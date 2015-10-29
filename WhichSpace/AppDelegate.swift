@@ -38,9 +38,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func activeSpaceDidChange() {
-        // TODO: Figure out how to determine the *actual* space number
-        let spaceNumber = Int(arc4random_uniform(UInt32(icons.count)))
-        statusBarItem.image = icons[spaceNumber]
+        let conn = _CGSDefaultConnection()
+        let info = CGSCopyManagedDisplaySpaces(conn)
+        let displayInfo = info[0] as! NSDictionary
+        let activeSpaceID = displayInfo["Current Space"]!["ManagedSpaceID"] as! Int
+        let spaces = displayInfo["Spaces"] as! NSArray
+        for (index, space) in spaces.enumerate() {
+            let spaceID = space["ManagedSpaceID"] as! Int
+            if spaceID == activeSpaceID {
+                statusBarItem.image = icons[index]
+                return
+            }
+        }
+        statusBarItem.image = icons[0]
     }
 
     @IBAction func quitClicked(sender: NSMenuItem) {

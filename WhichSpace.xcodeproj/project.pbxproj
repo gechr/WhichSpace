@@ -18,6 +18,7 @@
 		5E13C88C1BE03A6F00FF4305 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5E13C88F1BE03A6F00FF4305 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		5E13C8911BE03A6F00FF4305 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5E3FDE6A1BE2B1E6002D7DF1 /* WhichSpaceBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WhichSpaceBridge.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +55,7 @@
 				5E13C88C1BE03A6F00FF4305 /* Assets.xcassets */,
 				5E13C88E1BE03A6F00FF4305 /* MainMenu.xib */,
 				5E13C8911BE03A6F00FF4305 /* Info.plist */,
+				5E3FDE6A1BE2B1E6002D7DF1 /* WhichSpaceBridge.h */,
 			);
 			path = WhichSpace;
 			sourceTree = "<group>";
@@ -235,6 +237,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.gechr.WhichSpace;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = WhichSpace/WhichSpaceBridge.h;
 			};
 			name = Debug;
 		};
@@ -247,6 +250,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.gechr.WhichSpace;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = WhichSpace/WhichSpaceBridge.h;
 			};
 			name = Release;
 		};
@@ -269,6 +273,7 @@
 				5E13C8961BE03A6F00FF4305 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
