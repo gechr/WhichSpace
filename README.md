@@ -14,4 +14,4 @@ Have you ever forgotten _which space_ is currently active on OS X (10.11+) and w
 ## TODO
 * Fix detection on startup
 * Fix detection when first space is deleted
-* Fix crash when switching to a space >6 (OS X allows up to 16)
+* Add support for >6 spaces (OS X allows up to 16)
