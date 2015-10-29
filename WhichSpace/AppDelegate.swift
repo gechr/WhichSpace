@@ -28,12 +28,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationDidFinishLaunching(notification: NSNotification) {
-        for i in 0...5 {
-            let iconName = "ic_looks_" + String(i + 1)
+        icons.append(NSImage(named: "default")!)
+        icons[0].template = true
+        for i in 1...6 {
+            let iconName = "space_" + String(i)
             icons.append(NSImage(named: iconName)!)
             icons[i].template = true
         }
-        statusBarItem.image = icons[0]
+        statusBarItem.image = icons.first
         statusBarItem.menu = statusMenu
     }
 
@@ -45,12 +47,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let spaces = displayInfo["Spaces"] as! NSArray
         for (index, space) in spaces.enumerate() {
             let spaceID = space["ManagedSpaceID"] as! Int
+            let iconIndex = index + 1
             if spaceID == activeSpaceID {
-                statusBarItem.image = icons[index]
+                if iconIndex >= icons.count {
+                    break
+                }
+                statusBarItem.image = icons[iconIndex]
                 return
             }
         }
-        statusBarItem.image = icons[0]
+        statusBarItem.image = icons.first
     }
 
     @IBAction func quitClicked(sender: NSMenuItem) {

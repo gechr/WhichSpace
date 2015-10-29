@@ -3,61 +3,61 @@
     {
       "size" : "16x16",
       "idiom" : "mac",
-      "filename" : "WhichSpace_16px.png",
+      "filename" : "WhiceSpace_16px.png",
       "scale" : "1x"
     },
     {
       "size" : "16x16",
       "idiom" : "mac",
-      "filename" : "WhichSpace_32px.png",
+      "filename" : "WhiceSpace_32px-1.png",
       "scale" : "2x"
     },
     {
       "size" : "32x32",
       "idiom" : "mac",
-      "filename" : "WhichSpace_32px-1.png",
+      "filename" : "WhiceSpace_32px.png",
       "scale" : "1x"
     },
     {
       "size" : "32x32",
       "idiom" : "mac",
-      "filename" : "WhichSpace_64px.png",
+      "filename" : "WhiceSpace_64px.png",
       "scale" : "2x"
     },
     {
       "size" : "128x128",
       "idiom" : "mac",
-      "filename" : "WhichSpace_128x.png",
+      "filename" : "WhiceSpace_128x.png",
       "scale" : "1x"
     },
     {
       "size" : "128x128",
       "idiom" : "mac",
-      "filename" : "WhichSpace_256px.png",
+      "filename" : "WhiceSpace_256px-1.png",
       "scale" : "2x"
     },
     {
       "size" : "256x256",
       "idiom" : "mac",
-      "filename" : "WhichSpace_256px-1.png",
+      "filename" : "WhiceSpace_256px.png",
       "scale" : "1x"
     },
     {
       "size" : "256x256",
       "idiom" : "mac",
-      "filename" : "WhichSpace_512px.png",
+      "filename" : "WhiceSpace_512px-1.png",
       "scale" : "2x"
     },
     {
       "size" : "512x512",
       "idiom" : "mac",
-      "filename" : "WhichSpace_512px-1.png",
+      "filename" : "WhiceSpace_512px.png",
       "scale" : "1x"
     },
     {
       "size" : "512x512",
       "idiom" : "mac",
-      "filename" : "WhichSpace_1024px.png",
+      "filename" : "WhiceSpace_1024px.png",
       "scale" : "2x"
     }
   ],
