@@ -31,7 +31,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     func applicationDidFinishLaunching(notification: NSNotification) {
-        statusBarItem.image = NSImage(named: "Default")
+        statusBarItem.image = NSImage(named: "default")
         statusBarItem.menu = statusMenu
         
         // show the correct space on launch
