@@ -27,6 +27,9 @@
                     </connections>
                 </menuItem>
             </items>
+            <connections>
+                <outlet property="delegate" destination="Voe-Tx-rLC" id="haP-0D-wv1"/>
+            </connections>
         </menu>
     </objects>
 </document>

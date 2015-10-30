@@ -7,12 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3AE480061BE3516200E22248 /* StatusItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AE480051BE3516200E22248 /* StatusItemCell.swift */; };
 		5E13C88B1BE03A6F00FF4305 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E13C88A1BE03A6F00FF4305 /* AppDelegate.swift */; };
 		5E13C88D1BE03A6F00FF4305 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E13C88C1BE03A6F00FF4305 /* Assets.xcassets */; };
 		5E13C8901BE03A6F00FF4305 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5E13C88E1BE03A6F00FF4305 /* MainMenu.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3AE480051BE3516200E22248 /* StatusItemCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusItemCell.swift; sourceTree = "<group>"; };
+		3AE480071BE35A2F00E22248 /* NSStatusBarButtonCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSStatusBarButtonCell.h; sourceTree = "<group>"; };
 		5E13C8871BE03A6F00FF4305 /* WhichSpace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhichSpace.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E13C88A1BE03A6F00FF4305 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5E13C88C1BE03A6F00FF4305 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -52,10 +55,12 @@
 			isa = PBXGroup;
 			children = (
 				5E13C88A1BE03A6F00FF4305 /* AppDelegate.swift */,
+				3AE480051BE3516200E22248 /* StatusItemCell.swift */,
 				5E13C88C1BE03A6F00FF4305 /* Assets.xcassets */,
 				5E13C88E1BE03A6F00FF4305 /* MainMenu.xib */,
 				5E13C8911BE03A6F00FF4305 /* Info.plist */,
 				5E3FDE6A1BE2B1E6002D7DF1 /* WhichSpaceBridge.h */,
+				3AE480071BE35A2F00E22248 /* NSStatusBarButtonCell.h */,
 			);
 			path = WhichSpace;
 			sourceTree = "<group>";
@@ -131,6 +136,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5E13C88B1BE03A6F00FF4305 /* AppDelegate.swift in Sources */,
+				3AE480061BE3516200E22248 /* StatusItemCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
