@@ -28,7 +28,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationDidFinishLaunching(notification: NSNotification) {
-        icons.append(NSImage(named: "default")!)
+        icons.append(NSImage(named: "Default")!)
         icons[0].template = true
         for i in 1...6 {
             let iconName = "space_" + String(i)
