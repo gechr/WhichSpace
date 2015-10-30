@@ -11,6 +11,8 @@
 
 #import <Foundation/Foundation.h>
 
+#import "NSStatusBarButtonCell.h"
+
 int _CGSDefaultConnection();
 id CGSCopyManagedDisplaySpaces(int conn);
 
