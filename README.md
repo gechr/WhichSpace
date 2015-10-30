@@ -14,3 +14,4 @@ Have you ever forgotten _which space_ is currently active on OS X (10.11+) and w
 ## TODO
 * Add 'Dark Mode' support
 * Fix detection when a preceding inactive space is deleted
+* Add multi-monitor support
