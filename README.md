@@ -12,6 +12,5 @@ Have you ever forgotten _which space_ is currently active on OS X (10.11+) and w
 [Pull requests](https://github.com/gechr/WhichSpace/pulls) are welcome!
 
 ## TODO
-* Fix detection on startup
-* Fix detection when first space is deleted
-* Add support for >6 spaces (OS X allows up to 16)
+* Add 'Dark Mode' support
+* Fix detection when a preceding inactive space is deleted
