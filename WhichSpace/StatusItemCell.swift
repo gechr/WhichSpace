@@ -31,12 +31,12 @@ class StatusItemCell : NSStatusBarButtonCell {
         roundedRectanglePath.fill()
 
         
-        let titleRect = NSRect(x: frame.origin.x + 0.5, y: frame.origin.y + 3, width: frame.size.width, height: frame.size.height)
+        let titleRect = NSRect(x: frame.origin.x, y: frame.origin.y + 3, width: frame.size.width, height: frame.size.height)
         
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = NSTextAlignment.Center
         
-        let font = NSFont.menuBarFontOfSize(11)
+        let font = NSFont.boldSystemFontOfSize(11)
         let attributes = [NSFontAttributeName: font, NSParagraphStyleAttributeName: paragraphStyle, NSForegroundColorAttributeName: foregroundColor]
         title.drawInRect(titleRect, withAttributes:attributes)
     }
