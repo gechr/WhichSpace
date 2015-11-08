@@ -282,7 +282,7 @@
 					"$(PROJECT_DIR)/WhichSpace/Frameworks",
 				);
 				INFOPLIST_FILE = WhichSpace/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../WhichSpace/Frameworks @executable_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = io.gechr.WhichSpace;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = WhichSpace/Classes/WhichSpaceBridge.h;
@@ -299,7 +299,7 @@
 					"$(PROJECT_DIR)/WhichSpace/Frameworks",
 				);
 				INFOPLIST_FILE = WhichSpace/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../WhichSpace/Frameworks @executable_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = io.gechr.WhichSpace;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = WhichSpace/Classes/WhichSpaceBridge.h;
