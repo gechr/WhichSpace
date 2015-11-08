@@ -11,17 +11,33 @@
 		5E13C88B1BE03A6F00FF4305 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E13C88A1BE03A6F00FF4305 /* AppDelegate.swift */; };
 		5E13C88D1BE03A6F00FF4305 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E13C88C1BE03A6F00FF4305 /* Assets.xcassets */; };
 		5E13C8901BE03A6F00FF4305 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5E13C88E1BE03A6F00FF4305 /* MainMenu.xib */; };
+		5E3A37FD1BF004D50085EFD9 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E3A37FC1BF004D50085EFD9 /* Sparkle.framework */; };
+		5E3A37FF1BF004DE0085EFD9 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5E3A37FC1BF004D50085EFD9 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		5E7B3C6A1BEEDB4600CA19A4 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				5E3A37FF1BF004DE0085EFD9 /* Sparkle.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		3AE480051BE3516200E22248 /* StatusItemCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusItemCell.swift; sourceTree = "<group>"; };
-		3AE480071BE35A2F00E22248 /* NSStatusBarButtonCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSStatusBarButtonCell.h; sourceTree = "<group>"; };
+		3AE480071BE35A2F00E22248 /* WhichSpaceBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WhichSpaceBridge.h; sourceTree = "<group>"; };
 		5E13C8871BE03A6F00FF4305 /* WhichSpace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhichSpace.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E13C88A1BE03A6F00FF4305 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5E13C88C1BE03A6F00FF4305 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5E13C88F1BE03A6F00FF4305 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		5E13C8911BE03A6F00FF4305 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5E3FDE6A1BE2B1E6002D7DF1 /* WhichSpaceBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WhichSpaceBridge.h; sourceTree = "<group>"; };
+		5E3A37FC1BF004D50085EFD9 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
+		5EC84D821BEFB9FC00829140 /* NSStatusBarButtonCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSStatusBarButtonCell.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -29,6 +45,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5E3A37FD1BF004D50085EFD9 /* Sparkle.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -38,7 +55,9 @@
 		5E13C87E1BE03A6F00FF4305 = {
 			isa = PBXGroup;
 			children = (
-				5E13C8891BE03A6F00FF4305 /* WhichSpace */,
+				5EC84D811BEFB80900829140 /* Classes */,
+				5E7B3C671BEEDAEA00CA19A4 /* Frameworks */,
+				5E13C8891BE03A6F00FF4305 /* Resources */,
 				5E13C8881BE03A6F00FF4305 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -51,18 +70,36 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		5E13C8891BE03A6F00FF4305 /* WhichSpace */ = {
+		5E13C8891BE03A6F00FF4305 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				5E13C88A1BE03A6F00FF4305 /* AppDelegate.swift */,
-				3AE480051BE3516200E22248 /* StatusItemCell.swift */,
 				5E13C88C1BE03A6F00FF4305 /* Assets.xcassets */,
 				5E13C88E1BE03A6F00FF4305 /* MainMenu.xib */,
 				5E13C8911BE03A6F00FF4305 /* Info.plist */,
-				5E3FDE6A1BE2B1E6002D7DF1 /* WhichSpaceBridge.h */,
-				3AE480071BE35A2F00E22248 /* NSStatusBarButtonCell.h */,
 			);
+			name = Resources;
 			path = WhichSpace;
+			sourceTree = "<group>";
+		};
+		5E7B3C671BEEDAEA00CA19A4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5E3A37FC1BF004D50085EFD9 /* Sparkle.framework */,
+			);
+			name = Frameworks;
+			path = WhichSpace/Frameworks;
+			sourceTree = "<group>";
+		};
+		5EC84D811BEFB80900829140 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				5E13C88A1BE03A6F00FF4305 /* AppDelegate.swift */,
+				5EC84D821BEFB9FC00829140 /* NSStatusBarButtonCell.h */,
+				3AE480051BE3516200E22248 /* StatusItemCell.swift */,
+				3AE480071BE35A2F00E22248 /* WhichSpaceBridge.h */,
+			);
+			name = Classes;
+			path = WhichSpace/Classes;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -75,6 +112,7 @@
 				5E13C8831BE03A6F00FF4305 /* Sources */,
 				5E13C8841BE03A6F00FF4305 /* Frameworks */,
 				5E13C8851BE03A6F00FF4305 /* Resources */,
+				5E7B3C6A1BEEDB4600CA19A4 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -239,11 +277,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/WhichSpace/Frameworks",
+				);
 				INFOPLIST_FILE = WhichSpace/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../WhichSpace/Frameworks @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = io.gechr.WhichSpace;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = WhichSpace/WhichSpaceBridge.h;
+				SWIFT_OBJC_BRIDGING_HEADER = WhichSpace/Classes/WhichSpaceBridge.h;
 			};
 			name = Debug;
 		};
@@ -252,11 +294,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/WhichSpace/Frameworks",
+				);
 				INFOPLIST_FILE = WhichSpace/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../WhichSpace/Frameworks @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = io.gechr.WhichSpace;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = WhichSpace/WhichSpaceBridge.h;
+				SWIFT_OBJC_BRIDGING_HEADER = WhichSpace/Classes/WhichSpaceBridge.h;
 			};
 			name = Release;
 		};

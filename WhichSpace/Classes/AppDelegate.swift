@@ -7,33 +7,40 @@
 //
 
 import Cocoa
+import Sparkle
 
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDelegate {
 
     @IBOutlet weak var window: NSWindow!
     @IBOutlet weak var statusMenu: NSMenu!
+    @IBOutlet weak var updater: SUUpdater!
 
     var icons = [NSImage]()
     let statusBarItem = NSStatusBar.systemStatusBar().statusItemWithLength(27)
     let conn = _CGSDefaultConnection()
 
+    func configureSparkle() {
+        updater = SUUpdater.sharedUpdater()
+        updater.delegate = self
+    }
+
     func applicationWillFinishLaunching(notification: NSNotification) {
         NSApp.setActivationPolicy(.Prohibited)
+        configureSparkle()
         NSWorkspace.sharedWorkspace().notificationCenter.addObserver(
             self,
             selector: "activeSpaceDidChange",
             name: NSWorkspaceActiveSpaceDidChangeNotification,
             object: NSWorkspace.sharedWorkspace()
         )
-        
         statusBarItem.button?.cell = StatusItemCell()
     }
 
     func applicationDidFinishLaunching(notification: NSNotification) {
         statusBarItem.image = NSImage(named: "default")
         statusBarItem.menu = statusMenu
-        
+
         // show the correct space on launch
         activeSpaceDidChange()
     }
@@ -58,13 +65,17 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             cell.isMenuVisible = true
         }
     }
-    
+
     func menuDidClose(menu: NSMenu) {
         if let cell = statusBarItem.button?.cell as! StatusItemCell? {
             cell.isMenuVisible = false
         }
     }
-    
+
+    @IBAction func checkForUpdatesClicked(sender: NSMenuItem) {
+        updater.checkForUpdates(self)
+    }
+
     @IBAction func quitClicked(sender: NSMenuItem) {
         NSApplication.sharedApplication().terminate(self)
     }
