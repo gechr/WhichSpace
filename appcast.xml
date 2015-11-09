@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>WhichSpace Changelog</title>
+    <link>https://raw.githubusercontent.com/gechr/WhichSpace/updates/appcast.xml</link>
+    <description>Most recent changes with links to updates.</description>
+    <language>en</language>
+    <item>
+      <title>Version 0.1.1</title>
+      <sparkle:releaseNotesLink>
+        https://github.com/gechr/WhichSpace/releases/tag/v0.1.1
+      </sparkle:releaseNotesLink>
+      <pubDate>Fri Oct 30 16:57:23 2015 +0000</pubDate>
+      <enclosure
+        url="https://github.com/gechr/WhichSpace/releases/download/v0.1.1/WhichSpace.app.zip"
+        sparkle:version="0.1.1"
+        length="1579186"
+        type="application/octet-stream" />
+      <sparkle:minimumSystemVersion>10.11</sparkle:minimumSystemVersion>
+    </item>
+    <item>
+      <title>Version 0.1.0</title>
+      <sparkle:releaseNotesLink>
+        https://github.com/gechr/WhichSpace/releases/tag/v0.1.0
+      </sparkle:releaseNotesLink>
+      <pubDate>Thu Oct 29 22:15:31 2015 +0000</pubDate>
+      <enclosure
+        url="https://github.com/gechr/WhichSpace/releases/download/v0.1.0/WhichSpace.app.zip"
+        sparkle:version="0.1.0"
+        length="1576258"
+        type="application/octet-stream" />
+      <sparkle:minimumSystemVersion>10.11</sparkle:minimumSystemVersion>
+    </item>
+  </channel>
+</rss>
