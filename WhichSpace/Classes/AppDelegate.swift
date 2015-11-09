@@ -14,6 +14,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
 
     @IBOutlet weak var window: NSWindow!
     @IBOutlet weak var statusMenu: NSMenu!
+    @IBOutlet weak var application: NSApplication!
     @IBOutlet weak var updater: SUUpdater!
 
     var icons = [NSImage]()
@@ -23,25 +24,33 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
     func configureSparkle() {
         updater = SUUpdater.sharedUpdater()
         updater.delegate = self
+        // Silently check for updates on launch
+        updater.checkForUpdatesInBackground()
     }
 
     func applicationWillFinishLaunching(notification: NSNotification) {
-        NSApp.setActivationPolicy(.Prohibited)
-        configureSparkle()
+        application = NSApplication.sharedApplication()
+        // Specifying `.Accessory` both hides the Dock icon and allows
+        // the update dialog to take focus
+        application.setActivationPolicy(.Accessory)
+
         NSWorkspace.sharedWorkspace().notificationCenter.addObserver(
             self,
             selector: "activeSpaceDidChange",
             name: NSWorkspaceActiveSpaceDidChangeNotification,
             object: NSWorkspace.sharedWorkspace()
         )
+
         statusBarItem.button?.cell = StatusItemCell()
+
+        configureSparkle()
     }
 
     func applicationDidFinishLaunching(notification: NSNotification) {
         statusBarItem.image = NSImage(named: "default")
         statusBarItem.menu = statusMenu
 
-        // show the correct space on launch
+        // Show the correct space on launch
         activeSpaceDidChange()
     }
 
@@ -73,7 +82,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
     }
 
     @IBAction func checkForUpdatesClicked(sender: NSMenuItem) {
-        updater.checkForUpdates(self)
+        updater.checkForUpdates(sender)
     }
 
     @IBAction func quitClicked(sender: NSMenuItem) {
