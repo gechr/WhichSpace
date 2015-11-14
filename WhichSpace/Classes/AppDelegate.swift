@@ -15,7 +15,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
     @IBOutlet weak var window: NSWindow!
     @IBOutlet weak var statusMenu: NSMenu!
     @IBOutlet weak var application: NSApplication!
+    @IBOutlet weak var workspace: NSWorkspace!
     @IBOutlet weak var updater: SUUpdater!
+
+    // Frequency to check active space (in seconds)
+    let UpdateInterval: Double = 1
 
     var icons = [NSImage]()
     let statusBarItem = NSStatusBar.systemStatusBar().statusItemWithLength(27)
@@ -34,11 +38,22 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
         // the update dialog to take focus
         application.setActivationPolicy(.Accessory)
 
-        NSWorkspace.sharedWorkspace().notificationCenter.addObserver(
+        workspace = NSWorkspace.sharedWorkspace()
+        workspace.notificationCenter.addObserver(
             self,
-            selector: "activeSpaceDidChange",
+            selector: "updateActiveSpaceNumber",
             name: NSWorkspaceActiveSpaceDidChangeNotification,
-            object: NSWorkspace.sharedWorkspace()
+            object: workspace
+        )
+
+        // TODO: Figure out a suitable notification and add an observer
+        //       rather than checking every `UpdateInterval` seconds
+        NSTimer.scheduledTimerWithTimeInterval(
+            UpdateInterval,
+            target: self,
+            selector: "updateActiveSpaceNumber",
+            userInfo: nil,
+            repeats: true
         )
 
         statusBarItem.button?.cell = StatusItemCell()
@@ -51,10 +66,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
         statusBarItem.menu = statusMenu
 
         // Show the correct space on launch
-        activeSpaceDidChange()
+        updateActiveSpaceNumber()
     }
 
-    func activeSpaceDidChange() {
+    func updateActiveSpaceNumber() {
         let info = CGSCopyManagedDisplaySpaces(conn)
         let displayInfo = info[0] as! NSDictionary
         let activeSpaceID = displayInfo["Current Space"]!["ManagedSpaceID"] as! Int
