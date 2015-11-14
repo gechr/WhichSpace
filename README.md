@@ -12,9 +12,5 @@ Have you ever forgotten _which space_ is currently active on OS X (10.11+) and w
 [Pull requests](https://github.com/gechr/WhichSpace/pulls) are welcome!
 
 ## TODO
-* Add automatic updates
 * Add 'Dark Mode' support
 * Add multi-monitor support
-* Fix space number detection issues when:
-  * a preceding inactive space is deleted
-  * spaces are re-ordered (manually or automatically)
