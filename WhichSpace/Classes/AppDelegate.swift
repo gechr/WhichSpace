@@ -66,9 +66,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
             NSLog("Monitor file failed to open file")
             return
         }
-        
+
         let source = dispatch_source_create(DISPATCH_SOURCE_TYPE_VNODE, UInt(fildes), DISPATCH_VNODE_DELETE, queue)
-    
+
         dispatch_source_set_event_handler(source) { () -> Void in
             let flags = dispatch_source_get_data(source)
             if (flags & DISPATCH_VNODE_DELETE != 0) {
@@ -84,7 +84,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
 
         dispatch_resume(source)
     }
-    
+
     func updateActiveSpaceNumber() {
         let info = CGSCopyManagedDisplaySpaces(conn)
         let displayInfo = info[0] as! NSDictionary
