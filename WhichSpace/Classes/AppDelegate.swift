@@ -18,9 +18,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
     @IBOutlet weak var workspace: NSWorkspace!
     @IBOutlet weak var updater: SUUpdater!
 
-    // Frequency to check active space (in seconds)
-    let UpdateInterval: Double = 1
-
     var icons = [NSImage]()
     let statusBarItem = NSStatusBar.systemStatusBar().statusItemWithLength(27)
     let conn = _CGSDefaultConnection()
@@ -46,16 +43,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
             object: workspace
         )
 
-        // TODO: Figure out a suitable notification and add an observer
-        //       rather than checking every `UpdateInterval` seconds
-        NSTimer.scheduledTimerWithTimeInterval(
-            UpdateInterval,
-            target: self,
-            selector: "updateActiveSpaceNumber",
-            userInfo: nil,
-            repeats: true
-        )
-
+        monitorFile("~/Library/Preferences/com.apple.spaces.plist")
+        
         statusBarItem.button?.cell = StatusItemCell()
 
         configureSparkle()
@@ -67,6 +56,33 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
 
         // Show the correct space on launch
         updateActiveSpaceNumber()
+    }
+
+    func monitorFile(path : String) {
+        let fullPath = (path as NSString).stringByExpandingTildeInPath
+        let queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
+        let fildes = open(fullPath.cStringUsingEncoding(NSUTF8StringEncoding)!, O_EVTONLY)
+        if fildes == -1 {
+            NSLog("Monitor file failed to open file")
+            return
+        }
+
+        let source = dispatch_source_create(DISPATCH_SOURCE_TYPE_VNODE, UInt(fildes), DISPATCH_VNODE_DELETE, queue)
+
+        dispatch_source_set_event_handler(source) { () -> Void in
+            let flags = dispatch_source_get_data(source)
+            if (flags & DISPATCH_VNODE_DELETE != 0) {
+                dispatch_source_cancel(source)
+                self.updateActiveSpaceNumber()
+                self.monitorFile(path)
+            }
+        }
+
+        dispatch_source_set_cancel_handler(source) { () -> Void in
+            close(fildes)
+        }
+
+        dispatch_resume(source)
     }
 
     func updateActiveSpaceNumber() {
