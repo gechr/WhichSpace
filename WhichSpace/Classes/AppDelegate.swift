@@ -18,9 +18,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
     @IBOutlet weak var workspace: NSWorkspace!
     @IBOutlet weak var updater: SUUpdater!
 
-    // Frequency to check active space (in seconds)
-    let UpdateInterval: Double = 1
-
     var icons = [NSImage]()
     let statusBarItem = NSStatusBar.systemStatusBar().statusItemWithLength(27)
     let conn = _CGSDefaultConnection()
