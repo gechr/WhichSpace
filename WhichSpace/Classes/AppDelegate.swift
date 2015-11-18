@@ -23,6 +23,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
     let statusBarItem = NSStatusBar.systemStatusBar().statusItemWithLength(27)
     let conn = _CGSDefaultConnection()
 
+    static var darkModeEnabled = false
+
     private func configureApplication() {
         application = NSApplication.sharedApplication()
         // Specifying `.Accessory` both hides the Dock icon and allows
@@ -40,13 +42,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
         )
         NSDistributedNotificationCenter.defaultCenter().addObserver(
             self,
-            selector: "updateMenuBarIcon",
+            selector: "updateDarkModeStatus:",
             name: "AppleInterfaceThemeChangedNotification",
             object: nil
         )
     }
 
     private func configureMenuBarIcon() {
+        updateDarkModeStatus()
         statusBarItem.button?.cell = StatusItemCell()
         statusBarItem.image = NSImage(named: "default")
         statusBarItem.menu = statusMenu
@@ -84,6 +87,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
         }
 
         dispatch_resume(source)
+    }
+
+    func updateDarkModeStatus(sender: AnyObject?=nil) {
+        let dictionary = NSUserDefaults.standardUserDefaults().persistentDomainForName(NSGlobalDomain);
+        if let interfaceStyle = dictionary?["AppleInterfaceStyle"] as? NSString {
+            AppDelegate.darkModeEnabled = interfaceStyle.localizedCaseInsensitiveContainsString("dark")
+        } else {
+            AppDelegate.darkModeEnabled = false
+        }
     }
 
     func applicationWillFinishLaunching(notification: NSNotification) {
