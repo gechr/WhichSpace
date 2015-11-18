@@ -18,23 +18,19 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
     @IBOutlet weak var workspace: NSWorkspace!
     @IBOutlet weak var updater: SUUpdater!
 
-    var icons = [NSImage]()
+    let spacesMonitorFile = "~/Library/Preferences/com.apple.spaces.plist"
+
     let statusBarItem = NSStatusBar.systemStatusBar().statusItemWithLength(27)
     let conn = _CGSDefaultConnection()
 
-    func configureSparkle() {
-        updater = SUUpdater.sharedUpdater()
-        updater.delegate = self
-        // Silently check for updates on launch
-        updater.checkForUpdatesInBackground()
-    }
-
-    func applicationWillFinishLaunching(notification: NSNotification) {
+    private func configureApplication() {
         application = NSApplication.sharedApplication()
         // Specifying `.Accessory` both hides the Dock icon and allows
         // the update dialog to take focus
         application.setActivationPolicy(.Accessory)
+    }
 
+    private func configureObservers() {
         workspace = NSWorkspace.sharedWorkspace()
         workspace.notificationCenter.addObserver(
             self,
@@ -42,28 +38,33 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
             name: NSWorkspaceActiveSpaceDidChangeNotification,
             object: workspace
         )
-
-        monitorFile("~/Library/Preferences/com.apple.spaces.plist")
-        
-        statusBarItem.button?.cell = StatusItemCell()
-
-        configureSparkle()
+        NSDistributedNotificationCenter.defaultCenter().addObserver(
+            self,
+            selector: "updateMenuBarIcon",
+            name: "AppleInterfaceThemeChangedNotification",
+            object: nil
+        )
     }
 
-    func applicationDidFinishLaunching(notification: NSNotification) {
+    private func configureMenuBarIcon() {
+        statusBarItem.button?.cell = StatusItemCell()
         statusBarItem.image = NSImage(named: "default")
         statusBarItem.menu = statusMenu
-
-        // Show the correct space on launch
-        updateActiveSpaceNumber()
     }
 
-    func monitorFile(path : String) {
-        let fullPath = (path as NSString).stringByExpandingTildeInPath
+    private func configureSparkle() {
+        updater = SUUpdater.sharedUpdater()
+        updater.delegate = self
+        // Silently check for updates on launch
+        updater.checkForUpdatesInBackground()
+    }
+
+    private func configureSpaceMonitor() {
+        let fullPath = (spacesMonitorFile as NSString).stringByExpandingTildeInPath
         let queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
         let fildes = open(fullPath.cStringUsingEncoding(NSUTF8StringEncoding)!, O_EVTONLY)
         if fildes == -1 {
-            NSLog("Monitor file failed to open file")
+            NSLog("Failed to open file: \(spacesMonitorFile)")
             return
         }
 
@@ -74,7 +75,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
             if (flags & DISPATCH_VNODE_DELETE != 0) {
                 dispatch_source_cancel(source)
                 self.updateActiveSpaceNumber()
-                self.monitorFile(path)
+                self.configureSpaceMonitor()
             }
         }
 
@@ -83,6 +84,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
         }
 
         dispatch_resume(source)
+    }
+
+    func applicationWillFinishLaunching(notification: NSNotification) {
+        configureApplication()
+        configureObservers()
+        configureMenuBarIcon()
+        configureSparkle()
+        configureSpaceMonitor()
+        updateActiveSpaceNumber()
     }
 
     func updateActiveSpaceNumber() {
