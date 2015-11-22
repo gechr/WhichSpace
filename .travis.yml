@@ -1,3 +1,14 @@
 language: objective-c
-xcode_project: WhichSpace.xcodeproj
-xcode_scheme: WhichSpace
+osx_image: xcode7
+script:
+  xctool
+  -project WhichSpace.xcodeproj
+  -scheme WhichSpace
+  build
+  test
+  ONLY_ACTIVE_ARCH=NO
+  CODE_SIGN_IDENTITY=""
+  CODE_SIGNING_REQUIRED=NO
+before_install:
+  - brew update
+  - brew reinstall --HEAD xctool
