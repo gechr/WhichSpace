@@ -1,4 +1,4 @@
-## WhichSpace
+## WhichSpace [![Build Status](https://travis-ci.org/gechr/WhichSpace.svg?branch=master)](https://travis-ci.org/gechr/WhichSpace)
 Have you ever forgotten _which space_ is currently active on OS X (10.11+) and wanted a quick way to tell? Didn't think so... but I did!
 
 ## Screenshot
