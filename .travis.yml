@@ -1,0 +1,3 @@
+language: objective-c
+xcode_project: WhichSpace.xcodeproj
+xcode_scheme: WhichSpace
