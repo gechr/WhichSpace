@@ -12,4 +12,5 @@ Have you ever forgotten _which space_ is currently active on OS X (10.11+) and w
 [Pull requests](https://github.com/gechr/WhichSpace/pulls) are welcome!
 
 ## TODO
+* Add support for OS X 10.9 (Mavericks) + 10.10 (Yosemite)
 * Add multi-monitor support
