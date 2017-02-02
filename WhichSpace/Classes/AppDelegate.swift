@@ -10,6 +10,7 @@ import Cocoa
 import Sparkle
 
 @NSApplicationMain
+@objc
 class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDelegate {
 
     @IBOutlet weak var window: NSWindow!
@@ -20,85 +21,85 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
 
     let spacesMonitorFile = "~/Library/Preferences/com.apple.spaces.plist"
 
-    let statusBarItem = NSStatusBar.systemStatusBar().statusItemWithLength(27)
+    let statusBarItem = NSStatusBar.system().statusItem(withLength: 27)
     let conn = _CGSDefaultConnection()
 
     static var darkModeEnabled = false
 
-    private func configureApplication() {
-        application = NSApplication.sharedApplication()
+    fileprivate func configureApplication() {
+        application = NSApplication.shared()
         // Specifying `.Accessory` both hides the Dock icon and allows
         // the update dialog to take focus
-        application.setActivationPolicy(.Accessory)
+        application.setActivationPolicy(.accessory)
     }
 
-    private func configureObservers() {
-        workspace = NSWorkspace.sharedWorkspace()
+    fileprivate func configureObservers() {
+        workspace = NSWorkspace.shared()
         workspace.notificationCenter.addObserver(
             self,
-            selector: "updateActiveSpaceNumber",
-            name: NSWorkspaceActiveSpaceDidChangeNotification,
+            selector: #selector(AppDelegate.updateActiveSpaceNumber),
+            name: NSNotification.Name.NSWorkspaceActiveSpaceDidChange,
             object: workspace
         )
-        NSDistributedNotificationCenter.defaultCenter().addObserver(
+        DistributedNotificationCenter.default().addObserver(
             self,
-            selector: "updateDarkModeStatus:",
-            name: "AppleInterfaceThemeChangedNotification",
+            selector: #selector(updateDarkModeStatus(_:)),
+            name: NSNotification.Name("AppleInterfaceThemeChangedNotification"),
             object: nil
         )
     }
 
-    private func configureMenuBarIcon() {
+    fileprivate func configureMenuBarIcon() {
         updateDarkModeStatus()
         statusBarItem.button?.cell = StatusItemCell()
-        statusBarItem.image = NSImage(named: "default")
+        statusBarItem.image = NSImage(named: "default") // This icon appears when switching spaces when cell length is variable width.
         statusBarItem.menu = statusMenu
     }
 
-    private func configureSparkle() {
-        updater = SUUpdater.sharedUpdater()
+    fileprivate func configureSparkle() {
+        updater = SUUpdater.shared()
         updater.delegate = self
         // Silently check for updates on launch
         updater.checkForUpdatesInBackground()
     }
 
-    private func configureSpaceMonitor() {
-        let fullPath = (spacesMonitorFile as NSString).stringByExpandingTildeInPath
-        let queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
-        let fildes = open(fullPath.cStringUsingEncoding(NSUTF8StringEncoding)!, O_EVTONLY)
+    fileprivate func configureSpaceMonitor() {
+        let fullPath = (spacesMonitorFile as NSString).expandingTildeInPath
+        let queue = DispatchQueue.global(priority: DispatchQueue.GlobalQueuePriority.default)
+        let fildes = open(fullPath.cString(using: String.Encoding.utf8)!, O_EVTONLY)
         if fildes == -1 {
             NSLog("Failed to open file: \(spacesMonitorFile)")
             return
         }
 
-        let source = dispatch_source_create(DISPATCH_SOURCE_TYPE_VNODE, UInt(fildes), DISPATCH_VNODE_DELETE, queue)
+        let source = DispatchSource.makeFileSystemObjectSource(fileDescriptor: fildes, eventMask: DispatchSource.FileSystemEvent.delete, queue: queue)
 
-        dispatch_source_set_event_handler(source) { () -> Void in
-            let flags = dispatch_source_get_data(source)
-            if (flags & DISPATCH_VNODE_DELETE != 0) {
-                dispatch_source_cancel(source)
+        source.setEventHandler { () -> Void in
+            let flags = source.data.rawValue
+            if (flags & DispatchSource.FileSystemEvent.delete.rawValue != 0) {
+                source.cancel()
                 self.updateActiveSpaceNumber()
                 self.configureSpaceMonitor()
             }
         }
 
-        dispatch_source_set_cancel_handler(source) { () -> Void in
+        source.setCancelHandler { () -> Void in
             close(fildes)
         }
 
-        dispatch_resume(source)
+        source.resume()
     }
 
-    func updateDarkModeStatus(sender: AnyObject?=nil) {
-        let dictionary = NSUserDefaults.standardUserDefaults().persistentDomainForName(NSGlobalDomain);
+    func updateDarkModeStatus(_ sender: AnyObject?=nil) {
+        let dictionary = UserDefaults.standard.persistentDomain(forName: UserDefaults.globalDomain);
         if let interfaceStyle = dictionary?["AppleInterfaceStyle"] as? NSString {
-            AppDelegate.darkModeEnabled = interfaceStyle.localizedCaseInsensitiveContainsString("dark")
+            AppDelegate.darkModeEnabled = interfaceStyle.localizedCaseInsensitiveContains("dark")
         } else {
             AppDelegate.darkModeEnabled = false
         }
     }
 
-    func applicationWillFinishLaunching(notification: NSNotification) {
+    func applicationWillFinishLaunching(_ notification: Notification) {
         configureApplication()
         configureObservers()
         configureMenuBarIcon()
@@ -108,37 +109,37 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
     }
 
     func updateActiveSpaceNumber() {
-        let info = CGSCopyManagedDisplaySpaces(conn)
-        let displayInfo = info[0] as! NSDictionary
-        let activeSpaceID = displayInfo["Current Space"]!["ManagedSpaceID"] as! Int
+        let info = CGSCopyManagedDisplaySpaces(conn) as! [NSDictionary]
+        let displayInfo = info[0]
+        let activeSpaceID = (displayInfo["Current Space"]! as! NSDictionary)["ManagedSpaceID"] as! Int
         let spaces = displayInfo["Spaces"] as! NSArray
-        for (index, space) in spaces.enumerate() {
-            let spaceID = space["ManagedSpaceID"] as! Int
+        for (index, space) in spaces.enumerated() {
+            let spaceID = (space as! NSDictionary)["ManagedSpaceID"] as! Int
             let spaceNumber = index + 1
             if spaceID == activeSpaceID {
-                statusBarItem.button?.title = String(spaceNumber)
+                statusBarItem.button?.title = String("\(spaceNumber)")
                 return
             }
         }
     }
 
-    func menuWillOpen(menu: NSMenu) {
+    func menuWillOpen(_ menu: NSMenu) {
         if let cell = statusBarItem.button?.cell as! StatusItemCell? {
             cell.isMenuVisible = true
         }
     }
 
-    func menuDidClose(menu: NSMenu) {
+    func menuDidClose(_ menu: NSMenu) {
         if let cell = statusBarItem.button?.cell as! StatusItemCell? {
             cell.isMenuVisible = false
         }
     }
 
-    @IBAction func checkForUpdatesClicked(sender: NSMenuItem) {
+    @IBAction func checkForUpdatesClicked(_ sender: NSMenuItem) {
         updater.checkForUpdates(sender)
     }
 
-    @IBAction func quitClicked(sender: NSMenuItem) {
-        NSApplication.sharedApplication().terminate(self)
+    @IBAction func quitClicked(_ sender: NSMenuItem) {
+        NSApplication.shared().terminate(self)
     }
 }
