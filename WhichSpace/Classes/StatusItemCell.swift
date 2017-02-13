@@ -12,7 +12,7 @@ class StatusItemCell: NSStatusBarButtonCell {
     
     var isMenuVisible = false
     
-    override func drawImage(image: NSImage, withFrame frame: NSRect, inView controlView: NSView) {
+    override func drawImage(_ image: NSImage, withFrame frame: NSRect, in controlView: NSView) {
 
         var darkColor: NSColor
         var whiteColor: NSColor
@@ -33,19 +33,18 @@ class StatusItemCell: NSStatusBarButtonCell {
             blueColor.setFill()
             rectPath.fill()
         }
-
+        
         let roundedRectanglePath = NSBezierPath(roundedRect: NSRect(x: 5, y: 3, width: 16, height: 16), xRadius: 2, yRadius: 2)
         backgroundColor.setFill()
         roundedRectanglePath.fill()
-
         
         let titleRect = NSRect(x: frame.origin.x, y: frame.origin.y + 3, width: frame.size.width, height: frame.size.height)
         
         let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = NSTextAlignment.Center
+        paragraphStyle.alignment = NSTextAlignment.center
         
-        let font = NSFont.boldSystemFontOfSize(11)
+        let font = NSFont.boldSystemFont(ofSize: 11)
         let attributes = [NSFontAttributeName: font, NSParagraphStyleAttributeName: paragraphStyle, NSForegroundColorAttributeName: foregroundColor]
-        title.drawInRect(titleRect, withAttributes:attributes)
+        title.draw(in: titleRect, withAttributes:attributes)
     }
 }
