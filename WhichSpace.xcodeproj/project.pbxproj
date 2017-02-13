@@ -135,8 +135,7 @@
 				TargetAttributes = {
 					5E13C8861BE03A6F00FF4305 = {
 						CreatedOnToolsVersion = 7.1;
-						DevelopmentTeam = R6Q5T2H2M4;
-						LastSwiftMigration = 0820;
+						DevelopmentTeam = WH3AMFYJQK;
 					};
 				};
 			};
@@ -216,6 +215,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = WH3AMFYJQK;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -262,6 +262,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = WH3AMFYJQK;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
