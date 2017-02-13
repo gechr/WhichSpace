@@ -65,7 +65,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
 
     fileprivate func configureSpaceMonitor() {
         let fullPath = (spacesMonitorFile as NSString).expandingTildeInPath
-        let queue = DispatchQueue.global(priority: DispatchQueue.GlobalQueuePriority.default)
+        let queue = DispatchQueue.global(qos: .default)
         let fildes = open(fullPath.cString(using: String.Encoding.utf8)!, O_EVTONLY)
         if fildes == -1 {
             NSLog("Failed to open file: \(spacesMonitorFile)")
