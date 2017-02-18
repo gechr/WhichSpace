@@ -1,14 +1,10 @@
 language: objective-c
 osx_image: xcode8.2
 script:
-  xctool
+  xcodebuild
   -project WhichSpace.xcodeproj
   -scheme WhichSpace
   build
-  test
   ONLY_ACTIVE_ARCH=NO
   CODE_SIGN_IDENTITY=""
   CODE_SIGNING_REQUIRED=NO
-before_install:
-  - brew update
-  - brew reinstall --HEAD xctool
