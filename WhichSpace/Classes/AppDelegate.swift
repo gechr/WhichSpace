@@ -3,7 +3,7 @@
 //  WhichSpace
 //
 //  Created by George on 27/10/2015.
-//  Copyright © 2015 George Christou. All rights reserved.
+//  Copyright © 2017 George Christou. All rights reserved.
 //
 
 import Cocoa
@@ -100,6 +100,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
     }
 
     func applicationWillFinishLaunching(_ notification: Notification) {
+        PFMoveToApplicationsFolderIfNecessary()
         configureApplication()
         configureObservers()
         configureMenuBarIcon()

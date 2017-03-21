@@ -3,7 +3,7 @@
 //  WhichSpace
 //
 //  Created by Stephen Sykes on 30/10/15.
-//  Copyright © 2015 George Christou. All rights reserved.
+//  Copyright © 2017 George Christou. All rights reserved.
 //
 
 import Cocoa
