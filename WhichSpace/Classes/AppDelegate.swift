@@ -21,24 +21,24 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
 
     let spacesMonitorFile = "~/Library/Preferences/com.apple.spaces.plist"
 
-    let statusBarItem = NSStatusBar.system().statusItem(withLength: 27)
+    let statusBarItem = NSStatusBar.system.statusItem(withLength: 27)
     let conn = _CGSDefaultConnection()
 
     static var darkModeEnabled = false
 
     fileprivate func configureApplication() {
-        application = NSApplication.shared()
+        application = NSApplication.shared
         // Specifying `.Accessory` both hides the Dock icon and allows
         // the update dialog to take focus
         application.setActivationPolicy(.accessory)
     }
 
     fileprivate func configureObservers() {
-        workspace = NSWorkspace.shared()
+        workspace = NSWorkspace.shared
         workspace.notificationCenter.addObserver(
             self,
             selector: #selector(AppDelegate.updateActiveSpaceNumber),
-            name: NSNotification.Name.NSWorkspaceActiveSpaceDidChange,
+            name: NSWorkspace.activeSpaceDidChangeNotification,
             object: workspace
         )
         DistributedNotificationCenter.default().addObserver(
@@ -90,7 +90,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
         source.resume()
     }
 
-    func updateDarkModeStatus(_ sender: AnyObject?=nil) {
+    @objc func updateDarkModeStatus(_ sender: AnyObject?=nil) {
         let dictionary = UserDefaults.standard.persistentDomain(forName: UserDefaults.globalDomain);
         if let interfaceStyle = dictionary?["AppleInterfaceStyle"] as? NSString {
             AppDelegate.darkModeEnabled = interfaceStyle.localizedCaseInsensitiveContains("dark")
@@ -109,7 +109,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
         updateActiveSpaceNumber()
     }
 
-    func updateActiveSpaceNumber() {
+    @objc func updateActiveSpaceNumber() {
         let info = CGSCopyManagedDisplaySpaces(conn) as! [NSDictionary]
         let displayInfo = info[0]
         let activeSpaceID = (displayInfo["Current Space"]! as! NSDictionary)["ManagedSpaceID"] as! Int
@@ -141,6 +141,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
     }
 
     @IBAction func quitClicked(_ sender: NSMenuItem) {
-        NSApplication.shared().terminate(self)
+        NSApplication.shared.terminate(self)
     }
 }

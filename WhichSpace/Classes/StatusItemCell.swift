@@ -44,7 +44,18 @@ class StatusItemCell: NSStatusBarButtonCell {
         paragraphStyle.alignment = NSTextAlignment.center
         
         let font = NSFont.boldSystemFont(ofSize: 11)
-        let attributes = [NSFontAttributeName: font, NSParagraphStyleAttributeName: paragraphStyle, NSForegroundColorAttributeName: foregroundColor]
-        title.draw(in: titleRect, withAttributes:attributes)
+        let attributes = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): font, convertFromNSAttributedStringKey(NSAttributedString.Key.paragraphStyle): paragraphStyle, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): foregroundColor]
+        title.draw(in: titleRect, withAttributes:convertToOptionalNSAttributedStringKeyDictionary(attributes))
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
+	return input.rawValue
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
+	guard let input = input else { return nil }
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
 }
