@@ -5,6 +5,15 @@ Have you ever forgotten _which space_ is currently active on macOS (10.11+) and 
 ![WhichSpace](https://raw.github.com/gechr/WhichSpace/master/Screenshots/WhichSpace.png)
 
 ## Installation
+
+#### Homebrew
+
+```
+brew cask install whichspace
+```
+
+#### GitHub
+
 * Download and extract the [latest release](https://github.com/gechr/WhichSpace/releases/latest)
 * Run `WhichSpace.app`
 
@@ -12,5 +21,4 @@ Have you ever forgotten _which space_ is currently active on macOS (10.11+) and 
 [Pull requests](https://github.com/gechr/WhichSpace/pulls) are welcome!
 
 ## TODO
-* Add support for macOS 10.9 (Mavericks) + 10.10 (Yosemite)
 * Add multi-monitor support
