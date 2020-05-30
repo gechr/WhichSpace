@@ -23,7 +23,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
 
     let statusBarItem = NSStatusBar.system.statusItem(withLength: 27)
     let conn = _CGSDefaultConnection()
-
+    
     static var darkModeEnabled = false
 
     fileprivate func configureApplication() {
@@ -41,12 +41,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
             name: NSWorkspace.activeSpaceDidChangeNotification,
             object: workspace
         )
+        
         DistributedNotificationCenter.default().addObserver(
             self,
             selector: #selector(updateDarkModeStatus(_:)),
             name: NSNotification.Name("AppleInterfaceThemeChangedNotification"),
             object: nil
         )
+        
     }
 
     fileprivate func configureMenuBarIcon() {
@@ -111,9 +113,21 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
 
     @objc func updateActiveSpaceNumber() {
         let info = CGSCopyManagedDisplaySpaces(conn) as! [NSDictionary]
-        let displayInfo = info[0]
-        let activeSpaceID = (displayInfo["Current Space"]! as! NSDictionary)["ManagedSpaceID"] as! Int
-        let spaces = displayInfo["Spaces"] as! NSArray
+        let disp = CGSCopyActiveMenuBarDisplayIdentifier(conn) as! String
+        print(disp)
+        let spaces : NSMutableArray = []
+        var activeSpaceID = -1
+        for display in info {
+            let tmpDisp = display["Display Identifier"] as! String
+            if tmpDisp == disp {
+                activeSpaceID = (display["Current Space"]! as! NSDictionary)["ManagedSpaceID"] as! Int
+            }
+            let tmp = display["Spaces"] as! NSArray
+            spaces.addObjects(from: tmp as! [Any])
+        }
+        // let displayInfo = info[0]
+        // let activeSpaceID = (displayInfo["Current Space"]! as! NSDictionary)["ManagedSpaceID"] as! Int
+        // let spaces = displayInfo["Spaces"] as! NSArray
         for (index, space) in spaces.enumerated() {
             let spaceID = (space as! NSDictionary)["ManagedSpaceID"] as! Int
             let spaceNumber = index + 1
