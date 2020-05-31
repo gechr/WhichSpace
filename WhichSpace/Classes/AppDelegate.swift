@@ -35,22 +35,24 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
 
     fileprivate func configureObservers() {
         workspace = NSWorkspace.shared
-        
+        workspace.notificationCenter.addObserver(
+            self,
+            selector: #selector(AppDelegate.updateActiveSpaceNumber),
+            name: NSWorkspace.activeSpaceDidChangeNotification,
+            object: workspace
+        )
         workspace.notificationCenter.addObserver(
             self,
             selector: #selector(AppDelegate.updateActiveSpaceNumber),
             name: NSWorkspace.didActivateApplicationNotification,
             object: workspace
         )
-        
         DistributedNotificationCenter.default().addObserver(
             self,
             selector: #selector(updateDarkModeStatus(_:)),
             name: NSNotification.Name("AppleInterfaceThemeChangedNotification"),
             object: nil
         )
-        
-        
     }
     
     fileprivate func configureMenuBarIcon() {
