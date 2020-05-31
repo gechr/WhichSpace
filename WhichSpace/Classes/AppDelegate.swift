@@ -35,10 +35,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
 
     fileprivate func configureObservers() {
         workspace = NSWorkspace.shared
+        
         workspace.notificationCenter.addObserver(
             self,
             selector: #selector(AppDelegate.updateActiveSpaceNumber),
-            name: NSWorkspace.activeSpaceDidChangeNotification,
+            name: NSWorkspace.didActivateApplicationNotification,
             object: workspace
         )
         
@@ -49,8 +50,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
             object: nil
         )
         
+        
     }
-
+    
     fileprivate func configureMenuBarIcon() {
         updateDarkModeStatus()
         statusBarItem.button?.cell = StatusItemCell()
@@ -114,7 +116,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
     @objc func updateActiveSpaceNumber() {
         let info = CGSCopyManagedDisplaySpaces(conn) as! [NSDictionary]
         let disp = CGSCopyActiveMenuBarDisplayIdentifier(conn) as! String
-        print(disp)
+
         let spaces : NSMutableArray = []
         var activeSpaceID = -1
         for display in info {
@@ -125,9 +127,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
             let tmp = display["Spaces"] as! NSArray
             spaces.addObjects(from: tmp as! [Any])
         }
-        // let displayInfo = info[0]
-        // let activeSpaceID = (displayInfo["Current Space"]! as! NSDictionary)["ManagedSpaceID"] as! Int
-        // let spaces = displayInfo["Spaces"] as! NSArray
+
         for (index, space) in spaces.enumerated() {
             let spaceID = (space as! NSDictionary)["ManagedSpaceID"] as! Int
             let spaceNumber = index + 1
@@ -157,4 +157,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
     @IBAction func quitClicked(_ sender: NSMenuItem) {
         NSApplication.shared.terminate(self)
     }
+    
+    
 }

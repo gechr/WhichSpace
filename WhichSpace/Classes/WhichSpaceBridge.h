@@ -17,5 +17,5 @@
 int _CGSDefaultConnection();
 id CGSCopyManagedDisplaySpaces(int conn);
 id CGSCopyActiveMenuBarDisplayIdentifier(int conn);
-id CGSCast(int conn);
+// id CGSCopyWindowsWithOptionsAndTags(int conn);
 #endif
