@@ -47,6 +47,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
             name: NSWorkspace.didActivateApplicationNotification,
             object: workspace
         )
+        workspace.notificationCenter.addObserver(
+            self,
+            selector: #selector(AppDelegate.updateActiveSpaceNumber),
+            name: NSWorkspace.didDeactivateApplicationNotification,
+            object: workspace
+        )
         DistributedNotificationCenter.default().addObserver(
             self,
             selector: #selector(updateDarkModeStatus(_:)),
@@ -54,7 +60,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
             object: nil
         )
     }
-    
     fileprivate func configureMenuBarIcon() {
         updateDarkModeStatus()
         statusBarItem.button?.cell = StatusItemCell()
