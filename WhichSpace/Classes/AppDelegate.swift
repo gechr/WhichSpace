@@ -119,18 +119,20 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
     @objc func updateActiveSpaceNumber() {
         let info = CGSCopyManagedDisplaySpaces(conn) as! [NSDictionary]
         let disp = CGSCopyActiveMenuBarDisplayIdentifier(conn) as! String
-
         let spaces : NSMutableArray = []
         var activeSpaceID = -1
         for display in info {
             let tmpDisp = display["Display Identifier"] as! String
-            if tmpDisp == disp {
+            if tmpDisp == "Main" {
                 activeSpaceID = (display["Current Space"]! as! NSDictionary)["ManagedSpaceID"] as! Int
+            } else {
+                if tmpDisp == disp {
+                    activeSpaceID = (display["Current Space"]! as! NSDictionary)["ManagedSpaceID"] as! Int
+                }
             }
             let tmp = display["Spaces"] as! NSArray
             spaces.addObjects(from: tmp as! [Any])
         }
-
         for (index, space) in spaces.enumerated() {
             let spaceID = (space as! NSDictionary)["ManagedSpaceID"] as! Int
             let spaceNumber = index + 1
