@@ -97,7 +97,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
         source.resume()
     }
 
-    @objc func updateDarkModeStatus(_ sender: AnyObject?=nil) {
+    @objc func updateDarkModeStatus(_ sender: AnyObject? = nil) {
         let dictionary = UserDefaults.standard.persistentDomain(forName: UserDefaults.globalDomain);
         if let interfaceStyle = dictionary?["AppleInterfaceStyle"] as? NSString {
             AppDelegate.darkModeEnabled = interfaceStyle.localizedCaseInsensitiveContains("dark")
@@ -119,23 +119,38 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
     @objc func updateActiveSpaceNumber() {
         let displays = CGSCopyManagedDisplaySpaces(conn) as! [NSDictionary]
         let activeDisplay = CGSCopyActiveMenuBarDisplayIdentifier(conn) as! String
-        let allSpaces : NSMutableArray = []
+        let allSpaces: NSMutableArray = []
         var activeSpaceID = -1
 
-        for disp in displays {
-            let dispID = disp["Display Identifier"] as! String
+        for d in displays {
+            guard
+                let current = d["Current Space"] as? [String: Any],
+                let spaces = d["Spaces"] as? [[String: Any]],
+                let dispID = d["Display Identifier"] as? String
+                else {
+                    continue
+            }
+
             switch dispID {
             case mainDisplay, activeDisplay:
-                activeSpaceID = (disp["Current Space"]! as! NSDictionary)["ManagedSpaceID"] as! Int
+                activeSpaceID = current["ManagedSpaceID"] as! Int
             default:
                 break
             }
-            let spaces = disp["Spaces"] as! NSArray
-            allSpaces.addObjects(from: spaces as! [Any])
+
+            for s in spaces {
+                let isFullscreen = s["TileLayoutManager"] as? [String: Any] != nil
+                if isFullscreen {
+                    continue
+                }
+                allSpaces.add(s)
+            }
         }
 
         if activeSpaceID == -1 {
-            self.statusBarItem.button?.title = "?"
+            DispatchQueue.main.async {
+                self.statusBarItem.button?.title = "?"
+            }
             return
         }
 
@@ -143,7 +158,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
             let spaceID = (space as! NSDictionary)["ManagedSpaceID"] as! Int
             let spaceNumber = index + 1
             if spaceID == activeSpaceID {
-                self.statusBarItem.button?.title = String("\(spaceNumber)")
+                DispatchQueue.main.async {
+                    self.statusBarItem.button?.title = String("\(spaceNumber)")
+                }
                 return
             }
         }
