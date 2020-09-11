@@ -19,6 +19,3 @@ brew cask install whichspace
 
 ## Contributing
 [Pull requests](https://github.com/gechr/WhichSpace/pulls) are welcome!
-
-## TODO
-* Add multi-monitor support
