@@ -19,6 +19,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
     @IBOutlet weak var workspace: NSWorkspace!
     @IBOutlet weak var updater: SUUpdater!
 
+    let mainDisplay = "Main"
     let spacesMonitorFile = "~/Library/Preferences/com.apple.spaces.plist"
 
     let statusBarItem = NSStatusBar.system.statusItem(withLength: 27)
@@ -45,6 +46,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
             self,
             selector: #selector(updateDarkModeStatus(_:)),
             name: NSNotification.Name("AppleInterfaceThemeChangedNotification"),
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(AppDelegate.updateActiveSpaceNumber),
+            name: NSApplication.didUpdateNotification,
             object: nil
         )
     }
@@ -110,15 +117,33 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
     }
 
     @objc func updateActiveSpaceNumber() {
-        let info = CGSCopyManagedDisplaySpaces(conn) as! [NSDictionary]
-        let displayInfo = info[0]
-        let activeSpaceID = (displayInfo["Current Space"]! as! NSDictionary)["ManagedSpaceID"] as! Int
-        let spaces = displayInfo["Spaces"] as! NSArray
-        for (index, space) in spaces.enumerated() {
+        let displays = CGSCopyManagedDisplaySpaces(conn) as! [NSDictionary]
+        let activeDisplay = CGSCopyActiveMenuBarDisplayIdentifier(conn) as! String
+        let allSpaces : NSMutableArray = []
+        var activeSpaceID = -1
+
+        for disp in displays {
+            let dispID = disp["Display Identifier"] as! String
+            switch dispID {
+            case mainDisplay, activeDisplay:
+                activeSpaceID = (disp["Current Space"]! as! NSDictionary)["ManagedSpaceID"] as! Int
+            default:
+                break
+            }
+            let spaces = disp["Spaces"] as! NSArray
+            allSpaces.addObjects(from: spaces as! [Any])
+        }
+
+        if activeSpaceID == -1 {
+            self.statusBarItem.button?.title = "?"
+            return
+        }
+
+        for (index, space) in allSpaces.enumerated() {
             let spaceID = (space as! NSDictionary)["ManagedSpaceID"] as! Int
             let spaceNumber = index + 1
             if spaceID == activeSpaceID {
-                statusBarItem.button?.title = String("\(spaceNumber)")
+                self.statusBarItem.button?.title = String("\(spaceNumber)")
                 return
             }
         }
