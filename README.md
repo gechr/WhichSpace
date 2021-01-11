@@ -9,7 +9,7 @@ Have you ever forgotten _which space_ is currently active on macOS (10.11+) and 
 #### Homebrew
 
 ```
-brew cask install whichspace
+brew install --cask whichspace
 ```
 
 #### GitHub
