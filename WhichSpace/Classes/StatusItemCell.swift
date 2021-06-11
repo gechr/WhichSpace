@@ -34,11 +34,14 @@ class StatusItemCell: NSStatusBarButtonCell {
             rectPath.fill()
         }
         
-        let roundedRectanglePath = NSBezierPath(roundedRect: NSRect(x: 5, y: 3, width: 16, height: 16), xRadius: 2, yRadius: 2)
+        let xStart = (controlView.frame.width - 16) / 2 + 2,
+            yStart = (controlView.frame.height - 16) / 2
+        
+        let roundedRectanglePath = NSBezierPath(roundedRect: NSRect(x: xStart, y: yStart, width: 16, height: 16), xRadius: 2, yRadius: 2)
         backgroundColor.setFill()
         roundedRectanglePath.fill()
         
-        let titleRect = NSRect(x: frame.origin.x, y: frame.origin.y + 3, width: frame.size.width, height: frame.size.height)
+        let titleRect = NSRect(x: frame.origin.x, y: frame.origin.y+5, width: frame.size.width, height: frame.size.height)
         
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = NSTextAlignment.center
