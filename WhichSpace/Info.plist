@@ -36,7 +36,9 @@
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>SUFeedURL</key>
-	<string>https://raw.github.com/gechr/WhichSpace/updates/appcast.xml</string>
+	<string>https://raw.githubusercontent.com/gechr/WhichSpace/updates/appcast.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>nyujP2tTQFT6DhKG2rE90nik2zMpOYlOw1LKsYR3jGg=</string>
 	<key>SUScheduledCheckInterval</key>
 	<integer>86400</integer>
 </dict>

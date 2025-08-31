@@ -7,12 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3AE480061BE3516200E22248 /* StatusItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AE480051BE3516200E22248 /* StatusItemCell.swift */; };
+		3AE480061BE3516200E22248 /* SpaceIconGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AE480051BE3516200E22248 /* SpaceIconGenerator.swift */; };
 		5E13C88B1BE03A6F00FF4305 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E13C88A1BE03A6F00FF4305 /* AppDelegate.swift */; };
 		5E13C88D1BE03A6F00FF4305 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E13C88C1BE03A6F00FF4305 /* Assets.xcassets */; };
 		5E13C8901BE03A6F00FF4305 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5E13C88E1BE03A6F00FF4305 /* MainMenu.xib */; };
-		5E3A37FD1BF004D50085EFD9 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E3A37FC1BF004D50085EFD9 /* Sparkle.framework */; };
-		5E3A37FF1BF004DE0085EFD9 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5E3A37FC1BF004D50085EFD9 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		5E342D5E2E650D570003F863 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 5E342D5D2E650D570003F863 /* Sparkle */; };
 		5E51B77F1E7EE562009395E6 /* PFMoveApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E51B77E1E7EE562009395E6 /* PFMoveApplication.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		5E51B7811E7EE64C009395E6 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E51B7801E7EE64C009395E6 /* Security.framework */; };
 		5E51B7841E7EE7BF009395E6 /* LetsMove.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EEAD20F1E7EE523003BB305 /* LetsMove.framework */; };
@@ -34,7 +33,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		3AE480051BE3516200E22248 /* StatusItemCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusItemCell.swift; sourceTree = "<group>"; };
+		3AE480051BE3516200E22248 /* SpaceIconGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpaceIconGenerator.swift; sourceTree = "<group>"; };
 		3AE480071BE35A2F00E22248 /* WhichSpaceBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WhichSpaceBridge.h; sourceTree = "<group>"; };
 		5E13C8871BE03A6F00FF4305 /* WhichSpace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhichSpace.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E13C88A1BE03A6F00FF4305 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -45,8 +44,6 @@
 		5E51B77D1E7EE562009395E6 /* PFMoveApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PFMoveApplication.h; sourceTree = "<group>"; };
 		5E51B77E1E7EE562009395E6 /* PFMoveApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PFMoveApplication.m; sourceTree = "<group>"; };
 		5E51B7801E7EE64C009395E6 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
-		5EC84D821BEFB9FC00829140 /* NSStatusBarButtonCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSStatusBarButtonCell.h; sourceTree = "<group>"; };
-		5EEAD20F1E7EE523003BB305 /* LetsMove.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = LetsMove.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,8 +52,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5E51B7811E7EE64C009395E6 /* Security.framework in Frameworks */,
-				5E51B7841E7EE7BF009395E6 /* LetsMove.framework in Frameworks */,
-				5E3A37FD1BF004D50085EFD9 /* Sparkle.framework in Frameworks */,
+				5E342D5E2E650D570003F863 /* Sparkle in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -70,6 +66,7 @@
 				5E7B3C671BEEDAEA00CA19A4 /* Frameworks */,
 				5E13C8891BE03A6F00FF4305 /* Resources */,
 				5E13C8881BE03A6F00FF4305 /* Products */,
+				81D85DAD75ABF281E1B2B041 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -109,12 +106,27 @@
 				5E51B77D1E7EE562009395E6 /* PFMoveApplication.h */,
 				5E51B77E1E7EE562009395E6 /* PFMoveApplication.m */,
 				5E13C88A1BE03A6F00FF4305 /* AppDelegate.swift */,
-				5EC84D821BEFB9FC00829140 /* NSStatusBarButtonCell.h */,
-				3AE480051BE3516200E22248 /* StatusItemCell.swift */,
+				3AE480051BE3516200E22248 /* SpaceIconGenerator.swift */,
 				3AE480071BE35A2F00E22248 /* WhichSpaceBridge.h */,
 			);
 			name = Classes;
 			path = WhichSpace/Classes;
+			sourceTree = "<group>";
+		};
+		FA391F51B463431EB6A590B2 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				7D5083B3E634D4357014724C /* Pods-WhichSpace.debug.xcconfig */,
+				11EC65E869AC5EDAE86390D5 /* Pods-WhichSpace.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		81D85DAD75ABF281E1B2B041 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -145,7 +157,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0710;
-				LastUpgradeCheck = 1200;
+				LastUpgradeCheck = 1600;
 				ORGANIZATIONNAME = "George Christou";
 				TargetAttributes = {
 					5E13C8861BE03A6F00FF4305 = {
@@ -187,6 +199,9 @@
 				zh_TW,
 			);
 			mainGroup = 5E13C87E1BE03A6F00FF4305;
+			packageReferences = (
+				5E342D5C2E650D570003F863 /* XCRemoteSwiftPackageReference "Sparkle" */,
+			);
 			productRefGroup = 5E13C8881BE03A6F00FF4305 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -214,7 +229,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5E13C88B1BE03A6F00FF4305 /* AppDelegate.swift in Sources */,
-				3AE480061BE3516200E22248 /* StatusItemCell.swift in Sources */,
+				3AE480061BE3516200E22248 /* SpaceIconGenerator.swift in Sources */,
 				5E51B77F1E7EE562009395E6 /* PFMoveApplication.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -282,7 +297,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -333,7 +348,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -349,12 +364,12 @@
 				CURRENT_PROJECT_VERSION = 0.3.2;
 				DEVELOPMENT_TEAM = WH3AMFYJQK;
 				ENABLE_HARDENED_RUNTIME = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/WhichSpace/Frameworks",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = WhichSpace/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
 				MARKETING_VERSION = 0.3.2;
 				PRODUCT_BUNDLE_IDENTIFIER = io.gechr.WhichSpace;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -373,12 +388,12 @@
 				CURRENT_PROJECT_VERSION = 0.3.2;
 				DEVELOPMENT_TEAM = WH3AMFYJQK;
 				ENABLE_HARDENED_RUNTIME = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/WhichSpace/Frameworks",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = WhichSpace/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
 				MARKETING_VERSION = 0.3.2;
 				PRODUCT_BUNDLE_IDENTIFIER = io.gechr.WhichSpace;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -410,6 +425,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		5E342D5C2E650D570003F863 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.7.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		5E342D5D2E650D570003F863 /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5E342D5C2E650D570003F863 /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 5E13C87F1BE03A6F00FF4305 /* Project object */;
 }

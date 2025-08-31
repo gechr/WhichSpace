@@ -375,7 +375,7 @@ static BOOL Trash(NSString *path) {
 																 tag:NULL];
 	}
 #endif
-	
+
 	// As a last resort try trashing with AppleScript.
 	// This allows us to trash the app in macOS Sierra even when the app is running inside
 	// an app translocation image.
@@ -411,7 +411,7 @@ static BOOL DeleteOrTrash(NSString *path) {
 		// Don't log warning if on Sierra and running inside App Translocation path
 		if (![path containsString:@"/AppTranslocation/"])
 			NSLog(@"WARNING -- Could not delete '%@': %@", path, [error localizedDescription]);
-		
+
 		return Trash(path);
 	}
 }

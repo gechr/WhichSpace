@@ -1,2 +1,4 @@
-xcuserdata
 .DS_STORE
+
+build/
+xcuserdata/

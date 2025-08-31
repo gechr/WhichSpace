@@ -18,7 +18,6 @@
             </connections>
         </customObject>
         <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
-        <customObject id="vMj-4g-saa" customClass="SUUpdater"/>
         <menu id="XdI-pq-qR1">
             <items>
                 <menuItem title="Check for Updates..." id="2Cf-ag-6kJ">

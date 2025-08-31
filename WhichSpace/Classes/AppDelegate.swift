@@ -11,21 +11,23 @@ import Sparkle
 
 @NSApplicationMain
 @objc
-class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     @IBOutlet weak var window: NSWindow!
     @IBOutlet weak var statusMenu: NSMenu!
     @IBOutlet weak var application: NSApplication!
     @IBOutlet weak var workspace: NSWorkspace!
-    @IBOutlet weak var updater: SUUpdater!
+    private var updaterController: SPUStandardUpdaterController!
 
     let mainDisplay = "Main"
     let spacesMonitorFile = "~/Library/Preferences/com.apple.spaces.plist"
 
-    let statusBarItem = NSStatusBar.system.statusItem(withLength: 27)
+    let statusBarItem = NSStatusBar.system.statusItem(withLength: 24)
     let conn = _CGSDefaultConnection()
 
-    static var darkModeEnabled = false
+    private var currentSpaceNumber: String = "?"
+    private var isMenuVisible = false
+    private var darkModeEnabled = false
 
     fileprivate func configureApplication() {
         application = NSApplication.shared
@@ -58,16 +60,21 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
 
     fileprivate func configureMenuBarIcon() {
         updateDarkModeStatus()
-        statusBarItem.button?.cell = StatusItemCell()
-        statusBarItem.image = NSImage(named: "default") // This icon appears when switching spaces when cell length is variable width.
         statusBarItem.menu = statusMenu
+        updateStatusBarIcon()
+    }
+
+    private func updateStatusBarIcon() {
+        let icon = SpaceIconGenerator.generateIcon(
+            for: currentSpaceNumber,
+            darkMode: darkModeEnabled,
+            highlighted: isMenuVisible
+        )
+        statusBarItem.button?.image = icon
     }
 
     fileprivate func configureSparkle() {
-        updater = SUUpdater.shared()
-        updater.delegate = self
-        // Silently check for updates on launch
-        updater.checkForUpdatesInBackground()
+        updaterController = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: nil, userDriverDelegate: nil)
     }
 
     fileprivate func configureSpaceMonitor() {
@@ -98,12 +105,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
     }
 
     @objc func updateDarkModeStatus(_ sender: AnyObject? = nil) {
-        let dictionary = UserDefaults.standard.persistentDomain(forName: UserDefaults.globalDomain);
+        let dictionary = UserDefaults.standard.persistentDomain(forName: UserDefaults.globalDomain)
         if let interfaceStyle = dictionary?["AppleInterfaceStyle"] as? NSString {
-            AppDelegate.darkModeEnabled = interfaceStyle.localizedCaseInsensitiveContains("dark")
+            darkModeEnabled = interfaceStyle.localizedCaseInsensitiveContains("dark")
         } else {
-            AppDelegate.darkModeEnabled = false
+            darkModeEnabled = false
         }
+        updateStatusBarIcon()
     }
 
     func applicationWillFinishLaunching(_ notification: Notification) {
@@ -149,7 +157,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
 
         if activeSpaceID == -1 {
             DispatchQueue.main.async {
-                self.statusBarItem.button?.title = "?"
+                self.currentSpaceNumber = "?"
+                self.updateStatusBarIcon()
             }
             return
         }
@@ -159,7 +168,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
             let spaceNumber = index + 1
             if spaceID == activeSpaceID {
                 DispatchQueue.main.async {
-                    self.statusBarItem.button?.title = String("\(spaceNumber)")
+                    self.currentSpaceNumber = String(spaceNumber)
+                    self.updateStatusBarIcon()
                 }
                 return
             }
@@ -167,19 +177,17 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SUUpdaterDel
     }
 
     func menuWillOpen(_ menu: NSMenu) {
-        if let cell = statusBarItem.button?.cell as! StatusItemCell? {
-            cell.isMenuVisible = true
-        }
+        isMenuVisible = true
+        updateStatusBarIcon()
     }
 
     func menuDidClose(_ menu: NSMenu) {
-        if let cell = statusBarItem.button?.cell as! StatusItemCell? {
-            cell.isMenuVisible = false
-        }
+        isMenuVisible = false
+        updateStatusBarIcon()
     }
 
     @IBAction func checkForUpdatesClicked(_ sender: NSMenuItem) {
-        updater.checkForUpdates(sender)
+        updaterController.checkForUpdates(sender)
     }
 
     @IBAction func quitClicked(_ sender: NSMenuItem) {
