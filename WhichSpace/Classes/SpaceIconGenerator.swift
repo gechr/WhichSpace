@@ -10,26 +10,39 @@ import Cocoa
 
 /// Generates status bar icon images using only public APIs
 enum SpaceIconGenerator {
-    private static let iconSize: CGFloat = 16
-    private static let cornerRadius: CGFloat = 2
-    private static let fontSize: CGFloat = 11
+    private static let iconSize: CGFloat = 20
+    private static let cornerRadius: CGFloat = 4
+    private static let fontSize: CGFloat = 14
     private static let statusItemSize = NSSize(width: 24, height: 22)
 
-    static func generateIcon(for spaceNumber: String, darkMode: Bool, highlighted: Bool) -> NSImage {
+    static func generateIcon(
+        for spaceNumber: String,
+        darkMode: Bool,
+        highlighted: Bool,
+        customColors: SpaceColors? = nil
+    ) -> NSImage {
         let image = NSImage(size: statusItemSize, flipped: false) { rect in
-            // Colors based on dark mode and highlight state
-            let darkColor: NSColor
-            let lightColor: NSColor
-            if darkMode {
-                darkColor = NSColor(calibratedWhite: 0.7, alpha: 1)
-                lightColor = NSColor(calibratedWhite: 0, alpha: 1)
+            let baseForeground: NSColor
+            let baseBackground: NSColor
+
+            if let customColors {
+                // Use custom colors if set for this space
+                baseForeground = customColors.foregroundColor
+                baseBackground = customColors.backgroundColor
             } else {
-                darkColor = NSColor(calibratedWhite: 0.3, alpha: 1)
-                lightColor = NSColor(calibratedWhite: 1, alpha: 1)
+                // Default colors based on dark mode
+                if darkMode {
+                    baseForeground = NSColor(calibratedWhite: 0, alpha: 1)
+                    baseBackground = NSColor(calibratedWhite: 0.7, alpha: 1)
+                } else {
+                    baseForeground = NSColor(calibratedWhite: 1, alpha: 1)
+                    baseBackground = NSColor(calibratedWhite: 0.3, alpha: 1)
+                }
             }
 
-            let foregroundColor = highlighted ? darkColor : lightColor
-            let backgroundColor = highlighted ? lightColor : darkColor
+            // Invert colors when highlighted (menu open)
+            let foregroundColor = highlighted ? baseBackground : baseForeground
+            let backgroundColor = highlighted ? baseForeground : baseBackground
 
             // Draw blue background when highlighted
             if highlighted {

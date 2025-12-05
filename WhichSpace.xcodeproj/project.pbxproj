@@ -14,8 +14,8 @@
 		5E342D5E2E650D570003F863 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 5E342D5D2E650D570003F863 /* Sparkle */; };
 		5E51B77F1E7EE562009395E6 /* PFMoveApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E51B77E1E7EE562009395E6 /* PFMoveApplication.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		5E51B7811E7EE64C009395E6 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E51B7801E7EE64C009395E6 /* Security.framework */; };
-		5E51B7841E7EE7BF009395E6 /* LetsMove.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EEAD20F1E7EE523003BB305 /* LetsMove.framework */; };
-		5E51B7851E7EE7BF009395E6 /* LetsMove.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5EEAD20F1E7EE523003BB305 /* LetsMove.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		5E51B7851E7EE7BF009395E6 /* BuildFile in CopyFiles */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		7A6E621AFE7580D49E7E7714 /* SpacePreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBA7DD8EA9C87994B985726 /* SpacePreferences.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,8 +25,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				5E3A37FF1BF004DE0085EFD9 /* Sparkle.framework in CopyFiles */,
-				5E51B7851E7EE7BF009395E6 /* LetsMove.framework in CopyFiles */,
+				5E51B7851E7EE7BF009395E6 /* BuildFile in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -44,6 +43,7 @@
 		5E51B77D1E7EE562009395E6 /* PFMoveApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PFMoveApplication.h; sourceTree = "<group>"; };
 		5E51B77E1E7EE562009395E6 /* PFMoveApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PFMoveApplication.m; sourceTree = "<group>"; };
 		5E51B7801E7EE64C009395E6 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		9EBA7DD8EA9C87994B985726 /* SpacePreferences.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SpacePreferences.swift; path = WhichSpace/Classes/SpacePreferences.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +67,7 @@
 				5E13C8891BE03A6F00FF4305 /* Resources */,
 				5E13C8881BE03A6F00FF4305 /* Products */,
 				81D85DAD75ABF281E1B2B041 /* Frameworks */,
+				7B42401AA38FA345351B4786 /* WhichSpace */,
 			);
 			sourceTree = "<group>";
 		};
@@ -93,7 +94,6 @@
 			isa = PBXGroup;
 			children = (
 				5E51B7801E7EE64C009395E6 /* Security.framework */,
-				5EEAD20F1E7EE523003BB305 /* LetsMove.framework */,
 				5E3A37FC1BF004D50085EFD9 /* Sparkle.framework */,
 			);
 			name = Frameworks;
@@ -113,13 +113,12 @@
 			path = WhichSpace/Classes;
 			sourceTree = "<group>";
 		};
-		FA391F51B463431EB6A590B2 /* Pods */ = {
+		7B42401AA38FA345351B4786 /* WhichSpace */ = {
 			isa = PBXGroup;
 			children = (
-				7D5083B3E634D4357014724C /* Pods-WhichSpace.debug.xcconfig */,
-				11EC65E869AC5EDAE86390D5 /* Pods-WhichSpace.release.xcconfig */,
+				A0ED316349CD243CFDDA9A69 /* Classes */,
 			);
-			path = Pods;
+			name = WhichSpace;
 			sourceTree = "<group>";
 		};
 		81D85DAD75ABF281E1B2B041 /* Frameworks */ = {
@@ -127,6 +126,14 @@
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A0ED316349CD243CFDDA9A69 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				9EBA7DD8EA9C87994B985726 /* SpacePreferences.swift */,
+			);
+			name = Classes;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -231,6 +238,7 @@
 				5E13C88B1BE03A6F00FF4305 /* AppDelegate.swift in Sources */,
 				3AE480061BE3516200E22248 /* SpaceIconGenerator.swift in Sources */,
 				5E51B77F1E7EE562009395E6 /* PFMoveApplication.m in Sources */,
+				7A6E621AFE7580D49E7E7714 /* SpacePreferences.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -366,10 +374,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = WhichSpace/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MARKETING_VERSION = 0.4.1;
 				PRODUCT_BUNDLE_IDENTIFIER = io.gechr.WhichSpace;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -390,10 +395,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = WhichSpace/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MARKETING_VERSION = 0.4.1;
 				PRODUCT_BUNDLE_IDENTIFIER = io.gechr.WhichSpace;
 				PRODUCT_NAME = "$(TARGET_NAME)";

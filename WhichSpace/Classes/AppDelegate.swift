@@ -24,11 +24,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     let statusBarItem = NSStatusBar.system.statusItem(withLength: 24)
     let conn = _CGSDefaultConnection()
 
+    private var currentSpaceInt: Int = 0
     private var currentSpaceNumber: String = "?"
-    private var isMenuVisible = false
     private var darkModeEnabled = false
-    private var mouseEventMonitor: Any?
+    private var isMenuVisible = false
+    private var isPickingForeground = true
     private var lastUpdateTime: Date = .distantPast
+    private var mouseEventMonitor: Any?
 
     fileprivate func configureApplication() {
         application = NSApplication.shared
@@ -80,15 +82,102 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     fileprivate func configureMenuBarIcon() {
         updateDarkModeStatus()
+        configureColorMenuItems()
         statusBarItem.menu = statusMenu
         updateStatusBarIcon()
     }
 
+    fileprivate func configureColorMenuItems() {
+        // Create Colors submenu
+        let colorsMenu = NSMenu(title: "Colors")
+
+        let foregroundItem = NSMenuItem(
+            title: "Foreground...",
+            action: #selector(setForegroundColorClicked),
+            keyEquivalent: ""
+        )
+        foregroundItem.target = self
+
+        let backgroundItem = NSMenuItem(
+            title: "Background...",
+            action: #selector(setBackgroundColorClicked),
+            keyEquivalent: ""
+        )
+        backgroundItem.target = self
+
+        let resetItem = NSMenuItem(
+            title: "Reset to Default",
+            action: #selector(resetColorsClicked),
+            keyEquivalent: ""
+        )
+        resetItem.target = self
+
+        colorsMenu.addItem(foregroundItem)
+        colorsMenu.addItem(backgroundItem)
+        colorsMenu.addItem(NSMenuItem.separator())
+        colorsMenu.addItem(resetItem)
+
+        let colorsMenuItem = NSMenuItem(title: "Colors", action: nil, keyEquivalent: "")
+        colorsMenuItem.submenu = colorsMenu
+
+        statusMenu.insertItem(colorsMenuItem, at: 0)
+        statusMenu.insertItem(NSMenuItem.separator(), at: 1)
+    }
+
+    @objc func setForegroundColorClicked() {
+        isPickingForeground = true
+        showColorPanel()
+    }
+
+    @objc func setBackgroundColorClicked() {
+        isPickingForeground = false
+        showColorPanel()
+    }
+
+    private func showColorPanel() {
+        // Activate the app so the color panel can be shown
+        NSApp.activate(ignoringOtherApps: true)
+
+        let colorPanel = NSColorPanel.shared
+        colorPanel.setTarget(self)
+        colorPanel.setAction(#selector(colorChanged(_:)))
+        colorPanel.isContinuous = true
+
+        // Set initial color based on current space preferences
+        if let colors = SpacePreferences.colors(forSpace: currentSpaceInt) {
+            colorPanel.color = isPickingForeground ? colors.foregroundColor : colors.backgroundColor
+        } else {
+            colorPanel.color = isPickingForeground ? .white : .black
+        }
+
+        colorPanel.makeKeyAndOrderFront(nil)
+    }
+
+    @objc func colorChanged(_ sender: NSColorPanel) {
+        guard currentSpaceInt > 0 else { return }
+
+        let existingColors = SpacePreferences.colors(forSpace: currentSpaceInt)
+        let foreground = isPickingForeground ? sender.color : (existingColors?.foregroundColor ?? .white)
+        let background = isPickingForeground ? (existingColors?.backgroundColor ?? .black) : sender.color
+
+        let newColors = SpaceColors(foreground: foreground, background: background)
+        SpacePreferences.setColors(newColors, forSpace: currentSpaceInt)
+        updateStatusBarIcon()
+    }
+
+    @objc func resetColorsClicked() {
+        guard currentSpaceInt > 0 else { return }
+        SpacePreferences.clearColors(forSpace: currentSpaceInt)
+        updateStatusBarIcon()
+    }
+
     private func updateStatusBarIcon() {
+        let customColors = SpacePreferences.colors(forSpace: currentSpaceInt)
         let icon = SpaceIconGenerator.generateIcon(
             for: currentSpaceNumber,
             darkMode: darkModeEnabled,
-            highlighted: isMenuVisible
+            highlighted: isMenuVisible,
+            customColors: customColors
         )
         statusBarItem.button?.image = icon
     }
@@ -192,6 +281,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 }
                 if spaceID == activeSpaceID {
                     DispatchQueue.main.async {
+                        self.currentSpaceInt = localIndex
                         self.currentSpaceNumber = String(localIndex)
                         self.lastUpdateTime = Date()
                         self.updateStatusBarIcon()
@@ -202,6 +292,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
 
         DispatchQueue.main.async {
+            self.currentSpaceInt = 0
             self.currentSpaceNumber = "?"
             self.updateStatusBarIcon()
         }
