@@ -31,6 +31,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var lastUpdateTime: Date = .distantPast
     private var mouseEventMonitor: Any?
 
+    private var useBritishSpelling: Bool {
+        let region = Locale.current.language.region?.identifier
+        return region == "GB" || region == "AU" || region == "NZ"
+    }
+
     fileprivate func configureApplication() {
         application = NSApplication.shared
         // Specifying `.Accessory` both hides the Dock icon and allows
@@ -88,7 +93,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     fileprivate func configureColorMenuItems() {
         // Create Colors submenu
-        let colorsMenu = NSMenu(title: "Colors")
+        let colorsMenu = NSMenu(title: useBritishSpelling ? "Colours" : "Colors")
 
         // Foreground label
         let foregroundLabel = NSMenuItem(title: "Foreground", action: nil, keyEquivalent: "")
@@ -140,7 +145,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         resetItem.target = self
         colorsMenu.addItem(resetItem)
 
-        let colorsMenuItem = NSMenuItem(title: "Colors", action: nil, keyEquivalent: "")
+        let colorsMenuItem = NSMenuItem(
+            title: useBritishSpelling ? "Colours" : "Colors",
+            action: nil,
+            keyEquivalent: ""
+        )
         colorsMenuItem.submenu = colorsMenu
 
         statusMenu.insertItem(colorsMenuItem, at: 0)
