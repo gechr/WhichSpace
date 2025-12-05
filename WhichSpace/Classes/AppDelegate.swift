@@ -11,7 +11,7 @@ import Sparkle
 
 @main
 @objc
-class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate {
     @IBOutlet var window: NSWindow!
     @IBOutlet var statusMenu: NSMenu!
     @IBOutlet var application: NSApplication!
@@ -27,7 +27,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var currentSpaceInt: Int = 0
     private var currentSpaceNumber: String = "?"
     private var darkModeEnabled = false
-    private var isMenuVisible = false
     private var isPickingForeground = true
     private var lastUpdateTime: Date = .distantPast
     private var mouseEventMonitor: Any?
@@ -91,19 +90,47 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         // Create Colors submenu
         let colorsMenu = NSMenu(title: "Colors")
 
-        let foregroundItem = NSMenuItem(
-            title: "Foreground...",
-            action: #selector(setForegroundColorClicked),
-            keyEquivalent: ""
-        )
-        foregroundItem.target = self
+        // Foreground label
+        let foregroundLabel = NSMenuItem(title: "Foreground", action: nil, keyEquivalent: "")
+        foregroundLabel.isEnabled = false
+        colorsMenu.addItem(foregroundLabel)
 
-        let backgroundItem = NSMenuItem(
-            title: "Background...",
-            action: #selector(setBackgroundColorClicked),
-            keyEquivalent: ""
-        )
-        backgroundItem.target = self
+        // Foreground color swatches
+        let foregroundSwatchItem = NSMenuItem()
+        let foregroundSwatchView = ColorSwatchView()
+        foregroundSwatchView.frame = NSRect(origin: .zero, size: foregroundSwatchView.intrinsicContentSize)
+        foregroundSwatchView.onColorSelected = { [weak self] color in
+            self?.setForegroundColor(color)
+        }
+        foregroundSwatchView.onCustomColorRequested = { [weak self] in
+            self?.isPickingForeground = true
+            self?.showColorPanel()
+        }
+        foregroundSwatchItem.view = foregroundSwatchView
+        colorsMenu.addItem(foregroundSwatchItem)
+
+        colorsMenu.addItem(NSMenuItem.separator())
+
+        // Background label
+        let backgroundLabel = NSMenuItem(title: "Background", action: nil, keyEquivalent: "")
+        backgroundLabel.isEnabled = false
+        colorsMenu.addItem(backgroundLabel)
+
+        // Background color swatches
+        let backgroundSwatchItem = NSMenuItem()
+        let backgroundSwatchView = ColorSwatchView()
+        backgroundSwatchView.frame = NSRect(origin: .zero, size: backgroundSwatchView.intrinsicContentSize)
+        backgroundSwatchView.onColorSelected = { [weak self] color in
+            self?.setBackgroundColor(color)
+        }
+        backgroundSwatchView.onCustomColorRequested = { [weak self] in
+            self?.isPickingForeground = false
+            self?.showColorPanel()
+        }
+        backgroundSwatchItem.view = backgroundSwatchView
+        colorsMenu.addItem(backgroundSwatchItem)
+
+        colorsMenu.addItem(NSMenuItem.separator())
 
         let resetItem = NSMenuItem(
             title: "Reset to Default",
@@ -111,10 +138,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             keyEquivalent: ""
         )
         resetItem.target = self
-
-        colorsMenu.addItem(foregroundItem)
-        colorsMenu.addItem(backgroundItem)
-        colorsMenu.addItem(NSMenuItem.separator())
         colorsMenu.addItem(resetItem)
 
         let colorsMenuItem = NSMenuItem(title: "Colors", action: nil, keyEquivalent: "")
@@ -124,14 +147,22 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         statusMenu.insertItem(NSMenuItem.separator(), at: 1)
     }
 
-    @objc func setForegroundColorClicked() {
-        isPickingForeground = true
-        showColorPanel()
+    private func setForegroundColor(_ color: NSColor) {
+        guard currentSpaceInt > 0 else { return }
+        let existingColors = SpacePreferences.colors(forSpace: currentSpaceInt)
+        let background = existingColors?.backgroundColor ?? .black
+        let newColors = SpaceColors(foreground: color, background: background)
+        SpacePreferences.setColors(newColors, forSpace: currentSpaceInt)
+        updateStatusBarIcon()
     }
 
-    @objc func setBackgroundColorClicked() {
-        isPickingForeground = false
-        showColorPanel()
+    private func setBackgroundColor(_ color: NSColor) {
+        guard currentSpaceInt > 0 else { return }
+        let existingColors = SpacePreferences.colors(forSpace: currentSpaceInt)
+        let foreground = existingColors?.foregroundColor ?? .white
+        let newColors = SpaceColors(foreground: foreground, background: color)
+        SpacePreferences.setColors(newColors, forSpace: currentSpaceInt)
+        updateStatusBarIcon()
     }
 
     private func showColorPanel() {
@@ -176,7 +207,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let icon = SpaceIconGenerator.generateIcon(
             for: currentSpaceNumber,
             darkMode: darkModeEnabled,
-            highlighted: isMenuVisible,
             customColors: customColors
         )
         statusBarItem.button?.image = icon
@@ -296,16 +326,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             self.currentSpaceNumber = "?"
             self.updateStatusBarIcon()
         }
-    }
-
-    func menuWillOpen(_: NSMenu) {
-        isMenuVisible = true
-        updateStatusBarIcon()
-    }
-
-    func menuDidClose(_: NSMenu) {
-        isMenuVisible = false
-        updateStatusBarIcon()
     }
 
     @IBAction func checkForUpdatesClicked(_ sender: NSMenuItem) {

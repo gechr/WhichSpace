@@ -16,6 +16,7 @@
 		5E51B7811E7EE64C009395E6 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E51B7801E7EE64C009395E6 /* Security.framework */; };
 		5E51B7851E7EE7BF009395E6 /* BuildFile in CopyFiles */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		7A6E621AFE7580D49E7E7714 /* SpacePreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBA7DD8EA9C87994B985726 /* SpacePreferences.swift */; };
+		A5AE357C03C4D0E1DDD62E6F /* ColorSwatchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8C8D752372D8C9EAE5667B1 /* ColorSwatchView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -44,6 +45,7 @@
 		5E51B77E1E7EE562009395E6 /* PFMoveApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PFMoveApplication.m; sourceTree = "<group>"; };
 		5E51B7801E7EE64C009395E6 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		9EBA7DD8EA9C87994B985726 /* SpacePreferences.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SpacePreferences.swift; path = WhichSpace/Classes/SpacePreferences.swift; sourceTree = "<group>"; };
+		C8C8D752372D8C9EAE5667B1 /* ColorSwatchView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ColorSwatchView.swift; path = WhichSpace/Classes/ColorSwatchView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,6 +134,7 @@
 			isa = PBXGroup;
 			children = (
 				9EBA7DD8EA9C87994B985726 /* SpacePreferences.swift */,
+				C8C8D752372D8C9EAE5667B1 /* ColorSwatchView.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -239,6 +242,7 @@
 				3AE480061BE3516200E22248 /* SpaceIconGenerator.swift in Sources */,
 				5E51B77F1E7EE562009395E6 /* PFMoveApplication.m in Sources */,
 				7A6E621AFE7580D49E7E7714 /* SpacePreferences.swift in Sources */,
+				A5AE357C03C4D0E1DDD62E6F /* ColorSwatchView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

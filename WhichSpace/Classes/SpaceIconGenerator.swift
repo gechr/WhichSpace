@@ -18,37 +18,21 @@ enum SpaceIconGenerator {
     static func generateIcon(
         for spaceNumber: String,
         darkMode: Bool,
-        highlighted: Bool,
         customColors: SpaceColors? = nil
     ) -> NSImage {
         let image = NSImage(size: statusItemSize, flipped: false) { rect in
-            let baseForeground: NSColor
-            let baseBackground: NSColor
+            let foregroundColor: NSColor
+            let backgroundColor: NSColor
 
             if let customColors {
-                // Use custom colors if set for this space
-                baseForeground = customColors.foregroundColor
-                baseBackground = customColors.backgroundColor
+                foregroundColor = customColors.foregroundColor
+                backgroundColor = customColors.backgroundColor
+            } else if darkMode {
+                foregroundColor = NSColor(calibratedWhite: 0, alpha: 1)
+                backgroundColor = NSColor(calibratedWhite: 0.7, alpha: 1)
             } else {
-                // Default colors based on dark mode
-                if darkMode {
-                    baseForeground = NSColor(calibratedWhite: 0, alpha: 1)
-                    baseBackground = NSColor(calibratedWhite: 0.7, alpha: 1)
-                } else {
-                    baseForeground = NSColor(calibratedWhite: 1, alpha: 1)
-                    baseBackground = NSColor(calibratedWhite: 0.3, alpha: 1)
-                }
-            }
-
-            // Invert colors when highlighted (menu open)
-            let foregroundColor = highlighted ? baseBackground : baseForeground
-            let backgroundColor = highlighted ? baseForeground : baseBackground
-
-            // Draw blue background when highlighted
-            if highlighted {
-                let blueColor = NSColor(calibratedRed: 0, green: 0.41, blue: 0.85, alpha: 1)
-                blueColor.setFill()
-                NSBezierPath(rect: rect).fill()
+                foregroundColor = NSColor(calibratedWhite: 1, alpha: 1)
+                backgroundColor = NSColor(calibratedWhite: 0.3, alpha: 1)
             }
 
             // Center the rounded rect within the status item
