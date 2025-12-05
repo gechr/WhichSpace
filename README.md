@@ -19,7 +19,8 @@ brew install --cask whichspace
 * Download and extract the [latest release](https://github.com/gechr/WhichSpace/releases/latest)
 * Run `WhichSpace.app`
 
-> **Note:** Since the app is not notarized, macOS will show a warning: _"WhichSpace.app" cannot be opened because Apple cannot check it for malicious software._
+> [!WARNING]
+> Since the app is not notarized, macOS will show a warning: _"WhichSpace.app" cannot be opened because Apple cannot check it for malicious software._
 >
 > To bypass this, run the following command in Terminal:
 > ```
