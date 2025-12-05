@@ -52,7 +52,7 @@ enum SpaceIconGenerator {
             let font = NSFont.boldSystemFont(ofSize: fontSize)
             let attributes: [NSAttributedString.Key: Any] = [
                 .font: font,
-                .foregroundColor: foregroundColor
+                .foregroundColor: foregroundColor,
             ]
             let textSize = spaceNumber.size(withAttributes: attributes)
             let textX = backgroundRect.origin.x + (backgroundRect.width - textSize.width) / 2

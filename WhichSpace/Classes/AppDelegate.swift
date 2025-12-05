@@ -9,14 +9,13 @@
 import Cocoa
 import Sparkle
 
-@NSApplicationMain
+@main
 @objc
 class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
-
-    @IBOutlet weak var window: NSWindow!
-    @IBOutlet weak var statusMenu: NSMenu!
-    @IBOutlet weak var application: NSApplication!
-    @IBOutlet weak var workspace: NSWorkspace!
+    @IBOutlet var window: NSWindow!
+    @IBOutlet var statusMenu: NSMenu!
+    @IBOutlet var application: NSApplication!
+    @IBOutlet var workspace: NSWorkspace!
     private var updaterController: SPUStandardUpdaterController!
 
     let mainDisplay = "Main"
@@ -70,7 +69,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         // Fallback: monitor mouse clicks for cases where the same app's window is on another display
         mouseEventMonitor = NSEvent.addGlobalMonitorForEvents(matching: .leftMouseDown) { [weak self] _ in
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                guard let self = self else { return }
+                guard let self else { return }
                 // Skip if a notification-triggered update happened recently
                 if Date().timeIntervalSince(self.lastUpdateTime) > 0.5 {
                     self.updateActiveSpaceNumber()
@@ -133,7 +132,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         source.resume()
     }
 
-    @objc func updateDarkModeStatus(_ sender: AnyObject? = nil) {
+    @objc func updateDarkModeStatus(_: AnyObject? = nil) {
         let dictionary = UserDefaults.standard.persistentDomain(forName: UserDefaults.globalDomain)
         if let interfaceStyle = dictionary?["AppleInterfaceStyle"] as? NSString {
             darkModeEnabled = interfaceStyle.localizedCaseInsensitiveContains("dark")
@@ -143,7 +142,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         updateStatusBarIcon()
     }
 
-    func applicationWillFinishLaunching(_ notification: Notification) {
+    func applicationWillFinishLaunching(_: Notification) {
         PFMoveToApplicationsFolderIfNecessary()
         configureApplication()
         configureObservers()
@@ -208,12 +207,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
     }
 
-    func menuWillOpen(_ menu: NSMenu) {
+    func menuWillOpen(_: NSMenu) {
         isMenuVisible = true
         updateStatusBarIcon()
     }
 
-    func menuDidClose(_ menu: NSMenu) {
+    func menuDidClose(_: NSMenu) {
         isMenuVisible = false
         updateStatusBarIcon()
     }
@@ -222,7 +221,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         updaterController.checkForUpdates(sender)
     }
 
-    @IBAction func quitClicked(_ sender: NSMenuItem) {
+    @IBAction func quitClicked(_: NSMenuItem) {
         NSApplication.shared.terminate(self)
     }
 }
