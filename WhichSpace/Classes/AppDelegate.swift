@@ -95,7 +95,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     fileprivate func configureSparkle() {
-        updaterController = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: nil, userDriverDelegate: nil)
+        updaterController = SPUStandardUpdaterController(
+            startingUpdater: true,
+            updaterDelegate: nil,
+            userDriverDelegate: nil
+        )
     }
 
     fileprivate func configureSpaceMonitor() {
@@ -107,18 +111,22 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             return
         }
 
-        let source = DispatchSource.makeFileSystemObjectSource(fileDescriptor: fildes, eventMask: DispatchSource.FileSystemEvent.delete, queue: queue)
+        let source = DispatchSource.makeFileSystemObjectSource(
+            fileDescriptor: fildes,
+            eventMask: DispatchSource.FileSystemEvent.delete,
+            queue: queue
+        )
 
-        source.setEventHandler { () -> Void in
+        source.setEventHandler {
             let flags = source.data.rawValue
-            if (flags & DispatchSource.FileSystemEvent.delete.rawValue != 0) {
+            if flags & DispatchSource.FileSystemEvent.delete.rawValue != 0 {
                 source.cancel()
                 self.updateActiveSpaceNumber()
                 self.configureSpaceMonitor()
             }
         }
 
-        source.setCancelHandler { () -> Void in
+        source.setCancelHandler {
             close(fildes)
         }
 
@@ -146,35 +154,43 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     @objc func updateActiveSpaceNumber() {
-        let displays = CGSCopyManagedDisplaySpaces(conn) as! [NSDictionary]
-        let activeDisplay = CGSCopyActiveMenuBarDisplayIdentifier(conn) as! String
+        guard
+            let displays = CGSCopyManagedDisplaySpaces(conn) as? [NSDictionary],
+            let activeDisplay = CGSCopyActiveMenuBarDisplayIdentifier(conn) as? String
+        else {
+            return
+        }
 
-        for d in displays {
+        for display in displays {
             guard
-                let current = d["Current Space"] as? [String: Any],
-                let spaces = d["Spaces"] as? [[String: Any]],
-                let dispID = d["Display Identifier"] as? String
-                else {
-                    continue
-            }
-
-            // Only process the active display
-            guard dispID == mainDisplay || dispID == activeDisplay else {
+                let current = display["Current Space"] as? [String: Any],
+                let spaces = display["Spaces"] as? [[String: Any]],
+                let displayID = display["Display Identifier"] as? String
+            else {
                 continue
             }
 
-            let activeSpaceID = current["ManagedSpaceID"] as! Int
+            // Only process the active display
+            guard displayID == mainDisplay || displayID == activeDisplay else {
+                continue
+            }
+
+            guard let activeSpaceID = current["ManagedSpaceID"] as? Int else {
+                continue
+            }
 
             // Find the position of the active space within this display's spaces
             var localIndex = 0
-            for s in spaces {
-                let isFullscreen = s["TileLayoutManager"] as? [String: Any] != nil
+            for space in spaces {
+                let isFullscreen = space["TileLayoutManager"] is [String: Any]
                 if isFullscreen {
                     continue
                 }
 
                 localIndex += 1
-                let spaceID = s["ManagedSpaceID"] as! Int
+                guard let spaceID = space["ManagedSpaceID"] as? Int else {
+                    continue
+                }
                 if spaceID == activeSpaceID {
                     DispatchQueue.main.async {
                         self.currentSpaceNumber = String(localIndex)
