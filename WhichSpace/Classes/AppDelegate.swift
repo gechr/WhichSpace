@@ -28,6 +28,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var currentSpaceNumber: String = "?"
     private var isMenuVisible = false
     private var darkModeEnabled = false
+    private var mouseEventMonitor: Any?
+    private var lastUpdateTime: Date = .distantPast
 
     fileprivate func configureApplication() {
         application = NSApplication.shared
@@ -56,6 +58,25 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             name: NSApplication.didUpdateNotification,
             object: nil
         )
+
+        // Monitor when a different application becomes active (e.g., clicking on another display)
+        workspace.notificationCenter.addObserver(
+            self,
+            selector: #selector(AppDelegate.updateActiveSpaceNumber),
+            name: NSWorkspace.didActivateApplicationNotification,
+            object: workspace
+        )
+
+        // Fallback: monitor mouse clicks for cases where the same app's window is on another display
+        mouseEventMonitor = NSEvent.addGlobalMonitorForEvents(matching: .leftMouseDown) { [weak self] _ in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                guard let self = self else { return }
+                // Skip if a notification-triggered update happened recently
+                if Date().timeIntervalSince(self.lastUpdateTime) > 0.5 {
+                    self.updateActiveSpaceNumber()
+                }
+            }
+        }
     }
 
     fileprivate func configureMenuBarIcon() {
@@ -127,8 +148,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     @objc func updateActiveSpaceNumber() {
         let displays = CGSCopyManagedDisplaySpaces(conn) as! [NSDictionary]
         let activeDisplay = CGSCopyActiveMenuBarDisplayIdentifier(conn) as! String
-        let allSpaces: NSMutableArray = []
-        var activeSpaceID = -1
 
         for d in displays {
             guard
@@ -139,40 +158,37 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                     continue
             }
 
-            switch dispID {
-            case mainDisplay, activeDisplay:
-                activeSpaceID = current["ManagedSpaceID"] as! Int
-            default:
-                break
+            // Only process the active display
+            guard dispID == mainDisplay || dispID == activeDisplay else {
+                continue
             }
 
+            let activeSpaceID = current["ManagedSpaceID"] as! Int
+
+            // Find the position of the active space within this display's spaces
+            var localIndex = 0
             for s in spaces {
                 let isFullscreen = s["TileLayoutManager"] as? [String: Any] != nil
                 if isFullscreen {
                     continue
                 }
-                allSpaces.add(s)
-            }
-        }
 
-        if activeSpaceID == -1 {
-            DispatchQueue.main.async {
-                self.currentSpaceNumber = "?"
-                self.updateStatusBarIcon()
-            }
-            return
-        }
-
-        for (index, space) in allSpaces.enumerated() {
-            let spaceID = (space as! NSDictionary)["ManagedSpaceID"] as! Int
-            let spaceNumber = index + 1
-            if spaceID == activeSpaceID {
-                DispatchQueue.main.async {
-                    self.currentSpaceNumber = String(spaceNumber)
-                    self.updateStatusBarIcon()
+                localIndex += 1
+                let spaceID = s["ManagedSpaceID"] as! Int
+                if spaceID == activeSpaceID {
+                    DispatchQueue.main.async {
+                        self.currentSpaceNumber = String(localIndex)
+                        self.lastUpdateTime = Date()
+                        self.updateStatusBarIcon()
+                    }
+                    return
                 }
-                return
             }
+        }
+
+        DispatchQueue.main.async {
+            self.currentSpaceNumber = "?"
+            self.updateStatusBarIcon()
         }
     }
 

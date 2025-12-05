@@ -1,8 +1,6 @@
 ## WhichSpace
 Have you ever forgotten _which space_ is currently active on macOS and wanted a quick way to tell? Didn't think so... but I did!
 
-**Requires macOS 13.0 or later.**
-
 ## Screenshot
 ![WhichSpace](https://raw.github.com/gechr/WhichSpace/master/Screenshots/WhichSpace.png)
 
