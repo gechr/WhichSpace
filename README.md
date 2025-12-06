@@ -2,7 +2,7 @@
 
 Have you ever forgotten _which space_ is currently active on macOS and wanted a quick way to tell? Didn't think so... but I did!
 
-<img src="Screenshots/WhichSpace.png" width="50%">
+<img src="Screenshots/WhichSpace.png">
 
 ## Features
 
@@ -10,13 +10,13 @@ Have you ever forgotten _which space_ is currently active on macOS and wanted a 
 
 Choose foreground and background colours for each space, or apply one colour to all spaces:
 
-<img src="Screenshots/ColoursMenu.png" width="50%">
+<img src="Screenshots/ColoursMenu.png" width="60%">
 
 ### Icon Styles
 
 Choose from a variety of icon shapes for each space, or apply one icon to all spaces:
 
-<img src="Screenshots/IconsMenu.png" width="50%">
+<img src="Screenshots/IconsMenu.png" width="60%">
 
 ## Installation
 
