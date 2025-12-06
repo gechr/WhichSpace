@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		046A66EA8CE1B935051E9603 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA28BCBE77F37761A1A560E /* Constants.swift */; };
 		3AE480061BE3516200E22248 /* SpaceIconGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AE480051BE3516200E22248 /* SpaceIconGenerator.swift */; };
 		5E13C88B1BE03A6F00FF4305 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E13C88A1BE03A6F00FF4305 /* AppDelegate.swift */; };
 		5E13C88D1BE03A6F00FF4305 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E13C88C1BE03A6F00FF4305 /* Assets.xcassets */; };
@@ -38,6 +39,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0AA28BCBE77F37761A1A560E /* Constants.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Constants.swift; path = WhichSpace/Classes/Constants.swift; sourceTree = "<group>"; };
 		3AE480051BE3516200E22248 /* SpaceIconGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpaceIconGenerator.swift; sourceTree = "<group>"; };
 		3AE480071BE35A2F00E22248 /* WhichSpaceBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WhichSpaceBridge.h; sourceTree = "<group>"; };
 		5E13C8871BE03A6F00FF4305 /* WhichSpace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhichSpace.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -151,6 +153,7 @@
 				C8C8D752372D8C9EAE5667B1 /* ColorSwatchView.swift */,
 				D4F2A6B83E5D9C0F1B2E7A48 /* IconStyleRowView.swift */,
 				E5F3A7C92D4B8E1F6A3C9D72 /* SFSymbolPickerView.swift */,
+				0AA28BCBE77F37761A1A560E /* Constants.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -265,6 +268,7 @@
 				A5AE357C03C4D0E1DDD62E6F /* ColorSwatchView.swift in Sources */,
 				B7D9E4A12F3C8B7E9A1D5C3F /* IconStyleRowView.swift in Sources */,
 				F6D4B8E13C5A9F2E7B1D3E84 /* SFSymbolPickerView.swift in Sources */,
+				046A66EA8CE1B935051E9603 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

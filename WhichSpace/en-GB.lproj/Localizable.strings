@@ -7,7 +7,6 @@
 "background_label" = "Background";
 "color_menu_title" = "Colour";
 "foreground_label" = "Foreground";
-"launch_at_login" = "Launch at Login";
 "icon_style_circle" = "Circle";
 "icon_style_circleOutline" = "Circle (Outline)";
 "icon_style_hexagon" = "Hexagon";
@@ -18,6 +17,9 @@
 "icon_style_squareOutline" = "Square (Outline)";
 "icon_style_triangle" = "Triangle";
 "icon_style_triangleOutline" = "Triangle (Outline)";
+"invert_colors" = "Invert colours";
+"invert_colors_tip" = "Swap the foreground and background colours";
+"launch_at_login" = "Launch at Login";
 "number_menu_title" = "Number";
 "reset_color_to_default" = "Reset colour to default";
 "reset_color_to_default_tip" = "Remove custom colours for this Space";

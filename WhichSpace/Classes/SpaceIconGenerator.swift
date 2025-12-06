@@ -14,9 +14,9 @@ enum SpaceIconGenerator {
     private static let fontSize: CGFloat = 14
     private static let fontSizeSmall: CGFloat = 12
     private static let fontSizeTiny: CGFloat = 8
-    private static let iconSize: CGFloat = 20
+    private static let iconSize = Layout.iconSize
     private static let outlineWidth: CGFloat = 1.5
-    private static let statusItemSize = NSSize(width: 24, height: 22)
+    private static let statusItemSize = Layout.statusItemSize
 
     // swiftlint:disable:next function_body_length
     static func generateIcon(
@@ -111,18 +111,9 @@ enum SpaceIconGenerator {
         if let customColors {
             (customColors.foregroundColor, customColors.backgroundColor)
         } else if filled {
-            if darkMode {
-                (NSColor(calibratedWhite: 0, alpha: 1), NSColor(calibratedWhite: 0.7, alpha: 1))
-            } else {
-                (NSColor(calibratedWhite: 1, alpha: 1), NSColor(calibratedWhite: 0.3, alpha: 1))
-            }
+            IconColors.filledColors(darkMode: darkMode)
         } else {
-            // Outline style - use single color
-            if darkMode {
-                (NSColor(calibratedWhite: 0.7, alpha: 1), NSColor(calibratedWhite: 0.7, alpha: 1))
-            } else {
-                (NSColor(calibratedWhite: 0.3, alpha: 1), NSColor(calibratedWhite: 0.3, alpha: 1))
-            }
+            IconColors.outlineColors(darkMode: darkMode)
         }
     }
 

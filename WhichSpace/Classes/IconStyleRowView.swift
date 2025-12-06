@@ -10,7 +10,7 @@ import Cocoa
 
 final class IconStyleRowView: NSView {
     private let style: IconStyle
-    private let iconSize: CGFloat = 20
+    private let iconSize = Layout.iconSize
     private var isHighlighted = false
 
     var onSelected: (() -> Void)?
@@ -33,7 +33,7 @@ final class IconStyleRowView: NSView {
     }
 
     override var intrinsicContentSize: NSSize {
-        NSSize(width: 180, height: 22)
+        NSSize(width: 180, height: Layout.statusItemHeight)
     }
 
     override func draw(_ dirtyRect: NSRect) {
@@ -48,7 +48,7 @@ final class IconStyleRowView: NSView {
         // Checkmark
         if isChecked {
             let checkAttrs: [NSAttributedString.Key: Any] = [
-                .font: NSFont.menuFont(ofSize: 13),
+                .font: NSFont.menuFont(ofSize: Layout.menuFontSize),
                 .foregroundColor: isHighlighted ? NSColor.white : NSColor.labelColor,
             ]
             "✓".draw(at: NSPoint(x: 9, y: 3), withAttributes: checkAttrs)
@@ -66,7 +66,7 @@ final class IconStyleRowView: NSView {
 
         // Label
         let labelAttrs: [NSAttributedString.Key: Any] = [
-            .font: NSFont.menuFont(ofSize: 13),
+            .font: NSFont.menuFont(ofSize: Layout.menuFontSize),
             .foregroundColor: isHighlighted ? NSColor.white : NSColor.labelColor,
         ]
         let labelPoint = NSPoint(x: 24 + iconSize + 8, y: 3)

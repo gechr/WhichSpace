@@ -36,6 +36,11 @@ private enum Localization {
     static let backgroundLabel = NSLocalizedString("background_label", comment: "Label for background color section")
     static let colorTitle = NSLocalizedString("color_menu_title", comment: "Title of the color menu")
     static let foregroundLabel = NSLocalizedString("foreground_label", comment: "Label for foreground color section")
+    static let invertColors = NSLocalizedString("invert_colors", comment: "Menu item to invert colors")
+    static let invertColorsTip = NSLocalizedString(
+        "invert_colors_tip",
+        comment: "Tooltip for invert colors"
+    )
     static let launchAtLogin = NSLocalizedString("launch_at_login", comment: "Menu item to launch at login")
     static let numberTitle = NSLocalizedString("number_menu_title", comment: "Title of the number style menu")
     static let resetColorToDefault = NSLocalizedString(
@@ -79,7 +84,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     let mainDisplay = "Main"
     let spacesMonitorFile = "~/Library/Preferences/com.apple.spaces.plist"
 
-    let statusBarItem = NSStatusBar.system.statusItem(withLength: 24)
+    let statusBarItem = NSStatusBar.system.statusItem(withLength: Layout.statusItemWidth)
     let conn = _CGSDefaultConnection()
 
     private var currentSpace: Int = 0
@@ -309,6 +314,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Separator before actions
         colorsMenu.addItem(NSMenuItem.separator())
 
+        let invertColorsItem = NSMenuItem(
+            title: Localization.invertColors,
+            action: #selector(invertColors),
+            keyEquivalent: ""
+        )
+        invertColorsItem.target = self
+        invertColorsItem.toolTip = Localization.invertColorsTip
+        colorsMenu.addItem(invertColorsItem)
+
         let applyToAllItem = NSMenuItem(
             title: Localization.applyColorToAll,
             action: #selector(applyColorsToAllSpaces),
@@ -506,6 +520,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 SpacePreferences.setColors(colors, forSpace: space)
             }
         }
+    }
+
+    @objc func invertColors() {
+        guard currentSpace > 0 else { return }
+        let existingColors = SpacePreferences.colors(forSpace: currentSpace)
+        let defaults = IconColors.filledColors(darkMode: darkModeEnabled)
+        let foreground = existingColors?.foregroundColor ?? defaults.foreground
+        let background = existingColors?.backgroundColor ?? defaults.background
+        let newColors = SpaceColors(foreground: background, background: foreground)
+        SpacePreferences.setColors(newColors, forSpace: currentSpace)
+        updateStatusBarIcon()
     }
 
     @objc func resetColorToDefault() {
