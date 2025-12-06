@@ -18,6 +18,12 @@ Choose from a variety of icons for each space, or apply one icon to all spaces:
 
 <img src="Screenshots/IconsMenu.png" width="60%">
 
+### Symbols
+
+Use custom symbols instead of numbers for a more personalised look:
+
+<img src="Screenshots/SymbolsMenu.png" width="60%">
+
 ## Installation
 
 ### Homebrew (recommended)

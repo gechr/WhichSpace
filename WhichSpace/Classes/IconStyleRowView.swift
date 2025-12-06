@@ -41,7 +41,8 @@ final class IconStyleRowView: NSView {
 
         if isHighlighted {
             NSColor.selectedContentBackgroundColor.setFill()
-            NSBezierPath(rect: bounds).fill()
+            let highlightRect = bounds.insetBy(dx: 5, dy: 1)
+            NSBezierPath(roundedRect: highlightRect, xRadius: 4, yRadius: 4).fill()
         }
 
         // Checkmark
@@ -50,7 +51,7 @@ final class IconStyleRowView: NSView {
                 .font: NSFont.menuFont(ofSize: 13),
                 .foregroundColor: isHighlighted ? NSColor.white : NSColor.labelColor,
             ]
-            "✓".draw(at: NSPoint(x: 6, y: 3), withAttributes: checkAttrs)
+            "✓".draw(at: NSPoint(x: 8, y: 3), withAttributes: checkAttrs)
         }
 
         // Icon

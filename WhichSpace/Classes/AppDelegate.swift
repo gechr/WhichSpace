@@ -15,6 +15,10 @@ private enum Localization {
         "apply_color_to_all",
         comment: "Menu item to apply color to all spaces"
     )
+    static let applyStyleToAll = NSLocalizedString(
+        "apply_style_to_all",
+        comment: "Menu item to apply style to all spaces"
+    )
     static let applyToAll = NSLocalizedString("apply_to_all", comment: "Menu item to apply setting to all spaces")
     static let backgroundLabel = NSLocalizedString("background_label", comment: "Label for background color section")
     static let colorTitle = NSLocalizedString("color_menu_title", comment: "Title of the color menu")
@@ -41,7 +45,6 @@ private enum Localization {
 @main
 @objc
 final class AppDelegate: NSObject, NSApplicationDelegate {
-    @IBOutlet var window: NSWindow!
     @IBOutlet var statusMenu: NSMenu!
     @IBOutlet var application: NSApplication!
     @IBOutlet var workspace: NSWorkspace!
@@ -59,6 +62,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var isPickingForeground = true
     private var lastUpdateTime: Date = .distantPast
     private var mouseEventMonitor: Any?
+    private var spacesMonitor: DispatchSourceFileSystemObject?
 
     private func configureApplication() {
         application = NSApplication.shared
@@ -88,7 +92,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             object: nil
         )
 
-        // Monitor when a different application becomes active (e.g., clicking on another display)
+        // Monitor when a different application becomes active (e.g.,, clicking on another display)
         workspace.notificationCenter.addObserver(
             self,
             selector: #selector(AppDelegate.updateActiveSpaceNumber),
@@ -152,6 +156,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         styleMenu.addItem(symbolMenuItem)
 
         styleMenu.addItem(NSMenuItem.separator())
+
+        let applyStyleItem = NSMenuItem(
+            title: Localization.applyStyleToAll,
+            action: #selector(applyStyleToAllSpaces),
+            keyEquivalent: ""
+        )
+        applyStyleItem.target = self
+        styleMenu.addItem(applyStyleItem)
 
         let resetStyleItem = NSMenuItem(
             title: Localization.resetStyleToDefault,
@@ -393,18 +405,57 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         updateStatusBarIcon()
     }
 
+    /// Returns all space indices across all displays (excluding fullscreen spaces)
+    private func getAllSpaceIndices() -> Set<Int> {
+        var indices = Set<Int>()
+        guard let displays = CGSCopyManagedDisplaySpaces(conn) as? [NSDictionary] else {
+            return indices
+        }
+
+        for display in displays {
+            guard let spaces = display["Spaces"] as? [[String: Any]] else {
+                continue
+            }
+
+            var localIndex = 0
+            for space in spaces {
+                let isFullscreen = space["TileLayoutManager"] is [String: Any]
+                if isFullscreen {
+                    continue
+                }
+                localIndex += 1
+                indices.insert(localIndex)
+            }
+        }
+
+        return indices
+    }
+
     @objc func applyColorsToAllSpaces() {
-        guard let colors = SpacePreferences.colors(forSpace: currentSpace) else { return }
-        for space in SpacePreferences.allConfiguredSpaces() {
+        guard currentSpace > 0,
+              let colors = SpacePreferences.colors(forSpace: currentSpace)
+        else { return }
+        for space in getAllSpaceIndices() {
             SpacePreferences.setColors(colors, forSpace: space)
         }
     }
 
+    @objc func applyStyleToAllSpaces() {
+        guard currentSpace > 0 else { return }
+        let style = currentIconStyle()
+        let symbol = SpacePreferences.sfSymbol(forSpace: currentSpace)
+        for space in getAllSpaceIndices() {
+            SpacePreferences.setIconStyle(style, forSpace: space)
+            SpacePreferences.setSFSymbol(symbol, forSpace: space)
+        }
+    }
+
     @objc func applyAllToAllSpaces() {
+        guard currentSpace > 0 else { return }
         let style = currentIconStyle()
         let colors = SpacePreferences.colors(forSpace: currentSpace)
         let symbol = SpacePreferences.sfSymbol(forSpace: currentSpace)
-        for space in SpacePreferences.allConfiguredSpaces() {
+        for space in getAllSpaceIndices() {
             SpacePreferences.setIconStyle(style, forSpace: space)
             SpacePreferences.setSFSymbol(symbol, forSpace: space)
             if let colors {
@@ -464,6 +515,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func configureSpaceMonitor() {
+        // Cancel existing monitor if any
+        spacesMonitor?.cancel()
+        spacesMonitor = nil
+
         let fullPath = (spacesMonitorFile as NSString).expandingTildeInPath
         let queue = DispatchQueue.global(qos: .default)
         let fildes = open(fullPath.cString(using: String.Encoding.utf8)!, O_EVTONLY)
@@ -478,10 +533,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             queue: queue
         )
 
-        source.setEventHandler {
+        source.setEventHandler { [weak self] in
+            guard let self else { return }
             let flags = source.data.rawValue
             if flags & DispatchSource.FileSystemEvent.delete.rawValue != 0 {
-                source.cancel()
                 self.updateActiveSpaceNumber()
                 self.configureSpaceMonitor()
             }
@@ -492,6 +547,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         source.resume()
+        spacesMonitor = source
     }
 
     @objc func updateDarkModeStatus(_: AnyObject? = nil) {
@@ -541,15 +597,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             // Find the position of the active space within this display's spaces
             var localIndex = 0
             for space in spaces {
+                guard let spaceID = space["ManagedSpaceID"] as? Int else {
+                    continue
+                }
+
                 let isFullscreen = space["TileLayoutManager"] is [String: Any]
                 if isFullscreen {
+                    // If the active space is a fullscreen space, preserve the last known space
+                    if spaceID == activeSpaceID {
+                        DispatchQueue.main.async {
+                            self.lastUpdateTime = Date()
+                            // Keep currentSpace and currentSpaceLabel unchanged
+                        }
+                        return
+                    }
                     continue
                 }
 
                 localIndex += 1
-                guard let spaceID = space["ManagedSpaceID"] as? Int else {
-                    continue
-                }
                 if spaceID == activeSpaceID {
                     DispatchQueue.main.async {
                         self.currentSpace = localIndex

@@ -16,11 +16,10 @@
 		5E51B7811E7EE64C009395E6 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E51B7801E7EE64C009395E6 /* Security.framework */; };
 		5E51B7851E7EE7BF009395E6 /* BuildFile in CopyFiles */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		7A6E621AFE7580D49E7E7714 /* SpacePreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBA7DD8EA9C87994B985726 /* SpacePreferences.swift */; };
+		A1E2D3C41B2F4A5B6C7D8E93 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A1E2D3C41B2F4A5B6C7D8E92 /* Localizable.strings */; };
 		A5AE357C03C4D0E1DDD62E6F /* ColorSwatchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8C8D752372D8C9EAE5667B1 /* ColorSwatchView.swift */; };
 		B7D9E4A12F3C8B7E9A1D5C3F /* IconStyleRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4F2A6B83E5D9C0F1B2E7A48 /* IconStyleRowView.swift */; };
 		F6D4B8E13C5A9F2E7B1D3E84 /* SFSymbolPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5F3A7C92D4B8E1F6A3C9D72 /* SFSymbolPickerView.swift */; };
-		G7E5C9F24D6B0A3E8C2F1D95 /* MenuTextRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = H8F6D0A35E7C1B4F9D3G2E06 /* MenuTextRowView.swift */; };
-		A1E2D3C41B2F4A5B6C7D8E93 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A1E2D3C41B2F4A5B6C7D8E92 /* Localizable.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -49,14 +48,13 @@
 		5E51B77E1E7EE562009395E6 /* PFMoveApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PFMoveApplication.m; sourceTree = "<group>"; };
 		5E51B7801E7EE64C009395E6 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		9EBA7DD8EA9C87994B985726 /* SpacePreferences.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SpacePreferences.swift; path = WhichSpace/Classes/SpacePreferences.swift; sourceTree = "<group>"; };
-		C8C8D752372D8C9EAE5667B1 /* ColorSwatchView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ColorSwatchView.swift; path = WhichSpace/Classes/ColorSwatchView.swift; sourceTree = "<group>"; };
-		D4F2A6B83E5D9C0F1B2E7A48 /* IconStyleRowView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = IconStyleRowView.swift; path = WhichSpace/Classes/IconStyleRowView.swift; sourceTree = "<group>"; };
-		E5F3A7C92D4B8E1F6A3C9D72 /* SFSymbolPickerView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SFSymbolPickerView.swift; path = WhichSpace/Classes/SFSymbolPickerView.swift; sourceTree = "<group>"; };
-		H8F6D0A35E7C1B4F9D3G2E06 /* MenuTextRowView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MenuTextRowView.swift; path = WhichSpace/Classes/MenuTextRowView.swift; sourceTree = "<group>"; };
 		A1E2D3C41B2F4A5B6C7D8E90 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		A1E2D3C41B2F4A5B6C7D8E91 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		A1E2D3C41B2F4A5B6C7D8E94 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/MainMenu.strings; sourceTree = "<group>"; };
 		A1E2D3C41B2F4A5B6C7D8E95 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/MainMenu.strings"; sourceTree = "<group>"; };
+		C8C8D752372D8C9EAE5667B1 /* ColorSwatchView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ColorSwatchView.swift; path = WhichSpace/Classes/ColorSwatchView.swift; sourceTree = "<group>"; };
+		D4F2A6B83E5D9C0F1B2E7A48 /* IconStyleRowView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = IconStyleRowView.swift; path = WhichSpace/Classes/IconStyleRowView.swift; sourceTree = "<group>"; };
+		E5F3A7C92D4B8E1F6A3C9D72 /* SFSymbolPickerView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SFSymbolPickerView.swift; path = WhichSpace/Classes/SFSymbolPickerView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -149,7 +147,6 @@
 				C8C8D752372D8C9EAE5667B1 /* ColorSwatchView.swift */,
 				D4F2A6B83E5D9C0F1B2E7A48 /* IconStyleRowView.swift */,
 				E5F3A7C92D4B8E1F6A3C9D72 /* SFSymbolPickerView.swift */,
-				H8F6D0A35E7C1B4F9D3G2E06 /* MenuTextRowView.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -262,7 +259,6 @@
 				A5AE357C03C4D0E1DDD62E6F /* ColorSwatchView.swift in Sources */,
 				B7D9E4A12F3C8B7E9A1D5C3F /* IconStyleRowView.swift in Sources */,
 				F6D4B8E13C5A9F2E7B1D3E84 /* SFSymbolPickerView.swift in Sources */,
-				G7E5C9F24D6B0A3E8C2F1D95 /* MenuTextRowView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
