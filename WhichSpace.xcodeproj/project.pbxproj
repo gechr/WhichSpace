@@ -11,7 +11,7 @@
 		3AE480061BE3516200E22248 /* Icon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AE480051BE3516200E22248 /* Icon.swift */; };
 		388A1BECFB83F1A4A810071C /* ColorSwatchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DEE86BDAF9CDD39DEAD48B1 /* ColorSwatchView.swift */; };
 		784A5E34B37EFEA67108010D /* IconStyleRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D390612030604D33D8BAF96E /* IconStyleRowView.swift */; };
-		653A4C2D9300475561325CA6 /* SFSymbolPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58EEA2DF7ADE5C02ADC1AE3A /* SFSymbolPickerView.swift */; };
+		653A4C2D9300475561325CA6 /* SymbolPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58EEA2DF7ADE5C02ADC1AE3A /* SymbolPickerView.swift */; };
 		5E13C88B1BE03A6F00FF4305 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E13C88A1BE03A6F00FF4305 /* App.swift */; };
 		5E13C88B3BE03A6F00FF4307 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E13C88A3BE03A6F00FF4307 /* AppState.swift */; };
 		5E13C88D1BE03A6F00FF4305 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E13C88C1BE03A6F00FF4305 /* Assets.xcassets */; };
@@ -43,7 +43,7 @@
 		3AE480051BE3516200E22248 /* Icon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Icon.swift; sourceTree = "<group>"; };
 		5DEE86BDAF9CDD39DEAD48B1 /* ColorSwatchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorSwatchView.swift; sourceTree = "<group>"; };
 		D390612030604D33D8BAF96E /* IconStyleRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconStyleRowView.swift; sourceTree = "<group>"; };
-		58EEA2DF7ADE5C02ADC1AE3A /* SFSymbolPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFSymbolPickerView.swift; sourceTree = "<group>"; };
+		58EEA2DF7ADE5C02ADC1AE3A /* SymbolPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SymbolPickerView.swift; sourceTree = "<group>"; };
 		3AE480071BE35A2F00E22248 /* WhichSpaceBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WhichSpaceBridge.h; sourceTree = "<group>"; };
 		5E13C8871BE03A6F00FF4305 /* WhichSpace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhichSpace.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E13C88A1BE03A6F00FF4305 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
@@ -102,7 +102,7 @@
 				3AE480051BE3516200E22248 /* Icon.swift */,
 				5DEE86BDAF9CDD39DEAD48B1 /* ColorSwatchView.swift */,
 				D390612030604D33D8BAF96E /* IconStyleRowView.swift */,
-				58EEA2DF7ADE5C02ADC1AE3A /* SFSymbolPickerView.swift */,
+				58EEA2DF7ADE5C02ADC1AE3A /* SymbolPickerView.swift */,
 				5E13C88C1BE03A6F00FF4305 /* Assets.xcassets */,
 				5E13C8911BE03A6F00FF4305 /* Info.plist */,
 				A1E2D3C41B2F4A5B6C7D8E92 /* Localizable.strings */,
@@ -242,7 +242,7 @@
 				046A66EA8CE1B935051E9603 /* Constants.swift in Sources */,
 				388A1BECFB83F1A4A810071C /* ColorSwatchView.swift in Sources */,
 				784A5E34B37EFEA67108010D /* IconStyleRowView.swift in Sources */,
-				653A4C2D9300475561325CA6 /* SFSymbolPickerView.swift in Sources */,
+				653A4C2D9300475561325CA6 /* SymbolPickerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

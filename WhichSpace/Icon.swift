@@ -479,8 +479,8 @@ enum SpaceIconGenerator {
 
 // MARK: - NSImage Tinting Extension
 
-private extension NSImage {
-    func tinted(with color: NSColor) -> NSImage {
+extension NSImage {
+    fileprivate func tinted(with color: NSColor) -> NSImage {
         guard let image = copy() as? NSImage else {
             return self
         }

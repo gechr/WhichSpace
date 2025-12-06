@@ -1,6 +1,6 @@
 import Cocoa
 
-final class SFSymbolPickerView: NSView, NSSearchFieldDelegate {
+final class SymbolPickerView: NSView, NSSearchFieldDelegate {
     // Curated list of symbols useful for a space picker app
     // swiftformat:disable all
     private static let curatedSymbols: [String] = [
@@ -239,7 +239,7 @@ final class SFSymbolPickerView: NSView, NSSearchFieldDelegate {
         "suit.heart.fill", "suit.club.fill", "suit.spade.fill", "suit.diamond.fill",
         "bolt.fill", "bolt.circle.fill", "bolt.square.fill",
         "sparkle", "sparkles", "rays", "slowmo", "timelapse",
-        "burst.fill", "waveform", "waveform.circle.fill"
+        "burst.fill", "waveform", "waveform.circle.fill",
     ]
     // swiftformat:enable all
 
@@ -547,8 +547,8 @@ private final class SymbolGridView: NSView {
 
 // MARK: - NSImage Tinting Extension
 
-private extension NSImage {
-    func tinted(with color: NSColor) -> NSImage {
+extension NSImage {
+    fileprivate func tinted(with color: NSColor) -> NSImage {
         guard let image = copy() as? NSImage else {
             return self
         }

@@ -279,7 +279,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         symbolMenu.delegate = self
 
         let symbolPickerItem = NSMenuItem()
-        let symbolPickerView = SFSymbolPickerView()
+        let symbolPickerView = SymbolPickerView()
         symbolPickerView.frame = NSRect(origin: .zero, size: symbolPickerView.intrinsicContentSize)
         symbolPickerView.selectedSymbol = appState.currentSymbol
         symbolPickerView.darkMode = appState.darkModeEnabled
@@ -299,6 +299,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc private func checkForUpdates() {
+        NSApp.activate(ignoringOtherApps: true)
         updaterController.checkForUpdates(nil)
     }
 
@@ -501,7 +502,7 @@ extension AppDelegate: NSMenuDelegate {
             }
 
             // Update symbol picker view
-            if let view = item.view as? SFSymbolPickerView {
+            if let view = item.view as? SymbolPickerView {
                 view.selectedSymbol = currentSymbol
                 view.darkMode = appState.darkModeEnabled
                 view.needsDisplay = true

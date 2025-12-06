@@ -37,6 +37,7 @@
 
 # rules
 
+--disable extensionAccessControl
 --enable unusedPrivateDeclarations
 --enable emptyExtensions
 --enable isEmpty

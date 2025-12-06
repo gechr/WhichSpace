@@ -210,6 +210,9 @@ unneeded_override:
 deployment_target:
   macOS_deployment_target: '14'
 
+trailing_comma:
+  mandatory_comma: true
+
 custom_rules:
   no_nsrect:
     regex: '\bNSRect\b'
