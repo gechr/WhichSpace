@@ -1,11 +1,3 @@
-//
-//  ColorSwatchView.swift
-//  WhichSpace
-//
-//  Created by George Christou.
-//  Copyright © 2020 George Christou. All rights reserved.
-//
-
 import Cocoa
 
 final class ColorSwatchView: NSView {
@@ -26,13 +18,13 @@ final class ColorSwatchView: NSView {
         .systemGreen, .systemBlue, .systemPurple,
     ]
 
-    private let swatchSize: CGFloat = 16
-    private let spacing: CGFloat = 6
-    private let padding: CGFloat = 12
+    private let swatchSize = 16.0
+    private let spacing = 6.0
+    private let padding = 12.0
 
     var onColorSelected: ((NSColor) -> Void)?
     var onCustomColorRequested: (() -> Void)?
-    var gridMode: Bool = false
+    var gridMode = false
 
     private var hoveredIndex: Int?
 
@@ -40,14 +32,14 @@ final class ColorSwatchView: NSView {
         gridMode ? Self.gridColors : Self.presetColors
     }
 
-    override var intrinsicContentSize: NSSize {
-        let count = CGFloat(colors.count + (gridMode ? 0 : 1)) // +1 for custom color button in normal mode
+    override var intrinsicContentSize: CGSize {
+        let count = Double(colors.count + (gridMode ? 0 : 1)) // +1 for custom color button in normal mode
         let width = padding * 2 + count * swatchSize + (count - 1) * spacing
         let height = swatchSize + padding
-        return NSSize(width: width, height: height)
+        return CGSize(width: width, height: height)
     }
 
-    override func draw(_ dirtyRect: NSRect) {
+    override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
         var xOffset = padding
@@ -55,20 +47,20 @@ final class ColorSwatchView: NSView {
 
         // Draw color swatches
         for (index, color) in colors.enumerated() {
-            let swatchRect = NSRect(x: xOffset, y: yOffset, width: swatchSize, height: swatchSize)
+            let swatchRect = CGRect(x: xOffset, y: yOffset, width: swatchSize, height: swatchSize)
             drawSwatch(color: color, in: swatchRect, highlighted: hoveredIndex == index)
             xOffset += swatchSize + spacing
         }
 
         // Draw custom color button (rainbow gradient circle) - only in normal mode
         if !gridMode {
-            let customRect = NSRect(x: xOffset, y: yOffset, width: swatchSize, height: swatchSize)
+            let customRect = CGRect(x: xOffset, y: yOffset, width: swatchSize, height: swatchSize)
             let customHighlighted = hoveredIndex == colors.count
             drawCustomColorButton(in: customRect, highlighted: customHighlighted)
         }
     }
 
-    private func drawSwatch(color: NSColor, in rect: NSRect, highlighted: Bool) {
+    private func drawSwatch(color: NSColor, in rect: CGRect, highlighted: Bool) {
         if highlighted {
             let highlightRect = rect.insetBy(dx: -2, dy: -2)
             let highlightPath = NSBezierPath(ovalIn: highlightRect)
@@ -87,7 +79,7 @@ final class ColorSwatchView: NSView {
         path.fill()
     }
 
-    private func drawCustomColorButton(in rect: NSRect, highlighted: Bool) {
+    private func drawCustomColorButton(in rect: CGRect, highlighted: Bool) {
         if highlighted {
             let highlightRect = rect.insetBy(dx: -2, dy: -2)
             let highlightPath = NSBezierPath(ovalIn: highlightRect)
@@ -104,12 +96,12 @@ final class ColorSwatchView: NSView {
 
         // Draw rainbow-ish gradient
         let colors = [NSColor.systemRed, NSColor.systemYellow, NSColor.systemGreen, NSColor.systemBlue]
-        let center = NSPoint(x: rect.midX, y: rect.midY)
+        let center = CGPoint(x: rect.midX, y: rect.midY)
         let radius = swatchSize / 2 - 2
 
         for (index, color) in colors.enumerated() {
-            let startAngle = CGFloat(index) * 90
-            let endAngle = CGFloat(index + 1) * 90
+            let startAngle = Double(index) * 90
+            let endAngle = Double(index + 1) * 90
             let wedge = NSBezierPath()
             wedge.move(to: center)
             wedge.appendArc(withCenter: center, radius: radius, startAngle: startAngle, endAngle: endAngle)
@@ -127,7 +119,7 @@ final class ColorSwatchView: NSView {
 
         // Check color swatches
         for color in colors {
-            let swatchRect = NSRect(x: xOffset, y: yOffset, width: swatchSize, height: swatchSize)
+            let swatchRect = CGRect(x: xOffset, y: yOffset, width: swatchSize, height: swatchSize)
             if swatchRect.contains(location) {
                 onColorSelected?(color)
                 return
@@ -137,7 +129,7 @@ final class ColorSwatchView: NSView {
 
         // Check custom color button - only in normal mode
         if !gridMode {
-            let customRect = NSRect(x: xOffset, y: yOffset, width: swatchSize, height: swatchSize)
+            let customRect = CGRect(x: xOffset, y: yOffset, width: swatchSize, height: swatchSize)
             if customRect.contains(location) {
                 onCustomColorRequested?()
             }
@@ -171,12 +163,12 @@ final class ColorSwatchView: NSView {
         ))
     }
 
-    private func indexForLocation(_ location: NSPoint) -> Int? {
+    private func indexForLocation(_ location: CGPoint) -> Int? {
         var xOffset = padding
         let yOffset = (bounds.height - swatchSize) / 2
 
         for index in 0 ..< colors.count {
-            let swatchRect = NSRect(x: xOffset, y: yOffset, width: swatchSize, height: swatchSize)
+            let swatchRect = CGRect(x: xOffset, y: yOffset, width: swatchSize, height: swatchSize)
             if swatchRect.contains(location) {
                 return index
             }
@@ -185,7 +177,7 @@ final class ColorSwatchView: NSView {
 
         // Check custom color button - only in normal mode
         if !gridMode {
-            let customRect = NSRect(x: xOffset, y: yOffset, width: swatchSize, height: swatchSize)
+            let customRect = CGRect(x: xOffset, y: yOffset, width: swatchSize, height: swatchSize)
             if customRect.contains(location) {
                 return colors.count
             }

@@ -1,15 +1,7 @@
-//
-//  SpacePreferences.swift
-//  WhichSpace
-//
-//  Created by George Christou.
-//  Copyright © 2020 George Christou. All rights reserved.
-//
-
 import Cocoa
 import Defaults
 
-enum IconStyle: String, CaseIterable, Codable, Defaults.Serializable {
+enum IconStyle: String, CaseIterable, Defaults.Serializable {
     case square
     case squareOutline
     case circle
@@ -26,34 +18,50 @@ enum IconStyle: String, CaseIterable, Codable, Defaults.Serializable {
     }
 }
 
-struct SpaceColors: Codable, Equatable, Defaults.Serializable {
-    var foreground: Data
-    var background: Data
+struct SpaceColors: Equatable, Defaults.Serializable {
+    var foreground: NSColor
+    var background: NSColor
 
-    init(foreground: NSColor, background: NSColor) {
-        self.foreground = (try? NSKeyedArchiver.archivedData(
-            withRootObject: foreground,
-            requiringSecureCoding: false
-        )) ?? Data()
-        self.background = (try? NSKeyedArchiver.archivedData(
-            withRootObject: background,
-            requiringSecureCoding: false
-        )) ?? Data()
+    // Backwards compatibility aliases
+    var foregroundColor: NSColor { foreground }
+    var backgroundColor: NSColor { background }
+
+    struct Bridge: Defaults.Bridge {
+        typealias Value = SpaceColors
+        typealias Serializable = [String: Data]
+
+        // swiftlint:disable:next discouraged_optional_collection
+        func serialize(_ value: SpaceColors?) -> [String: Data]? {
+            guard let value else {
+                return nil
+            }
+            return [
+                "foreground": try! NSKeyedArchiver.archivedData(
+                    withRootObject: value.foreground,
+                    requiringSecureCoding: true
+                ),
+                "background": try! NSKeyedArchiver.archivedData(
+                    withRootObject: value.background,
+                    requiringSecureCoding: true
+                ),
+            ]
+        }
+
+        // swiftlint:disable:next discouraged_optional_collection
+        func deserialize(_ object: [String: Data]?) -> SpaceColors? {
+            guard let object,
+                  let foregroundData = object["foreground"],
+                  let backgroundData = object["background"],
+                  let foreground = try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSColor.self, from: foregroundData),
+                  let background = try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSColor.self, from: backgroundData)
+            else {
+                return nil
+            }
+            return SpaceColors(foreground: foreground, background: background)
+        }
     }
 
-    var foregroundColor: NSColor {
-        (try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSColor.self, from: foreground)) ?? .white
-    }
-
-    var backgroundColor: NSColor {
-        (try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSColor.self, from: background)) ?? .black
-    }
-}
-
-extension Defaults.Keys {
-    static let spaceColors = Key<[Int: SpaceColors]>("spaceColors", default: [:])
-    static let spaceIconStyles = Key<[Int: IconStyle]>("spaceIconStyles", default: [:])
-    static let spaceSFSymbols = Key<[Int: String]>("spaceSFSymbols", default: [:])
+    static let bridge = Bridge()
 }
 
 enum SpacePreferences {

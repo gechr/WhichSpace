@@ -1,15 +1,7 @@
-//
-//  SFSymbolPickerView.swift
-//  WhichSpace
-//
-//  Created by George Christou.
-//  Copyright © 2020 George Christou. All rights reserved.
-//
-
 import Cocoa
 
 final class SFSymbolPickerView: NSView, NSSearchFieldDelegate {
-    // Curated list of 500 symbols useful for a space picker app
+    // Curated list of symbols useful for a space picker app
     // swiftformat:disable all
     private static let curatedSymbols: [String] = [
         // Work & Productivity
@@ -231,7 +223,7 @@ final class SFSymbolPickerView: NSView, NSSearchFieldDelegate {
         "arrow.3.trianglepath", "arrowtriangle.up.fill", "arrowtriangle.down.fill",
         "chevron.up.circle.fill", "chevron.down.circle.fill", "chevron.compact.up", "chevron.compact.down",
 
-        // Shapes & Stars (at the end as requested)
+        // Shapes & Stars
         "circle.fill", "circle.lefthalf.filled", "circle.righthalf.filled", "circle.tophalf.filled",
         "circle.bottomhalf.filled", "circle.inset.filled", "circle.dashed",
         "oval.fill", "oval.portrait.fill", "capsule.fill", "capsule.portrait.fill",
@@ -247,29 +239,30 @@ final class SFSymbolPickerView: NSView, NSSearchFieldDelegate {
         "suit.heart.fill", "suit.club.fill", "suit.spade.fill", "suit.diamond.fill",
         "bolt.fill", "bolt.circle.fill", "bolt.square.fill",
         "sparkle", "sparkles", "rays", "slowmo", "timelapse",
-        "burst.fill", "waveform", "waveform.circle.fill",
+        "burst.fill", "waveform", "waveform.circle.fill"
     ]
     // swiftformat:enable all
 
     /// Filter to only symbols that exist on this system, then shuffle with fixed seed
     private static let allSymbols: [String] = {
         var rng = SeededRandomNumberGenerator(seed: 42)
-        return curatedSymbols.filter {
+        let available = curatedSymbols.filter {
             NSImage(systemSymbolName: $0, accessibilityDescription: nil) != nil
-        }.shuffled(using: &rng)
+        }
+        return available.shuffled(using: &rng)
     }()
 
-    private let symbolSize: CGFloat = 20
-    private let spacing: CGFloat = 4
-    private let padding: CGFloat = 8
+    private let symbolSize: Double = 20
+    private let spacing: Double = 4
+    private let padding: Double = 8
     private let columns = 8
     private let visibleRows = 8
-    private let searchFieldHeight: CGFloat = 22
-    private let scrollbarWidth: CGFloat = 15
+    private let searchFieldHeight: Double = 22
+    private let scrollbarWidth: Double = 15
 
     var onSymbolSelected: ((String?) -> Void)?
     var selectedSymbol: String?
-    var darkMode: Bool = false {
+    var darkMode = false {
         didSet {
             gridView.darkMode = darkMode
             gridView.needsDisplay = true
@@ -281,7 +274,7 @@ final class SFSymbolPickerView: NSView, NSSearchFieldDelegate {
     private let scrollView = NSScrollView()
     private let gridView: SymbolGridView
 
-    override init(frame frameRect: NSRect) {
+    override init(frame frameRect: CGRect) {
         gridView = SymbolGridView(symbols: Self.allSymbols, columns: columns, symbolSize: symbolSize, spacing: spacing)
         super.init(frame: frameRect)
         setupViews()
@@ -342,11 +335,11 @@ final class SFSymbolPickerView: NSView, NSSearchFieldDelegate {
         gridView.needsDisplay = true
     }
 
-    override var intrinsicContentSize: NSSize {
-        let gridWidth = padding * 2 + CGFloat(columns) * symbolSize + CGFloat(columns - 1) * spacing + scrollbarWidth
-        let maxGridHeight = CGFloat(visibleRows) * symbolSize + CGFloat(visibleRows - 1) * spacing + padding
+    override var intrinsicContentSize: CGSize {
+        let gridWidth = padding * 2 + Double(columns) * symbolSize + Double(columns - 1) * spacing + scrollbarWidth
+        let maxGridHeight = Double(visibleRows) * symbolSize + Double(visibleRows - 1) * spacing + padding
         let totalHeight = padding + searchFieldHeight + padding + maxGridHeight + padding
-        return NSSize(width: gridWidth, height: totalHeight)
+        return CGSize(width: gridWidth, height: totalHeight)
     }
 
     // MARK: - NSSearchFieldDelegate
@@ -367,17 +360,17 @@ final class SFSymbolPickerView: NSView, NSSearchFieldDelegate {
 private final class SymbolGridView: NSView {
     var symbols: [String]
     var selectedSymbol: String?
-    var darkMode: Bool = false
+    var darkMode = false
     var onSymbolSelected: ((String) -> Void)?
 
     private let columns: Int
-    private let symbolSize: CGFloat
-    private let spacing: CGFloat
-    private let padding: CGFloat = 8
+    private let symbolSize: Double
+    private let spacing: Double
+    private let padding: Double = 8
     private var hoveredIndex: Int?
     private var imageCache: [String: NSImage] = [:]
 
-    init(symbols: [String], columns: Int, symbolSize: CGFloat, spacing: CGFloat) {
+    init(symbols: [String], columns: Int, symbolSize: Double, spacing: Double) {
         self.symbols = symbols
         self.columns = columns
         self.symbolSize = symbolSize
@@ -392,18 +385,20 @@ private final class SymbolGridView: NSView {
 
     func updateSize() {
         let rows = (symbols.count + columns - 1) / columns
-        let width = padding * 2 + CGFloat(columns) * symbolSize + CGFloat(columns - 1) * spacing
-        let height = padding * 2 + CGFloat(rows) * symbolSize + CGFloat(rows - 1) * spacing
-        frame = NSRect(x: 0, y: 0, width: width, height: max(height, 50))
+        let width = padding * 2 + Double(columns) * symbolSize + Double(columns - 1) * spacing
+        let height = padding * 2 + Double(rows) * symbolSize + Double(rows - 1) * spacing
+        frame = CGRect(x: 0, y: 0, width: width, height: max(height, 50))
         imageCache.removeAll() // Clear cache when symbols change
     }
 
     override var isFlipped: Bool { true }
 
-    override func draw(_ dirtyRect: NSRect) {
+    override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
-        guard !symbols.isEmpty else { return }
+        guard !symbols.isEmpty else {
+            return
+        }
 
         // Only draw symbols that intersect with the dirty rect (virtualized rendering)
         let cellHeight = symbolSize + spacing
@@ -413,7 +408,9 @@ private final class SymbolGridView: NSView {
         let minRow = max(0, Int((dirtyRect.minY - padding) / cellHeight))
         let maxRow = min(totalRows, Int((dirtyRect.maxY - padding) / cellHeight) + 1)
 
-        guard minRow < maxRow else { return }
+        guard minRow < maxRow else {
+            return
+        }
 
         for row in minRow ..< maxRow {
             for col in 0 ..< columns {
@@ -421,10 +418,10 @@ private final class SymbolGridView: NSView {
                 guard index < symbols.count else { continue }
 
                 let symbolName = symbols[index]
-                let xOffset = padding + CGFloat(col) * cellWidth
-                let yOffset = padding + CGFloat(row) * cellHeight
+                let xOffset = padding + Double(col) * cellWidth
+                let yOffset = padding + Double(row) * cellHeight
 
-                let symbolRect = NSRect(x: xOffset, y: yOffset, width: symbolSize, height: symbolSize)
+                let symbolRect = CGRect(x: xOffset, y: yOffset, width: symbolSize, height: symbolSize)
 
                 // Skip if not in dirty rect
                 guard symbolRect.intersects(dirtyRect) else { continue }
@@ -436,7 +433,7 @@ private final class SymbolGridView: NSView {
         }
     }
 
-    private func drawSymbol(_ symbolName: String, in rect: NSRect, highlighted: Bool, selected: Bool) {
+    private func drawSymbol(_ symbolName: String, in rect: CGRect, highlighted: Bool, selected: Bool) {
         if highlighted || selected {
             let highlightRect = rect.insetBy(dx: -2, dy: -2)
             let highlightPath = NSBezierPath(roundedRect: highlightRect, xRadius: 4, yRadius: 4)
@@ -504,12 +501,12 @@ private final class SymbolGridView: NSView {
         }
     }
 
-    private func rectForIndex(_ index: Int) -> NSRect {
+    private func rectForIndex(_ index: Int) -> CGRect {
         let col = index % columns
         let row = index / columns
-        let xOffset = padding + CGFloat(col) * (symbolSize + spacing)
-        let yOffset = padding + CGFloat(row) * (symbolSize + spacing)
-        return NSRect(x: xOffset - 2, y: yOffset - 2, width: symbolSize + 4, height: symbolSize + 4)
+        let xOffset = padding + Double(col) * (symbolSize + spacing)
+        let yOffset = padding + Double(row) * (symbolSize + spacing)
+        return CGRect(x: xOffset - 2, y: yOffset - 2, width: symbolSize + 4, height: symbolSize + 4)
     }
 
     override func updateTrackingAreas() {
@@ -525,20 +522,24 @@ private final class SymbolGridView: NSView {
         ))
     }
 
-    private func indexForLocation(_ location: NSPoint) -> Int? {
+    private func indexForLocation(_ location: CGPoint) -> Int? {
         // Direct calculation instead of iterating
         let col = Int((location.x - padding) / (symbolSize + spacing))
         let row = Int((location.y - padding) / (symbolSize + spacing))
 
-        guard col >= 0, col < columns, row >= 0 else { return nil }
+        guard col >= 0, col < columns, row >= 0 else {
+            return nil
+        }
 
         let index = row * columns + col
-        guard index < symbols.count else { return nil }
+        guard index < symbols.count else {
+            return nil
+        }
 
         // Verify the point is actually within the symbol rect (not in spacing)
-        let xOffset = padding + CGFloat(col) * (symbolSize + spacing)
-        let yOffset = padding + CGFloat(row) * (symbolSize + spacing)
-        let symbolRect = NSRect(x: xOffset, y: yOffset, width: symbolSize, height: symbolSize)
+        let xOffset = padding + Double(col) * (symbolSize + spacing)
+        let yOffset = padding + Double(row) * (symbolSize + spacing)
+        let symbolRect = CGRect(x: xOffset, y: yOffset, width: symbolSize, height: symbolSize)
 
         return symbolRect.contains(location) ? index : nil
     }
@@ -548,10 +549,12 @@ private final class SymbolGridView: NSView {
 
 private extension NSImage {
     func tinted(with color: NSColor) -> NSImage {
-        guard let image = copy() as? NSImage else { return self }
+        guard let image = copy() as? NSImage else {
+            return self
+        }
         image.lockFocus()
         color.set()
-        let imageRect = NSRect(origin: .zero, size: image.size)
+        let imageRect = CGRect(origin: .zero, size: image.size)
         imageRect.fill(using: .sourceAtop)
         image.unlockFocus()
         return image

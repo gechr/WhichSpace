@@ -1,11 +1,3 @@
-//
-//  IconStyleRowView.swift
-//  WhichSpace
-//
-//  Created by George Christou.
-//  Copyright © 2020 George Christou. All rights reserved.
-//
-
 import Cocoa
 
 final class IconStyleRowView: NSView {
@@ -14,13 +6,13 @@ final class IconStyleRowView: NSView {
     private var isHighlighted = false
 
     var onSelected: (() -> Void)?
-    var isChecked: Bool = false {
+    var isChecked = false {
         didSet { needsDisplay = true }
     }
 
     var customColors: SpaceColors?
-    var darkMode: Bool = false
-    var previewNumber: String = "1"
+    var darkMode = false
+    var previewNumber = "1"
 
     init(style: IconStyle) {
         self.style = style
@@ -32,11 +24,11 @@ final class IconStyleRowView: NSView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override var intrinsicContentSize: NSSize {
-        NSSize(width: 180, height: Layout.statusItemHeight)
+    override var intrinsicContentSize: CGSize {
+        CGSize(width: 180, height: Layout.statusItemHeight)
     }
 
-    override func draw(_ dirtyRect: NSRect) {
+    override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
         if isHighlighted {
@@ -51,7 +43,7 @@ final class IconStyleRowView: NSView {
                 .font: NSFont.menuFont(ofSize: Layout.menuFontSize),
                 .foregroundColor: isHighlighted ? NSColor.white : NSColor.labelColor,
             ]
-            "✓".draw(at: NSPoint(x: 9, y: 3), withAttributes: checkAttrs)
+            "✓".draw(at: CGPoint(x: 9, y: 3), withAttributes: checkAttrs)
         }
 
         // Icon
@@ -61,7 +53,7 @@ final class IconStyleRowView: NSView {
             customColors: customColors,
             style: style
         )
-        let iconRect = NSRect(x: 24, y: (bounds.height - iconSize) / 2, width: iconSize, height: iconSize)
+        let iconRect = CGRect(x: 24, y: (bounds.height - iconSize) / 2, width: iconSize, height: iconSize)
         icon.draw(in: iconRect)
 
         // Label
@@ -69,7 +61,7 @@ final class IconStyleRowView: NSView {
             .font: NSFont.menuFont(ofSize: Layout.menuFontSize),
             .foregroundColor: isHighlighted ? NSColor.white : NSColor.labelColor,
         ]
-        let labelPoint = NSPoint(x: 24 + iconSize + 8, y: 3)
+        let labelPoint = CGPoint(x: 24 + iconSize + 8, y: 3)
         style.localizedTitle.draw(at: labelPoint, withAttributes: labelAttrs)
     }
 
