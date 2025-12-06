@@ -421,4 +421,53 @@ enum SpaceIconGenerator {
 
         spaceNumber.draw(in: textRect, withAttributes: attributes)
     }
+
+    // MARK: - SF Symbol Icon
+
+    static func generateSFSymbolIcon(
+        symbolName: String,
+        darkMode: Bool,
+        customColors: SpaceColors? = nil
+    ) -> NSImage {
+        let symbolConfig = NSImage.SymbolConfiguration(pointSize: 16, weight: .medium)
+        guard let sfImage = NSImage(systemSymbolName: symbolName, accessibilityDescription: nil)?
+            .withSymbolConfiguration(symbolConfig)
+        else {
+            // Fallback to question mark if symbol not found
+            return generateIcon(for: "?", darkMode: darkMode, customColors: customColors)
+        }
+
+        let color: NSColor
+        if let customColors {
+            color = customColors.foregroundColor
+        } else if darkMode {
+            color = NSColor(calibratedWhite: 0.7, alpha: 1)
+        } else {
+            color = NSColor(calibratedWhite: 0.3, alpha: 1)
+        }
+
+        return NSImage(size: statusItemSize, flipped: false) { rect in
+            let tintedImage = sfImage.tinted(with: color)
+            let imageSize = tintedImage.size
+            let xStart = (rect.width - imageSize.width) / 2
+            let yStart = (rect.height - imageSize.height) / 2
+            let imageRect = NSRect(x: xStart, y: yStart, width: imageSize.width, height: imageSize.height)
+            tintedImage.draw(in: imageRect)
+            return true
+        }
+    }
+}
+
+// MARK: - NSImage Tinting Extension
+
+private extension NSImage {
+    func tinted(with color: NSColor) -> NSImage {
+        guard let image = copy() as? NSImage else { return self }
+        image.lockFocus()
+        color.set()
+        let imageRect = NSRect(origin: .zero, size: image.size)
+        imageRect.fill(using: .sourceAtop)
+        image.unlockFocus()
+        return image
+    }
 }

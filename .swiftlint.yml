@@ -1,4 +1,11 @@
+deployment_target:
+  macOS_deployment_target: 13.0
+
+excluded:
+  - build
+
 disabled_rules:
   - file_length
+  - function_body_length
   - trailing_comma
   - type_body_length

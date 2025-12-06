@@ -9,25 +9,34 @@
 import Cocoa
 import Sparkle
 
+// swiftformat:disable wrapArguments
 private enum Localization {
-    static let applyToAll = NSLocalizedString(
-        "apply_to_all",
-        comment: "Menu item to apply setting to all spaces"
-    )
     static let applyColorToAll = NSLocalizedString(
         "apply_color_to_all",
         comment: "Menu item to apply color to all spaces"
     )
-    static let applyIconToAll = NSLocalizedString(
-        "apply_icon_to_all",
-        comment: "Menu item to apply icon to all spaces"
-    )
+    static let applyToAll = NSLocalizedString("apply_to_all", comment: "Menu item to apply setting to all spaces")
     static let backgroundLabel = NSLocalizedString("background_label", comment: "Label for background color section")
     static let colorTitle = NSLocalizedString("color_menu_title", comment: "Title of the color menu")
     static let foregroundLabel = NSLocalizedString("foreground_label", comment: "Label for foreground color section")
-    static let iconTitle = NSLocalizedString("icon_menu_title", comment: "Title of the icon menu")
-    static let resetToDefault = NSLocalizedString("reset_to_default", comment: "Menu item to reset customization")
+    static let numberTitle = NSLocalizedString("number_menu_title", comment: "Title of the number style menu")
+    static let resetColorToDefault = NSLocalizedString(
+        "reset_color_to_default",
+        comment: "Menu item to reset color to default"
+    )
+    static let resetSpaceToDefault = NSLocalizedString(
+        "reset_space_to_default",
+        comment: "Menu item to reset space customization"
+    )
+    static let resetStyleToDefault = NSLocalizedString(
+        "reset_style_to_default",
+        comment: "Menu item to reset style to default"
+    )
+    static let styleTitle = NSLocalizedString("style_menu_title", comment: "Title of the style menu")
+    static let symbolTitle = NSLocalizedString("symbol_menu_title", comment: "Title of the symbol menu")
 }
+
+// swiftformat:enable wrapArguments
 
 @main
 @objc
@@ -101,47 +110,110 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func configureMenuBarIcon() {
         updateDarkModeStatus()
-        configureColorMenuItems()
-        configureIconMenuItems()
-        configureResetMenuItem()
+        configureVersionHeader()
+        configureColorMenuItem()
+        configureStyleMenuItem()
+        configureApplyAndResetMenuItems()
         statusMenu.delegate = self
         statusBarItem.menu = statusMenu
         updateStatusBarIcon()
     }
 
-    private func configureResetMenuItem() {
-        statusMenu.insertItem(NSMenuItem.separator(), at: 3)
+    private func configureVersionHeader() {
+        let name = Bundle.main.infoDictionary?["CFBundleName"] as? String ?? "WhichSpace"
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
+        let versionItem = NSMenuItem(title: "\(name) v\(version)", action: nil, keyEquivalent: "")
+        versionItem.isEnabled = false
+        statusMenu.insertItem(versionItem, at: 0)
+        statusMenu.insertItem(NSMenuItem.separator(), at: 1)
+    }
 
-        let applyAllItem = NSMenuItem(
+    private func configureColorMenuItem() {
+        let colorsMenu = createColorMenu()
+        let colorsMenuItem = NSMenuItem(title: Localization.colorTitle, action: nil, keyEquivalent: "")
+        colorsMenuItem.submenu = colorsMenu
+        statusMenu.insertItem(colorsMenuItem, at: 2)
+    }
+
+    private func configureStyleMenuItem() {
+        let styleMenu = NSMenu(title: Localization.styleTitle)
+        styleMenu.delegate = self
+
+        // Add Number submenu (icon shapes)
+        let iconMenu = createIconMenu()
+        let iconMenuItem = NSMenuItem(title: Localization.numberTitle, action: nil, keyEquivalent: "")
+        iconMenuItem.submenu = iconMenu
+        styleMenu.addItem(iconMenuItem)
+
+        // Add Symbol submenu
+        let symbolMenu = createSymbolMenu()
+        let symbolMenuItem = NSMenuItem(title: Localization.symbolTitle, action: nil, keyEquivalent: "")
+        symbolMenuItem.submenu = symbolMenu
+        styleMenu.addItem(symbolMenuItem)
+
+        styleMenu.addItem(NSMenuItem.separator())
+
+        let resetStyleItem = NSMenuItem(
+            title: Localization.resetStyleToDefault,
+            action: #selector(resetStyleToDefault),
+            keyEquivalent: ""
+        )
+        resetStyleItem.target = self
+        styleMenu.addItem(resetStyleItem)
+
+        let styleMenuItem = NSMenuItem(title: Localization.styleTitle, action: nil, keyEquivalent: "")
+        styleMenuItem.submenu = styleMenu
+
+        statusMenu.insertItem(styleMenuItem, at: 3)
+        statusMenu.insertItem(NSMenuItem.separator(), at: 4)
+    }
+
+    private func configureApplyAndResetMenuItems() {
+        let applyToAllItem = NSMenuItem(
             title: Localization.applyToAll,
             action: #selector(applyAllToAllSpaces),
             keyEquivalent: ""
         )
-        applyAllItem.target = self
-        statusMenu.insertItem(applyAllItem, at: 4)
+        applyToAllItem.target = self
+        statusMenu.insertItem(applyToAllItem, at: 5)
 
         let resetItem = NSMenuItem(
-            title: Localization.resetToDefault,
-            action: #selector(resetToDefaultClicked),
+            title: Localization.resetSpaceToDefault,
+            action: #selector(resetSpaceToDefault),
             keyEquivalent: ""
         )
         resetItem.target = self
-        statusMenu.insertItem(resetItem, at: 5)
+        statusMenu.insertItem(resetItem, at: 6)
 
-        statusMenu.insertItem(NSMenuItem.separator(), at: 6)
+        statusMenu.insertItem(NSMenuItem.separator(), at: 7)
     }
 
-    private func configureColorMenuItems() {
-        // Create Color submenu
+    private func createColorMenu() -> NSMenu {
         let colorsMenu = NSMenu(title: Localization.colorTitle)
+        colorsMenu.delegate = self
 
-        // Foreground label
+        // Grid color swatch for symbol mode (shown only when symbol active)
+        let gridSwatchItem = NSMenuItem()
+        gridSwatchItem.tag = 210
+        gridSwatchItem.isHidden = true
+        let gridSwatchView = ColorSwatchView()
+        gridSwatchView.gridMode = true
+        gridSwatchView.frame = NSRect(origin: .zero, size: gridSwatchView.intrinsicContentSize)
+        gridSwatchView.onColorSelected = { [weak self] color in
+            self?.setForegroundColor(color)
+        }
+        gridSwatchItem.view = gridSwatchView
+        colorsMenu.addItem(gridSwatchItem)
+
+        // Foreground label (hidden when symbol active)
         let foregroundLabel = NSMenuItem(title: Localization.foregroundLabel, action: nil, keyEquivalent: "")
         foregroundLabel.isEnabled = false
+        foregroundLabel.tag = 200
         colorsMenu.addItem(foregroundLabel)
 
-        // Foreground color swatches
+        // Foreground color swatches (hidden when symbol active)
         let foregroundSwatchItem = NSMenuItem()
+        foregroundSwatchItem.tag = 201
         let foregroundSwatchView = ColorSwatchView()
         foregroundSwatchView.frame = NSRect(origin: .zero, size: foregroundSwatchView.intrinsicContentSize)
         foregroundSwatchView.onColorSelected = { [weak self] color in
@@ -154,15 +226,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         foregroundSwatchItem.view = foregroundSwatchView
         colorsMenu.addItem(foregroundSwatchItem)
 
-        colorsMenu.addItem(NSMenuItem.separator())
+        // Separator (hidden when symbol active)
+        let separator = NSMenuItem.separator()
+        separator.tag = 202
+        colorsMenu.addItem(separator)
 
-        // Background label
+        // Background label (hidden when symbol active)
         let backgroundLabel = NSMenuItem(title: Localization.backgroundLabel, action: nil, keyEquivalent: "")
         backgroundLabel.isEnabled = false
+        backgroundLabel.tag = 203
         colorsMenu.addItem(backgroundLabel)
 
-        // Background color swatches
+        // Background color swatches (hidden when symbol active)
         let backgroundSwatchItem = NSMenuItem()
+        backgroundSwatchItem.tag = 204
         let backgroundSwatchView = ColorSwatchView()
         backgroundSwatchView.frame = NSRect(origin: .zero, size: backgroundSwatchView.intrinsicContentSize)
         backgroundSwatchView.onColorSelected = { [weak self] color in
@@ -175,6 +252,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         backgroundSwatchItem.view = backgroundSwatchView
         colorsMenu.addItem(backgroundSwatchItem)
 
+        // Separator before actions
         colorsMenu.addItem(NSMenuItem.separator())
 
         let applyToAllItem = NSMenuItem(
@@ -185,18 +263,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         applyToAllItem.target = self
         colorsMenu.addItem(applyToAllItem)
 
-        let colorsMenuItem = NSMenuItem(
-            title: Localization.colorTitle,
-            action: nil,
+        let resetColorItem = NSMenuItem(
+            title: Localization.resetColorToDefault,
+            action: #selector(resetColorToDefault),
             keyEquivalent: ""
         )
-        colorsMenuItem.submenu = colorsMenu
+        resetColorItem.target = self
+        colorsMenu.addItem(resetColorItem)
 
-        statusMenu.insertItem(colorsMenuItem, at: 0)
+        return colorsMenu
     }
 
-    private func configureIconMenuItems() {
-        let iconMenu = NSMenu(title: Localization.iconTitle)
+    private func createIconMenu() -> NSMenu {
+        let iconMenu = NSMenu(title: Localization.numberTitle)
         iconMenu.delegate = self
 
         for style in IconStyle.allCases {
@@ -215,29 +294,38 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             iconMenu.addItem(item)
         }
 
-        iconMenu.addItem(NSMenuItem.separator())
+        return iconMenu
+    }
 
-        let applyToAllItem = NSMenuItem(
-            title: Localization.applyIconToAll,
-            action: #selector(applyIconToAll),
-            keyEquivalent: ""
-        )
-        applyToAllItem.target = self
-        iconMenu.addItem(applyToAllItem)
+    private func createSymbolMenu() -> NSMenu {
+        let symbolMenu = NSMenu(title: Localization.symbolTitle)
+        symbolMenu.delegate = self
 
-        let iconMenuItem = NSMenuItem(
-            title: Localization.iconTitle,
-            action: nil,
-            keyEquivalent: ""
-        )
-        iconMenuItem.submenu = iconMenu
+        let symbolPickerItem = NSMenuItem()
+        let symbolPickerView = SFSymbolPickerView()
+        symbolPickerView.frame = NSRect(origin: .zero, size: symbolPickerView.intrinsicContentSize)
+        symbolPickerView.selectedSymbol = SpacePreferences.sfSymbol(forSpace: currentSpace)
+        symbolPickerView.darkMode = darkModeEnabled
+        symbolPickerView.onSymbolSelected = { [weak self] symbol in
+            self?.setSymbol(symbol)
+        }
+        symbolPickerItem.view = symbolPickerView
+        symbolMenu.addItem(symbolPickerItem)
 
-        statusMenu.insertItem(iconMenuItem, at: 1)
-        statusMenu.insertItem(NSMenuItem.separator(), at: 2)
+        return symbolMenu
+    }
+
+    private func setSymbol(_ symbol: String?) {
+        guard currentSpace > 0 else { return }
+        SpacePreferences.setSFSymbol(symbol, forSpace: currentSpace)
+        updateStatusBarIcon()
     }
 
     private func selectIconStyle(_ style: IconStyle, rowView: IconStyleRowView?) {
         guard currentSpace > 0 else { return }
+
+        // Clear SF Symbol to switch to number mode
+        SpacePreferences.clearSFSymbol(forSpace: currentSpace)
         SpacePreferences.setIconStyle(style, forSpace: currentSpace)
 
         // Update checkmarks in all row views
@@ -254,13 +342,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func currentIconStyle() -> IconStyle {
         SpacePreferences.iconStyle(forSpace: currentSpace) ?? .square
-    }
-
-    @objc func applyIconToAll() {
-        let style = currentIconStyle()
-        for space in 1 ... 16 {
-            SpacePreferences.setIconStyle(style, forSpace: space)
-        }
     }
 
     private func setForegroundColor(_ color: NSColor) {
@@ -314,7 +395,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc func applyColorsToAllSpaces() {
         guard let colors = SpacePreferences.colors(forSpace: currentSpace) else { return }
-        for space in 1 ... 16 {
+        for space in SpacePreferences.allConfiguredSpaces() {
             SpacePreferences.setColors(colors, forSpace: space)
         }
     }
@@ -322,29 +403,55 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @objc func applyAllToAllSpaces() {
         let style = currentIconStyle()
         let colors = SpacePreferences.colors(forSpace: currentSpace)
-        for space in 1 ... 16 {
+        let symbol = SpacePreferences.sfSymbol(forSpace: currentSpace)
+        for space in SpacePreferences.allConfiguredSpaces() {
             SpacePreferences.setIconStyle(style, forSpace: space)
+            SpacePreferences.setSFSymbol(symbol, forSpace: space)
             if let colors {
                 SpacePreferences.setColors(colors, forSpace: space)
             }
         }
     }
 
-    @objc func resetToDefaultClicked() {
+    @objc func resetColorToDefault() {
+        guard currentSpace > 0 else { return }
+        SpacePreferences.clearColors(forSpace: currentSpace)
+        updateStatusBarIcon()
+    }
+
+    @objc func resetStyleToDefault() {
+        guard currentSpace > 0 else { return }
+        SpacePreferences.clearIconStyle(forSpace: currentSpace)
+        SpacePreferences.clearSFSymbol(forSpace: currentSpace)
+        updateStatusBarIcon()
+    }
+
+    @objc func resetSpaceToDefault() {
         guard currentSpace > 0 else { return }
         SpacePreferences.clearColors(forSpace: currentSpace)
         SpacePreferences.clearIconStyle(forSpace: currentSpace)
+        SpacePreferences.clearSFSymbol(forSpace: currentSpace)
         updateStatusBarIcon()
     }
 
     private func updateStatusBarIcon() {
         let customColors = SpacePreferences.colors(forSpace: currentSpace)
-        let icon = SpaceIconGenerator.generateIcon(
-            for: currentSpaceLabel,
-            darkMode: darkModeEnabled,
-            customColors: customColors,
-            style: currentIconStyle()
-        )
+
+        let icon: NSImage
+        if let sfSymbol = SpacePreferences.sfSymbol(forSpace: currentSpace) {
+            icon = SpaceIconGenerator.generateSFSymbolIcon(
+                symbolName: sfSymbol,
+                darkMode: darkModeEnabled,
+                customColors: customColors
+            )
+        } else {
+            icon = SpaceIconGenerator.generateIcon(
+                for: currentSpaceLabel,
+                darkMode: darkModeEnabled,
+                customColors: customColors,
+                style: currentIconStyle()
+            )
+        }
         statusBarItem.button?.image = icon
     }
 
@@ -482,7 +589,7 @@ extension AppDelegate: SPUStandardUserDriverDelegate {
         NSApp.activate(ignoringOtherApps: true)
     }
 
-    func standardUserDriverDidReceiveUserAttention(forUpdate update: SUAppcastItem) {
+    func standardUserDriverDidReceiveUserAttention(forUpdate _: SUAppcastItem) {
         NSApp.activate(ignoringOtherApps: true)
     }
 }
@@ -491,19 +598,38 @@ extension AppDelegate: SPUStandardUserDriverDelegate {
 
 extension AppDelegate: NSMenuDelegate {
     func menuWillOpen(_ menu: NSMenu) {
-        // Update icon style views when menu opens
         let currentStyle = currentIconStyle()
         let customColors = SpacePreferences.colors(forSpace: currentSpace)
         let previewNumber = currentSpaceLabel == "?" ? "1" : currentSpaceLabel
+        let currentSymbol = SpacePreferences.sfSymbol(forSpace: currentSpace)
+        let symbolIsActive = currentSymbol != nil
 
         for item in menu.items {
-            // Direct items (when Icons submenu opens)
+            // Update icon style views - only show checkmark when not in symbol mode
             if let view = item.view as? IconStyleRowView {
-                view.isChecked = item.representedObject as? IconStyle == currentStyle
+                view.isChecked = !symbolIsActive && item.representedObject as? IconStyle == currentStyle
                 view.customColors = customColors
                 view.darkMode = darkModeEnabled
                 view.previewNumber = previewNumber
                 view.needsDisplay = true
+            }
+
+            // Update symbol picker view
+            if let view = item.view as? SFSymbolPickerView {
+                view.selectedSymbol = currentSymbol
+                view.darkMode = darkModeEnabled
+                view.needsDisplay = true
+            }
+
+            // Show grid swatch when symbol is active (tag 210)
+            if item.tag == 210 {
+                item.isHidden = !symbolIsActive
+            }
+
+            // Hide foreground/background labels and swatches when symbol is active
+            // Tags 200-204: foreground label, foreground swatch, separator, background label, background swatch
+            if item.tag >= 200, item.tag <= 204 {
+                item.isHidden = symbolIsActive
             }
         }
     }

@@ -52,6 +52,57 @@ struct SpaceColors: Codable, Equatable {
 enum SpacePreferences {
     private static let colorsKey = "spaceColors"
     private static let iconStylesKey = "spaceIconStyles"
+    private static let sfSymbolsKey = "spaceSFSymbols"
+
+    // MARK: - SF Symbol
+
+    static func sfSymbol(forSpace spaceNumber: Int) -> String? {
+        guard let data = UserDefaults.standard.data(forKey: sfSymbolsKey),
+              let allSymbols = try? JSONDecoder().decode([Int: String].self, from: data)
+        else {
+            return nil
+        }
+        return allSymbols[spaceNumber]
+    }
+
+    static func setSFSymbol(_ symbol: String?, forSpace spaceNumber: Int) {
+        var allSymbols = getAllSFSymbols()
+        if let symbol {
+            allSymbols[spaceNumber] = symbol
+        } else {
+            allSymbols.removeValue(forKey: spaceNumber)
+        }
+        saveAllSFSymbols(allSymbols)
+    }
+
+    static func clearSFSymbol(forSpace spaceNumber: Int) {
+        setSFSymbol(nil, forSpace: spaceNumber)
+    }
+
+    private static func getAllSFSymbols() -> [Int: String] {
+        guard let data = UserDefaults.standard.data(forKey: sfSymbolsKey),
+              let allSymbols = try? JSONDecoder().decode([Int: String].self, from: data)
+        else {
+            return [:]
+        }
+        return allSymbols
+    }
+
+    private static func saveAllSFSymbols(_ symbols: [Int: String]) {
+        if let data = try? JSONEncoder().encode(symbols) {
+            UserDefaults.standard.set(data, forKey: sfSymbolsKey)
+        }
+    }
+
+    // MARK: - All Configured Spaces
+
+    static func allConfiguredSpaces() -> Set<Int> {
+        var spaces = Set<Int>()
+        spaces.formUnion(getAllColors().keys)
+        spaces.formUnion(getAllIconStyles().keys)
+        spaces.formUnion(getAllSFSymbols().keys)
+        return spaces
+    }
 
     // MARK: - Icon Style
 
