@@ -12,6 +12,8 @@
 		5E13C88D1BE03A6F00FF4305 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E13C88C1BE03A6F00FF4305 /* Assets.xcassets */; };
 		5E13C8901BE03A6F00FF4305 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5E13C88E1BE03A6F00FF4305 /* MainMenu.xib */; };
 		5E342D5E2E650D570003F863 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 5E342D5D2E650D570003F863 /* Sparkle */; };
+		5E4C3D012F890A230003F864 /* LaunchAtLogin in Frameworks */ = {isa = PBXBuildFile; productRef = 5E4C3D032F890A230003F866 /* LaunchAtLogin */; };
+		5E4C3D042F890A230003F867 /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = 5E4C3D062F890A230003F869 /* Defaults */; };
 		5E51B77F1E7EE562009395E6 /* PFMoveApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E51B77E1E7EE562009395E6 /* PFMoveApplication.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		5E51B7811E7EE64C009395E6 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E51B7801E7EE64C009395E6 /* Security.framework */; };
 		5E51B7851E7EE7BF009395E6 /* BuildFile in CopyFiles */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -64,6 +66,8 @@
 			files = (
 				5E51B7811E7EE64C009395E6 /* Security.framework in Frameworks */,
 				5E342D5E2E650D570003F863 /* Sparkle in Frameworks */,
+				5E4C3D012F890A230003F864 /* LaunchAtLogin in Frameworks */,
+				5E4C3D042F890A230003F867 /* Defaults in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -224,6 +228,8 @@
 			mainGroup = 5E13C87E1BE03A6F00FF4305;
 			packageReferences = (
 				5E342D5C2E650D570003F863 /* XCRemoteSwiftPackageReference "Sparkle" */,
+				5E4C3D022F890A230003F865 /* XCRemoteSwiftPackageReference "LaunchAtLogin-Modern" */,
+				5E4C3D052F890A230003F868 /* XCRemoteSwiftPackageReference "Defaults" */,
 			);
 			productRefGroup = 5E13C8881BE03A6F00FF4305 /* Products */;
 			projectDirPath = "";
@@ -468,6 +474,22 @@
 				minimumVersion = 2.7.1;
 			};
 		};
+		5E4C3D022F890A230003F865 /* XCRemoteSwiftPackageReference "LaunchAtLogin-Modern" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/LaunchAtLogin-Modern";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+		5E4C3D052F890A230003F868 /* XCRemoteSwiftPackageReference "Defaults" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/Defaults";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -475,6 +497,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5E342D5C2E650D570003F863 /* XCRemoteSwiftPackageReference "Sparkle" */;
 			productName = Sparkle;
+		};
+		5E4C3D032F890A230003F866 /* LaunchAtLogin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5E4C3D022F890A230003F865 /* XCRemoteSwiftPackageReference "LaunchAtLogin-Modern" */;
+			productName = LaunchAtLogin;
+		};
+		5E4C3D062F890A230003F869 /* Defaults */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5E4C3D052F890A230003F868 /* XCRemoteSwiftPackageReference "Defaults" */;
+			productName = Defaults;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

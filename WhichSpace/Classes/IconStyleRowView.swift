@@ -51,7 +51,7 @@ final class IconStyleRowView: NSView {
                 .font: NSFont.menuFont(ofSize: 13),
                 .foregroundColor: isHighlighted ? NSColor.white : NSColor.labelColor,
             ]
-            "✓".draw(at: NSPoint(x: 8, y: 3), withAttributes: checkAttrs)
+            "✓".draw(at: NSPoint(x: 9, y: 3), withAttributes: checkAttrs)
         }
 
         // Icon

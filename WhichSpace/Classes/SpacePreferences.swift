@@ -7,8 +7,9 @@
 //
 
 import Cocoa
+import Defaults
 
-enum IconStyle: String, CaseIterable, Codable {
+enum IconStyle: String, CaseIterable, Codable, Defaults.Serializable {
     case square
     case squareOutline
     case circle
@@ -25,7 +26,7 @@ enum IconStyle: String, CaseIterable, Codable {
     }
 }
 
-struct SpaceColors: Codable, Equatable {
+struct SpaceColors: Codable, Equatable, Defaults.Serializable {
     var foreground: Data
     var background: Data
 
@@ -49,138 +50,74 @@ struct SpaceColors: Codable, Equatable {
     }
 }
 
-enum SpacePreferences {
-    private static let colorsKey = "spaceColors"
-    private static let iconStylesKey = "spaceIconStyles"
-    private static let sfSymbolsKey = "spaceSFSymbols"
+extension Defaults.Keys {
+    static let spaceColors = Key<[Int: SpaceColors]>("spaceColors", default: [:])
+    static let spaceIconStyles = Key<[Int: IconStyle]>("spaceIconStyles", default: [:])
+    static let spaceSFSymbols = Key<[Int: String]>("spaceSFSymbols", default: [:])
+}
 
+enum SpacePreferences {
     // MARK: - SF Symbol
 
     static func sfSymbol(forSpace spaceNumber: Int) -> String? {
-        guard let data = UserDefaults.standard.data(forKey: sfSymbolsKey),
-              let allSymbols = try? JSONDecoder().decode([Int: String].self, from: data)
-        else {
-            return nil
-        }
-        return allSymbols[spaceNumber]
+        Defaults[.spaceSFSymbols][spaceNumber]
     }
 
     static func setSFSymbol(_ symbol: String?, forSpace spaceNumber: Int) {
-        var allSymbols = getAllSFSymbols()
         if let symbol {
-            allSymbols[spaceNumber] = symbol
+            Defaults[.spaceSFSymbols][spaceNumber] = symbol
         } else {
-            allSymbols.removeValue(forKey: spaceNumber)
+            Defaults[.spaceSFSymbols].removeValue(forKey: spaceNumber)
         }
-        saveAllSFSymbols(allSymbols)
     }
 
     static func clearSFSymbol(forSpace spaceNumber: Int) {
-        setSFSymbol(nil, forSpace: spaceNumber)
-    }
-
-    private static func getAllSFSymbols() -> [Int: String] {
-        guard let data = UserDefaults.standard.data(forKey: sfSymbolsKey),
-              let allSymbols = try? JSONDecoder().decode([Int: String].self, from: data)
-        else {
-            return [:]
-        }
-        return allSymbols
-    }
-
-    private static func saveAllSFSymbols(_ symbols: [Int: String]) {
-        if let data = try? JSONEncoder().encode(symbols) {
-            UserDefaults.standard.set(data, forKey: sfSymbolsKey)
-        }
+        Defaults[.spaceSFSymbols].removeValue(forKey: spaceNumber)
     }
 
     // MARK: - All Configured Spaces
 
     static func allConfiguredSpaces() -> Set<Int> {
         var spaces = Set<Int>()
-        spaces.formUnion(getAllColors().keys)
-        spaces.formUnion(getAllIconStyles().keys)
-        spaces.formUnion(getAllSFSymbols().keys)
+        spaces.formUnion(Defaults[.spaceColors].keys)
+        spaces.formUnion(Defaults[.spaceIconStyles].keys)
+        spaces.formUnion(Defaults[.spaceSFSymbols].keys)
         return spaces
     }
 
     // MARK: - Icon Style
 
     static func iconStyle(forSpace spaceNumber: Int) -> IconStyle? {
-        guard let data = UserDefaults.standard.data(forKey: iconStylesKey),
-              let allStyles = try? JSONDecoder().decode([Int: IconStyle].self, from: data)
-        else {
-            return nil
-        }
-        return allStyles[spaceNumber]
+        Defaults[.spaceIconStyles][spaceNumber]
     }
 
     static func setIconStyle(_ style: IconStyle?, forSpace spaceNumber: Int) {
-        var allStyles = getAllIconStyles()
         if let style {
-            allStyles[spaceNumber] = style
+            Defaults[.spaceIconStyles][spaceNumber] = style
         } else {
-            allStyles.removeValue(forKey: spaceNumber)
+            Defaults[.spaceIconStyles].removeValue(forKey: spaceNumber)
         }
-        saveAllIconStyles(allStyles)
     }
 
     static func clearIconStyle(forSpace spaceNumber: Int) {
-        setIconStyle(nil, forSpace: spaceNumber)
-    }
-
-    private static func getAllIconStyles() -> [Int: IconStyle] {
-        guard let data = UserDefaults.standard.data(forKey: iconStylesKey),
-              let allStyles = try? JSONDecoder().decode([Int: IconStyle].self, from: data)
-        else {
-            return [:]
-        }
-        return allStyles
-    }
-
-    private static func saveAllIconStyles(_ styles: [Int: IconStyle]) {
-        if let data = try? JSONEncoder().encode(styles) {
-            UserDefaults.standard.set(data, forKey: iconStylesKey)
-        }
+        Defaults[.spaceIconStyles].removeValue(forKey: spaceNumber)
     }
 
     // MARK: - Colors
 
     static func colors(forSpace spaceNumber: Int) -> SpaceColors? {
-        guard let data = UserDefaults.standard.data(forKey: colorsKey),
-              let allColors = try? JSONDecoder().decode([Int: SpaceColors].self, from: data)
-        else {
-            return nil
-        }
-        return allColors[spaceNumber]
+        Defaults[.spaceColors][spaceNumber]
     }
 
     static func setColors(_ colors: SpaceColors?, forSpace spaceNumber: Int) {
-        var allColors = getAllColors()
         if let colors {
-            allColors[spaceNumber] = colors
+            Defaults[.spaceColors][spaceNumber] = colors
         } else {
-            allColors.removeValue(forKey: spaceNumber)
+            Defaults[.spaceColors].removeValue(forKey: spaceNumber)
         }
-        saveAllColors(allColors)
     }
 
     static func clearColors(forSpace spaceNumber: Int) {
-        setColors(nil, forSpace: spaceNumber)
-    }
-
-    private static func getAllColors() -> [Int: SpaceColors] {
-        guard let data = UserDefaults.standard.data(forKey: colorsKey),
-              let allColors = try? JSONDecoder().decode([Int: SpaceColors].self, from: data)
-        else {
-            return [:]
-        }
-        return allColors
-    }
-
-    private static func saveAllColors(_ colors: [Int: SpaceColors]) {
-        if let data = try? JSONEncoder().encode(colors) {
-            UserDefaults.standard.set(data, forKey: colorsKey)
-        }
+        Defaults[.spaceColors].removeValue(forKey: spaceNumber)
     }
 }

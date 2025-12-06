@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import LaunchAtLogin
 import Sparkle
 
 // swiftformat:disable wrapArguments
@@ -15,26 +16,51 @@ private enum Localization {
         "apply_color_to_all",
         comment: "Menu item to apply color to all spaces"
     )
+    static let applyColorToAllTip = NSLocalizedString(
+        "apply_color_to_all_tip",
+        comment: "Tooltip for apply color to all spaces"
+    )
     static let applyStyleToAll = NSLocalizedString(
         "apply_style_to_all",
         comment: "Menu item to apply style to all spaces"
     )
+    static let applyStyleToAllTip = NSLocalizedString(
+        "apply_style_to_all_tip",
+        comment: "Tooltip for apply style to all spaces"
+    )
     static let applyToAll = NSLocalizedString("apply_to_all", comment: "Menu item to apply setting to all spaces")
+    static let applyToAllTip = NSLocalizedString(
+        "apply_to_all_tip",
+        comment: "Tooltip for apply all settings to all spaces"
+    )
     static let backgroundLabel = NSLocalizedString("background_label", comment: "Label for background color section")
     static let colorTitle = NSLocalizedString("color_menu_title", comment: "Title of the color menu")
     static let foregroundLabel = NSLocalizedString("foreground_label", comment: "Label for foreground color section")
+    static let launchAtLogin = NSLocalizedString("launch_at_login", comment: "Menu item to launch at login")
     static let numberTitle = NSLocalizedString("number_menu_title", comment: "Title of the number style menu")
     static let resetColorToDefault = NSLocalizedString(
         "reset_color_to_default",
         comment: "Menu item to reset color to default"
     )
+    static let resetColorToDefaultTip = NSLocalizedString(
+        "reset_color_to_default_tip",
+        comment: "Tooltip for reset color to default"
+    )
     static let resetSpaceToDefault = NSLocalizedString(
         "reset_space_to_default",
         comment: "Menu item to reset space customization"
     )
+    static let resetSpaceToDefaultTip = NSLocalizedString(
+        "reset_space_to_default_tip",
+        comment: "Tooltip for reset space to default"
+    )
     static let resetStyleToDefault = NSLocalizedString(
         "reset_style_to_default",
         comment: "Menu item to reset style to default"
+    )
+    static let resetStyleToDefaultTip = NSLocalizedString(
+        "reset_style_to_default_tip",
+        comment: "Tooltip for reset style to default"
     )
     static let styleTitle = NSLocalizedString("style_menu_title", comment: "Title of the style menu")
     static let symbolTitle = NSLocalizedString("symbol_menu_title", comment: "Title of the symbol menu")
@@ -118,6 +144,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         configureColorMenuItem()
         configureStyleMenuItem()
         configureApplyAndResetMenuItems()
+        configureLaunchAtLoginMenuItem()
         statusMenu.delegate = self
         statusBarItem.menu = statusMenu
         updateStatusBarIcon()
@@ -163,6 +190,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             keyEquivalent: ""
         )
         applyStyleItem.target = self
+        applyStyleItem.toolTip = Localization.applyStyleToAllTip
         styleMenu.addItem(applyStyleItem)
 
         let resetStyleItem = NSMenuItem(
@@ -171,6 +199,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             keyEquivalent: ""
         )
         resetStyleItem.target = self
+        resetStyleItem.toolTip = Localization.resetStyleToDefaultTip
         styleMenu.addItem(resetStyleItem)
 
         let styleMenuItem = NSMenuItem(title: Localization.styleTitle, action: nil, keyEquivalent: "")
@@ -187,6 +216,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             keyEquivalent: ""
         )
         applyToAllItem.target = self
+        applyToAllItem.toolTip = Localization.applyToAllTip
         statusMenu.insertItem(applyToAllItem, at: 5)
 
         let resetItem = NSMenuItem(
@@ -195,9 +225,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             keyEquivalent: ""
         )
         resetItem.target = self
+        resetItem.toolTip = Localization.resetSpaceToDefaultTip
         statusMenu.insertItem(resetItem, at: 6)
 
         statusMenu.insertItem(NSMenuItem.separator(), at: 7)
+    }
+
+    private func configureLaunchAtLoginMenuItem() {
+        let launchAtLoginItem = NSMenuItem(
+            title: Localization.launchAtLogin,
+            action: #selector(toggleLaunchAtLogin),
+            keyEquivalent: ""
+        )
+        launchAtLoginItem.target = self
+        launchAtLoginItem.tag = 100
+        statusMenu.insertItem(launchAtLoginItem, at: 8)
     }
 
     private func createColorMenu() -> NSMenu {
@@ -273,6 +315,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             keyEquivalent: ""
         )
         applyToAllItem.target = self
+        applyToAllItem.toolTip = Localization.applyColorToAllTip
         colorsMenu.addItem(applyToAllItem)
 
         let resetColorItem = NSMenuItem(
@@ -281,6 +324,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             keyEquivalent: ""
         )
         resetColorItem.target = self
+        resetColorItem.toolTip = Localization.resetColorToDefaultTip
         colorsMenu.addItem(resetColorItem)
 
         return colorsMenu
@@ -485,6 +529,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         updateStatusBarIcon()
     }
 
+    @objc func toggleLaunchAtLogin() {
+        LaunchAtLogin.isEnabled.toggle()
+    }
+
     private func updateStatusBarIcon() {
         let customColors = SpacePreferences.colors(forSpace: currentSpace)
 
@@ -668,6 +716,11 @@ extension AppDelegate: NSMenuDelegate {
         let previewNumber = currentSpaceLabel == "?" ? "1" : currentSpaceLabel
         let currentSymbol = SpacePreferences.sfSymbol(forSpace: currentSpace)
         let symbolIsActive = currentSymbol != nil
+
+        // Update Launch at Login checkmark (tag 100)
+        if let launchAtLoginItem = menu.item(withTag: 100) {
+            launchAtLoginItem.state = LaunchAtLogin.isEnabled ? .on : .off
+        }
 
         for item in menu.items {
             // Update icon style views - only show checkmark when not in symbol mode
