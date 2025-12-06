@@ -12,9 +12,9 @@ Choose foreground and background colours for each space, or apply one colour to 
 
 <img src="Screenshots/ColoursMenu.png" width="60%">
 
-### Icon Styles
+### Icons
 
-Choose from a variety of icon shapes for each space, or apply one icon to all spaces:
+Choose from a variety of icons for each space, or apply one icon to all spaces:
 
 <img src="Screenshots/IconsMenu.png" width="60%">
 
