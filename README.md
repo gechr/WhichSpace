@@ -1,14 +1,28 @@
-## WhichSpace
+# WhichSpace
+
 Have you ever forgotten _which space_ is currently active on macOS and wanted a quick way to tell? Didn't think so... but I did!
 
-## Screenshot
-![WhichSpace](https://raw.github.com/gechr/WhichSpace/master/Screenshots/WhichSpace.png)
+<img src="Screenshots/WhichSpace.png" width="50%">
+
+## Features
+
+### Colours
+
+Choose foreground and background colours for each space, or apply one colour to all spaces:
+
+<img src="Screenshots/ColoursMenu.png" width="50%">
+
+### Icon Styles
+
+Choose from a variety of icon shapes for each space, or apply one icon to all spaces:
+
+<img src="Screenshots/IconsMenu.png" width="50%">
 
 ## Installation
 
-#### Homebrew (recommended)
+### Homebrew (recommended)
 
-```
+```text
 brew install --cask whichspace
 ```
 
@@ -27,4 +41,5 @@ brew install --cask whichspace
 > Or right-click the app and select "Open" to add an exception.
 
 ## Contributing
+
 [Pull requests](https://github.com/gechr/WhichSpace/pulls) are welcome!
