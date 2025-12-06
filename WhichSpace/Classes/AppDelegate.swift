@@ -352,7 +352,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         updaterController = SPUStandardUpdaterController(
             startingUpdater: true,
             updaterDelegate: nil,
-            userDriverDelegate: nil
+            userDriverDelegate: self
         )
     }
 
@@ -468,6 +468,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @IBAction func quitClicked(_: NSMenuItem) {
         NSApplication.shared.terminate(self)
+    }
+}
+
+// MARK: - SPUStandardUserDriverDelegate
+
+extension AppDelegate: SPUStandardUserDriverDelegate {
+    func supportsGentleScheduledUpdateReminders() -> Bool {
+        true
+    }
+
+    func standardUserDriverWillShowModalAlert() {
+        NSApp.activate(ignoringOtherApps: true)
+    }
+
+    func standardUserDriverDidReceiveUserAttention(forUpdate update: SUAppcastItem) {
+        NSApp.activate(ignoringOtherApps: true)
     }
 }
 
