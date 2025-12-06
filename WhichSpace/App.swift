@@ -53,6 +53,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
         let versionItem = NSMenuItem(title: "\(name) v\(version)", action: nil, keyEquivalent: "")
         versionItem.isEnabled = false
+        if let icon = NSApp.applicationIconImage {
+            let resized = NSImage(size: NSSize(width: 16, height: 16))
+            resized.lockFocus()
+            icon.draw(in: NSRect(x: 0, y: 0, width: 16, height: 16))
+            resized.unlockFocus()
+            versionItem.image = resized
+        }
         statusMenu.addItem(versionItem)
         statusMenu.addItem(.separator())
     }
@@ -60,6 +67,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func configureColorMenuItem() {
         let colorsMenu = createColorMenu()
         let colorsMenuItem = NSMenuItem(title: Localization.colorTitle, action: nil, keyEquivalent: "")
+        colorsMenuItem.image = NSImage(systemSymbolName: "paintpalette", accessibilityDescription: nil)
         colorsMenuItem.submenu = colorsMenu
         statusMenu.addItem(colorsMenuItem)
     }
@@ -71,12 +79,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Number submenu (icon shapes)
         let iconMenu = createIconMenu()
         let iconMenuItem = NSMenuItem(title: Localization.numberTitle, action: nil, keyEquivalent: "")
+        iconMenuItem.image = NSImage(systemSymbolName: "number", accessibilityDescription: nil)
         iconMenuItem.submenu = iconMenu
         styleMenu.addItem(iconMenuItem)
 
         // Symbol submenu
         let symbolMenu = createSymbolMenu()
         let symbolMenuItem = NSMenuItem(title: Localization.symbolTitle, action: nil, keyEquivalent: "")
+        symbolMenuItem.image = NSImage(systemSymbolName: "star", accessibilityDescription: nil)
         symbolMenuItem.submenu = symbolMenu
         styleMenu.addItem(symbolMenuItem)
 
@@ -88,6 +98,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             keyEquivalent: ""
         )
         applyStyleItem.target = self
+        applyStyleItem.image = NSImage(systemSymbolName: "square.on.square", accessibilityDescription: nil)
         styleMenu.addItem(applyStyleItem)
 
         let resetStyleItem = NSMenuItem(
@@ -96,9 +107,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             keyEquivalent: ""
         )
         resetStyleItem.target = self
+        resetStyleItem.image = NSImage(systemSymbolName: "arrow.uturn.backward", accessibilityDescription: nil)
         styleMenu.addItem(resetStyleItem)
 
         let styleMenuItem = NSMenuItem(title: Localization.styleTitle, action: nil, keyEquivalent: "")
+        styleMenuItem.image = NSImage(systemSymbolName: "textformat", accessibilityDescription: nil)
         styleMenuItem.submenu = styleMenu
         statusMenu.addItem(styleMenuItem)
         statusMenu.addItem(.separator())
@@ -111,6 +124,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             keyEquivalent: ""
         )
         applyToAllItem.target = self
+        applyToAllItem.image = NSImage(systemSymbolName: "square.on.square", accessibilityDescription: nil)
         statusMenu.addItem(applyToAllItem)
 
         let resetItem = NSMenuItem(
@@ -119,6 +133,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             keyEquivalent: ""
         )
         resetItem.target = self
+        resetItem.image = NSImage(systemSymbolName: "arrow.uturn.backward", accessibilityDescription: nil)
         statusMenu.addItem(resetItem)
         statusMenu.addItem(.separator())
     }
@@ -131,6 +146,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
         launchAtLoginItem.target = self
         launchAtLoginItem.tag = 100
+        launchAtLoginItem.image = NSImage(systemSymbolName: "sunrise", accessibilityDescription: nil)
         statusMenu.addItem(launchAtLoginItem)
     }
 
@@ -141,6 +157,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             keyEquivalent: ""
         )
         updateItem.target = self
+        updateItem.image = NSImage(systemSymbolName: "arrow.triangle.2.circlepath", accessibilityDescription: nil)
         statusMenu.addItem(updateItem)
 
         statusMenu.addItem(.separator())
@@ -228,6 +245,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             keyEquivalent: ""
         )
         invertColorsItem.target = self
+        invertColorsItem.image = NSImage(systemSymbolName: "arrow.left.arrow.right", accessibilityDescription: nil)
         colorsMenu.addItem(invertColorsItem)
 
         let applyToAllItem = NSMenuItem(
@@ -236,6 +254,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             keyEquivalent: ""
         )
         applyToAllItem.target = self
+        applyToAllItem.image = NSImage(systemSymbolName: "square.on.square", accessibilityDescription: nil)
         colorsMenu.addItem(applyToAllItem)
 
         let resetColorItem = NSMenuItem(
@@ -244,6 +263,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             keyEquivalent: ""
         )
         resetColorItem.target = self
+        resetColorItem.image = NSImage(systemSymbolName: "arrow.uturn.backward", accessibilityDescription: nil)
         colorsMenu.addItem(resetColorItem)
 
         return colorsMenu
