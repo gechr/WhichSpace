@@ -17,6 +17,8 @@
 		5E51B7851E7EE7BF009395E6 /* BuildFile in CopyFiles */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		7A6E621AFE7580D49E7E7714 /* SpacePreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBA7DD8EA9C87994B985726 /* SpacePreferences.swift */; };
 		A5AE357C03C4D0E1DDD62E6F /* ColorSwatchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8C8D752372D8C9EAE5667B1 /* ColorSwatchView.swift */; };
+		B7D9E4A12F3C8B7E9A1D5C3F /* IconStyleRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4F2A6B83E5D9C0F1B2E7A48 /* IconStyleRowView.swift */; };
+		A1E2D3C41B2F4A5B6C7D8E93 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A1E2D3C41B2F4A5B6C7D8E92 /* Localizable.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -46,6 +48,11 @@
 		5E51B7801E7EE64C009395E6 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		9EBA7DD8EA9C87994B985726 /* SpacePreferences.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SpacePreferences.swift; path = WhichSpace/Classes/SpacePreferences.swift; sourceTree = "<group>"; };
 		C8C8D752372D8C9EAE5667B1 /* ColorSwatchView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ColorSwatchView.swift; path = WhichSpace/Classes/ColorSwatchView.swift; sourceTree = "<group>"; };
+		D4F2A6B83E5D9C0F1B2E7A48 /* IconStyleRowView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = IconStyleRowView.swift; path = WhichSpace/Classes/IconStyleRowView.swift; sourceTree = "<group>"; };
+		A1E2D3C41B2F4A5B6C7D8E90 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A1E2D3C41B2F4A5B6C7D8E91 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		A1E2D3C41B2F4A5B6C7D8E94 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		A1E2D3C41B2F4A5B6C7D8E95 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/MainMenu.strings"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +94,7 @@
 				5E13C88C1BE03A6F00FF4305 /* Assets.xcassets */,
 				5E13C88E1BE03A6F00FF4305 /* MainMenu.xib */,
 				5E13C8911BE03A6F00FF4305 /* Info.plist */,
+				A1E2D3C41B2F4A5B6C7D8E92 /* Localizable.strings */,
 			);
 			name = Resources;
 			path = WhichSpace;
@@ -135,6 +143,7 @@
 			children = (
 				9EBA7DD8EA9C87994B985726 /* SpacePreferences.swift */,
 				C8C8D752372D8C9EAE5667B1 /* ColorSwatchView.swift */,
+				D4F2A6B83E5D9C0F1B2E7A48 /* IconStyleRowView.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -183,6 +192,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				"en-GB",
 				Base,
 				ca,
 				cs,
@@ -228,6 +238,7 @@
 			files = (
 				5E13C88D1BE03A6F00FF4305 /* Assets.xcassets in Resources */,
 				5E13C8901BE03A6F00FF4305 /* MainMenu.xib in Resources */,
+				A1E2D3C41B2F4A5B6C7D8E93 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -243,6 +254,7 @@
 				5E51B77F1E7EE562009395E6 /* PFMoveApplication.m in Sources */,
 				7A6E621AFE7580D49E7E7714 /* SpacePreferences.swift in Sources */,
 				A5AE357C03C4D0E1DDD62E6F /* ColorSwatchView.swift in Sources */,
+				B7D9E4A12F3C8B7E9A1D5C3F /* IconStyleRowView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -253,8 +265,19 @@
 			isa = PBXVariantGroup;
 			children = (
 				5E13C88F1BE03A6F00FF4305 /* Base */,
+				A1E2D3C41B2F4A5B6C7D8E94 /* en */,
+				A1E2D3C41B2F4A5B6C7D8E95 /* en-GB */,
 			);
 			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		A1E2D3C41B2F4A5B6C7D8E92 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A1E2D3C41B2F4A5B6C7D8E90 /* en */,
+				A1E2D3C41B2F4A5B6C7D8E91 /* en-GB */,
+			);
+			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

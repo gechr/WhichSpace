@@ -9,9 +9,29 @@
 import Cocoa
 import Sparkle
 
+private enum Localization {
+    static let applyToAll = NSLocalizedString(
+        "apply_to_all",
+        comment: "Menu item to apply setting to all spaces"
+    )
+    static let applyColorToAll = NSLocalizedString(
+        "apply_color_to_all",
+        comment: "Menu item to apply color to all spaces"
+    )
+    static let applyIconToAll = NSLocalizedString(
+        "apply_icon_to_all",
+        comment: "Menu item to apply icon to all spaces"
+    )
+    static let backgroundLabel = NSLocalizedString("background_label", comment: "Label for background color section")
+    static let colorTitle = NSLocalizedString("color_menu_title", comment: "Title of the color menu")
+    static let foregroundLabel = NSLocalizedString("foreground_label", comment: "Label for foreground color section")
+    static let iconTitle = NSLocalizedString("icon_menu_title", comment: "Title of the icon menu")
+    static let resetToDefault = NSLocalizedString("reset_to_default", comment: "Menu item to reset customization")
+}
+
 @main
 @objc
-class AppDelegate: NSObject, NSApplicationDelegate {
+final class AppDelegate: NSObject, NSApplicationDelegate {
     @IBOutlet var window: NSWindow!
     @IBOutlet var statusMenu: NSMenu!
     @IBOutlet var application: NSApplication!
@@ -24,26 +44,21 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let statusBarItem = NSStatusBar.system.statusItem(withLength: 24)
     let conn = _CGSDefaultConnection()
 
-    private var currentSpaceInt: Int = 0
-    private var currentSpaceNumber: String = "?"
+    private var currentSpace: Int = 0
+    private var currentSpaceLabel: String = "?"
     private var darkModeEnabled = false
     private var isPickingForeground = true
     private var lastUpdateTime: Date = .distantPast
     private var mouseEventMonitor: Any?
 
-    private var useBritishSpelling: Bool {
-        let region = Locale.current.language.region?.identifier
-        return region == "GB" || region == "AU" || region == "NZ"
-    }
-
-    fileprivate func configureApplication() {
+    private func configureApplication() {
         application = NSApplication.shared
         // Specifying `.Accessory` both hides the Dock icon and allows
         // the update dialog to take focus
         application.setActivationPolicy(.accessory)
     }
 
-    fileprivate func configureObservers() {
+    private func configureObservers() {
         workspace = NSWorkspace.shared
         workspace.notificationCenter.addObserver(
             self,
@@ -84,19 +99,43 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
-    fileprivate func configureMenuBarIcon() {
+    private func configureMenuBarIcon() {
         updateDarkModeStatus()
         configureColorMenuItems()
+        configureIconMenuItems()
+        configureResetMenuItem()
         statusBarItem.menu = statusMenu
         updateStatusBarIcon()
     }
 
-    fileprivate func configureColorMenuItems() {
-        // Create Colors submenu
-        let colorsMenu = NSMenu(title: useBritishSpelling ? "Colours" : "Colors")
+    private func configureResetMenuItem() {
+        statusMenu.insertItem(NSMenuItem.separator(), at: 3)
+
+        let applyAllItem = NSMenuItem(
+            title: Localization.applyToAll,
+            action: #selector(applyAllToAllSpaces),
+            keyEquivalent: ""
+        )
+        applyAllItem.target = self
+        statusMenu.insertItem(applyAllItem, at: 4)
+
+        let resetItem = NSMenuItem(
+            title: Localization.resetToDefault,
+            action: #selector(resetToDefaultClicked),
+            keyEquivalent: ""
+        )
+        resetItem.target = self
+        statusMenu.insertItem(resetItem, at: 5)
+
+        statusMenu.insertItem(NSMenuItem.separator(), at: 6)
+    }
+
+    private func configureColorMenuItems() {
+        // Create Color submenu
+        let colorsMenu = NSMenu(title: Localization.colorTitle)
 
         // Foreground label
-        let foregroundLabel = NSMenuItem(title: "Foreground", action: nil, keyEquivalent: "")
+        let foregroundLabel = NSMenuItem(title: Localization.foregroundLabel, action: nil, keyEquivalent: "")
         foregroundLabel.isEnabled = false
         colorsMenu.addItem(foregroundLabel)
 
@@ -117,7 +156,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         colorsMenu.addItem(NSMenuItem.separator())
 
         // Background label
-        let backgroundLabel = NSMenuItem(title: "Background", action: nil, keyEquivalent: "")
+        let backgroundLabel = NSMenuItem(title: Localization.backgroundLabel, action: nil, keyEquivalent: "")
         backgroundLabel.isEnabled = false
         colorsMenu.addItem(backgroundLabel)
 
@@ -137,40 +176,106 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         colorsMenu.addItem(NSMenuItem.separator())
 
-        let resetItem = NSMenuItem(
-            title: "Reset to Default",
-            action: #selector(resetColorsClicked),
+        let applyToAllItem = NSMenuItem(
+            title: Localization.applyColorToAll,
+            action: #selector(applyColorsToAllSpaces),
             keyEquivalent: ""
         )
-        resetItem.target = self
-        colorsMenu.addItem(resetItem)
+        applyToAllItem.target = self
+        colorsMenu.addItem(applyToAllItem)
 
         let colorsMenuItem = NSMenuItem(
-            title: useBritishSpelling ? "Colours" : "Colors",
+            title: Localization.colorTitle,
             action: nil,
             keyEquivalent: ""
         )
         colorsMenuItem.submenu = colorsMenu
 
         statusMenu.insertItem(colorsMenuItem, at: 0)
-        statusMenu.insertItem(NSMenuItem.separator(), at: 1)
+    }
+
+    private func configureIconMenuItems() {
+        let iconMenu = NSMenu(title: Localization.iconTitle)
+
+        for style in IconStyle.allCases {
+            let item = NSMenuItem()
+            let rowView = IconStyleRowView(style: style)
+            rowView.frame = NSRect(origin: .zero, size: rowView.intrinsicContentSize)
+            rowView.isChecked = style == currentIconStyle()
+            rowView.customColors = SpacePreferences.colors(forSpace: currentSpace)
+            rowView.darkMode = darkModeEnabled
+            rowView.previewNumber = currentSpaceLabel == "?" ? "1" : currentSpaceLabel
+            rowView.onSelected = { [weak self, weak rowView] in
+                self?.selectIconStyle(style, rowView: rowView)
+            }
+            item.view = rowView
+            item.representedObject = style
+            iconMenu.addItem(item)
+        }
+
+        iconMenu.addItem(NSMenuItem.separator())
+
+        let applyToAllItem = NSMenuItem(
+            title: Localization.applyIconToAll,
+            action: #selector(applyIconToAll),
+            keyEquivalent: ""
+        )
+        applyToAllItem.target = self
+        iconMenu.addItem(applyToAllItem)
+
+        let iconMenuItem = NSMenuItem(
+            title: Localization.iconTitle,
+            action: nil,
+            keyEquivalent: ""
+        )
+        iconMenuItem.submenu = iconMenu
+
+        statusMenu.insertItem(iconMenuItem, at: 1)
+        statusMenu.insertItem(NSMenuItem.separator(), at: 2)
+    }
+
+    private func selectIconStyle(_ style: IconStyle, rowView: IconStyleRowView?) {
+        guard currentSpace > 0 else { return }
+        SpacePreferences.setIconStyle(style, forSpace: currentSpace)
+
+        // Update checkmarks in all row views
+        if let menu = rowView?.enclosingMenuItem?.menu {
+            for item in menu.items {
+                if let view = item.view as? IconStyleRowView {
+                    view.isChecked = item.representedObject as? IconStyle == style
+                }
+            }
+        }
+
+        updateStatusBarIcon()
+    }
+
+    private func currentIconStyle() -> IconStyle {
+        SpacePreferences.iconStyle(forSpace: currentSpace) ?? .square
+    }
+
+    @objc func applyIconToAll() {
+        let style = currentIconStyle()
+        for space in 1 ... 16 {
+            SpacePreferences.setIconStyle(style, forSpace: space)
+        }
     }
 
     private func setForegroundColor(_ color: NSColor) {
-        guard currentSpaceInt > 0 else { return }
-        let existingColors = SpacePreferences.colors(forSpace: currentSpaceInt)
+        guard currentSpace > 0 else { return }
+        let existingColors = SpacePreferences.colors(forSpace: currentSpace)
         let background = existingColors?.backgroundColor ?? .black
         let newColors = SpaceColors(foreground: color, background: background)
-        SpacePreferences.setColors(newColors, forSpace: currentSpaceInt)
+        SpacePreferences.setColors(newColors, forSpace: currentSpace)
         updateStatusBarIcon()
     }
 
     private func setBackgroundColor(_ color: NSColor) {
-        guard currentSpaceInt > 0 else { return }
-        let existingColors = SpacePreferences.colors(forSpace: currentSpaceInt)
+        guard currentSpace > 0 else { return }
+        let existingColors = SpacePreferences.colors(forSpace: currentSpace)
         let foreground = existingColors?.foregroundColor ?? .white
         let newColors = SpaceColors(foreground: foreground, background: color)
-        SpacePreferences.setColors(newColors, forSpace: currentSpaceInt)
+        SpacePreferences.setColors(newColors, forSpace: currentSpace)
         updateStatusBarIcon()
     }
 
@@ -184,7 +289,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         colorPanel.isContinuous = true
 
         // Set initial color based on current space preferences
-        if let colors = SpacePreferences.colors(forSpace: currentSpaceInt) {
+        if let colors = SpacePreferences.colors(forSpace: currentSpace) {
             colorPanel.color = isPickingForeground ? colors.foregroundColor : colors.backgroundColor
         } else {
             colorPanel.color = isPickingForeground ? .white : .black
@@ -194,34 +299,54 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc func colorChanged(_ sender: NSColorPanel) {
-        guard currentSpaceInt > 0 else { return }
+        guard currentSpace > 0 else { return }
 
-        let existingColors = SpacePreferences.colors(forSpace: currentSpaceInt)
+        let existingColors = SpacePreferences.colors(forSpace: currentSpace)
         let foreground = isPickingForeground ? sender.color : (existingColors?.foregroundColor ?? .white)
         let background = isPickingForeground ? (existingColors?.backgroundColor ?? .black) : sender.color
 
         let newColors = SpaceColors(foreground: foreground, background: background)
-        SpacePreferences.setColors(newColors, forSpace: currentSpaceInt)
+        SpacePreferences.setColors(newColors, forSpace: currentSpace)
         updateStatusBarIcon()
     }
 
-    @objc func resetColorsClicked() {
-        guard currentSpaceInt > 0 else { return }
-        SpacePreferences.clearColors(forSpace: currentSpaceInt)
+    @objc func applyColorsToAllSpaces() {
+        guard let colors = SpacePreferences.colors(forSpace: currentSpace) else { return }
+        for space in 1 ... 16 {
+            SpacePreferences.setColors(colors, forSpace: space)
+        }
+    }
+
+    @objc func applyAllToAllSpaces() {
+        let style = currentIconStyle()
+        let colors = SpacePreferences.colors(forSpace: currentSpace)
+        for space in 1 ... 16 {
+            SpacePreferences.setIconStyle(style, forSpace: space)
+            if let colors {
+                SpacePreferences.setColors(colors, forSpace: space)
+            }
+        }
+    }
+
+    @objc func resetToDefaultClicked() {
+        guard currentSpace > 0 else { return }
+        SpacePreferences.clearColors(forSpace: currentSpace)
+        SpacePreferences.clearIconStyle(forSpace: currentSpace)
         updateStatusBarIcon()
     }
 
     private func updateStatusBarIcon() {
-        let customColors = SpacePreferences.colors(forSpace: currentSpaceInt)
+        let customColors = SpacePreferences.colors(forSpace: currentSpace)
         let icon = SpaceIconGenerator.generateIcon(
-            for: currentSpaceNumber,
+            for: currentSpaceLabel,
             darkMode: darkModeEnabled,
-            customColors: customColors
+            customColors: customColors,
+            style: currentIconStyle()
         )
         statusBarItem.button?.image = icon
     }
 
-    fileprivate func configureSparkle() {
+    private func configureSparkle() {
         updaterController = SPUStandardUpdaterController(
             startingUpdater: true,
             updaterDelegate: nil,
@@ -229,7 +354,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         )
     }
 
-    fileprivate func configureSpaceMonitor() {
+    private func configureSpaceMonitor() {
         let fullPath = (spacesMonitorFile as NSString).expandingTildeInPath
         let queue = DispatchQueue.global(qos: .default)
         let fildes = open(fullPath.cString(using: String.Encoding.utf8)!, O_EVTONLY)
@@ -281,18 +406,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc func updateActiveSpaceNumber() {
-        guard
-            let displays = CGSCopyManagedDisplaySpaces(conn) as? [NSDictionary],
-            let activeDisplay = CGSCopyActiveMenuBarDisplayIdentifier(conn) as? String
+        guard let displays = CGSCopyManagedDisplaySpaces(conn) as? [NSDictionary],
+              let activeDisplay = CGSCopyActiveMenuBarDisplayIdentifier(conn) as? String
         else {
             return
         }
 
         for display in displays {
-            guard
-                let current = display["Current Space"] as? [String: Any],
-                let spaces = display["Spaces"] as? [[String: Any]],
-                let displayID = display["Display Identifier"] as? String
+            guard let current = display["Current Space"] as? [String: Any],
+                  let spaces = display["Spaces"] as? [[String: Any]],
+                  let displayID = display["Display Identifier"] as? String
             else {
                 continue
             }
@@ -320,8 +443,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 }
                 if spaceID == activeSpaceID {
                     DispatchQueue.main.async {
-                        self.currentSpaceInt = localIndex
-                        self.currentSpaceNumber = String(localIndex)
+                        self.currentSpace = localIndex
+                        self.currentSpaceLabel = String(localIndex)
                         self.lastUpdateTime = Date()
                         self.updateStatusBarIcon()
                     }
@@ -331,8 +454,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         DispatchQueue.main.async {
-            self.currentSpaceInt = 0
-            self.currentSpaceNumber = "?"
+            self.currentSpace = 0
+            self.currentSpaceLabel = "?"
             self.updateStatusBarIcon()
         }
     }
@@ -343,5 +466,26 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     @IBAction func quitClicked(_: NSMenuItem) {
         NSApplication.shared.terminate(self)
+    }
+}
+
+// MARK: - NSMenuDelegate
+
+extension AppDelegate: NSMenuDelegate {
+    func menuWillOpen(_ menu: NSMenu) {
+        // Update icon style views when menu opens
+        let currentStyle = currentIconStyle()
+        let customColors = SpacePreferences.colors(forSpace: currentSpace)
+        let previewNumber = currentSpaceLabel == "?" ? "1" : currentSpaceLabel
+
+        for item in menu.items {
+            if let view = item.view as? IconStyleRowView {
+                view.isChecked = item.representedObject as? IconStyle == currentStyle
+                view.customColors = customColors
+                view.darkMode = darkModeEnabled
+                view.previewNumber = previewNumber
+                view.needsDisplay = true
+            }
+        }
     }
 }

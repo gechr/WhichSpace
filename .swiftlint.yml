@@ -1,3 +1,4 @@
 disabled_rules:
+  - file_length
   - trailing_comma
   - type_body_length

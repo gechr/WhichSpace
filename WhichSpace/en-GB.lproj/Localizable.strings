@@ -1,0 +1,19 @@
+"apply_to_all" = "Apply style to all Spaces";
+"apply_color_to_all" = "Apply colour to all Spaces";
+"apply_icon_to_all" = "Apply icon to all Spaces";
+"background_label" = "Background";
+"color_menu_title" = "Colour";
+"foreground_label" = "Foreground";
+"icon_menu_title" = "Icon";
+"reset_to_default" = "Reset to default style";
+
+"icon_style_square" = "Square";
+"icon_style_squareOutline" = "Square (Outline)";
+"icon_style_circle" = "Circle";
+"icon_style_circleOutline" = "Circle (Outline)";
+"icon_style_triangle" = "Triangle";
+"icon_style_triangleOutline" = "Triangle (Outline)";
+"icon_style_pentagon" = "Pentagon";
+"icon_style_pentagonOutline" = "Pentagon (Outline)";
+"icon_style_hexagon" = "Hexagon";
+"icon_style_hexagonOutline" = "Hexagon (Outline)";

@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class ColorSwatchView: NSView {
+final class ColorSwatchView: NSView {
     static let presetColors: [NSColor] = [
         .black,
         .white,
@@ -27,6 +27,8 @@ class ColorSwatchView: NSView {
     var onColorSelected: ((NSColor) -> Void)?
     var onCustomColorRequested: (() -> Void)?
 
+    private var hoveredIndex: Int?
+
     override var intrinsicContentSize: NSSize {
         let count = CGFloat(Self.presetColors.count + 1) // +1 for custom color button
         let width = padding * 2 + count * swatchSize + (count - 1) * spacing
@@ -41,18 +43,26 @@ class ColorSwatchView: NSView {
         let yOffset = (bounds.height - swatchSize) / 2
 
         // Draw preset color swatches
-        for color in Self.presetColors {
+        for (index, color) in Self.presetColors.enumerated() {
             let swatchRect = NSRect(x: xOffset, y: yOffset, width: swatchSize, height: swatchSize)
-            drawSwatch(color: color, in: swatchRect)
+            drawSwatch(color: color, in: swatchRect, highlighted: hoveredIndex == index)
             xOffset += swatchSize + spacing
         }
 
         // Draw custom color button (rainbow gradient circle)
         let customRect = NSRect(x: xOffset, y: yOffset, width: swatchSize, height: swatchSize)
-        drawCustomColorButton(in: customRect)
+        let customHighlighted = hoveredIndex == Self.presetColors.count
+        drawCustomColorButton(in: customRect, highlighted: customHighlighted)
     }
 
-    private func drawSwatch(color: NSColor, in rect: NSRect) {
+    private func drawSwatch(color: NSColor, in rect: NSRect, highlighted: Bool) {
+        if highlighted {
+            let highlightRect = rect.insetBy(dx: -2, dy: -2)
+            let highlightPath = NSBezierPath(ovalIn: highlightRect)
+            NSColor.selectedContentBackgroundColor.setFill()
+            highlightPath.fill()
+        }
+
         let path = NSBezierPath(ovalIn: rect.insetBy(dx: 1, dy: 1))
 
         // Draw border for light colors
@@ -64,7 +74,14 @@ class ColorSwatchView: NSView {
         path.fill()
     }
 
-    private func drawCustomColorButton(in rect: NSRect) {
+    private func drawCustomColorButton(in rect: NSRect, highlighted: Bool) {
+        if highlighted {
+            let highlightRect = rect.insetBy(dx: -2, dy: -2)
+            let highlightPath = NSBezierPath(ovalIn: highlightRect)
+            NSColor.selectedContentBackgroundColor.setFill()
+            highlightPath.fill()
+        }
+
         let path = NSBezierPath(ovalIn: rect.insetBy(dx: 1, dy: 1))
 
         // Draw a simple "+" or gradient to indicate custom
@@ -109,5 +126,53 @@ class ColorSwatchView: NSView {
         if customRect.contains(location) {
             onCustomColorRequested?()
         }
+    }
+
+    override func mouseMoved(with event: NSEvent) {
+        let location = convert(event.locationInWindow, from: nil)
+        let newIndex = indexForLocation(location)
+        if newIndex != hoveredIndex {
+            hoveredIndex = newIndex
+            needsDisplay = true
+        }
+    }
+
+    override func mouseExited(with _: NSEvent) {
+        hoveredIndex = nil
+        needsDisplay = true
+    }
+
+    override func updateTrackingAreas() {
+        super.updateTrackingAreas()
+        for area in trackingAreas {
+            removeTrackingArea(area)
+        }
+        addTrackingArea(NSTrackingArea(
+            rect: bounds,
+            options: [.mouseEnteredAndExited, .mouseMoved, .activeAlways],
+            owner: self,
+            userInfo: nil
+        ))
+    }
+
+    private func indexForLocation(_ location: NSPoint) -> Int? {
+        var xOffset = padding
+        let yOffset = (bounds.height - swatchSize) / 2
+
+        for index in 0 ..< Self.presetColors.count {
+            let swatchRect = NSRect(x: xOffset, y: yOffset, width: swatchSize, height: swatchSize)
+            if swatchRect.contains(location) {
+                return index
+            }
+            xOffset += swatchSize + spacing
+        }
+
+        // Check custom color button
+        let customRect = NSRect(x: xOffset, y: yOffset, width: swatchSize, height: swatchSize)
+        if customRect.contains(location) {
+            return Self.presetColors.count
+        }
+
+        return nil
     }
 }
