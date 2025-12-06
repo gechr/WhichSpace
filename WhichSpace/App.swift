@@ -1,5 +1,5 @@
 import LaunchAtLogin
-import Sparkle
+@preconcurrency import Sparkle
 import SwiftUI
 
 @main
@@ -17,14 +17,10 @@ struct AppMain: App {
 // MARK: - App Delegate
 
 @MainActor
-final class AppDelegate: NSObject, NSApplicationDelegate {
+final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverDelegate {
     private let statusBarItem = NSStatusBar.system.statusItem(withLength: Layout.statusItemWidth)
     private let appState = AppState.shared
-    private let updaterController = SPUStandardUpdaterController(
-        startingUpdater: true,
-        updaterDelegate: nil,
-        userDriverDelegate: nil
-    )
+    private var updaterController: SPUStandardUpdaterController!
 
     private var statusMenu: NSMenu!
     private var isPickingForeground = true
@@ -35,7 +31,34 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_: Notification) {
         PFMoveToApplicationsFolderIfNecessary()
         NSApp.setActivationPolicy(.accessory)
+        updaterController = SPUStandardUpdaterController(
+            startingUpdater: true,
+            updaterDelegate: nil,
+            userDriverDelegate: self
+        )
         configureMenuBarIcon()
+    }
+
+    // MARK: - SPUStandardUserDriverDelegate
+
+    nonisolated var supportsGentleScheduledUpdateReminders: Bool {
+        true
+    }
+
+    nonisolated func standardUserDriverWillHandleShowingUpdate(
+        _: Bool,
+        forUpdate _: SUAppcastItem,
+        state _: SPUUserUpdateState
+    ) {
+        DispatchQueue.main.async {
+            NSApp.setActivationPolicy(.regular)
+        }
+    }
+
+    nonisolated func standardUserDriverWillFinishUpdateSession() {
+        DispatchQueue.main.async {
+            NSApp.setActivationPolicy(.accessory)
+        }
     }
 
     private func configureMenuBarIcon() {
