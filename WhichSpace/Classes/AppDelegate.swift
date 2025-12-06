@@ -104,6 +104,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         configureColorMenuItems()
         configureIconMenuItems()
         configureResetMenuItem()
+        statusMenu.delegate = self
         statusBarItem.menu = statusMenu
         updateStatusBarIcon()
     }
@@ -196,6 +197,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func configureIconMenuItems() {
         let iconMenu = NSMenu(title: Localization.iconTitle)
+        iconMenu.delegate = self
 
         for style in IconStyle.allCases {
             let item = NSMenuItem()
@@ -479,6 +481,7 @@ extension AppDelegate: NSMenuDelegate {
         let previewNumber = currentSpaceLabel == "?" ? "1" : currentSpaceLabel
 
         for item in menu.items {
+            // Direct items (when Icons submenu opens)
             if let view = item.view as? IconStyleRowView {
                 view.isChecked = item.representedObject as? IconStyle == currentStyle
                 view.customColors = customColors
