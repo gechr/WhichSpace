@@ -28,6 +28,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private var statusMenu: NSMenu!
     private var isPickingForeground = true
+    private var appName: String {
+        Bundle.main.infoDictionary?["CFBundleName"] as? String ?? "WhichSpace"
+    }
 
     func applicationDidFinishLaunching(_: Notification) {
         PFMoveToApplicationsFolderIfNecessary()
@@ -49,9 +52,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func configureVersionHeader() {
-        let name = Bundle.main.infoDictionary?["CFBundleName"] as? String ?? "WhichSpace"
         let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
-        let versionItem = NSMenuItem(title: "\(name) v\(version)", action: nil, keyEquivalent: "")
+        let versionItem = NSMenuItem(title: "\(appName) v\(version)", action: nil, keyEquivalent: "")
         versionItem.isEnabled = false
         if let icon = NSApp.applicationIconImage {
             let resized = NSImage(size: NSSize(width: 16, height: 16))
@@ -79,7 +81,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Number submenu (icon shapes)
         let iconMenu = createIconMenu()
         let iconMenuItem = NSMenuItem(title: Localization.numberTitle, action: nil, keyEquivalent: "")
-        iconMenuItem.image = NSImage(systemSymbolName: "number", accessibilityDescription: nil)
+        iconMenuItem.image = NSImage(systemSymbolName: "textformat.123", accessibilityDescription: nil)
         iconMenuItem.submenu = iconMenu
         styleMenu.addItem(iconMenuItem)
 
@@ -99,6 +101,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
         applyStyleItem.target = self
         applyStyleItem.image = NSImage(systemSymbolName: "square.on.square", accessibilityDescription: nil)
+        applyStyleItem.toolTip = Localization.applyStyleToAllTip
         styleMenu.addItem(applyStyleItem)
 
         let resetStyleItem = NSMenuItem(
@@ -108,10 +111,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
         resetStyleItem.target = self
         resetStyleItem.image = NSImage(systemSymbolName: "arrow.uturn.backward", accessibilityDescription: nil)
+        resetStyleItem.toolTip = Localization.resetStyleToDefaultTip
         styleMenu.addItem(resetStyleItem)
 
         let styleMenuItem = NSMenuItem(title: Localization.styleTitle, action: nil, keyEquivalent: "")
-        styleMenuItem.image = NSImage(systemSymbolName: "textformat", accessibilityDescription: nil)
+        styleMenuItem.image = NSImage(systemSymbolName: "photo.artframe", accessibilityDescription: nil)
         styleMenuItem.submenu = styleMenu
         statusMenu.addItem(styleMenuItem)
         statusMenu.addItem(.separator())
@@ -125,6 +129,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
         applyToAllItem.target = self
         applyToAllItem.image = NSImage(systemSymbolName: "square.on.square", accessibilityDescription: nil)
+        applyToAllItem.toolTip = Localization.applyToAllTip
         statusMenu.addItem(applyToAllItem)
 
         let resetItem = NSMenuItem(
@@ -134,6 +139,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
         resetItem.target = self
         resetItem.image = NSImage(systemSymbolName: "arrow.uturn.backward", accessibilityDescription: nil)
+        resetItem.toolTip = Localization.resetSpaceToDefaultTip
         statusMenu.addItem(resetItem)
         statusMenu.addItem(.separator())
     }
@@ -147,6 +153,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         launchAtLoginItem.target = self
         launchAtLoginItem.tag = 100
         launchAtLoginItem.image = NSImage(systemSymbolName: "sunrise", accessibilityDescription: nil)
+        launchAtLoginItem.toolTip = "Automatically start \(appName) when you log in"
         statusMenu.addItem(launchAtLoginItem)
     }
 
@@ -158,15 +165,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
         updateItem.target = self
         updateItem.image = NSImage(systemSymbolName: "arrow.triangle.2.circlepath", accessibilityDescription: nil)
+        updateItem.toolTip = "Check for new versions of \(appName)"
         statusMenu.addItem(updateItem)
-
-        statusMenu.addItem(.separator())
 
         let quitItem = NSMenuItem(
             title: "Quit",
             action: #selector(NSApplication.terminate(_:)),
             keyEquivalent: "q"
         )
+        quitItem.image = NSImage(systemSymbolName: "xmark.circle", accessibilityDescription: nil)
+        quitItem.toolTip = "Quit \(appName)"
         statusMenu.addItem(quitItem)
     }
 
@@ -246,6 +254,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
         invertColorsItem.target = self
         invertColorsItem.image = NSImage(systemSymbolName: "arrow.left.arrow.right", accessibilityDescription: nil)
+        invertColorsItem.toolTip = Localization.invertColorsTip
         colorsMenu.addItem(invertColorsItem)
 
         let applyToAllItem = NSMenuItem(
@@ -255,6 +264,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
         applyToAllItem.target = self
         applyToAllItem.image = NSImage(systemSymbolName: "square.on.square", accessibilityDescription: nil)
+        applyToAllItem.toolTip = Localization.applyColorToAllTip
         colorsMenu.addItem(applyToAllItem)
 
         let resetColorItem = NSMenuItem(
@@ -264,6 +274,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
         resetColorItem.target = self
         resetColorItem.image = NSImage(systemSymbolName: "arrow.uturn.backward", accessibilityDescription: nil)
+        resetColorItem.toolTip = Localization.resetColorToDefaultTip
         colorsMenu.addItem(resetColorItem)
 
         return colorsMenu
