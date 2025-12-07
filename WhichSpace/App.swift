@@ -201,7 +201,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
         let sizeMenuItem = NSMenuItem(title: Localization.sizeTitle, action: nil, keyEquivalent: "")
         sizeMenuItem.image = NSImage(
-            systemSymbolName: "percent",
+            systemSymbolName: "arrow.up.left.and.down.right.and.arrow.up.right.and.down.left",
             accessibilityDescription: nil
         )
         sizeMenuItem.submenu = sizeMenu

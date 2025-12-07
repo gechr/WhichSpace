@@ -24,7 +24,7 @@ enum Labels {
 enum Layout {
     // Size scale (percentage)
     static let defaultSizeScale = 100.0
-    static let sizeScaleRange = 50.0 ... 120.0
+    static let sizeScaleRange = 60.0 ... 120.0
 
     // Base sizes (at 100% scale)
     static let baseIconSize = 20.0

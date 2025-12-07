@@ -125,6 +125,7 @@ final class SizeRowView: NSView {
     // MARK: - Mouse Events
 
     override func mouseDown(with event: NSEvent) {
+        window?.makeFirstResponder(self)
         let location = convert(event.locationInWindow, from: nil)
 
         if stepper.frame.contains(location) {
@@ -139,6 +140,23 @@ final class SizeRowView: NSView {
         }
 
         super.mouseDown(with: event)
+    }
+
+    // MARK: - Keyboard Events
+
+    override var acceptsFirstResponder: Bool { true }
+
+    override func keyDown(with event: NSEvent) {
+        switch event.keyCode {
+        case 123, 125: // Left arrow, Down arrow
+            stepper.doubleValue = max(stepper.minValue, stepper.doubleValue - stepper.increment)
+            stepperChanged()
+        case 124, 126: // Right arrow, Up arrow
+            stepper.doubleValue = min(stepper.maxValue, stepper.doubleValue + stepper.increment)
+            stepperChanged()
+        default:
+            super.keyDown(with: event)
+        }
     }
 
     // MARK: - Actions
