@@ -1,6 +1,8 @@
 import Cocoa
 
 final class ColorSwatchView: NSView {
+    // MARK: - Static Properties
+
     static let presetColors: [NSColor] = [
         .black,
         .white,
@@ -18,19 +20,24 @@ final class ColorSwatchView: NSView {
         .systemGreen, .systemBlue, .systemPurple,
     ]
 
+    // MARK: - Configuration
+
+    var gridMode = false
+    var onColorSelected: ((NSColor) -> Void)?
+    var onCustomColorRequested: (() -> Void)?
+
+    // MARK: - Private Properties
+
     private let swatchSize = 16.0
     private let spacing = 6.0
     private let padding = 12.0
-
-    var onColorSelected: ((NSColor) -> Void)?
-    var onCustomColorRequested: (() -> Void)?
-    var gridMode = false
-
     private var hoveredIndex: Int?
 
     private var colors: [NSColor] {
         gridMode ? Self.gridColors : Self.presetColors
     }
+
+    // MARK: - NSView Overrides
 
     override var intrinsicContentSize: CGSize {
         let count = Double(colors.count + (gridMode ? 0 : 1)) // +1 for custom color button in normal mode
@@ -57,57 +64,6 @@ final class ColorSwatchView: NSView {
             let customRect = CGRect(x: xOffset, y: yOffset, width: swatchSize, height: swatchSize)
             let customHighlighted = hoveredIndex == colors.count
             drawCustomColorButton(in: customRect, highlighted: customHighlighted)
-        }
-    }
-
-    private func drawSwatch(color: NSColor, in rect: CGRect, highlighted: Bool) {
-        if highlighted {
-            let highlightRect = rect.insetBy(dx: -2, dy: -2)
-            let highlightPath = NSBezierPath(ovalIn: highlightRect)
-            NSColor.selectedContentBackgroundColor.setFill()
-            highlightPath.fill()
-        }
-
-        let path = NSBezierPath(ovalIn: rect.insetBy(dx: 1, dy: 1))
-
-        // Draw border for light colors
-        NSColor.gray.withAlphaComponent(0.5).setStroke()
-        path.lineWidth = 1
-        path.stroke()
-
-        color.setFill()
-        path.fill()
-    }
-
-    private func drawCustomColorButton(in rect: CGRect, highlighted: Bool) {
-        if highlighted {
-            let highlightRect = rect.insetBy(dx: -2, dy: -2)
-            let highlightPath = NSBezierPath(ovalIn: highlightRect)
-            NSColor.selectedContentBackgroundColor.setFill()
-            highlightPath.fill()
-        }
-
-        let path = NSBezierPath(ovalIn: rect.insetBy(dx: 1, dy: 1))
-
-        // Draw a simple "+" or gradient to indicate custom
-        NSColor.gray.withAlphaComponent(0.5).setStroke()
-        path.lineWidth = 1
-        path.stroke()
-
-        // Draw rainbow-ish gradient
-        let colors = [NSColor.systemRed, NSColor.systemYellow, NSColor.systemGreen, NSColor.systemBlue]
-        let center = CGPoint(x: rect.midX, y: rect.midY)
-        let radius = swatchSize / 2 - 2
-
-        for (index, color) in colors.enumerated() {
-            let startAngle = Double(index) * 90
-            let endAngle = Double(index + 1) * 90
-            let wedge = NSBezierPath()
-            wedge.move(to: center)
-            wedge.appendArc(withCenter: center, radius: radius, startAngle: startAngle, endAngle: endAngle)
-            wedge.close()
-            color.setFill()
-            wedge.fill()
         }
     }
 
@@ -163,6 +119,8 @@ final class ColorSwatchView: NSView {
         ))
     }
 
+    // MARK: - Private Methods
+
     private func indexForLocation(_ location: CGPoint) -> Int? {
         var xOffset = padding
         let yOffset = (bounds.height - swatchSize) / 2
@@ -184,5 +142,56 @@ final class ColorSwatchView: NSView {
         }
 
         return nil
+    }
+
+    private func drawSwatch(color: NSColor, in rect: CGRect, highlighted: Bool) {
+        if highlighted {
+            let highlightRect = rect.insetBy(dx: -2, dy: -2)
+            let highlightPath = NSBezierPath(ovalIn: highlightRect)
+            NSColor.selectedContentBackgroundColor.setFill()
+            highlightPath.fill()
+        }
+
+        let path = NSBezierPath(ovalIn: rect.insetBy(dx: 1, dy: 1))
+
+        // Draw border for light colors
+        NSColor.gray.withAlphaComponent(0.5).setStroke()
+        path.lineWidth = 1
+        path.stroke()
+
+        color.setFill()
+        path.fill()
+    }
+
+    private func drawCustomColorButton(in rect: CGRect, highlighted: Bool) {
+        if highlighted {
+            let highlightRect = rect.insetBy(dx: -2, dy: -2)
+            let highlightPath = NSBezierPath(ovalIn: highlightRect)
+            NSColor.selectedContentBackgroundColor.setFill()
+            highlightPath.fill()
+        }
+
+        let path = NSBezierPath(ovalIn: rect.insetBy(dx: 1, dy: 1))
+
+        // Draw a simple "+" or gradient to indicate custom
+        NSColor.gray.withAlphaComponent(0.5).setStroke()
+        path.lineWidth = 1
+        path.stroke()
+
+        // Draw rainbow-ish gradient
+        let colors = [NSColor.systemRed, NSColor.systemYellow, NSColor.systemGreen, NSColor.systemBlue]
+        let center = CGPoint(x: rect.midX, y: rect.midY)
+        let radius = swatchSize / 2 - 2
+
+        for (index, color) in colors.enumerated() {
+            let startAngle = Double(index) * 90
+            let endAngle = Double(index + 1) * 90
+            let wedge = NSBezierPath()
+            wedge.move(to: center)
+            wedge.appendArc(withCenter: center, radius: radius, startAngle: startAngle, endAngle: endAngle)
+            wedge.close()
+            color.setFill()
+            wedge.fill()
+        }
     }
 }

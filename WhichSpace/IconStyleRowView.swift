@@ -2,7 +2,7 @@ import Cocoa
 
 final class IconStyleRowView: NSView {
     private let style: IconStyle
-    private let iconSize = Layout.iconSize
+    private let iconSize = Layout.defaultIconSize
     private var isHighlighted = false
 
     var onSelected: (() -> Void)?

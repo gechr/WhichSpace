@@ -1,6 +1,8 @@
 import Cocoa
 import Defaults
 
+// MARK: - IconStyle
+
 enum IconStyle: String, CaseIterable, Defaults.Serializable {
     case square
     case squareOutline
@@ -18,14 +20,9 @@ enum IconStyle: String, CaseIterable, Defaults.Serializable {
     }
 }
 
+// MARK: - SpaceColors
+
 struct SpaceColors: Equatable, Defaults.Serializable {
-    var foreground: NSColor
-    var background: NSColor
-
-    // Backwards compatibility aliases
-    var foregroundColor: NSColor { foreground }
-    var backgroundColor: NSColor { background }
-
     struct Bridge: Defaults.Bridge {
         typealias Value = SpaceColors
         typealias Serializable = [String: Data]
@@ -62,11 +59,22 @@ struct SpaceColors: Equatable, Defaults.Serializable {
     }
 
     static let bridge = Bridge()
+
+    var foreground: NSColor
+    var background: NSColor
+
+    // Backwards compatibility aliases
+    var foregroundColor: NSColor { foreground }
+    var backgroundColor: NSColor { background }
 }
 
-enum SpacePreferences {
-    // MARK: - SF Symbol
+// MARK: - SpacePreferences
 
+enum SpacePreferences {}
+
+// MARK: - SpacePreferences + SF Symbols
+
+extension SpacePreferences {
     static func sfSymbol(forSpace spaceNumber: Int) -> String? {
         Defaults[.spaceSFSymbols][spaceNumber]
     }
@@ -82,19 +90,11 @@ enum SpacePreferences {
     static func clearSFSymbol(forSpace spaceNumber: Int) {
         Defaults[.spaceSFSymbols].removeValue(forKey: spaceNumber)
     }
+}
 
-    // MARK: - All Configured Spaces
+// MARK: - SpacePreferences + Icon Style
 
-    static func allConfiguredSpaces() -> Set<Int> {
-        var spaces = Set<Int>()
-        spaces.formUnion(Defaults[.spaceColors].keys)
-        spaces.formUnion(Defaults[.spaceIconStyles].keys)
-        spaces.formUnion(Defaults[.spaceSFSymbols].keys)
-        return spaces
-    }
-
-    // MARK: - Icon Style
-
+extension SpacePreferences {
     static func iconStyle(forSpace spaceNumber: Int) -> IconStyle? {
         Defaults[.spaceIconStyles][spaceNumber]
     }
@@ -110,9 +110,11 @@ enum SpacePreferences {
     static func clearIconStyle(forSpace spaceNumber: Int) {
         Defaults[.spaceIconStyles].removeValue(forKey: spaceNumber)
     }
+}
 
-    // MARK: - Colors
+// MARK: - SpacePreferences + Colors
 
+extension SpacePreferences {
     static func colors(forSpace spaceNumber: Int) -> SpaceColors? {
         Defaults[.spaceColors][spaceNumber]
     }

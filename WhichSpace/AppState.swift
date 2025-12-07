@@ -219,13 +219,6 @@ final class AppState {
         return generateSingleIcon(for: currentSpace, label: currentSpaceLabel, darkMode: isDark)
     }
 
-    var statusBarWidth: Double {
-        if showAllSpaces, !allSpaceLabels.isEmpty {
-            return Double(allSpaceLabels.count) * Layout.statusItemWidth
-        }
-        return Layout.statusItemWidth
-    }
-
     private func generateSingleIcon(for space: Int, label: String, darkMode: Bool) -> NSImage {
         let colors = SpacePreferences.colors(forSpace: space)
         let style = SpacePreferences.iconStyle(forSpace: space) ?? .square

@@ -23,6 +23,8 @@
 		784A5E34B37EFEA67108010D /* IconStyleRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D390612030604D33D8BAF96E /* IconStyleRowView.swift */; };
 		7A6E621AFE7580D49E7E7714 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBA7DD8EA9C87994B985726 /* Preferences.swift */; };
 		A1E2D3C41B2F4A5B6C7D8E93 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A1E2D3C41B2F4A5B6C7D8E92 /* Localizable.strings */; };
+		SIZE01ROWVIEWBUILDREF /* SizeRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SIZE01ROWVIEWFILEREFER /* SizeRowView.swift */; };
+		CONF01ALERTBUILDREFER /* ConfirmationAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = CONF01ALERTFILEREFER /* ConfirmationAlert.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -57,6 +59,8 @@
 		A1E2D3C41B2F4A5B6C7D8E90 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Locale/en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		A1E2D3C41B2F4A5B6C7D8E91 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "Locale/en-GB.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		D390612030604D33D8BAF96E /* IconStyleRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconStyleRowView.swift; sourceTree = "<group>"; };
+		SIZE01ROWVIEWFILEREFER /* SizeRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizeRowView.swift; sourceTree = "<group>"; };
+		CONF01ALERTFILEREFER /* ConfirmationAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmationAlert.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +107,8 @@
 				5DEE86BDAF9CDD39DEAD48B1 /* ColorSwatchView.swift */,
 				D390612030604D33D8BAF96E /* IconStyleRowView.swift */,
 				58EEA2DF7ADE5C02ADC1AE3A /* SymbolPickerView.swift */,
+				SIZE01ROWVIEWFILEREFER /* SizeRowView.swift */,
+				CONF01ALERTFILEREFER /* ConfirmationAlert.swift */,
 				5E13C88C1BE03A6F00FF4305 /* Assets.xcassets */,
 				5E13C8911BE03A6F00FF4305 /* Info.plist */,
 				A1E2D3C41B2F4A5B6C7D8E92 /* Localizable.strings */,
@@ -242,6 +248,8 @@
 				046A66EA8CE1B935051E9603 /* Constants.swift in Sources */,
 				388A1BECFB83F1A4A810071C /* ColorSwatchView.swift in Sources */,
 				784A5E34B37EFEA67108010D /* IconStyleRowView.swift in Sources */,
+				SIZE01ROWVIEWBUILDREF /* SizeRowView.swift in Sources */,
+				CONF01ALERTBUILDREFER /* ConfirmationAlert.swift in Sources */,
 				653A4C2D9300475561325CA6 /* SymbolPickerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

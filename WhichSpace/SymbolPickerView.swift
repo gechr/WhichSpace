@@ -1,8 +1,10 @@
 import Cocoa
 
-final class SymbolPickerView: NSView, NSSearchFieldDelegate {
-    // Curated list of symbols useful for a space picker app
+final class SymbolPickerView: NSView {
+    // MARK: - Static Properties
+
     // swiftformat:disable all
+    /// Curated list of symbols useful for a space picker app
     private static let curatedSymbols: [String] = [
         // Work & Productivity
         "doc.fill", "doc.text.fill", "doc.richtext.fill", "doc.plaintext.fill", "doc.append.fill",
@@ -252,6 +254,8 @@ final class SymbolPickerView: NSView, NSSearchFieldDelegate {
         return available.shuffled(using: &rng)
     }()
 
+    // MARK: - Configuration
+
     private let symbolSize: Double = 20
     private let spacing: Double = 4
     private let padding: Double = 8
@@ -259,6 +263,8 @@ final class SymbolPickerView: NSView, NSSearchFieldDelegate {
     private let visibleRows = 8
     private let searchFieldHeight: Double = 22
     private let scrollbarWidth: Double = 15
+
+    // MARK: - Public Properties
 
     var onSymbolSelected: ((String?) -> Void)?
     var selectedSymbol: String?
@@ -269,10 +275,25 @@ final class SymbolPickerView: NSView, NSSearchFieldDelegate {
         }
     }
 
+    // MARK: - Private Properties
+
     private var filteredSymbols: [String] = allSymbols
     private let searchField = NSSearchField()
     private let scrollView = NSScrollView()
     private let gridView: SymbolGridView
+
+    // MARK: - Computed Properties
+
+    override var acceptsFirstResponder: Bool { true }
+
+    override var intrinsicContentSize: CGSize {
+        let gridWidth = padding * 2 + Double(columns) * symbolSize + Double(columns - 1) * spacing + scrollbarWidth
+        let maxGridHeight = Double(visibleRows) * symbolSize + Double(visibleRows - 1) * spacing + padding
+        let totalHeight = padding + searchFieldHeight + padding + maxGridHeight + padding
+        return CGSize(width: gridWidth, height: totalHeight)
+    }
+
+    // MARK: - Initialization
 
     override init(frame frameRect: CGRect) {
         gridView = SymbolGridView(symbols: Self.allSymbols, columns: columns, symbolSize: symbolSize, spacing: spacing)
@@ -286,7 +307,7 @@ final class SymbolPickerView: NSView, NSSearchFieldDelegate {
         setupViews()
     }
 
-    override var acceptsFirstResponder: Bool { true }
+    // MARK: - Private Methods
 
     private func setupViews() {
         // Search field at top
@@ -334,16 +355,11 @@ final class SymbolPickerView: NSView, NSSearchFieldDelegate {
         gridView.updateSize()
         gridView.needsDisplay = true
     }
+}
 
-    override var intrinsicContentSize: CGSize {
-        let gridWidth = padding * 2 + Double(columns) * symbolSize + Double(columns - 1) * spacing + scrollbarWidth
-        let maxGridHeight = Double(visibleRows) * symbolSize + Double(visibleRows - 1) * spacing + padding
-        let totalHeight = padding + searchFieldHeight + padding + maxGridHeight + padding
-        return CGSize(width: gridWidth, height: totalHeight)
-    }
+// MARK: - NSSearchFieldDelegate
 
-    // MARK: - NSSearchFieldDelegate
-
+extension SymbolPickerView: NSSearchFieldDelegate {
     func controlTextDidChange(_: Notification) {
         let searchText = searchField.stringValue.lowercased()
         if searchText.isEmpty {
@@ -355,13 +371,17 @@ final class SymbolPickerView: NSView, NSSearchFieldDelegate {
     }
 }
 
-// MARK: - Symbol Grid View
+// MARK: - SymbolGridView
 
 private final class SymbolGridView: NSView {
+    // MARK: - Properties
+
     var symbols: [String]
     var selectedSymbol: String?
     var darkMode = false
     var onSymbolSelected: ((String) -> Void)?
+
+    // MARK: - Private Properties
 
     private let columns: Int
     private let symbolSize: Double
@@ -369,6 +389,12 @@ private final class SymbolGridView: NSView {
     private let padding: Double = 8
     private var hoveredIndex: Int?
     private var imageCache: [String: NSImage] = [:]
+
+    // MARK: - Computed Properties
+
+    override var isFlipped: Bool { true }
+
+    // MARK: - Initialization
 
     init(symbols: [String], columns: Int, symbolSize: Double, spacing: Double) {
         self.symbols = symbols
@@ -383,15 +409,17 @@ private final class SymbolGridView: NSView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: - Public Methods
+
     func updateSize() {
         let rows = (symbols.count + columns - 1) / columns
         let width = padding * 2 + Double(columns) * symbolSize + Double(columns - 1) * spacing
         let height = padding * 2 + Double(rows) * symbolSize + Double(rows - 1) * spacing
         frame = CGRect(x: 0, y: 0, width: width, height: max(height, 50))
-        imageCache.removeAll() // Clear cache when symbols change
+        imageCache.removeAll()
     }
 
-    override var isFlipped: Bool { true }
+    // MARK: - Drawing
 
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
@@ -470,6 +498,8 @@ private final class SymbolGridView: NSView {
         tintedImage.draw(in: imageRect)
     }
 
+    // MARK: - Event Handling
+
     override func mouseUp(with event: NSEvent) {
         let location = convert(event.locationInWindow, from: nil)
         if let index = indexForLocation(location), index < symbols.count {
@@ -505,14 +535,6 @@ private final class SymbolGridView: NSView {
         toolTip = nil
     }
 
-    private func rectForIndex(_ index: Int) -> CGRect {
-        let col = index % columns
-        let row = index / columns
-        let xOffset = padding + Double(col) * (symbolSize + spacing)
-        let yOffset = padding + Double(row) * (symbolSize + spacing)
-        return CGRect(x: xOffset - 2, y: yOffset - 2, width: symbolSize + 4, height: symbolSize + 4)
-    }
-
     override func updateTrackingAreas() {
         super.updateTrackingAreas()
         for area in trackingAreas {
@@ -524,6 +546,16 @@ private final class SymbolGridView: NSView {
             owner: self,
             userInfo: nil
         ))
+    }
+
+    // MARK: - Private Helpers
+
+    private func rectForIndex(_ index: Int) -> CGRect {
+        let col = index % columns
+        let row = index / columns
+        let xOffset = padding + Double(col) * (symbolSize + spacing)
+        let yOffset = padding + Double(row) * (symbolSize + spacing)
+        return CGRect(x: xOffset - 2, y: yOffset - 2, width: symbolSize + 4, height: symbolSize + 4)
     }
 
     private func indexForLocation(_ location: CGPoint) -> Int? {
@@ -549,7 +581,7 @@ private final class SymbolGridView: NSView {
     }
 }
 
-// MARK: - NSImage Tinting Extension
+// MARK: - NSImage + Tinting
 
 extension NSImage {
     fileprivate func tinted(with color: NSColor) -> NSImage {
