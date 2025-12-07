@@ -446,9 +446,10 @@ enum SpaceIconGenerator {
     static func generateSFSymbolIcon(
         symbolName: String,
         darkMode: Bool,
-        customColors: SpaceColors? = nil
+        customColors: SpaceColors? = nil,
+        pointSize: Double = Layout.Icon.sfSymbolPointSize
     ) -> NSImage {
-        let symbolConfig = NSImage.SymbolConfiguration(pointSize: Layout.Icon.sfSymbolPointSize, weight: .medium)
+        let symbolConfig = NSImage.SymbolConfiguration(pointSize: pointSize, weight: .medium)
         guard let sfImage = NSImage(systemSymbolName: symbolName, accessibilityDescription: nil)?
             .withSymbolConfiguration(symbolConfig)
         else {

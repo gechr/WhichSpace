@@ -1,5 +1,6 @@
 import Cocoa
 import Combine
+import Defaults
 import os.log
 
 @MainActor
@@ -12,6 +13,7 @@ final class AppState {
     private(set) var currentSpace = 0
     private(set) var currentSpaceLabel = "?"
     private(set) var darkModeEnabled = false
+    private(set) var allSpaceLabels: [String] = []
 
     private let mainDisplay = "Main"
     private let spacesMonitorFile = "~/Library/Preferences/com.apple.spaces.plist"
@@ -133,42 +135,51 @@ final class AppState {
                 continue
             }
 
-            var localIndex = 0
+            var regularSpaceIndex = 0
+            var spaceLabels: [String] = []
+            var foundActiveSpace = false
+            var activeIndex = 0
+
             for space in spaces {
                 guard let spaceID = space["ManagedSpaceID"] as? Int else {
                     continue
                 }
 
                 let isFullscreen = space["TileLayoutManager"] is [String: Any]
+                let label: String
                 if isFullscreen {
-                    if spaceID == activeSpaceID {
-                        lastUpdateTime = Date()
-                        return
-                    }
-                    continue
+                    label = Labels.fullscreen
+                } else {
+                    regularSpaceIndex += 1
+                    label = String(regularSpaceIndex)
                 }
 
-                localIndex += 1
+                spaceLabels.append(label)
+
                 if spaceID == activeSpaceID {
-                    currentSpace = localIndex
-                    currentSpaceLabel = String(localIndex)
+                    activeIndex = spaceLabels.count
+                    currentSpace = activeIndex
+                    currentSpaceLabel = label
                     lastUpdateTime = Date()
-                    return
+                    foundActiveSpace = true
                 }
+            }
+
+            allSpaceLabels = spaceLabels
+
+            if foundActiveSpace {
+                return
             }
         }
 
         currentSpace = 0
         currentSpaceLabel = "?"
+        allSpaceLabels = []
     }
 
     @objc func updateDarkModeStatus() {
-        let dictionary = UserDefaults.standard.persistentDomain(forName: UserDefaults.globalDomain)
-        if let interfaceStyle = dictionary?["AppleInterfaceStyle"] as? NSString {
-            darkModeEnabled = interfaceStyle.localizedCaseInsensitiveContains("dark")
-        } else {
-            darkModeEnabled = false
-        }
+        let appearance = NSApp.effectiveAppearance
+        darkModeEnabled = appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
     }
 
     // MARK: - Helpers
@@ -185,45 +196,92 @@ final class AppState {
         SpacePreferences.colors(forSpace: currentSpace)
     }
 
-    func getAllSpaceIndices() -> Set<Int> {
-        var indices = Set<Int>()
-        guard let displays = CGSCopyManagedDisplaySpaces(conn) as? [NSDictionary] else {
-            return indices
+    func getAllSpaceIndices() -> [Int] {
+        guard !allSpaceLabels.isEmpty else {
+            return []
         }
-
-        for display in displays {
-            guard let spaces = display["Spaces"] as? [[String: Any]] else {
-                continue
-            }
-
-            var localIndex = 0
-            for space in spaces {
-                let isFullscreen = space["TileLayoutManager"] is [String: Any]
-                if isFullscreen { continue }
-                localIndex += 1
-                indices.insert(localIndex)
-            }
-        }
-
-        return indices
+        return Array(1 ... allSpaceLabels.count)
     }
 
     // MARK: - Icon Generation
 
+    var showAllSpaces: Bool {
+        Defaults[.showAllSpaces]
+    }
+
     var statusBarIcon: NSImage {
-        if let symbol = currentSymbol {
-            SpaceIconGenerator.generateSFSymbolIcon(
-                symbolName: symbol,
-                darkMode: darkModeEnabled,
-                customColors: currentColors
-            )
-        } else {
-            SpaceIconGenerator.generateIcon(
-                for: currentSpaceLabel,
-                darkMode: darkModeEnabled,
-                customColors: currentColors,
-                style: currentIconStyle
+        // Check current appearance directly each time
+        let appearance = NSApp.effectiveAppearance
+        let isDark = appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+        if showAllSpaces, !allSpaceLabels.isEmpty {
+            return generateCombinedIcon(darkMode: isDark)
+        }
+        return generateSingleIcon(for: currentSpace, label: currentSpaceLabel, darkMode: isDark)
+    }
+
+    var statusBarWidth: Double {
+        if showAllSpaces, !allSpaceLabels.isEmpty {
+            return Double(allSpaceLabels.count) * Layout.statusItemWidth
+        }
+        return Layout.statusItemWidth
+    }
+
+    private func generateSingleIcon(for space: Int, label: String, darkMode: Bool) -> NSImage {
+        let colors = SpacePreferences.colors(forSpace: space)
+        let style = SpacePreferences.iconStyle(forSpace: space) ?? .square
+
+        // Fullscreen spaces just show "F" with the same colors
+        if label == Labels.fullscreen {
+            return SpaceIconGenerator.generateIcon(
+                for: Labels.fullscreen,
+                darkMode: darkMode,
+                customColors: colors,
+                style: style
             )
         }
+
+        let symbol = SpacePreferences.sfSymbol(forSpace: space)
+
+        if let symbol {
+            return SpaceIconGenerator.generateSFSymbolIcon(
+                symbolName: symbol,
+                darkMode: darkMode,
+                customColors: colors
+            )
+        }
+        return SpaceIconGenerator.generateIcon(
+            for: label,
+            darkMode: darkMode,
+            customColors: colors,
+            style: style
+        )
+    }
+
+    private func generateCombinedIcon(darkMode: Bool) -> NSImage {
+        let totalWidth = Double(allSpaceLabels.count) * Layout.statusItemWidth
+        let combinedImage = NSImage(size: NSSize(width: totalWidth, height: Layout.statusItemHeight))
+
+        combinedImage.lockFocus()
+
+        for (index, label) in allSpaceLabels.enumerated() {
+            let spaceIndex = index + 1
+            let isActive = spaceIndex == currentSpace
+            let icon = generateSingleIcon(for: spaceIndex, label: label, darkMode: darkMode)
+
+            let xOffset = Double(index) * Layout.statusItemWidth
+            let drawRect = NSRect(
+                x: xOffset,
+                y: 0,
+                width: Layout.statusItemWidth,
+                height: Layout.statusItemHeight
+            )
+
+            // Draw with reduced opacity for inactive spaces
+            let alpha = isActive ? 1.0 : 0.35
+            icon.draw(in: drawRect, from: .zero, operation: .sourceOver, fraction: alpha)
+        }
+
+        combinedImage.unlockFocus()
+        return combinedImage
     }
 }

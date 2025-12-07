@@ -8,13 +8,13 @@ Have you ever forgotten _which space_ is currently active on macOS and wanted a 
 
 ### Colours
 
-Choose foreground and background colours for each space, or apply one colour to all spaces:
+Choose foreground and background colours for each space, or apply one colour to all Spaces:
 
 <img src="Screenshots/ColoursMenu.png" width="60%">
 
 ### Icons
 
-Choose from a variety of icons for each space, or apply one icon to all spaces:
+Choose from a variety of icons for each space, or apply one icon to all Spaces:
 
 <img src="Screenshots/IconsMenu.png" width="60%">
 

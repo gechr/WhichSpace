@@ -4,9 +4,16 @@ import Defaults
 // MARK: - Defaults Keys
 
 extension Defaults.Keys {
+    static let showAllSpaces = Key<Bool>("showAllSpaces", default: false)
     static let spaceColors = Key<[Int: SpaceColors]>("spaceColors", default: [:])
     static let spaceIconStyles = Key<[Int: IconStyle]>("spaceIconStyles", default: [:])
     static let spaceSFSymbols = Key<[Int: String]>("spaceSFSymbols", default: [:])
+}
+
+// MARK: - Labels
+
+enum Labels {
+    static let fullscreen = "F"
 }
 
 // MARK: - Layout
@@ -23,10 +30,11 @@ enum Layout {
         static let fontSize = 14.0
         static let fontSizeSmall = 12.0
         static let fontSizeTiny = 8.0
+        static let fullscreenSymbolPointSize = 23.0
         static let outlineWidth = 1.5
         static let polygonCornerRadius = 3.0
-        static let triangleCornerRadius = 4.5
         static let sfSymbolPointSize = 16.0
+        static let triangleCornerRadius = 4.5
     }
 }
 
@@ -70,10 +78,13 @@ enum Localization {
     static let numberTitle = NSLocalizedString("number_menu_title", comment: "")
     static let resetColorToDefault = NSLocalizedString("reset_color_to_default", comment: "")
     static let resetColorToDefaultTip = NSLocalizedString("reset_color_to_default_tip", comment: "")
+    static let resetAllSpacesToDefault = NSLocalizedString("reset_all_spaces_to_default", comment: "")
+    static let resetAllSpacesToDefaultTip = NSLocalizedString("reset_all_spaces_to_default_tip", comment: "")
     static let resetSpaceToDefault = NSLocalizedString("reset_space_to_default", comment: "")
     static let resetSpaceToDefaultTip = NSLocalizedString("reset_space_to_default_tip", comment: "")
     static let resetStyleToDefault = NSLocalizedString("reset_style_to_default", comment: "")
     static let resetStyleToDefaultTip = NSLocalizedString("reset_style_to_default_tip", comment: "")
+    static let showAllSpaces = NSLocalizedString("show_all_spaces", comment: "")
     static let styleTitle = NSLocalizedString("style_menu_title", comment: "")
     static let symbolTitle = NSLocalizedString("symbol_menu_title", comment: "")
 }

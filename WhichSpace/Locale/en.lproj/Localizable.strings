@@ -2,7 +2,7 @@
 "apply_color_to_all_tip" = "Copy this Space's colors to all other Spaces";
 "apply_style_to_all" = "Apply style to all Spaces";
 "apply_style_to_all_tip" = "Copy this Space's styles to all other Spaces";
-"apply_to_all" = "Apply to all Spaces";
+"apply_to_all" = "Copy current settings to all Spaces";
 "apply_to_all_tip" = "Copy this Space's colors and styles to all other Spaces";
 "background_label" = "Background";
 "color_menu_title" = "Color";
@@ -23,9 +23,12 @@
 "number_menu_title" = "Number";
 "reset_color_to_default" = "Reset colors to default";
 "reset_color_to_default_tip" = "Remove custom colors for this Space";
-"reset_space_to_default" = "Reset Space to default";
+"reset_all_spaces_to_default" = "Reset all Spaces to default";
+"reset_all_spaces_to_default_tip" = "Remove all customizations for all Spaces";
+"reset_space_to_default" = "Reset current Space to default";
 "reset_space_to_default_tip" = "Remove all customizations for this Space";
 "reset_style_to_default" = "Reset style to default";
 "reset_style_to_default_tip" = "Remove custom styles for this Space";
+"show_all_spaces" = "Show all Spaces";
 "style_menu_title" = "Style";
 "symbol_menu_title" = "Symbol";

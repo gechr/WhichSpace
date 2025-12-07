@@ -1,4 +1,6 @@
+import Defaults
 import LaunchAtLogin
+import Observation
 @preconcurrency import Sparkle
 import SwiftUI
 
@@ -18,9 +20,10 @@ struct AppMain: App {
 
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverDelegate {
-    private let statusBarItem = NSStatusBar.system.statusItem(withLength: Layout.statusItemWidth)
+    private let statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     private let appState = AppState.shared
     private var updaterController: SPUStandardUpdaterController!
+    private var observationTask: Task<Void, Never>?
 
     private var statusMenu: NSMenu!
     private var isPickingForeground = true
@@ -37,6 +40,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             userDriverDelegate: self
         )
         configureMenuBarIcon()
+        startObservingAppState()
+    }
+
+    private func startObservingAppState() {
+        observationTask = Task { [weak self] in
+            while !Task.isCancelled {
+                guard let self else {
+                    return
+                }
+                // Access properties to register them for observation tracking
+                let icon = withObservationTracking {
+                    self.appState.statusBarIcon
+                } onChange: {
+                    Task { @MainActor [weak self] in
+                        self?.updateStatusBarIcon()
+                    }
+                }
+                statusBarItem.button?.image = icon
+                try? await Task.sleep(for: .milliseconds(100))
+            }
+        }
     }
 
     // MARK: - SPUStandardUserDriverDelegate
@@ -146,6 +170,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     }
 
     private func configureApplyAndResetMenuItems() {
+        let showAllSpacesItem = NSMenuItem(
+            title: Localization.showAllSpaces,
+            action: #selector(toggleShowAllSpaces),
+            keyEquivalent: ""
+        )
+        showAllSpacesItem.target = self
+        showAllSpacesItem.tag = 101
+        showAllSpacesItem.image = NSImage(
+            systemSymbolName: "square.grid.3x1.below.line.grid.1x2",
+            accessibilityDescription: nil
+        )
+        showAllSpacesItem.toolTip = "Show all Spaces in the menu bar"
+        statusMenu.addItem(showAllSpacesItem)
+        statusMenu.addItem(.separator())
+
         let applyToAllItem = NSMenuItem(
             title: Localization.applyToAll,
             action: #selector(applyAllToAllSpaces),
@@ -165,6 +204,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         resetItem.image = NSImage(systemSymbolName: "arrow.uturn.backward", accessibilityDescription: nil)
         resetItem.toolTip = Localization.resetSpaceToDefaultTip
         statusMenu.addItem(resetItem)
+
+        let resetAllItem = NSMenuItem(
+            title: Localization.resetAllSpacesToDefault,
+            action: #selector(resetAllSpacesToDefault),
+            keyEquivalent: ""
+        )
+        resetAllItem.target = self
+        resetAllItem.image = NSImage(systemSymbolName: "arrow.triangle.2.circlepath", accessibilityDescription: nil)
+        resetAllItem.toolTip = Localization.resetAllSpacesToDefaultTip
+        statusMenu.addItem(resetAllItem)
         statusMenu.addItem(.separator())
     }
 
@@ -355,6 +404,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         LaunchAtLogin.isEnabled.toggle()
     }
 
+    @objc private func toggleShowAllSpaces() {
+        Defaults[.showAllSpaces].toggle()
+        updateStatusBarIcon()
+    }
+
     @objc private func checkForUpdates() {
         NSApp.activate(ignoringOtherApps: true)
         updaterController.checkForUpdates(nil)
@@ -369,9 +423,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         let symbol = appState.currentSymbol
         for space in appState.getAllSpaceIndices() {
             SpacePreferences.setIconStyle(style, forSpace: space)
-            SpacePreferences.setSFSymbol(symbol, forSpace: space)
+            if let symbol {
+                SpacePreferences.setSFSymbol(symbol, forSpace: space)
+            } else {
+                SpacePreferences.clearSFSymbol(forSpace: space)
+            }
             if let colors {
                 SpacePreferences.setColors(colors, forSpace: space)
+            } else {
+                SpacePreferences.clearColors(forSpace: space)
             }
         }
         updateStatusBarIcon()
@@ -384,6 +444,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         SpacePreferences.clearColors(forSpace: appState.currentSpace)
         SpacePreferences.clearIconStyle(forSpace: appState.currentSpace)
         SpacePreferences.clearSFSymbol(forSpace: appState.currentSpace)
+        updateStatusBarIcon()
+    }
+
+    @objc private func resetAllSpacesToDefault() {
+        for space in appState.getAllSpaceIndices() {
+            SpacePreferences.clearColors(forSpace: space)
+            SpacePreferences.clearIconStyle(forSpace: space)
+            SpacePreferences.clearSFSymbol(forSpace: space)
+        }
         updateStatusBarIcon()
     }
 
@@ -402,12 +471,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     }
 
     @objc private func applyColorsToAllSpaces() {
-        guard appState.currentSpace > 0, let colors = appState.currentColors else {
+        guard appState.currentSpace > 0 else {
             return
         }
+        let colors = appState.currentColors
         for space in appState.getAllSpaceIndices() {
-            SpacePreferences.setColors(colors, forSpace: space)
+            if let colors {
+                SpacePreferences.setColors(colors, forSpace: space)
+            } else {
+                SpacePreferences.clearColors(forSpace: space)
+            }
         }
+        updateStatusBarIcon()
     }
 
     @objc private func resetColorToDefault() {
@@ -423,7 +498,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         let symbol = appState.currentSymbol
         for space in appState.getAllSpaceIndices() {
             SpacePreferences.setIconStyle(style, forSpace: space)
-            SpacePreferences.setSFSymbol(symbol, forSpace: space)
+            if let symbol {
+                SpacePreferences.setSFSymbol(symbol, forSpace: space)
+            } else {
+                SpacePreferences.clearSFSymbol(forSpace: space)
+            }
         }
     }
 
@@ -546,6 +625,11 @@ extension AppDelegate: NSMenuDelegate {
         // Update Launch at Login checkmark (tag 100)
         if let launchAtLoginItem = menu.item(withTag: 100) {
             launchAtLoginItem.state = LaunchAtLogin.isEnabled ? .on : .off
+        }
+
+        // Update Show All Spaces checkmark (tag 101)
+        if let showAllSpacesItem = menu.item(withTag: 101) {
+            showAllSpacesItem.state = Defaults[.showAllSpaces] ? .on : .off
         }
 
         for item in menu.items {
