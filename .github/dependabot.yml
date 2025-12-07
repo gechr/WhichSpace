@@ -1,0 +1,24 @@
+version: 2
+
+updates:
+  - package-ecosystem: swift
+    cooldown:
+      default-days: 7
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+
+  - package-ecosystem: github-actions
+    cooldown:
+      default-days: 7
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      github-actions:
+        patterns:
+          - "*"
