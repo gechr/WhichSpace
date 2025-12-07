@@ -2,7 +2,7 @@ import Cocoa
 
 // MARK: - Size Row View
 
-final class SizeRowView: NSView {
+final class SizeSlider: NSView {
     private let slider: NSSlider
     private let stepper: NSStepper
     private let minLabel: NSTextField

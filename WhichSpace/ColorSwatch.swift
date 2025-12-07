@@ -1,6 +1,6 @@
 import Cocoa
 
-final class ColorSwatchView: NSView {
+final class ColorSwatch: NSView {
     // MARK: - Static Properties
 
     static let presetColors: [NSColor] = [

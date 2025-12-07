@@ -37,6 +37,16 @@
          </BuildableReference>
       </MacroExpansion>
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "6F68C4FC60B24B5FB9535767"
+               BuildableName = "WhichSpaceTests.xctest"
+               BlueprintName = "WhichSpaceTests"
+               ReferencedContainer = "container:WhichSpace.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

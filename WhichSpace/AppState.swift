@@ -3,6 +3,33 @@ import Combine
 import Defaults
 import os.log
 
+// MARK: - Display Space Provider Protocol
+
+/// Protocol for abstracting CGS display space functions for testability
+protocol DisplaySpaceProviding {
+    // swiftlint:disable:next discouraged_optional_collection
+    func copyManagedDisplaySpaces() -> [NSDictionary]?
+    func copyActiveMenuBarDisplayIdentifier() -> String?
+}
+
+/// Default implementation using the actual CGS functions
+struct CGSDisplaySpaceProvider: DisplaySpaceProviding {
+    private let conn: Int32
+
+    init() {
+        conn = _CGSDefaultConnection()
+    }
+
+    // swiftlint:disable:next discouraged_optional_collection
+    func copyManagedDisplaySpaces() -> [NSDictionary]? {
+        CGSCopyManagedDisplaySpaces(conn) as? [NSDictionary]
+    }
+
+    func copyActiveMenuBarDisplayIdentifier() -> String? {
+        CGSCopyActiveMenuBarDisplayIdentifier(conn) as? String
+    }
+}
+
 @MainActor
 @Observable
 final class AppState {
@@ -17,17 +44,41 @@ final class AppState {
 
     private let mainDisplay = "Main"
     private let spacesMonitorFile = "~/Library/Preferences/com.apple.spaces.plist"
-    private let conn = _CGSDefaultConnection()
+    private let displaySpaceProvider: DisplaySpaceProviding
+    let store: DefaultsStore
 
     private var lastUpdateTime: Date = .distantPast
     private var mouseEventMonitor: Any?
     private var spacesMonitor: DispatchSourceFileSystemObject?
 
     private init() {
+        displaySpaceProvider = CGSDisplaySpaceProvider()
+        store = .shared
         updateDarkModeStatus()
         configureObservers()
         configureSpaceMonitor()
         updateActiveSpaceNumber()
+    }
+
+    /// Internal initializer for testing with a custom display space provider
+    init(displaySpaceProvider: DisplaySpaceProviding, skipObservers: Bool = false, store: DefaultsStore = .shared) {
+        self.displaySpaceProvider = displaySpaceProvider
+        self.store = store
+        updateDarkModeStatus()
+        if !skipObservers {
+            configureObservers()
+            configureSpaceMonitor()
+        }
+        updateActiveSpaceNumber()
+    }
+
+    // MARK: - Test Helpers
+
+    /// Sets space labels and current space directly for testing the rendering path
+    func setSpaceState(labels: [String], currentSpace: Int, currentLabel: String) {
+        allSpaceLabels = labels
+        self.currentSpace = currentSpace
+        currentSpaceLabel = currentLabel
     }
 
     // MARK: - Observers
@@ -113,8 +164,8 @@ final class AppState {
     // MARK: - Space Detection
 
     @objc func updateActiveSpaceNumber() {
-        guard let displays = CGSCopyManagedDisplaySpaces(conn) as? [NSDictionary],
-              let activeDisplay = CGSCopyActiveMenuBarDisplayIdentifier(conn) as? String
+        guard let displays = displaySpaceProvider.copyManagedDisplaySpaces(),
+              let activeDisplay = displaySpaceProvider.copyActiveMenuBarDisplayIdentifier()
         else {
             return
         }
@@ -185,15 +236,15 @@ final class AppState {
     // MARK: - Helpers
 
     var currentIconStyle: IconStyle {
-        SpacePreferences.iconStyle(forSpace: currentSpace) ?? .square
+        SpacePreferences.iconStyle(forSpace: currentSpace, store: store) ?? .square
     }
 
     var currentSymbol: String? {
-        SpacePreferences.sfSymbol(forSpace: currentSpace)
+        SpacePreferences.sfSymbol(forSpace: currentSpace, store: store)
     }
 
     var currentColors: SpaceColors? {
-        SpacePreferences.colors(forSpace: currentSpace)
+        SpacePreferences.colors(forSpace: currentSpace, store: store)
     }
 
     func getAllSpaceIndices() -> [Int] {
@@ -206,7 +257,7 @@ final class AppState {
     // MARK: - Icon Generation
 
     var showAllSpaces: Bool {
-        Defaults[.showAllSpaces]
+        store.showAllSpaces
     }
 
     var statusBarIcon: NSImage {
@@ -220,8 +271,8 @@ final class AppState {
     }
 
     private func generateSingleIcon(for space: Int, label: String, darkMode: Bool) -> NSImage {
-        let colors = SpacePreferences.colors(forSpace: space)
-        let style = SpacePreferences.iconStyle(forSpace: space) ?? .square
+        let colors = SpacePreferences.colors(forSpace: space, store: store)
+        let style = SpacePreferences.iconStyle(forSpace: space, store: store) ?? .square
 
         // Fullscreen spaces just show "F" with the same colors
         if label == Labels.fullscreen {
@@ -233,7 +284,7 @@ final class AppState {
             )
         }
 
-        let symbol = SpacePreferences.sfSymbol(forSpace: space)
+        let symbol = SpacePreferences.sfSymbol(forSpace: space, store: store)
 
         if let symbol {
             return SpaceIconGenerator.generateSFSymbolIcon(

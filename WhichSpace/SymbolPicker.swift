@@ -1,6 +1,6 @@
 import Cocoa
 
-final class SymbolPickerView: NSView {
+final class SymbolPicker: NSView {
     // MARK: - Static Properties
 
     // swiftformat:disable all
@@ -23,7 +23,7 @@ final class SymbolPickerView: NSView {
         "checklist", "checklist.checked", "square.and.pencil",
 
         // Communication
-        "envelope.fill", "envelope.open.fill", "envelope.badge.fill", "envelope.circle.fill",
+        "envelope.fill", "envelope.open.fill", "envelope.badge.fill", "envelope.circle.fill", "mail.stack.fill",
         "message.fill", "message.circle.fill", "message.badge.fill", "ellipsis.message.fill",
         "bubble.left.fill", "bubble.right.fill", "bubble.left.and.bubble.right.fill",
         "bubble.left.and.exclamationmark.bubble.right.fill", "exclamationmark.bubble.fill",
@@ -43,7 +43,7 @@ final class SymbolPickerView: NSView {
         "guitars.fill", "drum.fill", "amplifier.fill",
         "headphones", "headphones.circle.fill", "hifispeaker.fill", "homepod.fill", "airpodsmax",
         "tv.fill", "tv.circle.fill", "4k.tv.fill", "play.tv.fill",
-        "film.fill", "film.circle.fill", "video.fill.badge.plus",
+        "film.fill", "film.circle.fill", "video.fill.badge.plus", "movieclapper.fill",
         "gamecontroller.fill", "arcade.stick", "dpad.fill", "l.joystick.fill", "r.joystick.fill",
         "puzzlepiece.fill", "puzzlepiece.extension.fill",
         "theatermasks.fill", "theatermask.and.paintbrush.fill", "ticket.fill", "popcorn.fill",
@@ -54,7 +54,7 @@ final class SymbolPickerView: NSView {
         "network", "network.badge.shield.half.filled",
         "wifi", "wifi.circle.fill", "wifi.exclamationmark", "wifi.slash",
         "antenna.radiowaves.left.and.right", "antenna.radiowaves.left.and.right.circle.fill",
-        "server.rack", "xserve", "macpro.gen3.fill", "pc", "laptopcomputer", "desktopcomputer",
+        "server.rack", "xserve", "macpro.gen3.fill", "pc", "laptopcomputer", "desktopcomputer", "macwindow",
         "cpu.fill", "memorychip.fill", "opticaldisc.fill",
         "terminal.fill", "chevron.left.forwardslash.chevron.right", "curlybraces", "curlybraces.square.fill",
         "apple.terminal.fill", "command", "option", "control", "shift.fill", "capslock.fill",
@@ -74,7 +74,7 @@ final class SymbolPickerView: NSView {
         "wand.and.stars", "wand.and.rays", "wand.and.stars.inverse",
         "crop", "crop.rotate", "perspective", "skew",
         "scissors", "scissors.circle.fill", "ruler.fill", "level.fill",
-        "square.on.circle.fill", "circle.grid.cross.fill", "circle.grid.2x2.fill", "circle.grid.3x3.fill",
+        "square.on.circle.fill", "circle.grid.cross.fill", "circle.grid.2x2.fill", "circle.grid.3x3.fill", "square.stack.3d.up.fill",
         "aspectratio.fill", "arrow.up.left.and.arrow.down.right", "arrow.down.right.and.arrow.up.left",
         "lifepreserver.fill", "burn", "wand.and.rays.inverse",
         "lasso", "lasso.and.sparkles", "scribble", "scribble.variable",
@@ -83,7 +83,7 @@ final class SymbolPickerView: NSView {
 
         // People & Social
         "person.fill", "person.circle.fill", "person.badge.plus", "person.badge.minus",
-        "person.2.fill", "person.2.circle.fill", "person.3.fill", "person.3.sequence.fill",
+        "person.2.fill", "person.2.circle.fill", "person.3.fill",
         "person.crop.circle.fill", "person.crop.square.fill", "person.crop.rectangle.fill",
         "person.wave.2.fill", "person.2.wave.2.fill",
         "figure.stand", "figure.walk", "figure.wave", "figure.arms.open",
@@ -109,7 +109,7 @@ final class SymbolPickerView: NSView {
         "wineglass.fill", "waterbottle.fill", "birthday.cake.fill",
         "fork.knife", "fork.knife.circle.fill", "frying.pan.fill",
         "cart.fill", "cart.circle.fill", "cart.badge.plus", "bag.fill", "bag.circle.fill", "bag.badge.plus",
-        "basket.fill", "storefront.fill", "storefront.circle.fill",
+        "basket.fill", "storefront.fill", "storefront.circle.fill", "shippingbox.fill",
         "carrot.fill", "leaf.fill", "tree.fill", "fish.fill",
 
         // Finance & Business
@@ -191,8 +191,8 @@ final class SymbolPickerView: NSView {
         "stroller.fill", "wheelchair", "figure.roll.runningpace",
 
         // Objects & Tools
-        "gear", "gearshape.fill", "gearshape.2.fill",
-        "wrench.fill", "wrench.and.screwdriver.fill", "hammer.fill", "screwdriver.fill",
+        "gear", "gearshape.fill", "gearshape.2.fill", "slider.horizontal.3",
+        "wrench.fill", "wrench.and.screwdriver.fill", "hammer.fill", "hammer.circle.fill", "screwdriver.fill",
         "eyedropper.halffull", "paintbrush.fill", "level.fill", "ruler.fill",
         "scroll.fill", "theatermasks.fill", "crown.fill", "wand.and.stars",
         "flashlight.on.fill", "flashlight.off.fill", "lightbulb.fill",
@@ -255,8 +255,8 @@ final class SymbolPickerView: NSView {
 
     // MARK: - Configuration
 
-    private let symbolSize: Double = 20
-    private let spacing: Double = 4
+    private let symbolSize: Double = 24
+    private let spacing: Double = 6
     private let padding: Double = 8
     private let columns = 8
     private let visibleRows = 8
@@ -358,7 +358,7 @@ final class SymbolPickerView: NSView {
 
 // MARK: - NSSearchFieldDelegate
 
-extension SymbolPickerView: NSSearchFieldDelegate {
+extension SymbolPicker: NSSearchFieldDelegate {
     func controlTextDidChange(_: Notification) {
         let searchText = searchField.stringValue.lowercased()
         if searchText.isEmpty {
@@ -478,7 +478,7 @@ private final class SymbolGridView: NSView {
         if let cached = imageCache[cacheKey] {
             tintedImage = cached
         } else {
-            let config = NSImage.SymbolConfiguration(pointSize: 14, weight: .medium)
+            let config = NSImage.SymbolConfiguration(pointSize: 17, weight: .medium)
             guard let image = NSImage(systemSymbolName: symbolName, accessibilityDescription: nil)?
                 .withSymbolConfiguration(config)
             else {
@@ -547,17 +547,22 @@ private final class SymbolGridView: NSView {
         ))
     }
 
-    // MARK: - Private Helpers
+    // MARK: - Frame Calculation (shared by drawing, hit testing, and test support)
 
-    private func rectForIndex(_ index: Int) -> CGRect {
+    /// Returns the clickable frame for the symbol at the given index
+    func frameForSymbol(at index: Int) -> CGRect? {
+        guard index >= 0, index < symbols.count else {
+            return nil
+        }
         let col = index % columns
         let row = index / columns
         let xOffset = padding + Double(col) * (symbolSize + spacing)
         let yOffset = padding + Double(row) * (symbolSize + spacing)
-        return CGRect(x: xOffset - 2, y: yOffset - 2, width: symbolSize + 4, height: symbolSize + 4)
+        return CGRect(x: xOffset, y: yOffset, width: symbolSize, height: symbolSize)
     }
 
-    private func indexForLocation(_ location: CGPoint) -> Int? {
+    /// Returns the symbol index at the given location, or nil if not over a symbol
+    func symbolIndex(at location: CGPoint) -> Int? {
         // Direct calculation instead of iterating
         let col = Int((location.x - padding) / (symbolSize + spacing))
         let row = Int((location.y - padding) / (symbolSize + spacing))
@@ -567,16 +572,26 @@ private final class SymbolGridView: NSView {
         }
 
         let index = row * columns + col
-        guard index < symbols.count else {
+        guard let frame = frameForSymbol(at: index) else {
             return nil
         }
 
         // Verify the point is actually within the symbol rect (not in spacing)
-        let xOffset = padding + Double(col) * (symbolSize + spacing)
-        let yOffset = padding + Double(row) * (symbolSize + spacing)
-        let symbolRect = CGRect(x: xOffset, y: yOffset, width: symbolSize, height: symbolSize)
+        return frame.contains(location) ? index : nil
+    }
 
-        return symbolRect.contains(location) ? index : nil
+    // MARK: - Private Helpers
+
+    private func rectForIndex(_ index: Int) -> CGRect {
+        guard let frame = frameForSymbol(at: index) else {
+            return .zero
+        }
+        // Expand by 2 pixels for highlight area
+        return frame.insetBy(dx: -2, dy: -2)
+    }
+
+    private func indexForLocation(_ location: CGPoint) -> Int? {
+        symbolIndex(at: location)
     }
 }
 
@@ -611,5 +626,40 @@ private struct SeededRandomNumberGenerator: RandomNumberGenerator {
         state ^= state >> 7
         state ^= state << 17
         return state
+    }
+}
+
+// MARK: - Test Support
+
+extension SymbolPicker {
+    /// Layout information for testing - allows tests to query actual layout without hardcoding constants
+    struct LayoutInfo {
+        let symbolSize: Double
+        let spacing: Double
+        let padding: Double
+        let columns: Int
+    }
+
+    /// Layout info for testing (internal access allows @testable import)
+    var layoutInfo: LayoutInfo {
+        LayoutInfo(symbolSize: symbolSize, spacing: spacing, padding: padding, columns: columns)
+    }
+
+    /// Returns the frame for the symbol at the given index within the grid coordinate system.
+    /// Delegates to the grid view's actual frame calculation to ensure consistency.
+    func frameForSymbol(at index: Int) -> CGRect? {
+        gridView.frameForSymbol(at: index)
+    }
+
+    /// Returns the symbol index at the given point within the grid coordinate system,
+    /// or nil if the point is not over a clickable symbol (e.g., in spacing or padding).
+    /// Uses the same hit testing logic as the actual click handler.
+    func symbolIndex(at point: CGPoint) -> Int? {
+        gridView.symbolIndex(at: point)
+    }
+
+    /// Returns the current number of symbols in the grid (may change with filtering)
+    var symbolCount: Int {
+        gridView.symbols.count
     }
 }

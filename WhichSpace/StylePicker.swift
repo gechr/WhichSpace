@@ -1,6 +1,6 @@
 import Cocoa
 
-final class IconStyleRowView: NSView {
+final class StylePicker: NSView {
     private let style: IconStyle
     private let iconSize = Layout.defaultIconSize
     private var isHighlighted = false

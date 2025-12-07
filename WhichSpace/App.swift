@@ -16,6 +16,49 @@ struct AppMain: App {
     }
 }
 
+// MARK: - Launch at Login Protocol
+
+/// Protocol for abstracting LaunchAtLogin for testability
+protocol LaunchAtLoginProviding {
+    var isEnabled: Bool { get set }
+}
+
+/// Default implementation using the actual LaunchAtLogin library
+struct DefaultLaunchAtLoginProvider: LaunchAtLoginProviding {
+    var isEnabled: Bool {
+        get { LaunchAtLogin.isEnabled }
+        set { LaunchAtLogin.isEnabled = newValue }
+    }
+}
+
+// MARK: - Confirmation Alert Protocol
+
+/// Protocol for abstracting confirmation alerts for testability
+protocol ConfirmationAlertProviding {
+    func runModal() -> Bool
+}
+
+/// Default implementation using the actual ConfirmationAlert
+extension ConfirmationAlert: ConfirmationAlertProviding {}
+
+/// Factory for creating confirmation alerts
+protocol ConfirmationAlertFactory {
+    func makeAlert(message: String, detail: String, confirmTitle: String, isDestructive: Bool)
+        -> ConfirmationAlertProviding
+}
+
+/// Default factory that creates real ConfirmationAlerts
+struct DefaultConfirmationAlertFactory: ConfirmationAlertFactory {
+    func makeAlert(
+        message: String,
+        detail: String,
+        confirmTitle: String,
+        isDestructive: Bool
+    ) -> ConfirmationAlertProviding {
+        ConfirmationAlert(message: message, detail: detail, confirmTitle: confirmTitle, isDestructive: isDestructive)
+    }
+}
+
 // MARK: - App Delegate
 
 @MainActor
@@ -23,12 +66,44 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     // MARK: - Properties
 
     private let statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-    private let appState = AppState.shared
+    private let appState: AppState
+    private let alertFactory: ConfirmationAlertFactory
+    private var launchAtLogin: LaunchAtLoginProviding
 
     private var updaterController: SPUStandardUpdaterController!
-    private var statusMenu: NSMenu!
-    private var observationTask: Task<Void, Never>?
+    private(set) var statusMenu: NSMenu!
+    private(set) var observationTask: Task<Void, Never>?
     private var isPickingForeground = true
+    private(set) var statusBarIconUpdateCount = 0
+
+    /// Test hook: continuation that fires whenever updateStatusBarIcon() completes.
+    /// Set this from tests to await icon updates deterministically.
+    var statusBarIconUpdateNotifier: AsyncStream<Void>.Continuation?
+
+    /// Convenience accessor for the store via appState
+    private var store: DefaultsStore { appState.store }
+
+    // MARK: - Initialization
+
+    /// Default initializer for production use
+    override init() {
+        appState = AppState.shared
+        alertFactory = DefaultConfirmationAlertFactory()
+        launchAtLogin = DefaultLaunchAtLoginProvider()
+        super.init()
+    }
+
+    /// Testable initializer with dependency injection
+    init(
+        appState: AppState,
+        alertFactory: ConfirmationAlertFactory,
+        launchAtLogin: LaunchAtLoginProviding = DefaultLaunchAtLoginProvider()
+    ) {
+        self.appState = appState
+        self.alertFactory = alertFactory
+        self.launchAtLogin = launchAtLogin
+        super.init()
+    }
 
     // MARK: - Computed Properties
 
@@ -52,7 +127,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
     // MARK: - Observation
 
-    private func startObservingAppState() {
+    /// Test hook to start the observation task. In production, this is called from applicationDidFinishLaunching.
+    func startObservingAppState() {
         observationTask = Task { [weak self] in
             while !Task.isCancelled {
                 guard let self else {
@@ -70,6 +146,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
                 try? await Task.sleep(for: .milliseconds(100))
             }
         }
+    }
+
+    /// Cancels the observation task. Call this in test teardown to prevent leaks.
+    func stopObservingAppState() {
+        observationTask?.cancel()
+        observationTask = nil
     }
 
     // MARK: - SPUStandardUserDriverDelegate
@@ -96,7 +178,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
     // MARK: - Menu Configuration
 
-    private func configureMenuBarIcon() {
+    /// Test hook to configure the menu bar icon. In production, this is called from applicationDidFinishLaunching.
+    func configureMenuBarIcon() {
         statusMenu = NSMenu()
         configureVersionHeader()
         configureColorMenuItem()
@@ -187,16 +270,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         // Size scale row (percentage)
         let sizeItem = NSMenuItem()
         sizeItem.tag = MenuTag.sizeRow
-        let sizeRowView = SizeRowView(
-            initialSize: Defaults[.sizeScale],
+        let sizeSlider = SizeSlider(
+            initialSize: store.sizeScale,
             range: Layout.sizeScaleRange
         )
-        sizeRowView.frame = NSRect(origin: .zero, size: sizeRowView.intrinsicContentSize)
-        sizeRowView.onSizeChanged = { [weak self] scale in
-            Defaults[.sizeScale] = scale
+        sizeSlider.frame = NSRect(origin: .zero, size: sizeSlider.intrinsicContentSize)
+        sizeSlider.onSizeChanged = { [weak self] scale in
+            self?.store.sizeScale = scale
             self?.updateStatusBarIcon()
         }
-        sizeItem.view = sizeRowView
+        sizeItem.view = sizeSlider
         sizeMenu.addItem(sizeItem)
 
         let sizeMenuItem = NSMenuItem(title: Localization.sizeTitle, action: nil, keyEquivalent: "")
@@ -307,16 +390,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         // Foreground color swatches (hidden when symbol active)
         let foregroundSwatchItem = NSMenuItem()
         foregroundSwatchItem.tag = MenuTag.foregroundSwatch
-        let foregroundSwatchView = ColorSwatchView()
-        foregroundSwatchView.frame = NSRect(origin: .zero, size: foregroundSwatchView.intrinsicContentSize)
-        foregroundSwatchView.onColorSelected = { [weak self] color in
+        let foregroundSwatch = ColorSwatch()
+        foregroundSwatch.frame = NSRect(origin: .zero, size: foregroundSwatch.intrinsicContentSize)
+        foregroundSwatch.onColorSelected = { [weak self] color in
             self?.setForegroundColor(color)
         }
-        foregroundSwatchView.onCustomColorRequested = { [weak self] in
+        foregroundSwatch.onCustomColorRequested = { [weak self] in
             self?.isPickingForeground = true
             self?.showColorPanel()
         }
-        foregroundSwatchItem.view = foregroundSwatchView
+        foregroundSwatchItem.view = foregroundSwatch
         colorsMenu.addItem(foregroundSwatchItem)
 
         // Separator (hidden when symbol active)
@@ -333,16 +416,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         // Background color swatches (hidden when symbol active)
         let backgroundSwatchItem = NSMenuItem()
         backgroundSwatchItem.tag = MenuTag.backgroundSwatch
-        let backgroundSwatchView = ColorSwatchView()
-        backgroundSwatchView.frame = NSRect(origin: .zero, size: backgroundSwatchView.intrinsicContentSize)
-        backgroundSwatchView.onColorSelected = { [weak self] color in
+        let backgroundSwatch = ColorSwatch()
+        backgroundSwatch.frame = NSRect(origin: .zero, size: backgroundSwatch.intrinsicContentSize)
+        backgroundSwatch.onColorSelected = { [weak self] color in
             self?.setBackgroundColor(color)
         }
-        backgroundSwatchView.onCustomColorRequested = { [weak self] in
+        backgroundSwatch.onCustomColorRequested = { [weak self] in
             self?.isPickingForeground = false
             self?.showColorPanel()
         }
-        backgroundSwatchItem.view = backgroundSwatchView
+        backgroundSwatchItem.view = backgroundSwatch
         colorsMenu.addItem(backgroundSwatchItem)
 
         // Separator before actions
@@ -390,16 +473,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
         for style in IconStyle.allCases {
             let item = NSMenuItem()
-            let rowView = IconStyleRowView(style: style)
-            rowView.frame = NSRect(origin: .zero, size: rowView.intrinsicContentSize)
-            rowView.isChecked = style == appState.currentIconStyle
-            rowView.customColors = appState.currentColors
-            rowView.darkMode = appState.darkModeEnabled
-            rowView.previewNumber = appState.currentSpaceLabel == "?" ? "1" : appState.currentSpaceLabel
-            rowView.onSelected = { [weak self, weak rowView] in
-                self?.selectIconStyle(style, rowView: rowView)
+            let stylePicker = StylePicker(style: style)
+            stylePicker.frame = NSRect(origin: .zero, size: stylePicker.intrinsicContentSize)
+            stylePicker.isChecked = style == appState.currentIconStyle
+            stylePicker.customColors = appState.currentColors
+            stylePicker.darkMode = appState.darkModeEnabled
+            stylePicker.previewNumber = appState.currentSpaceLabel == "?" ? "1" : appState.currentSpaceLabel
+            stylePicker.onSelected = { [weak self, weak stylePicker] in
+                self?.selectIconStyle(style, stylePicker: stylePicker)
             }
-            item.view = rowView
+            item.view = stylePicker
             item.representedObject = style
             iconMenu.addItem(item)
         }
@@ -412,14 +495,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         symbolMenu.delegate = self
 
         let symbolPickerItem = NSMenuItem()
-        let symbolPickerView = SymbolPickerView()
-        symbolPickerView.frame = NSRect(origin: .zero, size: symbolPickerView.intrinsicContentSize)
-        symbolPickerView.selectedSymbol = appState.currentSymbol
-        symbolPickerView.darkMode = appState.darkModeEnabled
-        symbolPickerView.onSymbolSelected = { [weak self] symbol in
+        let symbolPicker = SymbolPicker()
+        symbolPicker.frame = NSRect(origin: .zero, size: symbolPicker.intrinsicContentSize)
+        symbolPicker.selectedSymbol = appState.currentSymbol
+        symbolPicker.darkMode = appState.darkModeEnabled
+        symbolPicker.onSymbolSelected = { [weak self] symbol in
             self?.setSymbol(symbol)
         }
-        symbolPickerItem.view = symbolPickerView
+        symbolPickerItem.view = symbolPicker
         symbolMenu.addItem(symbolPickerItem)
 
         return symbolMenu
@@ -427,12 +510,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
     // MARK: - Actions
 
-    @objc private func toggleLaunchAtLogin() {
-        LaunchAtLogin.isEnabled.toggle()
+    @objc func toggleLaunchAtLogin() {
+        launchAtLogin.isEnabled.toggle()
+        updateStatusBarIcon()
     }
 
-    @objc private func toggleShowAllSpaces() {
-        Defaults[.showAllSpaces].toggle()
+    @objc func toggleShowAllSpaces() {
+        store.showAllSpaces.toggle()
         updateStatusBarIcon()
     }
 
@@ -441,17 +525,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         updaterController.checkForUpdates(nil)
     }
 
-    @objc private func applyAllToAllSpaces() {
+    @objc func applyAllToAllSpaces() {
         guard appState.currentSpace > 0 else {
             return
         }
 
-        let confirmed = ConfirmationAlert(
+        let confirmed = alertFactory.makeAlert(
             message: Localization.applyToAllConfirm,
             detail: Localization.applyToAllDetail,
             confirmTitle: Localization.okButton,
             isDestructive: false
-        ).runModal()
+        )
+        .runModal()
 
         guard confirmed else {
             return
@@ -461,63 +546,67 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         let colors = appState.currentColors
         let symbol = appState.currentSymbol
         for space in appState.getAllSpaceIndices() {
-            SpacePreferences.setIconStyle(style, forSpace: space)
+            SpacePreferences.setIconStyle(style, forSpace: space, store: store)
             if let symbol {
-                SpacePreferences.setSFSymbol(symbol, forSpace: space)
+                SpacePreferences.setSFSymbol(symbol, forSpace: space, store: store)
             } else {
-                SpacePreferences.clearSFSymbol(forSpace: space)
+                SpacePreferences.clearSFSymbol(forSpace: space, store: store)
             }
             if let colors {
-                SpacePreferences.setColors(colors, forSpace: space)
+                SpacePreferences.setColors(colors, forSpace: space, store: store)
             } else {
-                SpacePreferences.clearColors(forSpace: space)
+                SpacePreferences.clearColors(forSpace: space, store: store)
             }
         }
         updateStatusBarIcon()
     }
 
-    @objc private func resetSpaceToDefault() {
+    @objc func resetSpaceToDefault() {
         guard appState.currentSpace > 0 else {
             return
         }
 
-        let confirmed = ConfirmationAlert(
+        let confirmed = alertFactory.makeAlert(
             message: Localization.resetSpaceConfirm,
             detail: Localization.resetSpaceDetail,
-            confirmTitle: Localization.resetButton
-        ).runModal()
+            confirmTitle: Localization.resetButton,
+            isDestructive: true
+        )
+        .runModal()
 
         guard confirmed else {
             return
         }
 
-        SpacePreferences.clearColors(forSpace: appState.currentSpace)
-        SpacePreferences.clearIconStyle(forSpace: appState.currentSpace)
-        SpacePreferences.clearSFSymbol(forSpace: appState.currentSpace)
+        SpacePreferences.clearColors(forSpace: appState.currentSpace, store: store)
+        SpacePreferences.clearIconStyle(forSpace: appState.currentSpace, store: store)
+        SpacePreferences.clearSFSymbol(forSpace: appState.currentSpace, store: store)
         updateStatusBarIcon()
     }
 
-    @objc private func resetAllSpacesToDefault() {
-        let confirmed = ConfirmationAlert(
+    @objc func resetAllSpacesToDefault() {
+        let confirmed = alertFactory.makeAlert(
             message: Localization.resetAllSpacesConfirm,
             detail: Localization.resetAllSpacesDetail,
-            confirmTitle: Localization.resetAllButton
-        ).runModal()
+            confirmTitle: Localization.resetAllButton,
+            isDestructive: true
+        )
+        .runModal()
 
         guard confirmed else {
             return
         }
 
         for space in appState.getAllSpaceIndices() {
-            SpacePreferences.clearColors(forSpace: space)
-            SpacePreferences.clearIconStyle(forSpace: space)
-            SpacePreferences.clearSFSymbol(forSpace: space)
+            SpacePreferences.clearColors(forSpace: space, store: store)
+            SpacePreferences.clearIconStyle(forSpace: space, store: store)
+            SpacePreferences.clearSFSymbol(forSpace: space, store: store)
         }
-        Defaults[.sizeScale] = Layout.defaultSizeScale
+        store.sizeScale = Layout.defaultSizeScale
         updateStatusBarIcon()
     }
 
-    @objc private func invertColors() {
+    @objc func invertColors() {
         guard appState.currentSpace > 0 else {
             return
         }
@@ -526,22 +615,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         let background = appState.currentColors?.backgroundColor ?? defaults.background
         SpacePreferences.setColors(
             SpaceColors(foreground: background, background: foreground),
-            forSpace: appState.currentSpace
+            forSpace: appState.currentSpace,
+            store: store
         )
         updateStatusBarIcon()
     }
 
-    @objc private func applyColorsToAllSpaces() {
+    @objc func applyColorsToAllSpaces() {
         guard appState.currentSpace > 0 else {
             return
         }
 
-        let confirmed = ConfirmationAlert(
+        let confirmed = alertFactory.makeAlert(
             message: Localization.applyColorToAllConfirm,
             detail: Localization.applyColorToAllDetail,
             confirmTitle: Localization.okButton,
             isDestructive: false
-        ).runModal()
+        )
+        .runModal()
 
         guard confirmed else {
             return
@@ -550,40 +641,43 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         let colors = appState.currentColors
         for space in appState.getAllSpaceIndices() {
             if let colors {
-                SpacePreferences.setColors(colors, forSpace: space)
+                SpacePreferences.setColors(colors, forSpace: space, store: store)
             } else {
-                SpacePreferences.clearColors(forSpace: space)
+                SpacePreferences.clearColors(forSpace: space, store: store)
             }
         }
         updateStatusBarIcon()
     }
 
-    @objc private func resetColorToDefault() {
-        let confirmed = ConfirmationAlert(
+    @objc func resetColorToDefault() {
+        let confirmed = alertFactory.makeAlert(
             message: Localization.resetColorConfirm,
             detail: Localization.resetColorDetail,
-            confirmTitle: Localization.resetButton
-        ).runModal()
+            confirmTitle: Localization.resetButton,
+            isDestructive: true
+        )
+        .runModal()
 
         guard confirmed else {
             return
         }
 
-        SpacePreferences.clearColors(forSpace: appState.currentSpace)
+        SpacePreferences.clearColors(forSpace: appState.currentSpace, store: store)
         updateStatusBarIcon()
     }
 
-    @objc private func applyStyleToAllSpaces() {
+    @objc func applyStyleToAllSpaces() {
         guard appState.currentSpace > 0 else {
             return
         }
 
-        let confirmed = ConfirmationAlert(
+        let confirmed = alertFactory.makeAlert(
             message: Localization.applyStyleToAllConfirm,
             detail: Localization.applyStyleToAllDetail,
             confirmTitle: Localization.okButton,
             isDestructive: false
-        ).runModal()
+        )
+        .runModal()
 
         guard confirmed else {
             return
@@ -592,32 +686,35 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         let style = appState.currentIconStyle
         let symbol = appState.currentSymbol
         for space in appState.getAllSpaceIndices() {
-            SpacePreferences.setIconStyle(style, forSpace: space)
+            SpacePreferences.setIconStyle(style, forSpace: space, store: store)
             if let symbol {
-                SpacePreferences.setSFSymbol(symbol, forSpace: space)
+                SpacePreferences.setSFSymbol(symbol, forSpace: space, store: store)
             } else {
-                SpacePreferences.clearSFSymbol(forSpace: space)
+                SpacePreferences.clearSFSymbol(forSpace: space, store: store)
             }
         }
+        updateStatusBarIcon()
     }
 
-    @objc private func resetStyleToDefault() {
+    @objc func resetStyleToDefault() {
         guard appState.currentSpace > 0 else {
             return
         }
 
-        let confirmed = ConfirmationAlert(
+        let confirmed = alertFactory.makeAlert(
             message: Localization.resetStyleConfirm,
             detail: Localization.resetStyleDetail,
-            confirmTitle: Localization.resetButton
-        ).runModal()
+            confirmTitle: Localization.resetButton,
+            isDestructive: true
+        )
+        .runModal()
 
         guard confirmed else {
             return
         }
 
-        SpacePreferences.clearIconStyle(forSpace: appState.currentSpace)
-        SpacePreferences.clearSFSymbol(forSpace: appState.currentSpace)
+        SpacePreferences.clearIconStyle(forSpace: appState.currentSpace, store: store)
+        SpacePreferences.clearSFSymbol(forSpace: appState.currentSpace, store: store)
         updateStatusBarIcon()
     }
 
@@ -680,19 +777,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         updateStatusBarIcon()
     }
 
-    private func selectIconStyle(_ style: IconStyle, rowView: IconStyleRowView?) {
+    private func selectIconStyle(_ style: IconStyle, stylePicker: StylePicker?) {
         guard appState.currentSpace > 0 else {
             return
         }
 
         // Clear SF Symbol to switch to number mode
-        SpacePreferences.clearSFSymbol(forSpace: appState.currentSpace)
-        SpacePreferences.setIconStyle(style, forSpace: appState.currentSpace)
+        SpacePreferences.clearSFSymbol(forSpace: appState.currentSpace, store: store)
+        SpacePreferences.setIconStyle(style, forSpace: appState.currentSpace, store: store)
 
         // Update checkmarks in all row views
-        if let menu = rowView?.enclosingMenuItem?.menu {
+        if let menu = stylePicker?.enclosingMenuItem?.menu {
             for item in menu.items {
-                if let view = item.view as? IconStyleRowView {
+                if let view = item.view as? StylePicker {
                     view.isChecked = item.representedObject as? IconStyle == style
                 }
             }
@@ -705,12 +802,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         guard appState.currentSpace > 0 else {
             return
         }
-        SpacePreferences.setSFSymbol(symbol, forSpace: appState.currentSpace)
+        SpacePreferences.setSFSymbol(symbol, forSpace: appState.currentSpace, store: store)
         updateStatusBarIcon()
     }
 
-    private func updateStatusBarIcon() {
+    func updateStatusBarIcon() {
+        statusBarIconUpdateCount += 1
         statusBarItem.button?.image = appState.statusBarIcon
+        statusBarIconUpdateNotifier?.yield()
     }
 }
 
@@ -724,19 +823,19 @@ extension AppDelegate: NSMenuDelegate {
         let currentSymbol = appState.currentSymbol
         let symbolIsActive = currentSymbol != nil
 
-        // Update Launch at Login checkmark (tag 100)
+        // Update Launch at Login checkmark (tag 1)
         if let launchAtLoginItem = menu.item(withTag: MenuTag.launchAtLogin) {
-            launchAtLoginItem.state = LaunchAtLogin.isEnabled ? .on : .off
+            launchAtLoginItem.state = launchAtLogin.isEnabled ? .on : .off
         }
 
         // Update Show All Spaces checkmark (tag 101)
         if let showAllSpacesItem = menu.item(withTag: MenuTag.showAllSpaces) {
-            showAllSpacesItem.state = Defaults[.showAllSpaces] ? .on : .off
+            showAllSpacesItem.state = store.showAllSpaces ? .on : .off
         }
 
         for item in menu.items {
             // Update icon style views - only show checkmark when not in symbol mode
-            if let view = item.view as? IconStyleRowView {
+            if let view = item.view as? StylePicker {
                 view.isChecked = !symbolIsActive && item.representedObject as? IconStyle == currentStyle
                 view.customColors = customColors
                 view.darkMode = appState.darkModeEnabled
@@ -745,7 +844,7 @@ extension AppDelegate: NSMenuDelegate {
             }
 
             // Update symbol picker view
-            if let view = item.view as? SymbolPickerView {
+            if let view = item.view as? SymbolPicker {
                 view.selectedSymbol = currentSymbol
                 view.darkMode = appState.darkModeEnabled
                 view.needsDisplay = true
@@ -761,8 +860,8 @@ extension AppDelegate: NSMenuDelegate {
             }
 
             // Update size row view (tag 310)
-            if item.tag == MenuTag.sizeRow, let view = item.view as? SizeRowView {
-                view.currentSize = Defaults[.sizeScale]
+            if item.tag == MenuTag.sizeRow, let view = item.view as? SizeSlider {
+                view.currentSize = store.sizeScale
             }
         }
 
