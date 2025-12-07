@@ -1,7 +1,7 @@
 version: 2
 
 updates:
-  - package-ecosystem: swift
+  - package-ecosystem: github-actions
     cooldown:
       default-days: 7
     directory: /
@@ -12,7 +12,7 @@ updates:
         patterns:
           - "*"
 
-  - package-ecosystem: github-actions
+  - package-ecosystem: swift
     cooldown:
       default-days: 7
     directory: /
