@@ -490,6 +490,9 @@ private final class SymbolGridView: NSView {
             }
             if let new = newIndex {
                 setNeedsDisplay(rectForIndex(new))
+                toolTip = symbols[new]
+            } else {
+                toolTip = nil
             }
         }
     }
@@ -499,6 +502,7 @@ private final class SymbolGridView: NSView {
             hoveredIndex = nil
             setNeedsDisplay(rectForIndex(old))
         }
+        toolTip = nil
     }
 
     private func rectForIndex(_ index: Int) -> CGRect {

@@ -1,4 +1,4 @@
-"apply_color_to_all" = "Apply colour to all Spaces";
+"apply_color_to_all" = "Apply colours to all Spaces";
 "apply_color_to_all_tip" = "Copy this Space's colours to all other Spaces";
 "apply_style_to_all" = "Apply style to all Spaces";
 "apply_style_to_all_tip" = "Copy this Space's styles to all other Spaces";
@@ -21,7 +21,7 @@
 "invert_colors_tip" = "Swap the foreground and background colours";
 "launch_at_login" = "Launch at Login";
 "number_menu_title" = "Number";
-"reset_color_to_default" = "Reset colour to default";
+"reset_color_to_default" = "Reset colours to default";
 "reset_color_to_default_tip" = "Remove custom colours for this Space";
 "reset_space_to_default" = "Reset Space to default";
 "reset_space_to_default_tip" = "Remove all customisations for this Space";

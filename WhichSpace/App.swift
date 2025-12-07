@@ -71,6 +71,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         configureUpdateAndQuitMenuItems()
         statusMenu.delegate = self
         statusBarItem.menu = statusMenu
+        statusBarItem.button?.toolTip = appName
         updateStatusBarIcon()
     }
 
@@ -111,7 +112,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         // Symbol submenu
         let symbolMenu = createSymbolMenu()
         let symbolMenuItem = NSMenuItem(title: Localization.symbolTitle, action: nil, keyEquivalent: "")
-        symbolMenuItem.image = NSImage(systemSymbolName: "star", accessibilityDescription: nil)
+        symbolMenuItem.image = NSImage(systemSymbolName: "burst.fill", accessibilityDescription: nil)
         symbolMenuItem.submenu = symbolMenu
         styleMenu.addItem(symbolMenuItem)
 
@@ -176,7 +177,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         launchAtLoginItem.target = self
         launchAtLoginItem.tag = 100
         launchAtLoginItem.image = NSImage(systemSymbolName: "sunrise", accessibilityDescription: nil)
-        launchAtLoginItem.toolTip = "Automatically start \(appName) when you log in"
+        launchAtLoginItem.toolTip = "Automatically run \(appName) on startup"
         statusMenu.addItem(launchAtLoginItem)
     }
 
@@ -187,16 +188,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             keyEquivalent: ""
         )
         updateItem.target = self
-        updateItem.image = NSImage(systemSymbolName: "arrow.triangle.2.circlepath", accessibilityDescription: nil)
+        updateItem.image = NSImage(systemSymbolName: "square.and.arrow.down", accessibilityDescription: nil)
         updateItem.toolTip = "Check for new versions of \(appName)"
         statusMenu.addItem(updateItem)
+        statusMenu.addItem(.separator())
 
         let quitItem = NSMenuItem(
             title: "Quit",
             action: #selector(NSApplication.terminate(_:)),
             keyEquivalent: "q"
         )
-        quitItem.image = NSImage(systemSymbolName: "xmark.circle", accessibilityDescription: nil)
+        quitItem.image = NSImage(systemSymbolName: "xmark.rectangle", accessibilityDescription: nil)
         quitItem.toolTip = "Quit \(appName)"
         statusMenu.addItem(quitItem)
     }
@@ -279,6 +281,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         invertColorsItem.image = NSImage(systemSymbolName: "arrow.left.arrow.right", accessibilityDescription: nil)
         invertColorsItem.toolTip = Localization.invertColorsTip
         colorsMenu.addItem(invertColorsItem)
+        colorsMenu.addItem(.separator())
 
         let applyToAllItem = NSMenuItem(
             title: Localization.applyColorToAll,
