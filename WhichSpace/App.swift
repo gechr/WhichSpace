@@ -298,19 +298,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         let colorsMenu = NSMenu(title: Localization.colorTitle)
         colorsMenu.delegate = self
 
-        // Grid color swatch for symbol mode (shown only when symbol active)
-        let gridSwatchItem = NSMenuItem()
-        gridSwatchItem.tag = MenuTag.gridSwatch
-        gridSwatchItem.isHidden = true
-        let gridSwatchView = ColorSwatchView()
-        gridSwatchView.gridMode = true
-        gridSwatchView.frame = NSRect(origin: .zero, size: gridSwatchView.intrinsicContentSize)
-        gridSwatchView.onColorSelected = { [weak self] color in
-            self?.setForegroundColor(color)
-        }
-        gridSwatchItem.view = gridSwatchView
-        colorsMenu.addItem(gridSwatchItem)
-
         // Foreground label (hidden when symbol active)
         let foregroundLabel = NSMenuItem(title: Localization.foregroundLabel, action: nil, keyEquivalent: "")
         foregroundLabel.isEnabled = false
@@ -762,11 +749,6 @@ extension AppDelegate: NSMenuDelegate {
                 view.selectedSymbol = currentSymbol
                 view.darkMode = appState.darkModeEnabled
                 view.needsDisplay = true
-            }
-
-            // Show grid swatch when symbol is active (tag 210)
-            if item.tag == MenuTag.gridSwatch {
-                item.isHidden = !symbolIsActive
             }
 
             // Hide foreground/background labels and swatches when symbol is active

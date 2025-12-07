@@ -73,15 +73,14 @@ enum IconColors {
 // MARK: - Menu Item Tags
 
 enum MenuTag {
-    static let launchAtLogin = 100
-    static let showAllSpaces = 101
-    static let foregroundLabel = 200
-    static let foregroundSwatch = 201
-    static let colorSeparator = 202
-    static let backgroundLabel = 203
-    static let backgroundSwatch = 204
-    static let gridSwatch = 210
-    static let sizeRow = 310
+    static let launchAtLogin = 1
+    static let showAllSpaces = 2
+    static let foregroundLabel = 3
+    static let foregroundSwatch = 4
+    static let colorSeparator = 5
+    static let backgroundLabel = 6
+    static let backgroundSwatch = 7
+    static let sizeRow = 8
 }
 
 // MARK: - Localization

@@ -14,15 +14,8 @@ final class ColorSwatchView: NSView {
         .systemPurple,
     ]
 
-    static let gridColors: [NSColor] = [
-        .black, .gray, .white,
-        .systemRed, .systemOrange, .systemYellow,
-        .systemGreen, .systemBlue, .systemPurple,
-    ]
-
     // MARK: - Configuration
 
-    var gridMode = false
     var onColorSelected: ((NSColor) -> Void)?
     var onCustomColorRequested: (() -> Void)?
 
@@ -33,14 +26,12 @@ final class ColorSwatchView: NSView {
     private let padding = 12.0
     private var hoveredIndex: Int?
 
-    private var colors: [NSColor] {
-        gridMode ? Self.gridColors : Self.presetColors
-    }
+    private var colors: [NSColor] { Self.presetColors }
 
     // MARK: - NSView Overrides
 
     override var intrinsicContentSize: CGSize {
-        let count = Double(colors.count + (gridMode ? 0 : 1)) // +1 for custom color button in normal mode
+        let count = Double(colors.count + 1) // +1 for custom color button
         let width = padding * 2 + count * swatchSize + (count - 1) * spacing
         let height = swatchSize + padding
         return CGSize(width: width, height: height)
@@ -59,12 +50,10 @@ final class ColorSwatchView: NSView {
             xOffset += swatchSize + spacing
         }
 
-        // Draw custom color button (rainbow gradient circle) - only in normal mode
-        if !gridMode {
-            let customRect = CGRect(x: xOffset, y: yOffset, width: swatchSize, height: swatchSize)
-            let customHighlighted = hoveredIndex == colors.count
-            drawCustomColorButton(in: customRect, highlighted: customHighlighted)
-        }
+        // Draw custom color button (rainbow gradient circle)
+        let customRect = CGRect(x: xOffset, y: yOffset, width: swatchSize, height: swatchSize)
+        let customHighlighted = hoveredIndex == colors.count
+        drawCustomColorButton(in: customRect, highlighted: customHighlighted)
     }
 
     override func mouseUp(with event: NSEvent) {
@@ -83,12 +72,10 @@ final class ColorSwatchView: NSView {
             xOffset += swatchSize + spacing
         }
 
-        // Check custom color button - only in normal mode
-        if !gridMode {
-            let customRect = CGRect(x: xOffset, y: yOffset, width: swatchSize, height: swatchSize)
-            if customRect.contains(location) {
-                onCustomColorRequested?()
-            }
+        // Check custom color button
+        let customRect = CGRect(x: xOffset, y: yOffset, width: swatchSize, height: swatchSize)
+        if customRect.contains(location) {
+            onCustomColorRequested?()
         }
     }
 
@@ -133,12 +120,10 @@ final class ColorSwatchView: NSView {
             xOffset += swatchSize + spacing
         }
 
-        // Check custom color button - only in normal mode
-        if !gridMode {
-            let customRect = CGRect(x: xOffset, y: yOffset, width: swatchSize, height: swatchSize)
-            if customRect.contains(location) {
-                return colors.count
-            }
+        // Check custom color button
+        let customRect = CGRect(x: xOffset, y: yOffset, width: swatchSize, height: swatchSize)
+        if customRect.contains(location) {
+            return colors.count
         }
 
         return nil

@@ -4,8 +4,7 @@ final class SymbolPickerView: NSView {
     // MARK: - Static Properties
 
     // swiftformat:disable all
-    /// Curated list of symbols useful for a space picker app
-    private static let curatedSymbols: [String] = [
+    private static let symbols: [String] = [
         // Work & Productivity
         "doc.fill", "doc.text.fill", "doc.richtext.fill", "doc.plaintext.fill", "doc.append.fill",
         "doc.badge.plus", "doc.badge.gearshape.fill", "doc.on.doc.fill", "doc.on.clipboard.fill",
@@ -248,7 +247,7 @@ final class SymbolPickerView: NSView {
     /// Filter to only symbols that exist on this system, then shuffle with fixed seed
     private static let allSymbols: [String] = {
         var rng = SeededRandomNumberGenerator(seed: 42)
-        let available = curatedSymbols.filter {
+        let available = symbols.filter {
             NSImage(systemSymbolName: $0, accessibilityDescription: nil) != nil
         }
         return available.shuffled(using: &rng)
