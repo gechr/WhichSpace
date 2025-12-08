@@ -22,7 +22,7 @@ jobs:
       - name: Install SwiftLint
         run: brew install swiftlint
       - name: Run SwiftLint
-        run: swiftlint lint --strict
+        run: make lint
 
   swiftformat:
     runs-on: macos-26
@@ -31,4 +31,4 @@ jobs:
         with:
           persist-credentials: false
       - name: Run SwiftFormat
-        run: swiftformat --lint .
+        run: make check

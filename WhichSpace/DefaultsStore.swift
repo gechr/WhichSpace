@@ -35,6 +35,7 @@ struct TypedKeySpec<Value: Defaults.Serializable>: KeySpec {
 /// 3. Tests will automatically pick up the new key
 enum KeySpecs {
     static let dimInactiveSpaces = TypedKeySpec(name: "dimInactiveSpaces", defaultValue: true)
+    static let hideEmptySpaces = TypedKeySpec(name: "hideEmptySpaces", defaultValue: false)
     static let showAllSpaces = TypedKeySpec(name: "showAllSpaces", defaultValue: false)
     static let spaceColors = TypedKeySpec(name: "spaceColors", defaultValue: [Int: SpaceColors]())
     static let spaceIconStyles = TypedKeySpec(name: "spaceIconStyles", defaultValue: [Int: IconStyle]())
@@ -62,6 +63,7 @@ enum KeySpecs {
         displaySpaceColors.name,
         displaySpaceIconStyles.name,
         displaySpaceSFSymbols.name,
+        hideEmptySpaces.name,
         showAllSpaces.name,
         sizeScale.name,
         spaceColors.name,
@@ -100,6 +102,7 @@ final class DefaultsStore: @unchecked Sendable {
 
     // Lazily-created keys bound to this store's suite
     private(set) lazy var dimInactiveSpacesKey = KeySpecs.dimInactiveSpaces.key(suite: suite)
+    private(set) lazy var hideEmptySpacesKey = KeySpecs.hideEmptySpaces.key(suite: suite)
     private(set) lazy var showAllSpacesKey = KeySpecs.showAllSpaces.key(suite: suite)
     private(set) lazy var spaceColorsKey = KeySpecs.spaceColors.key(suite: suite)
     private(set) lazy var spaceIconStylesKey = KeySpecs.spaceIconStyles.key(suite: suite)
@@ -121,6 +124,11 @@ final class DefaultsStore: @unchecked Sendable {
     var dimInactiveSpaces: Bool {
         get { Defaults[dimInactiveSpacesKey] }
         set { Defaults[dimInactiveSpacesKey] = newValue }
+    }
+
+    var hideEmptySpaces: Bool {
+        get { Defaults[hideEmptySpacesKey] }
+        set { Defaults[hideEmptySpacesKey] = newValue }
     }
 
     var showAllSpaces: Bool {
@@ -178,6 +186,7 @@ final class DefaultsStore: @unchecked Sendable {
             displaySpaceColorsKey,
             displaySpaceIconStylesKey,
             displaySpaceSFSymbolsKey,
+            hideEmptySpacesKey,
             showAllSpacesKey,
             sizeScaleKey,
             spaceColorsKey,

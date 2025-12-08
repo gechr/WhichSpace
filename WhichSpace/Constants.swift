@@ -5,6 +5,7 @@ import Defaults
 
 extension Defaults.Keys {
     static let dimInactiveSpaces = Key<Bool>("dimInactiveSpaces", default: true)
+    static let hideEmptySpaces = Key<Bool>("hideEmptySpaces", default: false)
     static let showAllSpaces = Key<Bool>("showAllSpaces", default: false)
     static let spaceColors = Key<[Int: SpaceColors]>("spaceColors", default: [:])
     static let spaceIconStyles = Key<[Int: IconStyle]>("spaceIconStyles", default: [:])
@@ -80,11 +81,12 @@ enum MenuTag {
     static let dimInactiveSpaces = 4
     static let foregroundLabel = 5
     static let foregroundSwatch = 6
-    static let launchAtLogin = 7
-    static let showAllSpaces = 8
-    static let sizeRow = 9
-    static let symbolColorSwatch = 10
-    static let uniqueIconsPerDisplay = 11
+    static let hideEmptySpaces = 7
+    static let launchAtLogin = 8
+    static let showAllSpaces = 9
+    static let sizeRow = 10
+    static let symbolColorSwatch = 11
+    static let uniqueIconsPerDisplay = 12
 }
 
 // MARK: - Localization
@@ -110,6 +112,8 @@ enum Localization {
     static let dimInactiveSpaces = NSLocalizedString("dim_inactive_spaces", comment: "")
     static let dimInactiveSpacesTip = NSLocalizedString("dim_inactive_spaces_tip", comment: "")
     static let foregroundLabel = NSLocalizedString("foreground_label", comment: "")
+    static let hideEmptySpaces = NSLocalizedString("hide_empty_spaces", comment: "")
+    static let hideEmptySpacesTip = NSLocalizedString("hide_empty_spaces_tip", comment: "")
     static let invertColors = NSLocalizedString("invert_colors", comment: "")
     static let invertColorsTip = NSLocalizedString("invert_colors_tip", comment: "")
     static let launchAtLogin = NSLocalizedString("launch_at_login", comment: "")

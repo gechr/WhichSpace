@@ -18,6 +18,8 @@
 "dim_inactive_spaces" = "Dim inactive Spaces";
 "dim_inactive_spaces_tip" = "Reduce opacity of inactive Space icons";
 "foreground_label" = "Foreground";
+"hide_empty_spaces" = "Hide empty Spaces";
+"hide_empty_spaces_tip" = "Hide Spaces that have no open windows";
 "icon_style_circle" = "Circle";
 "icon_style_circleOutline" = "Circle (Outline)";
 "icon_style_hexagon" = "Hexagon";

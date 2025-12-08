@@ -217,6 +217,44 @@ final class AppDelegateActionsTests: XCTestCase {
         XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 3, "updateStatusBarIcon should be called 3 times")
     }
 
+    // MARK: - toggleHideEmptySpaces Tests
+
+    func testToggleHideEmptySpaces_togglesFromTrueToFalse() {
+        store.hideEmptySpaces = true
+        let initialCount = sut.statusBarIconUpdateCount
+
+        sut.toggleHideEmptySpaces()
+
+        XCTAssertFalse(store.hideEmptySpaces, "hideEmptySpaces should toggle to false")
+        XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 1, "updateStatusBarIcon should be called")
+    }
+
+    func testToggleHideEmptySpaces_togglesFromFalseToTrue() {
+        store.hideEmptySpaces = false
+        let initialCount = sut.statusBarIconUpdateCount
+
+        sut.toggleHideEmptySpaces()
+
+        XCTAssertTrue(store.hideEmptySpaces, "hideEmptySpaces should toggle to true")
+        XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 1, "updateStatusBarIcon should be called")
+    }
+
+    func testToggleHideEmptySpaces_multipleToggles() {
+        store.hideEmptySpaces = false
+        let initialCount = sut.statusBarIconUpdateCount
+
+        sut.toggleHideEmptySpaces()
+        XCTAssertTrue(store.hideEmptySpaces)
+
+        sut.toggleHideEmptySpaces()
+        XCTAssertFalse(store.hideEmptySpaces)
+
+        sut.toggleHideEmptySpaces()
+        XCTAssertTrue(store.hideEmptySpaces)
+
+        XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 3, "updateStatusBarIcon should be called 3 times")
+    }
+
     // MARK: - applyAllToAllSpaces Tests
 
     func testApplyAllToAllSpaces_whenConfirmed_appliesStyleToAllSpaces() {
@@ -1150,6 +1188,52 @@ final class AppDelegateActionsTests: XCTestCase {
         XCTAssertTrue(
             dimInactiveItem?.isHidden ?? false,
             "Dim inactive Spaces should be hidden when Show All Spaces is off"
+        )
+    }
+
+    func testMenuWillOpen_setsHideEmptySpacesCheckmark_whenEnabled() {
+        sut.configureMenuBarIcon()
+        store.hideEmptySpaces = true
+
+        sut.menuWillOpen(sut.statusMenu)
+
+        let hideEmptyItem = sut.statusMenu.item(withTag: MenuTag.hideEmptySpaces)
+        XCTAssertEqual(hideEmptyItem?.state, .on, "Hide empty Spaces should be checked when enabled")
+    }
+
+    func testMenuWillOpen_setsHideEmptySpacesCheckmark_whenDisabled() {
+        sut.configureMenuBarIcon()
+        store.hideEmptySpaces = false
+
+        sut.menuWillOpen(sut.statusMenu)
+
+        let hideEmptyItem = sut.statusMenu.item(withTag: MenuTag.hideEmptySpaces)
+        XCTAssertEqual(hideEmptyItem?.state, .off, "Hide empty Spaces should be unchecked when disabled")
+    }
+
+    func testMenuWillOpen_showsHideEmptySpaces_whenShowAllSpacesEnabled() {
+        sut.configureMenuBarIcon()
+        store.showAllSpaces = true
+
+        sut.menuWillOpen(sut.statusMenu)
+
+        let hideEmptyItem = sut.statusMenu.item(withTag: MenuTag.hideEmptySpaces)
+        XCTAssertFalse(
+            hideEmptyItem?.isHidden ?? true,
+            "Hide empty Spaces should be visible when Show All Spaces is on"
+        )
+    }
+
+    func testMenuWillOpen_hidesHideEmptySpaces_whenShowAllSpacesDisabled() {
+        sut.configureMenuBarIcon()
+        store.showAllSpaces = false
+
+        sut.menuWillOpen(sut.statusMenu)
+
+        let hideEmptyItem = sut.statusMenu.item(withTag: MenuTag.hideEmptySpaces)
+        XCTAssertTrue(
+            hideEmptyItem?.isHidden ?? false,
+            "Hide empty Spaces should be hidden when Show All Spaces is off"
         )
     }
 

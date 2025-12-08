@@ -397,6 +397,111 @@ final class AppStateTests: XCTestCase {
         )
     }
 
+    func testShowAllSpaces_hideEmptySpaces_hidesEmptySpaces() {
+        // Given: 3 spaces, space 2 is active, space 1 has windows, space 3 is empty
+        store.showAllSpaces = true
+        store.hideEmptySpaces = true
+
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [
+                    (id: 100, isFullscreen: false),
+                    (id: 101, isFullscreen: false),
+                    (id: 102, isFullscreen: false),
+                ],
+                activeSpaceID: 101
+            ),
+        ]
+        // Space 100 has windows, space 101 is active, space 102 is empty
+        stub.spacesWithWindowsSet = [100]
+
+        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+
+        // When
+        let icon = sut.statusBarIcon
+
+        // Then: Should only show 2 spaces (100 with windows, 101 active), not 102 (empty)
+        // Width should be 2 * statusItemWidth instead of 3
+        let expectedWidth = 2 * Layout.statusItemWidth
+        XCTAssertEqual(
+            icon.size.width,
+            expectedWidth,
+            accuracy: 0.1,
+            "Icon should only show 2 spaces (one with windows, one active)"
+        )
+    }
+
+    func testShowAllSpaces_hideEmptySpaces_alwaysShowsActiveSpace() {
+        // Given: 2 spaces, space 2 is active but empty
+        store.showAllSpaces = true
+        store.hideEmptySpaces = true
+
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [
+                    (id: 100, isFullscreen: false),
+                    (id: 101, isFullscreen: false),
+                ],
+                activeSpaceID: 101
+            ),
+        ]
+        // Only space 100 has windows, but 101 is active
+        stub.spacesWithWindowsSet = [100]
+
+        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+
+        // When
+        let icon = sut.statusBarIcon
+
+        // Then: Should show both spaces (100 with windows, 101 active even though empty)
+        let expectedWidth = 2 * Layout.statusItemWidth
+        XCTAssertEqual(
+            icon.size.width,
+            expectedWidth,
+            accuracy: 0.1,
+            "Active space should always be shown even if empty"
+        )
+    }
+
+    func testShowAllSpaces_hideEmptySpacesDisabled_showsAllSpaces() {
+        // Given: 3 spaces, hideEmptySpaces is disabled
+        store.showAllSpaces = true
+        store.hideEmptySpaces = false
+
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [
+                    (id: 100, isFullscreen: false),
+                    (id: 101, isFullscreen: false),
+                    (id: 102, isFullscreen: false),
+                ],
+                activeSpaceID: 101
+            ),
+        ]
+        // Only space 100 has windows
+        stub.spacesWithWindowsSet = [100]
+
+        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+
+        // When
+        let icon = sut.statusBarIcon
+
+        // Then: Should show all 3 spaces since hideEmptySpaces is disabled
+        let expectedWidth = 3 * Layout.statusItemWidth
+        XCTAssertEqual(
+            icon.size.width,
+            expectedWidth,
+            accuracy: 0.1,
+            "All spaces should be shown when hideEmptySpaces is disabled"
+        )
+    }
+
     // MARK: - Dark Mode Tests
 
     func testUpdateDarkModeStatus_darkAppearance() {

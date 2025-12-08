@@ -202,6 +202,7 @@ final class DefaultsIsolationGuardTests: IsolatedDefaultsTestCase {
             "displaySpaceColors",
             "displaySpaceIconStyles",
             "displaySpaceSFSymbols",
+            "hideEmptySpaces",
             "showAllSpaces",
             "sizeScale",
             "spaceColors",

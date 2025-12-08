@@ -10,9 +10,10 @@ protocol DisplaySpaceProviding {
     // swiftlint:disable:next discouraged_optional_collection
     func copyManagedDisplaySpaces() -> [NSDictionary]?
     func copyActiveMenuBarDisplayIdentifier() -> String?
+    func spacesWithWindows(forSpaceIDs spaceIDs: [Int]) -> Set<Int>
 }
 
-/// Default implementation using the actual CGS functions
+/// Default implementation using the actual CGS/SLS functions
 struct CGSDisplaySpaceProvider: DisplaySpaceProviding {
     private let conn: Int32
 
@@ -28,6 +29,51 @@ struct CGSDisplaySpaceProvider: DisplaySpaceProviding {
     func copyActiveMenuBarDisplayIdentifier() -> String? {
         CGSCopyActiveMenuBarDisplayIdentifier(conn) as? String
     }
+
+    func spacesWithWindows(forSpaceIDs spaceIDs: [Int]) -> Set<Int> {
+        // Get all windows (not just on-screen) to detect windows on other spaces
+        let options: CGWindowListOption = [.optionAll, .excludeDesktopElements]
+        guard let windowList = CGWindowListCopyWindowInfo(options, kCGNullWindowID) as? [[String: Any]] else {
+            return []
+        }
+
+        // Collect all qualifying window IDs for a single batch query
+        var windowIDs: [Int] = []
+
+        for window in windowList {
+            // Filter to regular windows (layer 0) - skip menu bar, dock, etc.
+            guard let layer = window[kCGWindowLayer as String] as? Int, layer == 0 else {
+                continue
+            }
+
+            // Skip windows that are too small (likely utility/overlay windows)
+            guard let bounds = window[kCGWindowBounds as String] as? [String: Any],
+                  let width = bounds["Width"] as? Double,
+                  let height = bounds["Height"] as? Double,
+                  width > 5, height > 5
+            else {
+                continue
+            }
+
+            if let windowNumber = window[kCGWindowNumber as String] as? Int {
+                windowIDs.append(windowNumber)
+            }
+        }
+
+        guard !windowIDs.isEmpty else {
+            return []
+        }
+
+        // Single batch call to get all spaces for all windows
+        // Selector 0x7 = all spaces the windows are on
+        guard let result = SLSCopySpacesForWindows(conn, 0x7, windowIDs as CFArray) else {
+            return []
+        }
+        let spaces = result.takeRetainedValue() as? [Int] ?? []
+
+        let spaceIDSet = Set(spaceIDs)
+        return Set(spaces).intersection(spaceIDSet)
+    }
 }
 
 @MainActor
@@ -42,6 +88,7 @@ final class AppState {
     private(set) var currentDisplayID: String?
     private(set) var darkModeEnabled = false
     private(set) var allSpaceLabels: [String] = []
+    private(set) var allSpaceIDs: [Int] = []
 
     private let mainDisplay = "Main"
     private let spacesMonitorFile = "~/Library/Preferences/com.apple.spaces.plist"
@@ -51,6 +98,12 @@ final class AppState {
     private var lastUpdateTime: Date = .distantPast
     private var mouseEventMonitor: Any?
     private var spacesMonitor: DispatchSourceFileSystemObject?
+
+    // Cache for spacesWithWindows to avoid repeated expensive CGS calls
+    private var cachedSpacesWithWindows: Set<Int> = []
+    private var cachedSpacesWithWindowsTime: Date = .distantPast
+    private var cachedSpacesWithWindowsSpaceIDs: [Int] = []
+    private static let spacesWithWindowsCacheTTL: TimeInterval = 0.2
 
     private init() {
         displaySpaceProvider = CGSDisplaySpaceProvider()
@@ -76,11 +129,19 @@ final class AppState {
     // MARK: - Test Helpers
 
     /// Sets space labels and current space directly for testing the rendering path
-    func setSpaceState(labels: [String], currentSpace: Int, currentLabel: String, displayID: String? = nil) {
+    func setSpaceState(
+        labels: [String],
+        currentSpace: Int,
+        currentLabel: String,
+        displayID: String? = nil,
+        // swiftlint:disable:next discouraged_optional_collection
+        spaceIDs: [Int]? = nil
+    ) {
         allSpaceLabels = labels
         self.currentSpace = currentSpace
         currentSpaceLabel = currentLabel
         currentDisplayID = displayID
+        allSpaceIDs = spaceIDs ?? Array(100 ..< 100 + labels.count)
     }
 
     // MARK: - Observers
@@ -180,6 +241,9 @@ final class AppState {
     // MARK: - Space Detection
 
     @objc func updateActiveSpaceNumber() {
+        // Invalidate window cache on space change to get fresh window data
+        invalidateSpacesWithWindowsCache()
+
         guard let displays = displaySpaceProvider.copyManagedDisplaySpaces(),
               let activeDisplay = displaySpaceProvider.copyActiveMenuBarDisplayIdentifier()
         else {
@@ -204,6 +268,7 @@ final class AppState {
 
             var regularSpaceIndex = 0
             var spaceLabels: [String] = []
+            var spaceIDs: [Int] = []
             var foundActiveSpace = false
             var activeIndex = 0
 
@@ -222,6 +287,7 @@ final class AppState {
                 }
 
                 spaceLabels.append(label)
+                spaceIDs.append(spaceID)
 
                 if spaceID == activeSpaceID {
                     activeIndex = spaceLabels.count
@@ -234,6 +300,7 @@ final class AppState {
             }
 
             allSpaceLabels = spaceLabels
+            allSpaceIDs = spaceIDs
 
             if foundActiveSpace {
                 return
@@ -244,6 +311,7 @@ final class AppState {
         currentSpaceLabel = "?"
         currentDisplayID = nil
         allSpaceLabels = []
+        allSpaceIDs = []
     }
 
     @objc func updateDarkModeStatus() {
@@ -319,18 +387,58 @@ final class AppState {
         )
     }
 
+    /// Returns cached spaces with windows, refreshing if cache is stale or space IDs changed
+    private func getCachedSpacesWithWindows(forSpaceIDs spaceIDs: [Int]) -> Set<Int> {
+        let now = Date()
+        let cacheValid = cachedSpacesWithWindowsSpaceIDs == spaceIDs &&
+            now.timeIntervalSince(cachedSpacesWithWindowsTime) < Self.spacesWithWindowsCacheTTL
+
+        if !cacheValid {
+            cachedSpacesWithWindows = displaySpaceProvider.spacesWithWindows(forSpaceIDs: spaceIDs)
+            cachedSpacesWithWindowsTime = now
+            cachedSpacesWithWindowsSpaceIDs = spaceIDs
+        }
+        return cachedSpacesWithWindows
+    }
+
+    /// Invalidates the spacesWithWindows cache (call on space change)
+    private func invalidateSpacesWithWindowsCache() {
+        cachedSpacesWithWindowsTime = .distantPast
+        cachedSpacesWithWindowsSpaceIDs = []
+    }
+
     private func generateCombinedIcon(darkMode: Bool) -> NSImage {
-        let totalWidth = Double(allSpaceLabels.count) * Layout.statusItemWidth
+        // Determine which spaces to show
+        let spacesToShow: [(index: Int, label: String)]
+        if store.hideEmptySpaces {
+            let nonEmptySpaceIDs = getCachedSpacesWithWindows(forSpaceIDs: allSpaceIDs)
+            let filtered = allSpaceLabels.enumerated().filter { index, _ in
+                let spaceID = allSpaceIDs[index]
+                let spaceIndex = index + 1
+                // Always show active space, and spaces with windows
+                return spaceIndex == currentSpace || nonEmptySpaceIDs.contains(spaceID)
+            }
+            spacesToShow = filtered.map { (index: $0.offset, label: $0.element) }
+        } else {
+            spacesToShow = allSpaceLabels.enumerated().map { (index: $0.offset, label: $0.element) }
+        }
+
+        // If no spaces to show, show just the current space
+        guard !spacesToShow.isEmpty else {
+            return generateSingleIcon(for: currentSpace, label: currentSpaceLabel, darkMode: darkMode)
+        }
+
+        let totalWidth = Double(spacesToShow.count) * Layout.statusItemWidth
         let combinedImage = NSImage(size: NSSize(width: totalWidth, height: Layout.statusItemHeight))
 
         combinedImage.lockFocus()
 
-        for (index, label) in allSpaceLabels.enumerated() {
-            let spaceIndex = index + 1
+        for (drawIndex, spaceInfo) in spacesToShow.enumerated() {
+            let spaceIndex = spaceInfo.index + 1
             let isActive = spaceIndex == currentSpace
-            let icon = generateSingleIcon(for: spaceIndex, label: label, darkMode: darkMode)
+            let icon = generateSingleIcon(for: spaceIndex, label: spaceInfo.label, darkMode: darkMode)
 
-            let xOffset = Double(index) * Layout.statusItemWidth
+            let xOffset = Double(drawIndex) * Layout.statusItemWidth
             let drawRect = NSRect(
                 x: xOffset,
                 y: 0,

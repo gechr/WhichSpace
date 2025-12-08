@@ -19,9 +19,4 @@ jobs:
           persist-credentials: false
 
       - name: Run Tests
-        run: |
-          xcodebuild test \
-            -project WhichSpace.xcodeproj \
-            -scheme WhichSpace \
-            -destination 'platform=macOS' \
-            MACOSX_DEPLOYMENT_TARGET=14.0
+        run: make test

@@ -334,6 +334,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         )
         dimInactiveSpacesItem.toolTip = Localization.dimInactiveSpacesTip
         statusMenu.addItem(dimInactiveSpacesItem)
+
+        let hideEmptySpacesItem = NSMenuItem(
+            title: Localization.hideEmptySpaces,
+            action: #selector(toggleHideEmptySpaces),
+            keyEquivalent: ""
+        )
+        hideEmptySpacesItem.target = self
+        hideEmptySpacesItem.tag = MenuTag.hideEmptySpaces
+        hideEmptySpacesItem.image = NSImage(
+            systemSymbolName: "eye.slash",
+            accessibilityDescription: nil
+        )
+        hideEmptySpacesItem.toolTip = Localization.hideEmptySpacesTip
+        statusMenu.addItem(hideEmptySpacesItem)
         statusMenu.addItem(.separator())
 
         let applyToAllItem = NSMenuItem(
@@ -556,6 +570,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
     @objc func toggleDimInactiveSpaces() {
         store.dimInactiveSpaces.toggle()
+        updateStatusBarIcon()
+    }
+
+    @objc func toggleHideEmptySpaces() {
+        store.hideEmptySpaces.toggle()
         updateStatusBarIcon()
     }
 
@@ -933,6 +952,12 @@ extension AppDelegate: NSMenuDelegate {
         if let dimInactiveItem = menu.item(withTag: MenuTag.dimInactiveSpaces) {
             dimInactiveItem.state = store.dimInactiveSpaces ? .on : .off
             dimInactiveItem.isHidden = !store.showAllSpaces
+        }
+
+        // Update Hide empty Spaces checkmark and visibility
+        if let hideEmptyItem = menu.item(withTag: MenuTag.hideEmptySpaces) {
+            hideEmptyItem.state = store.hideEmptySpaces ? .on : .off
+            hideEmptyItem.isHidden = !store.showAllSpaces
         }
 
         for item in menu.items {

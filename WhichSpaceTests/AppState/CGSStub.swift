@@ -5,6 +5,7 @@ import Foundation
 final class CGSStub: DisplaySpaceProviding {
     var displays: [NSDictionary] = []
     var activeDisplayIdentifier: String?
+    var spacesWithWindowsSet: Set<Int> = []
 
     // swiftlint:disable:next discouraged_optional_collection
     func copyManagedDisplaySpaces() -> [NSDictionary]? {
@@ -13,6 +14,10 @@ final class CGSStub: DisplaySpaceProviding {
 
     func copyActiveMenuBarDisplayIdentifier() -> String? {
         activeDisplayIdentifier
+    }
+
+    func spacesWithWindows(forSpaceIDs spaceIDs: [Int]) -> Set<Int> {
+        spacesWithWindowsSet.intersection(spaceIDs)
     }
 
     // MARK: - Builder Helpers

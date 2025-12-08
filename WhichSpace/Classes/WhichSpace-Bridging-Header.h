@@ -13,9 +13,10 @@
 
 #import "PFMoveApplication.h"
 
-// Private CGS APIs for getting space information (no public alternative exists)
+// Private CGS/SLS APIs for getting space information (no public alternative exists)
 int _CGSDefaultConnection();
 id CGSCopyManagedDisplaySpaces(int conn);
 id CGSCopyActiveMenuBarDisplayIdentifier(int conn);
+CFArrayRef SLSCopySpacesForWindows(int conn, int selector, CFArrayRef windowIDs);
 
 #endif
