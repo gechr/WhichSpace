@@ -128,4 +128,13 @@ enum SpacePreferences {
     static func clearColors(forSpace spaceNumber: Int, store: DefaultsStore = .shared) {
         store.spaceColors.removeValue(forKey: spaceNumber)
     }
+
+    // MARK: - Clear All
+
+    /// Clears all per-space preferences (colors, icon styles, SF symbols).
+    static func clearAll(store: DefaultsStore = .shared) {
+        store.spaceColors = [:]
+        store.spaceIconStyles = [:]
+        store.spaceSFSymbols = [:]
+    }
 }

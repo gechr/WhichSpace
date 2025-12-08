@@ -597,11 +597,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             return
         }
 
-        for space in appState.getAllSpaceIndices() {
-            SpacePreferences.clearColors(forSpace: space, store: store)
-            SpacePreferences.clearIconStyle(forSpace: space, store: store)
-            SpacePreferences.clearSFSymbol(forSpace: space, store: store)
-        }
+        SpacePreferences.clearAll(store: store)
         store.sizeScale = Layout.defaultSizeScale
         updateStatusBarIcon()
     }

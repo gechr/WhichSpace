@@ -374,6 +374,53 @@ final class AppDelegateActionsTests: XCTestCase {
         XCTAssertEqual(store.sizeScale, 80.0, "Size scale should be preserved")
     }
 
+    func testResetAllSpacesToDefault_clearsPreferencesForClosedSpaces() {
+        // Setup: Configure 10 spaces worth of preferences (more than the 4 active spaces)
+        for space in 1 ... 10 {
+            setupSpaceWithPreferences(
+                space: space,
+                style: .pentagon,
+                colors: SpaceColors(foreground: .orange, background: .purple),
+                symbol: "star"
+            )
+        }
+
+        // Simulate closing spaces by reducing to only 2 active spaces
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [
+                    (id: 100, isFullscreen: false),
+                    (id: 101, isFullscreen: false),
+                ],
+                activeSpaceID: 101
+            ),
+        ]
+        appState.updateActiveSpaceNumber()
+        XCTAssertEqual(appState.getAllSpaceIndices().count, 2, "Should only have 2 active spaces")
+
+        alertFactory.shouldConfirm = true
+
+        // Reset all spaces
+        sut.resetAllSpacesToDefault()
+
+        // Verify ALL 10 spaces are cleared, not just the 2 active ones
+        for space in 1 ... 10 {
+            XCTAssertNil(
+                SpacePreferences.colors(forSpace: space, store: store),
+                "Space \(space) colors should be cleared"
+            )
+            XCTAssertNil(
+                SpacePreferences.iconStyle(forSpace: space, store: store),
+                "Space \(space) icon style should be cleared"
+            )
+            XCTAssertNil(
+                SpacePreferences.sfSymbol(forSpace: space, store: store),
+                "Space \(space) SF symbol should be cleared"
+            )
+        }
+    }
+
     // MARK: - invertColors Tests
 
     func testInvertColors_swapsForegroundAndBackground() {
