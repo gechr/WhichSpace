@@ -381,6 +381,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         let colorsMenu = NSMenu(title: Localization.colorTitle)
         colorsMenu.delegate = self
 
+        // Symbol color swatch (shown only when symbol active)
+        let symbolSwatchItem = NSMenuItem()
+        symbolSwatchItem.tag = MenuTag.symbolColorSwatch
+        symbolSwatchItem.isHidden = true
+        let symbolSwatch = ColorSwatch()
+        symbolSwatch.frame = NSRect(origin: .zero, size: symbolSwatch.intrinsicContentSize)
+        symbolSwatch.onColorSelected = { [weak self] color in
+            self?.setForegroundColor(color)
+        }
+        symbolSwatch.onCustomColorRequested = { [weak self] in
+            self?.isPickingForeground = true
+            self?.showColorPanel()
+        }
+        symbolSwatchItem.view = symbolSwatch
+        colorsMenu.addItem(symbolSwatchItem)
+
         // Foreground label (hidden when symbol active)
         let foregroundLabel = NSMenuItem(title: Localization.foregroundLabel, action: nil, keyEquivalent: "")
         foregroundLabel.isEnabled = false
@@ -844,6 +860,11 @@ extension AppDelegate: NSMenuDelegate {
                 view.selectedSymbol = currentSymbol
                 view.darkMode = appState.darkModeEnabled
                 view.needsDisplay = true
+            }
+
+            // Show symbol color swatch only when symbol is active
+            if item.tag == MenuTag.symbolColorSwatch {
+                item.isHidden = !symbolIsActive
             }
 
             // Hide foreground/background labels and swatches when symbol is active

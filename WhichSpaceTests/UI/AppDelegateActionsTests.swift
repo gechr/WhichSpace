@@ -1096,6 +1096,45 @@ final class AppDelegateActionsTests: XCTestCase {
         XCTAssertTrue(backgroundSwatch?.isHidden ?? false, "Background swatch should be hidden when symbol is active")
     }
 
+    func testMenuWillOpen_showsSymbolColorSwatch_whenSymbolActive() {
+        sut.configureMenuBarIcon()
+        SpacePreferences.setSFSymbol("star.fill", forSpace: appState.currentSpace, store: store)
+
+        // Find the Colors submenu
+        let colorsMenuItem = sut.statusMenu.items.first { $0.title == Localization.colorTitle }
+        guard let colorsMenu = colorsMenuItem?.submenu else {
+            XCTFail("Colors submenu not found")
+            return
+        }
+
+        sut.menuWillOpen(colorsMenu)
+
+        // Verify symbol color swatch is shown
+        let symbolColorSwatch = colorsMenu.item(withTag: MenuTag.symbolColorSwatch)
+        XCTAssertFalse(
+            symbolColorSwatch?.isHidden ?? true,
+            "Symbol color swatch should be visible when symbol is active"
+        )
+    }
+
+    func testMenuWillOpen_hidesSymbolColorSwatch_whenSymbolNotActive() {
+        sut.configureMenuBarIcon()
+        SpacePreferences.clearSFSymbol(forSpace: appState.currentSpace, store: store)
+
+        // Find the Colors submenu
+        let colorsMenuItem = sut.statusMenu.items.first { $0.title == Localization.colorTitle }
+        guard let colorsMenu = colorsMenuItem?.submenu else {
+            XCTFail("Colors submenu not found")
+            return
+        }
+
+        sut.menuWillOpen(colorsMenu)
+
+        // Verify symbol color swatch is hidden
+        let symbolColorSwatch = colorsMenu.item(withTag: MenuTag.symbolColorSwatch)
+        XCTAssertTrue(symbolColorSwatch?.isHidden ?? false, "Symbol color swatch should be hidden when no symbol")
+    }
+
     func testMenuWillOpen_showsColorSwatches_whenSymbolNotActive() {
         sut.configureMenuBarIcon()
         SpacePreferences.clearSFSymbol(forSpace: appState.currentSpace, store: store)

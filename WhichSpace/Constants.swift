@@ -81,6 +81,7 @@ enum MenuTag {
     static let backgroundLabel = 6
     static let backgroundSwatch = 7
     static let sizeRow = 8
+    static let symbolColorSwatch = 9
 }
 
 // MARK: - Localization
