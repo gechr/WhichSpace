@@ -39,6 +39,7 @@ final class AppState {
 
     private(set) var currentSpace = 0
     private(set) var currentSpaceLabel = "?"
+    private(set) var currentDisplayID: String?
     private(set) var darkModeEnabled = false
     private(set) var allSpaceLabels: [String] = []
 
@@ -75,10 +76,11 @@ final class AppState {
     // MARK: - Test Helpers
 
     /// Sets space labels and current space directly for testing the rendering path
-    func setSpaceState(labels: [String], currentSpace: Int, currentLabel: String) {
+    func setSpaceState(labels: [String], currentSpace: Int, currentLabel: String, displayID: String? = nil) {
         allSpaceLabels = labels
         self.currentSpace = currentSpace
         currentSpaceLabel = currentLabel
+        currentDisplayID = displayID
     }
 
     // MARK: - Observers
@@ -109,6 +111,20 @@ final class AppState {
             selector: #selector(updateActiveSpaceNumber),
             name: NSWorkspace.didActivateApplicationNotification,
             object: workspace
+        )
+
+        // Mission Control / Exposé dismissal
+        DistributedNotificationCenter.default().addObserver(
+            self,
+            selector: #selector(updateActiveSpaceNumber),
+            name: NSNotification.Name("com.apple.screenIsUnlocked"),
+            object: nil
+        )
+        DistributedNotificationCenter.default().addObserver(
+            self,
+            selector: #selector(updateActiveSpaceNumber),
+            name: NSNotification.Name("com.apple.exposeworkspacesdidchange"),
+            object: nil
         )
 
         mouseEventMonitor = NSEvent.addGlobalMonitorForEvents(matching: .leftMouseDown) { [weak self] _ in
@@ -211,6 +227,7 @@ final class AppState {
                     activeIndex = spaceLabels.count
                     currentSpace = activeIndex
                     currentSpaceLabel = label
+                    currentDisplayID = displayID
                     lastUpdateTime = Date()
                     foundActiveSpace = true
                 }
@@ -225,6 +242,7 @@ final class AppState {
 
         currentSpace = 0
         currentSpaceLabel = "?"
+        currentDisplayID = nil
         allSpaceLabels = []
     }
 
@@ -236,15 +254,15 @@ final class AppState {
     // MARK: - Helpers
 
     var currentIconStyle: IconStyle {
-        SpacePreferences.iconStyle(forSpace: currentSpace, store: store) ?? .square
+        SpacePreferences.iconStyle(forSpace: currentSpace, display: currentDisplayID, store: store) ?? .square
     }
 
     var currentSymbol: String? {
-        SpacePreferences.sfSymbol(forSpace: currentSpace, store: store)
+        SpacePreferences.sfSymbol(forSpace: currentSpace, display: currentDisplayID, store: store)
     }
 
     var currentColors: SpaceColors? {
-        SpacePreferences.colors(forSpace: currentSpace, store: store)
+        SpacePreferences.colors(forSpace: currentSpace, display: currentDisplayID, store: store)
     }
 
     func getAllSpaceIndices() -> [Int] {
@@ -271,8 +289,8 @@ final class AppState {
     }
 
     private func generateSingleIcon(for space: Int, label: String, darkMode: Bool) -> NSImage {
-        let colors = SpacePreferences.colors(forSpace: space, store: store)
-        let style = SpacePreferences.iconStyle(forSpace: space, store: store) ?? .square
+        let colors = SpacePreferences.colors(forSpace: space, display: currentDisplayID, store: store)
+        let style = SpacePreferences.iconStyle(forSpace: space, display: currentDisplayID, store: store) ?? .square
 
         // Fullscreen spaces just show "F" with the same colors
         if label == Labels.fullscreen {
@@ -284,7 +302,7 @@ final class AppState {
             )
         }
 
-        let symbol = SpacePreferences.sfSymbol(forSpace: space, store: store)
+        let symbol = SpacePreferences.sfSymbol(forSpace: space, display: currentDisplayID, store: store)
 
         if let symbol {
             return SpaceIconGenerator.generateSFSymbolIcon(

@@ -137,4 +137,123 @@ final class SpacePreferencesTests: IsolatedDefaultsTestCase {
         XCTAssertEqual(SpacePreferences.iconStyle(forSpace: 1, store: store), .circle)
         XCTAssertEqual(SpacePreferences.sfSymbol(forSpace: 1, store: store), "star")
     }
+
+    // MARK: - Per-Display Tests
+
+    func testSharedPreferencesWhenUniqueIconsDisabled() {
+        // Default: uniqueIconsPerDisplay is false
+        XCTAssertFalse(store.uniqueIconsPerDisplay)
+
+        // Set preferences with a display ID - should use shared storage
+        SpacePreferences.setColors(
+            SpaceColors(foreground: .red, background: .blue),
+            forSpace: 1,
+            display: "Display1",
+            store: store
+        )
+        SpacePreferences.setIconStyle(.circle, forSpace: 1, display: "Display1", store: store)
+        SpacePreferences.setSFSymbol("star", forSpace: 1, display: "Display1", store: store)
+
+        // Should be stored in shared storage, accessible without display ID
+        XCTAssertNotNil(SpacePreferences.colors(forSpace: 1, store: store))
+        XCTAssertEqual(SpacePreferences.iconStyle(forSpace: 1, store: store), .circle)
+        XCTAssertEqual(SpacePreferences.sfSymbol(forSpace: 1, store: store), "star")
+
+        // Same values accessible with any display ID (still uses shared storage)
+        XCTAssertNotNil(SpacePreferences.colors(forSpace: 1, display: "Display2", store: store))
+        XCTAssertEqual(SpacePreferences.iconStyle(forSpace: 1, display: "Display2", store: store), .circle)
+        XCTAssertEqual(SpacePreferences.sfSymbol(forSpace: 1, display: "Display2", store: store), "star")
+    }
+
+    func testPerDisplayPreferencesWhenEnabled() {
+        store.uniqueIconsPerDisplay = true
+
+        let display1 = "Display1"
+        let display2 = "Display2"
+
+        // Set different preferences for each display
+        SpacePreferences.setColors(
+            SpaceColors(foreground: .red, background: .blue),
+            forSpace: 1,
+            display: display1,
+            store: store
+        )
+        SpacePreferences.setIconStyle(.circle, forSpace: 1, display: display1, store: store)
+
+        SpacePreferences.setColors(
+            SpaceColors(foreground: .green, background: .yellow),
+            forSpace: 1,
+            display: display2,
+            store: store
+        )
+        SpacePreferences.setIconStyle(.hexagon, forSpace: 1, display: display2, store: store)
+
+        // Display1 should have its own settings
+        let colors1 = SpacePreferences.colors(forSpace: 1, display: display1, store: store)
+        XCTAssertEqual(colors1?.foreground, .red)
+        XCTAssertEqual(SpacePreferences.iconStyle(forSpace: 1, display: display1, store: store), .circle)
+
+        // Display2 should have its own settings
+        let colors2 = SpacePreferences.colors(forSpace: 1, display: display2, store: store)
+        XCTAssertEqual(colors2?.foreground, .green)
+        XCTAssertEqual(SpacePreferences.iconStyle(forSpace: 1, display: display2, store: store), .hexagon)
+    }
+
+    func testTogglingPreservesSettings() {
+        // Set shared preferences
+        store.uniqueIconsPerDisplay = false
+        SpacePreferences.setIconStyle(.square, forSpace: 1, store: store)
+
+        // Enable per-display and set display-specific preferences
+        store.uniqueIconsPerDisplay = true
+        SpacePreferences.setIconStyle(.circle, forSpace: 1, display: "Display1", store: store)
+
+        // Verify per-display setting
+        XCTAssertEqual(SpacePreferences.iconStyle(forSpace: 1, display: "Display1", store: store), .circle)
+
+        // Toggle back to shared - should get original shared value
+        store.uniqueIconsPerDisplay = false
+        XCTAssertEqual(SpacePreferences.iconStyle(forSpace: 1, store: store), .square)
+
+        // Toggle to per-display again - should get per-display value back
+        store.uniqueIconsPerDisplay = true
+        XCTAssertEqual(SpacePreferences.iconStyle(forSpace: 1, display: "Display1", store: store), .circle)
+    }
+
+    func testClearAllClearsEverything() {
+        // Set up both shared and per-display preferences
+        store.uniqueIconsPerDisplay = false
+        SpacePreferences.setIconStyle(.square, forSpace: 1, store: store)
+        SpacePreferences.setColors(SpaceColors(foreground: .red, background: .blue), forSpace: 1, store: store)
+
+        store.uniqueIconsPerDisplay = true
+        SpacePreferences.setIconStyle(.circle, forSpace: 1, display: "Display1", store: store)
+        SpacePreferences.setIconStyle(.triangle, forSpace: 1, display: "Display2", store: store)
+
+        // Clear everything
+        SpacePreferences.clearAll(store: store)
+
+        // All per-display settings should be cleared
+        XCTAssertNil(SpacePreferences.iconStyle(forSpace: 1, display: "Display1", store: store))
+        XCTAssertNil(SpacePreferences.iconStyle(forSpace: 1, display: "Display2", store: store))
+
+        // All shared settings should be cleared
+        store.uniqueIconsPerDisplay = false
+        XCTAssertNil(SpacePreferences.iconStyle(forSpace: 1, store: store))
+        XCTAssertNil(SpacePreferences.colors(forSpace: 1, store: store))
+    }
+
+    func testPerDisplayWithNilDisplayFallsBackToShared() {
+        store.uniqueIconsPerDisplay = true
+
+        // Set shared preference (by passing nil display when enabled)
+        // This should still use shared storage when display is nil
+        SpacePreferences.setIconStyle(.square, forSpace: 1, display: nil, store: store)
+
+        // Since display is nil even with uniqueIconsPerDisplay=true, should use shared
+        XCTAssertEqual(SpacePreferences.iconStyle(forSpace: 1, display: nil, store: store), .square)
+
+        // Per-display storage should be empty
+        XCTAssertNil(store.displaySpaceIconStyles["SomeDisplay"]?[1])
+    }
 }

@@ -74,67 +74,146 @@ struct SpaceColors: Equatable, Defaults.Serializable {
 ///
 /// All methods accept an optional `DefaultsStore` parameter. In production, pass
 /// `.shared` (the default). In tests, pass a per-test store for isolation.
+///
+/// When `uniqueIconsPerDisplay` is enabled, preferences are stored per-display
+/// using the display identifier. When disabled, shared preferences are used.
+/// Both sets of preferences are stored separately for backwards compatibility.
 enum SpacePreferences {
     // MARK: - SF Symbols
 
-    static func sfSymbol(forSpace spaceNumber: Int, store: DefaultsStore = .shared) -> String? {
-        store.spaceSFSymbols[spaceNumber]
+    static func sfSymbol(
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = .shared
+    ) -> String? {
+        if store.uniqueIconsPerDisplay, let display {
+            return store.displaySpaceSFSymbols[display]?[spaceNumber]
+        }
+        return store.spaceSFSymbols[spaceNumber]
     }
 
-    static func setSFSymbol(_ symbol: String?, forSpace spaceNumber: Int, store: DefaultsStore = .shared) {
-        if let symbol {
-            store.spaceSFSymbols[spaceNumber] = symbol
+    static func setSFSymbol(
+        _ symbol: String?,
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = .shared
+    ) {
+        if store.uniqueIconsPerDisplay, let display {
+            var displaySymbols = store.displaySpaceSFSymbols
+            var spaceSymbols = displaySymbols[display] ?? [:]
+            if let symbol {
+                spaceSymbols[spaceNumber] = symbol
+            } else {
+                spaceSymbols.removeValue(forKey: spaceNumber)
+            }
+            displaySymbols[display] = spaceSymbols
+            store.displaySpaceSFSymbols = displaySymbols
         } else {
-            store.spaceSFSymbols.removeValue(forKey: spaceNumber)
+            if let symbol {
+                store.spaceSFSymbols[spaceNumber] = symbol
+            } else {
+                store.spaceSFSymbols.removeValue(forKey: spaceNumber)
+            }
         }
     }
 
-    static func clearSFSymbol(forSpace spaceNumber: Int, store: DefaultsStore = .shared) {
-        store.spaceSFSymbols.removeValue(forKey: spaceNumber)
+    static func clearSFSymbol(forSpace spaceNumber: Int, display: String? = nil, store: DefaultsStore = .shared) {
+        setSFSymbol(nil, forSpace: spaceNumber, display: display, store: store)
     }
 
     // MARK: - Icon Style
 
-    static func iconStyle(forSpace spaceNumber: Int, store: DefaultsStore = .shared) -> IconStyle? {
-        store.spaceIconStyles[spaceNumber]
+    static func iconStyle(
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = .shared
+    ) -> IconStyle? {
+        if store.uniqueIconsPerDisplay, let display {
+            return store.displaySpaceIconStyles[display]?[spaceNumber]
+        }
+        return store.spaceIconStyles[spaceNumber]
     }
 
-    static func setIconStyle(_ style: IconStyle?, forSpace spaceNumber: Int, store: DefaultsStore = .shared) {
-        if let style {
-            store.spaceIconStyles[spaceNumber] = style
+    static func setIconStyle(
+        _ style: IconStyle?,
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = .shared
+    ) {
+        if store.uniqueIconsPerDisplay, let display {
+            var displayStyles = store.displaySpaceIconStyles
+            var spaceStyles = displayStyles[display] ?? [:]
+            if let style {
+                spaceStyles[spaceNumber] = style
+            } else {
+                spaceStyles.removeValue(forKey: spaceNumber)
+            }
+            displayStyles[display] = spaceStyles
+            store.displaySpaceIconStyles = displayStyles
         } else {
-            store.spaceIconStyles.removeValue(forKey: spaceNumber)
+            if let style {
+                store.spaceIconStyles[spaceNumber] = style
+            } else {
+                store.spaceIconStyles.removeValue(forKey: spaceNumber)
+            }
         }
     }
 
-    static func clearIconStyle(forSpace spaceNumber: Int, store: DefaultsStore = .shared) {
-        store.spaceIconStyles.removeValue(forKey: spaceNumber)
+    static func clearIconStyle(forSpace spaceNumber: Int, display: String? = nil, store: DefaultsStore = .shared) {
+        setIconStyle(nil, forSpace: spaceNumber, display: display, store: store)
     }
 
     // MARK: - Colors
 
-    static func colors(forSpace spaceNumber: Int, store: DefaultsStore = .shared) -> SpaceColors? {
-        store.spaceColors[spaceNumber]
+    static func colors(
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = .shared
+    ) -> SpaceColors? {
+        if store.uniqueIconsPerDisplay, let display {
+            return store.displaySpaceColors[display]?[spaceNumber]
+        }
+        return store.spaceColors[spaceNumber]
     }
 
-    static func setColors(_ colors: SpaceColors?, forSpace spaceNumber: Int, store: DefaultsStore = .shared) {
-        if let colors {
-            store.spaceColors[spaceNumber] = colors
+    static func setColors(
+        _ colors: SpaceColors?,
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = .shared
+    ) {
+        if store.uniqueIconsPerDisplay, let display {
+            var displayColors = store.displaySpaceColors
+            var spaceColors = displayColors[display] ?? [:]
+            if let colors {
+                spaceColors[spaceNumber] = colors
+            } else {
+                spaceColors.removeValue(forKey: spaceNumber)
+            }
+            displayColors[display] = spaceColors
+            store.displaySpaceColors = displayColors
         } else {
-            store.spaceColors.removeValue(forKey: spaceNumber)
+            if let colors {
+                store.spaceColors[spaceNumber] = colors
+            } else {
+                store.spaceColors.removeValue(forKey: spaceNumber)
+            }
         }
     }
 
-    static func clearColors(forSpace spaceNumber: Int, store: DefaultsStore = .shared) {
-        store.spaceColors.removeValue(forKey: spaceNumber)
+    static func clearColors(forSpace spaceNumber: Int, display: String? = nil, store: DefaultsStore = .shared) {
+        setColors(nil, forSpace: spaceNumber, display: display, store: store)
     }
 
     // MARK: - Clear All
 
-    /// Clears all per-space preferences (colors, icon styles, SF symbols).
+    /// Clears all preferences for all displays and shared settings.
     static func clearAll(store: DefaultsStore = .shared) {
         store.spaceColors = [:]
         store.spaceIconStyles = [:]
         store.spaceSFSymbols = [:]
+        store.displaySpaceColors = [:]
+        store.displaySpaceIconStyles = [:]
+        store.displaySpaceSFSymbols = [:]
     }
 }

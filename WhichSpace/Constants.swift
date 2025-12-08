@@ -82,6 +82,7 @@ enum MenuTag {
     static let backgroundSwatch = 7
     static let sizeRow = 8
     static let symbolColorSwatch = 9
+    static let uniqueIconsPerDisplay = 10
 }
 
 // MARK: - Localization
@@ -134,6 +135,8 @@ enum Localization {
     static let showAllSpaces = NSLocalizedString("show_all_spaces", comment: "")
     static let showAllSpacesTip = NSLocalizedString("show_all_spaces_tip", comment: "")
     static let sizeTitle = NSLocalizedString("size_menu_title", comment: "")
+    static let uniqueIconsPerDisplay = NSLocalizedString("unique_icons_per_display", comment: "")
+    static let uniqueIconsPerDisplayTip = NSLocalizedString("unique_icons_per_display_tip", comment: "")
     static let styleTitle = NSLocalizedString("style_menu_title", comment: "")
     static let symbolTitle = NSLocalizedString("symbol_menu_title", comment: "")
 }

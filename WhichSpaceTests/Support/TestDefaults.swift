@@ -169,6 +169,10 @@ final class DefaultsIsolationGuardTests: IsolatedDefaultsTestCase {
             "spaceIconStyles",
             "spaceSFSymbols",
             "sizeScale",
+            "uniqueIconsPerDisplay",
+            "displaySpaceColors",
+            "displaySpaceIconStyles",
+            "displaySpaceSFSymbols",
         ]
 
         XCTAssertEqual(

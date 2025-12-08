@@ -42,9 +42,9 @@
 "reset_color_confirm" = "Reset color?";
 "reset_color_detail" = "This will remove the custom color for the current Space only.";
 "reset_all_spaces_to_default" = "Reset all Spaces to default";
-"reset_all_spaces_to_default_tip" = "Remove color, style and size customizations for all Spaces";
+"reset_all_spaces_to_default_tip" = "Remove color, style and size customizations for all Spaces on all displays";
 "reset_all_spaces_confirm" = "Reset all Spaces?";
-"reset_all_spaces_detail" = "This will remove all color, style and size customizations for every Space.";
+"reset_all_spaces_detail" = "This will remove all color, style and size customizations for every Space on all displays.";
 "reset_space_to_default" = "Reset current Space to default";
 "reset_space_to_default_tip" = "Remove color and style customizations for the current Space only";
 "reset_space_confirm" = "Reset this Space?";
@@ -55,5 +55,7 @@
 "reset_style_detail" = "This will remove the custom style for the current Space only.";
 "show_all_spaces" = "Show all Spaces";
 "size_menu_title" = "Size";
+"unique_icons_per_display" = "Displays have separate icons";
+"unique_icons_per_display_tip" = "Customize Space icons separately for each display";
 "style_menu_title" = "Style";
 "symbol_menu_title" = "Symbol";

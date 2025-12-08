@@ -293,6 +293,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     }
 
     private func configureCopyAndResetMenuItems() {
+        let uniqueIconsPerDisplayItem = NSMenuItem(
+            title: Localization.uniqueIconsPerDisplay,
+            action: #selector(toggleUniqueIconsPerDisplay),
+            keyEquivalent: ""
+        )
+        uniqueIconsPerDisplayItem.target = self
+        uniqueIconsPerDisplayItem.tag = MenuTag.uniqueIconsPerDisplay
+        uniqueIconsPerDisplayItem.image = NSImage(
+            systemSymbolName: "display.2",
+            accessibilityDescription: nil
+        )
+        uniqueIconsPerDisplayItem.toolTip = Localization.uniqueIconsPerDisplayTip
+        statusMenu.addItem(uniqueIconsPerDisplayItem)
+
         let showAllSpacesItem = NSMenuItem(
             title: Localization.showAllSpaces,
             action: #selector(toggleShowAllSpaces),
@@ -536,6 +550,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         updateStatusBarIcon()
     }
 
+    @objc func toggleUniqueIconsPerDisplay() {
+        store.uniqueIconsPerDisplay.toggle()
+        updateStatusBarIcon()
+    }
+
     @objc private func checkForUpdates() {
         NSApp.activate(ignoringOtherApps: true)
         updaterController.checkForUpdates(nil)
@@ -561,17 +580,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         let style = appState.currentIconStyle
         let colors = appState.currentColors
         let symbol = appState.currentSymbol
+        let display = appState.currentDisplayID
         for space in appState.getAllSpaceIndices() {
-            SpacePreferences.setIconStyle(style, forSpace: space, store: store)
+            SpacePreferences.setIconStyle(style, forSpace: space, display: display, store: store)
             if let symbol {
-                SpacePreferences.setSFSymbol(symbol, forSpace: space, store: store)
+                SpacePreferences.setSFSymbol(symbol, forSpace: space, display: display, store: store)
             } else {
-                SpacePreferences.clearSFSymbol(forSpace: space, store: store)
+                SpacePreferences.clearSFSymbol(forSpace: space, display: display, store: store)
             }
             if let colors {
-                SpacePreferences.setColors(colors, forSpace: space, store: store)
+                SpacePreferences.setColors(colors, forSpace: space, display: display, store: store)
             } else {
-                SpacePreferences.clearColors(forSpace: space, store: store)
+                SpacePreferences.clearColors(forSpace: space, display: display, store: store)
             }
         }
         updateStatusBarIcon()
@@ -594,9 +614,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             return
         }
 
-        SpacePreferences.clearColors(forSpace: appState.currentSpace, store: store)
-        SpacePreferences.clearIconStyle(forSpace: appState.currentSpace, store: store)
-        SpacePreferences.clearSFSymbol(forSpace: appState.currentSpace, store: store)
+        SpacePreferences.clearColors(forSpace: appState.currentSpace, display: appState.currentDisplayID, store: store)
+        SpacePreferences.clearIconStyle(
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
+        SpacePreferences.clearSFSymbol(
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
         updateStatusBarIcon()
     }
 
@@ -613,6 +641,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             return
         }
 
+        // Always clear both shared and per-display settings
         SpacePreferences.clearAll(store: store)
         store.sizeScale = Layout.defaultSizeScale
         updateStatusBarIcon()
@@ -628,6 +657,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         SpacePreferences.setColors(
             SpaceColors(foreground: background, background: foreground),
             forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
             store: store
         )
         updateStatusBarIcon()
@@ -651,11 +681,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
 
         let colors = appState.currentColors
+        let display = appState.currentDisplayID
         for space in appState.getAllSpaceIndices() {
             if let colors {
-                SpacePreferences.setColors(colors, forSpace: space, store: store)
+                SpacePreferences.setColors(colors, forSpace: space, display: display, store: store)
             } else {
-                SpacePreferences.clearColors(forSpace: space, store: store)
+                SpacePreferences.clearColors(forSpace: space, display: display, store: store)
             }
         }
         updateStatusBarIcon()
@@ -674,7 +705,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             return
         }
 
-        SpacePreferences.clearColors(forSpace: appState.currentSpace, store: store)
+        SpacePreferences.clearColors(forSpace: appState.currentSpace, display: appState.currentDisplayID, store: store)
         updateStatusBarIcon()
     }
 
@@ -697,12 +728,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
         let style = appState.currentIconStyle
         let symbol = appState.currentSymbol
+        let display = appState.currentDisplayID
         for space in appState.getAllSpaceIndices() {
-            SpacePreferences.setIconStyle(style, forSpace: space, store: store)
+            SpacePreferences.setIconStyle(style, forSpace: space, display: display, store: store)
             if let symbol {
-                SpacePreferences.setSFSymbol(symbol, forSpace: space, store: store)
+                SpacePreferences.setSFSymbol(symbol, forSpace: space, display: display, store: store)
             } else {
-                SpacePreferences.clearSFSymbol(forSpace: space, store: store)
+                SpacePreferences.clearSFSymbol(forSpace: space, display: display, store: store)
             }
         }
         updateStatusBarIcon()
@@ -725,8 +757,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             return
         }
 
-        SpacePreferences.clearIconStyle(forSpace: appState.currentSpace, store: store)
-        SpacePreferences.clearSFSymbol(forSpace: appState.currentSpace, store: store)
+        SpacePreferences.clearIconStyle(
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
+        SpacePreferences.clearSFSymbol(
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
         updateStatusBarIcon()
     }
 
@@ -739,7 +779,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         let background = appState.currentColors?.backgroundColor ?? .black
         SpacePreferences.setColors(
             SpaceColors(foreground: color, background: background),
-            forSpace: appState.currentSpace
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
         )
         updateStatusBarIcon()
     }
@@ -751,7 +793,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         let foreground = appState.currentColors?.foregroundColor ?? .white
         SpacePreferences.setColors(
             SpaceColors(foreground: foreground, background: color),
-            forSpace: appState.currentSpace
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
         )
         updateStatusBarIcon()
     }
@@ -784,7 +828,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
         SpacePreferences.setColors(
             SpaceColors(foreground: foreground, background: background),
-            forSpace: appState.currentSpace
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
         )
         updateStatusBarIcon()
     }
@@ -795,8 +841,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
 
         // Clear SF Symbol to switch to number mode
-        SpacePreferences.clearSFSymbol(forSpace: appState.currentSpace, store: store)
-        SpacePreferences.setIconStyle(style, forSpace: appState.currentSpace, store: store)
+        SpacePreferences.clearSFSymbol(
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
+        SpacePreferences.setIconStyle(
+            style,
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
 
         // Update checkmarks in all row views
         if let menu = stylePicker?.enclosingMenuItem?.menu {
@@ -814,7 +869,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         guard appState.currentSpace > 0 else {
             return
         }
-        SpacePreferences.setSFSymbol(symbol, forSpace: appState.currentSpace, store: store)
+        SpacePreferences.setSFSymbol(
+            symbol,
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
         updateStatusBarIcon()
     }
 
@@ -835,12 +895,17 @@ extension AppDelegate: NSMenuDelegate {
         let currentSymbol = appState.currentSymbol
         let symbolIsActive = currentSymbol != nil
 
-        // Update Launch at Login checkmark (tag 1)
+        // Update Launch at Login checkmark
         if let launchAtLoginItem = menu.item(withTag: MenuTag.launchAtLogin) {
             launchAtLoginItem.state = launchAtLogin.isEnabled ? .on : .off
         }
 
-        // Update Show All Spaces checkmark (tag 101)
+        // Update Unique Icons Per Display checkmark
+        if let uniqueIconsItem = menu.item(withTag: MenuTag.uniqueIconsPerDisplay) {
+            uniqueIconsItem.state = store.uniqueIconsPerDisplay ? .on : .off
+        }
+
+        // Update Show All Spaces checkmark
         if let showAllSpacesItem = menu.item(withTag: MenuTag.showAllSpaces) {
             showAllSpacesItem.state = store.showAllSpaces ? .on : .off
         }

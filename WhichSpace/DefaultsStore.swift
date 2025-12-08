@@ -40,6 +40,21 @@ enum KeySpecs {
     static let spaceSFSymbols = TypedKeySpec(name: "spaceSFSymbols", defaultValue: [Int: String]())
     static let sizeScale = TypedKeySpec(name: "sizeScale", defaultValue: Layout.defaultSizeScale)
 
+    // Per-display settings (separate from shared settings for backwards compatibility)
+    static let uniqueIconsPerDisplay = TypedKeySpec(name: "uniqueIconsPerDisplay", defaultValue: false)
+    static let displaySpaceColors = TypedKeySpec(
+        name: "displaySpaceColors",
+        defaultValue: [String: [Int: SpaceColors]]()
+    )
+    static let displaySpaceIconStyles = TypedKeySpec(
+        name: "displaySpaceIconStyles",
+        defaultValue: [String: [Int: IconStyle]]()
+    )
+    static let displaySpaceSFSymbols = TypedKeySpec(
+        name: "displaySpaceSFSymbols",
+        defaultValue: [String: [Int: String]]()
+    )
+
     /// All key names for enumeration (e.g., in tests).
     static let allKeyNames: Set<String> = [
         showAllSpaces.name,
@@ -47,6 +62,10 @@ enum KeySpecs {
         spaceIconStyles.name,
         spaceSFSymbols.name,
         sizeScale.name,
+        uniqueIconsPerDisplay.name,
+        displaySpaceColors.name,
+        displaySpaceIconStyles.name,
+        displaySpaceSFSymbols.name,
     ]
 }
 
@@ -84,6 +103,12 @@ final class DefaultsStore: @unchecked Sendable {
     private(set) lazy var spaceSFSymbolsKey = KeySpecs.spaceSFSymbols.key(suite: suite)
     private(set) lazy var sizeScaleKey = KeySpecs.sizeScale.key(suite: suite)
 
+    // Per-display keys
+    private(set) lazy var uniqueIconsPerDisplayKey = KeySpecs.uniqueIconsPerDisplay.key(suite: suite)
+    private(set) lazy var displaySpaceColorsKey = KeySpecs.displaySpaceColors.key(suite: suite)
+    private(set) lazy var displaySpaceIconStylesKey = KeySpecs.displaySpaceIconStyles.key(suite: suite)
+    private(set) lazy var displaySpaceSFSymbolsKey = KeySpecs.displaySpaceSFSymbols.key(suite: suite)
+
     init(suite: UserDefaults) {
         self.suite = suite
     }
@@ -115,6 +140,27 @@ final class DefaultsStore: @unchecked Sendable {
         set { Defaults[sizeScaleKey] = newValue }
     }
 
+    /// Per-display properties
+    var uniqueIconsPerDisplay: Bool {
+        get { Defaults[uniqueIconsPerDisplayKey] }
+        set { Defaults[uniqueIconsPerDisplayKey] = newValue }
+    }
+
+    var displaySpaceColors: [String: [Int: SpaceColors]] {
+        get { Defaults[displaySpaceColorsKey] }
+        set { Defaults[displaySpaceColorsKey] = newValue }
+    }
+
+    var displaySpaceIconStyles: [String: [Int: IconStyle]] {
+        get { Defaults[displaySpaceIconStylesKey] }
+        set { Defaults[displaySpaceIconStylesKey] = newValue }
+    }
+
+    var displaySpaceSFSymbols: [String: [Int: String]] {
+        get { Defaults[displaySpaceSFSymbolsKey] }
+        set { Defaults[displaySpaceSFSymbolsKey] = newValue }
+    }
+
     // MARK: - Utilities
 
     /// Resets all keys to their default values.
@@ -124,7 +170,11 @@ final class DefaultsStore: @unchecked Sendable {
             spaceColorsKey,
             spaceIconStylesKey,
             spaceSFSymbolsKey,
-            sizeScaleKey
+            sizeScaleKey,
+            uniqueIconsPerDisplayKey,
+            displaySpaceColorsKey,
+            displaySpaceIconStylesKey,
+            displaySpaceSFSymbolsKey
         )
     }
 
