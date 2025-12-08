@@ -6,6 +6,15 @@ Have you ever forgotten _which space_ is currently active on macOS and wanted a 
 
 ## Features
 
+### Spaces
+
+Display the current Space only, or choose to display all Spaces:
+
+<img src="Screenshots/ShowAllSpaces.png">
+
+> [!NOTE]
+> Inactive spaces are dimmed by default.
+
 ### Colours
 
 Choose foreground and background colours for each space, or apply one colour to all Spaces:
@@ -16,13 +25,19 @@ Choose foreground and background colours for each space, or apply one colour to 
 
 Choose from a variety of icons for each space, or apply one icon to all Spaces:
 
-<img src="Screenshots/IconsMenu.png" width="60%">
+<img src="Screenshots/NumberMenu.png" width="60%">
 
 ### Symbols
 
 Use custom symbols instead of numbers for a more personalised look:
 
 <img src="Screenshots/SymbolsMenu.png" width="60%">
+
+### Size
+
+Adjust the scale of the icons in the menu bar:
+
+<img src="Screenshots/SizeMenu.png" width="60%">
 
 ## Installation
 
