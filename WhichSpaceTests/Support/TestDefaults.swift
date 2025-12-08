@@ -23,12 +23,17 @@ enum TestSuiteFactory {
         return TestSuite(suite: UserDefaults(suiteName: name)!, suiteName: name)
     }
 
-    /// Removes a test suite's persistent domain.
+    /// Removes a test suite's persistent domain and deletes the plist file.
     ///
     /// Call this in teardown to clean up after tests.
     static func destroySuite(_ testSuite: TestSuite) {
         testSuite.suite.removePersistentDomain(forName: testSuite.suiteName)
         testSuite.suite.synchronize()
+
+        // removePersistentDomain clears contents but leaves empty file - delete it
+        let prefsDir = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true).first!
+        let plistPath = "\(prefsDir)/Preferences/\(testSuite.suiteName).plist"
+        try? FileManager.default.removeItem(atPath: plistPath)
     }
 }
 
