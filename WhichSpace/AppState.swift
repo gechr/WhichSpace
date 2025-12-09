@@ -76,6 +76,15 @@ struct CGSDisplaySpaceProvider: DisplaySpaceProviding {
     }
 }
 
+/// Information about spaces on a single display
+struct DisplaySpaceInfo: Equatable {
+    let displayID: String
+    let labels: [String]
+    let spaceIDs: [Int]
+    /// The global starting index for this display's spaces (1-based)
+    var globalStartIndex = 1
+}
+
 @MainActor
 @Observable
 final class AppState {
@@ -90,6 +99,11 @@ final class AppState {
     private(set) var allSpaceLabels: [String] = []
     private(set) var allSpaceIDs: [Int] = []
 
+    /// Space info for all displays (used when showAllDisplays is enabled)
+    private(set) var allDisplaysSpaceInfo: [DisplaySpaceInfo] = []
+    /// The global space index of the current space across all displays (1-based)
+    private(set) var currentGlobalSpaceIndex = 0
+
     private let mainDisplay = "Main"
     private let spacesMonitorFile = "~/Library/Preferences/com.apple.spaces.plist"
     private let displaySpaceProvider: DisplaySpaceProviding
@@ -98,6 +112,8 @@ final class AppState {
     private var lastUpdateTime: Date = .distantPast
     private var mouseEventMonitor: Any?
     private var spacesMonitor: DispatchSourceFileSystemObject?
+    private var pendingUpdateTask: Task<Void, Never>?
+    private static let debounceInterval: Duration = .milliseconds(50)
 
     // Cache for spacesWithWindows to avoid repeated expensive CGS calls
     private var cachedSpacesWithWindows: Set<Int> = []
@@ -111,7 +127,7 @@ final class AppState {
         updateDarkModeStatus()
         configureObservers()
         configureSpaceMonitor()
-        updateActiveSpaceNumber()
+        performSpaceUpdate()
     }
 
     /// Internal initializer for testing with a custom display space provider
@@ -123,10 +139,17 @@ final class AppState {
             configureObservers()
             configureSpaceMonitor()
         }
-        updateActiveSpaceNumber()
+        performSpaceUpdate()
     }
 
     // MARK: - Test Helpers
+
+    /// Forces an immediate space update without debounce
+    func forceSpaceUpdate() {
+        pendingUpdateTask?.cancel()
+        pendingUpdateTask = nil
+        performSpaceUpdate()
+    }
 
     /// Sets space labels and current space directly for testing the rendering path
     func setSpaceState(
@@ -135,13 +158,18 @@ final class AppState {
         currentLabel: String,
         displayID: String? = nil,
         // swiftlint:disable:next discouraged_optional_collection
-        spaceIDs: [Int]? = nil
+        spaceIDs: [Int]? = nil,
+        // swiftlint:disable:next discouraged_optional_collection
+        allDisplays: [DisplaySpaceInfo]? = nil,
+        globalSpaceIndex: Int? = nil
     ) {
         allSpaceLabels = labels
         self.currentSpace = currentSpace
         currentSpaceLabel = currentLabel
         currentDisplayID = displayID
         allSpaceIDs = spaceIDs ?? Array(100 ..< 100 + labels.count)
+        allDisplaysSpaceInfo = allDisplays ?? []
+        currentGlobalSpaceIndex = globalSpaceIndex ?? currentSpace
     }
 
     // MARK: - Observers
@@ -172,6 +200,12 @@ final class AppState {
             selector: #selector(updateActiveSpaceNumber),
             name: NSWorkspace.didActivateApplicationNotification,
             object: workspace
+        )
+        workspace.notificationCenter.addObserver(
+            self,
+            selector: #selector(updateActiveSpaceNumber),
+            name: NSNotification.Name("NSWorkspaceActiveDisplayDidChangeNotification"),
+            object: nil
         )
 
         // Mission Control / Exposé dismissal
@@ -241,6 +275,18 @@ final class AppState {
     // MARK: - Space Detection
 
     @objc func updateActiveSpaceNumber() {
+        // Cancel any pending update and schedule a new one
+        pendingUpdateTask?.cancel()
+        pendingUpdateTask = Task {
+            try? await Task.sleep(for: Self.debounceInterval)
+            guard !Task.isCancelled else {
+                return
+            }
+            performSpaceUpdate()
+        }
+    }
+
+    private func performSpaceUpdate() {
         // Invalidate window cache on space change to get fresh window data
         invalidateSpacesWithWindowsCache()
 
@@ -250,6 +296,73 @@ final class AppState {
             return
         }
 
+        // Collect space info from ALL displays
+        var allDisplays: [DisplaySpaceInfo] = []
+        var activeSpaceIDToFind: Int?
+        var foundActiveDisplay = false
+
+        // First pass: find the active space ID from the active display
+        for display in displays {
+            guard let current = display["Current Space"] as? [String: Any],
+                  let displayID = display["Display Identifier"] as? String
+            else {
+                continue
+            }
+            if displayID == mainDisplay || displayID == activeDisplay {
+                activeSpaceIDToFind = current["ManagedSpaceID"] as? Int
+                break
+            }
+        }
+
+        // Second pass: collect all displays' spaces
+        for display in displays {
+            guard let spaces = display["Spaces"] as? [[String: Any]],
+                  let displayID = display["Display Identifier"] as? String
+            else {
+                continue
+            }
+
+            var regularSpaceIndex = 0
+            var spaceLabels: [String] = []
+            var spaceIDs: [Int] = []
+
+            for space in spaces {
+                guard let spaceID = space["ManagedSpaceID"] as? Int else {
+                    continue
+                }
+
+                let isFullscreen = space["TileLayoutManager"] is [String: Any]
+                let label: String
+                if isFullscreen {
+                    label = Labels.fullscreen
+                } else {
+                    regularSpaceIndex += 1
+                    label = String(regularSpaceIndex)
+                }
+
+                spaceLabels.append(label)
+                spaceIDs.append(spaceID)
+            }
+
+            if !spaceLabels.isEmpty {
+                allDisplays.append(DisplaySpaceInfo(
+                    displayID: displayID,
+                    labels: spaceLabels,
+                    spaceIDs: spaceIDs
+                ))
+            }
+        }
+
+        // Calculate global start indices
+        var globalIndex = 1
+        for index in 0 ..< allDisplays.count {
+            allDisplays[index].globalStartIndex = globalIndex
+            globalIndex += allDisplays[index].labels.count
+        }
+
+        allDisplaysSpaceInfo = allDisplays
+
+        // Now find the active display and set current space info
         for display in displays {
             guard let current = display["Current Space"] as? [String: Any],
                   let spaces = display["Spaces"] as? [[String: Any]],
@@ -269,8 +382,6 @@ final class AppState {
             var regularSpaceIndex = 0
             var spaceLabels: [String] = []
             var spaceIDs: [Int] = []
-            var foundActiveSpace = false
-            var activeIndex = 0
 
             for space in spaces {
                 guard let spaceID = space["ManagedSpaceID"] as? Int else {
@@ -290,19 +401,26 @@ final class AppState {
                 spaceIDs.append(spaceID)
 
                 if spaceID == activeSpaceID {
-                    activeIndex = spaceLabels.count
+                    let activeIndex = spaceLabels.count
                     currentSpace = activeIndex
                     currentSpaceLabel = label
                     currentDisplayID = displayID
                     lastUpdateTime = Date()
-                    foundActiveSpace = true
+                    foundActiveDisplay = true
+
+                    // Calculate global space index
+                    if let displayInfo = allDisplays.first(where: { $0.displayID == displayID }) {
+                        currentGlobalSpaceIndex = displayInfo.globalStartIndex + activeIndex - 1
+                    } else {
+                        currentGlobalSpaceIndex = activeIndex
+                    }
                 }
             }
 
             allSpaceLabels = spaceLabels
             allSpaceIDs = spaceIDs
 
-            if foundActiveSpace {
+            if foundActiveDisplay {
                 return
             }
         }
@@ -310,8 +428,10 @@ final class AppState {
         currentSpace = 0
         currentSpaceLabel = "?"
         currentDisplayID = nil
+        currentGlobalSpaceIndex = 0
         allSpaceLabels = []
         allSpaceIDs = []
+        allDisplaysSpaceInfo = []
     }
 
     @objc func updateDarkModeStatus() {
@@ -346,13 +466,25 @@ final class AppState {
         store.showAllSpaces
     }
 
+    var showAllDisplays: Bool {
+        store.showAllDisplays
+    }
+
     var statusBarIcon: NSImage {
         // Check current appearance directly each time
         let appearance = NSApp.effectiveAppearance
         let isDark = appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+
+        // Show all displays mode takes precedence (shows spaces from all displays with separators)
+        if showAllDisplays, !allDisplaysSpaceInfo.isEmpty {
+            return generateCrossDisplayIcon(darkMode: isDark)
+        }
+
+        // Show all spaces mode (shows all spaces from current display only)
         if showAllSpaces, !allSpaceLabels.isEmpty {
             return generateCombinedIcon(darkMode: isDark)
         }
+
         return generateSingleIcon(for: currentSpace, label: currentSpaceLabel, darkMode: isDark)
     }
 
@@ -407,16 +539,51 @@ final class AppState {
         cachedSpacesWithWindowsSpaceIDs = []
     }
 
+    /// Determines if a space should be shown based on filtering settings
+    private func shouldShowSpace(label: String, spaceID: Int, nonEmptySpaceIDs: Set<Int>) -> Bool {
+        // Hide full-screen applications if enabled
+        if store.hideFullscreenApps, label == Labels.fullscreen {
+            return false
+        }
+        // Hide empty spaces if enabled
+        if store.hideEmptySpaces, !nonEmptySpaceIDs.contains(spaceID) {
+            return false
+        }
+        return true
+    }
+
     private func generateCombinedIcon(darkMode: Bool) -> NSImage {
         // Determine which spaces to show
         let spacesToShow: [(index: Int, label: String)]
-        if store.hideEmptySpaces {
-            let nonEmptySpaceIDs = getCachedSpacesWithWindows(forSpaceIDs: allSpaceIDs)
-            let filtered = allSpaceLabels.enumerated().filter { index, _ in
+        let needsFiltering = store.hideEmptySpaces || store.hideFullscreenApps
+        if needsFiltering {
+            let nonEmptySpaceIDs: Set<Int>
+            if store.hideEmptySpaces {
+                nonEmptySpaceIDs = getCachedSpacesWithWindows(forSpaceIDs: allSpaceIDs)
+            } else {
+                nonEmptySpaceIDs = []
+            }
+            let filtered = allSpaceLabels.enumerated().filter { index, label in
                 let spaceID = allSpaceIDs[index]
                 let spaceIndex = index + 1
-                // Always show active space, and spaces with windows
-                return spaceIndex == currentSpace || nonEmptySpaceIDs.contains(spaceID)
+                let isActive = spaceIndex == currentSpace
+
+                // Always show active space
+                if isActive {
+                    return true
+                }
+
+                // Hide full-screen applications if enabled
+                if store.hideFullscreenApps, label == Labels.fullscreen {
+                    return false
+                }
+
+                // Hide empty spaces if enabled
+                if store.hideEmptySpaces, !nonEmptySpaceIDs.contains(spaceID) {
+                    return false
+                }
+
+                return true
             }
             spacesToShow = filtered.map { (index: $0.offset, label: $0.element) }
         } else {
@@ -453,5 +620,168 @@ final class AppState {
 
         combinedImage.unlockFocus()
         return combinedImage
+    }
+
+    // Generates an icon showing all spaces across all displays with separators between displays
+    // swiftlint:disable:next function_body_length
+    private func generateCrossDisplayIcon(darkMode: Bool) -> NSImage {
+        // Collect all space IDs for window detection
+        let allSpaceIDsAcrossDisplays = allDisplaysSpaceInfo.flatMap(\.spaceIDs)
+        let nonEmptySpaceIDs: Set<Int>
+        if store.hideEmptySpaces {
+            nonEmptySpaceIDs = getCachedSpacesWithWindows(forSpaceIDs: allSpaceIDsAcrossDisplays)
+        } else {
+            nonEmptySpaceIDs = []
+        }
+
+        // Build list of spaces to show per display, filtering based on settings
+        struct SpaceToShow {
+            let displayID: String
+            let localIndex: Int // 1-based index within display
+            let globalIndex: Int // 1-based global index across all displays
+            let label: String
+            let spaceID: Int
+            let isActive: Bool
+        }
+
+        var spacesPerDisplay: [[SpaceToShow]] = []
+
+        for displayInfo in allDisplaysSpaceInfo {
+            var displaySpaces: [SpaceToShow] = []
+
+            for (arrayIndex, label) in displayInfo.labels.enumerated() {
+                let localIndex = arrayIndex + 1
+                let globalIndex = displayInfo.globalStartIndex + arrayIndex
+                let spaceID = displayInfo.spaceIDs[arrayIndex]
+                let isActive = globalIndex == currentGlobalSpaceIndex
+
+                // Always show active space
+                guard isActive || shouldShowSpace(label: label, spaceID: spaceID, nonEmptySpaceIDs: nonEmptySpaceIDs)
+                else {
+                    continue
+                }
+
+                displaySpaces.append(SpaceToShow(
+                    displayID: displayInfo.displayID,
+                    localIndex: localIndex,
+                    globalIndex: globalIndex,
+                    label: label,
+                    spaceID: spaceID,
+                    isActive: isActive
+                ))
+            }
+
+            if !displaySpaces.isEmpty {
+                spacesPerDisplay.append(displaySpaces)
+            }
+        }
+
+        // If no spaces to show at all, return single icon
+        guard !spacesPerDisplay.isEmpty else {
+            return generateSingleIcon(for: currentSpace, label: currentSpaceLabel, darkMode: darkMode)
+        }
+
+        // Calculate total width: spaces + separators between displays
+        let totalSpaces = spacesPerDisplay.reduce(0) { $0 + $1.count }
+        let separatorCount = max(0, spacesPerDisplay.count - 1)
+        let totalWidth = Double(totalSpaces) * Layout.statusItemWidth +
+            Double(separatorCount) * Layout.displaySeparatorWidth
+
+        let combinedImage = NSImage(size: NSSize(width: totalWidth, height: Layout.statusItemHeight))
+
+        combinedImage.lockFocus()
+
+        var xOffset: Double = 0
+
+        for (displayIndex, displaySpaces) in spacesPerDisplay.enumerated() {
+            // Draw separator before this display (except for the first)
+            if displayIndex > 0 {
+                drawDisplaySeparator(at: xOffset, darkMode: darkMode)
+                xOffset += Layout.displaySeparatorWidth
+            }
+
+            // Draw each space for this display
+            for space in displaySpaces {
+                // Use global index for the label when in cross-display mode
+                let globalLabel = space.label == Labels.fullscreen ? Labels.fullscreen : String(space.globalIndex)
+                let icon = generateSingleIconForCrossDisplay(
+                    globalIndex: space.globalIndex,
+                    label: globalLabel,
+                    displayID: space.displayID,
+                    localIndex: space.localIndex,
+                    darkMode: darkMode
+                )
+
+                let drawRect = NSRect(
+                    x: xOffset,
+                    y: 0,
+                    width: Layout.statusItemWidth,
+                    height: Layout.statusItemHeight
+                )
+
+                // Draw with reduced opacity for inactive spaces (if dimming is enabled)
+                let alpha = space.isActive || !store.dimInactiveSpaces ? 1.0 : 0.35
+                icon.draw(in: drawRect, from: .zero, operation: .sourceOver, fraction: alpha)
+
+                xOffset += Layout.statusItemWidth
+            }
+        }
+
+        combinedImage.unlockFocus()
+        return combinedImage
+    }
+
+    /// Generates a single icon for cross-display mode, looking up preferences by display and local index
+    private func generateSingleIconForCrossDisplay(
+        globalIndex _: Int,
+        label: String,
+        displayID: String,
+        localIndex: Int,
+        darkMode: Bool
+    ) -> NSImage {
+        // Look up colors and style using local index and display ID (for per-display customization)
+        let colors = SpacePreferences.colors(forSpace: localIndex, display: displayID, store: store)
+        let style = SpacePreferences.iconStyle(forSpace: localIndex, display: displayID, store: store) ?? .square
+
+        // Fullscreen spaces just show "F" with the same colors
+        if label == Labels.fullscreen {
+            return SpaceIconGenerator.generateIcon(
+                for: Labels.fullscreen,
+                darkMode: darkMode,
+                customColors: colors,
+                style: style
+            )
+        }
+
+        let symbol = SpacePreferences.sfSymbol(forSpace: localIndex, display: displayID, store: store)
+
+        if let symbol {
+            return SpaceIconGenerator.generateSFSymbolIcon(
+                symbolName: symbol,
+                darkMode: darkMode,
+                customColors: colors
+            )
+        }
+        return SpaceIconGenerator.generateIcon(
+            for: label,
+            darkMode: darkMode,
+            customColors: colors,
+            style: style
+        )
+    }
+
+    /// Draws a vertical separator line between displays
+    private func drawDisplaySeparator(at xOffset: Double, darkMode: Bool) {
+        let separatorColor = store.separatorColor ?? (darkMode
+            ? NSColor(calibratedWhite: 0.5, alpha: 0.6)
+            : NSColor(calibratedWhite: 0.4, alpha: 0.6))
+        separatorColor.setStroke()
+
+        let centerX = xOffset + Layout.displaySeparatorWidth / 2
+        let path = NSBezierPath()
+        path.move(to: NSPoint(x: centerX, y: 3))
+        path.line(to: NSPoint(x: centerX, y: Layout.statusItemHeight - 3))
+        path.lineWidth = 1.0
+        path.stroke()
     }
 }

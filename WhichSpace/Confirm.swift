@@ -32,7 +32,7 @@ struct ConfirmationAlert {
         }
 
         alert.addButton(withTitle: confirmTitle)
-        alert.addButton(withTitle: Localization.cancelButton)
+        alert.addButton(withTitle: Localization.buttonCancel)
         if isDestructive {
             alert.buttons[0].hasDestructiveAction = true
             alert.buttons[0].keyEquivalent = ""

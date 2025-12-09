@@ -1,3 +1,4 @@
+import AppKit
 import Defaults
 import Foundation
 
@@ -36,7 +37,9 @@ struct TypedKeySpec<Value: Defaults.Serializable>: KeySpec {
 enum KeySpecs {
     static let dimInactiveSpaces = TypedKeySpec(name: "dimInactiveSpaces", defaultValue: true)
     static let hideEmptySpaces = TypedKeySpec(name: "hideEmptySpaces", defaultValue: false)
+    static let hideFullscreenApps = TypedKeySpec(name: "hideFullscreenApps", defaultValue: false)
     static let showAllSpaces = TypedKeySpec(name: "showAllSpaces", defaultValue: false)
+    static let showAllDisplays = TypedKeySpec(name: "showAllDisplays", defaultValue: false)
     static let spaceColors = TypedKeySpec(name: "spaceColors", defaultValue: [Int: SpaceColors]())
     static let spaceIconStyles = TypedKeySpec(name: "spaceIconStyles", defaultValue: [Int: IconStyle]())
     static let spaceSFSymbols = TypedKeySpec(name: "spaceSFSymbols", defaultValue: [Int: String]())
@@ -56,6 +59,7 @@ enum KeySpecs {
         name: "displaySpaceSFSymbols",
         defaultValue: [String: [Int: String]]()
     )
+    static let separatorColor = TypedKeySpec(name: "separatorColor", defaultValue: Data?.none)
 
     /// All key names for enumeration (e.g., in tests).
     static let allKeyNames: Set<String> = [
@@ -64,6 +68,9 @@ enum KeySpecs {
         displaySpaceIconStyles.name,
         displaySpaceSFSymbols.name,
         hideEmptySpaces.name,
+        hideFullscreenApps.name,
+        separatorColor.name,
+        showAllDisplays.name,
         showAllSpaces.name,
         sizeScale.name,
         spaceColors.name,
@@ -101,19 +108,24 @@ final class DefaultsStore: @unchecked Sendable {
     let suite: UserDefaults
 
     // Lazily-created keys bound to this store's suite
-    private(set) lazy var dimInactiveSpacesKey = KeySpecs.dimInactiveSpaces.key(suite: suite)
-    private(set) lazy var hideEmptySpacesKey = KeySpecs.hideEmptySpaces.key(suite: suite)
-    private(set) lazy var showAllSpacesKey = KeySpecs.showAllSpaces.key(suite: suite)
-    private(set) lazy var spaceColorsKey = KeySpecs.spaceColors.key(suite: suite)
-    private(set) lazy var spaceIconStylesKey = KeySpecs.spaceIconStyles.key(suite: suite)
-    private(set) lazy var spaceSFSymbolsKey = KeySpecs.spaceSFSymbols.key(suite: suite)
-    private(set) lazy var sizeScaleKey = KeySpecs.sizeScale.key(suite: suite)
+    private(set) lazy var keyDimInactiveSpaces = KeySpecs.dimInactiveSpaces.key(suite: suite)
+    private(set) lazy var keyHideEmptySpaces = KeySpecs.hideEmptySpaces.key(suite: suite)
+    private(set) lazy var keyHideFullscreenApps = KeySpecs.hideFullscreenApps.key(suite: suite)
+    private(set) lazy var keyShowAllDisplays = KeySpecs.showAllDisplays.key(suite: suite)
+    private(set) lazy var keyShowAllSpaces = KeySpecs.showAllSpaces.key(suite: suite)
+    private(set) lazy var keySpaceColors = KeySpecs.spaceColors.key(suite: suite)
+    private(set) lazy var keySpaceIconStyles = KeySpecs.spaceIconStyles.key(suite: suite)
+    private(set) lazy var keySpaceSFSymbols = KeySpecs.spaceSFSymbols.key(suite: suite)
+    private(set) lazy var keySizeScale = KeySpecs.sizeScale.key(suite: suite)
 
     // Per-display keys
-    private(set) lazy var uniqueIconsPerDisplayKey = KeySpecs.uniqueIconsPerDisplay.key(suite: suite)
-    private(set) lazy var displaySpaceColorsKey = KeySpecs.displaySpaceColors.key(suite: suite)
-    private(set) lazy var displaySpaceIconStylesKey = KeySpecs.displaySpaceIconStyles.key(suite: suite)
-    private(set) lazy var displaySpaceSFSymbolsKey = KeySpecs.displaySpaceSFSymbols.key(suite: suite)
+    private(set) lazy var keyUniqueIconsPerDisplay = KeySpecs.uniqueIconsPerDisplay.key(suite: suite)
+    private(set) lazy var keyDisplaySpaceColors = KeySpecs.displaySpaceColors.key(suite: suite)
+    private(set) lazy var keyDisplaySpaceIconStyles = KeySpecs.displaySpaceIconStyles.key(suite: suite)
+    private(set) lazy var keyDisplaySpaceSFSymbols = KeySpecs.displaySpaceSFSymbols.key(suite: suite)
+
+    /// Separator color
+    private(set) lazy var keySeparatorColor = KeySpecs.separatorColor.key(suite: suite)
 
     init(suite: UserDefaults) {
         self.suite = suite
@@ -122,59 +134,88 @@ final class DefaultsStore: @unchecked Sendable {
     // MARK: - Property Accessors
 
     var dimInactiveSpaces: Bool {
-        get { Defaults[dimInactiveSpacesKey] }
-        set { Defaults[dimInactiveSpacesKey] = newValue }
+        get { Defaults[keyDimInactiveSpaces] }
+        set { Defaults[keyDimInactiveSpaces] = newValue }
     }
 
     var hideEmptySpaces: Bool {
-        get { Defaults[hideEmptySpacesKey] }
-        set { Defaults[hideEmptySpacesKey] = newValue }
+        get { Defaults[keyHideEmptySpaces] }
+        set { Defaults[keyHideEmptySpaces] = newValue }
+    }
+
+    var hideFullscreenApps: Bool {
+        get { Defaults[keyHideFullscreenApps] }
+        set { Defaults[keyHideFullscreenApps] = newValue }
+    }
+
+    var showAllDisplays: Bool {
+        get { Defaults[keyShowAllDisplays] }
+        set { Defaults[keyShowAllDisplays] = newValue }
     }
 
     var showAllSpaces: Bool {
-        get { Defaults[showAllSpacesKey] }
-        set { Defaults[showAllSpacesKey] = newValue }
+        get { Defaults[keyShowAllSpaces] }
+        set { Defaults[keyShowAllSpaces] = newValue }
     }
 
     var spaceColors: [Int: SpaceColors] {
-        get { Defaults[spaceColorsKey] }
-        set { Defaults[spaceColorsKey] = newValue }
+        get { Defaults[keySpaceColors] }
+        set { Defaults[keySpaceColors] = newValue }
     }
 
     var spaceIconStyles: [Int: IconStyle] {
-        get { Defaults[spaceIconStylesKey] }
-        set { Defaults[spaceIconStylesKey] = newValue }
+        get { Defaults[keySpaceIconStyles] }
+        set { Defaults[keySpaceIconStyles] = newValue }
     }
 
     var spaceSFSymbols: [Int: String] {
-        get { Defaults[spaceSFSymbolsKey] }
-        set { Defaults[spaceSFSymbolsKey] = newValue }
+        get { Defaults[keySpaceSFSymbols] }
+        set { Defaults[keySpaceSFSymbols] = newValue }
     }
 
     var sizeScale: Double {
-        get { Defaults[sizeScaleKey] }
-        set { Defaults[sizeScaleKey] = newValue }
+        get { Defaults[keySizeScale] }
+        set { Defaults[keySizeScale] = newValue }
     }
 
     /// Per-display properties
     var uniqueIconsPerDisplay: Bool {
-        get { Defaults[uniqueIconsPerDisplayKey] }
-        set { Defaults[uniqueIconsPerDisplayKey] = newValue }
+        get { Defaults[keyUniqueIconsPerDisplay] }
+        set { Defaults[keyUniqueIconsPerDisplay] = newValue }
     }
 
     var displaySpaceColors: [String: [Int: SpaceColors]] {
-        get { Defaults[displaySpaceColorsKey] }
-        set { Defaults[displaySpaceColorsKey] = newValue }
+        get { Defaults[keyDisplaySpaceColors] }
+        set { Defaults[keyDisplaySpaceColors] = newValue }
     }
 
     var displaySpaceIconStyles: [String: [Int: IconStyle]] {
-        get { Defaults[displaySpaceIconStylesKey] }
-        set { Defaults[displaySpaceIconStylesKey] = newValue }
+        get { Defaults[keyDisplaySpaceIconStyles] }
+        set { Defaults[keyDisplaySpaceIconStyles] = newValue }
     }
 
     var displaySpaceSFSymbols: [String: [Int: String]] {
-        get { Defaults[displaySpaceSFSymbolsKey] }
-        set { Defaults[displaySpaceSFSymbolsKey] = newValue }
+        get { Defaults[keyDisplaySpaceSFSymbols] }
+        set { Defaults[keyDisplaySpaceSFSymbols] = newValue }
+    }
+
+    var separatorColor: NSColor? {
+        get {
+            guard let data = Defaults[keySeparatorColor] else {
+                return nil
+            }
+            return try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSColor.self, from: data)
+        }
+        set {
+            if let color = newValue {
+                Defaults[keySeparatorColor] = try? NSKeyedArchiver.archivedData(
+                    withRootObject: color,
+                    requiringSecureCoding: true
+                )
+            } else {
+                Defaults[keySeparatorColor] = nil
+            }
+        }
     }
 
     // MARK: - Utilities
@@ -182,17 +223,20 @@ final class DefaultsStore: @unchecked Sendable {
     /// Resets all keys to their default values.
     func resetAll() {
         Defaults.reset(
-            dimInactiveSpacesKey,
-            displaySpaceColorsKey,
-            displaySpaceIconStylesKey,
-            displaySpaceSFSymbolsKey,
-            hideEmptySpacesKey,
-            showAllSpacesKey,
-            sizeScaleKey,
-            spaceColorsKey,
-            spaceIconStylesKey,
-            spaceSFSymbolsKey,
-            uniqueIconsPerDisplayKey
+            keyDimInactiveSpaces,
+            keyDisplaySpaceColors,
+            keyDisplaySpaceIconStyles,
+            keyDisplaySpaceSFSymbols,
+            keyHideEmptySpaces,
+            keyHideFullscreenApps,
+            keySeparatorColor,
+            keyShowAllDisplays,
+            keyShowAllSpaces,
+            keySizeScale,
+            keySpaceColors,
+            keySpaceIconStyles,
+            keySpaceSFSymbols,
+            keyUniqueIconsPerDisplay
         )
     }
 

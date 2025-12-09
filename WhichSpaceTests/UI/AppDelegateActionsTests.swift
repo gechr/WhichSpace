@@ -179,6 +179,68 @@ final class AppDelegateActionsTests: XCTestCase {
         XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 3, "updateStatusBarIcon should be called 3 times")
     }
 
+    func testToggleShowAllSpaces_disablesShowAllDisplays_whenEnabled() {
+        store.showAllDisplays = true
+        store.showAllSpaces = false
+
+        sut.toggleShowAllSpaces()
+
+        XCTAssertTrue(store.showAllSpaces, "showAllSpaces should be enabled")
+        XCTAssertFalse(store.showAllDisplays, "showAllDisplays should be disabled when showAllSpaces is enabled")
+    }
+
+    func testToggleShowAllSpaces_doesNotAffectShowAllDisplays_whenDisabled() {
+        store.showAllDisplays = true
+        store.showAllSpaces = true
+
+        sut.toggleShowAllSpaces()
+
+        XCTAssertFalse(store.showAllSpaces, "showAllSpaces should be disabled")
+        XCTAssertTrue(store.showAllDisplays, "showAllDisplays should remain unchanged when showAllSpaces is disabled")
+    }
+
+    // MARK: - toggleShowAllDisplays Tests
+
+    func testToggleShowAllDisplays_togglesFromFalseToTrue() {
+        store.showAllDisplays = false
+        let initialCount = sut.statusBarIconUpdateCount
+
+        sut.toggleShowAllDisplays()
+
+        XCTAssertTrue(store.showAllDisplays, "showAllDisplays should toggle to true")
+        XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 1, "updateStatusBarIcon should be called")
+    }
+
+    func testToggleShowAllDisplays_togglesFromTrueToFalse() {
+        store.showAllDisplays = true
+        let initialCount = sut.statusBarIconUpdateCount
+
+        sut.toggleShowAllDisplays()
+
+        XCTAssertFalse(store.showAllDisplays, "showAllDisplays should toggle to false")
+        XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 1, "updateStatusBarIcon should be called")
+    }
+
+    func testToggleShowAllDisplays_disablesShowAllSpaces_whenEnabled() {
+        store.showAllSpaces = true
+        store.showAllDisplays = false
+
+        sut.toggleShowAllDisplays()
+
+        XCTAssertTrue(store.showAllDisplays, "showAllDisplays should be enabled")
+        XCTAssertFalse(store.showAllSpaces, "showAllSpaces should be disabled when showAllDisplays is enabled")
+    }
+
+    func testToggleShowAllDisplays_doesNotAffectShowAllSpaces_whenDisabled() {
+        store.showAllSpaces = true
+        store.showAllDisplays = true
+
+        sut.toggleShowAllDisplays()
+
+        XCTAssertFalse(store.showAllDisplays, "showAllDisplays should be disabled")
+        XCTAssertTrue(store.showAllSpaces, "showAllSpaces should remain unchanged when showAllDisplays is disabled")
+    }
+
     // MARK: - toggleDimInactiveSpaces Tests
 
     func testToggleDimInactiveSpaces_togglesFromTrueToFalse() {
@@ -251,6 +313,44 @@ final class AppDelegateActionsTests: XCTestCase {
 
         sut.toggleHideEmptySpaces()
         XCTAssertTrue(store.hideEmptySpaces)
+
+        XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 3, "updateStatusBarIcon should be called 3 times")
+    }
+
+    // MARK: - toggleHideFullscreenApps Tests
+
+    func testToggleHideFullscreenApps_togglesFromTrueToFalse() {
+        store.hideFullscreenApps = true
+        let initialCount = sut.statusBarIconUpdateCount
+
+        sut.toggleHideFullscreenApps()
+
+        XCTAssertFalse(store.hideFullscreenApps, "hideFullscreenApps should toggle to false")
+        XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 1, "updateStatusBarIcon should be called")
+    }
+
+    func testToggleHideFullscreenApps_togglesFromFalseToTrue() {
+        store.hideFullscreenApps = false
+        let initialCount = sut.statusBarIconUpdateCount
+
+        sut.toggleHideFullscreenApps()
+
+        XCTAssertTrue(store.hideFullscreenApps, "hideFullscreenApps should toggle to true")
+        XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 1, "updateStatusBarIcon should be called")
+    }
+
+    func testToggleHideFullscreenApps_multipleToggles() {
+        store.hideFullscreenApps = false
+        let initialCount = sut.statusBarIconUpdateCount
+
+        sut.toggleHideFullscreenApps()
+        XCTAssertTrue(store.hideFullscreenApps)
+
+        sut.toggleHideFullscreenApps()
+        XCTAssertFalse(store.hideFullscreenApps)
+
+        sut.toggleHideFullscreenApps()
+        XCTAssertTrue(store.hideFullscreenApps)
 
         XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 3, "updateStatusBarIcon should be called 3 times")
     }
@@ -472,7 +572,7 @@ final class AppDelegateActionsTests: XCTestCase {
                 activeSpaceID: 101
             ),
         ]
-        appState.updateActiveSpaceNumber()
+        appState.forceSpaceUpdate()
         XCTAssertEqual(appState.getAllSpaceIndices().count, 2, "Should only have 2 active spaces")
 
         alertFactory.shouldConfirm = true
@@ -987,7 +1087,7 @@ final class AppDelegateActionsTests: XCTestCase {
 
         XCTAssertEqual(alertFactory.alertsShown.count, 1)
         let alert = alertFactory.alertsShown.first
-        XCTAssertEqual(alert?.message, Localization.applyToAllConfirm)
+        XCTAssertEqual(alert?.message, Localization.confirmApplyToAll)
         XCTAssertEqual(alert?.isDestructive, false)
     }
 
@@ -998,7 +1098,7 @@ final class AppDelegateActionsTests: XCTestCase {
 
         XCTAssertEqual(alertFactory.alertsShown.count, 1)
         let alert = alertFactory.alertsShown.first
-        XCTAssertEqual(alert?.message, Localization.resetSpaceConfirm)
+        XCTAssertEqual(alert?.message, Localization.confirmResetSpace)
         XCTAssertEqual(alert?.isDestructive, true)
     }
 
@@ -1009,7 +1109,7 @@ final class AppDelegateActionsTests: XCTestCase {
 
         XCTAssertEqual(alertFactory.alertsShown.count, 1)
         let alert = alertFactory.alertsShown.first
-        XCTAssertEqual(alert?.message, Localization.resetAllSpacesConfirm)
+        XCTAssertEqual(alert?.message, Localization.confirmResetAllSpaces)
         XCTAssertEqual(alert?.isDestructive, true)
     }
 
@@ -1020,7 +1120,7 @@ final class AppDelegateActionsTests: XCTestCase {
 
         XCTAssertEqual(alertFactory.alertsShown.count, 1)
         let alert = alertFactory.alertsShown.first
-        XCTAssertEqual(alert?.message, Localization.applyColorToAllConfirm)
+        XCTAssertEqual(alert?.message, Localization.confirmApplyColorToAll)
         XCTAssertEqual(alert?.isDestructive, false)
     }
 
@@ -1031,7 +1131,7 @@ final class AppDelegateActionsTests: XCTestCase {
 
         XCTAssertEqual(alertFactory.alertsShown.count, 1)
         let alert = alertFactory.alertsShown.first
-        XCTAssertEqual(alert?.message, Localization.applyStyleToAllConfirm)
+        XCTAssertEqual(alert?.message, Localization.confirmApplyStyleToAll)
         XCTAssertEqual(alert?.isDestructive, false)
     }
 
@@ -1042,7 +1142,7 @@ final class AppDelegateActionsTests: XCTestCase {
 
         XCTAssertEqual(alertFactory.alertsShown.count, 1)
         let alert = alertFactory.alertsShown.first
-        XCTAssertEqual(alert?.message, Localization.resetStyleConfirm)
+        XCTAssertEqual(alert?.message, Localization.confirmResetStyle)
         XCTAssertEqual(alert?.isDestructive, true)
     }
 
@@ -1053,7 +1153,7 @@ final class AppDelegateActionsTests: XCTestCase {
 
         XCTAssertEqual(alertFactory.alertsShown.count, 1)
         let alert = alertFactory.alertsShown.first
-        XCTAssertEqual(alert?.message, Localization.resetColorConfirm)
+        XCTAssertEqual(alert?.message, Localization.confirmResetColor)
         XCTAssertEqual(alert?.isDestructive, true)
     }
 
@@ -1237,12 +1337,58 @@ final class AppDelegateActionsTests: XCTestCase {
         )
     }
 
+    func testMenuWillOpen_setsHideFullscreenAppsCheckmark_whenEnabled() {
+        sut.configureMenuBarIcon()
+        store.hideFullscreenApps = true
+
+        sut.menuWillOpen(sut.statusMenu)
+
+        let hideFullscreenItem = sut.statusMenu.item(withTag: MenuTag.hideFullscreenApps)
+        XCTAssertEqual(hideFullscreenItem?.state, .on, "Hide full-screen apps should be checked when enabled")
+    }
+
+    func testMenuWillOpen_setsHideFullscreenAppsCheckmark_whenDisabled() {
+        sut.configureMenuBarIcon()
+        store.hideFullscreenApps = false
+
+        sut.menuWillOpen(sut.statusMenu)
+
+        let hideFullscreenItem = sut.statusMenu.item(withTag: MenuTag.hideFullscreenApps)
+        XCTAssertEqual(hideFullscreenItem?.state, .off, "Hide full-screen apps should be unchecked when disabled")
+    }
+
+    func testMenuWillOpen_showsHideFullscreenApps_whenShowAllSpacesEnabled() {
+        sut.configureMenuBarIcon()
+        store.showAllSpaces = true
+
+        sut.menuWillOpen(sut.statusMenu)
+
+        let hideFullscreenItem = sut.statusMenu.item(withTag: MenuTag.hideFullscreenApps)
+        XCTAssertFalse(
+            hideFullscreenItem?.isHidden ?? true,
+            "Hide full-screen apps should be visible when Show All Spaces is on"
+        )
+    }
+
+    func testMenuWillOpen_hidesHideFullscreenApps_whenShowAllSpacesDisabled() {
+        sut.configureMenuBarIcon()
+        store.showAllSpaces = false
+
+        sut.menuWillOpen(sut.statusMenu)
+
+        let hideFullscreenItem = sut.statusMenu.item(withTag: MenuTag.hideFullscreenApps)
+        XCTAssertTrue(
+            hideFullscreenItem?.isHidden ?? false,
+            "Hide full-screen apps should be hidden when Show All Spaces is off"
+        )
+    }
+
     func testMenuWillOpen_hidesColorSwatches_whenSymbolActive() {
         sut.configureMenuBarIcon()
         SpacePreferences.setSFSymbol("star.fill", forSpace: appState.currentSpace, store: store)
 
         // Find the Colors submenu
-        let colorsMenuItem = sut.statusMenu.items.first { $0.title == Localization.colorTitle }
+        let colorsMenuItem = sut.statusMenu.items.first { $0.title == Localization.menuColor }
         guard let colorsMenu = colorsMenuItem?.submenu else {
             XCTFail("Colors submenu not found")
             return
@@ -1269,7 +1415,7 @@ final class AppDelegateActionsTests: XCTestCase {
         SpacePreferences.setSFSymbol("star.fill", forSpace: appState.currentSpace, store: store)
 
         // Find the Colors submenu
-        let colorsMenuItem = sut.statusMenu.items.first { $0.title == Localization.colorTitle }
+        let colorsMenuItem = sut.statusMenu.items.first { $0.title == Localization.menuColor }
         guard let colorsMenu = colorsMenuItem?.submenu else {
             XCTFail("Colors submenu not found")
             return
@@ -1290,7 +1436,7 @@ final class AppDelegateActionsTests: XCTestCase {
         SpacePreferences.clearSFSymbol(forSpace: appState.currentSpace, store: store)
 
         // Find the Colors submenu
-        let colorsMenuItem = sut.statusMenu.items.first { $0.title == Localization.colorTitle }
+        let colorsMenuItem = sut.statusMenu.items.first { $0.title == Localization.menuColor }
         guard let colorsMenu = colorsMenuItem?.submenu else {
             XCTFail("Colors submenu not found")
             return
@@ -1308,7 +1454,7 @@ final class AppDelegateActionsTests: XCTestCase {
         SpacePreferences.clearSFSymbol(forSpace: appState.currentSpace, store: store)
 
         // Find the Colors submenu
-        let colorsMenuItem = sut.statusMenu.items.first { $0.title == Localization.colorTitle }
+        let colorsMenuItem = sut.statusMenu.items.first { $0.title == Localization.menuColor }
         guard let colorsMenu = colorsMenuItem?.submenu else {
             XCTFail("Colors submenu not found")
             return
@@ -1341,6 +1487,74 @@ final class AppDelegateActionsTests: XCTestCase {
             initialCount + 1,
             "updateStatusBarIcon should be called when menu opens"
         )
+    }
+
+    func testMenuWillOpen_showsSeparatorItems_whenShowAllDisplaysEnabled() {
+        sut.configureMenuBarIcon()
+        store.showAllDisplays = true
+
+        // Find the Colors submenu
+        let colorsMenuItem = sut.statusMenu.items.first { $0.title == Localization.menuColor }
+        guard let colorsMenu = colorsMenuItem?.submenu else {
+            XCTFail("Colors submenu not found")
+            return
+        }
+
+        sut.menuWillOpen(colorsMenu)
+
+        let separatorLabel = colorsMenu.item(withTag: MenuTag.separatorLabel)
+        let separatorSwatch = colorsMenu.item(withTag: MenuTag.separatorSwatch)
+        XCTAssertFalse(
+            separatorLabel?.isHidden ?? true,
+            "Separator label should be visible when Show All Displays is on"
+        )
+        XCTAssertFalse(
+            separatorSwatch?.isHidden ?? true,
+            "Separator swatch should be visible when Show All Displays is on"
+        )
+    }
+
+    func testMenuWillOpen_hidesSeparatorItems_whenShowAllDisplaysDisabled() {
+        sut.configureMenuBarIcon()
+        store.showAllDisplays = false
+
+        // Find the Colors submenu
+        let colorsMenuItem = sut.statusMenu.items.first { $0.title == Localization.menuColor }
+        guard let colorsMenu = colorsMenuItem?.submenu else {
+            XCTFail("Colors submenu not found")
+            return
+        }
+
+        sut.menuWillOpen(colorsMenu)
+
+        let separatorLabel = colorsMenu.item(withTag: MenuTag.separatorLabel)
+        let separatorSwatch = colorsMenu.item(withTag: MenuTag.separatorSwatch)
+        XCTAssertTrue(
+            separatorLabel?.isHidden ?? false,
+            "Separator label should be hidden when Show All Displays is off"
+        )
+        XCTAssertTrue(
+            separatorSwatch?.isHidden ?? false,
+            "Separator swatch should be hidden when Show All Displays is off"
+        )
+    }
+
+    func testResetColorToDefault_clearsSeparatorColor() {
+        store.separatorColor = .systemRed
+        alertFactory.shouldConfirm = true
+
+        sut.resetColorToDefault()
+
+        XCTAssertNil(store.separatorColor, "Separator color should be cleared on reset")
+    }
+
+    func testResetAllSpacesToDefault_clearsSeparatorColor() {
+        store.separatorColor = .systemBlue
+        alertFactory.shouldConfirm = true
+
+        sut.resetAllSpacesToDefault()
+
+        XCTAssertNil(store.separatorColor, "Separator color should be cleared on reset all")
     }
 
     // MARK: - toggleLaunchAtLogin Tests

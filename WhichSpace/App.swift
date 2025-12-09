@@ -212,26 +212,26 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
     private func configureColorMenuItem() {
         let colorsMenu = createColorMenu()
-        let colorsMenuItem = NSMenuItem(title: Localization.colorTitle, action: nil, keyEquivalent: "")
+        let colorsMenuItem = NSMenuItem(title: Localization.menuColor, action: nil, keyEquivalent: "")
         colorsMenuItem.image = NSImage(systemSymbolName: "paintpalette", accessibilityDescription: nil)
         colorsMenuItem.submenu = colorsMenu
         statusMenu.addItem(colorsMenuItem)
     }
 
     private func configureStyleMenuItem() {
-        let styleMenu = NSMenu(title: Localization.styleTitle)
+        let styleMenu = NSMenu(title: Localization.menuStyle)
         styleMenu.delegate = self
 
         // Number submenu (icon shapes)
         let iconMenu = createIconMenu()
-        let iconMenuItem = NSMenuItem(title: Localization.numberTitle, action: nil, keyEquivalent: "")
+        let iconMenuItem = NSMenuItem(title: Localization.menuNumber, action: nil, keyEquivalent: "")
         iconMenuItem.image = NSImage(systemSymbolName: "textformat.123", accessibilityDescription: nil)
         iconMenuItem.submenu = iconMenu
         styleMenu.addItem(iconMenuItem)
 
         // Symbol submenu
         let symbolMenu = createSymbolMenu()
-        let symbolMenuItem = NSMenuItem(title: Localization.symbolTitle, action: nil, keyEquivalent: "")
+        let symbolMenuItem = NSMenuItem(title: Localization.menuSymbol, action: nil, keyEquivalent: "")
         symbolMenuItem.image = NSImage(systemSymbolName: "burst.fill", accessibilityDescription: nil)
         symbolMenuItem.submenu = symbolMenu
         styleMenu.addItem(symbolMenuItem)
@@ -239,33 +239,33 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         styleMenu.addItem(.separator())
 
         let applyStyleItem = NSMenuItem(
-            title: Localization.applyStyleToAll,
+            title: Localization.actionApplyStyleToAll,
             action: #selector(applyStyleToAllSpaces),
             keyEquivalent: ""
         )
         applyStyleItem.target = self
         applyStyleItem.image = NSImage(systemSymbolName: "square.on.square", accessibilityDescription: nil)
-        applyStyleItem.toolTip = Localization.applyStyleToAllTip
+        applyStyleItem.toolTip = Localization.tipApplyStyleToAll
         styleMenu.addItem(applyStyleItem)
 
         let resetStyleItem = NSMenuItem(
-            title: Localization.resetStyleToDefault,
+            title: Localization.actionResetStyleToDefault,
             action: #selector(resetStyleToDefault),
             keyEquivalent: ""
         )
         resetStyleItem.target = self
         resetStyleItem.image = NSImage(systemSymbolName: "arrow.uturn.backward", accessibilityDescription: nil)
-        resetStyleItem.toolTip = Localization.resetStyleToDefaultTip
+        resetStyleItem.toolTip = Localization.tipResetStyleToDefault
         styleMenu.addItem(resetStyleItem)
 
-        let styleMenuItem = NSMenuItem(title: Localization.styleTitle, action: nil, keyEquivalent: "")
+        let styleMenuItem = NSMenuItem(title: Localization.menuStyle, action: nil, keyEquivalent: "")
         styleMenuItem.image = NSImage(systemSymbolName: "photo.artframe", accessibilityDescription: nil)
         styleMenuItem.submenu = styleMenu
         statusMenu.addItem(styleMenuItem)
     }
 
     private func configureSizeMenuItem() {
-        let sizeMenu = NSMenu(title: Localization.sizeTitle)
+        let sizeMenu = NSMenu(title: Localization.menuSize)
         sizeMenu.delegate = self
 
         // Size scale row (percentage)
@@ -283,7 +283,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         sizeItem.view = sizeSlider
         sizeMenu.addItem(sizeItem)
 
-        let sizeMenuItem = NSMenuItem(title: Localization.sizeTitle, action: nil, keyEquivalent: "")
+        let sizeMenuItem = NSMenuItem(title: Localization.menuSize, action: nil, keyEquivalent: "")
         sizeMenuItem.image = NSImage(
             systemSymbolName: "arrow.up.left.and.down.right.and.arrow.up.right.and.down.left",
             accessibilityDescription: nil
@@ -295,35 +295,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
     private func configureCopyAndResetMenuItems() {
         let uniqueIconsPerDisplayItem = NSMenuItem(
-            title: Localization.uniqueIconsPerDisplay,
+            title: Localization.toggleUniqueIconsPerDisplay,
             action: #selector(toggleUniqueIconsPerDisplay),
             keyEquivalent: ""
         )
         uniqueIconsPerDisplayItem.target = self
         uniqueIconsPerDisplayItem.tag = MenuTag.uniqueIconsPerDisplay
         uniqueIconsPerDisplayItem.image = NSImage(
-            systemSymbolName: "display.2",
+            systemSymbolName: "theatermasks",
             accessibilityDescription: nil
         )
-        uniqueIconsPerDisplayItem.toolTip = Localization.uniqueIconsPerDisplayTip
+        uniqueIconsPerDisplayItem.toolTip = Localization.tipUniqueIconsPerDisplay
         statusMenu.addItem(uniqueIconsPerDisplayItem)
 
-        let showAllSpacesItem = NSMenuItem(
-            title: Localization.showAllSpaces,
-            action: #selector(toggleShowAllSpaces),
-            keyEquivalent: ""
-        )
-        showAllSpacesItem.target = self
-        showAllSpacesItem.tag = MenuTag.showAllSpaces
-        showAllSpacesItem.image = NSImage(
-            systemSymbolName: "square.grid.3x1.below.line.grid.1x2",
-            accessibilityDescription: nil
-        )
-        showAllSpacesItem.toolTip = Localization.showAllSpacesTip
-        statusMenu.addItem(showAllSpacesItem)
-
         let dimInactiveSpacesItem = NSMenuItem(
-            title: Localization.dimInactiveSpaces,
+            title: Localization.toggleDimInactiveSpaces,
             action: #selector(toggleDimInactiveSpaces),
             keyEquivalent: ""
         )
@@ -333,11 +319,43 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             systemSymbolName: "aqi.low",
             accessibilityDescription: nil
         )
-        dimInactiveSpacesItem.toolTip = Localization.dimInactiveSpacesTip
+        dimInactiveSpacesItem.toolTip = Localization.tipDimInactiveSpaces
         statusMenu.addItem(dimInactiveSpacesItem)
 
+        statusMenu.addItem(NSMenuItem.separator())
+
+        let showAllDisplaysItem = NSMenuItem(
+            title: Localization.toggleShowAllDisplays,
+            action: #selector(toggleShowAllDisplays),
+            keyEquivalent: ""
+        )
+        showAllDisplaysItem.target = self
+        showAllDisplaysItem.tag = MenuTag.showAllDisplays
+        showAllDisplaysItem.image = NSImage(
+            systemSymbolName: "display.2",
+            accessibilityDescription: nil
+        )
+        showAllDisplaysItem.toolTip = Localization.tipShowAllDisplays
+        statusMenu.addItem(showAllDisplaysItem)
+
+        let showAllSpacesItem = NSMenuItem(
+            title: Localization.toggleShowAllSpaces,
+            action: #selector(toggleShowAllSpaces),
+            keyEquivalent: ""
+        )
+        showAllSpacesItem.target = self
+        showAllSpacesItem.tag = MenuTag.showAllSpaces
+        showAllSpacesItem.image = NSImage(
+            systemSymbolName: "square.grid.3x1.below.line.grid.1x2",
+            accessibilityDescription: nil
+        )
+        showAllSpacesItem.toolTip = Localization.tipShowAllSpaces
+        statusMenu.addItem(showAllSpacesItem)
+
+        statusMenu.addItem(NSMenuItem.separator())
+
         let hideEmptySpacesItem = NSMenuItem(
-            title: Localization.hideEmptySpaces,
+            title: Localization.toggleHideEmptySpaces,
             action: #selector(toggleHideEmptySpaces),
             keyEquivalent: ""
         )
@@ -347,82 +365,103 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             systemSymbolName: "eye.slash",
             accessibilityDescription: nil
         )
-        hideEmptySpacesItem.toolTip = Localization.hideEmptySpacesTip
+        hideEmptySpacesItem.toolTip = Localization.tipHideEmptySpaces
         statusMenu.addItem(hideEmptySpacesItem)
+
+        let hideFullscreenAppsItem = NSMenuItem(
+            title: Localization.toggleHideFullscreenApps,
+            action: #selector(toggleHideFullscreenApps),
+            keyEquivalent: ""
+        )
+        hideFullscreenAppsItem.target = self
+        hideFullscreenAppsItem.tag = MenuTag.hideFullscreenApps
+        hideFullscreenAppsItem.image = NSImage(
+            systemSymbolName: "eye.slash.fill",
+            accessibilityDescription: nil
+        )
+        hideFullscreenAppsItem.toolTip = Localization.tipHideFullscreenApps
+        statusMenu.addItem(hideFullscreenAppsItem)
         statusMenu.addItem(.separator())
 
         let applyToAllItem = NSMenuItem(
-            title: Localization.applyToAll,
+            title: Localization.actionApplyToAll,
             action: #selector(applyAllToAllSpaces),
             keyEquivalent: ""
         )
         applyToAllItem.target = self
         applyToAllItem.image = NSImage(systemSymbolName: "square.on.square", accessibilityDescription: nil)
-        applyToAllItem.toolTip = Localization.applyToAllTip
+        applyToAllItem.toolTip = Localization.tipApplyToAll
         statusMenu.addItem(applyToAllItem)
 
         let resetItem = NSMenuItem(
-            title: Localization.resetSpaceToDefault,
+            title: Localization.actionResetSpaceToDefault,
             action: #selector(resetSpaceToDefault),
             keyEquivalent: ""
         )
         resetItem.target = self
         resetItem.image = NSImage(systemSymbolName: "arrow.uturn.backward", accessibilityDescription: nil)
-        resetItem.toolTip = Localization.resetSpaceToDefaultTip
+        resetItem.toolTip = Localization.tipResetSpaceToDefault
         statusMenu.addItem(resetItem)
 
         let resetAllItem = NSMenuItem(
-            title: Localization.resetAllSpacesToDefault,
+            title: Localization.actionResetAllSpacesToDefault,
             action: #selector(resetAllSpacesToDefault),
             keyEquivalent: ""
         )
         resetAllItem.target = self
         resetAllItem.image = NSImage(systemSymbolName: "arrow.triangle.2.circlepath", accessibilityDescription: nil)
-        resetAllItem.toolTip = Localization.resetAllSpacesToDefaultTip
+        resetAllItem.toolTip = Localization.tipResetAllSpacesToDefault
         statusMenu.addItem(resetAllItem)
         statusMenu.addItem(.separator())
     }
 
     private func configureLaunchAtLoginMenuItem() {
         let launchAtLoginItem = NSMenuItem(
-            title: Localization.launchAtLogin,
+            title: Localization.toggleLaunchAtLogin,
             action: #selector(toggleLaunchAtLogin),
             keyEquivalent: ""
         )
         launchAtLoginItem.target = self
         launchAtLoginItem.tag = MenuTag.launchAtLogin
         launchAtLoginItem.image = NSImage(systemSymbolName: "sunrise", accessibilityDescription: nil)
-        launchAtLoginItem.toolTip = String(format: Localization.launchAtLoginTip, appName)
+        launchAtLoginItem.toolTip = String(format: Localization.tipLaunchAtLogin, appName)
         statusMenu.addItem(launchAtLoginItem)
     }
 
     private func configureUpdateAndQuitMenuItems() {
         let updateItem = NSMenuItem(
-            title: Localization.checkForUpdates,
+            title: Localization.actionCheckForUpdates,
             action: #selector(checkForUpdates),
             keyEquivalent: ""
         )
         updateItem.target = self
         updateItem.image = NSImage(systemSymbolName: "square.and.arrow.down", accessibilityDescription: nil)
-        updateItem.toolTip = String(format: Localization.checkForUpdatesTip, appName)
+        updateItem.toolTip = String(format: Localization.tipCheckForUpdates, appName)
         statusMenu.addItem(updateItem)
         statusMenu.addItem(.separator())
 
         let quitItem = NSMenuItem(
-            title: Localization.quit,
+            title: Localization.actionQuit,
             action: #selector(NSApplication.terminate(_:)),
             keyEquivalent: "q"
         )
         quitItem.image = NSImage(systemSymbolName: "xmark.rectangle", accessibilityDescription: nil)
-        quitItem.toolTip = String(format: Localization.quitTip, appName)
+        quitItem.toolTip = String(format: Localization.tipQuit, appName)
         statusMenu.addItem(quitItem)
     }
 
     // MARK: Color Menu
 
     private func createColorMenu() -> NSMenu {
-        let colorsMenu = NSMenu(title: Localization.colorTitle)
+        let colorsMenu = NSMenu(title: Localization.menuColor)
         colorsMenu.delegate = self
+
+        // Symbol label (shown only when symbol active)
+        let symbolLabelItem = NSMenuItem(title: Localization.labelSymbol, action: nil, keyEquivalent: "")
+        symbolLabelItem.isEnabled = false
+        symbolLabelItem.tag = MenuTag.symbolLabel
+        symbolLabelItem.isHidden = true
+        colorsMenu.addItem(symbolLabelItem)
 
         // Symbol color swatch (shown only when symbol active)
         let symbolSwatchItem = NSMenuItem()
@@ -441,7 +480,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         colorsMenu.addItem(symbolSwatchItem)
 
         // Foreground label (hidden when symbol active)
-        let foregroundLabel = NSMenuItem(title: Localization.foregroundLabel, action: nil, keyEquivalent: "")
+        let foregroundLabel = NSMenuItem(title: Localization.labelForeground, action: nil, keyEquivalent: "")
         foregroundLabel.isEnabled = false
         foregroundLabel.tag = MenuTag.foregroundLabel
         colorsMenu.addItem(foregroundLabel)
@@ -467,7 +506,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         colorsMenu.addItem(separator)
 
         // Background label (hidden when symbol active)
-        let backgroundLabel = NSMenuItem(title: Localization.backgroundLabel, action: nil, keyEquivalent: "")
+        let backgroundLabel = NSMenuItem(title: Localization.labelBackground, action: nil, keyEquivalent: "")
         backgroundLabel.isEnabled = false
         backgroundLabel.tag = MenuTag.backgroundLabel
         colorsMenu.addItem(backgroundLabel)
@@ -487,38 +526,59 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         backgroundSwatchItem.view = backgroundSwatch
         colorsMenu.addItem(backgroundSwatchItem)
 
+        // Separator color section (shown only when Show all Displays is enabled)
+        let separatorLabelItem = NSMenuItem(title: Localization.labelSeparator, action: nil, keyEquivalent: "")
+        separatorLabelItem.isEnabled = false
+        separatorLabelItem.tag = MenuTag.separatorLabel
+        separatorLabelItem.isHidden = true
+        colorsMenu.addItem(separatorLabelItem)
+
+        let separatorSwatchItem = NSMenuItem()
+        separatorSwatchItem.tag = MenuTag.separatorSwatch
+        separatorSwatchItem.isHidden = true
+        let separatorSwatch = ColorSwatch()
+        separatorSwatch.frame = NSRect(origin: .zero, size: separatorSwatch.intrinsicContentSize)
+        separatorSwatch.onColorSelected = { [weak self] color in
+            self?.setSeparatorColor(color)
+        }
+        separatorSwatch.onCustomColorRequested = { [weak self] in
+            self?.showSeparatorColorPanel()
+        }
+        separatorSwatchItem.view = separatorSwatch
+        colorsMenu.addItem(separatorSwatchItem)
+
         // Separator before actions
         colorsMenu.addItem(.separator())
 
         let invertColorsItem = NSMenuItem(
-            title: Localization.invertColors,
+            title: Localization.actionInvertColors,
             action: #selector(invertColors),
             keyEquivalent: ""
         )
         invertColorsItem.target = self
         invertColorsItem.image = NSImage(systemSymbolName: "arrow.left.arrow.right", accessibilityDescription: nil)
-        invertColorsItem.toolTip = Localization.invertColorsTip
+        invertColorsItem.toolTip = Localization.tipInvertColors
         colorsMenu.addItem(invertColorsItem)
         colorsMenu.addItem(.separator())
 
         let applyToAllItem = NSMenuItem(
-            title: Localization.applyColorToAll,
+            title: Localization.actionApplyColorToAll,
             action: #selector(applyColorsToAllSpaces),
             keyEquivalent: ""
         )
         applyToAllItem.target = self
         applyToAllItem.image = NSImage(systemSymbolName: "square.on.square", accessibilityDescription: nil)
-        applyToAllItem.toolTip = Localization.applyColorToAllTip
+        applyToAllItem.toolTip = Localization.tipApplyColorToAll
         colorsMenu.addItem(applyToAllItem)
 
         let resetColorItem = NSMenuItem(
-            title: Localization.resetColorToDefault,
+            title: Localization.actionResetColorToDefault,
             action: #selector(resetColorToDefault),
             keyEquivalent: ""
         )
         resetColorItem.target = self
         resetColorItem.image = NSImage(systemSymbolName: "arrow.uturn.backward", accessibilityDescription: nil)
-        resetColorItem.toolTip = Localization.resetColorToDefaultTip
+        resetColorItem.toolTip = Localization.tipResetColorToDefault
         colorsMenu.addItem(resetColorItem)
 
         return colorsMenu
@@ -527,7 +587,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     // MARK: Style Menus
 
     private func createIconMenu() -> NSMenu {
-        let iconMenu = NSMenu(title: Localization.numberTitle)
+        let iconMenu = NSMenu(title: Localization.menuNumber)
         iconMenu.delegate = self
 
         for style in IconStyle.allCases {
@@ -550,7 +610,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     }
 
     private func createSymbolMenu() -> NSMenu {
-        let symbolMenu = NSMenu(title: Localization.symbolTitle)
+        let symbolMenu = NSMenu(title: Localization.menuSymbol)
         symbolMenu.delegate = self
 
         let symbolPickerItem = NSMenuItem()
@@ -579,13 +639,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         updateStatusBarIcon()
     }
 
+    @objc func toggleHideFullscreenApps() {
+        store.hideFullscreenApps.toggle()
+        updateStatusBarIcon()
+    }
+
     @objc func toggleLaunchAtLogin() {
         launchAtLogin.isEnabled.toggle()
         updateStatusBarIcon()
     }
 
+    @objc func toggleShowAllDisplays() {
+        store.showAllDisplays.toggle()
+        // Turn off showAllSpaces when enabling showAllDisplays (they are mutually exclusive in behavior)
+        if store.showAllDisplays {
+            store.showAllSpaces = false
+        }
+        updateStatusBarIcon()
+    }
+
     @objc func toggleShowAllSpaces() {
         store.showAllSpaces.toggle()
+        // Turn off showAllDisplays when enabling showAllSpaces (they are mutually exclusive in behavior)
+        if store.showAllSpaces {
+            store.showAllDisplays = false
+        }
         updateStatusBarIcon()
     }
 
@@ -605,9 +683,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
 
         let confirmed = alertFactory.makeAlert(
-            message: Localization.applyToAllConfirm,
-            detail: Localization.applyToAllDetail,
-            confirmTitle: Localization.okButton,
+            message: Localization.confirmApplyToAll,
+            detail: Localization.detailApplyToAll,
+            confirmTitle: Localization.buttonOK,
             isDestructive: false
         )
         .runModal()
@@ -642,9 +720,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
 
         let confirmed = alertFactory.makeAlert(
-            message: Localization.resetSpaceConfirm,
-            detail: Localization.resetSpaceDetail,
-            confirmTitle: Localization.resetButton,
+            message: Localization.confirmResetSpace,
+            detail: Localization.detailResetSpace,
+            confirmTitle: Localization.buttonReset,
             isDestructive: true
         )
         .runModal()
@@ -669,9 +747,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
     @objc func resetAllSpacesToDefault() {
         let confirmed = alertFactory.makeAlert(
-            message: Localization.resetAllSpacesConfirm,
-            detail: Localization.resetAllSpacesDetail,
-            confirmTitle: Localization.resetAllButton,
+            message: Localization.confirmResetAllSpaces,
+            detail: Localization.detailResetAllSpaces,
+            confirmTitle: Localization.buttonResetAll,
             isDestructive: true
         )
         .runModal()
@@ -683,6 +761,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         // Always clear both shared and per-display settings
         SpacePreferences.clearAll(store: store)
         store.sizeScale = Layout.defaultSizeScale
+        store.separatorColor = nil
         updateStatusBarIcon()
     }
 
@@ -708,9 +787,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
 
         let confirmed = alertFactory.makeAlert(
-            message: Localization.applyColorToAllConfirm,
-            detail: Localization.applyColorToAllDetail,
-            confirmTitle: Localization.okButton,
+            message: Localization.confirmApplyColorToAll,
+            detail: Localization.detailApplyColorToAll,
+            confirmTitle: Localization.buttonOK,
             isDestructive: false
         )
         .runModal()
@@ -733,9 +812,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
     @objc func resetColorToDefault() {
         let confirmed = alertFactory.makeAlert(
-            message: Localization.resetColorConfirm,
-            detail: Localization.resetColorDetail,
-            confirmTitle: Localization.resetButton,
+            message: Localization.confirmResetColor,
+            detail: Localization.detailResetColor,
+            confirmTitle: Localization.buttonReset,
             isDestructive: true
         )
         .runModal()
@@ -745,6 +824,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
 
         SpacePreferences.clearColors(forSpace: appState.currentSpace, display: appState.currentDisplayID, store: store)
+        store.separatorColor = nil
         updateStatusBarIcon()
     }
 
@@ -754,9 +834,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
 
         let confirmed = alertFactory.makeAlert(
-            message: Localization.applyStyleToAllConfirm,
-            detail: Localization.applyStyleToAllDetail,
-            confirmTitle: Localization.okButton,
+            message: Localization.confirmApplyStyleToAll,
+            detail: Localization.detailApplyStyleToAll,
+            confirmTitle: Localization.buttonOK,
             isDestructive: false
         )
         .runModal()
@@ -785,9 +865,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
 
         let confirmed = alertFactory.makeAlert(
-            message: Localization.resetStyleConfirm,
-            detail: Localization.resetStyleDetail,
-            confirmTitle: Localization.resetButton,
+            message: Localization.confirmResetStyle,
+            detail: Localization.detailResetStyle,
+            confirmTitle: Localization.buttonReset,
             isDestructive: true
         )
         .runModal()
@@ -836,6 +916,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             display: appState.currentDisplayID,
             store: store
         )
+        updateStatusBarIcon()
+    }
+
+    private func setSeparatorColor(_ color: NSColor) {
+        store.separatorColor = color
+        updateStatusBarIcon()
+    }
+
+    private func showSeparatorColorPanel() {
+        NSApp.activate(ignoringOtherApps: true)
+
+        let colorPanel = NSColorPanel.shared
+        colorPanel.setTarget(self)
+        colorPanel.setAction(#selector(separatorColorChanged(_:)))
+        colorPanel.isContinuous = true
+        colorPanel.color = store.separatorColor ?? .gray
+        colorPanel.makeKeyAndOrderFront(nil)
+    }
+
+    @objc private func separatorColorChanged(_ sender: NSColorPanel) {
+        store.separatorColor = sender.color
         updateStatusBarIcon()
     }
 
@@ -949,16 +1050,30 @@ extension AppDelegate: NSMenuDelegate {
             showAllSpacesItem.state = store.showAllSpaces ? .on : .off
         }
 
+        // Update Show All Displays checkmark
+        if let showAllDisplaysItem = menu.item(withTag: MenuTag.showAllDisplays) {
+            showAllDisplaysItem.state = store.showAllDisplays ? .on : .off
+        }
+
+        // Dim/Hide options are visible when either showAllSpaces or showAllDisplays is enabled
+        let showMultiSpaceOptions = store.showAllSpaces || store.showAllDisplays
+
         // Update Dim inactive Spaces checkmark and visibility
         if let dimInactiveItem = menu.item(withTag: MenuTag.dimInactiveSpaces) {
             dimInactiveItem.state = store.dimInactiveSpaces ? .on : .off
-            dimInactiveItem.isHidden = !store.showAllSpaces
+            dimInactiveItem.isHidden = !showMultiSpaceOptions
         }
 
         // Update Hide empty Spaces checkmark and visibility
         if let hideEmptyItem = menu.item(withTag: MenuTag.hideEmptySpaces) {
             hideEmptyItem.state = store.hideEmptySpaces ? .on : .off
-            hideEmptyItem.isHidden = !store.showAllSpaces
+            hideEmptyItem.isHidden = !showMultiSpaceOptions
+        }
+
+        // Update Hide full-screen applications checkmark and visibility
+        if let hideFullscreenItem = menu.item(withTag: MenuTag.hideFullscreenApps) {
+            hideFullscreenItem.state = store.hideFullscreenApps ? .on : .off
+            hideFullscreenItem.isHidden = !showMultiSpaceOptions
         }
 
         for item in menu.items {
@@ -978,9 +1093,14 @@ extension AppDelegate: NSMenuDelegate {
                 view.needsDisplay = true
             }
 
-            // Show symbol color swatch only when symbol is active
-            if item.tag == MenuTag.symbolColorSwatch {
+            // Show symbol label and color swatch only when symbol is active
+            if item.tag == MenuTag.symbolLabel || item.tag == MenuTag.symbolColorSwatch {
                 item.isHidden = !symbolIsActive
+            }
+
+            // Show separator label and swatch only when Show all Displays is enabled
+            if item.tag == MenuTag.separatorLabel || item.tag == MenuTag.separatorSwatch {
+                item.isHidden = !store.showAllDisplays
             }
 
             // Hide foreground/background labels and swatches when symbol is active

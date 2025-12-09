@@ -16,7 +16,7 @@ enum IconStyle: String, CaseIterable, Defaults.Serializable {
     case hexagonOutline
 
     var localizedTitle: String {
-        NSLocalizedString("icon_style_\(rawValue)", comment: "Icon style name")
+        NSLocalizedString("style_\(rawValue)", comment: "Icon style name")
     }
 }
 
