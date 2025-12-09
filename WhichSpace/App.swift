@@ -198,6 +198,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
         let versionItem = NSMenuItem(title: "\(appName) v\(version)", action: nil, keyEquivalent: "")
         versionItem.isEnabled = false
+        versionItem.toolTip = "https://github.com/gechr/WhichSpace"
         if let icon = NSApp.applicationIconImage {
             let resized = NSImage(size: NSSize(width: 16, height: 16))
             resized.lockFocus()
