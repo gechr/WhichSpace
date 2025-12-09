@@ -34,6 +34,7 @@ struct TypedKeySpec<Value: Defaults.Serializable>: KeySpec {
 /// 2. Add the corresponding property in `DefaultsStore`
 /// 3. Tests will automatically pick up the new key
 enum KeySpecs {
+    static let dimInactiveSpaces = TypedKeySpec(name: "dimInactiveSpaces", defaultValue: true)
     static let showAllSpaces = TypedKeySpec(name: "showAllSpaces", defaultValue: false)
     static let spaceColors = TypedKeySpec(name: "spaceColors", defaultValue: [Int: SpaceColors]())
     static let spaceIconStyles = TypedKeySpec(name: "spaceIconStyles", defaultValue: [Int: IconStyle]())
@@ -57,15 +58,16 @@ enum KeySpecs {
 
     /// All key names for enumeration (e.g., in tests).
     static let allKeyNames: Set<String> = [
-        showAllSpaces.name,
-        spaceColors.name,
-        spaceIconStyles.name,
-        spaceSFSymbols.name,
-        sizeScale.name,
-        uniqueIconsPerDisplay.name,
+        dimInactiveSpaces.name,
         displaySpaceColors.name,
         displaySpaceIconStyles.name,
         displaySpaceSFSymbols.name,
+        showAllSpaces.name,
+        sizeScale.name,
+        spaceColors.name,
+        spaceIconStyles.name,
+        spaceSFSymbols.name,
+        uniqueIconsPerDisplay.name,
     ]
 }
 
@@ -97,6 +99,7 @@ final class DefaultsStore: @unchecked Sendable {
     let suite: UserDefaults
 
     // Lazily-created keys bound to this store's suite
+    private(set) lazy var dimInactiveSpacesKey = KeySpecs.dimInactiveSpaces.key(suite: suite)
     private(set) lazy var showAllSpacesKey = KeySpecs.showAllSpaces.key(suite: suite)
     private(set) lazy var spaceColorsKey = KeySpecs.spaceColors.key(suite: suite)
     private(set) lazy var spaceIconStylesKey = KeySpecs.spaceIconStyles.key(suite: suite)
@@ -114,6 +117,11 @@ final class DefaultsStore: @unchecked Sendable {
     }
 
     // MARK: - Property Accessors
+
+    var dimInactiveSpaces: Bool {
+        get { Defaults[dimInactiveSpacesKey] }
+        set { Defaults[dimInactiveSpacesKey] = newValue }
+    }
 
     var showAllSpaces: Bool {
         get { Defaults[showAllSpacesKey] }
@@ -166,15 +174,16 @@ final class DefaultsStore: @unchecked Sendable {
     /// Resets all keys to their default values.
     func resetAll() {
         Defaults.reset(
+            dimInactiveSpacesKey,
+            displaySpaceColorsKey,
+            displaySpaceIconStylesKey,
+            displaySpaceSFSymbolsKey,
             showAllSpacesKey,
+            sizeScaleKey,
             spaceColorsKey,
             spaceIconStylesKey,
             spaceSFSymbolsKey,
-            sizeScaleKey,
-            uniqueIconsPerDisplayKey,
-            displaySpaceColorsKey,
-            displaySpaceIconStylesKey,
-            displaySpaceSFSymbolsKey
+            uniqueIconsPerDisplayKey
         )
     }
 

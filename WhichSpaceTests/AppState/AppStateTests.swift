@@ -348,6 +348,55 @@ final class AppStateTests: XCTestCase {
         }
     }
 
+    func testShowAllSpaces_dimInactiveDisabled_allSpacesSameAlpha() {
+        // Given: 2 spaces, space 1 is active, dimming disabled
+        store.showAllSpaces = true
+        store.dimInactiveSpaces = false
+
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [
+                    (id: 100, isFullscreen: false),
+                    (id: 101, isFullscreen: false),
+                ],
+                activeSpaceID: 100
+            ),
+        ]
+
+        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+
+        // When
+        let icon = sut.statusBarIcon
+
+        guard let bitmap = icon.bitmapRepresentation() else {
+            XCTFail("Could not create bitmap representation")
+            return
+        }
+
+        // Account for Retina scaling: bitmap pixels may be 2x the point size
+        let scale = Double(bitmap.pixelsWide) / icon.size.width
+        let segmentWidth = Int(Layout.statusItemWidth * scale)
+        let sampleY = bitmap.pixelsHigh / 2
+
+        // Space 1 (active)
+        let activeX = segmentWidth / 2
+        let alphaActive = bitmap.sampleMaxAlpha(inRect: CGRect(x: activeX - 3, y: sampleY - 3, width: 6, height: 6))
+
+        // Space 2 (inactive but dimming disabled)
+        let inactiveX = segmentWidth + segmentWidth / 2
+        let alphaInactive = bitmap.sampleMaxAlpha(inRect: CGRect(x: inactiveX - 3, y: sampleY - 3, width: 6, height: 6))
+
+        // Both should have similar alpha when dimming is disabled
+        XCTAssertEqual(
+            alphaActive,
+            alphaInactive,
+            accuracy: 0.1,
+            "Active and inactive spaces should have same alpha when dimming is disabled"
+        )
+    }
+
     // MARK: - Dark Mode Tests
 
     func testUpdateDarkModeStatus_darkAppearance() {

@@ -179,6 +179,44 @@ final class AppDelegateActionsTests: XCTestCase {
         XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 3, "updateStatusBarIcon should be called 3 times")
     }
 
+    // MARK: - toggleDimInactiveSpaces Tests
+
+    func testToggleDimInactiveSpaces_togglesFromTrueToFalse() {
+        store.dimInactiveSpaces = true
+        let initialCount = sut.statusBarIconUpdateCount
+
+        sut.toggleDimInactiveSpaces()
+
+        XCTAssertFalse(store.dimInactiveSpaces, "dimInactiveSpaces should toggle to false")
+        XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 1, "updateStatusBarIcon should be called")
+    }
+
+    func testToggleDimInactiveSpaces_togglesFromFalseToTrue() {
+        store.dimInactiveSpaces = false
+        let initialCount = sut.statusBarIconUpdateCount
+
+        sut.toggleDimInactiveSpaces()
+
+        XCTAssertTrue(store.dimInactiveSpaces, "dimInactiveSpaces should toggle to true")
+        XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 1, "updateStatusBarIcon should be called")
+    }
+
+    func testToggleDimInactiveSpaces_multipleToggles() {
+        store.dimInactiveSpaces = true
+        let initialCount = sut.statusBarIconUpdateCount
+
+        sut.toggleDimInactiveSpaces()
+        XCTAssertFalse(store.dimInactiveSpaces)
+
+        sut.toggleDimInactiveSpaces()
+        XCTAssertTrue(store.dimInactiveSpaces)
+
+        sut.toggleDimInactiveSpaces()
+        XCTAssertFalse(store.dimInactiveSpaces)
+
+        XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 3, "updateStatusBarIcon should be called 3 times")
+    }
+
     // MARK: - applyAllToAllSpaces Tests
 
     func testApplyAllToAllSpaces_whenConfirmed_appliesStyleToAllSpaces() {
@@ -1067,6 +1105,52 @@ final class AppDelegateActionsTests: XCTestCase {
 
         let showAllSpacesItem = sut.statusMenu.item(withTag: MenuTag.showAllSpaces)
         XCTAssertEqual(showAllSpacesItem?.state, .off, "Show All Spaces should be unchecked when disabled")
+    }
+
+    func testMenuWillOpen_setsDimInactiveSpacesCheckmark_whenEnabled() {
+        sut.configureMenuBarIcon()
+        store.dimInactiveSpaces = true
+
+        sut.menuWillOpen(sut.statusMenu)
+
+        let dimInactiveItem = sut.statusMenu.item(withTag: MenuTag.dimInactiveSpaces)
+        XCTAssertEqual(dimInactiveItem?.state, .on, "Dim inactive Spaces should be checked when enabled")
+    }
+
+    func testMenuWillOpen_setsDimInactiveSpacesCheckmark_whenDisabled() {
+        sut.configureMenuBarIcon()
+        store.dimInactiveSpaces = false
+
+        sut.menuWillOpen(sut.statusMenu)
+
+        let dimInactiveItem = sut.statusMenu.item(withTag: MenuTag.dimInactiveSpaces)
+        XCTAssertEqual(dimInactiveItem?.state, .off, "Dim inactive Spaces should be unchecked when disabled")
+    }
+
+    func testMenuWillOpen_showsDimInactiveSpaces_whenShowAllSpacesEnabled() {
+        sut.configureMenuBarIcon()
+        store.showAllSpaces = true
+
+        sut.menuWillOpen(sut.statusMenu)
+
+        let dimInactiveItem = sut.statusMenu.item(withTag: MenuTag.dimInactiveSpaces)
+        XCTAssertFalse(
+            dimInactiveItem?.isHidden ?? true,
+            "Dim inactive Spaces should be visible when Show All Spaces is on"
+        )
+    }
+
+    func testMenuWillOpen_hidesDimInactiveSpaces_whenShowAllSpacesDisabled() {
+        sut.configureMenuBarIcon()
+        store.showAllSpaces = false
+
+        sut.menuWillOpen(sut.statusMenu)
+
+        let dimInactiveItem = sut.statusMenu.item(withTag: MenuTag.dimInactiveSpaces)
+        XCTAssertTrue(
+            dimInactiveItem?.isHidden ?? false,
+            "Dim inactive Spaces should be hidden when Show All Spaces is off"
+        )
     }
 
     func testMenuWillOpen_hidesColorSwatches_whenSymbolActive() {

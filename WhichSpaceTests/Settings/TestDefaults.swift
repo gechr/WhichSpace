@@ -164,15 +164,16 @@ final class DefaultsIsolationGuardTests: IsolatedDefaultsTestCase {
     /// Verifies that KeySpecs matches Defaults.Keys definitions.
     func testKeySpecsMatchDefaultsKeys() {
         let expectedKeyNames: Set<String> = [
-            "showAllSpaces",
-            "spaceColors",
-            "spaceIconStyles",
-            "spaceSFSymbols",
-            "sizeScale",
-            "uniqueIconsPerDisplay",
+            "dimInactiveSpaces",
             "displaySpaceColors",
             "displaySpaceIconStyles",
             "displaySpaceSFSymbols",
+            "showAllSpaces",
+            "sizeScale",
+            "spaceColors",
+            "spaceIconStyles",
+            "spaceSFSymbols",
+            "uniqueIconsPerDisplay",
         ]
 
         XCTAssertEqual(

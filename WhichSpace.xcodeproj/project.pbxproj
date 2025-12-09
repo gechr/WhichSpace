@@ -124,12 +124,12 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1BFDC79F6CAD45FCA411BBDF /* Support */ = {
+		1BFDC79F6CAD45FCA411BBDF /* Settings */ = {
 			isa = PBXGroup;
 			children = (
 				6A516759A1224D10B03F0D59 /* TestDefaults.swift */,
 			);
-			path = Support;
+			path = Settings;
 			sourceTree = "<group>";
 		};
 		276053535FD9450A8F3AA8C0 /* UI */ = {
@@ -221,7 +221,7 @@
 		C426C7016341439BBF1FF01F /* WhichSpaceTests */ = {
 			isa = PBXGroup;
 			children = (
-				1BFDC79F6CAD45FCA411BBDF /* Support */,
+				1BFDC79F6CAD45FCA411BBDF /* Settings */,
 				7C40222D2B774DAB87B08F40 /* Core */,
 				D22FA31F1EB944C78A3BE1B3 /* AppState */,
 				276053535FD9450A8F3AA8C0 /* UI */,

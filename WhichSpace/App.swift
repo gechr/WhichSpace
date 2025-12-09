@@ -320,6 +320,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         )
         showAllSpacesItem.toolTip = Localization.showAllSpacesTip
         statusMenu.addItem(showAllSpacesItem)
+
+        let dimInactiveSpacesItem = NSMenuItem(
+            title: Localization.dimInactiveSpaces,
+            action: #selector(toggleDimInactiveSpaces),
+            keyEquivalent: ""
+        )
+        dimInactiveSpacesItem.target = self
+        dimInactiveSpacesItem.tag = MenuTag.dimInactiveSpaces
+        dimInactiveSpacesItem.image = NSImage(
+            systemSymbolName: "aqi.low",
+            accessibilityDescription: nil
+        )
+        dimInactiveSpacesItem.toolTip = Localization.dimInactiveSpacesTip
+        statusMenu.addItem(dimInactiveSpacesItem)
         statusMenu.addItem(.separator())
 
         let applyToAllItem = NSMenuItem(
@@ -539,6 +553,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     }
 
     // MARK: - Actions
+
+    @objc func toggleDimInactiveSpaces() {
+        store.dimInactiveSpaces.toggle()
+        updateStatusBarIcon()
+    }
 
     @objc func toggleLaunchAtLogin() {
         launchAtLogin.isEnabled.toggle()
@@ -908,6 +927,12 @@ extension AppDelegate: NSMenuDelegate {
         // Update Show All Spaces checkmark
         if let showAllSpacesItem = menu.item(withTag: MenuTag.showAllSpaces) {
             showAllSpacesItem.state = store.showAllSpaces ? .on : .off
+        }
+
+        // Update Dim inactive Spaces checkmark and visibility
+        if let dimInactiveItem = menu.item(withTag: MenuTag.dimInactiveSpaces) {
+            dimInactiveItem.state = store.dimInactiveSpaces ? .on : .off
+            dimInactiveItem.isHidden = !store.showAllSpaces
         }
 
         for item in menu.items {

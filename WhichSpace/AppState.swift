@@ -338,8 +338,8 @@ final class AppState {
                 height: Layout.statusItemHeight
             )
 
-            // Draw with reduced opacity for inactive spaces
-            let alpha = isActive ? 1.0 : 0.35
+            // Draw with reduced opacity for inactive spaces (if dimming is enabled)
+            let alpha = isActive || !store.dimInactiveSpaces ? 1.0 : 0.35
             icon.draw(in: drawRect, from: .zero, operation: .sourceOver, fraction: alpha)
         }
 
