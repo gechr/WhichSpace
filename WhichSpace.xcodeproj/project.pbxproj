@@ -124,12 +124,12 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1BFDC79F6CAD45FCA411BBDF /* Settings */ = {
+		1BFDC79F6CAD45FCA411BBDF /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
 				6A516759A1224D10B03F0D59 /* TestDefaults.swift */,
 			);
-			path = Settings;
+			path = Preferences;
 			sourceTree = "<group>";
 		};
 		276053535FD9450A8F3AA8C0 /* UI */ = {

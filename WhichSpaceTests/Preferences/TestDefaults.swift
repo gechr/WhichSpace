@@ -4,7 +4,7 @@ import XCTest
 
 // MARK: - TestSuite
 
-/// A test UserDefaults suite with its associated name for cleanup.
+/// A test UserDefaults suite with its associated name.
 struct TestSuite {
     let suite: UserDefaults
     let suiteName: String
@@ -13,28 +13,62 @@ struct TestSuite {
 // MARK: - TestSuiteFactory
 
 /// Creates isolated UserDefaults suites for testing.
+///
+/// Uses real UserDefaults with unique suite names for test isolation.
+/// Orphaned plist files from previous test runs are cleaned up automatically
+/// at the start of each test run (cfprefsd prevents reliable cleanup of
+/// current run's files).
 enum TestSuiteFactory {
+    private static let testSuitePrefix = "WhichSpaceTests"
+    private static var hasCleanedUp = false
+
     /// Creates a new UserDefaults suite with a unique name.
     ///
     /// Each call returns a fresh, empty suite suitable for test isolation.
     /// The suite name includes a UUID to prevent collisions.
     static func createSuite() -> TestSuite {
-        let name = "WhichSpaceTests.\(UUID().uuidString)"
+        cleanupOrphanedTestFilesOnce()
+        let name = "\(testSuitePrefix).\(UUID().uuidString)"
         return TestSuite(suite: UserDefaults(suiteName: name)!, suiteName: name)
     }
 
-    /// Removes a test suite's persistent domain and deletes the plist file.
+    /// Removes a test suite's persistent domain.
     ///
-    /// Call this in teardown to clean up after tests.
+    /// Note: The plist file may remain on disk due to cfprefsd caching.
+    /// These orphaned files are cleaned up at the start of the next test run.
     static func destroySuite(_ testSuite: TestSuite) {
         testSuite.suite.removePersistentDomain(forName: testSuite.suiteName)
-        testSuite.suite.synchronize()
-
-        // removePersistentDomain clears contents but leaves empty file - delete it
-        let prefsDir = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true).first!
-        let plistPath = "\(prefsDir)/Preferences/\(testSuite.suiteName).plist"
-        try? FileManager.default.removeItem(atPath: plistPath)
     }
+
+    /// Cleans up orphaned test plist files from previous test runs.
+    ///
+    /// Called once per test run. Files from previous runs are safe to delete
+    /// because cfprefsd has long since forgotten about them.
+    private static func cleanupOrphanedTestFilesOnce() {
+        guard !hasCleanedUp else {
+            return
+        }
+        hasCleanedUp = true
+
+        let prefsURL = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask).first!
+            .appendingPathComponent("Preferences")
+
+        guard let files = try? FileManager.default.contentsOfDirectory(
+            at: prefsURL,
+            includingPropertiesForKeys: nil
+        ) else { return }
+
+        for file in files where file.lastPathComponent.wholeMatch(of: testSuitePattern) != nil {
+            try? FileManager.default.removeItem(at: file)
+        }
+    }
+
+    /// Pattern matching test suite plist files: "WhichSpaceTests.UUID.plist"
+    private static let testSuitePattern: Regex<Substring> = {
+        let uuid = "[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}"
+        // swiftlint:disable:next force_try
+        return try! Regex("^\(testSuitePrefix)\\.\(uuid)\\.plist$")
+    }()
 }
 
 // MARK: - IsolatedDefaultsTestCase
@@ -96,7 +130,7 @@ class IsolatedDefaultsTestCase: XCTestCase {
     /// The underlying UserDefaults suite (for direct access if needed).
     var suite: UserDefaults { store.suite }
 
-    /// The test suite with its name for cleanup.
+    /// The test suite with its name.
     private var testSuite: TestSuite!
     // swiftlint:enable test_case_accessibility
 
