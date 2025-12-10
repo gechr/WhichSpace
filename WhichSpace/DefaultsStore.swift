@@ -35,6 +35,7 @@ struct TypedKeySpec<Value: Defaults.Serializable>: KeySpec {
 /// 2. Add the corresponding property in `DefaultsStore`
 /// 3. Tests will automatically pick up the new key
 enum KeySpecs {
+    static let clickToSwitchSpaces = TypedKeySpec(name: "clickToSwitchSpaces", defaultValue: false)
     static let dimInactiveSpaces = TypedKeySpec(name: "dimInactiveSpaces", defaultValue: true)
     static let hideEmptySpaces = TypedKeySpec(name: "hideEmptySpaces", defaultValue: false)
     static let hideFullscreenApps = TypedKeySpec(name: "hideFullscreenApps", defaultValue: false)
@@ -63,6 +64,7 @@ enum KeySpecs {
 
     /// All key names for enumeration (e.g., in tests).
     static let allKeyNames: Set<String> = [
+        clickToSwitchSpaces.name,
         dimInactiveSpaces.name,
         displaySpaceColors.name,
         displaySpaceIconStyles.name,
@@ -108,6 +110,7 @@ final class DefaultsStore: @unchecked Sendable {
     let suite: UserDefaults
 
     // Lazily-created keys bound to this store's suite
+    private(set) lazy var keyClickToSwitchSpaces = KeySpecs.clickToSwitchSpaces.key(suite: suite)
     private(set) lazy var keyDimInactiveSpaces = KeySpecs.dimInactiveSpaces.key(suite: suite)
     private(set) lazy var keyHideEmptySpaces = KeySpecs.hideEmptySpaces.key(suite: suite)
     private(set) lazy var keyHideFullscreenApps = KeySpecs.hideFullscreenApps.key(suite: suite)
@@ -132,6 +135,11 @@ final class DefaultsStore: @unchecked Sendable {
     }
 
     // MARK: - Property Accessors
+
+    var clickToSwitchSpaces: Bool {
+        get { Defaults[keyClickToSwitchSpaces] }
+        set { Defaults[keyClickToSwitchSpaces] = newValue }
+    }
 
     var dimInactiveSpaces: Bool {
         get { Defaults[keyDimInactiveSpaces] }
@@ -223,6 +231,7 @@ final class DefaultsStore: @unchecked Sendable {
     /// Resets all keys to their default values.
     func resetAll() {
         Defaults.reset(
+            keyClickToSwitchSpaces,
             keyDimInactiveSpaces,
             keyDisplaySpaceColors,
             keyDisplaySpaceIconStyles,

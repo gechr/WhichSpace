@@ -524,6 +524,64 @@ final class AppStateTests: XCTestCase {
         NSApp.appearance = previousAppearance
     }
 
+    // MARK: - Visible Icon Slots
+
+    func testVisibleIconSlots_showAllSpacesUsesLabelsAndOffsets() {
+        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        sut.setSpaceState(
+            labels: ["1", "2", "3"],
+            currentSpace: 2,
+            currentLabel: "2",
+            displayID: "Main"
+        )
+        store.showAllSpaces = true
+
+        let slots = sut.visibleIconSlots()
+
+        XCTAssertEqual(slots.map(\.targetSpace), [1, 2, 3])
+        XCTAssertEqual(slots.map(\.startX), [0, Layout.statusItemWidth, Layout.statusItemWidth * 2])
+    }
+
+    func testVisibleIconSlots_crossDisplayIncludesSeparatorAndSkipsFullscreenTargets() {
+        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let displayA = DisplaySpaceInfo(
+            displayID: "DisplayA",
+            labels: ["1", Labels.fullscreen],
+            spaceIDs: [100, 101],
+            globalStartIndex: 1
+        )
+        let displayB = DisplaySpaceInfo(
+            displayID: "DisplayB",
+            labels: ["1", "2"],
+            spaceIDs: [200, 201],
+            globalStartIndex: 3
+        )
+
+        sut.setSpaceState(
+            labels: ["1", Labels.fullscreen],
+            currentSpace: 1,
+            currentLabel: "1",
+            displayID: "DisplayA",
+            spaceIDs: [100, 101],
+            allDisplays: [displayA, displayB],
+            globalSpaceIndex: 1
+        )
+        store.showAllDisplays = true
+
+        let slots = sut.visibleIconSlots()
+
+        XCTAssertEqual(slots.map(\.targetSpace), [1, nil, 2, 3])
+        XCTAssertEqual(
+            slots.map(\.startX),
+            [
+                0,
+                Layout.statusItemWidth,
+                Layout.statusItemWidth * 2 + Layout.displaySeparatorWidth,
+                Layout.statusItemWidth * 3 + Layout.displaySeparatorWidth,
+            ]
+        )
+    }
+
     func testUpdateDarkModeStatus_lightAppearance() {
         // Given
         stub.activeDisplayIdentifier = "Main"

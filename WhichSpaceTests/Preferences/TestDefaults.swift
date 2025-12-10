@@ -198,6 +198,7 @@ final class DefaultsIsolationGuardTests: IsolatedDefaultsTestCase {
     /// Verifies that KeySpecs matches Defaults.Keys definitions.
     func testKeySpecsMatchDefaultsKeys() {
         let expectedKeyNames: Set<String> = [
+            "clickToSwitchSpaces",
             "dimInactiveSpaces",
             "displaySpaceColors",
             "displaySpaceIconStyles",

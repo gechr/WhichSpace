@@ -4,6 +4,7 @@ import Defaults
 // MARK: - Defaults Keys
 
 extension Defaults.Keys {
+    static let clickToSwitchSpaces = Key<Bool>("clickToSwitchSpaces", default: false)
     static let dimInactiveSpaces = Key<Bool>("dimInactiveSpaces", default: true)
     static let hideEmptySpaces = Key<Bool>("hideEmptySpaces", default: false)
     static let hideFullscreenApps = Key<Bool>("hideFullscreenApps", default: false)
@@ -82,6 +83,7 @@ enum IconColors {
 enum MenuTag {
     static let backgroundLabel = 1
     static let backgroundSwatch = 2
+    static let clickToSwitchSpaces = 19
     static let colorSeparator = 3
     static let dimInactiveSpaces = 4
     static let foregroundLabel = 5
@@ -157,6 +159,8 @@ enum Localization {
     static let tipShowAllDisplays = NSLocalizedString("tip_show_all_displays", comment: "")
     static let tipShowAllSpaces = NSLocalizedString("tip_show_all_spaces", comment: "")
     static let tipUniqueIconsPerDisplay = NSLocalizedString("tip_unique_icons_per_display", comment: "")
+    static let tipClickToSwitchSpaces = NSLocalizedString("tip_click_to_switch_spaces", comment: "")
+    static let toggleClickToSwitchSpaces = NSLocalizedString("toggle_click_to_switch_spaces", comment: "")
     static let toggleDimInactiveSpaces = NSLocalizedString("toggle_dim_inactive_spaces", comment: "")
     static let toggleHideEmptySpaces = NSLocalizedString("toggle_hide_empty_spaces", comment: "")
     static let toggleHideFullscreenApps = NSLocalizedString("toggle_hide_fullscreen_apps", comment: "")

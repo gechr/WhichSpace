@@ -85,9 +85,27 @@ struct DisplaySpaceInfo: Equatable {
     var globalStartIndex = 1
 }
 
+/// Geometry for rendered status bar icons (used for hit testing)
+struct StatusBarIconSlot: Equatable {
+    let startX: Double
+    let width: Double
+    let label: String
+    /// The numeric space to activate (nil for non-switchable items such as fullscreen apps)
+    let targetSpace: Int?
+}
+
 @MainActor
 @Observable
 final class AppState {
+    private struct CrossDisplaySpace {
+        let displayID: String
+        let localIndex: Int
+        let globalIndex: Int
+        let label: String
+        let spaceID: Int
+        let isActive: Bool
+    }
+
     static let shared = AppState()
 
     private static let logger = Logger(subsystem: "io.gechr.WhichSpace", category: "AppState")
@@ -488,6 +506,71 @@ final class AppState {
         return generateSingleIcon(for: currentSpace, label: currentSpaceLabel, darkMode: isDark)
     }
 
+    /// Returns the layout of visible icons in the status bar for the current mode
+    func visibleIconSlots() -> [StatusBarIconSlot] {
+        if showAllDisplays {
+            let spacesPerDisplay = spacesToShowAcrossDisplays()
+            guard !spacesPerDisplay.isEmpty else {
+                return []
+            }
+
+            var slots: [StatusBarIconSlot] = []
+            var xOffset: Double = 0
+            var shortcutNum = 0
+
+            for (displayIndex, displaySpaces) in spacesPerDisplay.enumerated() {
+                if displayIndex > 0 {
+                    xOffset += Layout.displaySeparatorWidth
+                }
+
+                for space in displaySpaces {
+                    let isFullscreen = space.label == Labels.fullscreen
+                    if !isFullscreen {
+                        shortcutNum += 1
+                    }
+                    let target = isFullscreen ? nil : shortcutNum
+                    slots.append(StatusBarIconSlot(
+                        startX: xOffset,
+                        width: Layout.statusItemWidth,
+                        label: space.label,
+                        targetSpace: target
+                    ))
+                    xOffset += Layout.statusItemWidth
+                }
+            }
+
+            return slots
+        }
+
+        if showAllSpaces {
+            let spacesToShow = spacesToShowForCurrentDisplay()
+            guard !spacesToShow.isEmpty else {
+                return []
+            }
+
+            // Count only non-fullscreen spaces to get keyboard shortcut numbers
+            var shortcutNum = 0
+            var slots: [StatusBarIconSlot] = []
+
+            for (drawIndex, spaceInfo) in spacesToShow.enumerated() {
+                let isFullscreen = spaceInfo.label == Labels.fullscreen
+                if !isFullscreen {
+                    shortcutNum += 1
+                }
+                let target = isFullscreen ? nil : shortcutNum
+                slots.append(StatusBarIconSlot(
+                    startX: Double(drawIndex) * Layout.statusItemWidth,
+                    width: Layout.statusItemWidth,
+                    label: spaceInfo.label,
+                    targetSpace: target
+                ))
+            }
+            return slots
+        }
+
+        return []
+    }
+
     private func generateSingleIcon(for space: Int, label: String, darkMode: Bool) -> NSImage {
         let colors = SpacePreferences.colors(forSpace: space, display: currentDisplayID, store: store)
         let style = SpacePreferences.iconStyle(forSpace: space, display: currentDisplayID, store: store) ?? .square
@@ -552,9 +635,7 @@ final class AppState {
         return true
     }
 
-    private func generateCombinedIcon(darkMode: Bool) -> NSImage {
-        // Determine which spaces to show
-        let spacesToShow: [(index: Int, label: String)]
+    private func spacesToShowForCurrentDisplay() -> [(index: Int, label: String)] {
         let needsFiltering = store.hideEmptySpaces || store.hideFullscreenApps
         if needsFiltering {
             let nonEmptySpaceIDs: Set<Int>
@@ -563,6 +644,7 @@ final class AppState {
             } else {
                 nonEmptySpaceIDs = []
             }
+
             let filtered = allSpaceLabels.enumerated().filter { index, label in
                 let spaceID = allSpaceIDs[index]
                 let spaceIndex = index + 1
@@ -573,22 +655,61 @@ final class AppState {
                     return true
                 }
 
-                // Hide full-screen applications if enabled
-                if store.hideFullscreenApps, label == Labels.fullscreen {
-                    return false
-                }
-
-                // Hide empty spaces if enabled
-                if store.hideEmptySpaces, !nonEmptySpaceIDs.contains(spaceID) {
-                    return false
-                }
-
-                return true
+                return shouldShowSpace(label: label, spaceID: spaceID, nonEmptySpaceIDs: nonEmptySpaceIDs)
             }
-            spacesToShow = filtered.map { (index: $0.offset, label: $0.element) }
-        } else {
-            spacesToShow = allSpaceLabels.enumerated().map { (index: $0.offset, label: $0.element) }
+            return filtered.map { (index: $0.offset, label: $0.element) }
         }
+
+        return allSpaceLabels.enumerated().map { (index: $0.offset, label: $0.element) }
+    }
+
+    private func spacesToShowAcrossDisplays() -> [[CrossDisplaySpace]] {
+        // Collect all space IDs for window detection
+        let allSpaceIDsAcrossDisplays = allDisplaysSpaceInfo.flatMap(\.spaceIDs)
+        let nonEmptySpaceIDs: Set<Int>
+        if store.hideEmptySpaces {
+            nonEmptySpaceIDs = getCachedSpacesWithWindows(forSpaceIDs: allSpaceIDsAcrossDisplays)
+        } else {
+            nonEmptySpaceIDs = []
+        }
+
+        var spacesPerDisplay: [[CrossDisplaySpace]] = []
+
+        for displayInfo in allDisplaysSpaceInfo {
+            var displaySpaces: [CrossDisplaySpace] = []
+
+            for (arrayIndex, label) in displayInfo.labels.enumerated() {
+                let localIndex = arrayIndex + 1
+                let globalIndex = displayInfo.globalStartIndex + arrayIndex
+                let spaceID = displayInfo.spaceIDs[arrayIndex]
+                let isActive = globalIndex == currentGlobalSpaceIndex
+
+                // Always show active space
+                guard isActive || shouldShowSpace(label: label, spaceID: spaceID, nonEmptySpaceIDs: nonEmptySpaceIDs)
+                else {
+                    continue
+                }
+
+                displaySpaces.append(CrossDisplaySpace(
+                    displayID: displayInfo.displayID,
+                    localIndex: localIndex,
+                    globalIndex: globalIndex,
+                    label: label,
+                    spaceID: spaceID,
+                    isActive: isActive
+                ))
+            }
+
+            if !displaySpaces.isEmpty {
+                spacesPerDisplay.append(displaySpaces)
+            }
+        }
+
+        return spacesPerDisplay
+    }
+
+    private func generateCombinedIcon(darkMode: Bool) -> NSImage {
+        let spacesToShow = spacesToShowForCurrentDisplay()
 
         // If no spaces to show, show just the current space
         guard !spacesToShow.isEmpty else {
@@ -625,56 +746,7 @@ final class AppState {
     // Generates an icon showing all spaces across all displays with separators between displays
     // swiftlint:disable:next function_body_length
     private func generateCrossDisplayIcon(darkMode: Bool) -> NSImage {
-        // Collect all space IDs for window detection
-        let allSpaceIDsAcrossDisplays = allDisplaysSpaceInfo.flatMap(\.spaceIDs)
-        let nonEmptySpaceIDs: Set<Int>
-        if store.hideEmptySpaces {
-            nonEmptySpaceIDs = getCachedSpacesWithWindows(forSpaceIDs: allSpaceIDsAcrossDisplays)
-        } else {
-            nonEmptySpaceIDs = []
-        }
-
-        // Build list of spaces to show per display, filtering based on settings
-        struct SpaceToShow {
-            let displayID: String
-            let localIndex: Int // 1-based index within display
-            let globalIndex: Int // 1-based global index across all displays
-            let label: String
-            let spaceID: Int
-            let isActive: Bool
-        }
-
-        var spacesPerDisplay: [[SpaceToShow]] = []
-
-        for displayInfo in allDisplaysSpaceInfo {
-            var displaySpaces: [SpaceToShow] = []
-
-            for (arrayIndex, label) in displayInfo.labels.enumerated() {
-                let localIndex = arrayIndex + 1
-                let globalIndex = displayInfo.globalStartIndex + arrayIndex
-                let spaceID = displayInfo.spaceIDs[arrayIndex]
-                let isActive = globalIndex == currentGlobalSpaceIndex
-
-                // Always show active space
-                guard isActive || shouldShowSpace(label: label, spaceID: spaceID, nonEmptySpaceIDs: nonEmptySpaceIDs)
-                else {
-                    continue
-                }
-
-                displaySpaces.append(SpaceToShow(
-                    displayID: displayInfo.displayID,
-                    localIndex: localIndex,
-                    globalIndex: globalIndex,
-                    label: label,
-                    spaceID: spaceID,
-                    isActive: isActive
-                ))
-            }
-
-            if !displaySpaces.isEmpty {
-                spacesPerDisplay.append(displaySpaces)
-            }
-        }
+        let spacesPerDisplay = spacesToShowAcrossDisplays()
 
         // If no spaces to show at all, return single icon
         guard !spacesPerDisplay.isEmpty else {

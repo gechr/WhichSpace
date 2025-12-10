@@ -59,9 +59,11 @@
 "tip_reset_color_to_default" = "Remove custom color for the current Space and separator";
 "tip_reset_space_to_default" = "Remove color and style customizations for the current Space only";
 "tip_reset_style_to_default" = "Remove custom style for the current Space only";
+"tip_click_to_switch_spaces" = "Left-click a Space icon to switch to it";
 "tip_show_all_displays" = "Show Spaces from all displays with global numbering and separators";
 "tip_show_all_spaces" = "Show an icon for every Space in the menu bar";
 "tip_unique_icons_per_display" = "Customize Space icons separately for each display";
+"toggle_click_to_switch_spaces" = "Click to switch Spaces";
 "toggle_dim_inactive_spaces" = "Dim inactive Spaces";
 "toggle_hide_empty_spaces" = "Hide empty Spaces";
 "toggle_hide_fullscreen_apps" = "Hide full-screen Applications";

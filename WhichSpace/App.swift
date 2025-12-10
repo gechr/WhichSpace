@@ -1,3 +1,4 @@
+import AppKit
 import Defaults
 import LaunchAtLogin
 import Observation
@@ -28,6 +29,79 @@ struct DefaultLaunchAtLoginProvider: LaunchAtLoginProviding {
     var isEnabled: Bool {
         get { LaunchAtLogin.isEnabled }
         set { LaunchAtLogin.isEnabled = newValue }
+    }
+}
+
+// MARK: - Space Switching
+
+enum SpaceSwitcher {
+    private static let maxSupportedSpace = 16
+    private static let firstHotKey: UInt16 = 118
+    private static var hasPromptedForAccessibility = false
+
+    static func switchToSpace(_ space: Int) {
+        guard ensureAccessibilityPermission() else {
+            NSLog("SpaceSwitcher: accessibility permission not granted; cannot switch")
+            return
+        }
+
+        guard let event = eventForSwitching(to: space) else {
+            return
+        }
+        postSwitchEvents(with: event)
+    }
+
+    private static func ensureAccessibilityPermission() -> Bool {
+        if AXIsProcessTrusted() {
+            return true
+        }
+
+        // Request permission once so the user sees the System Settings prompt
+        if !hasPromptedForAccessibility {
+            let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
+            _ = AXIsProcessTrustedWithOptions(options)
+            hasPromptedForAccessibility = true
+        }
+
+        return false
+    }
+
+    private static func eventForSwitching(to space: Int) -> CGEvent? {
+        guard (1 ... maxSupportedSpace).contains(space) else {
+            return nil
+        }
+
+        let hotKey = CGSSymbolicHotKey(firstHotKey + UInt16(space) - 1)
+        var keyCode: CGKeyCode = 0
+        var flags: CGSModifierFlags = 0
+
+        let error = CGSGetSymbolicHotKeyValue(hotKey, nil, &keyCode, &flags)
+        guard error == .success else {
+            return nil
+        }
+
+        if !CGSIsSymbolicHotKeyEnabled(hotKey) {
+            _ = CGSSetSymbolicHotKeyEnabled(hotKey, true)
+        }
+
+        guard let keyDownEvent = CGEvent(keyboardEventSource: nil, virtualKey: keyCode, keyDown: true) else {
+            return nil
+        }
+
+        keyDownEvent.flags = CGEventFlags(rawValue: flags)
+        return keyDownEvent
+    }
+
+    private static func postSwitchEvents(with keyDownEvent: CGEvent) {
+        let keyCodeValue = CGKeyCode(keyDownEvent.getIntegerValueField(.keyboardEventKeycode))
+        guard let keyUpEvent = CGEvent(keyboardEventSource: nil, virtualKey: keyCodeValue, keyDown: false) else {
+            return
+        }
+
+        // Send the shortcut command to get Mission Control to switch spaces
+        keyDownEvent.post(tap: .cghidEventTap)
+        keyUpEvent.flags = []
+        keyUpEvent.post(tap: .cghidEventTap)
     }
 }
 
@@ -123,6 +197,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         )
         configureMenuBarIcon()
         startObservingAppState()
+
+        // Disable click-to-switch if accessibility permission was revoked
+        if store.clickToSwitchSpaces, !AXIsProcessTrusted() {
+            store.clickToSwitchSpaces = false
+        }
     }
 
     // MARK: - Observation
@@ -196,7 +275,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         updateStatusBarIcon()
     }
 
-    @objc private func statusBarButtonClicked(_: NSStatusBarButton) {
+    @objc private func statusBarButtonClicked(_ button: NSStatusBarButton) {
         guard let event = NSApp.currentEvent else {
             return
         }
@@ -204,6 +283,44 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         if event.type == .rightMouseUp {
             // Show menu on right-click
             statusBarItem.popUpMenu(statusMenu)
+        } else if event.type == .leftMouseUp {
+            handleLeftClick(event, button: button)
+        }
+    }
+
+    private func handleLeftClick(_ event: NSEvent, button: NSStatusBarButton) {
+        // Only handle clicks if the setting is enabled
+        guard store.clickToSwitchSpaces else {
+            return
+        }
+
+        // If user denied accessibility permission, disable the setting
+        guard AXIsProcessTrusted() else {
+            store.clickToSwitchSpaces = false
+            return
+        }
+
+        let slots = appState.visibleIconSlots()
+        guard !slots.isEmpty else {
+            return
+        }
+
+        let location = button.convert(event.locationInWindow, from: nil)
+        let clickX = Double(location.x)
+
+        for slot in slots {
+            let endX = slot.startX + slot.width
+            guard clickX >= slot.startX, clickX <= endX else {
+                continue
+            }
+
+            // Ignore non-switchable slots (e.g., fullscreen apps)
+            guard let targetSpace = slot.targetSpace else {
+                return
+            }
+
+            SpaceSwitcher.switchToSpace(targetSpace)
+            return
         }
     }
 
@@ -364,6 +481,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         )
         showAllSpacesItem.toolTip = Localization.tipShowAllSpaces
         statusMenu.addItem(showAllSpacesItem)
+
+        let clickToSwitchItem = NSMenuItem(
+            title: Localization.toggleClickToSwitchSpaces,
+            action: #selector(toggleClickToSwitchSpaces),
+            keyEquivalent: ""
+        )
+        clickToSwitchItem.target = self
+        clickToSwitchItem.tag = MenuTag.clickToSwitchSpaces
+        clickToSwitchItem.image = NSImage(
+            systemSymbolName: "cursorarrow.click",
+            accessibilityDescription: nil
+        )
+        clickToSwitchItem.toolTip = Localization.tipClickToSwitchSpaces
+        statusMenu.addItem(clickToSwitchItem)
 
         statusMenu.addItem(NSMenuItem.separator())
 
@@ -683,6 +814,41 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             store.showAllDisplays = false
         }
         updateStatusBarIcon()
+    }
+
+    @objc func toggleClickToSwitchSpaces() {
+        // If enabling and no accessibility permission, show alert first
+        if !store.clickToSwitchSpaces, !AXIsProcessTrusted() {
+            showAccessibilityPermissionAlert()
+            return
+        }
+        store.clickToSwitchSpaces.toggle()
+    }
+
+    private func showAccessibilityPermissionAlert() {
+        let alert = NSAlert()
+        alert.messageText = "Permission Required"
+        // swiftformat:disable all
+        alert.informativeText = """
+        This feature requires Accessibility permission to simulate keyboard shortcuts.
+
+        After clicking Continue, macOS will prompt you for permission. Click "Open System Settings", then find \(appName) in the list and enable it.
+        """
+        // swiftformat:enable all
+        alert.alertStyle = .informational
+        alert.addButton(withTitle: "Continue")
+        alert.addButton(withTitle: "Cancel")
+
+        NSApp.activate(ignoringOtherApps: true)
+        let response = alert.runModal()
+
+        if response == .alertFirstButtonReturn {
+            // Request permission - this triggers the system prompt
+            let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
+            _ = AXIsProcessTrustedWithOptions(options)
+            // Enable the setting - it will check permission again when actually switching
+            store.clickToSwitchSpaces = true
+        }
     }
 
     @objc func toggleUniqueIconsPerDisplay() {
@@ -1041,7 +1207,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
     func updateStatusBarIcon() {
         statusBarIconUpdateCount += 1
-        statusBarItem.button?.image = appState.statusBarIcon
+        let icon = appState.statusBarIcon
+        statusBarItem.length = icon.size.width
+        statusBarItem.button?.image = icon
         statusBarIconUpdateNotifier?.yield()
     }
 }
@@ -1078,6 +1246,12 @@ extension AppDelegate: NSMenuDelegate {
 
         // Dim/Hide options are visible when either showAllSpaces or showAllDisplays is enabled
         let showMultiSpaceOptions = store.showAllSpaces || store.showAllDisplays
+
+        // Update Click to Switch Spaces checkmark and visibility (only shown when multi-space is enabled)
+        if let clickToSwitchItem = menu.item(withTag: MenuTag.clickToSwitchSpaces) {
+            clickToSwitchItem.state = store.clickToSwitchSpaces ? .on : .off
+            clickToSwitchItem.isHidden = !showMultiSpaceOptions
+        }
 
         // Update Dim inactive Spaces checkmark and visibility
         if let dimInactiveItem = menu.item(withTag: MenuTag.dimInactiveSpaces) {
