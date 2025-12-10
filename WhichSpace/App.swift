@@ -1117,10 +1117,12 @@ extension AppDelegate: NSMenuDelegate {
             }
 
             // Show separator divider, label, and swatch only when Show all Displays is enabled
+            // AND there are multiple displays (separator only appears between displays)
             if item.tag == MenuTag.separatorColorDivider || item.tag == MenuTag.separatorLabel
                 || item.tag == MenuTag.separatorSwatch
             {
-                item.isHidden = !store.showAllDisplays
+                let hasMultipleDisplays = appState.allDisplaysSpaceInfo.count > 1
+                item.isHidden = !store.showAllDisplays || !hasMultipleDisplays
             }
 
             // Hide foreground/background labels and swatches when symbol is active
