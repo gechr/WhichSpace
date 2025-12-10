@@ -12,7 +12,8 @@ import Defaults
 /// Generates status bar icon images using custom drawing
 enum SpaceIconGenerator {
     private static var sizeScale: Double { Defaults[.sizeScale] / 100.0 }
-    private static var iconSize: Double { Layout.baseIconSize * sizeScale }
+    private static var squareSize: Double { Layout.baseSquareSize * sizeScale }
+    private static var polygonSize: Double { Layout.basePolygonSize * sizeScale }
     private static let statusItemSize = Layout.statusItemSize
 
     private static func scaledFont(for digitCount: Int) -> NSFont {
@@ -133,7 +134,7 @@ enum SpaceIconGenerator {
         customColors: SpaceColors?,
         filled: Bool
     ) -> NSImage {
-        let currentIconSize = iconSize
+        let currentIconSize = squareSize
         return NSImage(size: statusItemSize, flipped: false) { rect in
             let colors = getColors(darkMode: darkMode, customColors: customColors, filled: filled)
 
@@ -181,7 +182,7 @@ enum SpaceIconGenerator {
         customColors: SpaceColors?,
         filled: Bool
     ) -> NSImage {
-        let currentIconSize = iconSize
+        let currentIconSize = squareSize
         return NSImage(size: statusItemSize, flipped: false) { rect in
             let colors = getColors(darkMode: darkMode, customColors: customColors, filled: filled)
 
@@ -225,7 +226,7 @@ enum SpaceIconGenerator {
         customColors: SpaceColors?,
         filled: Bool
     ) -> NSImage {
-        let currentIconSize = iconSize
+        let currentIconSize = polygonSize
         return NSImage(size: statusItemSize, flipped: false) { rect in
             let colors = getColors(darkMode: darkMode, customColors: customColors, filled: filled)
 
@@ -308,7 +309,7 @@ enum SpaceIconGenerator {
         filled: Bool,
         sides: Int
     ) -> NSImage {
-        let currentIconSize = iconSize
+        let currentIconSize = polygonSize
         return NSImage(size: statusItemSize, flipped: false) { rect in
             let colors = getColors(darkMode: darkMode, customColors: customColors, filled: filled)
 

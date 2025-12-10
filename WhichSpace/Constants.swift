@@ -32,8 +32,9 @@ enum Layout {
     static let sizeScaleRange = 60.0 ... 120.0
 
     // Base sizes (at 100% scale)
-    static let baseIconSize = 20.0
-    static let defaultIconSize = baseIconSize * defaultSizeScale / 100.0
+    static let baseSquareSize = 20.0
+    static let basePolygonSize = 21.0
+    static let defaultIconSize = baseSquareSize * defaultSizeScale / 100.0
     static let baseFontSize = 14.0
     static let baseFontSizeSmall = 12.0
     static let baseFontSizeTiny = 8.0
