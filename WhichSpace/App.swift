@@ -907,13 +907,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         updateStatusBarIcon()
     }
 
-    // MARK: - Private Helpers
+    // MARK: - Color Helpers
 
-    private func setForegroundColor(_ color: NSColor) {
+    func setForegroundColor(_ color: NSColor) {
         guard appState.currentSpace > 0 else {
             return
         }
-        let background = appState.currentColors?.backgroundColor ?? .black
+        let defaults = IconColors.filledColors(darkMode: appState.darkModeEnabled)
+        let background = appState.currentColors?.backgroundColor ?? defaults.background
         SpacePreferences.setColors(
             SpaceColors(foreground: color, background: background),
             forSpace: appState.currentSpace,
@@ -923,11 +924,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         updateStatusBarIcon()
     }
 
-    private func setBackgroundColor(_ color: NSColor) {
+    func setBackgroundColor(_ color: NSColor) {
         guard appState.currentSpace > 0 else {
             return
         }
-        let foreground = appState.currentColors?.foregroundColor ?? .white
+        let defaults = IconColors.filledColors(darkMode: appState.darkModeEnabled)
+        let foreground = appState.currentColors?.foregroundColor ?? defaults.foreground
         SpacePreferences.setColors(
             SpaceColors(foreground: foreground, background: color),
             forSpace: appState.currentSpace,
@@ -981,8 +983,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
 
         let existingColors = appState.currentColors
-        let foreground = isPickingForeground ? sender.color : (existingColors?.foregroundColor ?? .white)
-        let background = isPickingForeground ? (existingColors?.backgroundColor ?? .black) : sender.color
+        let defaults = IconColors.filledColors(darkMode: appState.darkModeEnabled)
+        let foreground = isPickingForeground ? sender.color : (existingColors?.foregroundColor ?? defaults.foreground)
+        let background = isPickingForeground ? (existingColors?.backgroundColor ?? defaults.background) : sender.color
 
         SpacePreferences.setColors(
             SpaceColors(foreground: foreground, background: background),

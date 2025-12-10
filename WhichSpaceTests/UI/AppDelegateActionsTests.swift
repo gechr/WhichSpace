@@ -1035,6 +1035,80 @@ final class AppDelegateActionsTests: XCTestCase {
         }
     }
 
+    // MARK: - setForegroundColor Tests
+
+    func testSetForegroundColor_withNoExistingColors_usesDefaultBackground() {
+        // Ensure no custom colors exist
+        SpacePreferences.clearColors(forSpace: appState.currentSpace, store: store)
+        XCTAssertNil(appState.currentColors, "Should have no custom colors initially")
+
+        // Set only foreground color
+        sut.setForegroundColor(.systemRed)
+
+        // Verify the background uses the default (not black)
+        let colors = SpacePreferences.colors(forSpace: appState.currentSpace, store: store)
+        XCTAssertNotNil(colors, "Colors should be set")
+        XCTAssertEqual(colors?.foreground, .systemRed, "Foreground should be the selected color")
+
+        let defaults = IconColors.filledColors(darkMode: appState.darkModeEnabled)
+        XCTAssertEqual(colors?.background, defaults.background, "Background should use the default, not black")
+    }
+
+    func testSetForegroundColor_withExistingColors_preservesBackground() {
+        // Set up existing colors
+        let existingBackground = NSColor.systemBlue
+        SpacePreferences.setColors(
+            SpaceColors(foreground: .white, background: existingBackground),
+            forSpace: appState.currentSpace,
+            store: store
+        )
+
+        // Set foreground color
+        sut.setForegroundColor(.systemGreen)
+
+        // Verify background is preserved
+        let colors = SpacePreferences.colors(forSpace: appState.currentSpace, store: store)
+        XCTAssertEqual(colors?.foreground, .systemGreen, "Foreground should be updated")
+        XCTAssertEqual(colors?.background, existingBackground, "Background should be preserved")
+    }
+
+    // MARK: - setBackgroundColor Tests
+
+    func testSetBackgroundColor_withNoExistingColors_usesDefaultForeground() {
+        // Ensure no custom colors exist
+        SpacePreferences.clearColors(forSpace: appState.currentSpace, store: store)
+        XCTAssertNil(appState.currentColors, "Should have no custom colors initially")
+
+        // Set only background color
+        sut.setBackgroundColor(.systemBlue)
+
+        // Verify the foreground uses the default (not white)
+        let colors = SpacePreferences.colors(forSpace: appState.currentSpace, store: store)
+        XCTAssertNotNil(colors, "Colors should be set")
+        XCTAssertEqual(colors?.background, .systemBlue, "Background should be the selected color")
+
+        let defaults = IconColors.filledColors(darkMode: appState.darkModeEnabled)
+        XCTAssertEqual(colors?.foreground, defaults.foreground, "Foreground should use the default, not white")
+    }
+
+    func testSetBackgroundColor_withExistingColors_preservesForeground() {
+        // Set up existing colors
+        let existingForeground = NSColor.systemRed
+        SpacePreferences.setColors(
+            SpaceColors(foreground: existingForeground, background: .black),
+            forSpace: appState.currentSpace,
+            store: store
+        )
+
+        // Set background color
+        sut.setBackgroundColor(.systemYellow)
+
+        // Verify foreground is preserved
+        let colors = SpacePreferences.colors(forSpace: appState.currentSpace, store: store)
+        XCTAssertEqual(colors?.foreground, existingForeground, "Foreground should be preserved")
+        XCTAssertEqual(colors?.background, .systemYellow, "Background should be updated")
+    }
+
     // MARK: - Edge Cases: Dark Mode Defaults When Colors Absent
 
     func testInvertColors_withNoCustomColors_usesDarkModeDefaults() {
@@ -1489,7 +1563,22 @@ final class AppDelegateActionsTests: XCTestCase {
         )
     }
 
-    func testMenuWillOpen_showsSeparatorItems_whenShowAllDisplaysEnabled() {
+    func testMenuWillOpen_showsSeparatorItems_whenShowAllDisplaysEnabledAndMultipleDisplays() {
+        // Set up multiple displays (required for separator to be visible)
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [(id: 100, isFullscreen: false), (id: 101, isFullscreen: false)],
+                activeSpaceID: 101
+            ),
+            CGSStub.makeDisplay(
+                displayID: "External",
+                spaces: [(id: 200, isFullscreen: false), (id: 201, isFullscreen: false)],
+                activeSpaceID: 200
+            ),
+        ]
+        appState.forceSpaceUpdate()
+
         sut.configureMenuBarIcon()
         store.showAllDisplays = true
 
@@ -1506,11 +1595,37 @@ final class AppDelegateActionsTests: XCTestCase {
         let separatorSwatch = colorsMenu.item(withTag: MenuTag.separatorSwatch)
         XCTAssertFalse(
             separatorLabel?.isHidden ?? true,
-            "Separator label should be visible when Show All Displays is on"
+            "Separator label should be visible when Show All Displays is on with multiple displays"
         )
         XCTAssertFalse(
             separatorSwatch?.isHidden ?? true,
-            "Separator swatch should be visible when Show All Displays is on"
+            "Separator swatch should be visible when Show All Displays is on with multiple displays"
+        )
+    }
+
+    func testMenuWillOpen_hidesSeparatorItems_whenShowAllDisplaysEnabledButSingleDisplay() {
+        // Single display setup (default from setUp)
+        sut.configureMenuBarIcon()
+        store.showAllDisplays = true
+
+        // Find the Colors submenu
+        let colorsMenuItem = sut.statusMenu.items.first { $0.title == Localization.menuColor }
+        guard let colorsMenu = colorsMenuItem?.submenu else {
+            XCTFail("Colors submenu not found")
+            return
+        }
+
+        sut.menuWillOpen(colorsMenu)
+
+        let separatorLabel = colorsMenu.item(withTag: MenuTag.separatorLabel)
+        let separatorSwatch = colorsMenu.item(withTag: MenuTag.separatorSwatch)
+        XCTAssertTrue(
+            separatorLabel?.isHidden ?? false,
+            "Separator label should be hidden with single display even when Show All Displays is on"
+        )
+        XCTAssertTrue(
+            separatorSwatch?.isHidden ?? false,
+            "Separator swatch should be hidden with single display even when Show All Displays is on"
         )
     }
 
