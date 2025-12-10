@@ -189,9 +189,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         configureLaunchAtLoginMenuItem()
         configureUpdateAndQuitMenuItems()
         statusMenu.delegate = self
-        statusBarItem.menu = statusMenu
         statusBarItem.button?.toolTip = appName
+        statusBarItem.button?.target = self
+        statusBarItem.button?.action = #selector(statusBarButtonClicked(_:))
+        statusBarItem.button?.sendAction(on: [.leftMouseUp, .rightMouseUp])
         updateStatusBarIcon()
+    }
+
+    @objc private func statusBarButtonClicked(_: NSStatusBarButton) {
+        guard let event = NSApp.currentEvent else {
+            return
+        }
+
+        if event.type == .rightMouseUp {
+            // Show menu on right-click
+            statusBarItem.popUpMenu(statusMenu)
+        }
     }
 
     private func configureVersionHeader() {
@@ -527,6 +540,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         colorsMenu.addItem(backgroundSwatchItem)
 
         // Separator color section (shown only when Show all Displays is enabled)
+        let separatorColorDivider = NSMenuItem.separator()
+        separatorColorDivider.tag = MenuTag.separatorColorDivider
+        separatorColorDivider.isHidden = true
+        colorsMenu.addItem(separatorColorDivider)
+
         let separatorLabelItem = NSMenuItem(title: Localization.labelSeparator, action: nil, keyEquivalent: "")
         separatorLabelItem.isEnabled = false
         separatorLabelItem.tag = MenuTag.separatorLabel
@@ -1098,8 +1116,10 @@ extension AppDelegate: NSMenuDelegate {
                 item.isHidden = !symbolIsActive
             }
 
-            // Show separator label and swatch only when Show all Displays is enabled
-            if item.tag == MenuTag.separatorLabel || item.tag == MenuTag.separatorSwatch {
+            // Show separator divider, label, and swatch only when Show all Displays is enabled
+            if item.tag == MenuTag.separatorColorDivider || item.tag == MenuTag.separatorLabel
+                || item.tag == MenuTag.separatorSwatch
+            {
                 item.isHidden = !store.showAllDisplays
             }
 

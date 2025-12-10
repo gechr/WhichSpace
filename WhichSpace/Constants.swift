@@ -91,6 +91,7 @@ enum MenuTag {
     static let showAllDisplays = 13
     static let showAllSpaces = 9
     static let sizeRow = 10
+    static let separatorColorDivider = 18
     static let separatorLabel = 15
     static let separatorSwatch = 16
     static let symbolColorSwatch = 11
