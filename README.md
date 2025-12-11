@@ -8,34 +8,49 @@ Have you ever forgotten _which space_ is currently active on macOS and wanted a 
 
 ### Spaces
 
-Display the current Space only, or choose to display all Spaces:
+#### Show the current Space only, or choose to show all Spaces:
 
 <img src="Screenshots/ShowAllSpaces.png">
 
+#### Click on a Space to switch to it:
+
+<img src="Screenshots/ClickToSwitch.gif">
+
 > [!NOTE]
-> Inactive spaces are dimmed by default.
+> Inactive Spaces are dimmed by default.
+
+### Displays
+
+#### Show the current Display only, or choose to show all Displays:
+
+<img src="Screenshots/ShowAllDisplays.png">
+
+> [!NOTE]
+> A vertical separator is shown between Displays.
+>
+> Full-screen apps are shown as **F** and can be hidden entirely.
 
 ### Colours
 
-Choose foreground and background colours for each space, or apply one colour to all Spaces:
+#### Choose foreground and background colours for each Space, or apply one colour to all Spaces:
 
 <img src="Screenshots/ColoursMenu.png" width="60%">
 
 ### Icons
 
-Choose from a variety of icons for each space, or apply one icon to all Spaces:
+#### Choose from a variety of icons for each Space, or apply one icon to all Spaces:
 
 <img src="Screenshots/NumberMenu.png" width="60%">
 
 ### Symbols
 
-Use custom symbols instead of numbers for a more personalised look:
+#### Use custom symbols instead of numbers for a more personalised look:
 
 <img src="Screenshots/SymbolsMenu.png" width="60%">
 
 ### Size
 
-Adjust the scale of the icons in the menu bar:
+#### Adjust the scale of the icons in the menu bar:
 
 <img src="Screenshots/SizeMenu.png" width="60%">
 
