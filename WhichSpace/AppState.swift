@@ -471,6 +471,10 @@ final class AppState {
         SpacePreferences.colors(forSpace: currentSpace, display: currentDisplayID, store: store)
     }
 
+    var currentFont: NSFont? {
+        SpacePreferences.font(forSpace: currentSpace, display: currentDisplayID, store: store)?.font
+    }
+
     func getAllSpaceIndices() -> [Int] {
         guard !allSpaceLabels.isEmpty else {
             return []
@@ -574,6 +578,7 @@ final class AppState {
     private func generateSingleIcon(for space: Int, label: String, darkMode: Bool) -> NSImage {
         let colors = SpacePreferences.colors(forSpace: space, display: currentDisplayID, store: store)
         let style = SpacePreferences.iconStyle(forSpace: space, display: currentDisplayID, store: store) ?? .square
+        let font = SpacePreferences.font(forSpace: space, display: currentDisplayID, store: store)?.font
 
         // Fullscreen spaces just show "F" with the same colors
         if label == Labels.fullscreen {
@@ -581,6 +586,7 @@ final class AppState {
                 for: Labels.fullscreen,
                 darkMode: darkMode,
                 customColors: colors,
+                customFont: font,
                 style: style
             )
         }
@@ -598,6 +604,7 @@ final class AppState {
             for: label,
             darkMode: darkMode,
             customColors: colors,
+            customFont: font,
             style: style
         )
     }
@@ -811,9 +818,10 @@ final class AppState {
         localIndex: Int,
         darkMode: Bool
     ) -> NSImage {
-        // Look up colors and style using local index and display ID (for per-display customization)
+        // Look up colors, style, and font using local index and display ID (for per-display customization)
         let colors = SpacePreferences.colors(forSpace: localIndex, display: displayID, store: store)
         let style = SpacePreferences.iconStyle(forSpace: localIndex, display: displayID, store: store) ?? .square
+        let font = SpacePreferences.font(forSpace: localIndex, display: displayID, store: store)?.font
 
         // Fullscreen spaces just show "F" with the same colors
         if label == Labels.fullscreen {
@@ -821,6 +829,7 @@ final class AppState {
                 for: Labels.fullscreen,
                 darkMode: darkMode,
                 customColors: colors,
+                customFont: font,
                 style: style
             )
         }
@@ -838,6 +847,7 @@ final class AppState {
             for: label,
             darkMode: darkMode,
             customColors: colors,
+            customFont: font,
             style: style
         )
     }

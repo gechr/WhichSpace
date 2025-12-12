@@ -20,6 +20,38 @@ enum IconStyle: String, CaseIterable, Defaults.Serializable {
     }
 }
 
+// MARK: - SpaceFont
+
+struct SpaceFont: Equatable, Defaults.Serializable {
+    struct Bridge: Defaults.Bridge {
+        typealias Value = SpaceFont
+        typealias Serializable = Data
+
+        func serialize(_ value: SpaceFont?) -> Data? {
+            guard let value else {
+                return nil
+            }
+            return try? NSKeyedArchiver.archivedData(
+                withRootObject: value.font,
+                requiringSecureCoding: true
+            )
+        }
+
+        func deserialize(_ object: Data?) -> SpaceFont? {
+            guard let object,
+                  let font = try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSFont.self, from: object)
+            else {
+                return nil
+            }
+            return SpaceFont(font: font)
+        }
+    }
+
+    static let bridge = Bridge()
+
+    var font: NSFont
+}
+
 // MARK: - SpaceColors
 
 struct SpaceColors: Equatable, Defaults.Serializable {
@@ -205,6 +237,48 @@ enum SpacePreferences {
         setColors(nil, forSpace: spaceNumber, display: display, store: store)
     }
 
+    // MARK: - Font
+
+    static func font(
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = .shared
+    ) -> SpaceFont? {
+        if store.uniqueIconsPerDisplay, let display {
+            return store.displaySpaceFonts[display]?[spaceNumber]
+        }
+        return store.spaceFonts[spaceNumber]
+    }
+
+    static func setFont(
+        _ font: SpaceFont?,
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = .shared
+    ) {
+        if store.uniqueIconsPerDisplay, let display {
+            var displayFonts = store.displaySpaceFonts
+            var spaceFonts = displayFonts[display] ?? [:]
+            if let font {
+                spaceFonts[spaceNumber] = font
+            } else {
+                spaceFonts.removeValue(forKey: spaceNumber)
+            }
+            displayFonts[display] = spaceFonts
+            store.displaySpaceFonts = displayFonts
+        } else {
+            if let font {
+                store.spaceFonts[spaceNumber] = font
+            } else {
+                store.spaceFonts.removeValue(forKey: spaceNumber)
+            }
+        }
+    }
+
+    static func clearFont(forSpace spaceNumber: Int, display: String? = nil, store: DefaultsStore = .shared) {
+        setFont(nil, forSpace: spaceNumber, display: display, store: store)
+    }
+
     // MARK: - Clear All
 
     /// Clears all preferences for all displays and shared settings.
@@ -212,8 +286,10 @@ enum SpacePreferences {
         store.spaceColors = [:]
         store.spaceIconStyles = [:]
         store.spaceSFSymbols = [:]
+        store.spaceFonts = [:]
         store.displaySpaceColors = [:]
         store.displaySpaceIconStyles = [:]
         store.displaySpaceSFSymbols = [:]
+        store.displaySpaceFonts = [:]
     }
 }

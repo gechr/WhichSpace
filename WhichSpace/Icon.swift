@@ -16,7 +16,7 @@ enum SpaceIconGenerator {
     private static var polygonSize: Double { Layout.basePolygonSize * sizeScale }
     private static let statusItemSize = Layout.statusItemSize
 
-    private static func scaledFont(for digitCount: Int) -> NSFont {
+    private static func scaledFont(for digitCount: Int, customFont: NSFont? = nil) -> NSFont {
         let baseFontSize: Double
         switch digitCount {
         case 1:
@@ -26,6 +26,12 @@ enum SpaceIconGenerator {
         default:
             baseFontSize = Layout.baseFontSizeTiny
         }
+
+        if let customFont {
+            // Scale the custom font proportionally
+            let scaledSize = customFont.pointSize * sizeScale
+            return NSFontManager.shared.convert(customFont, toSize: scaledSize)
+        }
         return NSFont.boldSystemFont(ofSize: baseFontSize * sizeScale)
     }
 
@@ -34,6 +40,7 @@ enum SpaceIconGenerator {
         for spaceNumber: String,
         darkMode: Bool,
         customColors: SpaceColors? = nil,
+        customFont: NSFont? = nil,
         style: IconStyle = .square
     ) -> NSImage {
         switch style {
@@ -42,6 +49,7 @@ enum SpaceIconGenerator {
                 for: spaceNumber,
                 darkMode: darkMode,
                 customColors: customColors,
+                customFont: customFont,
                 filled: true
             )
         case .squareOutline:
@@ -49,6 +57,7 @@ enum SpaceIconGenerator {
                 for: spaceNumber,
                 darkMode: darkMode,
                 customColors: customColors,
+                customFont: customFont,
                 filled: false
             )
         case .circle:
@@ -56,6 +65,7 @@ enum SpaceIconGenerator {
                 for: spaceNumber,
                 darkMode: darkMode,
                 customColors: customColors,
+                customFont: customFont,
                 filled: true
             )
         case .circleOutline:
@@ -63,6 +73,7 @@ enum SpaceIconGenerator {
                 for: spaceNumber,
                 darkMode: darkMode,
                 customColors: customColors,
+                customFont: customFont,
                 filled: false
             )
         case .triangle:
@@ -70,6 +81,7 @@ enum SpaceIconGenerator {
                 for: spaceNumber,
                 darkMode: darkMode,
                 customColors: customColors,
+                customFont: customFont,
                 filled: true
             )
         case .triangleOutline:
@@ -77,6 +89,7 @@ enum SpaceIconGenerator {
                 for: spaceNumber,
                 darkMode: darkMode,
                 customColors: customColors,
+                customFont: customFont,
                 filled: false
             )
         case .pentagon:
@@ -84,6 +97,7 @@ enum SpaceIconGenerator {
                 for: spaceNumber,
                 darkMode: darkMode,
                 customColors: customColors,
+                customFont: customFont,
                 filled: true,
                 sides: 5
             )
@@ -92,6 +106,7 @@ enum SpaceIconGenerator {
                 for: spaceNumber,
                 darkMode: darkMode,
                 customColors: customColors,
+                customFont: customFont,
                 filled: false,
                 sides: 5
             )
@@ -100,6 +115,7 @@ enum SpaceIconGenerator {
                 for: spaceNumber,
                 darkMode: darkMode,
                 customColors: customColors,
+                customFont: customFont,
                 filled: true,
                 sides: 6
             )
@@ -108,6 +124,7 @@ enum SpaceIconGenerator {
                 for: spaceNumber,
                 darkMode: darkMode,
                 customColors: customColors,
+                customFont: customFont,
                 filled: false,
                 sides: 6
             )
@@ -132,6 +149,7 @@ enum SpaceIconGenerator {
         for spaceNumber: String,
         darkMode: Bool,
         customColors: SpaceColors?,
+        customFont: NSFont?,
         filled: Bool
     ) -> NSImage {
         let currentIconSize = squareSize
@@ -160,7 +178,7 @@ enum SpaceIconGenerator {
             }
 
             // Draw centered text - use smaller font for multi-digit numbers
-            let font = scaledFont(for: spaceNumber.count)
+            let font = scaledFont(for: spaceNumber.count, customFont: customFont)
             let attributes: [NSAttributedString.Key: Any] = [
                 .font: font,
                 .foregroundColor: colors.foreground,
@@ -180,6 +198,7 @@ enum SpaceIconGenerator {
         for spaceNumber: String,
         darkMode: Bool,
         customColors: SpaceColors?,
+        customFont: NSFont?,
         filled: Bool
     ) -> NSImage {
         let currentIconSize = squareSize
@@ -204,7 +223,7 @@ enum SpaceIconGenerator {
             }
 
             // Draw centered text - use smaller font for multi-digit numbers
-            let font = scaledFont(for: spaceNumber.count)
+            let font = scaledFont(for: spaceNumber.count, customFont: customFont)
             let attributes: [NSAttributedString.Key: Any] = [
                 .font: font,
                 .foregroundColor: colors.foreground,
@@ -224,6 +243,7 @@ enum SpaceIconGenerator {
         for spaceNumber: String,
         darkMode: Bool,
         customColors: SpaceColors?,
+        customFont: NSFont?,
         filled: Bool
     ) -> NSImage {
         let currentIconSize = polygonSize
@@ -275,16 +295,22 @@ enum SpaceIconGenerator {
 
             // Draw centered text - use smaller font for multi-digit numbers
             // Triangle gets extra reduction for better fit
-            let baseFontSize: Double
-            switch spaceNumber.count {
-            case 1:
-                baseFontSize = Layout.baseFontSize - 2
-            case 2:
-                baseFontSize = Layout.baseFontSizeSmall - 2
-            default:
-                baseFontSize = Layout.baseFontSizeTiny - 1
+            let font: NSFont
+            if let customFont {
+                let scaledSize = customFont.pointSize * sizeScale
+                font = NSFontManager.shared.convert(customFont, toSize: scaledSize)
+            } else {
+                let baseFontSize: Double
+                switch spaceNumber.count {
+                case 1:
+                    baseFontSize = Layout.baseFontSize - 2
+                case 2:
+                    baseFontSize = Layout.baseFontSizeSmall - 2
+                default:
+                    baseFontSize = Layout.baseFontSizeTiny - 1
+                }
+                font = NSFont.boldSystemFont(ofSize: baseFontSize * sizeScale)
             }
-            let font = NSFont.boldSystemFont(ofSize: baseFontSize * sizeScale)
             let attributes: [NSAttributedString.Key: Any] = [
                 .font: font,
                 .foregroundColor: colors.foreground,
@@ -306,6 +332,7 @@ enum SpaceIconGenerator {
         for spaceNumber: String,
         darkMode: Bool,
         customColors: SpaceColors?,
+        customFont: NSFont?,
         filled: Bool,
         sides: Int
     ) -> NSImage {
@@ -337,7 +364,8 @@ enum SpaceIconGenerator {
                 sides: sides,
                 centerX: centerX,
                 centerY: centerY,
-                foregroundColor: colors.foreground
+                foregroundColor: colors.foreground,
+                customFont: customFont
             )
 
             return true
@@ -416,27 +444,34 @@ enum SpaceIconGenerator {
         sides: Int,
         centerX: Double,
         centerY: Double,
-        foregroundColor: NSColor
+        foregroundColor: NSColor,
+        customFont: NSFont?
     ) {
-        let sizeAdjustment: Double
-        switch (spaceNumber.count, sides) {
-        case (2, 5):
-            sizeAdjustment = -2
-        case (2, 6):
-            sizeAdjustment = -1
-        default:
-            sizeAdjustment = 0
+        let font: NSFont
+        if let customFont {
+            let scaledSize = customFont.pointSize * sizeScale
+            font = NSFontManager.shared.convert(customFont, toSize: scaledSize)
+        } else {
+            let sizeAdjustment: Double
+            switch (spaceNumber.count, sides) {
+            case (2, 5):
+                sizeAdjustment = -2
+            case (2, 6):
+                sizeAdjustment = -1
+            default:
+                sizeAdjustment = 0
+            }
+            let baseFontSize: Double
+            switch spaceNumber.count {
+            case 1:
+                baseFontSize = Layout.baseFontSize + sizeAdjustment
+            case 2:
+                baseFontSize = Layout.baseFontSizeSmall + sizeAdjustment
+            default:
+                baseFontSize = Layout.baseFontSizeTiny + sizeAdjustment
+            }
+            font = NSFont.boldSystemFont(ofSize: baseFontSize * sizeScale)
         }
-        let baseFontSize: Double
-        switch spaceNumber.count {
-        case 1:
-            baseFontSize = Layout.baseFontSize + sizeAdjustment
-        case 2:
-            baseFontSize = Layout.baseFontSizeSmall + sizeAdjustment
-        default:
-            baseFontSize = Layout.baseFontSizeTiny + sizeAdjustment
-        }
-        let font = NSFont.boldSystemFont(ofSize: baseFontSize * sizeScale)
         let attributes: [NSAttributedString.Key: Any] = [
             .font: font,
             .foregroundColor: foregroundColor,

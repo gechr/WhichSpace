@@ -755,6 +755,28 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             iconMenu.addItem(item)
         }
 
+        iconMenu.addItem(.separator())
+
+        let fontItem = NSMenuItem(
+            title: Localization.actionFont,
+            action: #selector(showFontPanel),
+            keyEquivalent: ""
+        )
+        fontItem.target = self
+        fontItem.image = NSImage(systemSymbolName: "textformat", accessibilityDescription: nil)
+        fontItem.toolTip = Localization.tipFont
+        iconMenu.addItem(fontItem)
+
+        let resetFontItem = NSMenuItem(
+            title: Localization.actionResetFontToDefault,
+            action: #selector(resetFontToDefault),
+            keyEquivalent: ""
+        )
+        resetFontItem.target = self
+        resetFontItem.image = NSImage(systemSymbolName: "arrow.uturn.backward", accessibilityDescription: nil)
+        resetFontItem.toolTip = Localization.tipResetFontToDefault
+        iconMenu.addItem(resetFontItem)
+
         return iconMenu
     }
 
@@ -881,6 +903,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         let style = appState.currentIconStyle
         let colors = appState.currentColors
         let symbol = appState.currentSymbol
+        let font = appState.currentFont
         let display = appState.currentDisplayID
         for space in appState.getAllSpaceIndices() {
             SpacePreferences.setIconStyle(style, forSpace: space, display: display, store: store)
@@ -893,6 +916,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
                 SpacePreferences.setColors(colors, forSpace: space, display: display, store: store)
             } else {
                 SpacePreferences.clearColors(forSpace: space, display: display, store: store)
+            }
+            if let font {
+                SpacePreferences.setFont(SpaceFont(font: font), forSpace: space, display: display, store: store)
+            } else {
+                SpacePreferences.clearFont(forSpace: space, display: display, store: store)
             }
         }
         updateStatusBarIcon()
@@ -917,6 +945,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
         SpacePreferences.clearColors(forSpace: appState.currentSpace, display: appState.currentDisplayID, store: store)
         SpacePreferences.clearIconStyle(
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
+        SpacePreferences.clearFont(
             forSpace: appState.currentSpace,
             display: appState.currentDisplayID,
             store: store
@@ -1198,6 +1231,73 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
         SpacePreferences.setSFSymbol(
             symbol,
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
+        updateStatusBarIcon()
+    }
+
+    // MARK: - Font Helpers
+
+    @objc func showFontPanel() {
+        NSApp.activate(ignoringOtherApps: true)
+
+        let fontManager = NSFontManager.shared
+        fontManager.target = self
+        fontManager.action = #selector(changeFont(_:))
+
+        let fontPanel = NSFontPanel.shared
+        // Set the current font if one exists, otherwise use a sensible default
+        if let currentFont = appState.currentFont {
+            fontPanel.setPanelFont(currentFont, isMultiple: false)
+        } else {
+            let defaultFont = NSFont.boldSystemFont(ofSize: Layout.baseFontSize)
+            fontPanel.setPanelFont(defaultFont, isMultiple: false)
+        }
+        fontPanel.makeKeyAndOrderFront(nil)
+    }
+
+    @objc func changeFont(_ sender: Any?) {
+        guard appState.currentSpace > 0 else {
+            return
+        }
+
+        guard let fontManager = sender as? NSFontManager else {
+            return
+        }
+
+        // Get the converted font from the font manager
+        let currentFont = appState.currentFont ?? NSFont.boldSystemFont(ofSize: Layout.baseFontSize)
+        let newFont = fontManager.convert(currentFont)
+
+        SpacePreferences.setFont(
+            SpaceFont(font: newFont),
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
+        updateStatusBarIcon()
+    }
+
+    @objc func resetFontToDefault() {
+        guard appState.currentSpace > 0 else {
+            return
+        }
+
+        let confirmed = alertFactory.makeAlert(
+            message: Localization.confirmResetFont,
+            detail: Localization.detailResetFont,
+            confirmTitle: Localization.buttonReset,
+            isDestructive: true
+        )
+        .runModal()
+
+        guard confirmed else {
+            return
+        }
+
+        SpacePreferences.clearFont(
             forSpace: appState.currentSpace,
             display: appState.currentDisplayID,
             store: store

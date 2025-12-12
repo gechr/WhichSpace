@@ -1,3 +1,4 @@
+import AppKit
 import XCTest
 @testable import WhichSpace
 
@@ -128,7 +129,8 @@ final class AppDelegateActionsTests: XCTestCase {
         space: Int,
         style: IconStyle? = nil,
         colors: SpaceColors? = nil,
-        symbol: String? = nil
+        symbol: String? = nil,
+        font: NSFont? = nil
     ) {
         if let style {
             SpacePreferences.setIconStyle(style, forSpace: space, store: store)
@@ -138,6 +140,9 @@ final class AppDelegateActionsTests: XCTestCase {
         }
         if let symbol {
             SpacePreferences.setSFSymbol(symbol, forSpace: space, store: store)
+        }
+        if let font {
+            SpacePreferences.setFont(SpaceFont(font: font), forSpace: space, store: store)
         }
     }
 
@@ -407,6 +412,20 @@ final class AppDelegateActionsTests: XCTestCase {
         }
     }
 
+    func testApplyAllToAllSpaces_whenConfirmed_appliesFontToAllSpaces() {
+        let testFont = NSFont.boldSystemFont(ofSize: 15)
+        setupSpaceWithPreferences(space: appState.currentSpace, font: testFont)
+        alertFactory.shouldConfirm = true
+
+        sut.applyAllToAllSpaces()
+
+        for space in 1 ... 4 {
+            let font = SpacePreferences.font(forSpace: space, store: store)?.font
+            XCTAssertEqual(font?.fontName, testFont.fontName, "Space \(space) should have font \(testFont.fontName)")
+            XCTAssertEqual(Double(font?.pointSize ?? -1), Double(testFont.pointSize), accuracy: 0.001)
+        }
+    }
+
     func testApplyAllToAllSpaces_whenDeclined_doesNotApply() {
         let testStyle = IconStyle.hexagon
         setupSpaceWithPreferences(space: appState.currentSpace, style: testStyle)
@@ -460,6 +479,25 @@ final class AppDelegateActionsTests: XCTestCase {
         }
     }
 
+    func testApplyAllToAllSpaces_clearsFontWhenNil() {
+        // Set fonts on other spaces
+        for space in 1 ... 4 {
+            SpacePreferences.setFont(SpaceFont(font: NSFont.systemFont(ofSize: 13)), forSpace: space, store: store)
+        }
+        // Current space has no font
+        SpacePreferences.clearFont(forSpace: appState.currentSpace, store: store)
+        alertFactory.shouldConfirm = true
+
+        sut.applyAllToAllSpaces()
+
+        for space in 1 ... 4 {
+            XCTAssertNil(
+                SpacePreferences.font(forSpace: space, store: store),
+                "Space \(space) should have no font"
+            )
+        }
+    }
+
     // MARK: - resetSpaceToDefault Tests
 
     func testResetSpaceToDefault_whenConfirmed_clearsAllPreferences() {
@@ -467,7 +505,8 @@ final class AppDelegateActionsTests: XCTestCase {
             space: appState.currentSpace,
             style: .hexagon,
             colors: SpaceColors(foreground: .red, background: .blue),
-            symbol: "star.fill"
+            symbol: "star.fill",
+            font: NSFont.boldSystemFont(ofSize: 14)
         )
         alertFactory.shouldConfirm = true
         let initialCount = sut.statusBarIconUpdateCount
@@ -477,6 +516,7 @@ final class AppDelegateActionsTests: XCTestCase {
         XCTAssertNil(SpacePreferences.colors(forSpace: appState.currentSpace, store: store))
         XCTAssertNil(SpacePreferences.iconStyle(forSpace: appState.currentSpace, store: store))
         XCTAssertNil(SpacePreferences.sfSymbol(forSpace: appState.currentSpace, store: store))
+        XCTAssertNil(SpacePreferences.font(forSpace: appState.currentSpace, store: store))
         XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 1, "updateStatusBarIcon should be called")
     }
 

@@ -61,12 +61,18 @@ enum KeySpecs {
         defaultValue: [String: [Int: String]]()
     )
     static let separatorColor = TypedKeySpec(name: "separatorColor", defaultValue: Data?.none)
+    static let spaceFonts = TypedKeySpec(name: "spaceFonts", defaultValue: [Int: SpaceFont]())
+    static let displaySpaceFonts = TypedKeySpec(
+        name: "displaySpaceFonts",
+        defaultValue: [String: [Int: SpaceFont]]()
+    )
 
     /// All key names for enumeration (e.g., in tests).
     static let allKeyNames: Set<String> = [
         clickToSwitchSpaces.name,
         dimInactiveSpaces.name,
         displaySpaceColors.name,
+        displaySpaceFonts.name,
         displaySpaceIconStyles.name,
         displaySpaceSFSymbols.name,
         hideEmptySpaces.name,
@@ -76,6 +82,7 @@ enum KeySpecs {
         showAllSpaces.name,
         sizeScale.name,
         spaceColors.name,
+        spaceFonts.name,
         spaceIconStyles.name,
         spaceSFSymbols.name,
         uniqueIconsPerDisplay.name,
@@ -129,6 +136,10 @@ final class DefaultsStore: @unchecked Sendable {
 
     /// Separator color
     private(set) lazy var keySeparatorColor = KeySpecs.separatorColor.key(suite: suite)
+
+    /// Font keys
+    private(set) lazy var keySpaceFonts = KeySpecs.spaceFonts.key(suite: suite)
+    private(set) lazy var keyDisplaySpaceFonts = KeySpecs.displaySpaceFonts.key(suite: suite)
 
     init(suite: UserDefaults) {
         self.suite = suite
@@ -207,6 +218,16 @@ final class DefaultsStore: @unchecked Sendable {
         set { Defaults[keyDisplaySpaceSFSymbols] = newValue }
     }
 
+    var spaceFonts: [Int: SpaceFont] {
+        get { Defaults[keySpaceFonts] }
+        set { Defaults[keySpaceFonts] = newValue }
+    }
+
+    var displaySpaceFonts: [String: [Int: SpaceFont]] {
+        get { Defaults[keyDisplaySpaceFonts] }
+        set { Defaults[keyDisplaySpaceFonts] = newValue }
+    }
+
     var separatorColor: NSColor? {
         get {
             guard let data = Defaults[keySeparatorColor] else {
@@ -234,6 +255,7 @@ final class DefaultsStore: @unchecked Sendable {
             keyClickToSwitchSpaces,
             keyDimInactiveSpaces,
             keyDisplaySpaceColors,
+            keyDisplaySpaceFonts,
             keyDisplaySpaceIconStyles,
             keyDisplaySpaceSFSymbols,
             keyHideEmptySpaces,
@@ -243,6 +265,7 @@ final class DefaultsStore: @unchecked Sendable {
             keyShowAllSpaces,
             keySizeScale,
             keySpaceColors,
+            keySpaceFonts,
             keySpaceIconStyles,
             keySpaceSFSymbols,
             keyUniqueIconsPerDisplay
