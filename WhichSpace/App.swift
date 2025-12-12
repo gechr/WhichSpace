@@ -281,8 +281,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
 
         if event.type == .rightMouseUp {
-            // Show menu on right-click
+            // Temporarily become a regular app so key equivalents (like Cmd+Q) work in the menu
+            NSApp.setActivationPolicy(.regular)
             statusBarItem.popUpMenu(statusMenu)
+            NSApp.setActivationPolicy(.accessory)
         } else if event.type == .leftMouseUp {
             handleLeftClick(event, button: button)
         }
