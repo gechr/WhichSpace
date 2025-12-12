@@ -1255,6 +1255,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             let defaultFont = NSFont.boldSystemFont(ofSize: Layout.baseFontSize)
             fontPanel.setPanelFont(defaultFont, isMultiple: false)
         }
+
+        // Center the font panel on screen
+        if let screen = NSScreen.main {
+            let screenFrame = screen.visibleFrame
+            let panelFrame = fontPanel.frame
+            let centerX = screenFrame.midX - panelFrame.width / 2
+            let centerY = screenFrame.midY - panelFrame.height / 2
+            fontPanel.setFrameOrigin(NSPoint(x: centerX, y: centerY))
+        }
+
         fontPanel.makeKeyAndOrderFront(nil)
     }
 
