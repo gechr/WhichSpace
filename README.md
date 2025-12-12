@@ -30,11 +30,11 @@ Have you ever forgotten _which space_ is currently active on macOS and wanted a 
 >
 > Full-screen apps are shown as **F** and can be hidden entirely.
 
-### Colours
+### Colors
 
-#### Choose foreground and background colours for each Space, or apply one colour to all Spaces:
+#### Choose foreground and background colors for each Space, or apply one color to all Spaces:
 
-<img src="Screenshots/ColoursMenu.png" width="60%">
+<img src="Screenshots/ColorsMenu.png" width="60%">
 
 ### Icons
 

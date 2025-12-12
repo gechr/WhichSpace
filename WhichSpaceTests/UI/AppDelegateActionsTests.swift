@@ -1590,6 +1590,36 @@ final class AppDelegateActionsTests: XCTestCase {
         XCTAssertFalse(backgroundSwatch?.isHidden ?? true, "Background swatch should be visible when no symbol")
     }
 
+    func testMenuWillOpen_hidesBackgroundColorOptions_whenTransparentStyleActive() {
+        sut.configureMenuBarIcon()
+        SpacePreferences.setIconStyle(.transparent, forSpace: appState.currentSpace, store: store)
+
+        // Find the Colors submenu
+        let colorsMenuItem = sut.statusMenu.items.first { $0.title == Localization.menuColor }
+        guard let colorsMenu = colorsMenuItem?.submenu else {
+            XCTFail("Colors submenu not found")
+            return
+        }
+
+        sut.menuWillOpen(colorsMenu)
+
+        // Background options should be hidden for transparent style
+        let colorSeparator = colorsMenu.item(withTag: MenuTag.colorSeparator)
+        let backgroundLabel = colorsMenu.item(withTag: MenuTag.backgroundLabel)
+        let backgroundSwatch = colorsMenu.item(withTag: MenuTag.backgroundSwatch)
+
+        XCTAssertTrue(colorSeparator?.isHidden ?? false, "Color separator should be hidden for transparent style")
+        XCTAssertTrue(backgroundLabel?.isHidden ?? false, "Background label should be hidden for transparent style")
+        XCTAssertTrue(backgroundSwatch?.isHidden ?? false, "Background swatch should be hidden for transparent style")
+
+        // Foreground options should still be visible
+        let foregroundLabel = colorsMenu.item(withTag: MenuTag.foregroundLabel)
+        let foregroundSwatch = colorsMenu.item(withTag: MenuTag.foregroundSwatch)
+
+        XCTAssertFalse(foregroundLabel?.isHidden ?? true, "Foreground label should be visible for transparent style")
+        XCTAssertFalse(foregroundSwatch?.isHidden ?? true, "Foreground swatch should be visible for transparent style")
+    }
+
     func testMenuWillOpen_updatesStatusBarIcon() {
         sut.configureMenuBarIcon()
         let initialCount = sut.statusBarIconUpdateCount

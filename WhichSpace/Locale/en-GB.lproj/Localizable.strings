@@ -30,8 +30,9 @@
 "detail_reset_font" = "This will remove the custom font for the current Space only.";
 "detail_reset_space" = "This will remove the colour, style, symbol, and font customisations for the current Space only.";
 "detail_reset_style" = "This will remove the custom style for the current Space only.";
-"label_background" = "Number (Background)";
-"label_foreground" = "Number (Foreground)";
+"label_number" = "Number";
+"label_number_background" = "Number (Background)";
+"label_number_foreground" = "Number (Foreground)";
 "label_separator" = "Separator";
 "label_symbol" = "Symbol";
 "menu_color" = "Colour";
@@ -47,6 +48,8 @@
 "style_pentagonOutline" = "Pentagon (Outline)";
 "style_square" = "Square";
 "style_squareOutline" = "Square (Outline)";
+"style_stroke" = "Stroke";
+"style_transparent" = "Transparent";
 "style_triangle" = "Triangle";
 "style_triangleOutline" = "Triangle (Outline)";
 "tip_apply_color_to_all" = "Copy this Space's colour to all Spaces";

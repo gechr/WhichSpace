@@ -623,7 +623,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         colorsMenu.addItem(symbolSwatchItem)
 
         // Foreground label (hidden when symbol active)
-        let foregroundLabel = NSMenuItem(title: Localization.labelForeground, action: nil, keyEquivalent: "")
+        let foregroundLabel = NSMenuItem(title: Localization.labelNumberForeground, action: nil, keyEquivalent: "")
         foregroundLabel.isEnabled = false
         foregroundLabel.tag = MenuTag.foregroundLabel
         colorsMenu.addItem(foregroundLabel)
@@ -649,7 +649,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         colorsMenu.addItem(separator)
 
         // Background label (hidden when symbol active)
-        let backgroundLabel = NSMenuItem(title: Localization.labelBackground, action: nil, keyEquivalent: "")
+        let backgroundLabel = NSMenuItem(title: Localization.labelNumberBackground, action: nil, keyEquivalent: "")
         backgroundLabel.isEnabled = false
         backgroundLabel.tag = MenuTag.backgroundLabel
         colorsMenu.addItem(backgroundLabel)
@@ -1412,12 +1412,20 @@ extension AppDelegate: NSMenuDelegate {
             }
 
             // Hide foreground/background labels and swatches when symbol is active
-            let colorTags = [
-                MenuTag.foregroundLabel, MenuTag.foregroundSwatch,
-                MenuTag.colorSeparator, MenuTag.backgroundLabel, MenuTag.backgroundSwatch,
-            ]
-            if colorTags.contains(item.tag) {
+            // Also hide background items when style is transparent (no background to color)
+            let foregroundTags = [MenuTag.foregroundLabel, MenuTag.foregroundSwatch]
+            let backgroundTags = [MenuTag.colorSeparator, MenuTag.backgroundLabel, MenuTag.backgroundSwatch]
+            if foregroundTags.contains(item.tag) {
                 item.isHidden = symbolIsActive
+            }
+            if backgroundTags.contains(item.tag) {
+                item.isHidden = symbolIsActive || currentStyle == .transparent
+            }
+            // Update foreground label text: "Number" for transparent, "Number (Foreground)" otherwise
+            if item.tag == MenuTag.foregroundLabel {
+                item.title = currentStyle == .transparent
+                    ? Localization.labelNumber
+                    : Localization.labelNumberForeground
             }
 
             // Update size row view (tag 310)

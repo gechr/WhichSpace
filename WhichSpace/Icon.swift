@@ -128,6 +128,20 @@ enum SpaceIconGenerator {
                 filled: false,
                 sides: 6
             )
+        case .stroke:
+            generateStrokeIcon(
+                for: spaceNumber,
+                darkMode: darkMode,
+                customColors: customColors,
+                customFont: customFont
+            )
+        case .transparent:
+            generateTransparentIcon(
+                for: spaceNumber,
+                darkMode: darkMode,
+                customColors: customColors,
+                customFont: customFont
+            )
         }
     }
 
@@ -482,6 +496,125 @@ enum SpaceIconGenerator {
         let textRect = CGRect(x: textX, y: textY, width: textSize.width, height: textSize.height)
 
         spaceNumber.draw(in: textRect, withAttributes: attributes)
+    }
+
+    private static func generateTransparentIcon(
+        for spaceNumber: String,
+        darkMode: Bool,
+        customColors: SpaceColors?,
+        customFont: NSFont?
+    ) -> NSImage {
+        NSImage(size: statusItemSize, flipped: false) { rect in
+            // Get text color - use foreground color, no background
+            let textColor: NSColor
+            if let customColors {
+                textColor = customColors.foregroundColor
+            } else {
+                textColor = darkMode ? IconColors.outlineDark : IconColors.outlineLight
+            }
+
+            // Draw centered text - use smaller font for multi-digit numbers
+            let font = scaledFont(for: spaceNumber.count, customFont: customFont)
+            let attributes: [NSAttributedString.Key: Any] = [
+                .font: font,
+                .foregroundColor: textColor,
+            ]
+            let textSize = spaceNumber.size(withAttributes: attributes)
+            let textX = (rect.width - textSize.width) / 2
+            let textY = (rect.height - textSize.height) / 2
+            let textRect = CGRect(x: textX, y: textY, width: textSize.width, height: textSize.height)
+
+            spaceNumber.draw(in: textRect, withAttributes: attributes)
+
+            return true
+        }
+    }
+
+    private static func generateStrokeIcon(
+        for spaceNumber: String,
+        darkMode: Bool,
+        customColors: SpaceColors?,
+        customFont: NSFont?
+    ) -> NSImage {
+        NSImage(size: statusItemSize, flipped: false) { rect in
+            guard let context = NSGraphicsContext.current?.cgContext else {
+                return false
+            }
+
+            // Get colors - foreground is fill, background is stroke
+            let fillColor: NSColor
+            let strokeColor: NSColor
+            if let customColors {
+                fillColor = customColors.foregroundColor
+                strokeColor = customColors.backgroundColor
+            } else {
+                let colors = IconColors.filledColors(darkMode: darkMode)
+                fillColor = colors.foreground
+                strokeColor = colors.background
+            }
+
+            // Use larger font for stroke mode to match visual weight of other styles
+            let baseFont = scaledFont(for: spaceNumber.count, customFont: customFont)
+            let enlargedSize = baseFont.pointSize * 1.1
+            let font = NSFontManager.shared.convert(baseFont, toSize: enlargedSize)
+            let ctFont = font as CTFont
+            let strokeWidth = 4.0 * sizeScale
+
+            // Create attributed string for measuring
+            let attributes: [NSAttributedString.Key: Any] = [.font: font]
+            let textSize = spaceNumber.size(withAttributes: attributes)
+            let textX = (rect.width - textSize.width) / 2
+
+            // Account for font metrics - CTFont draws from baseline
+            let ascent = CTFontGetAscent(ctFont)
+            let descent = CTFontGetDescent(ctFont)
+            let textHeight = ascent + descent
+            let textY = (rect.height - textHeight) / 2 + descent
+
+            // Create text path
+            let attrString = NSAttributedString(string: spaceNumber, attributes: [.font: font])
+            let line = CTLineCreateWithAttributedString(attrString)
+            let glyphRuns = CTLineGetGlyphRuns(line) as! [CTRun]
+
+            context.saveGState()
+            context.translateBy(x: textX, y: textY)
+
+            // Build path from all glyphs
+            let textPath = CGMutablePath()
+            for run in glyphRuns {
+                let glyphCount = CTRunGetGlyphCount(run)
+                let runFont = (CTRunGetAttributes(run) as Dictionary)[kCTFontAttributeName] as! CTFont
+
+                for index in 0 ..< glyphCount {
+                    let range = CFRange(location: index, length: 1)
+                    var glyph = CGGlyph()
+                    var position = CGPoint()
+                    CTRunGetGlyphs(run, range, &glyph)
+                    CTRunGetPositions(run, range, &position)
+
+                    if let glyphPath = CTFontCreatePathForGlyph(runFont, glyph, nil) {
+                        var transform = CGAffineTransform(translationX: position.x, y: position.y)
+                        textPath.addPath(glyphPath, transform: transform)
+                    }
+                }
+            }
+
+            // Draw stroke (behind)
+            context.addPath(textPath)
+            context.setStrokeColor(strokeColor.cgColor)
+            context.setLineWidth(strokeWidth)
+            context.setLineJoin(.round)
+            context.strokePath()
+
+            // Draw fill (on top)
+            context.addPath(textPath)
+            context.setFillColor(fillColor.cgColor)
+            context.fillPath()
+
+            context.restoreGState()
+
+            return true
+        }
     }
 
     // MARK: - SF Symbol Icon
