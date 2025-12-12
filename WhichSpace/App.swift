@@ -281,10 +281,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
 
         if event.type == .rightMouseUp {
-            // Temporarily become a regular app so key equivalents (like Cmd+Q) work in the menu
-            NSApp.setActivationPolicy(.regular)
             statusBarItem.popUpMenu(statusMenu)
-            NSApp.setActivationPolicy(.accessory)
         } else if event.type == .leftMouseUp {
             handleLeftClick(event, button: button)
         }
@@ -589,7 +586,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         let quitItem = NSMenuItem(
             title: Localization.actionQuit,
             action: #selector(NSApplication.terminate(_:)),
-            keyEquivalent: "q"
+            keyEquivalent: ""
         )
         quitItem.image = NSImage(systemSymbolName: "xmark.rectangle", accessibilityDescription: nil)
         quitItem.toolTip = String(format: Localization.tipQuit, appName)
