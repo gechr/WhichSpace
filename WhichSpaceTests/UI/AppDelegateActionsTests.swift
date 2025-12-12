@@ -5,7 +5,7 @@ import XCTest
 // MARK: - Stub Alert for Testing
 
 /// A stub alert that returns a predetermined result
-struct StubConfirmationAlert: ConfirmationAlertProviding {
+struct StubConfirmationAlert: ConfirmationAlertProvider {
     let shouldConfirm: Bool
 
     func runModal() -> Bool {
@@ -23,7 +23,7 @@ final class StubAlertFactory: ConfirmationAlertFactory {
         detail: String,
         confirmTitle: String,
         isDestructive: Bool
-    ) -> ConfirmationAlertProviding {
+    ) -> ConfirmationAlertProvider {
         alertsShown.append((message, detail, confirmTitle, isDestructive))
         return StubConfirmationAlert(shouldConfirm: shouldConfirm)
     }
@@ -36,7 +36,7 @@ final class StubAlertFactory: ConfirmationAlertFactory {
 // MARK: - Stub LaunchAtLogin for Testing
 
 /// A stub launch-at-login provider for testing
-final class StubLaunchAtLoginProvider: LaunchAtLoginProviding {
+final class StubLaunchAtLoginProvider: LaunchAtLoginProvider {
     var isEnabled = false
 }
 

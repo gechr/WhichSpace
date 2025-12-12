@@ -20,12 +20,12 @@ struct AppMain: App {
 // MARK: - Launch at Login Protocol
 
 /// Protocol for abstracting LaunchAtLogin for testability
-protocol LaunchAtLoginProviding {
+protocol LaunchAtLoginProvider {
     var isEnabled: Bool { get set }
 }
 
 /// Default implementation using the actual LaunchAtLogin library
-struct DefaultLaunchAtLoginProvider: LaunchAtLoginProviding {
+struct DefaultLaunchAtLoginProvider: LaunchAtLoginProvider {
     var isEnabled: Bool {
         get { LaunchAtLogin.isEnabled }
         set { LaunchAtLogin.isEnabled = newValue }
@@ -38,6 +38,8 @@ enum SpaceSwitcher {
     private static let maxSupportedSpace = 16
     private static let firstHotKey: UInt16 = 118
     private static var hasPromptedForAccessibility = false
+    private static var cachedYabaiURL: URL?
+    private static let yabaiExecutableName = "yabai"
 
     static func switchToSpace(_ space: Int) {
         guard ensureAccessibilityPermission() else {
@@ -103,22 +105,139 @@ enum SpaceSwitcher {
         keyUpEvent.flags = []
         keyUpEvent.post(tap: .cghidEventTap)
     }
+
+    /// Returns true if the yabai CLI is available and responding
+    static func isYabaiAvailable() -> Bool {
+        guard let yabaiURL = resolveYabaiExecutable() else {
+            return false
+        }
+
+        let process = Process()
+        process.executableURL = yabaiURL
+        process.arguments = ["-m", "query", "--spaces"]
+
+        let stderrPipe = Pipe()
+        process.standardError = stderrPipe
+
+        do {
+            try process.run()
+
+            guard let status = runWithTimeout(process) else {
+                NSLog("SpaceSwitcher: yabai preflight timed out")
+                return false
+            }
+
+            if status != 0 {
+                let stderrData = stderrPipe.fileHandleForReading.readDataToEndOfFile()
+                if let stderr = String(data: stderrData, encoding: .utf8), !stderr.isEmpty {
+                    NSLog("SpaceSwitcher: yabai preflight stderr: %@", stderr)
+                }
+                return false
+            }
+            return true
+        } catch {
+            NSLog("SpaceSwitcher: yabai preflight failed: \(error)")
+            return false
+        }
+    }
+
+    /// Switches to space using yabai CLI. Returns true on success.
+    static func switchToSpaceViaYabai(_ space: Int) -> Bool {
+        guard let yabaiURL = resolveYabaiExecutable() else {
+            return false
+        }
+
+        let process = Process()
+        process.executableURL = yabaiURL
+        process.arguments = ["-m", "space", "--focus", "\(space)"]
+
+        let stderrPipe = Pipe()
+        process.standardError = stderrPipe
+
+        do {
+            try process.run()
+
+            guard let status = runWithTimeout(process) else {
+                NSLog("SpaceSwitcher: yabai command timed out")
+                return false
+            }
+
+            if status != 0 {
+                let stderrData = stderrPipe.fileHandleForReading.readDataToEndOfFile()
+                if let stderr = String(data: stderrData, encoding: .utf8), !stderr.isEmpty {
+                    NSLog("SpaceSwitcher: yabai stderr: %@", stderr)
+                }
+                return false
+            }
+            return true
+        } catch {
+            NSLog("SpaceSwitcher: yabai command failed: \(error)")
+            return false
+        }
+    }
+
+    /// Runs a process with a timeout to avoid blocking the main thread indefinitely
+    /// Returns the termination status, or nil if the process timed out
+    private static func runWithTimeout(_ process: Process, timeout: TimeInterval = 3) -> Int32? {
+        let semaphore = DispatchSemaphore(value: 0)
+        DispatchQueue.global().async {
+            process.waitUntilExit()
+            semaphore.signal()
+        }
+
+        if semaphore.wait(timeout: .now() + timeout) == .timedOut {
+            process.terminate()
+            return nil
+        }
+
+        return process.terminationStatus
+    }
+
+    /// Resolve the absolute path to the yabai executable once to avoid PATH issues when launched from Finder/Login
+    /// Items
+    private static func resolveYabaiExecutable() -> URL? {
+        if let cachedYabaiURL {
+            return cachedYabaiURL
+        }
+
+        let pathEnv = ProcessInfo.processInfo.environment["PATH"] ?? ""
+        var searchPaths = ["/opt/homebrew/bin", "/usr/local/bin"]
+        searchPaths.append(contentsOf: pathEnv.split(separator: ":").map(String.init))
+
+        var seen = Set<String>()
+        for path in searchPaths where !path.isEmpty {
+            if seen.contains(path) {
+                continue
+            }
+            seen.insert(path)
+
+            let candidate = URL(fileURLWithPath: path, isDirectory: true)
+                .appendingPathComponent(yabaiExecutableName)
+            if FileManager.default.isExecutableFile(atPath: candidate.path) {
+                cachedYabaiURL = candidate
+                return candidate
+            }
+        }
+
+        NSLog("SpaceSwitcher: yabai not found; searched PATH (\(pathEnv)) and common locations")
+        return nil
+    }
 }
 
 // MARK: - Confirmation Alert Protocol
 
 /// Protocol for abstracting confirmation alerts for testability
-protocol ConfirmationAlertProviding {
+protocol ConfirmationAlertProvider {
     func runModal() -> Bool
 }
 
 /// Default implementation using the actual ConfirmationAlert
-extension ConfirmationAlert: ConfirmationAlertProviding {}
+extension ConfirmationAlert: ConfirmationAlertProvider {}
 
 /// Factory for creating confirmation alerts
 protocol ConfirmationAlertFactory {
     func makeAlert(message: String, detail: String, confirmTitle: String, isDestructive: Bool)
-        -> ConfirmationAlertProviding
+        -> ConfirmationAlertProvider
 }
 
 /// Default factory that creates real ConfirmationAlerts
@@ -128,7 +247,7 @@ struct DefaultConfirmationAlertFactory: ConfirmationAlertFactory {
         detail: String,
         confirmTitle: String,
         isDestructive: Bool
-    ) -> ConfirmationAlertProviding {
+    ) -> ConfirmationAlertProvider {
         ConfirmationAlert(message: message, detail: detail, confirmTitle: confirmTitle, isDestructive: isDestructive)
     }
 }
@@ -142,7 +261,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     private let statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     private let appState: AppState
     private let alertFactory: ConfirmationAlertFactory
-    private var launchAtLogin: LaunchAtLoginProviding
+    private var launchAtLogin: LaunchAtLoginProvider
 
     private var updaterController: SPUStandardUpdaterController!
     private(set) var statusMenu: NSMenu!
@@ -171,7 +290,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     init(
         appState: AppState,
         alertFactory: ConfirmationAlertFactory,
-        launchAtLogin: LaunchAtLoginProviding = DefaultLaunchAtLoginProvider()
+        launchAtLogin: LaunchAtLoginProvider = DefaultLaunchAtLoginProvider()
     ) {
         self.appState = appState
         self.alertFactory = alertFactory
@@ -318,7 +437,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
                 return
             }
 
-            SpaceSwitcher.switchToSpace(targetSpace)
+            // For spaces > 16, need yabai (macOS only has hotkeys for 1-16)
+            if targetSpace > 16 {
+                guard SpaceSwitcher.isYabaiAvailable() else {
+                    showYabaiRequiredAlert()
+                    return
+                }
+
+                if !SpaceSwitcher.switchToSpaceViaYabai(targetSpace) {
+                    showYabaiRequiredAlert()
+                }
+            } else {
+                SpaceSwitcher.switchToSpace(targetSpace)
+            }
             return
         }
     }
@@ -869,6 +1000,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             _ = AXIsProcessTrustedWithOptions(options)
             // Enable the setting - it will check permission again when actually switching
             store.clickToSwitchSpaces = true
+        }
+    }
+
+    private func showYabaiRequiredAlert() {
+        let alert = InfoAlert(
+            message: Localization.yabaiRequiredTitle,
+            detail: Localization.yabaiRequiredDetail,
+            primaryButtonTitle: Localization.buttonLearnMore,
+            icon: NSImage(named: "yabai")
+        )
+
+        if alert.runModal() {
+            if let url = URL(string: "https://github.com/asmvik/yabai/wiki/Installing-yabai-(latest-release)") {
+                NSWorkspace.shared.open(url)
+            }
         }
     }
 

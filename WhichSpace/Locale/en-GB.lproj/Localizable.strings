@@ -11,6 +11,7 @@
 "action_reset_space_to_default" = "Reset current Space customisations to default...";
 "action_reset_style_to_default" = "Reset style to default...";
 "button_cancel" = "Cancel";
+"button_learn_more" = "Learn More...";
 "button_ok" = "OK";
 "button_reset" = "Reset";
 "button_reset_all" = "Reset All";
@@ -80,3 +81,5 @@
 "toggle_show_all_displays" = "Show all Displays";
 "toggle_show_all_spaces" = "Show all Spaces";
 "toggle_unique_icons_per_display" = "Separate icons per Display";
+"yabai_required_detail" = "Switching to Spaces beyond 16 requires Yabai, a third-party window manager.\n\nYabai extends macOS's Space management capabilities and allows switching to any Space.";
+"yabai_required_title" = "Yabai Required";

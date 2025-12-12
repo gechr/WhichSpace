@@ -1,8 +1,8 @@
 import Foundation
 @testable import WhichSpace
 
-/// Stub implementation of DisplaySpaceProviding for testing
-final class CGSStub: DisplaySpaceProviding {
+/// Stub implementation of DisplaySpaceProvider for testing
+final class CGSStub: DisplaySpaceProvider {
     var displays: [NSDictionary] = []
     var activeDisplayIdentifier: String?
     var spacesWithWindowsSet: Set<Int> = []

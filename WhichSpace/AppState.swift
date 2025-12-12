@@ -6,7 +6,7 @@ import os.log
 // MARK: - Display Space Provider Protocol
 
 /// Protocol for abstracting CGS display space functions for testability
-protocol DisplaySpaceProviding {
+protocol DisplaySpaceProvider {
     // swiftlint:disable:next discouraged_optional_collection
     func copyManagedDisplaySpaces() -> [NSDictionary]?
     func copyActiveMenuBarDisplayIdentifier() -> String?
@@ -14,7 +14,7 @@ protocol DisplaySpaceProviding {
 }
 
 /// Default implementation using the actual CGS/SLS functions
-struct CGSDisplaySpaceProvider: DisplaySpaceProviding {
+struct CGSDisplaySpaceProvider: DisplaySpaceProvider {
     private let conn: Int32
 
     init() {
@@ -124,7 +124,7 @@ final class AppState {
 
     private let mainDisplay = "Main"
     private let spacesMonitorFile = "~/Library/Preferences/com.apple.spaces.plist"
-    private let displaySpaceProvider: DisplaySpaceProviding
+    private let displaySpaceProvider: DisplaySpaceProvider
     let store: DefaultsStore
 
     private var lastUpdateTime: Date = .distantPast
@@ -149,7 +149,7 @@ final class AppState {
     }
 
     /// Internal initializer for testing with a custom display space provider
-    init(displaySpaceProvider: DisplaySpaceProviding, skipObservers: Bool = false, store: DefaultsStore = .shared) {
+    init(displaySpaceProvider: DisplaySpaceProvider, skipObservers: Bool = false, store: DefaultsStore = .shared) {
         self.displaySpaceProvider = displaySpaceProvider
         self.store = store
         updateDarkModeStatus()

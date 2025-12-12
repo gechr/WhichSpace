@@ -118,6 +118,7 @@ enum Localization {
     static let actionResetSpaceToDefault = NSLocalizedString("action_reset_space_to_default", comment: "")
     static let actionResetStyleToDefault = NSLocalizedString("action_reset_style_to_default", comment: "")
     static let buttonCancel = NSLocalizedString("button_cancel", comment: "")
+    static let buttonLearnMore = NSLocalizedString("button_learn_more", comment: "")
     static let buttonOK = NSLocalizedString("button_ok", comment: "")
     static let buttonReset = NSLocalizedString("button_reset", comment: "")
     static let buttonResetAll = NSLocalizedString("button_reset_all", comment: "")
@@ -175,4 +176,6 @@ enum Localization {
     static let toggleShowAllDisplays = NSLocalizedString("toggle_show_all_displays", comment: "")
     static let toggleShowAllSpaces = NSLocalizedString("toggle_show_all_spaces", comment: "")
     static let toggleUniqueIconsPerDisplay = NSLocalizedString("toggle_unique_icons_per_display", comment: "")
+    static let yabaiRequiredDetail = NSLocalizedString("yabai_required_detail", comment: "")
+    static let yabaiRequiredTitle = NSLocalizedString("yabai_required_title", comment: "")
 }
