@@ -38,7 +38,7 @@ enum SpaceSwitcher {
     private static let maxSupportedSpace = 16
     private static let firstHotKey: UInt16 = 118
     private static var hasPromptedForAccessibility = false
-    private static var cachedYabaiURL: URL?
+    private static var binYabai: URL?
     private static let yabaiExecutableName = "yabai"
 
     static func switchToSpace(_ space: Int) {
@@ -196,8 +196,8 @@ enum SpaceSwitcher {
     /// Resolve the absolute path to the yabai executable once to avoid PATH issues when launched from Finder/Login
     /// Items
     private static func resolveYabaiExecutable() -> URL? {
-        if let cachedYabaiURL {
-            return cachedYabaiURL
+        if let binYabai {
+            return binYabai
         }
 
         let pathEnv = ProcessInfo.processInfo.environment["PATH"] ?? ""
@@ -214,7 +214,7 @@ enum SpaceSwitcher {
             let candidate = URL(fileURLWithPath: path, isDirectory: true)
                 .appendingPathComponent(yabaiExecutableName)
             if FileManager.default.isExecutableFile(atPath: candidate.path) {
-                cachedYabaiURL = candidate
+                binYabai = candidate
                 return candidate
             }
         }
@@ -928,7 +928,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         return symbolMenu
     }
 
-    // MARK: - Actions
+    // MARK: - Status Bar
+
+    func updateStatusBarIcon() {
+        statusBarIconUpdateCount += 1
+        let icon = appState.statusBarIcon
+        statusBarItem.length = icon.size.width
+        statusBarItem.button?.image = icon
+        statusBarIconUpdateNotifier?.yield()
+    }
+
+    // MARK: - Toggle Actions
 
     @objc func toggleDimInactiveSpaces() {
         store.dimInactiveSpaces.toggle()
@@ -977,47 +987,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         store.clickToSwitchSpaces.toggle()
     }
 
-    private func showAccessibilityPermissionAlert() {
-        let alert = NSAlert()
-        alert.messageText = "Permission Required"
-        // swiftformat:disable all
-        alert.informativeText = """
-        This feature requires Accessibility permission to simulate keyboard shortcuts.
-
-        After clicking Continue, macOS will prompt you for permission. Click "Open System Settings", then find \(appName) in the list and enable it.
-        """
-        // swiftformat:enable all
-        alert.alertStyle = .informational
-        alert.addButton(withTitle: "Continue")
-        alert.addButton(withTitle: "Cancel")
-
-        NSApp.activate(ignoringOtherApps: true)
-        let response = alert.runModal()
-
-        if response == .alertFirstButtonReturn {
-            // Request permission - this triggers the system prompt
-            let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
-            _ = AXIsProcessTrustedWithOptions(options)
-            // Enable the setting - it will check permission again when actually switching
-            store.clickToSwitchSpaces = true
-        }
-    }
-
-    private func showYabaiRequiredAlert() {
-        let alert = InfoAlert(
-            message: Localization.yabaiRequiredTitle,
-            detail: Localization.yabaiRequiredDetail,
-            primaryButtonTitle: Localization.buttonLearnMore,
-            icon: NSImage(named: "yabai")
-        )
-
-        if alert.runModal() {
-            if let url = URL(string: "https://github.com/asmvik/yabai/wiki/Installing-yabai-(latest-release)") {
-                NSWorkspace.shared.open(url)
-            }
-        }
-    }
-
     @objc func toggleUniqueIconsPerDisplay() {
         store.uniqueIconsPerDisplay.toggle()
         updateStatusBarIcon()
@@ -1027,6 +996,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         NSApp.activate(ignoringOtherApps: true)
         updaterController.checkForUpdates(nil)
     }
+
+    // MARK: - Apply Actions
 
     @objc func applyAllToAllSpaces() {
         guard appState.currentSpace > 0 else {
@@ -1070,6 +1041,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
         updateStatusBarIcon()
     }
+
+    // MARK: - Reset Actions
 
     @objc func resetSpaceToDefault() {
         guard appState.currentSpace > 0 else {
@@ -1127,6 +1100,54 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         updateStatusBarIcon()
     }
 
+    @objc func resetColorToDefault() {
+        let confirmed = alertFactory.makeAlert(
+            message: Localization.confirmResetColor,
+            detail: Localization.detailResetColor,
+            confirmTitle: Localization.buttonReset,
+            isDestructive: true
+        )
+        .runModal()
+
+        guard confirmed else {
+            return
+        }
+
+        SpacePreferences.clearColors(forSpace: appState.currentSpace, display: appState.currentDisplayID, store: store)
+        store.separatorColor = nil
+        updateStatusBarIcon()
+    }
+
+    @objc func resetStyleToDefault() {
+        guard appState.currentSpace > 0 else {
+            return
+        }
+
+        let confirmed = alertFactory.makeAlert(
+            message: Localization.confirmResetStyle,
+            detail: Localization.detailResetStyle,
+            confirmTitle: Localization.buttonReset,
+            isDestructive: true
+        )
+        .runModal()
+
+        guard confirmed else {
+            return
+        }
+
+        SpacePreferences.clearIconStyle(
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
+        SpacePreferences.clearSFSymbol(
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
+        updateStatusBarIcon()
+    }
+
     @objc func invertColors() {
         guard appState.currentSpace > 0 else {
             return
@@ -1172,24 +1193,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         updateStatusBarIcon()
     }
 
-    @objc func resetColorToDefault() {
-        let confirmed = alertFactory.makeAlert(
-            message: Localization.confirmResetColor,
-            detail: Localization.detailResetColor,
-            confirmTitle: Localization.buttonReset,
-            isDestructive: true
-        )
-        .runModal()
-
-        guard confirmed else {
-            return
-        }
-
-        SpacePreferences.clearColors(forSpace: appState.currentSpace, display: appState.currentDisplayID, store: store)
-        store.separatorColor = nil
-        updateStatusBarIcon()
-    }
-
     @objc func applyStyleToAllSpaces() {
         guard appState.currentSpace > 0 else {
             return
@@ -1218,36 +1221,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
                 SpacePreferences.clearSFSymbol(forSpace: space, display: display, store: store)
             }
         }
-        updateStatusBarIcon()
-    }
-
-    @objc func resetStyleToDefault() {
-        guard appState.currentSpace > 0 else {
-            return
-        }
-
-        let confirmed = alertFactory.makeAlert(
-            message: Localization.confirmResetStyle,
-            detail: Localization.detailResetStyle,
-            confirmTitle: Localization.buttonReset,
-            isDestructive: true
-        )
-        .runModal()
-
-        guard confirmed else {
-            return
-        }
-
-        SpacePreferences.clearIconStyle(
-            forSpace: appState.currentSpace,
-            display: appState.currentDisplayID,
-            store: store
-        )
-        SpacePreferences.clearSFSymbol(
-            forSpace: appState.currentSpace,
-            display: appState.currentDisplayID,
-            store: store
-        )
         updateStatusBarIcon()
     }
 
@@ -1460,12 +1433,47 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         updateStatusBarIcon()
     }
 
-    func updateStatusBarIcon() {
-        statusBarIconUpdateCount += 1
-        let icon = appState.statusBarIcon
-        statusBarItem.length = icon.size.width
-        statusBarItem.button?.image = icon
-        statusBarIconUpdateNotifier?.yield()
+    // MARK: - Alert Helpers
+
+    private func showAccessibilityPermissionAlert() {
+        let alert = NSAlert()
+        alert.messageText = "Permission Required"
+        // swiftformat:disable all
+        alert.informativeText = """
+        This feature requires Accessibility permission to simulate keyboard shortcuts.
+
+        After clicking Continue, macOS will prompt you for permission. Click "Open System Settings", then find \(appName) in the list and enable it.
+        """
+        // swiftformat:enable all
+        alert.alertStyle = .informational
+        alert.addButton(withTitle: "Continue")
+        alert.addButton(withTitle: "Cancel")
+
+        NSApp.activate(ignoringOtherApps: true)
+        let response = alert.runModal()
+
+        if response == .alertFirstButtonReturn {
+            // Request permission - this triggers the system prompt
+            let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
+            _ = AXIsProcessTrustedWithOptions(options)
+            // Enable the setting - it will check permission again when actually switching
+            store.clickToSwitchSpaces = true
+        }
+    }
+
+    private func showYabaiRequiredAlert() {
+        let alert = InfoAlert(
+            message: Localization.yabaiRequiredTitle,
+            detail: Localization.yabaiRequiredDetail,
+            primaryButtonTitle: Localization.buttonLearnMore,
+            icon: NSImage(named: "yabai")
+        )
+
+        if alert.runModal() {
+            if let url = URL(string: "https://github.com/asmvik/yabai/wiki/Installing-yabai-(latest-release)") {
+                NSWorkspace.shared.open(url)
+            }
+        }
     }
 }
 
