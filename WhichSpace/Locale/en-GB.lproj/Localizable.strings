@@ -8,7 +8,6 @@
 "action_reset_all_spaces_to_default" = "Reset all Space customisations to default...";
 "action_reset_color_to_default" = "Reset colour to default...";
 "action_reset_font_to_default" = "Reset font to default...";
-"action_reset_sound_to_default" = "Reset sound to default...";
 "action_reset_space_to_default" = "Reset current Space customisations to default...";
 "action_reset_style_to_default" = "Reset style to default...";
 "button_cancel" = "Cancel";
@@ -22,7 +21,6 @@
 "confirm_reset_all_spaces" = "Reset all Spaces?";
 "confirm_reset_color" = "Reset colour?";
 "confirm_reset_font" = "Reset font?";
-"confirm_reset_sound" = "Reset sound?";
 "confirm_reset_space" = "Reset this Space?";
 "confirm_reset_style" = "Reset style?";
 "detail_apply_color_to_all" = "This will update all other Spaces to match this Space's colour.";
@@ -31,7 +29,6 @@
 "detail_reset_all_spaces" = "This will remove all colour, style, font, size, symbol, and sound customisations for every Space on all displays.";
 "detail_reset_color" = "This will remove the custom colour for the current Space and the Display separator.";
 "detail_reset_font" = "This will remove the custom font for the current Space only.";
-"detail_reset_sound" = "This will disable the Space switch sound.";
 "detail_reset_space" = "This will remove the colour, style, symbol, and font customisations for the current Space only.";
 "detail_reset_style" = "This will remove the custom style for the current Space only.";
 "label_number" = "Number";
