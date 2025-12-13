@@ -43,7 +43,7 @@ enum KeySpecs {
     static let showAllDisplays = TypedKeySpec(name: "showAllDisplays", defaultValue: false)
     static let spaceColors = TypedKeySpec(name: "spaceColors", defaultValue: [Int: SpaceColors]())
     static let spaceIconStyles = TypedKeySpec(name: "spaceIconStyles", defaultValue: [Int: IconStyle]())
-    static let spaceSFSymbols = TypedKeySpec(name: "spaceSFSymbols", defaultValue: [Int: String]())
+    static let spaceSymbols = TypedKeySpec(name: "spaceSymbols", defaultValue: [Int: String]())
     static let sizeScale = TypedKeySpec(name: "sizeScale", defaultValue: Layout.defaultSizeScale)
 
     // Per-display settings (separate from shared settings for backwards compatibility)
@@ -56,8 +56,8 @@ enum KeySpecs {
         name: "displaySpaceIconStyles",
         defaultValue: [String: [Int: IconStyle]]()
     )
-    static let displaySpaceSFSymbols = TypedKeySpec(
-        name: "displaySpaceSFSymbols",
+    static let displaySpaceSymbols = TypedKeySpec(
+        name: "displaySpaceSymbols",
         defaultValue: [String: [Int: String]]()
     )
     static let separatorColor = TypedKeySpec(name: "separatorColor", defaultValue: Data?.none)
@@ -65,6 +65,11 @@ enum KeySpecs {
     static let displaySpaceFonts = TypedKeySpec(
         name: "displaySpaceFonts",
         defaultValue: [String: [Int: SpaceFont]]()
+    )
+    static let spaceSkinTones = TypedKeySpec(name: "spaceSkinTones", defaultValue: [Int: Int]())
+    static let displaySpaceSkinTones = TypedKeySpec(
+        name: "displaySpaceSkinTones",
+        defaultValue: [String: [Int: Int]]()
     )
 
     /// All key names for enumeration (e.g., in tests).
@@ -74,7 +79,8 @@ enum KeySpecs {
         displaySpaceColors.name,
         displaySpaceFonts.name,
         displaySpaceIconStyles.name,
-        displaySpaceSFSymbols.name,
+        displaySpaceSkinTones.name,
+        displaySpaceSymbols.name,
         hideEmptySpaces.name,
         hideFullscreenApps.name,
         separatorColor.name,
@@ -84,7 +90,8 @@ enum KeySpecs {
         spaceColors.name,
         spaceFonts.name,
         spaceIconStyles.name,
-        spaceSFSymbols.name,
+        spaceSkinTones.name,
+        spaceSymbols.name,
         uniqueIconsPerDisplay.name,
     ]
 }
@@ -125,14 +132,14 @@ final class DefaultsStore: @unchecked Sendable {
     private(set) lazy var keyShowAllSpaces = KeySpecs.showAllSpaces.key(suite: suite)
     private(set) lazy var keySpaceColors = KeySpecs.spaceColors.key(suite: suite)
     private(set) lazy var keySpaceIconStyles = KeySpecs.spaceIconStyles.key(suite: suite)
-    private(set) lazy var keySpaceSFSymbols = KeySpecs.spaceSFSymbols.key(suite: suite)
+    private(set) lazy var keySpaceSymbols = KeySpecs.spaceSymbols.key(suite: suite)
     private(set) lazy var keySizeScale = KeySpecs.sizeScale.key(suite: suite)
 
     // Per-display keys
     private(set) lazy var keyUniqueIconsPerDisplay = KeySpecs.uniqueIconsPerDisplay.key(suite: suite)
     private(set) lazy var keyDisplaySpaceColors = KeySpecs.displaySpaceColors.key(suite: suite)
     private(set) lazy var keyDisplaySpaceIconStyles = KeySpecs.displaySpaceIconStyles.key(suite: suite)
-    private(set) lazy var keyDisplaySpaceSFSymbols = KeySpecs.displaySpaceSFSymbols.key(suite: suite)
+    private(set) lazy var keyDisplaySpaceSymbols = KeySpecs.displaySpaceSymbols.key(suite: suite)
 
     /// Separator color
     private(set) lazy var keySeparatorColor = KeySpecs.separatorColor.key(suite: suite)
@@ -140,6 +147,10 @@ final class DefaultsStore: @unchecked Sendable {
     /// Font keys
     private(set) lazy var keySpaceFonts = KeySpecs.spaceFonts.key(suite: suite)
     private(set) lazy var keyDisplaySpaceFonts = KeySpecs.displaySpaceFonts.key(suite: suite)
+
+    /// Skin tone keys
+    private(set) lazy var keySpaceSkinTones = KeySpecs.spaceSkinTones.key(suite: suite)
+    private(set) lazy var keyDisplaySpaceSkinTones = KeySpecs.displaySpaceSkinTones.key(suite: suite)
 
     init(suite: UserDefaults) {
         self.suite = suite
@@ -187,9 +198,9 @@ final class DefaultsStore: @unchecked Sendable {
         set { Defaults[keySpaceIconStyles] = newValue }
     }
 
-    var spaceSFSymbols: [Int: String] {
-        get { Defaults[keySpaceSFSymbols] }
-        set { Defaults[keySpaceSFSymbols] = newValue }
+    var spaceSymbols: [Int: String] {
+        get { Defaults[keySpaceSymbols] }
+        set { Defaults[keySpaceSymbols] = newValue }
     }
 
     var sizeScale: Double {
@@ -213,9 +224,9 @@ final class DefaultsStore: @unchecked Sendable {
         set { Defaults[keyDisplaySpaceIconStyles] = newValue }
     }
 
-    var displaySpaceSFSymbols: [String: [Int: String]] {
-        get { Defaults[keyDisplaySpaceSFSymbols] }
-        set { Defaults[keyDisplaySpaceSFSymbols] = newValue }
+    var displaySpaceSymbols: [String: [Int: String]] {
+        get { Defaults[keyDisplaySpaceSymbols] }
+        set { Defaults[keyDisplaySpaceSymbols] = newValue }
     }
 
     var spaceFonts: [Int: SpaceFont] {
@@ -226,6 +237,16 @@ final class DefaultsStore: @unchecked Sendable {
     var displaySpaceFonts: [String: [Int: SpaceFont]] {
         get { Defaults[keyDisplaySpaceFonts] }
         set { Defaults[keyDisplaySpaceFonts] = newValue }
+    }
+
+    var spaceSkinTones: [Int: Int] {
+        get { Defaults[keySpaceSkinTones] }
+        set { Defaults[keySpaceSkinTones] = newValue }
+    }
+
+    var displaySpaceSkinTones: [String: [Int: Int]] {
+        get { Defaults[keyDisplaySpaceSkinTones] }
+        set { Defaults[keyDisplaySpaceSkinTones] = newValue }
     }
 
     var separatorColor: NSColor? {
@@ -257,7 +278,8 @@ final class DefaultsStore: @unchecked Sendable {
             keyDisplaySpaceColors,
             keyDisplaySpaceFonts,
             keyDisplaySpaceIconStyles,
-            keyDisplaySpaceSFSymbols,
+            keyDisplaySpaceSkinTones,
+            keyDisplaySpaceSymbols,
             keyHideEmptySpaces,
             keyHideFullscreenApps,
             keySeparatorColor,
@@ -267,7 +289,8 @@ final class DefaultsStore: @unchecked Sendable {
             keySpaceColors,
             keySpaceFonts,
             keySpaceIconStyles,
-            keySpaceSFSymbols,
+            keySpaceSkinTones,
+            keySpaceSymbols,
             keyUniqueIconsPerDisplay
         )
     }

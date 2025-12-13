@@ -400,7 +400,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
 
         if event.type == .rightMouseUp {
-            statusBarItem.popUpMenu(statusMenu)
+            guard let button = statusBarItem.button else {
+                return
+            }
+            let position = NSPoint(x: 0, y: button.bounds.height + 5)
+            statusMenu.popUp(positioning: nil, at: position, in: button)
         } else if event.type == .leftMouseUp {
             handleLeftClick(event, button: button)
         }
@@ -473,6 +477,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     private func configureColorMenuItem() {
         let colorsMenu = createColorMenu()
         let colorsMenuItem = NSMenuItem(title: Localization.menuColor, action: nil, keyEquivalent: "")
+        colorsMenuItem.tag = MenuTag.colorMenuItem.rawValue
         colorsMenuItem.image = NSImage(systemSymbolName: "paintpalette", accessibilityDescription: nil)
         colorsMenuItem.submenu = colorsMenu
         statusMenu.addItem(colorsMenuItem)
@@ -490,11 +495,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         styleMenu.addItem(iconMenuItem)
 
         // Symbol submenu
-        let symbolMenu = createSymbolMenu()
+        let symbolMenu = createItemMenu(type: .symbols)
         let symbolMenuItem = NSMenuItem(title: Localization.menuSymbol, action: nil, keyEquivalent: "")
         symbolMenuItem.image = NSImage(systemSymbolName: "burst.fill", accessibilityDescription: nil)
         symbolMenuItem.submenu = symbolMenu
         styleMenu.addItem(symbolMenuItem)
+
+        // Emoji submenu
+        let emojiMenu = createItemMenu(type: .emojis)
+        let emojiMenuItem = NSMenuItem(title: Localization.menuEmoji, action: nil, keyEquivalent: "")
+        emojiMenuItem.image = NSImage(systemSymbolName: "face.smiling", accessibilityDescription: nil)
+        emojiMenuItem.submenu = emojiMenu
+        styleMenu.addItem(emojiMenuItem)
 
         styleMenu.addItem(.separator())
 
@@ -530,7 +542,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
         // Size scale row (percentage)
         let sizeItem = NSMenuItem()
-        sizeItem.tag = MenuTag.sizeRow
+        sizeItem.tag = MenuTag.sizeRow.rawValue
         let sizeSlider = SizeSlider(
             initialSize: store.sizeScale,
             range: Layout.sizeScaleRange
@@ -560,7 +572,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             keyEquivalent: ""
         )
         uniqueIconsPerDisplayItem.target = self
-        uniqueIconsPerDisplayItem.tag = MenuTag.uniqueIconsPerDisplay
+        uniqueIconsPerDisplayItem.tag = MenuTag.uniqueIconsPerDisplay.rawValue
         uniqueIconsPerDisplayItem.image = NSImage(
             systemSymbolName: "theatermasks",
             accessibilityDescription: nil
@@ -574,7 +586,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             keyEquivalent: ""
         )
         dimInactiveSpacesItem.target = self
-        dimInactiveSpacesItem.tag = MenuTag.dimInactiveSpaces
+        dimInactiveSpacesItem.tag = MenuTag.dimInactiveSpaces.rawValue
         dimInactiveSpacesItem.image = NSImage(
             systemSymbolName: "aqi.low",
             accessibilityDescription: nil
@@ -590,7 +602,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             keyEquivalent: ""
         )
         showAllDisplaysItem.target = self
-        showAllDisplaysItem.tag = MenuTag.showAllDisplays
+        showAllDisplaysItem.tag = MenuTag.showAllDisplays.rawValue
         showAllDisplaysItem.image = NSImage(
             systemSymbolName: "display.2",
             accessibilityDescription: nil
@@ -604,7 +616,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             keyEquivalent: ""
         )
         showAllSpacesItem.target = self
-        showAllSpacesItem.tag = MenuTag.showAllSpaces
+        showAllSpacesItem.tag = MenuTag.showAllSpaces.rawValue
         showAllSpacesItem.image = NSImage(
             systemSymbolName: "square.grid.3x1.below.line.grid.1x2",
             accessibilityDescription: nil
@@ -618,9 +630,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             keyEquivalent: ""
         )
         clickToSwitchItem.target = self
-        clickToSwitchItem.tag = MenuTag.clickToSwitchSpaces
+        clickToSwitchItem.tag = MenuTag.clickToSwitchSpaces.rawValue
         clickToSwitchItem.image = NSImage(
-            systemSymbolName: "cursorarrow.click",
+            systemSymbolName: "hand.tap.fill",
             accessibilityDescription: nil
         )
         clickToSwitchItem.toolTip = Localization.tipClickToSwitchSpaces
@@ -634,7 +646,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             keyEquivalent: ""
         )
         hideEmptySpacesItem.target = self
-        hideEmptySpacesItem.tag = MenuTag.hideEmptySpaces
+        hideEmptySpacesItem.tag = MenuTag.hideEmptySpaces.rawValue
         hideEmptySpacesItem.image = NSImage(
             systemSymbolName: "eye.slash",
             accessibilityDescription: nil
@@ -648,7 +660,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             keyEquivalent: ""
         )
         hideFullscreenAppsItem.target = self
-        hideFullscreenAppsItem.tag = MenuTag.hideFullscreenApps
+        hideFullscreenAppsItem.tag = MenuTag.hideFullscreenApps.rawValue
         hideFullscreenAppsItem.image = NSImage(
             systemSymbolName: "eye.slash.fill",
             accessibilityDescription: nil
@@ -659,7 +671,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
         let applyToAllItem = NSMenuItem(
             title: Localization.actionApplyToAll,
-            action: #selector(applyAllToAllSpaces),
+            action: #selector(applyToAllSpaces),
             keyEquivalent: ""
         )
         applyToAllItem.target = self
@@ -696,7 +708,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             keyEquivalent: ""
         )
         launchAtLoginItem.target = self
-        launchAtLoginItem.tag = MenuTag.launchAtLogin
+        launchAtLoginItem.tag = MenuTag.launchAtLogin.rawValue
         launchAtLoginItem.image = NSImage(systemSymbolName: "sunrise", accessibilityDescription: nil)
         launchAtLoginItem.toolTip = String(format: Localization.tipLaunchAtLogin, appName)
         statusMenu.addItem(launchAtLoginItem)
@@ -730,16 +742,45 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         let colorsMenu = NSMenu(title: Localization.menuColor)
         colorsMenu.delegate = self
 
+        // Skin tone label (shown only when emoji active)
+        let skinToneLabelItem = NSMenuItem(title: Localization.labelSkinTone, action: nil, keyEquivalent: "")
+        skinToneLabelItem.isEnabled = false
+        skinToneLabelItem.tag = MenuTag.skinToneLabel.rawValue
+        skinToneLabelItem.isHidden = true
+        colorsMenu.addItem(skinToneLabelItem)
+
+        // Skin tone swatch (shown only when emoji active)
+        let skinToneSwatchItem = NSMenuItem()
+        skinToneSwatchItem.tag = MenuTag.skinToneSwatch.rawValue
+        skinToneSwatchItem.isHidden = true
+        let skinToneSwatch = SkinToneSwatch()
+        skinToneSwatch.frame = NSRect(origin: .zero, size: skinToneSwatch.intrinsicContentSize)
+        skinToneSwatch.onToneSelected = { [weak self] tone in
+            guard let self, appState.currentSpace > 0 else {
+                return
+            }
+            SpacePreferences.setSkinTone(
+                tone,
+                forSpace: appState.currentSpace,
+                display: appState.currentDisplayID,
+                store: store
+            )
+            updateStatusBarIcon()
+            skinToneSwatch.currentTone = tone
+        }
+        skinToneSwatchItem.view = skinToneSwatch
+        colorsMenu.addItem(skinToneSwatchItem)
+
         // Symbol label (shown only when symbol active)
         let symbolLabelItem = NSMenuItem(title: Localization.labelSymbol, action: nil, keyEquivalent: "")
         symbolLabelItem.isEnabled = false
-        symbolLabelItem.tag = MenuTag.symbolLabel
+        symbolLabelItem.tag = MenuTag.symbolLabel.rawValue
         symbolLabelItem.isHidden = true
         colorsMenu.addItem(symbolLabelItem)
 
         // Symbol color swatch (shown only when symbol active)
         let symbolSwatchItem = NSMenuItem()
-        symbolSwatchItem.tag = MenuTag.symbolColorSwatch
+        symbolSwatchItem.tag = MenuTag.symbolColorSwatch.rawValue
         symbolSwatchItem.isHidden = true
         let symbolSwatch = ColorSwatch()
         symbolSwatch.frame = NSRect(origin: .zero, size: symbolSwatch.intrinsicContentSize)
@@ -756,12 +797,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         // Foreground label (hidden when symbol active)
         let foregroundLabel = NSMenuItem(title: Localization.labelNumberForeground, action: nil, keyEquivalent: "")
         foregroundLabel.isEnabled = false
-        foregroundLabel.tag = MenuTag.foregroundLabel
+        foregroundLabel.tag = MenuTag.foregroundLabel.rawValue
         colorsMenu.addItem(foregroundLabel)
 
         // Foreground color swatches (hidden when symbol active)
         let foregroundSwatchItem = NSMenuItem()
-        foregroundSwatchItem.tag = MenuTag.foregroundSwatch
+        foregroundSwatchItem.tag = MenuTag.foregroundSwatch.rawValue
         let foregroundSwatch = ColorSwatch()
         foregroundSwatch.frame = NSRect(origin: .zero, size: foregroundSwatch.intrinsicContentSize)
         foregroundSwatch.onColorSelected = { [weak self] color in
@@ -776,18 +817,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
         // Separator (hidden when symbol active)
         let separator = NSMenuItem.separator()
-        separator.tag = MenuTag.colorSeparator
+        separator.tag = MenuTag.colorSeparator.rawValue
         colorsMenu.addItem(separator)
 
         // Background label (hidden when symbol active)
         let backgroundLabel = NSMenuItem(title: Localization.labelNumberBackground, action: nil, keyEquivalent: "")
         backgroundLabel.isEnabled = false
-        backgroundLabel.tag = MenuTag.backgroundLabel
+        backgroundLabel.tag = MenuTag.backgroundLabel.rawValue
         colorsMenu.addItem(backgroundLabel)
 
         // Background color swatches (hidden when symbol active)
         let backgroundSwatchItem = NSMenuItem()
-        backgroundSwatchItem.tag = MenuTag.backgroundSwatch
+        backgroundSwatchItem.tag = MenuTag.backgroundSwatch.rawValue
         let backgroundSwatch = ColorSwatch()
         backgroundSwatch.frame = NSRect(origin: .zero, size: backgroundSwatch.intrinsicContentSize)
         backgroundSwatch.onColorSelected = { [weak self] color in
@@ -802,18 +843,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
         // Separator color section (shown only when Show all Displays is enabled)
         let separatorColorDivider = NSMenuItem.separator()
-        separatorColorDivider.tag = MenuTag.separatorColorDivider
+        separatorColorDivider.tag = MenuTag.separatorColorDivider.rawValue
         separatorColorDivider.isHidden = true
         colorsMenu.addItem(separatorColorDivider)
 
         let separatorLabelItem = NSMenuItem(title: Localization.labelSeparator, action: nil, keyEquivalent: "")
         separatorLabelItem.isEnabled = false
-        separatorLabelItem.tag = MenuTag.separatorLabel
+        separatorLabelItem.tag = MenuTag.separatorLabel.rawValue
         separatorLabelItem.isHidden = true
         colorsMenu.addItem(separatorLabelItem)
 
         let separatorSwatchItem = NSMenuItem()
-        separatorSwatchItem.tag = MenuTag.separatorSwatch
+        separatorSwatchItem.tag = MenuTag.separatorSwatch.rawValue
         separatorSwatchItem.isHidden = true
         let separatorSwatch = ColorSwatch()
         separatorSwatch.frame = NSRect(origin: .zero, size: separatorSwatch.intrinsicContentSize)
@@ -834,6 +875,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             action: #selector(invertColors),
             keyEquivalent: ""
         )
+        invertColorsItem.tag = MenuTag.invertColors.rawValue
         invertColorsItem.target = self
         invertColorsItem.image = NSImage(systemSymbolName: "arrow.left.arrow.right", accessibilityDescription: nil)
         invertColorsItem.toolTip = Localization.tipInvertColors
@@ -910,22 +952,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         return iconMenu
     }
 
-    private func createSymbolMenu() -> NSMenu {
-        let symbolMenu = NSMenu(title: Localization.menuSymbol)
-        symbolMenu.delegate = self
+    private func createItemMenu(type: ItemPicker.ItemType) -> NSMenu {
+        let title = type == .symbols ? Localization.menuSymbol : Localization.menuEmoji
+        let menu = NSMenu(title: title)
+        menu.delegate = self
 
-        let symbolPickerItem = NSMenuItem()
-        let symbolPicker = SymbolPicker()
-        symbolPicker.frame = NSRect(origin: .zero, size: symbolPicker.intrinsicContentSize)
-        symbolPicker.selectedSymbol = appState.currentSymbol
-        symbolPicker.darkMode = appState.darkModeEnabled
-        symbolPicker.onSymbolSelected = { [weak self] symbol in
-            self?.setSymbol(symbol)
+        let pickerItem = NSMenuItem()
+        let picker = ItemPicker(type: type)
+        picker.frame = NSRect(origin: .zero, size: picker.intrinsicContentSize)
+        picker.selectedItem = appState.currentSymbol
+        picker.darkMode = appState.darkModeEnabled
+        picker.onItemSelected = { [weak self] item in
+            self?.setSymbol(item)
         }
-        symbolPickerItem.view = symbolPicker
-        symbolMenu.addItem(symbolPickerItem)
+        pickerItem.view = picker
+        menu.addItem(pickerItem)
 
-        return symbolMenu
+        return menu
     }
 
     // MARK: - Status Bar
@@ -999,7 +1042,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
     // MARK: - Apply Actions
 
-    @objc func applyAllToAllSpaces() {
+    @objc func applyToAllSpaces() {
         guard appState.currentSpace > 0 else {
             return
         }
@@ -1020,13 +1063,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         let colors = appState.currentColors
         let symbol = appState.currentSymbol
         let font = appState.currentFont
+        let skinTone = SpacePreferences.skinTone(
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
         let display = appState.currentDisplayID
         for space in appState.getAllSpaceIndices() {
             SpacePreferences.setIconStyle(style, forSpace: space, display: display, store: store)
             if let symbol {
-                SpacePreferences.setSFSymbol(symbol, forSpace: space, display: display, store: store)
+                SpacePreferences.setSymbol(symbol, forSpace: space, display: display, store: store)
             } else {
-                SpacePreferences.clearSFSymbol(forSpace: space, display: display, store: store)
+                SpacePreferences.clearSymbol(forSpace: space, display: display, store: store)
             }
             if let colors {
                 SpacePreferences.setColors(colors, forSpace: space, display: display, store: store)
@@ -1037,6 +1085,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
                 SpacePreferences.setFont(SpaceFont(font: font), forSpace: space, display: display, store: store)
             } else {
                 SpacePreferences.clearFont(forSpace: space, display: display, store: store)
+            }
+            if let skinTone {
+                SpacePreferences.setSkinTone(skinTone, forSpace: space, display: display, store: store)
+            } else {
+                SpacePreferences.clearSkinTone(forSpace: space, display: display, store: store)
             }
         }
         updateStatusBarIcon()
@@ -1072,7 +1125,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             display: appState.currentDisplayID,
             store: store
         )
-        SpacePreferences.clearSFSymbol(
+        SpacePreferences.clearSymbol(
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
+        SpacePreferences.clearSkinTone(
             forSpace: appState.currentSpace,
             display: appState.currentDisplayID,
             store: store
@@ -1114,6 +1172,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
 
         SpacePreferences.clearColors(forSpace: appState.currentSpace, display: appState.currentDisplayID, store: store)
+        SpacePreferences.clearSkinTone(
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
         store.separatorColor = nil
         updateStatusBarIcon()
     }
@@ -1140,7 +1203,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             display: appState.currentDisplayID,
             store: store
         )
-        SpacePreferences.clearSFSymbol(
+        SpacePreferences.clearSymbol(
             forSpace: appState.currentSpace,
             display: appState.currentDisplayID,
             store: store
@@ -1182,12 +1245,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
 
         let colors = appState.currentColors
+        let skinTone = SpacePreferences.skinTone(
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
         let display = appState.currentDisplayID
         for space in appState.getAllSpaceIndices() {
             if let colors {
                 SpacePreferences.setColors(colors, forSpace: space, display: display, store: store)
             } else {
                 SpacePreferences.clearColors(forSpace: space, display: display, store: store)
+            }
+            if let skinTone {
+                SpacePreferences.setSkinTone(skinTone, forSpace: space, display: display, store: store)
+            } else {
+                SpacePreferences.clearSkinTone(forSpace: space, display: display, store: store)
             }
         }
         updateStatusBarIcon()
@@ -1216,9 +1289,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         for space in appState.getAllSpaceIndices() {
             SpacePreferences.setIconStyle(style, forSpace: space, display: display, store: store)
             if let symbol {
-                SpacePreferences.setSFSymbol(symbol, forSpace: space, display: display, store: store)
+                SpacePreferences.setSymbol(symbol, forSpace: space, display: display, store: store)
             } else {
-                SpacePreferences.clearSFSymbol(forSpace: space, display: display, store: store)
+                SpacePreferences.clearSymbol(forSpace: space, display: display, store: store)
             }
         }
         updateStatusBarIcon()
@@ -1319,7 +1392,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
 
         // Clear SF Symbol to switch to number mode
-        SpacePreferences.clearSFSymbol(
+        SpacePreferences.clearSymbol(
             forSpace: appState.currentSpace,
             display: appState.currentDisplayID,
             store: store
@@ -1347,12 +1420,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         guard appState.currentSpace > 0 else {
             return
         }
-        SpacePreferences.setSFSymbol(
+        SpacePreferences.setSymbol(
             symbol,
             forSpace: appState.currentSpace,
             display: appState.currentDisplayID,
             store: store
         )
+        // When setting an emoji, also set the per-space skin tone to match the current global picker tone
+        if let symbol, symbol.containsEmoji {
+            SpacePreferences.setSkinTone(
+                Defaults[.emojiPickerSkinTone],
+                forSpace: appState.currentSpace,
+                display: appState.currentDisplayID,
+                store: store
+            )
+        }
         updateStatusBarIcon()
     }
 
@@ -1488,22 +1570,22 @@ extension AppDelegate: NSMenuDelegate {
         let symbolIsActive = currentSymbol != nil
 
         // Update Launch at Login checkmark
-        if let launchAtLoginItem = menu.item(withTag: MenuTag.launchAtLogin) {
+        if let launchAtLoginItem = menu.item(withTag: MenuTag.launchAtLogin.rawValue) {
             launchAtLoginItem.state = launchAtLogin.isEnabled ? .on : .off
         }
 
         // Update Unique Icons Per Display checkmark
-        if let uniqueIconsItem = menu.item(withTag: MenuTag.uniqueIconsPerDisplay) {
+        if let uniqueIconsItem = menu.item(withTag: MenuTag.uniqueIconsPerDisplay.rawValue) {
             uniqueIconsItem.state = store.uniqueIconsPerDisplay ? .on : .off
         }
 
         // Update Show All Spaces checkmark
-        if let showAllSpacesItem = menu.item(withTag: MenuTag.showAllSpaces) {
+        if let showAllSpacesItem = menu.item(withTag: MenuTag.showAllSpaces.rawValue) {
             showAllSpacesItem.state = store.showAllSpaces ? .on : .off
         }
 
         // Update Show All Displays checkmark
-        if let showAllDisplaysItem = menu.item(withTag: MenuTag.showAllDisplays) {
+        if let showAllDisplaysItem = menu.item(withTag: MenuTag.showAllDisplays.rawValue) {
             showAllDisplaysItem.state = store.showAllDisplays ? .on : .off
         }
 
@@ -1511,28 +1593,32 @@ extension AppDelegate: NSMenuDelegate {
         let showMultiSpaceOptions = store.showAllSpaces || store.showAllDisplays
 
         // Update Click to Switch Spaces checkmark and visibility (only shown when multi-space is enabled)
-        if let clickToSwitchItem = menu.item(withTag: MenuTag.clickToSwitchSpaces) {
+        if let clickToSwitchItem = menu.item(withTag: MenuTag.clickToSwitchSpaces.rawValue) {
             clickToSwitchItem.state = store.clickToSwitchSpaces ? .on : .off
             clickToSwitchItem.isHidden = !showMultiSpaceOptions
         }
 
         // Update Dim inactive Spaces checkmark and visibility
-        if let dimInactiveItem = menu.item(withTag: MenuTag.dimInactiveSpaces) {
+        if let dimInactiveItem = menu.item(withTag: MenuTag.dimInactiveSpaces.rawValue) {
             dimInactiveItem.state = store.dimInactiveSpaces ? .on : .off
             dimInactiveItem.isHidden = !showMultiSpaceOptions
         }
 
         // Update Hide empty Spaces checkmark and visibility
-        if let hideEmptyItem = menu.item(withTag: MenuTag.hideEmptySpaces) {
+        if let hideEmptyItem = menu.item(withTag: MenuTag.hideEmptySpaces.rawValue) {
             hideEmptyItem.state = store.hideEmptySpaces ? .on : .off
             hideEmptyItem.isHidden = !showMultiSpaceOptions
         }
 
         // Update Hide full-screen applications checkmark and visibility
-        if let hideFullscreenItem = menu.item(withTag: MenuTag.hideFullscreenApps) {
+        if let hideFullscreenItem = menu.item(withTag: MenuTag.hideFullscreenApps.rawValue) {
             hideFullscreenItem.state = store.hideFullscreenApps ? .on : .off
             hideFullscreenItem.isHidden = !showMultiSpaceOptions
         }
+
+        // Determine if current symbol is an emoji vs SF Symbol
+        let currentSymbolIsEmoji = currentSymbol?.containsEmoji ?? false
+        let currentSymbolIsSFSymbol = symbolIsActive && !currentSymbolIsEmoji
 
         for item in menu.items {
             // Update icon style views - only show checkmark when not in symbol mode
@@ -1551,39 +1637,63 @@ extension AppDelegate: NSMenuDelegate {
                 view.needsDisplay = true
             }
 
-            // Show symbol label and color swatch only when symbol is active
-            if item.tag == MenuTag.symbolLabel || item.tag == MenuTag.symbolColorSwatch {
-                item.isHidden = !symbolIsActive
+            // Show skin tone items only when emoji is active
+            if item.tag == MenuTag.skinToneLabel.rawValue || item.tag == MenuTag.skinToneSwatch.rawValue {
+                item.isHidden = !currentSymbolIsEmoji
+            }
+
+            // Update skin tone swatch to reflect current space's skin tone (with global fallback)
+            if item.tag == MenuTag.skinToneSwatch.rawValue, let swatch = item.view as? SkinToneSwatch {
+                let spaceTone = SpacePreferences.skinTone(
+                    forSpace: appState.currentSpace,
+                    display: appState.currentDisplayID,
+                    store: store
+                )
+                swatch.currentTone = spaceTone ?? 0
+            }
+
+            // Show symbol label and color swatch only when SF Symbol is active (not emoji)
+            if item.tag == MenuTag.symbolLabel.rawValue || item.tag == MenuTag.symbolColorSwatch.rawValue {
+                item.isHidden = !currentSymbolIsSFSymbol
             }
 
             // Show separator divider, label, and swatch only when Show all Displays is enabled
             // AND there are multiple displays (separator only appears between displays)
-            if item.tag == MenuTag.separatorColorDivider || item.tag == MenuTag.separatorLabel
-                || item.tag == MenuTag.separatorSwatch
+            if item.tag == MenuTag.separatorColorDivider.rawValue || item.tag == MenuTag.separatorLabel.rawValue
+                || item.tag == MenuTag.separatorSwatch.rawValue
             {
                 let hasMultipleDisplays = appState.allDisplaysSpaceInfo.count > 1
                 item.isHidden = !store.showAllDisplays || !hasMultipleDisplays
             }
 
-            // Hide foreground/background labels and swatches when symbol is active
+            // Hide foreground/background labels and swatches when any symbol is active (SF Symbol or emoji)
             // Also hide background items when style is transparent (no background to color)
-            let foregroundTags = [MenuTag.foregroundLabel, MenuTag.foregroundSwatch]
-            let backgroundTags = [MenuTag.colorSeparator, MenuTag.backgroundLabel, MenuTag.backgroundSwatch]
+            let foregroundTags = [MenuTag.foregroundLabel.rawValue, MenuTag.foregroundSwatch.rawValue]
+            let backgroundTags = [
+                MenuTag.colorSeparator.rawValue,
+                MenuTag.backgroundLabel.rawValue,
+                MenuTag.backgroundSwatch.rawValue,
+            ]
             if foregroundTags.contains(item.tag) {
                 item.isHidden = symbolIsActive
             }
             if backgroundTags.contains(item.tag) {
                 item.isHidden = symbolIsActive || currentStyle == .transparent
             }
+
+            // Hide "Invert color" when any symbol is active (no fg/bg to swap)
+            if item.tag == MenuTag.invertColors.rawValue {
+                item.isHidden = symbolIsActive
+            }
             // Update foreground label text: "Number" for transparent, "Number (Foreground)" otherwise
-            if item.tag == MenuTag.foregroundLabel {
+            if item.tag == MenuTag.foregroundLabel.rawValue {
                 item.title = currentStyle == .transparent
                     ? Localization.labelNumber
                     : Localization.labelNumberForeground
             }
 
             // Update size row view (tag 310)
-            if item.tag == MenuTag.sizeRow, let view = item.view as? SizeSlider {
+            if item.tag == MenuTag.sizeRow.rawValue, let view = item.view as? SizeSlider {
                 view.currentSize = store.sizeScale
             }
         }

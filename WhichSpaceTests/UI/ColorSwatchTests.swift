@@ -206,13 +206,14 @@ final class ColorSwatchTests: XCTestCase {
         let size = sut.intrinsicContentSize
         let colorCount = Double(ColorSwatch.presetColors.count + 1) // +1 for custom button
 
-        // Layout constants matching ColorSwatch
+        // Layout constants matching Swatch base class
         let swatchSize = 16.0
         let spacing = 6.0
-        let padding = 12.0
+        let leftPadding = 16.0
+        let rightPadding = 12.0
 
-        let expectedWidth = padding * 2 + colorCount * swatchSize + (colorCount - 1) * spacing
-        let expectedHeight: Double = swatchSize + padding
+        let expectedWidth = leftPadding + rightPadding + colorCount * swatchSize + (colorCount - 1) * spacing
+        let expectedHeight: Double = swatchSize + rightPadding
 
         XCTAssertEqual(size.width, expectedWidth, accuracy: 0.1, "Width should match expected calculation")
         XCTAssertEqual(size.height, expectedHeight, accuracy: 0.1, "Height should match expected calculation")
@@ -221,25 +222,19 @@ final class ColorSwatchTests: XCTestCase {
     // MARK: - Helpers
 
     /// Layout constants derived from view's intrinsic size for tolerance-based calculations
-    private var layoutInfo: (swatchSize: Double, spacing: Double, padding: Double) {
-        // Derive layout from intrinsic content size and known color count
-        let totalItems = Double(ColorSwatch.presetColors.count + 1)
-        let width = sut.intrinsicContentSize.width
-
-        // Known: width = padding * 2 + count * swatchSize + (count - 1) * spacing
-        // Known: height = swatchSize + padding, so swatchSize = height - padding
-        // We use standard values that match ColorSwatch implementation
+    private var layoutInfo: (swatchSize: Double, spacing: Double, leftPadding: Double) {
+        // We use standard values that match Swatch base class
         let swatchSize = 16.0
         let spacing = 6.0
-        let padding = (width - totalItems * swatchSize - (totalItems - 1) * spacing) / 2
+        let leftPadding = 16.0
 
-        return (swatchSize, spacing, padding)
+        return (swatchSize, spacing, leftPadding)
     }
 
     /// Returns the frame for the swatch at the given index
     private func frameForSwatch(at index: Int) -> CGRect {
         let layout = layoutInfo
-        let xOffset = layout.padding + Double(index) * (layout.swatchSize + layout.spacing)
+        let xOffset = layout.leftPadding + Double(index) * (layout.swatchSize + layout.spacing)
         let yOffset = (sut.bounds.height - layout.swatchSize) / 2
         return CGRect(x: xOffset, y: yOffset, width: layout.swatchSize, height: layout.swatchSize)
     }

@@ -84,42 +84,42 @@ final class SpacePreferencesTests: IsolatedDefaultsTestCase {
         }
     }
 
-    // MARK: - SF Symbol Tests
+    // MARK: - Symbol Tests
 
-    func testSFSymbolGetReturnsNilWhenNotSet() {
-        XCTAssertNil(SpacePreferences.sfSymbol(forSpace: 1, store: store))
-        XCTAssertNil(SpacePreferences.sfSymbol(forSpace: 5, store: store))
+    func testSymbolGetReturnsNilWhenNotSet() {
+        XCTAssertNil(SpacePreferences.symbol(forSpace: 1, store: store))
+        XCTAssertNil(SpacePreferences.symbol(forSpace: 5, store: store))
     }
 
-    func testSFSymbolSetAndGet() {
-        SpacePreferences.setSFSymbol("star.fill", forSpace: 1, store: store)
-        XCTAssertEqual(SpacePreferences.sfSymbol(forSpace: 1, store: store), "star.fill")
+    func testSymbolSetAndGet() {
+        SpacePreferences.setSymbol("star.fill", forSpace: 1, store: store)
+        XCTAssertEqual(SpacePreferences.symbol(forSpace: 1, store: store), "star.fill")
     }
 
-    func testSFSymbolSetNilRemoves() {
-        SpacePreferences.setSFSymbol("heart.fill", forSpace: 2, store: store)
-        XCTAssertEqual(SpacePreferences.sfSymbol(forSpace: 2, store: store), "heart.fill")
+    func testSymbolSetNilRemoves() {
+        SpacePreferences.setSymbol("heart.fill", forSpace: 2, store: store)
+        XCTAssertEqual(SpacePreferences.symbol(forSpace: 2, store: store), "heart.fill")
 
-        SpacePreferences.setSFSymbol(nil, forSpace: 2, store: store)
-        XCTAssertNil(SpacePreferences.sfSymbol(forSpace: 2, store: store))
+        SpacePreferences.setSymbol(nil, forSpace: 2, store: store)
+        XCTAssertNil(SpacePreferences.symbol(forSpace: 2, store: store))
     }
 
-    func testSFSymbolClear() {
-        SpacePreferences.setSFSymbol("moon.fill", forSpace: 3, store: store)
-        XCTAssertEqual(SpacePreferences.sfSymbol(forSpace: 3, store: store), "moon.fill")
+    func testSymbolClear() {
+        SpacePreferences.setSymbol("moon.fill", forSpace: 3, store: store)
+        XCTAssertEqual(SpacePreferences.symbol(forSpace: 3, store: store), "moon.fill")
 
-        SpacePreferences.clearSFSymbol(forSpace: 3, store: store)
-        XCTAssertNil(SpacePreferences.sfSymbol(forSpace: 3, store: store))
+        SpacePreferences.clearSymbol(forSpace: 3, store: store)
+        XCTAssertNil(SpacePreferences.symbol(forSpace: 3, store: store))
     }
 
-    func testSFSymbolMultipleSpaces() {
-        SpacePreferences.setSFSymbol("1.circle", forSpace: 1, store: store)
-        SpacePreferences.setSFSymbol("2.circle", forSpace: 2, store: store)
-        SpacePreferences.setSFSymbol("3.circle", forSpace: 3, store: store)
+    func testSymbolMultipleSpaces() {
+        SpacePreferences.setSymbol("1.circle", forSpace: 1, store: store)
+        SpacePreferences.setSymbol("2.circle", forSpace: 2, store: store)
+        SpacePreferences.setSymbol("3.circle", forSpace: 3, store: store)
 
-        XCTAssertEqual(SpacePreferences.sfSymbol(forSpace: 1, store: store), "1.circle")
-        XCTAssertEqual(SpacePreferences.sfSymbol(forSpace: 2, store: store), "2.circle")
-        XCTAssertEqual(SpacePreferences.sfSymbol(forSpace: 3, store: store), "3.circle")
+        XCTAssertEqual(SpacePreferences.symbol(forSpace: 1, store: store), "1.circle")
+        XCTAssertEqual(SpacePreferences.symbol(forSpace: 2, store: store), "2.circle")
+        XCTAssertEqual(SpacePreferences.symbol(forSpace: 3, store: store), "3.circle")
     }
 
     // MARK: - Cross-Preference Tests
@@ -128,14 +128,14 @@ final class SpacePreferencesTests: IsolatedDefaultsTestCase {
         let colors = SpaceColors(foreground: .red, background: .blue)
         SpacePreferences.setColors(colors, forSpace: 1, store: store)
         SpacePreferences.setIconStyle(.circle, forSpace: 1, store: store)
-        SpacePreferences.setSFSymbol("star", forSpace: 1, store: store)
+        SpacePreferences.setSymbol("star", forSpace: 1, store: store)
 
         // Clear one, others should remain
         SpacePreferences.clearColors(forSpace: 1, store: store)
 
         XCTAssertNil(SpacePreferences.colors(forSpace: 1, store: store))
         XCTAssertEqual(SpacePreferences.iconStyle(forSpace: 1, store: store), .circle)
-        XCTAssertEqual(SpacePreferences.sfSymbol(forSpace: 1, store: store), "star")
+        XCTAssertEqual(SpacePreferences.symbol(forSpace: 1, store: store), "star")
     }
 
     // MARK: - Per-Display Tests
@@ -152,17 +152,17 @@ final class SpacePreferencesTests: IsolatedDefaultsTestCase {
             store: store
         )
         SpacePreferences.setIconStyle(.circle, forSpace: 1, display: "Display1", store: store)
-        SpacePreferences.setSFSymbol("star", forSpace: 1, display: "Display1", store: store)
+        SpacePreferences.setSymbol("star", forSpace: 1, display: "Display1", store: store)
 
         // Should be stored in shared storage, accessible without display ID
         XCTAssertNotNil(SpacePreferences.colors(forSpace: 1, store: store))
         XCTAssertEqual(SpacePreferences.iconStyle(forSpace: 1, store: store), .circle)
-        XCTAssertEqual(SpacePreferences.sfSymbol(forSpace: 1, store: store), "star")
+        XCTAssertEqual(SpacePreferences.symbol(forSpace: 1, store: store), "star")
 
         // Same values accessible with any display ID (still uses shared storage)
         XCTAssertNotNil(SpacePreferences.colors(forSpace: 1, display: "Display2", store: store))
         XCTAssertEqual(SpacePreferences.iconStyle(forSpace: 1, display: "Display2", store: store), .circle)
-        XCTAssertEqual(SpacePreferences.sfSymbol(forSpace: 1, display: "Display2", store: store), "star")
+        XCTAssertEqual(SpacePreferences.symbol(forSpace: 1, display: "Display2", store: store), "star")
     }
 
     func testPerDisplayPreferencesWhenEnabled() {

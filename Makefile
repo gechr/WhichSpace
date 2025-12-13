@@ -1,5 +1,7 @@
 MACOSX_DEPLOYMENT_TARGET ?= 14.0
 
+.DEFAULT_GOAL := run
+
 .PHONY: build
 build:
 	@xcodebuild build \

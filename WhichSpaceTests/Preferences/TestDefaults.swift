@@ -203,7 +203,8 @@ final class DefaultsIsolationGuardTests: IsolatedDefaultsTestCase {
             "displaySpaceColors",
             "displaySpaceFonts",
             "displaySpaceIconStyles",
-            "displaySpaceSFSymbols",
+            "displaySpaceSkinTones",
+            "displaySpaceSymbols",
             "hideEmptySpaces",
             "hideFullscreenApps",
             "separatorColor",
@@ -213,7 +214,8 @@ final class DefaultsIsolationGuardTests: IsolatedDefaultsTestCase {
             "spaceColors",
             "spaceFonts",
             "spaceIconStyles",
-            "spaceSFSymbols",
+            "spaceSkinTones",
+            "spaceSymbols",
             "uniqueIconsPerDisplay",
         ]
 

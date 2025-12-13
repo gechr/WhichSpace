@@ -106,7 +106,7 @@ struct SpaceColors: Equatable, Defaults.Serializable {
 
 // MARK: - SpacePreferences
 
-/// Manages per-space preferences (colors, icon styles, SF symbols).
+/// Manages per-space preferences (colors, icon styles, symbols/emojis).
 ///
 /// All methods accept an optional `DefaultsStore` parameter. In production, pass
 /// `.shared` (the default). In tests, pass a per-test store for isolation.
@@ -115,46 +115,46 @@ struct SpaceColors: Equatable, Defaults.Serializable {
 /// using the display identifier. When disabled, shared preferences are used.
 /// Both sets of preferences are stored separately for backwards compatibility.
 enum SpacePreferences {
-    // MARK: - SF Symbols
+    // MARK: - Symbols (SF Symbols or Emojis)
 
-    static func sfSymbol(
+    static func symbol(
         forSpace spaceNumber: Int,
         display: String? = nil,
         store: DefaultsStore = .shared
     ) -> String? {
         if store.uniqueIconsPerDisplay, let display {
-            return store.displaySpaceSFSymbols[display]?[spaceNumber]
+            return store.displaySpaceSymbols[display]?[spaceNumber]
         }
-        return store.spaceSFSymbols[spaceNumber]
+        return store.spaceSymbols[spaceNumber]
     }
 
-    static func setSFSymbol(
+    static func setSymbol(
         _ symbol: String?,
         forSpace spaceNumber: Int,
         display: String? = nil,
         store: DefaultsStore = .shared
     ) {
         if store.uniqueIconsPerDisplay, let display {
-            var displaySymbols = store.displaySpaceSFSymbols
-            var spaceSymbols = displaySymbols[display] ?? [:]
+            var displaySymbols = store.displaySpaceSymbols
+            var symbols = displaySymbols[display] ?? [:]
             if let symbol {
-                spaceSymbols[spaceNumber] = symbol
+                symbols[spaceNumber] = symbol
             } else {
-                spaceSymbols.removeValue(forKey: spaceNumber)
+                symbols.removeValue(forKey: spaceNumber)
             }
-            displaySymbols[display] = spaceSymbols
-            store.displaySpaceSFSymbols = displaySymbols
+            displaySymbols[display] = symbols
+            store.displaySpaceSymbols = displaySymbols
         } else {
             if let symbol {
-                store.spaceSFSymbols[spaceNumber] = symbol
+                store.spaceSymbols[spaceNumber] = symbol
             } else {
-                store.spaceSFSymbols.removeValue(forKey: spaceNumber)
+                store.spaceSymbols.removeValue(forKey: spaceNumber)
             }
         }
     }
 
-    static func clearSFSymbol(forSpace spaceNumber: Int, display: String? = nil, store: DefaultsStore = .shared) {
-        setSFSymbol(nil, forSpace: spaceNumber, display: display, store: store)
+    static func clearSymbol(forSpace spaceNumber: Int, display: String? = nil, store: DefaultsStore = .shared) {
+        setSymbol(nil, forSpace: spaceNumber, display: display, store: store)
     }
 
     // MARK: - Icon Style
@@ -283,17 +283,62 @@ enum SpacePreferences {
         setFont(nil, forSpace: spaceNumber, display: display, store: store)
     }
 
+    // MARK: - Skin Tone
+
+    /// Returns the skin tone for a space, or nil to use the global default
+    static func skinTone(
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = .shared
+    ) -> Int? {
+        if store.uniqueIconsPerDisplay, let display {
+            return store.displaySpaceSkinTones[display]?[spaceNumber]
+        }
+        return store.spaceSkinTones[spaceNumber]
+    }
+
+    static func setSkinTone(
+        _ tone: Int?,
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = .shared
+    ) {
+        if store.uniqueIconsPerDisplay, let display {
+            var displayTones = store.displaySpaceSkinTones
+            var tones = displayTones[display] ?? [:]
+            if let tone {
+                tones[spaceNumber] = tone
+            } else {
+                tones.removeValue(forKey: spaceNumber)
+            }
+            displayTones[display] = tones
+            store.displaySpaceSkinTones = displayTones
+        } else {
+            if let tone {
+                store.spaceSkinTones[spaceNumber] = tone
+            } else {
+                store.spaceSkinTones.removeValue(forKey: spaceNumber)
+            }
+        }
+    }
+
+    static func clearSkinTone(forSpace spaceNumber: Int, display: String? = nil, store: DefaultsStore = .shared) {
+        setSkinTone(nil, forSpace: spaceNumber, display: display, store: store)
+    }
+
     // MARK: - Clear All
 
     /// Clears all preferences for all displays and shared settings.
     static func clearAll(store: DefaultsStore = .shared) {
         store.spaceColors = [:]
         store.spaceIconStyles = [:]
-        store.spaceSFSymbols = [:]
+        store.spaceSymbols = [:]
         store.spaceFonts = [:]
+        store.spaceSkinTones = [:]
         store.displaySpaceColors = [:]
         store.displaySpaceIconStyles = [:]
-        store.displaySpaceSFSymbols = [:]
+        store.displaySpaceSymbols = [:]
         store.displaySpaceFonts = [:]
+        store.displaySpaceSkinTones = [:]
     }
 }

@@ -27,7 +27,7 @@
 "detail_apply_style_to_all" = "This will update all other Spaces to match this Space's style.";
 "detail_apply_to_all" = "This will update all other Spaces to match this Space's colour, style, symbol, and font.";
 "detail_reset_all_spaces" = "This will remove all colour, style, font, size, and symbol customisations for every Space on all displays.";
-"detail_reset_color" = "This will remove the custom colour for the current Space and the separator.";
+"detail_reset_color" = "This will remove the custom colour for the current Space and the Display separator.";
 "detail_reset_font" = "This will remove the custom font for the current Space only.";
 "detail_reset_space" = "This will remove the colour, style, symbol, and font customisations for the current Space only.";
 "detail_reset_style" = "This will remove the custom style for the current Space only.";
@@ -35,8 +35,10 @@
 "label_number_background" = "Number (Background)";
 "label_number_foreground" = "Number (Foreground)";
 "label_separator" = "Separator";
+"label_skin_tone" = "Skin Tone";
 "label_symbol" = "Symbol";
 "menu_color" = "Colour";
+"menu_emoji" = "Emoji";
 "menu_number" = "Number";
 "menu_size" = "Size";
 "menu_style" = "Style";

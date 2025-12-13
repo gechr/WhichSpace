@@ -172,16 +172,16 @@ final class SpaceIconGeneratorTests: IsolatedDefaultsTestCase {
         XCTAssertTrue(hasGreenPixels, "Foreground color should appear in the generated icon")
     }
 
-    // MARK: - SF Symbol Tests
+    // MARK: - Symbol Tests
 
-    func testSFSymbolIconHasExpectedSize() {
-        let icon = SpaceIconGenerator.generateSFSymbolIcon(symbolName: "star.fill", darkMode: true)
+    func testSymbolIconHasExpectedSize() {
+        let icon = SpaceIconGenerator.generateSymbolIcon(symbolName: "star.fill", darkMode: true)
         XCTAssertEqual(icon.size, Layout.statusItemSize)
     }
 
-    func testSFSymbolWithCustomColors() {
+    func testSymbolWithCustomColors() {
         let customColors = SpaceColors(foreground: .systemGreen, background: .clear)
-        let icon = SpaceIconGenerator.generateSFSymbolIcon(
+        let icon = SpaceIconGenerator.generateSymbolIcon(
             symbolName: "star.fill",
             darkMode: true,
             customColors: customColors
@@ -191,14 +191,55 @@ final class SpaceIconGeneratorTests: IsolatedDefaultsTestCase {
         XCTAssertNotNil(icon.tiffRepresentation)
     }
 
-    func testInvalidSFSymbolFallsBackToQuestionMark() {
-        let icon = SpaceIconGenerator.generateSFSymbolIcon(
+    func testInvalidSymbolFallsBackToQuestionMark() {
+        let icon = SpaceIconGenerator.generateSymbolIcon(
             symbolName: "this.symbol.definitely.does.not.exist",
             darkMode: true
         )
 
         XCTAssertEqual(icon.size, Layout.statusItemSize)
         XCTAssertNotNil(icon.tiffRepresentation)
+    }
+
+    // MARK: - Emoji Tests
+
+    func testEmojiIconHasExpectedSize() {
+        let icon = SpaceIconGenerator.generateSymbolIcon(symbolName: "😀", darkMode: true)
+        XCTAssertEqual(icon.size, Layout.statusItemSize)
+    }
+
+    func testEmojiIconProducesValidImage() {
+        let icon = SpaceIconGenerator.generateSymbolIcon(symbolName: "👋", darkMode: true)
+        XCTAssertNotNil(icon.tiffRepresentation)
+        XCTAssertNotNil(icon.cgImage(forProposedRect: nil, context: nil, hints: nil))
+    }
+
+    func testEmojiWithSkinToneProducesValidImage() {
+        Defaults[.emojiPickerSkinTone] = 3 // Medium
+        let icon = SpaceIconGenerator.generateSymbolIcon(symbolName: "👋", darkMode: true)
+        XCTAssertEqual(icon.size, Layout.statusItemSize)
+        XCTAssertNotNil(icon.tiffRepresentation)
+    }
+
+    func testVariousEmojisProduceValidImages() {
+        let emojis = ["😀", "🎉", "⭐", "🔥", "💡", "🖐️", "👍"]
+        for emoji in emojis {
+            let icon = SpaceIconGenerator.generateSymbolIcon(symbolName: emoji, darkMode: true)
+            XCTAssertEqual(icon.size, Layout.statusItemSize, "\(emoji) should have correct size")
+            XCTAssertNotNil(icon.tiffRepresentation, "\(emoji) should produce valid image")
+        }
+    }
+
+    func testEmojiDifferentFromSFSymbol() {
+        let emojiIcon = SpaceIconGenerator.generateSymbolIcon(symbolName: "⭐", darkMode: true)
+        let symbolIcon = SpaceIconGenerator.generateSymbolIcon(symbolName: "star.fill", darkMode: true)
+
+        let emojiData = emojiIcon.tiffRepresentation
+        let symbolData = symbolIcon.tiffRepresentation
+
+        XCTAssertNotNil(emojiData)
+        XCTAssertNotNil(symbolData)
+        XCTAssertNotEqual(emojiData, symbolData, "Emoji and SF Symbol should produce different images")
     }
 
     // MARK: - Style-Specific Tests

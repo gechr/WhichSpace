@@ -316,7 +316,6 @@ final class AppState {
 
         // Collect space info from ALL displays
         var allDisplays: [DisplaySpaceInfo] = []
-        var activeSpaceIDToFind: Int?
         var foundActiveDisplay = false
 
         // First pass: find the active space ID from the active display
@@ -327,7 +326,6 @@ final class AppState {
                 continue
             }
             if displayID == mainDisplay || displayID == activeDisplay {
-                activeSpaceIDToFind = current["ManagedSpaceID"] as? Int
                 break
             }
         }
@@ -464,7 +462,7 @@ final class AppState {
     }
 
     var currentSymbol: String? {
-        SpacePreferences.sfSymbol(forSpace: currentSpace, display: currentDisplayID, store: store)
+        SpacePreferences.symbol(forSpace: currentSpace, display: currentDisplayID, store: store)
     }
 
     var currentColors: SpaceColors? {
@@ -591,13 +589,16 @@ final class AppState {
             )
         }
 
-        let symbol = SpacePreferences.sfSymbol(forSpace: space, display: currentDisplayID, store: store)
+        let symbol = SpacePreferences.symbol(forSpace: space, display: currentDisplayID, store: store)
 
         if let symbol {
-            return SpaceIconGenerator.generateSFSymbolIcon(
+            // Use per-space skin tone, defaulting to yellow (0) - NOT the global emoji picker preference
+            let skinTone = SpacePreferences.skinTone(forSpace: space, display: currentDisplayID, store: store) ?? 0
+            return SpaceIconGenerator.generateSymbolIcon(
                 symbolName: symbol,
                 darkMode: darkMode,
-                customColors: colors
+                customColors: colors,
+                skinTone: skinTone
             )
         }
         return SpaceIconGenerator.generateIcon(
@@ -834,13 +835,16 @@ final class AppState {
             )
         }
 
-        let symbol = SpacePreferences.sfSymbol(forSpace: localIndex, display: displayID, store: store)
+        let symbol = SpacePreferences.symbol(forSpace: localIndex, display: displayID, store: store)
 
         if let symbol {
-            return SpaceIconGenerator.generateSFSymbolIcon(
+            // Use per-space skin tone, defaulting to yellow (0) - NOT the global emoji picker preference
+            let skinTone = SpacePreferences.skinTone(forSpace: localIndex, display: displayID, store: store) ?? 0
+            return SpaceIconGenerator.generateSymbolIcon(
                 symbolName: symbol,
                 darkMode: darkMode,
-                customColors: colors
+                customColors: colors,
+                skinTone: skinTone
             )
         }
         return SpaceIconGenerator.generateIcon(

@@ -139,7 +139,7 @@ final class AppDelegateActionsTests: XCTestCase {
             SpacePreferences.setColors(colors, forSpace: space, store: store)
         }
         if let symbol {
-            SpacePreferences.setSFSymbol(symbol, forSpace: space, store: store)
+            SpacePreferences.setSymbol(symbol, forSpace: space, store: store)
         }
         if let font {
             SpacePreferences.setFont(SpaceFont(font: font), forSpace: space, store: store)
@@ -360,7 +360,7 @@ final class AppDelegateActionsTests: XCTestCase {
         XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 3, "updateStatusBarIcon should be called 3 times")
     }
 
-    // MARK: - applyAllToAllSpaces Tests
+    // MARK: - applyToAllSpaces. Tests
 
     func testApplyAllToAllSpaces_whenConfirmed_appliesStyleToAllSpaces() {
         let testStyle = IconStyle.circle
@@ -368,7 +368,7 @@ final class AppDelegateActionsTests: XCTestCase {
         alertFactory.shouldConfirm = true
         let initialCount = sut.statusBarIconUpdateCount
 
-        sut.applyAllToAllSpaces()
+        sut.applyToAllSpaces()
 
         for space in 1 ... 4 {
             XCTAssertEqual(
@@ -386,7 +386,7 @@ final class AppDelegateActionsTests: XCTestCase {
         setupSpaceWithPreferences(space: appState.currentSpace, colors: testColors)
         alertFactory.shouldConfirm = true
 
-        sut.applyAllToAllSpaces()
+        sut.applyToAllSpaces()
 
         for space in 1 ... 4 {
             let colors = SpacePreferences.colors(forSpace: space, store: store)
@@ -401,11 +401,11 @@ final class AppDelegateActionsTests: XCTestCase {
         setupSpaceWithPreferences(space: appState.currentSpace, symbol: testSymbol)
         alertFactory.shouldConfirm = true
 
-        sut.applyAllToAllSpaces()
+        sut.applyToAllSpaces()
 
         for space in 1 ... 4 {
             XCTAssertEqual(
-                SpacePreferences.sfSymbol(forSpace: space, store: store),
+                SpacePreferences.symbol(forSpace: space, store: store),
                 testSymbol,
                 "Space \(space) should have symbol \(testSymbol)"
             )
@@ -417,7 +417,7 @@ final class AppDelegateActionsTests: XCTestCase {
         setupSpaceWithPreferences(space: appState.currentSpace, font: testFont)
         alertFactory.shouldConfirm = true
 
-        sut.applyAllToAllSpaces()
+        sut.applyToAllSpaces()
 
         for space in 1 ... 4 {
             let font = SpacePreferences.font(forSpace: space, store: store)?.font
@@ -432,7 +432,7 @@ final class AppDelegateActionsTests: XCTestCase {
         alertFactory.shouldConfirm = false
         let initialCount = sut.statusBarIconUpdateCount
 
-        sut.applyAllToAllSpaces()
+        sut.applyToAllSpaces()
 
         // Other spaces should not have the style
         XCTAssertNil(SpacePreferences.iconStyle(forSpace: 1, store: store))
@@ -444,17 +444,17 @@ final class AppDelegateActionsTests: XCTestCase {
     func testApplyAllToAllSpaces_clearsSymbolWhenNil() {
         // Set symbols on other spaces
         for space in 1 ... 4 {
-            SpacePreferences.setSFSymbol("star.fill", forSpace: space, store: store)
+            SpacePreferences.setSymbol("star.fill", forSpace: space, store: store)
         }
         // Current space has no symbol (number mode)
-        SpacePreferences.clearSFSymbol(forSpace: appState.currentSpace, store: store)
+        SpacePreferences.clearSymbol(forSpace: appState.currentSpace, store: store)
         alertFactory.shouldConfirm = true
 
-        sut.applyAllToAllSpaces()
+        sut.applyToAllSpaces()
 
         for space in 1 ... 4 {
             XCTAssertNil(
-                SpacePreferences.sfSymbol(forSpace: space, store: store),
+                SpacePreferences.symbol(forSpace: space, store: store),
                 "Space \(space) should have no symbol"
             )
         }
@@ -469,7 +469,7 @@ final class AppDelegateActionsTests: XCTestCase {
         SpacePreferences.clearColors(forSpace: appState.currentSpace, store: store)
         alertFactory.shouldConfirm = true
 
-        sut.applyAllToAllSpaces()
+        sut.applyToAllSpaces()
 
         for space in 1 ... 4 {
             XCTAssertNil(
@@ -488,7 +488,7 @@ final class AppDelegateActionsTests: XCTestCase {
         SpacePreferences.clearFont(forSpace: appState.currentSpace, store: store)
         alertFactory.shouldConfirm = true
 
-        sut.applyAllToAllSpaces()
+        sut.applyToAllSpaces()
 
         for space in 1 ... 4 {
             XCTAssertNil(
@@ -515,7 +515,7 @@ final class AppDelegateActionsTests: XCTestCase {
 
         XCTAssertNil(SpacePreferences.colors(forSpace: appState.currentSpace, store: store))
         XCTAssertNil(SpacePreferences.iconStyle(forSpace: appState.currentSpace, store: store))
-        XCTAssertNil(SpacePreferences.sfSymbol(forSpace: appState.currentSpace, store: store))
+        XCTAssertNil(SpacePreferences.symbol(forSpace: appState.currentSpace, store: store))
         XCTAssertNil(SpacePreferences.font(forSpace: appState.currentSpace, store: store))
         XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 1, "updateStatusBarIcon should be called")
     }
@@ -572,7 +572,7 @@ final class AppDelegateActionsTests: XCTestCase {
         for space in 1 ... 4 {
             XCTAssertNil(SpacePreferences.colors(forSpace: space, store: store))
             XCTAssertNil(SpacePreferences.iconStyle(forSpace: space, store: store))
-            XCTAssertNil(SpacePreferences.sfSymbol(forSpace: space, store: store))
+            XCTAssertNil(SpacePreferences.symbol(forSpace: space, store: store))
         }
         XCTAssertEqual(store.sizeScale, Layout.defaultSizeScale, "Size scale should be reset to default")
         XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 1, "updateStatusBarIcon should be called")
@@ -631,7 +631,7 @@ final class AppDelegateActionsTests: XCTestCase {
                 "Space \(space) icon style should be cleared"
             )
             XCTAssertNil(
-                SpacePreferences.sfSymbol(forSpace: space, store: store),
+                SpacePreferences.symbol(forSpace: space, store: store),
                 "Space \(space) SF symbol should be cleared"
             )
         }
@@ -733,7 +733,7 @@ final class AppDelegateActionsTests: XCTestCase {
         // Set up different styles and symbols for each space
         for space in 1 ... 4 {
             SpacePreferences.setIconStyle(.circle, forSpace: space, store: store)
-            SpacePreferences.setSFSymbol("star.fill", forSpace: space, store: store)
+            SpacePreferences.setSymbol("star.fill", forSpace: space, store: store)
         }
 
         // Apply colors to all spaces
@@ -751,7 +751,7 @@ final class AppDelegateActionsTests: XCTestCase {
                 "Space \(space) style should be preserved after applying colors"
             )
             XCTAssertEqual(
-                SpacePreferences.sfSymbol(forSpace: space, store: store),
+                SpacePreferences.symbol(forSpace: space, store: store),
                 "star.fill",
                 "Space \(space) symbol should be preserved after applying colors"
             )
@@ -782,7 +782,7 @@ final class AppDelegateActionsTests: XCTestCase {
         sut.applyStyleToAllSpaces()
 
         for space in 1 ... 4 {
-            XCTAssertEqual(SpacePreferences.sfSymbol(forSpace: space, store: store), testSymbol)
+            XCTAssertEqual(SpacePreferences.symbol(forSpace: space, store: store), testSymbol)
         }
     }
 
@@ -801,11 +801,11 @@ final class AppDelegateActionsTests: XCTestCase {
     func testApplyStyleToAllSpaces_clearsSymbolWhenNil() {
         // First set symbols for all spaces
         for space in 1 ... 4 {
-            SpacePreferences.setSFSymbol("moon.fill", forSpace: space, store: store)
+            SpacePreferences.setSymbol("moon.fill", forSpace: space, store: store)
         }
 
         // Current space has no symbol (number mode)
-        SpacePreferences.clearSFSymbol(forSpace: appState.currentSpace, store: store)
+        SpacePreferences.clearSymbol(forSpace: appState.currentSpace, store: store)
         setupSpaceWithPreferences(space: appState.currentSpace, style: .hexagon)
         alertFactory.shouldConfirm = true
 
@@ -813,7 +813,7 @@ final class AppDelegateActionsTests: XCTestCase {
 
         for space in 1 ... 4 {
             XCTAssertNil(
-                SpacePreferences.sfSymbol(forSpace: space, store: store),
+                SpacePreferences.symbol(forSpace: space, store: store),
                 "Space \(space) should have no symbol"
             )
             XCTAssertEqual(
@@ -868,7 +868,7 @@ final class AppDelegateActionsTests: XCTestCase {
         sut.resetStyleToDefault()
 
         XCTAssertNil(SpacePreferences.iconStyle(forSpace: appState.currentSpace, store: store))
-        XCTAssertNil(SpacePreferences.sfSymbol(forSpace: appState.currentSpace, store: store))
+        XCTAssertNil(SpacePreferences.symbol(forSpace: appState.currentSpace, store: store))
         XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 1, "updateStatusBarIcon should be called")
     }
 
@@ -946,7 +946,7 @@ final class AppDelegateActionsTests: XCTestCase {
             "Style should be preserved after resetting color"
         )
         XCTAssertEqual(
-            SpacePreferences.sfSymbol(forSpace: appState.currentSpace, store: store),
+            SpacePreferences.symbol(forSpace: appState.currentSpace, store: store),
             testSymbol,
             "Symbol should be preserved after resetting color"
         )
@@ -961,7 +961,7 @@ final class AppDelegateActionsTests: XCTestCase {
         sut = AppDelegate(appState: appState, alertFactory: alertFactory)
         XCTAssertEqual(appState.currentSpace, 0)
 
-        sut.applyAllToAllSpaces()
+        sut.applyToAllSpaces()
 
         XCTAssertEqual(alertFactory.alertsShown.count, 0, "No alert should be shown when currentSpace is 0")
     }
@@ -1024,11 +1024,11 @@ final class AppDelegateActionsTests: XCTestCase {
         setupSpaceWithPreferences(space: appState.currentSpace, style: .circle, symbol: testSymbol)
         alertFactory.shouldConfirm = true
 
-        sut.applyAllToAllSpaces()
+        sut.applyToAllSpaces()
 
         for space in 1 ... 4 {
             XCTAssertEqual(
-                SpacePreferences.sfSymbol(forSpace: space, store: store),
+                SpacePreferences.symbol(forSpace: space, store: store),
                 testSymbol,
                 "Symbol should be applied"
             )
@@ -1043,17 +1043,17 @@ final class AppDelegateActionsTests: XCTestCase {
     func testApplyAllToAllSpaces_inNumberMode_clearsSymbolsOnAllSpaces() {
         // Set symbols on all spaces first
         for space in 1 ... 4 {
-            SpacePreferences.setSFSymbol("heart.fill", forSpace: space, store: store)
+            SpacePreferences.setSymbol("heart.fill", forSpace: space, store: store)
         }
         // Current space is in number mode (no symbol)
-        SpacePreferences.clearSFSymbol(forSpace: appState.currentSpace, store: store)
+        SpacePreferences.clearSymbol(forSpace: appState.currentSpace, store: store)
         setupSpaceWithPreferences(space: appState.currentSpace, style: .triangle)
         alertFactory.shouldConfirm = true
 
-        sut.applyAllToAllSpaces()
+        sut.applyToAllSpaces()
 
         for space in 1 ... 4 {
-            XCTAssertNil(SpacePreferences.sfSymbol(forSpace: space, store: store), "Symbol should be cleared")
+            XCTAssertNil(SpacePreferences.symbol(forSpace: space, store: store), "Symbol should be cleared")
             XCTAssertEqual(
                 SpacePreferences.iconStyle(forSpace: space, store: store),
                 .triangle,
@@ -1070,7 +1070,7 @@ final class AppDelegateActionsTests: XCTestCase {
         sut.applyStyleToAllSpaces()
 
         for space in 1 ... 4 {
-            XCTAssertEqual(SpacePreferences.sfSymbol(forSpace: space, store: store), testSymbol)
+            XCTAssertEqual(SpacePreferences.symbol(forSpace: space, store: store), testSymbol)
             XCTAssertEqual(SpacePreferences.iconStyle(forSpace: space, store: store), .hexagon)
         }
     }
@@ -1197,7 +1197,7 @@ final class AppDelegateActionsTests: XCTestCase {
     func testApplyAllToAllSpaces_showsCorrectAlert() {
         alertFactory.shouldConfirm = true
 
-        sut.applyAllToAllSpaces()
+        sut.applyToAllSpaces()
 
         XCTAssertEqual(alertFactory.alertsShown.count, 1)
         let alert = alertFactory.alertsShown.first
@@ -1325,7 +1325,7 @@ final class AppDelegateActionsTests: XCTestCase {
 
         sut.menuWillOpen(sut.statusMenu)
 
-        let launchAtLoginItem = sut.statusMenu.item(withTag: MenuTag.launchAtLogin)
+        let launchAtLoginItem = sut.statusMenu.item(withTag: MenuTag.launchAtLogin.rawValue)
         XCTAssertEqual(launchAtLoginItem?.state, .on, "Launch at Login should be checked when enabled")
     }
 
@@ -1335,7 +1335,7 @@ final class AppDelegateActionsTests: XCTestCase {
 
         sut.menuWillOpen(sut.statusMenu)
 
-        let launchAtLoginItem = sut.statusMenu.item(withTag: MenuTag.launchAtLogin)
+        let launchAtLoginItem = sut.statusMenu.item(withTag: MenuTag.launchAtLogin.rawValue)
         XCTAssertEqual(launchAtLoginItem?.state, .off, "Launch at Login should be unchecked when disabled")
     }
 
@@ -1345,7 +1345,7 @@ final class AppDelegateActionsTests: XCTestCase {
 
         sut.menuWillOpen(sut.statusMenu)
 
-        let showAllSpacesItem = sut.statusMenu.item(withTag: MenuTag.showAllSpaces)
+        let showAllSpacesItem = sut.statusMenu.item(withTag: MenuTag.showAllSpaces.rawValue)
         XCTAssertEqual(showAllSpacesItem?.state, .on, "Show All Spaces should be checked when enabled")
     }
 
@@ -1355,7 +1355,7 @@ final class AppDelegateActionsTests: XCTestCase {
 
         sut.menuWillOpen(sut.statusMenu)
 
-        let showAllSpacesItem = sut.statusMenu.item(withTag: MenuTag.showAllSpaces)
+        let showAllSpacesItem = sut.statusMenu.item(withTag: MenuTag.showAllSpaces.rawValue)
         XCTAssertEqual(showAllSpacesItem?.state, .off, "Show All Spaces should be unchecked when disabled")
     }
 
@@ -1365,7 +1365,7 @@ final class AppDelegateActionsTests: XCTestCase {
 
         sut.menuWillOpen(sut.statusMenu)
 
-        let dimInactiveItem = sut.statusMenu.item(withTag: MenuTag.dimInactiveSpaces)
+        let dimInactiveItem = sut.statusMenu.item(withTag: MenuTag.dimInactiveSpaces.rawValue)
         XCTAssertEqual(dimInactiveItem?.state, .on, "Dim inactive Spaces should be checked when enabled")
     }
 
@@ -1375,7 +1375,7 @@ final class AppDelegateActionsTests: XCTestCase {
 
         sut.menuWillOpen(sut.statusMenu)
 
-        let dimInactiveItem = sut.statusMenu.item(withTag: MenuTag.dimInactiveSpaces)
+        let dimInactiveItem = sut.statusMenu.item(withTag: MenuTag.dimInactiveSpaces.rawValue)
         XCTAssertEqual(dimInactiveItem?.state, .off, "Dim inactive Spaces should be unchecked when disabled")
     }
 
@@ -1385,7 +1385,7 @@ final class AppDelegateActionsTests: XCTestCase {
 
         sut.menuWillOpen(sut.statusMenu)
 
-        let dimInactiveItem = sut.statusMenu.item(withTag: MenuTag.dimInactiveSpaces)
+        let dimInactiveItem = sut.statusMenu.item(withTag: MenuTag.dimInactiveSpaces.rawValue)
         XCTAssertFalse(
             dimInactiveItem?.isHidden ?? true,
             "Dim inactive Spaces should be visible when Show All Spaces is on"
@@ -1398,7 +1398,7 @@ final class AppDelegateActionsTests: XCTestCase {
 
         sut.menuWillOpen(sut.statusMenu)
 
-        let dimInactiveItem = sut.statusMenu.item(withTag: MenuTag.dimInactiveSpaces)
+        let dimInactiveItem = sut.statusMenu.item(withTag: MenuTag.dimInactiveSpaces.rawValue)
         XCTAssertTrue(
             dimInactiveItem?.isHidden ?? false,
             "Dim inactive Spaces should be hidden when Show All Spaces is off"
@@ -1411,7 +1411,7 @@ final class AppDelegateActionsTests: XCTestCase {
 
         sut.menuWillOpen(sut.statusMenu)
 
-        let hideEmptyItem = sut.statusMenu.item(withTag: MenuTag.hideEmptySpaces)
+        let hideEmptyItem = sut.statusMenu.item(withTag: MenuTag.hideEmptySpaces.rawValue)
         XCTAssertEqual(hideEmptyItem?.state, .on, "Hide empty Spaces should be checked when enabled")
     }
 
@@ -1421,7 +1421,7 @@ final class AppDelegateActionsTests: XCTestCase {
 
         sut.menuWillOpen(sut.statusMenu)
 
-        let hideEmptyItem = sut.statusMenu.item(withTag: MenuTag.hideEmptySpaces)
+        let hideEmptyItem = sut.statusMenu.item(withTag: MenuTag.hideEmptySpaces.rawValue)
         XCTAssertEqual(hideEmptyItem?.state, .off, "Hide empty Spaces should be unchecked when disabled")
     }
 
@@ -1431,7 +1431,7 @@ final class AppDelegateActionsTests: XCTestCase {
 
         sut.menuWillOpen(sut.statusMenu)
 
-        let hideEmptyItem = sut.statusMenu.item(withTag: MenuTag.hideEmptySpaces)
+        let hideEmptyItem = sut.statusMenu.item(withTag: MenuTag.hideEmptySpaces.rawValue)
         XCTAssertFalse(
             hideEmptyItem?.isHidden ?? true,
             "Hide empty Spaces should be visible when Show All Spaces is on"
@@ -1444,7 +1444,7 @@ final class AppDelegateActionsTests: XCTestCase {
 
         sut.menuWillOpen(sut.statusMenu)
 
-        let hideEmptyItem = sut.statusMenu.item(withTag: MenuTag.hideEmptySpaces)
+        let hideEmptyItem = sut.statusMenu.item(withTag: MenuTag.hideEmptySpaces.rawValue)
         XCTAssertTrue(
             hideEmptyItem?.isHidden ?? false,
             "Hide empty Spaces should be hidden when Show All Spaces is off"
@@ -1457,7 +1457,7 @@ final class AppDelegateActionsTests: XCTestCase {
 
         sut.menuWillOpen(sut.statusMenu)
 
-        let hideFullscreenItem = sut.statusMenu.item(withTag: MenuTag.hideFullscreenApps)
+        let hideFullscreenItem = sut.statusMenu.item(withTag: MenuTag.hideFullscreenApps.rawValue)
         XCTAssertEqual(hideFullscreenItem?.state, .on, "Hide full-screen apps should be checked when enabled")
     }
 
@@ -1467,7 +1467,7 @@ final class AppDelegateActionsTests: XCTestCase {
 
         sut.menuWillOpen(sut.statusMenu)
 
-        let hideFullscreenItem = sut.statusMenu.item(withTag: MenuTag.hideFullscreenApps)
+        let hideFullscreenItem = sut.statusMenu.item(withTag: MenuTag.hideFullscreenApps.rawValue)
         XCTAssertEqual(hideFullscreenItem?.state, .off, "Hide full-screen apps should be unchecked when disabled")
     }
 
@@ -1477,7 +1477,7 @@ final class AppDelegateActionsTests: XCTestCase {
 
         sut.menuWillOpen(sut.statusMenu)
 
-        let hideFullscreenItem = sut.statusMenu.item(withTag: MenuTag.hideFullscreenApps)
+        let hideFullscreenItem = sut.statusMenu.item(withTag: MenuTag.hideFullscreenApps.rawValue)
         XCTAssertFalse(
             hideFullscreenItem?.isHidden ?? true,
             "Hide full-screen apps should be visible when Show All Spaces is on"
@@ -1490,7 +1490,7 @@ final class AppDelegateActionsTests: XCTestCase {
 
         sut.menuWillOpen(sut.statusMenu)
 
-        let hideFullscreenItem = sut.statusMenu.item(withTag: MenuTag.hideFullscreenApps)
+        let hideFullscreenItem = sut.statusMenu.item(withTag: MenuTag.hideFullscreenApps.rawValue)
         XCTAssertTrue(
             hideFullscreenItem?.isHidden ?? false,
             "Hide full-screen apps should be hidden when Show All Spaces is off"
@@ -1499,7 +1499,7 @@ final class AppDelegateActionsTests: XCTestCase {
 
     func testMenuWillOpen_hidesColorSwatches_whenSymbolActive() {
         sut.configureMenuBarIcon()
-        SpacePreferences.setSFSymbol("star.fill", forSpace: appState.currentSpace, store: store)
+        SpacePreferences.setSymbol("star.fill", forSpace: appState.currentSpace, store: store)
 
         // Find the Colors submenu
         let colorsMenuItem = sut.statusMenu.items.first { $0.title == Localization.menuColor }
@@ -1511,11 +1511,11 @@ final class AppDelegateActionsTests: XCTestCase {
         sut.menuWillOpen(colorsMenu)
 
         // Verify color swatch items are hidden
-        let foregroundLabel = colorsMenu.item(withTag: MenuTag.foregroundLabel)
-        let foregroundSwatch = colorsMenu.item(withTag: MenuTag.foregroundSwatch)
-        let colorSeparator = colorsMenu.item(withTag: MenuTag.colorSeparator)
-        let backgroundLabel = colorsMenu.item(withTag: MenuTag.backgroundLabel)
-        let backgroundSwatch = colorsMenu.item(withTag: MenuTag.backgroundSwatch)
+        let foregroundLabel = colorsMenu.item(withTag: MenuTag.foregroundLabel.rawValue)
+        let foregroundSwatch = colorsMenu.item(withTag: MenuTag.foregroundSwatch.rawValue)
+        let colorSeparator = colorsMenu.item(withTag: MenuTag.colorSeparator.rawValue)
+        let backgroundLabel = colorsMenu.item(withTag: MenuTag.backgroundLabel.rawValue)
+        let backgroundSwatch = colorsMenu.item(withTag: MenuTag.backgroundSwatch.rawValue)
 
         XCTAssertTrue(foregroundLabel?.isHidden ?? false, "Foreground label should be hidden when symbol is active")
         XCTAssertTrue(foregroundSwatch?.isHidden ?? false, "Foreground swatch should be hidden when symbol is active")
@@ -1526,7 +1526,7 @@ final class AppDelegateActionsTests: XCTestCase {
 
     func testMenuWillOpen_showsSymbolColorSwatch_whenSymbolActive() {
         sut.configureMenuBarIcon()
-        SpacePreferences.setSFSymbol("star.fill", forSpace: appState.currentSpace, store: store)
+        SpacePreferences.setSymbol("star.fill", forSpace: appState.currentSpace, store: store)
 
         // Find the Colors submenu
         let colorsMenuItem = sut.statusMenu.items.first { $0.title == Localization.menuColor }
@@ -1538,7 +1538,7 @@ final class AppDelegateActionsTests: XCTestCase {
         sut.menuWillOpen(colorsMenu)
 
         // Verify symbol color swatch is shown
-        let symbolColorSwatch = colorsMenu.item(withTag: MenuTag.symbolColorSwatch)
+        let symbolColorSwatch = colorsMenu.item(withTag: MenuTag.symbolColorSwatch.rawValue)
         XCTAssertFalse(
             symbolColorSwatch?.isHidden ?? true,
             "Symbol color swatch should be visible when symbol is active"
@@ -1547,7 +1547,7 @@ final class AppDelegateActionsTests: XCTestCase {
 
     func testMenuWillOpen_hidesSymbolColorSwatch_whenSymbolNotActive() {
         sut.configureMenuBarIcon()
-        SpacePreferences.clearSFSymbol(forSpace: appState.currentSpace, store: store)
+        SpacePreferences.clearSymbol(forSpace: appState.currentSpace, store: store)
 
         // Find the Colors submenu
         let colorsMenuItem = sut.statusMenu.items.first { $0.title == Localization.menuColor }
@@ -1559,13 +1559,13 @@ final class AppDelegateActionsTests: XCTestCase {
         sut.menuWillOpen(colorsMenu)
 
         // Verify symbol color swatch is hidden
-        let symbolColorSwatch = colorsMenu.item(withTag: MenuTag.symbolColorSwatch)
+        let symbolColorSwatch = colorsMenu.item(withTag: MenuTag.symbolColorSwatch.rawValue)
         XCTAssertTrue(symbolColorSwatch?.isHidden ?? false, "Symbol color swatch should be hidden when no symbol")
     }
 
     func testMenuWillOpen_showsColorSwatches_whenSymbolNotActive() {
         sut.configureMenuBarIcon()
-        SpacePreferences.clearSFSymbol(forSpace: appState.currentSpace, store: store)
+        SpacePreferences.clearSymbol(forSpace: appState.currentSpace, store: store)
 
         // Find the Colors submenu
         let colorsMenuItem = sut.statusMenu.items.first { $0.title == Localization.menuColor }
@@ -1577,11 +1577,11 @@ final class AppDelegateActionsTests: XCTestCase {
         sut.menuWillOpen(colorsMenu)
 
         // Verify color swatch items are visible
-        let foregroundLabel = colorsMenu.item(withTag: MenuTag.foregroundLabel)
-        let foregroundSwatch = colorsMenu.item(withTag: MenuTag.foregroundSwatch)
-        let colorSeparator = colorsMenu.item(withTag: MenuTag.colorSeparator)
-        let backgroundLabel = colorsMenu.item(withTag: MenuTag.backgroundLabel)
-        let backgroundSwatch = colorsMenu.item(withTag: MenuTag.backgroundSwatch)
+        let foregroundLabel = colorsMenu.item(withTag: MenuTag.foregroundLabel.rawValue)
+        let foregroundSwatch = colorsMenu.item(withTag: MenuTag.foregroundSwatch.rawValue)
+        let colorSeparator = colorsMenu.item(withTag: MenuTag.colorSeparator.rawValue)
+        let backgroundLabel = colorsMenu.item(withTag: MenuTag.backgroundLabel.rawValue)
+        let backgroundSwatch = colorsMenu.item(withTag: MenuTag.backgroundSwatch.rawValue)
 
         XCTAssertFalse(foregroundLabel?.isHidden ?? true, "Foreground label should be visible when no symbol")
         XCTAssertFalse(foregroundSwatch?.isHidden ?? true, "Foreground swatch should be visible when no symbol")
@@ -1604,17 +1604,17 @@ final class AppDelegateActionsTests: XCTestCase {
         sut.menuWillOpen(colorsMenu)
 
         // Background options should be hidden for transparent style
-        let colorSeparator = colorsMenu.item(withTag: MenuTag.colorSeparator)
-        let backgroundLabel = colorsMenu.item(withTag: MenuTag.backgroundLabel)
-        let backgroundSwatch = colorsMenu.item(withTag: MenuTag.backgroundSwatch)
+        let colorSeparator = colorsMenu.item(withTag: MenuTag.colorSeparator.rawValue)
+        let backgroundLabel = colorsMenu.item(withTag: MenuTag.backgroundLabel.rawValue)
+        let backgroundSwatch = colorsMenu.item(withTag: MenuTag.backgroundSwatch.rawValue)
 
         XCTAssertTrue(colorSeparator?.isHidden ?? false, "Color separator should be hidden for transparent style")
         XCTAssertTrue(backgroundLabel?.isHidden ?? false, "Background label should be hidden for transparent style")
         XCTAssertTrue(backgroundSwatch?.isHidden ?? false, "Background swatch should be hidden for transparent style")
 
         // Foreground options should still be visible
-        let foregroundLabel = colorsMenu.item(withTag: MenuTag.foregroundLabel)
-        let foregroundSwatch = colorsMenu.item(withTag: MenuTag.foregroundSwatch)
+        let foregroundLabel = colorsMenu.item(withTag: MenuTag.foregroundLabel.rawValue)
+        let foregroundSwatch = colorsMenu.item(withTag: MenuTag.foregroundSwatch.rawValue)
 
         XCTAssertFalse(foregroundLabel?.isHidden ?? true, "Foreground label should be visible for transparent style")
         XCTAssertFalse(foregroundSwatch?.isHidden ?? true, "Foreground swatch should be visible for transparent style")
@@ -1661,8 +1661,8 @@ final class AppDelegateActionsTests: XCTestCase {
 
         sut.menuWillOpen(colorsMenu)
 
-        let separatorLabel = colorsMenu.item(withTag: MenuTag.separatorLabel)
-        let separatorSwatch = colorsMenu.item(withTag: MenuTag.separatorSwatch)
+        let separatorLabel = colorsMenu.item(withTag: MenuTag.separatorLabel.rawValue)
+        let separatorSwatch = colorsMenu.item(withTag: MenuTag.separatorSwatch.rawValue)
         XCTAssertFalse(
             separatorLabel?.isHidden ?? true,
             "Separator label should be visible when Show All Displays is on with multiple displays"
@@ -1687,8 +1687,8 @@ final class AppDelegateActionsTests: XCTestCase {
 
         sut.menuWillOpen(colorsMenu)
 
-        let separatorLabel = colorsMenu.item(withTag: MenuTag.separatorLabel)
-        let separatorSwatch = colorsMenu.item(withTag: MenuTag.separatorSwatch)
+        let separatorLabel = colorsMenu.item(withTag: MenuTag.separatorLabel.rawValue)
+        let separatorSwatch = colorsMenu.item(withTag: MenuTag.separatorSwatch.rawValue)
         XCTAssertTrue(
             separatorLabel?.isHidden ?? false,
             "Separator label should be hidden with single display even when Show All Displays is on"
@@ -1712,8 +1712,8 @@ final class AppDelegateActionsTests: XCTestCase {
 
         sut.menuWillOpen(colorsMenu)
 
-        let separatorLabel = colorsMenu.item(withTag: MenuTag.separatorLabel)
-        let separatorSwatch = colorsMenu.item(withTag: MenuTag.separatorSwatch)
+        let separatorLabel = colorsMenu.item(withTag: MenuTag.separatorLabel.rawValue)
+        let separatorSwatch = colorsMenu.item(withTag: MenuTag.separatorSwatch.rawValue)
         XCTAssertTrue(
             separatorLabel?.isHidden ?? false,
             "Separator label should be hidden when Show All Displays is off"
@@ -1792,7 +1792,7 @@ final class AppDelegateActionsTests: XCTestCase {
         sut.menuWillOpen(sut.statusMenu)
 
         // Verify the menu checkmark reflects the new state
-        let launchAtLoginItem = sut.statusMenu.item(withTag: MenuTag.launchAtLogin)
+        let launchAtLoginItem = sut.statusMenu.item(withTag: MenuTag.launchAtLogin.rawValue)
         XCTAssertEqual(
             launchAtLoginItem?.state,
             .on,

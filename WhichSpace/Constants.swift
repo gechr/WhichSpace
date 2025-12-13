@@ -1,5 +1,6 @@
 import Cocoa
 import Defaults
+import EmojiKit
 
 // MARK: - Defaults Keys
 
@@ -13,10 +14,14 @@ extension Defaults.Keys {
     static let showAllSpaces = Key<Bool>("showAllSpaces", default: false)
     static let spaceColors = Key<[Int: SpaceColors]>("spaceColors", default: [:])
     static let spaceIconStyles = Key<[Int: IconStyle]>("spaceIconStyles", default: [:])
-    static let spaceSFSymbols = Key<[Int: String]>("spaceSFSymbols", default: [:])
+    static let spaceSymbols = Key<[Int: String]>("spaceSymbols", default: [:])
 
     /// Size preferences
     static let sizeScale = Key<Double>("sizeScale", default: Layout.defaultSizeScale)
+
+    /// Emoji picker skin tone for browsing (0 = default yellow, 1-5 = skin tones light to dark)
+    /// This only affects the emoji picker preview, not the menu bar icons
+    static let emojiPickerSkinTone = Key<Int>("emojiPickerSkinTone", default: 0)
 }
 
 // MARK: - Labels
@@ -80,26 +85,30 @@ enum IconColors {
 
 // MARK: - Menu Item Tags
 
-enum MenuTag {
-    static let backgroundLabel = 1
-    static let backgroundSwatch = 2
-    static let clickToSwitchSpaces = 19
-    static let colorSeparator = 3
-    static let dimInactiveSpaces = 4
-    static let foregroundLabel = 5
-    static let foregroundSwatch = 6
-    static let hideEmptySpaces = 7
-    static let hideFullscreenApps = 17
-    static let launchAtLogin = 8
-    static let showAllDisplays = 13
-    static let showAllSpaces = 9
-    static let sizeRow = 10
-    static let separatorColorDivider = 18
-    static let separatorLabel = 15
-    static let separatorSwatch = 16
-    static let symbolColorSwatch = 11
-    static let symbolLabel = 14
-    static let uniqueIconsPerDisplay = 12
+enum MenuTag: Int {
+    case backgroundLabel = 1
+    case backgroundSwatch
+    case clickToSwitchSpaces
+    case colorMenuItem
+    case colorSeparator
+    case dimInactiveSpaces
+    case foregroundLabel
+    case foregroundSwatch
+    case hideEmptySpaces
+    case hideFullscreenApps
+    case invertColors
+    case launchAtLogin
+    case separatorColorDivider
+    case separatorLabel
+    case separatorSwatch
+    case showAllDisplays
+    case showAllSpaces
+    case sizeRow
+    case skinToneLabel
+    case skinToneSwatch
+    case symbolColorSwatch
+    case symbolLabel
+    case uniqueIconsPerDisplay
 }
 
 // MARK: - Localization
@@ -142,8 +151,10 @@ enum Localization {
     static let labelNumberBackground = NSLocalizedString("label_number_background", comment: "")
     static let labelNumberForeground = NSLocalizedString("label_number_foreground", comment: "")
     static let labelSeparator = NSLocalizedString("label_separator", comment: "")
+    static let labelSkinTone = NSLocalizedString("label_skin_tone", comment: "")
     static let labelSymbol = NSLocalizedString("label_symbol", comment: "")
     static let menuColor = NSLocalizedString("menu_color", comment: "")
+    static let menuEmoji = NSLocalizedString("menu_emoji", comment: "")
     static let menuNumber = NSLocalizedString("menu_number", comment: "")
     static let menuSize = NSLocalizedString("menu_size", comment: "")
     static let menuStyle = NSLocalizedString("menu_style", comment: "")
@@ -178,4 +189,78 @@ enum Localization {
     static let toggleUniqueIconsPerDisplay = NSLocalizedString("toggle_unique_icons_per_display", comment: "")
     static let yabaiRequiredDetail = NSLocalizedString("yabai_required_detail", comment: "")
     static let yabaiRequiredTitle = NSLocalizedString("yabai_required_title", comment: "")
+}
+
+// MARK: - Skin Tone Support
+
+enum SkinTone {
+    static let modifiers: [String?] = [nil, "\u{1F3FB}", "\u{1F3FC}", "\u{1F3FD}", "\u{1F3FE}", "\u{1F3FF}"]
+    private static let modifierScalars: Set<Unicode.Scalar> = [
+        Unicode.Scalar(0x1F3FB)!,
+        Unicode.Scalar(0x1F3FC)!,
+        Unicode.Scalar(0x1F3FD)!,
+        Unicode.Scalar(0x1F3FE)!,
+        Unicode.Scalar(0x1F3FF)!,
+    ]
+
+    /// Variation Selector 16 - used to request emoji presentation
+    private static let vs16 = Unicode.Scalar(0xFE0F)!
+
+    /// Zero Width Joiner - used in complex emoji sequences
+    private static let zwj = Unicode.Scalar(0x200D)!
+
+    /// Applies a skin tone modifier to an emoji.
+    /// - Parameters:
+    ///   - emoji: The emoji to modify
+    ///   - tone: The skin tone index (0-5). If nil, uses the global default from Defaults.
+    /// - Returns: The emoji with the skin tone applied
+    static func apply(to emoji: String, tone: Int? = nil) -> String {
+        let toneIndex = tone ?? Defaults[.emojiPickerSkinTone]
+        let stripped = stripModifiers(from: emoji)
+
+        guard let modifier = modifiers[toneIndex] else {
+            // Yellow/default tone - return stripped emoji without any modifier
+            return stripped
+        }
+
+        guard canApplyModifier(to: stripped) else {
+            return emoji
+        }
+
+        // For ZWJ sequences, insert modifier after first modifier-base character
+        if stripped.unicodeScalars.contains(zwj) {
+            return insertModifierAfterFirstBase(in: stripped, modifier: modifier)
+        }
+
+        // Simple emoji - just append
+        return stripped + modifier
+    }
+
+    /// Strips skin tone modifiers and variation selectors from emoji
+    private static func stripModifiers(from emoji: String) -> String {
+        String(emoji.unicodeScalars.filter { !modifierScalars.contains($0) && $0 != vs16 })
+    }
+
+    /// Inserts skin tone modifier after the first modifier-base character in a ZWJ sequence
+    private static func insertModifierAfterFirstBase(in emoji: String, modifier: String) -> String {
+        var result = ""
+        var inserted = false
+
+        for scalar in emoji.unicodeScalars {
+            result.unicodeScalars.append(scalar)
+            // Insert modifier right after the first modifier-base character
+            if !inserted, scalar.properties.isEmojiModifierBase {
+                result += modifier
+                inserted = true
+            }
+        }
+
+        return result
+    }
+
+    /// Uses EmojiKit's size-based detection to determine if an emoji supports skin tones.
+    /// This is more reliable than `isEmojiModifierBase` which has false positives.
+    private static func canApplyModifier(to emoji: String) -> Bool {
+        Emoji(emoji).hasSkinToneVariants
+    }
 }

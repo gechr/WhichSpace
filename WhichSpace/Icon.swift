@@ -146,11 +146,29 @@ enum SpaceIconGenerator {
         }
     }
 
-    static func generateSFSymbolIcon(
+    /// Generates an icon for a symbol (SF Symbol name) or emoji string
+    /// - Parameters:
+    ///   - symbolName: The SF Symbol name or emoji character
+    ///   - darkMode: Whether dark mode is enabled
+    ///   - customColors: Optional custom colors for the icon
+    ///   - skinTone: Optional skin tone index (0-5) for emojis. If nil, uses global default.
+    static func generateSymbolIcon(
         symbolName: String,
         darkMode: Bool,
-        customColors: SpaceColors? = nil
+        customColors: SpaceColors? = nil,
+        skinTone: Int? = nil
     ) -> NSImage {
+        // Check if it's an emoji (contains emoji Unicode characters)
+        if symbolName.containsEmoji {
+            return generateEmojiIcon(
+                emoji: symbolName,
+                darkMode: darkMode,
+                customColors: customColors,
+                skinTone: skinTone
+            )
+        }
+
+        // Try SF Symbol
         let scaledPointSize = Layout.Icon.sfSymbolPointSize * sizeScale
         let symbolConfig = NSImage.SymbolConfiguration(pointSize: scaledPointSize, weight: .medium)
         guard let sfImage = NSImage(systemSymbolName: symbolName, accessibilityDescription: nil)?
@@ -176,6 +194,32 @@ enum SpaceIconGenerator {
             let yStart = (rect.height - imageSize.height) / 2
             let imageRect = CGRect(x: xStart, y: yStart, width: imageSize.width, height: imageSize.height)
             tintedImage.draw(in: imageRect)
+            return true
+        }
+    }
+
+    /// Generates an icon for an emoji character
+    private static func generateEmojiIcon(
+        emoji: String,
+        darkMode _: Bool,
+        customColors _: SpaceColors? = nil,
+        skinTone: Int? = nil
+    ) -> NSImage {
+        let displayEmoji = SkinTone.apply(to: emoji, tone: skinTone)
+        return NSImage(size: statusItemSize, flipped: false) { rect in
+            // Use smaller font for emoji to fit nicely in the status bar
+            let fontSize = 13.0 * sizeScale
+            let font = NSFont.systemFont(ofSize: fontSize)
+
+            let attributes: [NSAttributedString.Key: Any] = [.font: font]
+            let emojiSize = displayEmoji.size(withAttributes: attributes)
+
+            // Center the emoji in the rect
+            let xStart = (rect.width - emojiSize.width) / 2
+            let yStart = (rect.height - emojiSize.height) / 2
+            let emojiRect = CGRect(x: xStart, y: yStart, width: emojiSize.width, height: emojiSize.height)
+
+            displayEmoji.draw(in: emojiRect, withAttributes: attributes)
             return true
         }
     }
@@ -517,7 +561,7 @@ enum SpaceIconGenerator {
                     CTRunGetPositions(run, range, &position)
 
                     if let glyphPath = CTFontCreatePathForGlyph(runFont, glyph, nil) {
-                        var transform = CGAffineTransform(translationX: position.x, y: position.y)
+                        let transform = CGAffineTransform(translationX: position.x, y: position.y)
                         textPath.addPath(glyphPath, transform: transform)
                     }
                 }
@@ -624,5 +668,27 @@ extension NSImage {
         imageRect.fill(using: .sourceAtop)
         image.unlockFocus()
         return image
+    }
+}
+
+// MARK: - String Emoji Detection Extension
+
+extension String {
+    /// Returns true if the string contains emoji characters
+    var containsEmoji: Bool {
+        contains(where: \.isEmoji)
+    }
+}
+
+extension Character {
+    /// Returns true if the character is an emoji
+    var isEmoji: Bool {
+        guard let scalar = unicodeScalars.first else {
+            return false
+        }
+        // Check for emoji presentation or emoji modifier base
+        return scalar.properties.isEmoji && (
+            scalar.properties.isEmojiPresentation || unicodeScalars.count > 1
+        )
     }
 }
