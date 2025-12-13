@@ -14,6 +14,7 @@ Have you ever forgotten _which space_ is currently active on macOS and wanted a 
 - **Symbols** - Use native macOS symbols instead of numbers
 - **Emojis** - Use emojis to get even more creative
 - **Size** - Scale icons to your preference
+- **Sound** - Play a sound when switching Spaces
 - **Launch at Login** - Start automatically with macOS
 - **Auto-Updates** - Stay up-to-date with automatic updates
 

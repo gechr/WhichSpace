@@ -85,6 +85,13 @@ struct DisplaySpaceInfo: Equatable {
     var globalStartIndex = 1
 }
 
+// MARK: - Space Change Notification
+
+extension Notification.Name {
+    /// Posted when the active space changes. The notification object is the AppState instance.
+    static let spaceDidChange = Notification.Name("io.gechr.WhichSpace.spaceDidChange")
+}
+
 /// Geometry for rendered status bar icons (used for hit testing)
 struct StatusBarIconSlot: Equatable {
     let startX: Double
@@ -308,6 +315,10 @@ final class AppState {
         // Invalidate window cache on space change to get fresh window data
         invalidateSpacesWithWindowsCache()
 
+        // Save previous values for space change detection
+        let oldSpace = currentSpace
+        let oldDisplayID = currentDisplayID
+
         guard let displays = displaySpaceProvider.copyManagedDisplaySpaces(),
               let activeDisplay = displaySpaceProvider.copyActiveMenuBarDisplayIdentifier()
         else {
@@ -437,6 +448,7 @@ final class AppState {
             allSpaceIDs = spaceIDs
 
             if foundActiveDisplay {
+                postSpaceChangeNotificationIfNeeded(oldSpace: oldSpace, oldDisplayID: oldDisplayID)
                 return
             }
         }
@@ -448,6 +460,19 @@ final class AppState {
         allSpaceLabels = []
         allSpaceIDs = []
         allDisplaysSpaceInfo = []
+    }
+
+    /// Posts spaceDidChange notification if the space actually changed
+    private func postSpaceChangeNotificationIfNeeded(oldSpace: Int, oldDisplayID: String?) {
+        // Only notify if space or display actually changed
+        let spaceChanged = currentSpace != oldSpace || currentDisplayID != oldDisplayID
+
+        // Skip on initial launch (oldSpace == 0 means no previous space)
+        guard spaceChanged, oldSpace != 0 else {
+            return
+        }
+
+        NotificationCenter.default.post(name: .spaceDidChange, object: self)
     }
 
     @objc func updateDarkModeStatus() {

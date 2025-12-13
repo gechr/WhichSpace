@@ -72,6 +72,9 @@ enum KeySpecs {
         defaultValue: [String: [Int: Int]]()
     )
 
+    /// Sound settings (empty string = no sound)
+    static let soundName = TypedKeySpec(name: "soundName", defaultValue: "")
+
     /// All key names for enumeration (e.g., in tests).
     static let allKeyNames: Set<String> = [
         clickToSwitchSpaces.name,
@@ -87,6 +90,7 @@ enum KeySpecs {
         showAllDisplays.name,
         showAllSpaces.name,
         sizeScale.name,
+        soundName.name,
         spaceColors.name,
         spaceFonts.name,
         spaceIconStyles.name,
@@ -151,6 +155,9 @@ final class DefaultsStore: @unchecked Sendable {
     /// Skin tone keys
     private(set) lazy var keySpaceSkinTones = KeySpecs.spaceSkinTones.key(suite: suite)
     private(set) lazy var keyDisplaySpaceSkinTones = KeySpecs.displaySpaceSkinTones.key(suite: suite)
+
+    /// Sound keys
+    private(set) lazy var keySoundName = KeySpecs.soundName.key(suite: suite)
 
     init(suite: UserDefaults) {
         self.suite = suite
@@ -249,6 +256,11 @@ final class DefaultsStore: @unchecked Sendable {
         set { Defaults[keyDisplaySpaceSkinTones] = newValue }
     }
 
+    var soundName: String {
+        get { Defaults[keySoundName] }
+        set { Defaults[keySoundName] = newValue }
+    }
+
     var separatorColor: NSColor? {
         get {
             guard let data = Defaults[keySeparatorColor] else {
@@ -286,6 +298,7 @@ final class DefaultsStore: @unchecked Sendable {
             keyShowAllDisplays,
             keyShowAllSpaces,
             keySizeScale,
+            keySoundName,
             keySpaceColors,
             keySpaceFonts,
             keySpaceIconStyles,

@@ -211,6 +211,7 @@ final class DefaultsIsolationGuardTests: IsolatedDefaultsTestCase {
             "showAllDisplays",
             "showAllSpaces",
             "sizeScale",
+            "soundName",
             "spaceColors",
             "spaceFonts",
             "spaceIconStyles",

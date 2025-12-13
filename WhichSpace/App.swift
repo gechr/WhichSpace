@@ -316,6 +316,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         )
         configureMenuBarIcon()
         startObservingAppState()
+        startObservingSpaceChanges()
 
         // Disable click-to-switch if accessibility permission was revoked
         if store.clickToSwitchSpaces, !AXIsProcessTrusted() {
@@ -352,6 +353,26 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         observationTask = nil
     }
 
+    /// Starts observing space change notifications to play sound
+    private func startObservingSpaceChanges() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleSpaceDidChange),
+            name: .spaceDidChange,
+            object: nil
+        )
+    }
+
+    @objc private func handleSpaceDidChange() {
+        // Play sound if enabled (copy to allow overlapping sounds)
+        let soundName = store.soundName
+        guard !soundName.isEmpty else {
+            return
+        }
+        let sound = NSSound(named: NSSound.Name(soundName))?.copy() as? NSSound
+        sound?.play()
+    }
+
     // MARK: - SPUStandardUserDriverDelegate
 
     nonisolated var supportsGentleScheduledUpdateReminders: Bool {
@@ -382,6 +403,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         configureVersionHeader()
         configureColorMenuItem()
         configureStyleMenuItem()
+        configureSoundMenuItem()
         configureSizeMenuItem()
         configureCopyAndResetMenuItems()
         configureLaunchAtLoginMenuItem()
@@ -563,6 +585,78 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         sizeMenuItem.submenu = sizeMenu
         statusMenu.addItem(sizeMenuItem)
         statusMenu.addItem(.separator())
+    }
+
+    private func configureSoundMenuItem() {
+        let soundMenu = createSoundMenu()
+        let soundMenuItem = NSMenuItem(title: Localization.menuSound, action: nil, keyEquivalent: "")
+        soundMenuItem.image = NSImage(systemSymbolName: "speaker.wave.2", accessibilityDescription: nil)
+        soundMenuItem.submenu = soundMenu
+        statusMenu.addItem(soundMenuItem)
+    }
+
+    // MARK: Sound Menu
+
+    /// Available system sounds for space switch notification (discovered dynamically)
+    private static var systemSounds: [String] {
+        let soundsURL = URL(fileURLWithPath: "/System/Library/Sounds")
+        guard let contents = try? FileManager.default.contentsOfDirectory(
+            at: soundsURL,
+            includingPropertiesForKeys: nil
+        ) else {
+            return []
+        }
+        return contents
+            .filter { $0.pathExtension == "aiff" }
+            .map { $0.deletingPathExtension().lastPathComponent }
+            .sorted()
+    }
+
+    private func createSoundMenu() -> NSMenu {
+        let soundMenu = NSMenu(title: Localization.menuSound)
+        soundMenu.delegate = self
+
+        // "None" option at top (disables sound)
+        let noneItem = NSMenuItem(
+            title: Localization.soundNone,
+            action: #selector(selectSound(_:)),
+            keyEquivalent: ""
+        )
+        noneItem.target = self
+        noneItem.representedObject = "" // Empty string = no sound
+        noneItem.state = store.soundName.isEmpty ? .on : .off
+        soundMenu.addItem(noneItem)
+
+        soundMenu.addItem(.separator())
+
+        // System sounds
+        for soundName in Self.systemSounds {
+            let item = NSMenuItem(
+                title: soundName,
+                action: #selector(selectSound(_:)),
+                keyEquivalent: ""
+            )
+            item.target = self
+            item.representedObject = soundName
+            item.state = store.soundName == soundName ? .on : .off
+            soundMenu.addItem(item)
+        }
+
+        return soundMenu
+    }
+
+    @objc private func selectSound(_ sender: NSMenuItem) {
+        guard let soundName = sender.representedObject as? String else {
+            return
+        }
+
+        store.soundName = soundName
+
+        // Play preview of selected sound (unless "None")
+        if !soundName.isEmpty {
+            let sound = NSSound(named: NSSound.Name(soundName))?.copy() as? NSSound
+            sound?.play()
+        }
     }
 
     private func configureCopyAndResetMenuItems() {
@@ -1154,6 +1248,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         // Always clear both shared and per-display settings
         SpacePreferences.clearAll(store: store)
         store.sizeScale = Layout.defaultSizeScale
+        store.soundName = ""
         store.separatorColor = nil
         updateStatusBarIcon()
     }
@@ -1593,6 +1688,10 @@ extension AppDelegate: NSMenuDelegate {
         let showMultiSpaceOptions = store.showAllSpaces || store.showAllDisplays
 
         // Update Click to Switch Spaces checkmark and visibility (only shown when multi-space is enabled)
+        // Deselect if permission has been revoked
+        if store.clickToSwitchSpaces, !AXIsProcessTrusted() {
+            store.clickToSwitchSpaces = false
+        }
         if let clickToSwitchItem = menu.item(withTag: MenuTag.clickToSwitchSpaces.rawValue) {
             clickToSwitchItem.state = store.clickToSwitchSpaces ? .on : .off
             clickToSwitchItem.isHidden = !showMultiSpaceOptions
@@ -1695,6 +1794,12 @@ extension AppDelegate: NSMenuDelegate {
             // Update size row view (tag 310)
             if item.tag == MenuTag.sizeRow.rawValue, let view = item.view as? SizeSlider {
                 view.currentSize = store.sizeScale
+            }
+
+            // Update sound menu checkmarks
+            if item.representedObject is String {
+                let soundName = item.representedObject as? String ?? ""
+                item.state = soundName == store.soundName ? .on : .off
             }
         }
 
