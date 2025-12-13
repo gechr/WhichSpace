@@ -60,6 +60,22 @@ enum SpaceIconGenerator {
                 customFont: customFont,
                 filled: false
             )
+        case .slim:
+            generateSlimIcon(
+                for: spaceNumber,
+                darkMode: darkMode,
+                customColors: customColors,
+                customFont: customFont,
+                filled: true
+            )
+        case .slimOutline:
+            generateSlimIcon(
+                for: spaceNumber,
+                darkMode: darkMode,
+                customColors: customColors,
+                customFont: customFont,
+                filled: false
+            )
         case .circle:
             generateCircleIcon(
                 for: spaceNumber,
@@ -198,6 +214,61 @@ enum SpaceIconGenerator {
                 .foregroundColor: colors.foreground,
             ]
             let textSize = spaceNumber.size(withAttributes: attributes)
+            let textX = backgroundRect.origin.x + (backgroundRect.width - textSize.width) / 2
+            let textY = backgroundRect.origin.y + (backgroundRect.height - textSize.height) / 2
+            let textRect = CGRect(x: textX, y: textY, width: textSize.width, height: textSize.height)
+
+            spaceNumber.draw(in: textRect, withAttributes: attributes)
+
+            return true
+        }
+    }
+
+    private static func generateSlimIcon(
+        for spaceNumber: String,
+        darkMode: Bool,
+        customColors: SpaceColors?,
+        customFont: NSFont?,
+        filled: Bool
+    ) -> NSImage {
+        let currentIconHeight = squareSize
+        return NSImage(size: statusItemSize, flipped: false) { rect in
+            let colors = getColors(darkMode: darkMode, customColors: customColors, filled: filled)
+
+            // Calculate text size first to determine dynamic width
+            let font = scaledFont(for: spaceNumber.count, customFont: customFont)
+            let attributes: [NSAttributedString.Key: Any] = [
+                .font: font,
+                .foregroundColor: colors.foreground,
+            ]
+            let textSize = spaceNumber.size(withAttributes: attributes)
+
+            // Calculate dynamic width based on text with horizontal padding
+            let horizontalPadding = 4.0 * sizeScale
+            let iconWidth = textSize.width + horizontalPadding * 2
+
+            // Center the rounded rect within the status item
+            let xStart = (rect.width - iconWidth) / 2
+            let yStart = (rect.height - currentIconHeight) / 2
+            let backgroundRect = CGRect(x: xStart, y: yStart, width: iconWidth, height: currentIconHeight)
+
+            // Draw rounded rectangle
+            let roundedPath = NSBezierPath(
+                roundedRect: backgroundRect,
+                xRadius: Layout.Icon.cornerRadius,
+                yRadius: Layout.Icon.cornerRadius
+            )
+
+            if filled {
+                colors.background.setFill()
+                roundedPath.fill()
+            } else {
+                colors.background.setStroke()
+                roundedPath.lineWidth = Layout.Icon.outlineWidth
+                roundedPath.stroke()
+            }
+
+            // Draw centered text
             let textX = backgroundRect.origin.x + (backgroundRect.width - textSize.width) / 2
             let textY = backgroundRect.origin.y + (backgroundRect.height - textSize.height) / 2
             let textRect = CGRect(x: textX, y: textY, width: textSize.width, height: textSize.height)

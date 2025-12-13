@@ -206,6 +206,7 @@ final class SpaceIconGeneratorTests: IsolatedDefaultsTestCase {
     func testOutlineStyleProducesValidImage() {
         let outlineStyles: [IconStyle] = [
             .squareOutline,
+            .slimOutline,
             .circleOutline,
             .triangleOutline,
             .pentagonOutline,
@@ -220,13 +221,27 @@ final class SpaceIconGeneratorTests: IsolatedDefaultsTestCase {
     }
 
     func testFilledStyleProducesValidImage() {
-        let filledStyles: [IconStyle] = [.square, .circle, .triangle, .pentagon, .hexagon]
+        let filledStyles: [IconStyle] = [.square, .slim, .circle, .triangle, .pentagon, .hexagon]
 
         for style in filledStyles {
             let icon = SpaceIconGenerator.generateIcon(for: "1", darkMode: true, style: style)
             XCTAssertEqual(icon.size, Layout.statusItemSize, "\(style) should have correct size")
             XCTAssertNotNil(icon.tiffRepresentation, "\(style) should produce valid image")
         }
+    }
+
+    func testSlimStyleProducesDifferentImagesForDifferentDigitCounts() {
+        // Slim style has dynamic width based on text, so different digit counts
+        // should produce visually different icons
+        let singleDigit = SpaceIconGenerator.generateIcon(for: "1", darkMode: true, style: .slim)
+        let doubleDigit = SpaceIconGenerator.generateIcon(for: "12", darkMode: true, style: .slim)
+
+        let singleData = singleDigit.tiffRepresentation
+        let doubleData = doubleDigit.tiffRepresentation
+
+        XCTAssertNotNil(singleData)
+        XCTAssertNotNil(doubleData)
+        XCTAssertNotEqual(singleData, doubleData, "Slim icons should differ for different digit counts")
     }
 
     // MARK: - Helpers

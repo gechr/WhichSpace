@@ -47,6 +47,8 @@
 "style_hexagonOutline" = "Hexagon (Outline)";
 "style_pentagon" = "Pentagon";
 "style_pentagonOutline" = "Pentagon (Outline)";
+"style_slim" = "Slim";
+"style_slimOutline" = "Slim (Outline)";
 "style_square" = "Square";
 "style_squareOutline" = "Square (Outline)";
 "style_stroke" = "Stroke";
