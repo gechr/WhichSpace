@@ -36,7 +36,7 @@ struct CGSDisplaySpaceProvider: DisplaySpaceProvider {
             return []
         }
 
-        // Collect all qualifying window IDs for a single batch query
+        // Collect all qualifying window IDs
         var windowIDs: [Int] = []
 
         for window in windowList {
@@ -159,6 +159,7 @@ final class AppState {
     /// The global space index of the current space across all displays (1-based)
     private(set) var currentGlobalSpaceIndex = 0
     private(set) var currentSpace = 0
+    private(set) var currentSpaceID = 0
     private(set) var currentSpaceLabel = "?"
     private(set) var darkModeEnabled = false
 
@@ -488,6 +489,7 @@ final class AppState {
                 if spaceID == activeSpaceID {
                     let activeIndex = spaceLabels.count
                     currentSpace = activeIndex
+                    currentSpaceID = spaceID
                     currentDisplayID = displayID
                     lastUpdateTime = Date()
                     foundActiveDisplay = true
@@ -523,6 +525,7 @@ final class AppState {
         }
 
         currentSpace = 0
+        currentSpaceID = 0
         currentSpaceLabel = "?"
         currentDisplayID = nil
         currentGlobalSpaceIndex = 0
@@ -887,7 +890,7 @@ final class AppState {
                 let localRegularIndex = displayInfo.regularIndices[arrayIndex] ?? 0
                 let globalIndex = displayInfo.globalStartIndex + max(localRegularIndex - 1, 0)
                 let spaceID = displayInfo.spaceIDs[arrayIndex]
-                let isActive = globalIndex == currentGlobalSpaceIndex
+                let isActive = spaceID == currentSpaceID
 
                 // Always show active space
                 guard isActive || shouldShowSpace(label: label, spaceID: spaceID, nonEmptySpaceIDs: nonEmptySpaceIDs)

@@ -840,4 +840,52 @@ final class ShowAllDisplaysEdgeCaseTests: XCTestCase {
         let icon = sut.statusBarIcon
         XCTAssertNotNil(icon)
     }
+
+    /// Regression test: Fullscreen spaces were incorrectly shown as active on Space 1.
+    /// The bug: fullscreen spaces got globalIndex=1 due to nil regularIndex defaulting to 0,
+    /// which matched currentGlobalSpaceIndex when user was on Space 1.
+    func testHideFullscreenDoesNotShowFullscreenOnSpace1() {
+        store.showAllDisplays = true
+        store.hideFullscreenApps = true
+        stub.activeDisplayIdentifier = "Display1"
+        stub.displays = [
+            // User is on Space 1 (regular space)
+            CGSStub.makeDisplay(
+                displayID: "Display1",
+                spaces: [
+                    (id: 100, isFullscreen: false),
+                    (id: 101, isFullscreen: false),
+                    (id: 102, isFullscreen: false),
+                ],
+                activeSpaceID: 100
+            ),
+            // Other display has a fullscreen space that should be hidden
+            CGSStub.makeDisplay(
+                displayID: "Display2",
+                spaces: [
+                    (id: 200, isFullscreen: true), // fullscreen - should be hidden
+                    (id: 201, isFullscreen: false),
+                ],
+                activeSpaceID: 201
+            ),
+        ]
+
+        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+
+        // With hideFullscreenApps enabled:
+        // Display1: 3 regular spaces (all shown)
+        // Display2: 1 fullscreen (hidden) + 1 regular (shown) = 1 shown
+        // Total: 3 + 1 = 4 spaces, plus 1 separator between displays
+        let expectedSpaces = 4
+        let expectedSeparators = 1
+        let expectedWidth = Double(expectedSpaces) * Layout.statusItemWidth +
+            Double(expectedSeparators) * Layout.displaySeparatorWidth
+        let icon = sut.statusBarIcon
+        XCTAssertEqual(
+            icon.size.width,
+            expectedWidth,
+            accuracy: 0.1,
+            "Fullscreen space should be hidden, not incorrectly shown as active on Space 1"
+        )
+    }
 }
