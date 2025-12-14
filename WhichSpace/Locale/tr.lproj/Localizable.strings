@@ -44,8 +44,8 @@
 "menu_sound" = "Ses";
 "menu_style" = "Stil";
 "menu_symbol" = "Sembol";
-"sound_none" = "Yok";
 "search" = "Ara...";
+"sound_none" = "Yok";
 "style_circle" = "Daire";
 "style_circleOutline" = "Daire (Çerçeve)";
 "style_hexagon" = "Altıgen";
@@ -71,6 +71,7 @@
 "tip_hide_fullscreen_apps" = "Tam ekran uygulama içeren Alanları gizle";
 "tip_invert_colors" = "Ön plan ve arka plan renklerini değiştir";
 "tip_launch_at_login" = "Girişte %@ uygulamasını otomatik çalıştır";
+"tip_local_space_numbers" = "Global numaralar yerine ekran başına Space numaralarını göster";
 "tip_quit" = "%@ uygulamasından çık";
 "tip_reset_all_spaces_to_default" = "Tüm ekranlardaki tüm Alanlar için renk, stil, yazı tipi, boyut, sembol ve ses özelleştirmelerini kaldır";
 "tip_reset_color_to_default" = "Geçerli Alan ve ayırıcı için özel rengi kaldır";
@@ -85,6 +86,7 @@
 "toggle_hide_empty_spaces" = "Boş Alanları gizle";
 "toggle_hide_fullscreen_apps" = "Tam ekran uygulamaları gizle";
 "toggle_launch_at_login" = "Girişte çalıştır";
+"toggle_local_space_numbers" = "Yerel Space numaralarını kullan";
 "toggle_show_all_displays" = "Tüm ekranları göster";
 "toggle_show_all_spaces" = "Tüm Alanları göster";
 "toggle_unique_icons_per_display" = "Ekran başına ayrı simgeler";

@@ -44,8 +44,8 @@
 "menu_sound" = "Zvuk";
 "menu_style" = "Stil";
 "menu_symbol" = "Simbol";
-"sound_none" = "Ništa";
 "search" = "Претрага...";
+"sound_none" = "Ništa";
 "style_circle" = "Krug";
 "style_circleOutline" = "Krug (kontura)";
 "style_hexagon" = "Heksagon";
@@ -71,6 +71,7 @@
 "tip_hide_fullscreen_apps" = "Sakrij Prostore koji sadrže aplikacije preko celog ekrana";
 "tip_invert_colors" = "Zameni boju pozadine i prednjeg plana";
 "tip_launch_at_login" = "Automatski pokreni %@ pri prijavi";
+"tip_local_space_numbers" = "Prikaži brojeve Prostora po ekranu umesto globalnih brojeva";
 "tip_quit" = "Izađi iz %@";
 "tip_reset_all_spaces_to_default" = "Ukloni prilagođavanja boje, stila, fonta, veličine, simbola i zvuka za sve Prostore na svim ekranima";
 "tip_reset_color_to_default" = "Ukloni prilagođenu boju za tekući Prostor i razdelnik";
@@ -85,6 +86,7 @@
 "toggle_hide_empty_spaces" = "Sakrij prazne Prostore";
 "toggle_hide_fullscreen_apps" = "Sakrij aplikacije preko celog ekrana";
 "toggle_launch_at_login" = "Pokreni pri prijavi";
+"toggle_local_space_numbers" = "Koristi lokalne brojeve Prostora";
 "toggle_show_all_displays" = "Prikaži sve ekrane";
 "toggle_show_all_spaces" = "Prikaži sve Prostore";
 "toggle_unique_icons_per_display" = "Odvojene ikone po ekranu";

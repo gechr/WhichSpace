@@ -44,8 +44,8 @@
 "menu_sound" = "Zvuk";
 "menu_style" = "Štýl";
 "menu_symbol" = "Symbol";
-"sound_none" = "Žiadny";
 "search" = "Hľadať...";
+"sound_none" = "Žiadny";
 "style_circle" = "Kruh";
 "style_circleOutline" = "Kruh (obrys)";
 "style_hexagon" = "Šesťuholník";
@@ -71,6 +71,7 @@
 "tip_hide_fullscreen_apps" = "Skryť priestory obsahujúce celoobrazovkové aplikácie";
 "tip_invert_colors" = "Vymeniť farbu popredia a pozadia";
 "tip_launch_at_login" = "Automaticky spustiť %@ pri štarte";
+"tip_local_space_numbers" = "Zobrazovať čísla Spaces pre každý displej namiesto globálnych čísel";
 "tip_quit" = "Ukončiť %@";
 "tip_reset_all_spaces_to_default" = "Odstrániť prispôsobenia farby, štýlu, písma, veľkosti, symbolu a zvuku pre všetky priestory na všetkých displejoch";
 "tip_reset_color_to_default" = "Odstrániť vlastnú farbu pre aktuálny priestor a oddeľovač";
@@ -85,6 +86,7 @@
 "toggle_hide_empty_spaces" = "Skryť prázdne priestory";
 "toggle_hide_fullscreen_apps" = "Skryť celoobrazovkové aplikácie";
 "toggle_launch_at_login" = "Spustiť pri prihlásení";
+"toggle_local_space_numbers" = "Používať lokálne čísla Spaces";
 "toggle_show_all_displays" = "Zobraziť všetky displeje";
 "toggle_show_all_spaces" = "Zobraziť všetky priestory";
 "toggle_unique_icons_per_display" = "Samostatné ikony pre každý displej";

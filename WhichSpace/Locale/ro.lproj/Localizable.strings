@@ -44,8 +44,8 @@
 "menu_sound" = "Sunet";
 "menu_style" = "Stil";
 "menu_symbol" = "Simbol";
-"sound_none" = "Niciunul";
 "search" = "Căutare...";
+"sound_none" = "Niciunul";
 "style_circle" = "Cerc";
 "style_circleOutline" = "Cerc (Contur)";
 "style_hexagon" = "Hexagon";
@@ -71,6 +71,7 @@
 "tip_hide_fullscreen_apps" = "Ascunde spațiile cu aplicații pe tot ecranul";
 "tip_invert_colors" = "Inversează culorile de prim-plan și fundal";
 "tip_launch_at_login" = "Rulează %@ automat la pornire";
+"tip_local_space_numbers" = "Afișează numerele Spațiilor pe fiecare ecran în locul numerelor globale";
 "tip_quit" = "Ieșire din %@";
 "tip_reset_all_spaces_to_default" = "Elimină personalizările de culoare, stil, font, dimensiune, simbol și sunet pentru toate spațiile de pe toate ecranele";
 "tip_reset_color_to_default" = "Elimină culoarea personalizată pentru spațiul curent și separator";
@@ -85,6 +86,7 @@
 "toggle_hide_empty_spaces" = "Ascunde spațiile goale";
 "toggle_hide_fullscreen_apps" = "Ascunde aplicațiile pe tot ecranul";
 "toggle_launch_at_login" = "Pornește la logare";
+"toggle_local_space_numbers" = "Folosește numere locale ale Spațiilor";
 "toggle_show_all_displays" = "Afișează toate ecranele";
 "toggle_show_all_spaces" = "Afișează toate spațiile";
 "toggle_unique_icons_per_display" = "Pictograme separate per ecran";

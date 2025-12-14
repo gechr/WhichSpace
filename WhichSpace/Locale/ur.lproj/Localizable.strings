@@ -44,8 +44,8 @@
 "menu_sound" = "آواز";
 "menu_style" = "انداز";
 "menu_symbol" = "علامت";
-"sound_none" = "کوئی نہیں";
 "search" = "تلاش...";
+"sound_none" = "کوئی نہیں";
 "style_circle" = "دائرہ";
 "style_circleOutline" = "دائرہ (خاکہ)";
 "style_hexagon" = "شَش ضلعی";
@@ -71,6 +71,7 @@
 "tip_hide_fullscreen_apps" = "فل اسکرین ایپس والے اسپیسز چھپائیں";
 "tip_invert_colors" = "پیش منظر اور پس منظر کے رنگ اُلٹائیں";
 "tip_launch_at_login" = "آغاز پر %@ خودکار طور پر چلائیں";
+"tip_local_space_numbers" = "ہر ڈسپلے کے مقامی اسپیس نمبر دکھائیں، عالمی نمبروں کی بجائے";
 "tip_quit" = "%@ بند کریں";
 "tip_reset_all_spaces_to_default" = "تمام ڈسپلے پر تمام اسپیسز کے رنگ، انداز، فونٹ، سائز، علامت اور آواز کی تخصیصات ہٹائیں";
 "tip_reset_color_to_default" = "موجودہ اسپیس اور جداکار کے لیے حسبِ منشا رنگ ہٹائیں";
@@ -85,6 +86,7 @@
 "toggle_hide_empty_spaces" = "خالی اسپیسز چھپائیں";
 "toggle_hide_fullscreen_apps" = "فل اسکرین ایپس چھپائیں";
 "toggle_launch_at_login" = "لاگ اِن پر چلائیں";
+"toggle_local_space_numbers" = "مقامی اسپیس نمبر استعمال کریں";
 "toggle_show_all_displays" = "تمام ڈسپلے دکھائیں";
 "toggle_show_all_spaces" = "تمام اسپیسز دکھائیں";
 "toggle_unique_icons_per_display" = "ہر ڈسپلے کے لیے الگ آئیکنز";

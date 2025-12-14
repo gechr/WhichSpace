@@ -44,8 +44,8 @@
 "menu_sound" = "الصوت";
 "menu_style" = "النمط";
 "menu_symbol" = "الرمز";
-"sound_none" = "بدون";
 "search" = "بحث...";
+"sound_none" = "بدون";
 "style_circle" = "دائرة";
 "style_circleOutline" = "دائرة (حد خارجي)";
 "style_hexagon" = "سداسي";
@@ -71,6 +71,7 @@
 "tip_hide_fullscreen_apps" = "إخفاء المساحات التي تحتوي على تطبيقات بملء الشاشة";
 "tip_invert_colors" = "تبديل الألوان الأمامية والخلفية";
 "tip_launch_at_login" = "تشغيل %@ تلقائياً عند بدء التشغيل";
+"tip_local_space_numbers" = "اعرض أرقام المساحات لكل شاشة بدلاً من الأرقام العالمية";
 "tip_quit" = "إنهاء %@";
 "tip_reset_all_spaces_to_default" = "إزالة تخصيصات اللون والنمط والخط والحجم والرمز والصوت لكل المساحات على جميع الشاشات";
 "tip_reset_color_to_default" = "إزالة اللون المخصص للمساحة الحالية والفاصل";
@@ -85,6 +86,7 @@
 "toggle_hide_empty_spaces" = "إخفاء المساحات الفارغة";
 "toggle_hide_fullscreen_apps" = "إخفاء تطبيقات ملء الشاشة";
 "toggle_launch_at_login" = "تشغيل عند تسجيل الدخول";
+"toggle_local_space_numbers" = "استخدم أرقام المساحات المحلية";
 "toggle_show_all_displays" = "إظهار جميع الشاشات";
 "toggle_show_all_spaces" = "إظهار جميع المساحات";
 "toggle_unique_icons_per_display" = "أيقونات منفصلة لكل شاشة";

@@ -44,8 +44,8 @@
 "menu_sound" = "사운드";
 "menu_style" = "스타일";
 "menu_symbol" = "심볼";
-"sound_none" = "없음";
 "search" = "검색...";
+"sound_none" = "없음";
 "style_circle" = "원";
 "style_circleOutline" = "원 (윤곽)";
 "style_hexagon" = "육각형";
@@ -71,6 +71,7 @@
 "tip_hide_fullscreen_apps" = "전체 화면 앱이 있는 공간 숨기기";
 "tip_invert_colors" = "전경색과 배경색 바꾸기";
 "tip_launch_at_login" = "시동 시 %@ 자동 실행";
+"tip_local_space_numbers" = "글로벌 번호 대신 디스플레이별 Space 번호를 표시";
 "tip_quit" = "%@ 종료";
 "tip_reset_all_spaces_to_default" = "모든 디스플레이의 모든 공간에 대한 색상, 스타일, 글꼴, 크기, 심볼, 사운드 사용자 지정을 제거";
 "tip_reset_color_to_default" = "현재 공간과 구분선의 사용자 지정 색상 제거";
@@ -85,6 +86,7 @@
 "toggle_hide_empty_spaces" = "빈 공간 숨기기";
 "toggle_hide_fullscreen_apps" = "전체 화면 앱 공간 숨기기";
 "toggle_launch_at_login" = "로그인 시 실행";
+"toggle_local_space_numbers" = "전역이 아닌 로컬 Space 번호 사용";
 "toggle_show_all_displays" = "모든 디스플레이 표시";
 "toggle_show_all_spaces" = "모든 공간 표시";
 "toggle_unique_icons_per_display" = "디스플레이별 개별 아이콘";

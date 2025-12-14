@@ -44,8 +44,8 @@
 "menu_sound" = "聲音";
 "menu_style" = "樣式";
 "menu_symbol" = "符號";
-"sound_none" = "無";
 "search" = "搜尋...";
+"sound_none" = "無";
 "style_circle" = "圓形";
 "style_circleOutline" = "圓形 (描邊)";
 "style_hexagon" = "六邊形";
@@ -71,6 +71,7 @@
 "tip_hide_fullscreen_apps" = "隱藏包含全螢幕應用程式的空間";
 "tip_invert_colors" = "交換前景色與背景色";
 "tip_launch_at_login" = "登入時自動執行 %@";
+"tip_local_space_numbers" = "顯示每個顯示器的空間編號，而不是全域編號";
 "tip_quit" = "結束 %@";
 "tip_reset_all_spaces_to_default" = "移除所有顯示器上所有空間的顏色、樣式、字體、尺寸、符號和聲音自訂";
 "tip_reset_color_to_default" = "移除目前空間與分隔符的自訂顏色";
@@ -85,6 +86,7 @@
 "toggle_hide_empty_spaces" = "隱藏空的空間";
 "toggle_hide_fullscreen_apps" = "隱藏全螢幕應用的空間";
 "toggle_launch_at_login" = "登入時啟動";
+"toggle_local_space_numbers" = "使用本地空間編號";
 "toggle_show_all_displays" = "顯示所有顯示器";
 "toggle_show_all_spaces" = "顯示所有空間";
 "toggle_unique_icons_per_display" = "每個顯示器使用單獨的圖示";

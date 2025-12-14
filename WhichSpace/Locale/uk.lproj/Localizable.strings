@@ -44,8 +44,8 @@
 "menu_sound" = "Звук";
 "menu_style" = "Стиль";
 "menu_symbol" = "Символ";
-"sound_none" = "Немає";
 "search" = "Пошук...";
+"sound_none" = "Немає";
 "style_circle" = "Коло";
 "style_circleOutline" = "Коло (контур)";
 "style_hexagon" = "Шестикутник";
@@ -71,6 +71,7 @@
 "tip_hide_fullscreen_apps" = "Приховати простори з повноекранними застосунками";
 "tip_invert_colors" = "Поміняти місцями передній та задній план";
 "tip_launch_at_login" = "Автоматично запускати %@ під час старту системи";
+"tip_local_space_numbers" = "Показувати номери просторів для кожного дисплея замість глобальних номерів";
 "tip_quit" = "Закрити %@";
 "tip_reset_all_spaces_to_default" = "Видалити налаштування кольору, стилю, шрифту, розміру, символу та звуку для всіх просторів на всіх дисплеях";
 "tip_reset_color_to_default" = "Видалити налаштований колір для поточного простору та роздільника";
@@ -85,6 +86,7 @@
 "toggle_hide_empty_spaces" = "Приховувати порожні простори";
 "toggle_hide_fullscreen_apps" = "Приховувати повноекранні застосунки";
 "toggle_launch_at_login" = "Запускати під час входу";
+"toggle_local_space_numbers" = "Використовувати локальні номери просторів";
 "toggle_show_all_displays" = "Показувати всі дисплеї";
 "toggle_show_all_spaces" = "Показувати всі простори";
 "toggle_unique_icons_per_display" = "Окремі іконки для кожного дисплея";

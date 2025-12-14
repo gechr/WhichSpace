@@ -44,8 +44,8 @@
 "menu_sound" = "Geluid";
 "menu_style" = "Stijl";
 "menu_symbol" = "Symbool";
-"sound_none" = "Geen";
 "search" = "Zoeken...";
+"sound_none" = "Geen";
 "style_circle" = "Cirkel";
 "style_circleOutline" = "Cirkel (Contour)";
 "style_hexagon" = "Zeshoek";
@@ -71,6 +71,7 @@
 "tip_hide_fullscreen_apps" = "Spaces met apps op volledig scherm verbergen";
 "tip_invert_colors" = "Voor- en achtergrondkleur omwisselen";
 "tip_launch_at_login" = "%@ automatisch starten bij inloggen";
+"tip_local_space_numbers" = "Toon Space-nummers per scherm in plaats van globale nummers";
 "tip_quit" = "%@ afsluiten";
 "tip_reset_all_spaces_to_default" = "Kleur-, stijl-, lettertype-, grootte-, symbool- en geluidsaanpassingen verwijderen voor alle Spaces op alle schermen";
 "tip_reset_color_to_default" = "Aangepaste kleur voor de huidige Space en scheidingsteken verwijderen";
@@ -85,6 +86,7 @@
 "toggle_hide_empty_spaces" = "Lege Spaces verbergen";
 "toggle_hide_fullscreen_apps" = "Spaces met apps op volledig scherm verbergen";
 "toggle_launch_at_login" = "Starten bij inloggen";
+"toggle_local_space_numbers" = "Gebruik lokale Space-nummers";
 "toggle_show_all_displays" = "Alle schermen tonen";
 "toggle_show_all_spaces" = "Alle Spaces tonen";
 "toggle_unique_icons_per_display" = "Gescheiden iconen per scherm";

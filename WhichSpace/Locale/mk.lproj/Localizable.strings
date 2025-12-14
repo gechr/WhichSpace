@@ -44,8 +44,8 @@
 "menu_sound" = "Звук";
 "menu_style" = "Стил";
 "menu_symbol" = "Симбол";
-"sound_none" = "Ништо";
 "search" = "Пребарај...";
+"sound_none" = "Ништо";
 "style_circle" = "Круг";
 "style_circleOutline" = "Круг (контура)";
 "style_hexagon" = "Шестоаголник";
@@ -71,6 +71,7 @@
 "tip_hide_fullscreen_apps" = "Сокриј Простори што содржат апликации на цел екран";
 "tip_invert_colors" = "Замени ги боите на позадина и преден план";
 "tip_launch_at_login" = "Автоматски стартувај %@ при најавување";
+"tip_local_space_numbers" = "Прикажи броеви на Простори по дисплеј наместо глобални броеви";
 "tip_quit" = "Затвори %@";
 "tip_reset_all_spaces_to_default" = "Отстрани прилагодувања на боја, стил, фонт, големина, симбол и звук за сите Простори на сите дисплеи";
 "tip_reset_color_to_default" = "Отстрани ја прилагодената боја за тековниот Простор и разделникот";
@@ -85,6 +86,7 @@
 "toggle_hide_empty_spaces" = "Сокриј празни Простори";
 "toggle_hide_fullscreen_apps" = "Сокриј апликации на цел екран";
 "toggle_launch_at_login" = "Пушти при најавување";
+"toggle_local_space_numbers" = "Користи локални броеви на Простори";
 "toggle_show_all_displays" = "Прикажи ги сите дисплеи";
 "toggle_show_all_spaces" = "Прикажи ги сите Простори";
 "toggle_unique_icons_per_display" = "Одделни икони по дисплеј";

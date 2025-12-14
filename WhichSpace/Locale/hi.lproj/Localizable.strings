@@ -44,8 +44,8 @@
 "menu_sound" = "ध्वनि";
 "menu_style" = "स्टाइल";
 "menu_symbol" = "प्रतीक";
-"sound_none" = "कोई नहीं";
 "search" = "खोजें...";
+"sound_none" = "कोई नहीं";
 "style_circle" = "वृत्त";
 "style_circleOutline" = "वृत्त (आउटलाइन)";
 "style_hexagon" = "षट्भुज";
@@ -71,6 +71,7 @@
 "tip_hide_fullscreen_apps" = "फुल-स्क्रीन ऐप वाले स्पेसेस छिपाएँ";
 "tip_invert_colors" = "फोरग्राउंड और बैकग्राउंड रंग बदलें";
 "tip_launch_at_login" = "स्टार्टअप पर %@ को स्वतः चलाएँ";
+"tip_local_space_numbers" = "प्रति डिस्प्ले स्पेस नंबर दिखाएँ, वैश्विक नंबरों की बजाय";
 "tip_quit" = "%@ बंद करें";
 "tip_reset_all_spaces_to_default" = "सभी डिस्प्ले पर सभी स्पेसेस के लिए रंग, स्टाइल, फ़ॉन्ट, आकार, प्रतीक और ध्वनि के अनुकूलन हटाएँ";
 "tip_reset_color_to_default" = "मौजूदा स्पेस और सेपरेटर के लिए कस्टम रंग हटाएँ";
@@ -85,6 +86,7 @@
 "toggle_hide_empty_spaces" = "खाली स्पेसेस छिपाएँ";
 "toggle_hide_fullscreen_apps" = "फुल-स्क्रीन ऐप्स छिपाएँ";
 "toggle_launch_at_login" = "लॉगिन पर चालू करें";
+"toggle_local_space_numbers" = "स्थानीय स्पेस नंबर इस्तेमाल करें";
 "toggle_show_all_displays" = "सभी डिस्प्ले दिखाएँ";
 "toggle_show_all_spaces" = "सभी स्पेसेस दिखाएँ";
 "toggle_unique_icons_per_display" = "हर डिस्प्ले के लिए अलग आइकन";

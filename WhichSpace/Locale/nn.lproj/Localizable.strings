@@ -44,8 +44,8 @@
 "menu_sound" = "Lyd";
 "menu_style" = "Stil";
 "menu_symbol" = "Symbol";
-"sound_none" = "Ingen";
 "search" = "Søk...";
+"sound_none" = "Ingen";
 "style_circle" = "Sirkel";
 "style_circleOutline" = "Sirkel (Kontur)";
 "style_hexagon" = "Sekskant";
@@ -71,6 +71,7 @@
 "tip_hide_fullscreen_apps" = "Gøym Spaces med program i fullskjerm";
 "tip_invert_colors" = "Byt om på framgrunn og bakgrunn";
 "tip_launch_at_login" = "Køyr %@ automatisk ved oppstart";
+"tip_local_space_numbers" = "Vis Space-nummer per skjerm i staden for globale nummer";
 "tip_quit" = "Avslutt %@";
 "tip_reset_all_spaces_to_default" = "Fjern tilpassingar av farge, stil, skrifttype, storleik, symbol og lyd for alle Spaces på alle skjermar";
 "tip_reset_color_to_default" = "Fjern eigendefinert farge for gjeldande Space og skiljelinja";
@@ -85,6 +86,7 @@
 "toggle_hide_empty_spaces" = "Gøym tomme Spaces";
 "toggle_hide_fullscreen_apps" = "Gøym fullskjermprogram";
 "toggle_launch_at_login" = "Start ved pålogging";
+"toggle_local_space_numbers" = "Bruk lokale Space-nummer";
 "toggle_show_all_displays" = "Vis alle skjermar";
 "toggle_show_all_spaces" = "Vis alle Spaces";
 "toggle_unique_icons_per_display" = "Eigne ikon per skjerm";

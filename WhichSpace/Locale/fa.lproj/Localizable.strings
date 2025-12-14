@@ -44,8 +44,8 @@
 "menu_sound" = "صدا";
 "menu_style" = "استایل";
 "menu_symbol" = "نماد";
-"sound_none" = "هیچ‌کدام";
 "search" = "جستجو...";
+"sound_none" = "هیچ‌کدام";
 "style_circle" = "دایره";
 "style_circleOutline" = "دایره (حاشیه)";
 "style_hexagon" = "شش‌ضلعی";
@@ -71,6 +71,7 @@
 "tip_hide_fullscreen_apps" = "فضاهای دارای برنامه تمام‌صفحه را مخفی کن";
 "tip_invert_colors" = "جابه‌جایی رنگ پس‌زمینه و پیش‌زمینه";
 "tip_launch_at_login" = "اجرای خودکار %@ هنگام ورود";
+"tip_local_space_numbers" = "شماره‌های فضای محلی را برای هر نمایشگر نشان بده، به‌جای شماره‌های سراسری";
 "tip_quit" = "خروج %@";
 "tip_reset_all_spaces_to_default" = "حذف سفارشی‌سازی رنگ، استایل، فونت، اندازه، نماد و صدا برای همه فضاها روی همه نمایشگرها";
 "tip_reset_color_to_default" = "حذف رنگ سفارشی برای فضای فعلی و جداکننده";
@@ -85,6 +86,7 @@
 "toggle_hide_empty_spaces" = "مخفی کردن فضاهای خالی";
 "toggle_hide_fullscreen_apps" = "مخفی کردن برنامه‌های تمام‌صفحه";
 "toggle_launch_at_login" = "اجرای هنگام ورود";
+"toggle_local_space_numbers" = "استفاده از شماره‌های محلی فضا";
 "toggle_show_all_displays" = "نمایش همه نمایشگرها";
 "toggle_show_all_spaces" = "نمایش همه فضاها";
 "toggle_unique_icons_per_display" = "آیکون‌های جداگانه برای هر نمایشگر";

@@ -44,8 +44,8 @@
 "menu_sound" = "غږ";
 "menu_style" = "سټایل";
 "menu_symbol" = "سمبول";
-"sound_none" = "هیڅ";
 "search" = "لټون...";
+"sound_none" = "هیڅ";
 "style_circle" = "دایره";
 "style_circleOutline" = "دایره (بڼکه)";
 "style_hexagon" = "شپږضلعي";
@@ -71,6 +71,7 @@
 "tip_hide_fullscreen_apps" = "هغه سپېسونه پټ کړئ چې بشپړ سکرین اپلېکېشنونه لري";
 "tip_invert_colors" = "مخ او شاليد رنګونه واړوئ";
 "tip_launch_at_login" = "%@ په پيل کې په اوتومات ډول وچلوئ";
+"tip_local_space_numbers" = "د هر ډیسپلې محلي د سپېس شمېرې وښایئ، د عمومي شمېرو پر ځای";
 "tip_quit" = "%@ بند کړئ";
 "tip_reset_all_spaces_to_default" = "په ټولو ډیسپلېونو کې د ټولو سپېسونو د رنګ، سټایل، فانټ، کچې، سمبول او غږ سمونونه لرې کړئ";
 "tip_reset_color_to_default" = "د روان سپېس او بېلکوونکي دودیز رنګ لرې کړئ";
@@ -85,6 +86,7 @@
 "toggle_hide_empty_spaces" = "خالي سپېسونه پټ کړئ";
 "toggle_hide_fullscreen_apps" = "بشپړ سکرین اپلېکېشنونه پټ کړئ";
 "toggle_launch_at_login" = "د ننوتلو پر مهال وچلوئ";
+"toggle_local_space_numbers" = "د سپېس محلي شمېرې وکاروئ";
 "toggle_show_all_displays" = "ټول ډیسپلېونه وښایئ";
 "toggle_show_all_spaces" = "ټول سپېسونه وښایئ";
 "toggle_unique_icons_per_display" = "د هر ډیسپلې لپاره جلا نښې";

@@ -44,8 +44,8 @@
 "menu_sound" = "Som";
 "menu_style" = "Estilo";
 "menu_symbol" = "Símbolo";
-"sound_none" = "Nenhum";
 "search" = "Pesquisar...";
+"sound_none" = "Nenhum";
 "style_circle" = "Círculo";
 "style_circleOutline" = "Círculo (Contorno)";
 "style_hexagon" = "Hexágono";
@@ -71,6 +71,7 @@
 "tip_hide_fullscreen_apps" = "Ocultar Espaços com aplicações em ecrã inteiro";
 "tip_invert_colors" = "Trocar as cores de primeiro plano e fundo";
 "tip_launch_at_login" = "Executar %@ automaticamente ao iniciar sessão";
+"tip_local_space_numbers" = "Mostrar números de Espaço por monitor em vez de números globais";
 "tip_quit" = "Sair de %@";
 "tip_reset_all_spaces_to_default" = "Remover as personalizações de cor, estilo, tipo de letra, tamanho, símbolo e som de todos os Espaços em todos os monitores";
 "tip_reset_color_to_default" = "Remover a cor personalizada do Espaço atual e do separador";
@@ -85,6 +86,7 @@
 "toggle_hide_empty_spaces" = "Ocultar Espaços vazios";
 "toggle_hide_fullscreen_apps" = "Ocultar aplicações em ecrã inteiro";
 "toggle_launch_at_login" = "Abrir ao iniciar sessão";
+"toggle_local_space_numbers" = "Usar números locais de Espaço";
 "toggle_show_all_displays" = "Mostrar todos os monitores";
 "toggle_show_all_spaces" = "Mostrar todos os Espaços";
 "toggle_unique_icons_per_display" = "Ícones separados por monitor";

@@ -385,31 +385,40 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
     /// Observes preference changes that affect the status bar icon using Combine publishers
     private func startObservingPreferences() {
+        func voidPublisher(_ key: Defaults.Key<some Any>) -> AnyPublisher<Void, Never> {
+            Defaults.publisher(key)
+                .map { _ in () }
+                .eraseToAnyPublisher()
+        }
+
+        let localSpaceNumbersPublisher = voidPublisher(store.keyLocalSpaceNumbers)
+
         let displayModePublishers: [AnyPublisher<Void, Never>] = [
-            Defaults.publisher(store.keyShowAllSpaces).map { _ in }.eraseToAnyPublisher(),
-            Defaults.publisher(store.keyShowAllDisplays).map { _ in }.eraseToAnyPublisher(),
-            Defaults.publisher(store.keyDimInactiveSpaces).map { _ in }.eraseToAnyPublisher(),
-            Defaults.publisher(store.keyHideEmptySpaces).map { _ in }.eraseToAnyPublisher(),
-            Defaults.publisher(store.keyHideFullscreenApps).map { _ in }.eraseToAnyPublisher(),
-            Defaults.publisher(store.keyUniqueIconsPerDisplay).map { _ in }.eraseToAnyPublisher(),
+            voidPublisher(store.keyShowAllSpaces),
+            voidPublisher(store.keyShowAllDisplays),
+            voidPublisher(store.keyDimInactiveSpaces),
+            voidPublisher(store.keyHideEmptySpaces),
+            voidPublisher(store.keyHideFullscreenApps),
+            voidPublisher(store.keyUniqueIconsPerDisplay),
+            localSpaceNumbersPublisher,
         ]
 
         let appearancePublishers: [AnyPublisher<Void, Never>] = [
-            Defaults.publisher(store.keySizeScale).map { _ in }.eraseToAnyPublisher(),
-            Defaults.publisher(store.keySeparatorColor).map { _ in }.eraseToAnyPublisher(),
-            Defaults.publisher(store.keySpaceColors).map { _ in }.eraseToAnyPublisher(),
-            Defaults.publisher(store.keySpaceIconStyles).map { _ in }.eraseToAnyPublisher(),
-            Defaults.publisher(store.keySpaceSymbols).map { _ in }.eraseToAnyPublisher(),
-            Defaults.publisher(store.keySpaceFonts).map { _ in }.eraseToAnyPublisher(),
-            Defaults.publisher(store.keySpaceSkinTones).map { _ in }.eraseToAnyPublisher(),
+            voidPublisher(store.keySizeScale),
+            voidPublisher(store.keySeparatorColor),
+            voidPublisher(store.keySpaceColors),
+            voidPublisher(store.keySpaceIconStyles),
+            voidPublisher(store.keySpaceSymbols),
+            voidPublisher(store.keySpaceFonts),
+            voidPublisher(store.keySpaceSkinTones),
         ]
 
         let perDisplayPublishers: [AnyPublisher<Void, Never>] = [
-            Defaults.publisher(store.keyDisplaySpaceColors).map { _ in }.eraseToAnyPublisher(),
-            Defaults.publisher(store.keyDisplaySpaceIconStyles).map { _ in }.eraseToAnyPublisher(),
-            Defaults.publisher(store.keyDisplaySpaceSymbols).map { _ in }.eraseToAnyPublisher(),
-            Defaults.publisher(store.keyDisplaySpaceFonts).map { _ in }.eraseToAnyPublisher(),
-            Defaults.publisher(store.keyDisplaySpaceSkinTones).map { _ in }.eraseToAnyPublisher(),
+            voidPublisher(store.keyDisplaySpaceColors),
+            voidPublisher(store.keyDisplaySpaceIconStyles),
+            voidPublisher(store.keyDisplaySpaceSymbols),
+            voidPublisher(store.keyDisplaySpaceFonts),
+            voidPublisher(store.keyDisplaySpaceSkinTones),
         ]
 
         let allPublishers = displayModePublishers + appearancePublishers + perDisplayPublishers
@@ -420,6 +429,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
                 self?.updateStatusBarIcon()
+            }
+            .store(in: &preferenceCancellables)
+
+        localSpaceNumbersPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                // Refresh the cached labels so numbering changes apply immediately
+                self?.appState.forceSpaceUpdate()
             }
             .store(in: &preferenceCancellables)
     }
@@ -456,7 +473,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         configureStyleMenuItem()
         configureSoundMenuItem()
         configureSizeMenuItem()
-        configureCopyAndResetMenuItems()
+        configureOptionsMenuItems()
         configureLaunchAtLoginMenuItem()
         configureUpdateAndQuitMenuItems()
         statusMenu.delegate = self
@@ -710,7 +727,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
     }
 
-    private func configureCopyAndResetMenuItems() {
+    private func configureOptionsMenuItems() {
+        let localSpaceNumbersItem = NSMenuItem(
+            title: Localization.toggleLocalSpaceNumbers,
+            action: #selector(toggleLocalSpaceNumbers),
+            keyEquivalent: ""
+        )
+        localSpaceNumbersItem.target = self
+        localSpaceNumbersItem.tag = MenuTag.localSpaceNumbers.rawValue
+        localSpaceNumbersItem.image = NSImage(
+            systemSymbolName: "globe",
+            accessibilityDescription: nil
+        )
+        localSpaceNumbersItem.toolTip = Localization.tipLocalSpaceNumbers
+        statusMenu.addItem(localSpaceNumbersItem)
+
         let uniqueIconsPerDisplayItem = NSMenuItem(
             title: Localization.toggleUniqueIconsPerDisplay,
             action: #selector(toggleUniqueIconsPerDisplay),
@@ -1268,6 +1299,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         store.clickToSwitchSpaces.toggle()
     }
 
+    @objc func toggleLocalSpaceNumbers() {
+        store.localSpaceNumbers.toggle()
+    }
+
     @objc func toggleUniqueIconsPerDisplay() {
         store.uniqueIconsPerDisplay.toggle()
     }
@@ -1810,6 +1845,10 @@ extension AppDelegate: NSMenuDelegate {
         // Update Launch at Login checkmark
         if let launchAtLoginItem = menu.item(withTag: MenuTag.launchAtLogin.rawValue) {
             launchAtLoginItem.state = launchAtLogin.isEnabled ? .on : .off
+        }
+
+        if let localSpaceNumbersItem = menu.item(withTag: MenuTag.localSpaceNumbers.rawValue) {
+            localSpaceNumbersItem.state = store.localSpaceNumbers ? .on : .off
         }
 
         // Update Unique Icons Per Display checkmark

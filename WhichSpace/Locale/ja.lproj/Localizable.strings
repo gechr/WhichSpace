@@ -44,8 +44,8 @@
 "menu_sound" = "サウンド";
 "menu_style" = "スタイル";
 "menu_symbol" = "シンボル";
-"sound_none" = "なし";
 "search" = "検索...";
+"sound_none" = "なし";
 "style_circle" = "円";
 "style_circleOutline" = "円（アウトライン）";
 "style_hexagon" = "六角形";
@@ -71,6 +71,7 @@
 "tip_hide_fullscreen_apps" = "全画面アプリのあるスペースを隠す";
 "tip_invert_colors" = "前景色と背景色を入れ替える";
 "tip_launch_at_login" = "ログイン時に %@ を自動実行";
+"tip_local_space_numbers" = "グローバル番号ではなく、ディスプレイごとのSpace番号を表示";
 "tip_quit" = "%@ を終了";
 "tip_reset_all_spaces_to_default" = "すべてのディスプレイ上のすべてのスペースから色、スタイル、フォント、サイズ、シンボル、サウンドのカスタマイズを削除";
 "tip_reset_color_to_default" = "現在のスペースとセパレーターのカスタムカラーを削除";
@@ -85,6 +86,7 @@
 "toggle_hide_empty_spaces" = "空のスペースを非表示";
 "toggle_hide_fullscreen_apps" = "全画面アプリを非表示";
 "toggle_launch_at_login" = "ログイン時に起動";
+"toggle_local_space_numbers" = "ローカルのSpace番号を使用";
 "toggle_show_all_displays" = "すべてのディスプレイを表示";
 "toggle_show_all_spaces" = "すべてのスペースを表示";
 "toggle_unique_icons_per_display" = "ディスプレイごとに別々のアイコン";

@@ -44,8 +44,8 @@
 "menu_sound" = "Hang";
 "menu_style" = "Stílus";
 "menu_symbol" = "Szimbólum";
-"sound_none" = "Nincs";
 "search" = "Keresés...";
+"sound_none" = "Nincs";
 "style_circle" = "Kör";
 "style_circleOutline" = "Kör (Körvonal)";
 "style_hexagon" = "Hatszög";
@@ -71,6 +71,7 @@
 "tip_hide_fullscreen_apps" = "Rejtse el a teljes képernyős alkalmazásokat tartalmazó Space-eket";
 "tip_invert_colors" = "Cserélje fel az előtér és háttér színeit";
 "tip_launch_at_login" = "Indítsa %@ alkalmazást automatikusan bejelentkezéskor";
+"tip_local_space_numbers" = "Globális számok helyett jelenítse meg a Space-számokat kijelzőnként";
 "tip_quit" = "Lépjen ki a(z) %@ alkalmazásból";
 "tip_reset_all_spaces_to_default" = "Távolítsa el a szín-, stílus-, betűtípus-, méret-, szimbólum- és hang testreszabásokat minden Space-ről az összes kijelzőn";
 "tip_reset_color_to_default" = "Távolítsa el az aktuális Space és elválasztó egyedi színét";
@@ -85,6 +86,7 @@
 "toggle_hide_empty_spaces" = "Üres Space-ek elrejtése";
 "toggle_hide_fullscreen_apps" = "Teljes képernyős alkalmazások elrejtése";
 "toggle_launch_at_login" = "Indítás bejelentkezéskor";
+"toggle_local_space_numbers" = "Helyi Space-számok használata";
 "toggle_show_all_displays" = "Összes kijelző megjelenítése";
 "toggle_show_all_spaces" = "Összes Space megjelenítése";
 "toggle_unique_icons_per_display" = "Külön ikonok kijelzőnként";

@@ -7,11 +7,10 @@ import EmojiKit
 extension Defaults.Keys {
     static let clickToSwitchSpaces = Key<Bool>("clickToSwitchSpaces", default: false)
     static let dimInactiveSpaces = Key<Bool>("dimInactiveSpaces", default: true)
-    /// Emoji picker skin tone for browsing
-    /// This only affects the emoji picker preview, not the menu bar icons
     static let emojiPickerSkinTone = Key<SkinTone>("emojiPickerSkinTone", default: .default)
     static let hideEmptySpaces = Key<Bool>("hideEmptySpaces", default: false)
     static let hideFullscreenApps = Key<Bool>("hideFullscreenApps", default: false)
+    static let localSpaceNumbers = Key<Bool>("localSpaceNumbers", default: false)
     static let separatorColor = Key<Data?>("separatorColor", default: nil)
     static let showAllDisplays = Key<Bool>("showAllDisplays", default: false)
     static let showAllSpaces = Key<Bool>("showAllSpaces", default: false)
@@ -95,6 +94,7 @@ enum MenuTag: Int {
     case hideFullscreenApps
     case invertColors
     case launchAtLogin
+    case localSpaceNumbers
     case separatorColorDivider
     case separatorLabel
     case separatorSwatch
@@ -170,6 +170,7 @@ enum Localization {
     static let tipHideFullscreenApps = NSLocalizedString("tip_hide_fullscreen_apps", comment: "")
     static let tipInvertColors = NSLocalizedString("tip_invert_colors", comment: "")
     static let tipLaunchAtLogin = NSLocalizedString("tip_launch_at_login", comment: "")
+    static let tipLocalSpaceNumbers = NSLocalizedString("tip_local_space_numbers", comment: "")
     static let tipQuit = NSLocalizedString("tip_quit", comment: "")
     static let tipResetAllSpacesToDefault = NSLocalizedString("tip_reset_all_spaces_to_default", comment: "")
     static let tipResetColorToDefault = NSLocalizedString("tip_reset_color_to_default", comment: "")
@@ -184,6 +185,7 @@ enum Localization {
     static let toggleHideEmptySpaces = NSLocalizedString("toggle_hide_empty_spaces", comment: "")
     static let toggleHideFullscreenApps = NSLocalizedString("toggle_hide_fullscreen_apps", comment: "")
     static let toggleLaunchAtLogin = NSLocalizedString("toggle_launch_at_login", comment: "")
+    static let toggleLocalSpaceNumbers = NSLocalizedString("toggle_local_space_numbers", comment: "")
     static let toggleShowAllDisplays = NSLocalizedString("toggle_show_all_displays", comment: "")
     static let toggleShowAllSpaces = NSLocalizedString("toggle_show_all_spaces", comment: "")
     static let toggleUniqueIconsPerDisplay = NSLocalizedString("toggle_unique_icons_per_display", comment: "")

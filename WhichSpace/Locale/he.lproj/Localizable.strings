@@ -44,8 +44,8 @@
 "menu_sound" = "צליל";
 "menu_style" = "סגנון";
 "menu_symbol" = "סמל";
-"sound_none" = "ללא";
 "search" = "חיפוש...";
+"sound_none" = "ללא";
 "style_circle" = "עיגול";
 "style_circleOutline" = "עיגול (קו מתאר)";
 "style_hexagon" = "משושה";
@@ -71,6 +71,7 @@
 "tip_hide_fullscreen_apps" = "הסתר מרחבים עם יישומים במסך מלא";
 "tip_invert_colors" = "החלף בין צבע קדמי לרקע";
 "tip_launch_at_login" = "הפעל את %@ אוטומטית בעת ההפעלה";
+"tip_local_space_numbers" = "הצג מספרי מרחבים לכל מסך במקום מספרים גלובליים";
 "tip_quit" = "צא מ-%@";
 "tip_reset_all_spaces_to_default" = "הסר התאמות של צבע, סגנון, גופן, גודל, סמל וצליל לכל המרחבים בכל המסכים";
 "tip_reset_color_to_default" = "הסר צבע מותאם אישית למרחב הנוכחי ולמפריד";
@@ -85,6 +86,7 @@
 "toggle_hide_empty_spaces" = "הסתר מרחבים ריקים";
 "toggle_hide_fullscreen_apps" = "הסתר יישומי מסך מלא";
 "toggle_launch_at_login" = "הפעל בעת ההתחברות";
+"toggle_local_space_numbers" = "השתמש במספרי מרחבים מקומיים";
 "toggle_show_all_displays" = "הצג את כל התצוגות";
 "toggle_show_all_spaces" = "הצג את כל המרחבים";
 "toggle_unique_icons_per_display" = "סמלים נפרדים לכל תצוגה";

@@ -44,8 +44,8 @@
 "menu_sound" = "Bunyi";
 "menu_style" = "Gaya";
 "menu_symbol" = "Simbol";
-"sound_none" = "Tiada";
 "search" = "Cari...";
+"sound_none" = "Tiada";
 "style_circle" = "Bulatan";
 "style_circleOutline" = "Bulatan (Garis luar)";
 "style_hexagon" = "Heksagon";
@@ -71,6 +71,7 @@
 "tip_hide_fullscreen_apps" = "Sembunyikan Ruang yang mengandungi aplikasi skrin penuh";
 "tip_invert_colors" = "Tukar warna latar dan hadapan";
 "tip_launch_at_login" = "Jalankan %@ secara automatik semasa log masuk";
+"tip_local_space_numbers" = "Tunjukkan nombor Ruang setiap paparan dan bukannya nombor global";
 "tip_quit" = "Keluar %@";
 "tip_reset_all_spaces_to_default" = "Alih keluar penyesuaian warna, gaya, fon, saiz, simbol dan bunyi untuk semua Ruang pada semua paparan";
 "tip_reset_color_to_default" = "Alih keluar warna tersuai untuk Ruang semasa dan pemisah";
@@ -85,6 +86,7 @@
 "toggle_hide_empty_spaces" = "Sembunyikan Ruang kosong";
 "toggle_hide_fullscreen_apps" = "Sembunyikan aplikasi skrin penuh";
 "toggle_launch_at_login" = "Jalankan semasa log masuk";
+"toggle_local_space_numbers" = "Guna nombor Ruang tempatan";
 "toggle_show_all_displays" = "Tunjukkan semua paparan";
 "toggle_show_all_spaces" = "Tunjukkan semua Ruang";
 "toggle_unique_icons_per_display" = "Ikon berasingan setiap paparan";

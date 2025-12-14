@@ -44,8 +44,8 @@
 "menu_sound" = "เสียง";
 "menu_style" = "สไตล์";
 "menu_symbol" = "สัญลักษณ์";
-"sound_none" = "ไม่มี";
 "search" = "ค้นหา...";
+"sound_none" = "ไม่มี";
 "style_circle" = "วงกลม";
 "style_circleOutline" = "วงกลม (เส้นขอบ)";
 "style_hexagon" = "หกเหลี่ยม";
@@ -71,6 +71,7 @@
 "tip_hide_fullscreen_apps" = "ซ่อน Space ที่มีแอปเต็มหน้าจอ";
 "tip_invert_colors" = "สลับสีพื้นหน้าและพื้นหลัง";
 "tip_launch_at_login" = "เปิด %@ อัตโนมัติเมื่อเข้าสู่ระบบ";
+"tip_local_space_numbers" = "แสดงหมายเลข Space ตามหน้าจอแทนหมายเลขแบบรวม";
 "tip_quit" = "ออกจาก %@";
 "tip_reset_all_spaces_to_default" = "ลบการปรับแต่งสี สไตล์ ฟอนต์ ขนาด สัญลักษณ์ และเสียงของทุก Space บนทุกหน้าจอ";
 "tip_reset_color_to_default" = "ลบสีที่กำหนดเองของ Space ปัจจุบันและตัวคั่น";
@@ -85,6 +86,7 @@
 "toggle_hide_empty_spaces" = "ซ่อน Space ว่าง";
 "toggle_hide_fullscreen_apps" = "ซ่อนแอปเต็มหน้าจอ";
 "toggle_launch_at_login" = "เปิดเมื่อเข้าสู่ระบบ";
+"toggle_local_space_numbers" = "ใช้หมายเลข Space แบบแยกหน้าจอ";
 "toggle_show_all_displays" = "แสดงทุกหน้าจอ";
 "toggle_show_all_spaces" = "แสดงทุก Space";
 "toggle_unique_icons_per_display" = "ไอคอนแยกตามหน้าจอ";

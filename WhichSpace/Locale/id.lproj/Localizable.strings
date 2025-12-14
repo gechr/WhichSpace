@@ -44,8 +44,8 @@
 "menu_sound" = "Suara";
 "menu_style" = "Gaya";
 "menu_symbol" = "Simbol";
-"sound_none" = "Tidak ada";
 "search" = "Cari...";
+"sound_none" = "Tidak ada";
 "style_circle" = "Lingkaran";
 "style_circleOutline" = "Lingkaran (Outline)";
 "style_hexagon" = "Heksagon";
@@ -71,6 +71,7 @@
 "tip_hide_fullscreen_apps" = "Sembunyikan Space yang berisi aplikasi layar penuh";
 "tip_invert_colors" = "Tukar warna depan dan belakang";
 "tip_launch_at_login" = "Jalankan %@ otomatis saat masuk";
+"tip_local_space_numbers" = "Tampilkan nomor Space per layar, bukan nomor global";
 "tip_quit" = "Keluar dari %@";
 "tip_reset_all_spaces_to_default" = "Hapus kustomisasi warna, gaya, font, ukuran, simbol, dan suara untuk semua Space di semua layar";
 "tip_reset_color_to_default" = "Hapus warna khusus untuk Space saat ini dan pemisah";
@@ -85,6 +86,7 @@
 "toggle_hide_empty_spaces" = "Sembunyikan Space kosong";
 "toggle_hide_fullscreen_apps" = "Sembunyikan aplikasi layar penuh";
 "toggle_launch_at_login" = "Jalankan saat masuk";
+"toggle_local_space_numbers" = "Gunakan nomor Space lokal";
 "toggle_show_all_displays" = "Tampilkan semua layar";
 "toggle_show_all_spaces" = "Tampilkan semua Space";
 "toggle_unique_icons_per_display" = "Ikon terpisah per layar";

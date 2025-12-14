@@ -44,8 +44,8 @@
 "menu_sound" = "Ääni";
 "menu_style" = "Tyyli";
 "menu_symbol" = "Symboli";
-"sound_none" = "Ei mitään";
 "search" = "Hae...";
+"sound_none" = "Ei mitään";
 "style_circle" = "Ympyrä";
 "style_circleOutline" = "Ympyrä (Ääriviiva)";
 "style_hexagon" = "Kuusikulmio";
@@ -71,6 +71,7 @@
 "tip_hide_fullscreen_apps" = "Piilota Spacet, joissa on koko näytön sovelluksia";
 "tip_invert_colors" = "Vaihda etu- ja taustavärit keskenään";
 "tip_launch_at_login" = "Käynnistä %@ automaattisesti sisäänkirjautuessa";
+"tip_local_space_numbers" = "Näytä näyttökohtaiset Space-numerot globaalien numeroiden sijaan";
 "tip_quit" = "Lopeta %@";
 "tip_reset_all_spaces_to_default" = "Poista väri-, tyyli-, fontti-, koko-, symboli- ja ääni-mukautukset kaikista Spaceista kaikilla näytöillä";
 "tip_reset_color_to_default" = "Poista nykyisen Spacen ja erottimen mukautettu väri";
@@ -85,6 +86,7 @@
 "toggle_hide_empty_spaces" = "Piilota tyhjät Spacet";
 "toggle_hide_fullscreen_apps" = "Piilota koko näytön sovellukset";
 "toggle_launch_at_login" = "Käynnistä kirjautuessa";
+"toggle_local_space_numbers" = "Käytä paikallisia Space-numeroita";
 "toggle_show_all_displays" = "Näytä kaikki näytöt";
 "toggle_show_all_spaces" = "Näytä kaikki Spacet";
 "toggle_unique_icons_per_display" = "Eri kuvakkeet per näyttö";

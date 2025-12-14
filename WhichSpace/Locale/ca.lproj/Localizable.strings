@@ -44,8 +44,8 @@
 "menu_sound" = "So";
 "menu_style" = "Estil";
 "menu_symbol" = "Símbol";
-"sound_none" = "Cap";
 "search" = "Cerca...";
+"sound_none" = "Cap";
 "style_circle" = "Cercle";
 "style_circleOutline" = "Cercle (contorn)";
 "style_hexagon" = "Hexàgon";
@@ -71,6 +71,7 @@
 "tip_hide_fullscreen_apps" = "Amaga els Espais que contenen aplicacions a pantalla completa";
 "tip_invert_colors" = "Intercanvia el color de fons i de primer pla";
 "tip_launch_at_login" = "Executa %@ automàticament a l'inici";
+"tip_local_space_numbers" = "Mostra els números d'Espai per pantalla en comptes dels números globals";
 "tip_quit" = "Surt de %@";
 "tip_reset_all_spaces_to_default" = "Elimina les personalitzacions de color, estil, lletra, mida, símbol i so de tots els Espais a totes les pantalles";
 "tip_reset_color_to_default" = "Elimina el color personalitzat de l'Espai actual i del separador";
@@ -85,6 +86,7 @@
 "toggle_hide_empty_spaces" = "Amaga els Espais buits";
 "toggle_hide_fullscreen_apps" = "Amaga les aplicacions a pantalla completa";
 "toggle_launch_at_login" = "Executa en iniciar sessió";
+"toggle_local_space_numbers" = "Utilitza números locals d'Espai";
 "toggle_show_all_displays" = "Mostra totes les pantalles";
 "toggle_show_all_spaces" = "Mostra tots els Espais";
 "toggle_unique_icons_per_display" = "Separa les icones per pantalla";

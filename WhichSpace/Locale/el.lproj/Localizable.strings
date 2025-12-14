@@ -44,8 +44,8 @@
 "menu_sound" = "Ήχος";
 "menu_style" = "Στιλ";
 "menu_symbol" = "Σύμβολο";
-"sound_none" = "Κανένας";
 "search" = "Αναζήτηση...";
+"sound_none" = "Κανένας";
 "style_circle" = "Κύκλος";
 "style_circleOutline" = "Κύκλος (Περίγραμμα)";
 "style_hexagon" = "Εξάγωνο";
@@ -71,6 +71,7 @@
 "tip_hide_fullscreen_apps" = "Απόκρυψη Χώρων με εφαρμογές πλήρους οθόνης";
 "tip_invert_colors" = "Αντιστροφή χρώματος προσκηνίου και φόντου";
 "tip_launch_at_login" = "Αυτόματη εκτέλεση %@ κατά τη σύνδεση";
+"tip_local_space_numbers" = "Εμφάνιση αριθμών Χώρων ανά οθόνη αντί για καθολικούς αριθμούς";
 "tip_quit" = "Έξοδος από %@";
 "tip_reset_all_spaces_to_default" = "Αφαίρεση προσαρμογών χρώματος, στιλ, γραμματοσειράς, μεγέθους, συμβόλου και ήχου για όλους τους Χώρους σε όλες τις οθόνες";
 "tip_reset_color_to_default" = "Αφαίρεση προσαρμοσμένου χρώματος για τον τρέχοντα Χώρο και το διαχωριστικό";
@@ -85,6 +86,7 @@
 "toggle_hide_empty_spaces" = "Απόκρυψη άδειων Χώρων";
 "toggle_hide_fullscreen_apps" = "Απόκρυψη εφαρμογών πλήρους οθόνης";
 "toggle_launch_at_login" = "Εκκίνηση στη σύνδεση";
+"toggle_local_space_numbers" = "Χρήση τοπικών αριθμών Χώρων";
 "toggle_show_all_displays" = "Εμφάνιση όλων των οθονών";
 "toggle_show_all_spaces" = "Εμφάνιση όλων των Χώρων";
 "toggle_unique_icons_per_display" = "Ξεχωριστά εικονίδια ανά οθόνη";
