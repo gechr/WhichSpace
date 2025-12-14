@@ -879,6 +879,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         quitItem.image = NSImage(systemSymbolName: "xmark.rectangle", accessibilityDescription: nil)
         quitItem.toolTip = String(format: Localization.tipQuit, appName)
         statusMenu.addItem(quitItem)
+
+        // NSMenu clips bottom padding when containing custom view-backed items, so add
+        // an invisible spacer to compensate.
+        let spacer = NSMenuItem()
+        spacer.isEnabled = false
+        spacer.view = NSView(frame: NSRect(x: 0, y: 0, width: 1, height: 5))
+        statusMenu.addItem(spacer)
     }
 
     // MARK: Color Menu
