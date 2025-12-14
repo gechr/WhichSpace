@@ -92,14 +92,14 @@ struct DisplaySpaceInfo: Equatable {
         labels: [String],
         spaceIDs: [Int],
         globalStartIndex: Int = 1,
-        regularIndices: [Int?]? = nil,
+        regularIndices: [Int?] = [],
         regularSpaceCount: Int? = nil
     ) {
         self.displayID = displayID
         self.labels = labels
         self.spaceIDs = spaceIDs
         let computedRegularIndices: [Int?]
-        if let regularIndices {
+        if !regularIndices.isEmpty {
             computedRegularIndices = regularIndices
         } else {
             var count = 0
@@ -112,7 +112,7 @@ struct DisplaySpaceInfo: Equatable {
             }
         }
         self.regularIndices = computedRegularIndices
-        self.regularSpaceCount = regularSpaceCount ?? computedRegularIndices.compactMap { $0 }.count
+        self.regularSpaceCount = regularSpaceCount ?? computedRegularIndices.compactMap(\.self).count
         self.globalStartIndex = globalStartIndex
     }
 }
