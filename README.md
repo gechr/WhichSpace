@@ -17,6 +17,7 @@ Have you ever forgotten _which space_ is currently active on macOS and wanted a 
 - **Sound** - Play a sound when switching Spaces
 - **Launch at Login** - Start automatically with macOS
 - **Auto-Updates** - Stay up-to-date with automatic updates
+- **Languages** - Translated into multiple languages
 
 ## Features
 

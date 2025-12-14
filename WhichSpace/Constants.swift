@@ -158,6 +158,7 @@ enum Localization {
     static let menuStyle = NSLocalizedString("menu_style", comment: "")
     static let menuSymbol = NSLocalizedString("menu_symbol", comment: "")
     static let soundNone = NSLocalizedString("sound_none", comment: "")
+    static let search = NSLocalizedString("search", comment: "")
     static let tipApplyColorToAll = NSLocalizedString("tip_apply_color_to_all", comment: "")
     static let tipApplyStyleToAll = NSLocalizedString("tip_apply_style_to_all", comment: "")
     static let tipApplyToAll = NSLocalizedString("tip_apply_to_all", comment: "")

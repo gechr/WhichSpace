@@ -45,6 +45,7 @@
 "menu_style" = "Style";
 "menu_symbol" = "Symbol";
 "sound_none" = "None";
+"search" = "Search...";
 "style_circle" = "Circle";
 "style_circleOutline" = "Circle (Outline)";
 "style_hexagon" = "Hexagon";

@@ -72,12 +72,7 @@ final class ItemPicker: NSView {
         }
 
         var searchPlaceholder: String {
-            switch self {
-            case .symbols:
-                "Search symbols..."
-            case .emojis:
-                "Search..."
-            }
+            Localization.search
         }
 
         var itemSize: Double {

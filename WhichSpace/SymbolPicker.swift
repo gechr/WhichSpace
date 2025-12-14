@@ -312,7 +312,7 @@ final class SymbolPicker: NSView {
 
     private func setupViews() {
         // Search field at top
-        searchField.placeholderString = "Search symbols..."
+        searchField.placeholderString = Localization.search
         searchField.delegate = self
         searchField.translatesAutoresizingMaskIntoConstraints = false
         (searchField.cell as? NSSearchFieldCell)?.sendsSearchStringImmediately = true
