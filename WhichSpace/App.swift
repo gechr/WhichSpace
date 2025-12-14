@@ -1,4 +1,5 @@
 import AppKit
+import Combine
 import Defaults
 import LaunchAtLogin
 import Observation
@@ -35,11 +36,12 @@ struct DefaultLaunchAtLoginProvider: LaunchAtLoginProvider {
 // MARK: - Space Switching
 
 enum SpaceSwitcher {
-    private static let maxSupportedSpace = 16
     private static let firstHotKey: UInt16 = 118
-    private static var hasPromptedForAccessibility = false
-    private static var binYabai: URL?
+    private static let maxSupportedSpace = 16
     private static let yabaiExecutableName = "yabai"
+
+    private static var binYabai: URL?
+    private static var hasPromptedForAccessibility = false
 
     static func switchToSpace(_ space: Int) {
         guard ensureAccessibilityPermission() else {
@@ -258,16 +260,19 @@ struct DefaultConfirmationAlertFactory: ConfirmationAlertFactory {
 final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverDelegate {
     // MARK: - Properties
 
-    private let statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-    private let appState: AppState
     private let alertFactory: ConfirmationAlertFactory
-    private var launchAtLogin: LaunchAtLoginProvider
+    private let appState: AppState
+    private let statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
 
-    private var updaterController: SPUStandardUpdaterController!
-    private(set) var statusMenu: NSMenu!
-    private(set) var observationTask: Task<Void, Never>?
     private var isPickingForeground = true
+    private var isPreviewingIcon = false
+    private var launchAtLogin: LaunchAtLoginProvider
+    private var preferenceCancellables = Set<AnyCancellable>()
+    private var updaterController: SPUStandardUpdaterController!
+
+    private(set) var observationTask: Task<Void, Never>?
     private(set) var statusBarIconUpdateCount = 0
+    private(set) var statusMenu: NSMenu!
 
     /// Test hook: continuation that fires whenever updateStatusBarIcon() completes.
     /// Set this from tests to await icon updates deterministically.
@@ -317,6 +322,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         configureMenuBarIcon()
         startObservingAppState()
         startObservingSpaceChanges()
+        startObservingPreferences()
 
         // Disable click-to-switch if accessibility permission was revoked
         if store.clickToSwitchSpaces, !AXIsProcessTrusted() {
@@ -327,22 +333,26 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     // MARK: - Observation
 
     /// Test hook to start the observation task. In production, this is called from applicationDidFinishLaunching.
+    ///
+    /// Uses `withCheckedContinuation` to suspend until `statusBarIcon` changes, avoiding
+    /// wasteful polling. The `withObservationTracking` closure fires `onChange` once per
+    /// change, so we loop to re-register after each update.
     func startObservingAppState() {
         observationTask = Task { [weak self] in
             while !Task.isCancelled {
                 guard let self else {
                     return
                 }
-                // Access properties to register them for observation tracking
-                let icon = withObservationTracking {
-                    self.appState.statusBarIcon
-                } onChange: {
-                    Task { @MainActor [weak self] in
-                        self?.updateStatusBarIcon()
+                await withCheckedContinuation { continuation in
+                    _ = withObservationTracking {
+                        self.appState.statusBarIcon
+                    } onChange: {
+                        continuation.resume()
                     }
                 }
-                statusBarItem.button?.image = icon
-                try? await Task.sleep(for: .milliseconds(100))
+                await MainActor.run {
+                    self.updateStatusBarIcon()
+                }
             }
         }
     }
@@ -371,6 +381,47 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
         let sound = NSSound(named: NSSound.Name(soundName))?.copy() as? NSSound
         sound?.play()
+    }
+
+    /// Observes preference changes that affect the status bar icon using Combine publishers
+    private func startObservingPreferences() {
+        let displayModePublishers: [AnyPublisher<Void, Never>] = [
+            Defaults.publisher(store.keyShowAllSpaces).map { _ in }.eraseToAnyPublisher(),
+            Defaults.publisher(store.keyShowAllDisplays).map { _ in }.eraseToAnyPublisher(),
+            Defaults.publisher(store.keyDimInactiveSpaces).map { _ in }.eraseToAnyPublisher(),
+            Defaults.publisher(store.keyHideEmptySpaces).map { _ in }.eraseToAnyPublisher(),
+            Defaults.publisher(store.keyHideFullscreenApps).map { _ in }.eraseToAnyPublisher(),
+            Defaults.publisher(store.keyUniqueIconsPerDisplay).map { _ in }.eraseToAnyPublisher(),
+        ]
+
+        let appearancePublishers: [AnyPublisher<Void, Never>] = [
+            Defaults.publisher(store.keySizeScale).map { _ in }.eraseToAnyPublisher(),
+            Defaults.publisher(store.keySeparatorColor).map { _ in }.eraseToAnyPublisher(),
+            Defaults.publisher(store.keySpaceColors).map { _ in }.eraseToAnyPublisher(),
+            Defaults.publisher(store.keySpaceIconStyles).map { _ in }.eraseToAnyPublisher(),
+            Defaults.publisher(store.keySpaceSymbols).map { _ in }.eraseToAnyPublisher(),
+            Defaults.publisher(store.keySpaceFonts).map { _ in }.eraseToAnyPublisher(),
+            Defaults.publisher(store.keySpaceSkinTones).map { _ in }.eraseToAnyPublisher(),
+        ]
+
+        let perDisplayPublishers: [AnyPublisher<Void, Never>] = [
+            Defaults.publisher(store.keyDisplaySpaceColors).map { _ in }.eraseToAnyPublisher(),
+            Defaults.publisher(store.keyDisplaySpaceIconStyles).map { _ in }.eraseToAnyPublisher(),
+            Defaults.publisher(store.keyDisplaySpaceSymbols).map { _ in }.eraseToAnyPublisher(),
+            Defaults.publisher(store.keyDisplaySpaceFonts).map { _ in }.eraseToAnyPublisher(),
+            Defaults.publisher(store.keyDisplaySpaceSkinTones).map { _ in }.eraseToAnyPublisher(),
+        ]
+
+        let allPublishers = displayModePublishers + appearancePublishers + perDisplayPublishers
+
+        Publishers.MergeMany(allPublishers)
+            // 16ms ≈ one frame at 60 FPS; coalesces rapid changes into a single update
+            .debounce(for: .milliseconds(16), scheduler: DispatchQueue.main)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.updateStatusBarIcon()
+            }
+            .store(in: &preferenceCancellables)
     }
 
     // MARK: - SPUStandardUserDriverDelegate
@@ -862,6 +913,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             updateStatusBarIcon()
             skinToneSwatch.currentTone = tone
         }
+        skinToneSwatch.onHoverStart = { [weak self] index in
+            guard let self, let symbol = appState.currentSymbol else {
+                return
+            }
+            self.showPreviewIcon(symbol: symbol, skinTone: index)
+        }
+        skinToneSwatch.onHoverEnd = { [weak self] in
+            self?.restoreIcon()
+        }
         skinToneSwatchItem.view = skinToneSwatch
         colorsMenu.addItem(skinToneSwatchItem)
 
@@ -885,6 +945,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             self?.isPickingForeground = true
             self?.showColorPanel()
         }
+        symbolSwatch.onHoverStart = { [weak self] index in
+            guard index < ColorSwatch.presetColors.count else {
+                return
+            }
+            self?.showPreviewIcon(foreground: ColorSwatch.presetColors[index])
+        }
+        symbolSwatch.onHoverEnd = { [weak self] in
+            self?.restoreIcon()
+        }
         symbolSwatchItem.view = symbolSwatch
         colorsMenu.addItem(symbolSwatchItem)
 
@@ -905,6 +974,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         foregroundSwatch.onCustomColorRequested = { [weak self] in
             self?.isPickingForeground = true
             self?.showColorPanel()
+        }
+        foregroundSwatch.onHoverStart = { [weak self] index in
+            guard index < ColorSwatch.presetColors.count else {
+                return
+            }
+            self?.showPreviewIcon(foreground: ColorSwatch.presetColors[index])
+        }
+        foregroundSwatch.onHoverEnd = { [weak self] in
+            self?.restoreIcon()
         }
         foregroundSwatchItem.view = foregroundSwatch
         colorsMenu.addItem(foregroundSwatchItem)
@@ -931,6 +1009,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         backgroundSwatch.onCustomColorRequested = { [weak self] in
             self?.isPickingForeground = false
             self?.showColorPanel()
+        }
+        backgroundSwatch.onHoverStart = { [weak self] index in
+            guard index < ColorSwatch.presetColors.count else {
+                return
+            }
+            self?.showPreviewIcon(background: ColorSwatch.presetColors[index])
+        }
+        backgroundSwatch.onHoverEnd = { [weak self] in
+            self?.restoreIcon()
         }
         backgroundSwatchItem.view = backgroundSwatch
         colorsMenu.addItem(backgroundSwatchItem)
@@ -1016,6 +1103,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             stylePicker.onSelected = { [weak self, weak stylePicker] in
                 self?.selectIconStyle(style, stylePicker: stylePicker)
             }
+            stylePicker.onHoverStart = { [weak self] hoveredStyle in
+                self?.showPreviewIcon(style: hoveredStyle, clearSymbol: true)
+            }
+            stylePicker.onHoverEnd = { [weak self] in
+                self?.restoreIcon()
+            }
             item.view = stylePicker
             item.representedObject = style
             iconMenu.addItem(item)
@@ -1059,6 +1152,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         picker.onItemSelected = { [weak self] item in
             self?.setSymbol(item)
         }
+        picker.onItemHoverStart = { [weak self] item in
+            // For emojis, use the global emoji picker skin tone for preview
+            let skinTone = item.containsEmoji ? Defaults[.emojiPickerSkinTone] : nil
+            let foreground = self?.appState.currentColors?.foreground
+            let background = self?.appState.currentColors?.background
+            self?.showPreviewIcon(symbol: item, foreground: foreground, background: background, skinTone: skinTone)
+        }
+        picker.onItemHoverEnd = { [weak self] in
+            self?.restoreIcon()
+        }
         pickerItem.view = picker
         menu.addItem(pickerItem)
 
@@ -1068,6 +1171,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     // MARK: - Status Bar
 
     func updateStatusBarIcon() {
+        guard !isPreviewingIcon else {
+            return
+        }
         statusBarIconUpdateCount += 1
         let icon = appState.statusBarIcon
         statusBarItem.length = icon.size.width
@@ -1075,26 +1181,60 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         statusBarIconUpdateNotifier?.yield()
     }
 
+    // MARK: - Preview
+
+    private func showPreviewIcon(
+        style: IconStyle? = nil,
+        symbol: String? = nil,
+        foreground: NSColor? = nil,
+        background: NSColor? = nil,
+        clearSymbol: Bool = false,
+        skinTone: Int? = nil
+    ) {
+        isPreviewingIcon = true
+        let previewIcon = appState.generatePreviewIcon(
+            overrideStyle: style,
+            overrideSymbol: symbol,
+            overrideForeground: foreground,
+            overrideBackground: background,
+            clearSymbol: clearSymbol,
+            skinTone: skinTone
+        )
+        statusBarItem.length = previewIcon.size.width
+        statusBarItem.button?.image = previewIcon
+    }
+
+    private func restoreIcon() {
+        guard isPreviewingIcon else {
+            return
+        }
+        isPreviewingIcon = false
+        updateStatusBarIcon()
+    }
+
+    private func showInvertedColorPreview() {
+        let defaults = IconColors.filledColors(darkMode: appState.darkModeEnabled)
+        let foreground = appState.currentColors?.foregroundColor ?? defaults.foreground
+        let background = appState.currentColors?.backgroundColor ?? defaults.background
+        showPreviewIcon(foreground: background, background: foreground)
+    }
+
     // MARK: - Toggle Actions
 
     @objc func toggleDimInactiveSpaces() {
         store.dimInactiveSpaces.toggle()
-        updateStatusBarIcon()
     }
 
     @objc func toggleHideEmptySpaces() {
         store.hideEmptySpaces.toggle()
-        updateStatusBarIcon()
     }
 
     @objc func toggleHideFullscreenApps() {
         store.hideFullscreenApps.toggle()
-        updateStatusBarIcon()
     }
 
     @objc func toggleLaunchAtLogin() {
         launchAtLogin.isEnabled.toggle()
-        updateStatusBarIcon()
     }
 
     @objc func toggleShowAllDisplays() {
@@ -1103,7 +1243,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         if store.showAllDisplays {
             store.showAllSpaces = false
         }
-        updateStatusBarIcon()
     }
 
     @objc func toggleShowAllSpaces() {
@@ -1112,11 +1251,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         if store.showAllSpaces {
             store.showAllDisplays = false
         }
-        updateStatusBarIcon()
     }
 
     @objc func toggleClickToSwitchSpaces() {
-        // If enabling and no accessibility permission, show alert first
         if !store.clickToSwitchSpaces, !AXIsProcessTrusted() {
             showAccessibilityPermissionAlert()
             return
@@ -1126,7 +1263,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
     @objc func toggleUniqueIconsPerDisplay() {
         store.uniqueIconsPerDisplay.toggle()
-        updateStatusBarIcon()
     }
 
     @objc private func checkForUpdates() {
@@ -1805,5 +1941,27 @@ extension AppDelegate: NSMenuDelegate {
 
         // Update status bar icon when menu opens
         updateStatusBarIcon()
+    }
+
+    func menuDidClose(_: NSMenu) {
+        // Reset preview state in case menu closed while hovering (onHoverEnd may not fire)
+        if isPreviewingIcon {
+            isPreviewingIcon = false
+            updateStatusBarIcon()
+        }
+    }
+
+    func menu(_: NSMenu, willHighlight item: NSMenuItem?) {
+        guard let item else {
+            restoreIcon()
+            return
+        }
+
+        switch item.tag {
+        case MenuTag.invertColors.rawValue:
+            showInvertedColorPreview()
+        default:
+            restoreIcon()
+        }
     }
 }

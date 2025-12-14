@@ -7,21 +7,18 @@ import EmojiKit
 extension Defaults.Keys {
     static let clickToSwitchSpaces = Key<Bool>("clickToSwitchSpaces", default: false)
     static let dimInactiveSpaces = Key<Bool>("dimInactiveSpaces", default: true)
+    /// Emoji picker skin tone for browsing (0 = default yellow, 1-5 = skin tones light to dark)
+    /// This only affects the emoji picker preview, not the menu bar icons
+    static let emojiPickerSkinTone = Key<Int>("emojiPickerSkinTone", default: 0)
     static let hideEmptySpaces = Key<Bool>("hideEmptySpaces", default: false)
     static let hideFullscreenApps = Key<Bool>("hideFullscreenApps", default: false)
     static let separatorColor = Key<Data?>("separatorColor", default: nil)
     static let showAllDisplays = Key<Bool>("showAllDisplays", default: false)
     static let showAllSpaces = Key<Bool>("showAllSpaces", default: false)
+    static let sizeScale = Key<Double>("sizeScale", default: Layout.defaultSizeScale)
     static let spaceColors = Key<[Int: SpaceColors]>("spaceColors", default: [:])
     static let spaceIconStyles = Key<[Int: IconStyle]>("spaceIconStyles", default: [:])
     static let spaceSymbols = Key<[Int: String]>("spaceSymbols", default: [:])
-
-    /// Size preferences
-    static let sizeScale = Key<Double>("sizeScale", default: Layout.defaultSizeScale)
-
-    /// Emoji picker skin tone for browsing (0 = default yellow, 1-5 = skin tones light to dark)
-    /// This only affects the emoji picker preview, not the menu bar icons
-    static let emojiPickerSkinTone = Key<Int>("emojiPickerSkinTone", default: 0)
 }
 
 // MARK: - Labels
@@ -159,8 +156,8 @@ enum Localization {
     static let menuSize = NSLocalizedString("menu_size", comment: "")
     static let menuSound = NSLocalizedString("menu_sound", comment: "")
     static let menuStyle = NSLocalizedString("menu_style", comment: "")
-    static let soundNone = NSLocalizedString("sound_none", comment: "")
     static let menuSymbol = NSLocalizedString("menu_symbol", comment: "")
+    static let soundNone = NSLocalizedString("sound_none", comment: "")
     static let tipApplyColorToAll = NSLocalizedString("tip_apply_color_to_all", comment: "")
     static let tipApplyStyleToAll = NSLocalizedString("tip_apply_style_to_all", comment: "")
     static let tipApplyToAll = NSLocalizedString("tip_apply_to_all", comment: "")
@@ -197,6 +194,7 @@ enum Localization {
 
 enum SkinTone {
     static let modifiers: [String?] = [nil, "\u{1F3FB}", "\u{1F3FC}", "\u{1F3FD}", "\u{1F3FE}", "\u{1F3FF}"]
+
     private static let modifierScalars: Set<Unicode.Scalar> = [
         Unicode.Scalar(0x1F3FB)!,
         Unicode.Scalar(0x1F3FC)!,
@@ -204,10 +202,8 @@ enum SkinTone {
         Unicode.Scalar(0x1F3FE)!,
         Unicode.Scalar(0x1F3FF)!,
     ]
-
     /// Variation Selector 16 - used to request emoji presentation
     private static let vs16 = Unicode.Scalar(0xFE0F)!
-
     /// Zero Width Joiner - used in complex emoji sequences
     private static let zwj = Unicode.Scalar(0x200D)!
 

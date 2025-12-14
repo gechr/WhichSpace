@@ -7,11 +7,12 @@ import EmojiKit
 /// A clickable view that displays the skin tone emoji and handles clicks
 /// Draws text directly to avoid subviews intercepting mouse events
 private final class ToneLabelView: NSView {
-    var onClick: (() -> Void)?
     private var emoji: String
 
-    override var isFlipped: Bool { true }
+    var onClick: (() -> Void)?
+
     override var acceptsFirstResponder: Bool { true }
+    override var isFlipped: Bool { true }
 
     init(emoji: String) {
         self.emoji = emoji
@@ -100,16 +101,14 @@ final class ItemPicker: NSView {
 
     // MARK: - Configuration
 
-    private let spacing: Double = 6
     private let padding: Double = 8
-    private let visibleRows = 8
-    private let searchFieldHeight: Double = 22
     private let scrollbarWidth: Double = 15
+    private let searchFieldHeight: Double = 22
+    private let spacing: Double = 6
+    private let visibleRows = 8
 
     // MARK: - Public Properties
 
-    var onItemSelected: ((String?) -> Void)?
-    var selectedItem: String?
     var darkMode = false {
         didSet {
             gridView.darkMode = darkMode
@@ -117,14 +116,20 @@ final class ItemPicker: NSView {
         }
     }
 
+    var onItemHoverEnd: (() -> Void)?
+    var onItemHoverStart: ((String) -> Void)?
+    var onItemSelected: ((String?) -> Void)?
+    var selectedItem: String?
+
     // MARK: - Private Properties
 
+    private let gridView: ItemGridView
     private let itemType: ItemType
-    private var allItems: [String]
-    private var filteredItems: [String]
     private let searchField = NSSearchField()
     private let scrollView = NSScrollView()
-    private let gridView: ItemGridView
+
+    private var allItems: [String]
+    private var filteredItems: [String]
     private var toneLabelView: ToneLabelView?
 
     // MARK: - Computed Properties
@@ -216,6 +221,12 @@ final class ItemPicker: NSView {
             // from the Color menu will be applied at render time
             self.onItemSelected?(item)
         }
+        gridView.onItemHoverStart = { [weak self] item in
+            self?.onItemHoverStart?(item)
+        }
+        gridView.onItemHoverEnd = { [weak self] in
+            self?.onItemHoverEnd?()
+        }
         scrollView.documentView = gridView
 
         var constraints = [
@@ -304,19 +315,22 @@ extension ItemPicker: NSSearchFieldDelegate {
 private final class ItemGridView: NSView {
     // MARK: - Properties
 
-    var items: [String]
-    var selectedItem: String?
     var darkMode = false
-    var skinToneModifier: String?
+    var items: [String]
+    var onItemHoverEnd: (() -> Void)?
+    var onItemHoverStart: ((String) -> Void)?
     var onItemSelected: ((String) -> Void)?
+    var selectedItem: String?
+    var skinToneModifier: String?
 
     // MARK: - Private Properties
 
     private let columns: Int
     private let itemSize: Double
-    private let spacing: Double
-    private let padding: Double = 8
     private let itemType: ItemPicker.ItemType
+    private let padding: Double = 8
+    private let spacing: Double
+
     private var hoveredIndex: Int?
     private var imageCache: [String: NSImage] = [:]
 
@@ -484,8 +498,12 @@ private final class ItemGridView: NSView {
                 if itemType == .symbols {
                     toolTip = items[new]
                 }
+                onItemHoverStart?(items[new])
             } else {
                 toolTip = nil
+                if oldIndex != nil {
+                    onItemHoverEnd?()
+                }
             }
         }
     }
@@ -494,6 +512,7 @@ private final class ItemGridView: NSView {
         if let old = hoveredIndex {
             hoveredIndex = nil
             setNeedsDisplay(rectForIndex(old))
+            onItemHoverEnd?()
         }
         toolTip = nil
     }

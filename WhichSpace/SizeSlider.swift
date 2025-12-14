@@ -3,17 +3,17 @@ import Cocoa
 // MARK: - Size Row View
 
 final class SizeSlider: NSView {
+    private let maxLabel: NSTextField
+    private let minLabel: NSTextField
     private let slider: NSSlider
     private let stepper: NSStepper
-    private let minLabel: NSTextField
-    private let maxLabel: NSTextField
     private let valueLabel: NSTextField
 
+    private let controlHeight = 20.0
+    private let labelHeight = 12.0
     private let padding = 16.0
     private let sliderWidth = 140.0
     private let stepperWidth = 20.0
-    private let controlHeight = 20.0
-    private let labelHeight = 12.0
     private let valueLabelHeight = 20.0
 
     var onSizeChanged: ((Double) -> Void)?

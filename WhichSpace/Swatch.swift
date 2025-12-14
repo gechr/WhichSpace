@@ -20,6 +20,11 @@ class Swatch: NSView {
     /// Right padding after last swatch
     var rightPadding: Double { 12.0 }
 
+    // MARK: - Callbacks
+
+    var onHoverEnd: (() -> Void)?
+    var onHoverStart: ((Int) -> Void)?
+
     // MARK: - State
 
     private(set) var hoveredIndex: Int?
@@ -58,14 +63,23 @@ class Swatch: NSView {
         let location = convert(event.locationInWindow, from: nil)
         let newIndex = indexForLocation(location)
         if newIndex != hoveredIndex {
+            let oldIndex = hoveredIndex
             hoveredIndex = newIndex
             needsDisplay = true
+            if let new = newIndex {
+                onHoverStart?(new)
+            } else if oldIndex != nil {
+                onHoverEnd?()
+            }
         }
     }
 
     override func mouseExited(with _: NSEvent) {
-        hoveredIndex = nil
-        needsDisplay = true
+        if hoveredIndex != nil {
+            hoveredIndex = nil
+            needsDisplay = true
+            onHoverEnd?()
+        }
     }
 
     override func updateTrackingAreas() {

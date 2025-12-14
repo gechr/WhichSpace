@@ -255,18 +255,16 @@ final class SymbolPicker: NSView {
 
     // MARK: - Configuration
 
-    private let symbolSize: Double = 24
-    private let spacing: Double = 6
-    private let padding: Double = 8
     private let columns = 8
-    private let visibleRows = 8
-    private let searchFieldHeight: Double = 22
+    private let padding: Double = 8
     private let scrollbarWidth: Double = 15
+    private let searchFieldHeight: Double = 22
+    private let spacing: Double = 6
+    private let symbolSize: Double = 24
+    private let visibleRows = 8
 
     // MARK: - Public Properties
 
-    var onSymbolSelected: ((String?) -> Void)?
-    var selectedSymbol: String?
     var darkMode = false {
         didSet {
             gridView.darkMode = darkMode
@@ -274,12 +272,16 @@ final class SymbolPicker: NSView {
         }
     }
 
+    var onSymbolSelected: ((String?) -> Void)?
+    var selectedSymbol: String?
+
     // MARK: - Private Properties
 
-    private var filteredSymbols: [String] = allSymbols
-    private let searchField = NSSearchField()
-    private let scrollView = NSScrollView()
     private let gridView: SymbolGridView
+    private let scrollView = NSScrollView()
+    private let searchField = NSSearchField()
+
+    private var filteredSymbols: [String] = allSymbols
 
     // MARK: - Computed Properties
 
@@ -375,17 +377,18 @@ extension SymbolPicker: NSSearchFieldDelegate {
 private final class SymbolGridView: NSView {
     // MARK: - Properties
 
-    var symbols: [String]
-    var selectedSymbol: String?
     var darkMode = false
     var onSymbolSelected: ((String) -> Void)?
+    var selectedSymbol: String?
+    var symbols: [String]
 
     // MARK: - Private Properties
 
     private let columns: Int
-    private let symbolSize: Double
-    private let spacing: Double
     private let padding: Double = 8
+    private let spacing: Double
+    private let symbolSize: Double
+
     private var hoveredIndex: Int?
     private var imageCache: [String: NSImage] = [:]
 

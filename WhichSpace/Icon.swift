@@ -13,9 +13,10 @@ import Defaults
 enum SpaceIconGenerator {
     // MARK: - Properties
 
+    private static var polygonSize: Double { Layout.basePolygonSize * sizeScale }
     private static var sizeScale: Double { Defaults[.sizeScale] / 100.0 }
     private static var squareSize: Double { Layout.baseSquareSize * sizeScale }
-    private static var polygonSize: Double { Layout.basePolygonSize * sizeScale }
+
     private static let statusItemSize = Layout.statusItemSize
 
     // MARK: - Public API

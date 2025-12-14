@@ -1,17 +1,20 @@
 import Cocoa
 
 final class StylePicker: NSView {
-    private let style: IconStyle
     private let iconSize = Layout.defaultIconSize
+    private let style: IconStyle
+
     private var isHighlighted = false
 
-    var onSelected: (() -> Void)?
+    var customColors: SpaceColors?
+    var darkMode = false
     var isChecked = false {
         didSet { needsDisplay = true }
     }
 
-    var customColors: SpaceColors?
-    var darkMode = false
+    var onHoverEnd: (() -> Void)?
+    var onHoverStart: ((IconStyle) -> Void)?
+    var onSelected: (() -> Void)?
     var previewNumber = "1"
 
     init(style: IconStyle) {
@@ -68,11 +71,13 @@ final class StylePicker: NSView {
     override func mouseEntered(with _: NSEvent) {
         isHighlighted = true
         needsDisplay = true
+        onHoverStart?(style)
     }
 
     override func mouseExited(with _: NSEvent) {
         isHighlighted = false
         needsDisplay = true
+        onHoverEnd?()
     }
 
     override func mouseUp(with _: NSEvent) {

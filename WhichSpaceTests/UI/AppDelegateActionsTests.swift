@@ -150,27 +150,22 @@ final class AppDelegateActionsTests: XCTestCase {
 
     func testToggleShowAllSpaces_togglesFromFalseToTrue() {
         store.showAllSpaces = false
-        let initialCount = sut.statusBarIconUpdateCount
 
         sut.toggleShowAllSpaces()
 
         XCTAssertTrue(store.showAllSpaces, "showAllSpaces should toggle to true")
-        XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 1, "updateStatusBarIcon should be called")
     }
 
     func testToggleShowAllSpaces_togglesFromTrueToFalse() {
         store.showAllSpaces = true
-        let initialCount = sut.statusBarIconUpdateCount
 
         sut.toggleShowAllSpaces()
 
         XCTAssertFalse(store.showAllSpaces, "showAllSpaces should toggle to false")
-        XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 1, "updateStatusBarIcon should be called")
     }
 
     func testToggleShowAllSpaces_multipleToggles() {
         store.showAllSpaces = false
-        let initialCount = sut.statusBarIconUpdateCount
 
         sut.toggleShowAllSpaces()
         XCTAssertTrue(store.showAllSpaces)
@@ -180,8 +175,6 @@ final class AppDelegateActionsTests: XCTestCase {
 
         sut.toggleShowAllSpaces()
         XCTAssertTrue(store.showAllSpaces)
-
-        XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 3, "updateStatusBarIcon should be called 3 times")
     }
 
     func testToggleShowAllSpaces_disablesShowAllDisplays_whenEnabled() {
@@ -208,22 +201,18 @@ final class AppDelegateActionsTests: XCTestCase {
 
     func testToggleShowAllDisplays_togglesFromFalseToTrue() {
         store.showAllDisplays = false
-        let initialCount = sut.statusBarIconUpdateCount
 
         sut.toggleShowAllDisplays()
 
         XCTAssertTrue(store.showAllDisplays, "showAllDisplays should toggle to true")
-        XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 1, "updateStatusBarIcon should be called")
     }
 
     func testToggleShowAllDisplays_togglesFromTrueToFalse() {
         store.showAllDisplays = true
-        let initialCount = sut.statusBarIconUpdateCount
 
         sut.toggleShowAllDisplays()
 
         XCTAssertFalse(store.showAllDisplays, "showAllDisplays should toggle to false")
-        XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 1, "updateStatusBarIcon should be called")
     }
 
     func testToggleShowAllDisplays_disablesShowAllSpaces_whenEnabled() {
@@ -250,27 +239,22 @@ final class AppDelegateActionsTests: XCTestCase {
 
     func testToggleDimInactiveSpaces_togglesFromTrueToFalse() {
         store.dimInactiveSpaces = true
-        let initialCount = sut.statusBarIconUpdateCount
 
         sut.toggleDimInactiveSpaces()
 
         XCTAssertFalse(store.dimInactiveSpaces, "dimInactiveSpaces should toggle to false")
-        XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 1, "updateStatusBarIcon should be called")
     }
 
     func testToggleDimInactiveSpaces_togglesFromFalseToTrue() {
         store.dimInactiveSpaces = false
-        let initialCount = sut.statusBarIconUpdateCount
 
         sut.toggleDimInactiveSpaces()
 
         XCTAssertTrue(store.dimInactiveSpaces, "dimInactiveSpaces should toggle to true")
-        XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 1, "updateStatusBarIcon should be called")
     }
 
     func testToggleDimInactiveSpaces_multipleToggles() {
         store.dimInactiveSpaces = true
-        let initialCount = sut.statusBarIconUpdateCount
 
         sut.toggleDimInactiveSpaces()
         XCTAssertFalse(store.dimInactiveSpaces)
@@ -280,35 +264,28 @@ final class AppDelegateActionsTests: XCTestCase {
 
         sut.toggleDimInactiveSpaces()
         XCTAssertFalse(store.dimInactiveSpaces)
-
-        XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 3, "updateStatusBarIcon should be called 3 times")
     }
 
     // MARK: - toggleHideEmptySpaces Tests
 
     func testToggleHideEmptySpaces_togglesFromTrueToFalse() {
         store.hideEmptySpaces = true
-        let initialCount = sut.statusBarIconUpdateCount
 
         sut.toggleHideEmptySpaces()
 
         XCTAssertFalse(store.hideEmptySpaces, "hideEmptySpaces should toggle to false")
-        XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 1, "updateStatusBarIcon should be called")
     }
 
     func testToggleHideEmptySpaces_togglesFromFalseToTrue() {
         store.hideEmptySpaces = false
-        let initialCount = sut.statusBarIconUpdateCount
 
         sut.toggleHideEmptySpaces()
 
         XCTAssertTrue(store.hideEmptySpaces, "hideEmptySpaces should toggle to true")
-        XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 1, "updateStatusBarIcon should be called")
     }
 
     func testToggleHideEmptySpaces_multipleToggles() {
         store.hideEmptySpaces = false
-        let initialCount = sut.statusBarIconUpdateCount
 
         sut.toggleHideEmptySpaces()
         XCTAssertTrue(store.hideEmptySpaces)
@@ -318,35 +295,28 @@ final class AppDelegateActionsTests: XCTestCase {
 
         sut.toggleHideEmptySpaces()
         XCTAssertTrue(store.hideEmptySpaces)
-
-        XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 3, "updateStatusBarIcon should be called 3 times")
     }
 
     // MARK: - toggleHideFullscreenApps Tests
 
     func testToggleHideFullscreenApps_togglesFromTrueToFalse() {
         store.hideFullscreenApps = true
-        let initialCount = sut.statusBarIconUpdateCount
 
         sut.toggleHideFullscreenApps()
 
         XCTAssertFalse(store.hideFullscreenApps, "hideFullscreenApps should toggle to false")
-        XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 1, "updateStatusBarIcon should be called")
     }
 
     func testToggleHideFullscreenApps_togglesFromFalseToTrue() {
         store.hideFullscreenApps = false
-        let initialCount = sut.statusBarIconUpdateCount
 
         sut.toggleHideFullscreenApps()
 
         XCTAssertTrue(store.hideFullscreenApps, "hideFullscreenApps should toggle to true")
-        XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 1, "updateStatusBarIcon should be called")
     }
 
     func testToggleHideFullscreenApps_multipleToggles() {
         store.hideFullscreenApps = false
-        let initialCount = sut.statusBarIconUpdateCount
 
         sut.toggleHideFullscreenApps()
         XCTAssertTrue(store.hideFullscreenApps)
@@ -356,8 +326,6 @@ final class AppDelegateActionsTests: XCTestCase {
 
         sut.toggleHideFullscreenApps()
         XCTAssertTrue(store.hideFullscreenApps)
-
-        XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 3, "updateStatusBarIcon should be called 3 times")
     }
 
     // MARK: - applyToAllSpaces. Tests
@@ -1746,27 +1714,22 @@ final class AppDelegateActionsTests: XCTestCase {
 
     func testToggleLaunchAtLogin_togglesFromFalseToTrue() {
         launchAtLoginStub.isEnabled = false
-        let initialCount = sut.statusBarIconUpdateCount
 
         sut.toggleLaunchAtLogin()
 
         XCTAssertTrue(launchAtLoginStub.isEnabled, "LaunchAtLogin should toggle to true")
-        XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 1, "updateStatusBarIcon should be called")
     }
 
     func testToggleLaunchAtLogin_togglesFromTrueToFalse() {
         launchAtLoginStub.isEnabled = true
-        let initialCount = sut.statusBarIconUpdateCount
 
         sut.toggleLaunchAtLogin()
 
         XCTAssertFalse(launchAtLoginStub.isEnabled, "LaunchAtLogin should toggle to false")
-        XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 1, "updateStatusBarIcon should be called")
     }
 
     func testToggleLaunchAtLogin_multipleToggles() {
         launchAtLoginStub.isEnabled = false
-        let initialCount = sut.statusBarIconUpdateCount
 
         sut.toggleLaunchAtLogin()
         XCTAssertTrue(launchAtLoginStub.isEnabled)
@@ -1776,8 +1739,6 @@ final class AppDelegateActionsTests: XCTestCase {
 
         sut.toggleLaunchAtLogin()
         XCTAssertTrue(launchAtLoginStub.isEnabled)
-
-        XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 3, "updateStatusBarIcon should be called 3 times")
     }
 
     func testToggleLaunchAtLogin_menuCheckmarkUpdatesAfterMenuWillOpen() {

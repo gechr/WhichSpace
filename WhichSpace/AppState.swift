@@ -1,5 +1,4 @@
 import Cocoa
-import Combine
 import Defaults
 import os.log
 
@@ -115,36 +114,34 @@ final class AppState {
 
     static let shared = AppState()
 
+    private static let debounceInterval: Duration = .milliseconds(50)
     private static let logger = Logger(subsystem: "io.gechr.WhichSpace", category: "AppState")
-
-    private(set) var currentSpace = 0
-    private(set) var currentSpaceLabel = "?"
-    private(set) var currentDisplayID: String?
-    private(set) var darkModeEnabled = false
-    private(set) var allSpaceLabels: [String] = []
-    private(set) var allSpaceIDs: [Int] = []
+    private static let spacesWithWindowsCacheTTL: TimeInterval = 0.2
 
     /// Space info for all displays (used when showAllDisplays is enabled)
     private(set) var allDisplaysSpaceInfo: [DisplaySpaceInfo] = []
+    private(set) var allSpaceIDs: [Int] = []
+    private(set) var allSpaceLabels: [String] = []
+    private(set) var currentDisplayID: String?
     /// The global space index of the current space across all displays (1-based)
     private(set) var currentGlobalSpaceIndex = 0
+    private(set) var currentSpace = 0
+    private(set) var currentSpaceLabel = "?"
+    private(set) var darkModeEnabled = false
 
+    private let displaySpaceProvider: DisplaySpaceProvider
     private let mainDisplay = "Main"
     private let spacesMonitorFile = "~/Library/Preferences/com.apple.spaces.plist"
-    private let displaySpaceProvider: DisplaySpaceProvider
+
     let store: DefaultsStore
 
+    private var cachedSpacesWithWindows: Set<Int> = []
+    private var cachedSpacesWithWindowsSpaceIDs: [Int] = []
+    private var cachedSpacesWithWindowsTime: Date = .distantPast
     private var lastUpdateTime: Date = .distantPast
     private var mouseEventMonitor: Any?
-    private var spacesMonitor: DispatchSourceFileSystemObject?
     private var pendingUpdateTask: Task<Void, Never>?
-    private static let debounceInterval: Duration = .milliseconds(50)
-
-    // Cache for spacesWithWindows to avoid repeated expensive CGS calls
-    private var cachedSpacesWithWindows: Set<Int> = []
-    private var cachedSpacesWithWindowsTime: Date = .distantPast
-    private var cachedSpacesWithWindowsSpaceIDs: [Int] = []
-    private static let spacesWithWindowsCacheTTL: TimeInterval = 0.2
+    private var spacesMonitor: DispatchSourceFileSystemObject?
 
     private init() {
         displaySpaceProvider = CGSDisplaySpaceProvider()
@@ -244,6 +241,14 @@ final class AppState {
             self,
             selector: #selector(updateActiveSpaceNumber),
             name: NSNotification.Name("com.apple.exposeworkspacesdidchange"),
+            object: nil
+        )
+
+        // Display configuration changes (connect/disconnect/rearrange)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleDisplayConfigurationChange),
+            name: NSApplication.didChangeScreenParametersNotification,
             object: nil
         )
 
@@ -480,6 +485,10 @@ final class AppState {
         darkModeEnabled = appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
     }
 
+    @objc private func handleDisplayConfigurationChange() {
+        updateActiveSpaceNumber()
+    }
+
     // MARK: - Helpers
 
     var currentIconStyle: IconStyle {
@@ -531,6 +540,58 @@ final class AppState {
         }
 
         return generateSingleIcon(for: currentSpace, label: currentSpaceLabel, darkMode: isDark)
+    }
+
+    // MARK: - Preview Overrides
+
+    /// Temporary overrides for previewing style changes (only applied to current space)
+    /// Marked as @ObservationIgnored so setting them doesn't trigger icon regeneration
+    @ObservationIgnored private var previewBackground: NSColor?
+    @ObservationIgnored private var previewClearSymbol = false
+    @ObservationIgnored private var previewForeground: NSColor?
+    @ObservationIgnored private var previewSkinTone: Int?
+    @ObservationIgnored private var previewStyle: IconStyle?
+    @ObservationIgnored private var previewSymbol: String?
+
+    /// Sets preview overrides and returns the full status bar icon with previewed changes
+    func generatePreviewIcon(
+        overrideStyle: IconStyle? = nil,
+        overrideSymbol: String? = nil,
+        overrideForeground: NSColor? = nil,
+        overrideBackground: NSColor? = nil,
+        clearSymbol: Bool = false,
+        skinTone: Int? = nil
+    ) -> NSImage {
+        // Store overrides temporarily
+        previewStyle = overrideStyle
+        previewSymbol = overrideSymbol
+        previewForeground = overrideForeground
+        previewBackground = overrideBackground
+        previewClearSymbol = clearSymbol
+        previewSkinTone = skinTone
+
+        // Generate the full status bar icon (which will use overrides for current space)
+        let appearance = NSApp.effectiveAppearance
+        let isDark = appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+
+        let result: NSImage
+        if showAllDisplays, !allDisplaysSpaceInfo.isEmpty {
+            result = generateCrossDisplayIcon(darkMode: isDark)
+        } else if showAllSpaces, !allSpaceLabels.isEmpty {
+            result = generateCombinedIcon(darkMode: isDark)
+        } else {
+            result = generateSingleIcon(for: currentSpace, label: currentSpaceLabel, darkMode: isDark)
+        }
+
+        // Clear overrides
+        previewStyle = nil
+        previewSymbol = nil
+        previewForeground = nil
+        previewBackground = nil
+        previewClearSymbol = false
+        previewSkinTone = nil
+
+        return result
     }
 
     /// Returns the layout of visible icons in the status bar for the current mode
@@ -599,9 +660,26 @@ final class AppState {
     }
 
     private func generateSingleIcon(for space: Int, label: String, darkMode: Bool) -> NSImage {
-        let colors = SpacePreferences.colors(forSpace: space, display: currentDisplayID, store: store)
-        let style = SpacePreferences.iconStyle(forSpace: space, display: currentDisplayID, store: store) ?? .square
+        let isCurrentSpace = space == currentSpace
+        var colors = SpacePreferences.colors(forSpace: space, display: currentDisplayID, store: store)
+        var style = SpacePreferences.iconStyle(forSpace: space, display: currentDisplayID, store: store) ?? .square
         let font = SpacePreferences.font(forSpace: space, display: currentDisplayID, store: store)?.font
+
+        // Apply preview overrides for current space
+        if isCurrentSpace {
+            if let previewStyle {
+                style = previewStyle
+            }
+            let defaults = IconColors.filledColors(darkMode: darkMode)
+            if let fg = previewForeground {
+                let bg = colors?.background ?? defaults.background
+                colors = SpaceColors(foreground: fg, background: bg)
+            }
+            if let bg = previewBackground {
+                let fg = colors?.foreground ?? defaults.foreground
+                colors = SpaceColors(foreground: fg, background: bg)
+            }
+        }
 
         // Fullscreen spaces just show "F" with the same colors
         if label == Labels.fullscreen {
@@ -614,7 +692,23 @@ final class AppState {
             )
         }
 
-        let symbol = SpacePreferences.symbol(forSpace: space, display: currentDisplayID, store: store)
+        // Check for preview symbol override first (current space only)
+        if isCurrentSpace, let previewSymbol {
+            let skinTone = previewSkinTone
+                ?? SpacePreferences.skinTone(forSpace: space, display: currentDisplayID, store: store)
+                ?? 0
+            return SpaceIconGenerator.generateSymbolIcon(
+                symbolName: previewSymbol,
+                darkMode: darkMode,
+                customColors: colors,
+                skinTone: skinTone
+            )
+        }
+
+        // Skip saved symbol if previewing a number style (previewClearSymbol)
+        let symbol = (isCurrentSpace && previewClearSymbol)
+            ? nil
+            : SpacePreferences.symbol(forSpace: space, display: currentDisplayID, store: store)
 
         if let symbol {
             // Use per-space skin tone, defaulting to yellow (0) - NOT the global emoji picker preference
@@ -844,10 +938,29 @@ final class AppState {
         localIndex: Int,
         darkMode: Bool
     ) -> NSImage {
+        // Check if this is the current space (same display and same local index)
+        let isCurrentSpace = displayID == currentDisplayID && localIndex == currentSpace
+
         // Look up colors, style, and font using local index and display ID (for per-display customization)
-        let colors = SpacePreferences.colors(forSpace: localIndex, display: displayID, store: store)
-        let style = SpacePreferences.iconStyle(forSpace: localIndex, display: displayID, store: store) ?? .square
+        var colors = SpacePreferences.colors(forSpace: localIndex, display: displayID, store: store)
+        var style = SpacePreferences.iconStyle(forSpace: localIndex, display: displayID, store: store) ?? .square
         let font = SpacePreferences.font(forSpace: localIndex, display: displayID, store: store)?.font
+
+        // Apply preview overrides for current space
+        if isCurrentSpace {
+            if let previewStyle {
+                style = previewStyle
+            }
+            let defaults = IconColors.filledColors(darkMode: darkMode)
+            if let fg = previewForeground {
+                let bg = colors?.background ?? defaults.background
+                colors = SpaceColors(foreground: fg, background: bg)
+            }
+            if let bg = previewBackground {
+                let fg = colors?.foreground ?? defaults.foreground
+                colors = SpaceColors(foreground: fg, background: bg)
+            }
+        }
 
         // Fullscreen spaces just show "F" with the same colors
         if label == Labels.fullscreen {
@@ -860,7 +973,23 @@ final class AppState {
             )
         }
 
-        let symbol = SpacePreferences.symbol(forSpace: localIndex, display: displayID, store: store)
+        // Check for preview symbol override first (current space only)
+        if isCurrentSpace, let previewSymbol {
+            let skinTone = previewSkinTone
+                ?? SpacePreferences.skinTone(forSpace: localIndex, display: displayID, store: store)
+                ?? 0
+            return SpaceIconGenerator.generateSymbolIcon(
+                symbolName: previewSymbol,
+                darkMode: darkMode,
+                customColors: colors,
+                skinTone: skinTone
+            )
+        }
+
+        // Skip saved symbol if previewing a number style (previewClearSymbol)
+        let symbol = (isCurrentSpace && previewClearSymbol)
+            ? nil
+            : SpacePreferences.symbol(forSpace: localIndex, display: displayID, store: store)
 
         if let symbol {
             // Use per-space skin tone, defaulting to yellow (0) - NOT the global emoji picker preference

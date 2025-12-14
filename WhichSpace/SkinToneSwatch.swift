@@ -17,8 +17,6 @@ final class SkinToneSwatch: Swatch {
 
     // MARK: - Configuration
 
-    var onToneSelected: ((Int) -> Void)?
-
     /// The currently selected skin tone (0-5). Set this from outside to reflect per-space tone.
     var currentTone = 0 {
         didSet {
@@ -28,9 +26,12 @@ final class SkinToneSwatch: Swatch {
         }
     }
 
+    var onToneSelected: ((Int) -> Void)?
+
     // MARK: - Swatch Overrides
 
     override var itemCount: Int { Self.skinToneEmojis.count }
+    override var spacing: Double { 12.0 }
 
     override func drawItem(at index: Int, in rect: CGRect, highlighted: Bool) {
         let emoji = Self.skinToneEmojis[index]
