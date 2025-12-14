@@ -44,7 +44,7 @@
 "menu_sound" = "آواز";
 "menu_style" = "سٹائل";
 "menu_symbol" = "نشان";
-"search" = "ਖੋਜੋ...";
+"search" = "لبّھو...";
 "sound_none" = "کجھ نہیں";
 "style_circle" = "دایرہ";
 "style_circleOutline" = "دایرہ (آؤٹ لائن)";
@@ -71,7 +71,7 @@
 "tip_hide_fullscreen_apps" = "فل اسکرین ایپس والے سپیسز لکاؤ";
 "tip_invert_colors" = "پیش منظر تے پس منظر دے رنگ اُلٹو";
 "tip_launch_at_login" = "آغاز ’تے %@ خودکار چلاؤ";
-"tip_local_space_numbers" = "ہر ڈسپلے کے لیے مقامی اسپیس نمبر دکھاؤ، عالمی نمبروں کے بجائے";
+"tip_local_space_numbers" = "ہر ڈسپلے لئی عالمی نمبراں دی بجائے مقامی سپیس نمبر دکھاؤ";
 "tip_quit" = "%@ بند کرو";
 "tip_reset_all_spaces_to_default" = "تمام ڈسپلے ’تے تمام سپیسز دے رنگ، سٹائل، فونٹ، سائز، نشان تے آواز دیاں کسٹمائزیشن ختم کرو";
 "tip_reset_color_to_default" = "موجودہ سپیس تے جداکار لئی حسبِ منشا رنگ ہٹاؤ";
@@ -86,7 +86,7 @@
 "toggle_hide_empty_spaces" = "خالی سپیسز لکاؤ";
 "toggle_hide_fullscreen_apps" = "فل اسکرین ایپس لکاؤ";
 "toggle_launch_at_login" = "لاگ اِن ’تے چلاؤ";
-"toggle_local_space_numbers" = "مقامی اسپیس نمبر استعمال کرو";
+"toggle_local_space_numbers" = "مقامی سپیس نمبر ورتو";
 "toggle_show_all_displays" = "تمام ڈسپلے دکھاؤ";
 "toggle_show_all_spaces" = "تمام سپیسز دکھاؤ";
 "toggle_unique_icons_per_display" = "ہر ڈسپلے لئی وکھرے آئیکنز";

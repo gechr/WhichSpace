@@ -60,9 +60,9 @@
 "style_transparent" = "Gjennomsiktig";
 "style_triangle" = "Trekant";
 "style_triangleOutline" = "Trekant (Kontur)";
-"tip_apply_color_to_all" = "Kopier fargen til dette Space til alle Spaces";
-"tip_apply_style_to_all" = "Kopier stilen til dette Space til alle Spaces";
-"tip_apply_to_all" = "Kopier farge, stil, symbol og skrifttype til dette Space til alle Spaces";
+"tip_apply_color_to_all" = "Kopier fargen frå dette Space til alle Spaces";
+"tip_apply_style_to_all" = "Kopier stilen frå dette Space til alle Spaces";
+"tip_apply_to_all" = "Kopier farge, stil, symbol og skrifttype frå dette Space til alle Spaces";
 "tip_check_for_updates" = "Sjå etter nye versjonar av %@";
 "tip_click_to_switch_spaces" = "Venstreklikk på eit Space-ikon for å bytte til det";
 "tip_dim_inactive_spaces" = "Reduser opasiteten til ikon for inaktive Spaces";
@@ -81,7 +81,7 @@
 "tip_show_all_displays" = "Vis Spaces frå alle skjermar med global nummerering og skiljelinjer";
 "tip_show_all_spaces" = "Vis eit ikon for kvar Space i menylinja";
 "tip_unique_icons_per_display" = "Tilpass Space-ikon separat for kvar skjerm";
-"toggle_click_to_switch_spaces" = "Klikk for å bytte Spaces";
+"toggle_click_to_switch_spaces" = "Klikk for å bytte Space";
 "toggle_dim_inactive_spaces" = "Demp inaktive Spaces";
 "toggle_hide_empty_spaces" = "Gøym tomme Spaces";
 "toggle_hide_fullscreen_apps" = "Gøym fullskjermprogram";
