@@ -735,10 +735,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         )
         localSpaceNumbersItem.target = self
         localSpaceNumbersItem.tag = MenuTag.localSpaceNumbers.rawValue
+        let localSpaceNumbersConfig = NSImage.SymbolConfiguration(pointSize: 18, weight: .medium)
         localSpaceNumbersItem.image = NSImage(
-            systemSymbolName: "globe",
+            systemSymbolName: "1.square",
             accessibilityDescription: nil
-        )
+        )?.withSymbolConfiguration(localSpaceNumbersConfig)
         localSpaceNumbersItem.toolTip = Localization.tipLocalSpaceNumbers
         statusMenu.addItem(localSpaceNumbersItem)
 
