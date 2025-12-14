@@ -13,11 +13,13 @@ import Defaults
 enum SpaceIconGenerator {
     // MARK: - Properties
 
-    private static var polygonSize: Double { Layout.basePolygonSize * sizeScale }
-    private static var sizeScale: Double { Defaults[.sizeScale] / 100.0 }
-    private static var squareSize: Double { Layout.baseSquareSize * sizeScale }
-
     private static let statusItemSize = Layout.statusItemSize
+    /// Maximum icon size must fit within status item bounds with margin
+    private static let maxIconSize = min(statusItemSize.width, statusItemSize.height) - 1
+
+    private static var sizeScale: Double { Defaults[.sizeScale] / 100.0 }
+    private static var squareSize: Double { min(Layout.baseSquareSize * sizeScale, maxIconSize) }
+    private static var polygonSize: Double { min(Layout.basePolygonSize * sizeScale, maxIconSize) }
 
     // MARK: - Public API
 
@@ -394,38 +396,16 @@ enum SpaceIconGenerator {
             let colors = getColors(darkMode: darkMode, customColors: customColors, filled: filled)
             let shapeRect = centeredRect(size: iconSize, in: rect)
 
-            // Create equilateral triangle path with rounded corners (pointing up)
-            let trianglePath = NSBezierPath()
-            let radius = Layout.Icon.triangleCornerRadius
-            let xStart = shapeRect.origin.x
-            let yStart = shapeRect.origin.y
-            let size = shapeRect.width
+            // Triangle vertices (pointing up)
+            let top = CGPoint(x: shapeRect.midX, y: shapeRect.maxY)
+            let bottomLeft = CGPoint(x: shapeRect.minX, y: shapeRect.minY)
+            let bottomRight = CGPoint(x: shapeRect.maxX, y: shapeRect.minY)
+            let vertices = [top, bottomRight, bottomLeft]
 
-            let topPoint = CGPoint(x: xStart + size / 2, y: yStart + size)
-            let bottomLeft = CGPoint(x: xStart, y: yStart)
-            let bottomRight = CGPoint(x: xStart + size, y: yStart)
-
-            trianglePath.move(to: CGPoint(x: bottomLeft.x + radius * 0.5, y: bottomLeft.y + radius * 0.87))
-            trianglePath.line(to: CGPoint(x: topPoint.x - radius * 0.5, y: topPoint.y - radius * 0.87))
-            trianglePath.curve(
-                to: CGPoint(x: topPoint.x + radius * 0.5, y: topPoint.y - radius * 0.87),
-                controlPoint1: topPoint,
-                controlPoint2: topPoint
+            let trianglePath = createRoundedPolygonPath(
+                vertices: vertices,
+                cornerRadius: Layout.Icon.triangleCornerRadius
             )
-            trianglePath.line(to: CGPoint(x: bottomRight.x - radius * 0.5, y: bottomRight.y + radius * 0.87))
-            trianglePath.curve(
-                to: CGPoint(x: bottomRight.x - radius, y: bottomRight.y),
-                controlPoint1: bottomRight,
-                controlPoint2: bottomRight
-            )
-            trianglePath.line(to: CGPoint(x: bottomLeft.x + radius, y: bottomLeft.y))
-            trianglePath.curve(
-                to: CGPoint(x: bottomLeft.x + radius * 0.5, y: bottomLeft.y + radius * 0.87),
-                controlPoint1: bottomLeft,
-                controlPoint2: bottomLeft
-            )
-            trianglePath.close()
-
             fillOrStroke(path: trianglePath, color: colors.background, filled: filled)
 
             // Triangle uses smaller font and lower text position
@@ -615,9 +595,11 @@ enum SpaceIconGenerator {
         return vertices
     }
 
-    private static func createRoundedPolygonPath(vertices: [CGPoint]) -> NSBezierPath {
+    private static func createRoundedPolygonPath(
+        vertices: [CGPoint],
+        cornerRadius: Double = Layout.Icon.polygonCornerRadius
+    ) -> NSBezierPath {
         let path = NSBezierPath()
-        let cornerRadius = Layout.Icon.polygonCornerRadius
         let sides = vertices.count
 
         for idx in 0 ..< sides {

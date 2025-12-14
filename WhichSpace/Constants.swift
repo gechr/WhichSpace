@@ -53,7 +53,7 @@ enum Layout {
         static let outlineWidth = 1.5
         static let polygonCornerRadius = 3.0
         static let sfSymbolPointSize = 16.0
-        static let triangleCornerRadius = 4.5
+        static let triangleCornerRadius = 5.0
     }
 }
 
