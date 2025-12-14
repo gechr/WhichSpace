@@ -17,8 +17,8 @@ final class SkinToneSwatch: Swatch {
 
     // MARK: - Configuration
 
-    /// The currently selected skin tone (0-5). Set this from outside to reflect per-space tone.
-    var currentTone = 0 {
+    /// The currently selected skin tone. Set this from outside to reflect per-space tone.
+    var currentTone: SkinTone = .default {
         didSet {
             if currentTone != oldValue {
                 needsDisplay = true
@@ -26,7 +26,8 @@ final class SkinToneSwatch: Swatch {
         }
     }
 
-    var onToneSelected: ((Int) -> Void)?
+    var onToneSelected: ((SkinTone) -> Void)?
+    var onToneHoverStart: ((SkinTone) -> Void)?
 
     // MARK: - Swatch Overrides
 
@@ -35,7 +36,7 @@ final class SkinToneSwatch: Swatch {
 
     override func drawItem(at index: Int, in rect: CGRect, highlighted: Bool) {
         let emoji = Self.skinToneEmojis[index]
-        let isSelected = index == currentTone
+        let isSelected = index == currentTone.rawValue
 
         // Draw selection ring
         if isSelected {
@@ -69,7 +70,17 @@ final class SkinToneSwatch: Swatch {
     }
 
     override func handleSelection(at index: Int) {
-        onToneSelected?(index)
+        guard let tone = SkinTone(rawValue: index) else {
+            return
+        }
+        onToneSelected?(tone)
         needsDisplay = true
+    }
+
+    override func mouseMoved(with event: NSEvent) {
+        super.mouseMoved(with: event)
+        if let index = hoveredIndex, let tone = SkinTone(rawValue: index) {
+            onToneHoverStart?(tone)
+        }
     }
 }

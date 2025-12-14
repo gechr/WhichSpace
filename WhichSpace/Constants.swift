@@ -7,9 +7,9 @@ import EmojiKit
 extension Defaults.Keys {
     static let clickToSwitchSpaces = Key<Bool>("clickToSwitchSpaces", default: false)
     static let dimInactiveSpaces = Key<Bool>("dimInactiveSpaces", default: true)
-    /// Emoji picker skin tone for browsing (0 = default yellow, 1-5 = skin tones light to dark)
+    /// Emoji picker skin tone for browsing
     /// This only affects the emoji picker preview, not the menu bar icons
-    static let emojiPickerSkinTone = Key<Int>("emojiPickerSkinTone", default: 0)
+    static let emojiPickerSkinTone = Key<SkinTone>("emojiPickerSkinTone", default: .default)
     static let hideEmptySpaces = Key<Bool>("hideEmptySpaces", default: false)
     static let hideFullscreenApps = Key<Bool>("hideFullscreenApps", default: false)
     static let separatorColor = Key<Data?>("separatorColor", default: nil)
@@ -190,10 +190,47 @@ enum Localization {
     static let yabaiRequiredTitle = NSLocalizedString("yabai_required_title", comment: "")
 }
 
-// MARK: - Skin Tone Support
+// MARK: - Skin Tone
 
-enum SkinTone {
-    static let modifiers: [String?] = [nil, "\u{1F3FB}", "\u{1F3FC}", "\u{1F3FD}", "\u{1F3FE}", "\u{1F3FF}"]
+/// Represents a skin tone modifier for emojis.
+/// - `default`: Yellow/no modifier (Simpson skin tone)
+/// - `light` through `dark`: Fitzpatrick skin tone types 1-2 through 6
+enum SkinTone: Int, CaseIterable, Codable, Defaults.Serializable {
+    case `default` = 0
+    case light = 1
+    case mediumLight = 2
+    case medium = 3
+    case mediumDark = 4
+    case dark = 5
+
+    /// The Unicode skin tone modifier string, or nil for default (yellow)
+    var modifier: String? {
+        switch self {
+        case .default:
+            nil
+        case .light:
+            "\u{1F3FB}"
+        case .mediumLight:
+            "\u{1F3FC}"
+        case .medium:
+            "\u{1F3FD}"
+        case .mediumDark:
+            "\u{1F3FE}"
+        case .dark:
+            "\u{1F3FF}"
+        }
+    }
+
+    /// Creates a SkinTone from a raw index, defaulting to .default if out of bounds
+    init(rawValueOrDefault value: Int) {
+        self = Self(rawValue: value) ?? .default
+    }
+
+    // MARK: - Static Properties
+
+    static let modifiers: [String?] = Self.allCases.map(\.modifier)
+
+    // MARK: - Emoji Modification
 
     private static let modifierScalars: Set<Unicode.Scalar> = [
         Unicode.Scalar(0x1F3FB)!,
@@ -210,13 +247,13 @@ enum SkinTone {
     /// Applies a skin tone modifier to an emoji.
     /// - Parameters:
     ///   - emoji: The emoji to modify
-    ///   - tone: The skin tone index (0-5). If nil, uses the global default from Defaults.
+    ///   - tone: The skin tone. If nil, uses the global default from Defaults.
     /// - Returns: The emoji with the skin tone applied
-    static func apply(to emoji: String, tone: Int? = nil) -> String {
-        let toneIndex = tone ?? Defaults[.emojiPickerSkinTone]
+    static func apply(to emoji: String, tone: Self? = nil) -> String {
+        let variant = tone ?? Defaults[.emojiPickerSkinTone]
         let stripped = stripModifiers(from: emoji)
 
-        guard let modifier = modifiers[toneIndex] else {
+        guard let modifier = variant.modifier else {
             // Yellow/default tone - return stripped emoji without any modifier
             return stripped
         }

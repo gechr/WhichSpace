@@ -6,24 +6,24 @@ final class SkinToneTests: IsolatedDefaultsTestCase {
     // MARK: - Modifier Application
 
     func testApplyReturnsOriginalWhenToneIsDefault() {
-        Defaults[.emojiPickerSkinTone] = 0
+        Defaults[.emojiPickerSkinTone] = .default
         XCTAssertEqual(SkinTone.apply(to: "👋"), "👋")
         XCTAssertEqual(SkinTone.apply(to: "😀"), "😀")
     }
 
     func testApplyAddsToneToSupportedEmoji() {
-        Defaults[.emojiPickerSkinTone] = 1 // Light
+        Defaults[.emojiPickerSkinTone] = .light
         XCTAssertEqual(SkinTone.apply(to: "👋"), "👋🏻")
 
-        Defaults[.emojiPickerSkinTone] = 3 // Medium
+        Defaults[.emojiPickerSkinTone] = .medium
         XCTAssertEqual(SkinTone.apply(to: "👋"), "👋🏽")
 
-        Defaults[.emojiPickerSkinTone] = 5 // Dark
+        Defaults[.emojiPickerSkinTone] = .dark
         XCTAssertEqual(SkinTone.apply(to: "👋"), "👋🏿")
     }
 
     func testApplyReturnsOriginalForUnsupportedEmoji() {
-        Defaults[.emojiPickerSkinTone] = 3
+        Defaults[.emojiPickerSkinTone] = .medium
         // Face emojis don't support skin tones
         XCTAssertEqual(SkinTone.apply(to: "😀"), "😀")
         XCTAssertEqual(SkinTone.apply(to: "🎉"), "🎉")
@@ -31,19 +31,19 @@ final class SkinToneTests: IsolatedDefaultsTestCase {
     }
 
     func testApplyStripsExistingToneBeforeApplyingNew() {
-        Defaults[.emojiPickerSkinTone] = 5 // Dark
+        Defaults[.emojiPickerSkinTone] = .dark
         // Should strip medium tone and apply dark
         XCTAssertEqual(SkinTone.apply(to: "👋🏽"), "👋🏿")
     }
 
     func testApplyWorksWithVariousHandGestures() {
-        Defaults[.emojiPickerSkinTone] = 2 // Medium-light
+        Defaults[.emojiPickerSkinTone] = .mediumLight
         XCTAssertEqual(SkinTone.apply(to: "👍"), "👍🏼")
         XCTAssertEqual(SkinTone.apply(to: "🤞"), "🤞🏼")
     }
 
     func testApplyStripsVariationSelectorBeforeApplyingTone() {
-        Defaults[.emojiPickerSkinTone] = 2 // Medium-light
+        Defaults[.emojiPickerSkinTone] = .mediumLight
         // These emojis have variation selectors (U+FE0F)
         XCTAssertEqual(SkinTone.apply(to: "✌️"), "✌🏼") // ✌️ = U+270C U+FE0F
         XCTAssertEqual(SkinTone.apply(to: "☝️"), "☝🏼") // ☝️ = U+261D U+FE0F
@@ -51,7 +51,7 @@ final class SkinToneTests: IsolatedDefaultsTestCase {
     }
 
     func testApplyModifiesZWJSequencesWithPersonBase() {
-        Defaults[.emojiPickerSkinTone] = 3 // Medium
+        Defaults[.emojiPickerSkinTone] = .medium
         // Hair styles (person + ZWJ + hair)
         XCTAssertEqual(SkinTone.apply(to: "👨‍🦲"), "👨🏽‍🦲") // Man bald
         XCTAssertEqual(SkinTone.apply(to: "👩‍🦰"), "👩🏽‍🦰") // Woman red hair
@@ -61,15 +61,15 @@ final class SkinToneTests: IsolatedDefaultsTestCase {
     }
 
     func testApplyDoesNotModifyNonPersonZWJSequences() {
-        Defaults[.emojiPickerSkinTone] = 3 // Medium
+        Defaults[.emojiPickerSkinTone] = .medium
         // These don't start with a modifier-base character
         XCTAssertEqual(SkinTone.apply(to: "❤️‍🔥"), "❤️‍🔥") // Heart on fire
         XCTAssertEqual(SkinTone.apply(to: "🏳️‍🌈"), "🏳️‍🌈") // Rainbow flag
     }
 
     func testApplyDoesNotModifyEmojisWithoutSkinToneSupport() {
-        Defaults[.emojiPickerSkinTone] = 3 // Medium
-        // EmojiKit's hasSkinToneVariants correctly identifies these as not supporting skin tones
+        Defaults[.emojiPickerSkinTone] = .medium
+        // EmojiKit's hasSkinTones correctly identifies these as not supporting skin tones
         XCTAssertEqual(SkinTone.apply(to: "👯"), "👯") // People with bunny ears
         XCTAssertEqual(SkinTone.apply(to: "👯‍♀️"), "👯‍♀️") // Women with bunny ears
         XCTAssertEqual(SkinTone.apply(to: "👯‍♂️"), "👯‍♂️") // Men with bunny ears
@@ -80,16 +80,16 @@ final class SkinToneTests: IsolatedDefaultsTestCase {
 
     func testApplyWithExplicitToneParameter() {
         // Explicit tone should override the default
-        Defaults[.emojiPickerSkinTone] = 1 // Light (global default)
-        XCTAssertEqual(SkinTone.apply(to: "👋", tone: 5), "👋🏿") // Dark overrides
-        XCTAssertEqual(SkinTone.apply(to: "👋", tone: 0), "👋") // Yellow/default
+        Defaults[.emojiPickerSkinTone] = .light // (global default)
+        XCTAssertEqual(SkinTone.apply(to: "👋", tone: .dark), "👋🏿") // Dark overrides
+        XCTAssertEqual(SkinTone.apply(to: "👋", tone: .default), "👋") // Yellow/default
         XCTAssertEqual(SkinTone.apply(to: "👋", tone: nil), "👋🏻") // nil uses global
     }
 
-    func testApplyWithToneZeroStripsExistingModifier() {
-        // When tone is 0, should strip any existing modifier
-        XCTAssertEqual(SkinTone.apply(to: "👋🏿", tone: 0), "👋")
-        XCTAssertEqual(SkinTone.apply(to: "👍🏻", tone: 0), "👍")
+    func testApplyWithToneDefaultStripsExistingModifier() {
+        // When tone is .default, should strip any existing modifier
+        XCTAssertEqual(SkinTone.apply(to: "👋🏿", tone: .default), "👋")
+        XCTAssertEqual(SkinTone.apply(to: "👍🏻", tone: .default), "👍")
     }
 
     // MARK: - Modifiers Array

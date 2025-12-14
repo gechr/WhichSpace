@@ -7,7 +7,7 @@
 --allman false
 --binarygrouping 4,8
 --commas always
---decimalgrouping 3,6
+--decimalgrouping 3,5
 --elseposition same-line
 --voidtype void
 --exponentcase lowercase

@@ -395,6 +395,11 @@ final class AppState {
         allDisplaysSpaceInfo = allDisplays
 
         // Now find the active display and set current space info
+        // Prefer activeDisplay, only fall back to mainDisplay if activeDisplay not found
+        let targetDisplayID = allDisplays.contains { $0.displayID == activeDisplay }
+            ? activeDisplay
+            : mainDisplay
+
         for display in displays {
             guard let current = display["Current Space"] as? [String: Any],
                   let spaces = display["Spaces"] as? [[String: Any]],
@@ -403,7 +408,7 @@ final class AppState {
                 continue
             }
 
-            guard displayID == mainDisplay || displayID == activeDisplay else {
+            guard displayID == targetDisplayID else {
                 continue
             }
 
@@ -549,7 +554,7 @@ final class AppState {
     @ObservationIgnored private var previewBackground: NSColor?
     @ObservationIgnored private var previewClearSymbol = false
     @ObservationIgnored private var previewForeground: NSColor?
-    @ObservationIgnored private var previewSkinTone: Int?
+    @ObservationIgnored private var previewSkinTone: SkinTone?
     @ObservationIgnored private var previewStyle: IconStyle?
     @ObservationIgnored private var previewSymbol: String?
 
@@ -560,7 +565,7 @@ final class AppState {
         overrideForeground: NSColor? = nil,
         overrideBackground: NSColor? = nil,
         clearSymbol: Bool = false,
-        skinTone: Int? = nil
+        skinTone: SkinTone? = nil
     ) -> NSImage {
         // Store overrides temporarily
         previewStyle = overrideStyle
@@ -696,7 +701,7 @@ final class AppState {
         if isCurrentSpace, let previewSymbol {
             let skinTone = previewSkinTone
                 ?? SpacePreferences.skinTone(forSpace: space, display: currentDisplayID, store: store)
-                ?? 0
+                ?? .default
             return SpaceIconGenerator.generateSymbolIcon(
                 symbolName: previewSymbol,
                 darkMode: darkMode,
@@ -711,8 +716,9 @@ final class AppState {
             : SpacePreferences.symbol(forSpace: space, display: currentDisplayID, store: store)
 
         if let symbol {
-            // Use per-space skin tone, defaulting to yellow (0) - NOT the global emoji picker preference
-            let skinTone = SpacePreferences.skinTone(forSpace: space, display: currentDisplayID, store: store) ?? 0
+            // Use per-space skin tone, defaulting to yellow  (rather than the global emoji picker preference)
+            let skinTone = SpacePreferences
+                .skinTone(forSpace: space, display: currentDisplayID, store: store) ?? .default
             return SpaceIconGenerator.generateSymbolIcon(
                 symbolName: symbol,
                 darkMode: darkMode,
@@ -977,7 +983,7 @@ final class AppState {
         if isCurrentSpace, let previewSymbol {
             let skinTone = previewSkinTone
                 ?? SpacePreferences.skinTone(forSpace: localIndex, display: displayID, store: store)
-                ?? 0
+                ?? .default
             return SpaceIconGenerator.generateSymbolIcon(
                 symbolName: previewSymbol,
                 darkMode: darkMode,
@@ -992,8 +998,8 @@ final class AppState {
             : SpacePreferences.symbol(forSpace: localIndex, display: displayID, store: store)
 
         if let symbol {
-            // Use per-space skin tone, defaulting to yellow (0) - NOT the global emoji picker preference
-            let skinTone = SpacePreferences.skinTone(forSpace: localIndex, display: displayID, store: store) ?? 0
+            // Use per-space skin tone, defaulting to yellow  (rather than the global emoji picker preference)
+            let skinTone = SpacePreferences.skinTone(forSpace: localIndex, display: displayID, store: store) ?? .default
             return SpaceIconGenerator.generateSymbolIcon(
                 symbolName: symbol,
                 darkMode: darkMode,

@@ -290,7 +290,7 @@ enum SpacePreferences {
         forSpace spaceNumber: Int,
         display: String? = nil,
         store: DefaultsStore = .shared
-    ) -> Int? {
+    ) -> SkinTone? {
         if store.uniqueIconsPerDisplay, let display {
             return store.displaySpaceSkinTones[display]?[spaceNumber]
         }
@@ -298,7 +298,7 @@ enum SpacePreferences {
     }
 
     static func setSkinTone(
-        _ tone: Int?,
+        _ tone: SkinTone?,
         forSpace spaceNumber: Int,
         display: String? = nil,
         store: DefaultsStore = .shared

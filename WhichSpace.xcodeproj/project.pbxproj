@@ -47,6 +47,8 @@
 		A1E2D3C41B2F4A5B6C7D8E93 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A1E2D3C41B2F4A5B6C7D8E92 /* Localizable.strings */; };
 		B4E235CBC3DD715950C1C319 /* Swatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA6BF7DB8700734BA5B03AD /* Swatch.swift */; };
 		CB61E710EE0AA61181E63F29 /* EmojiRenderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23AEB50704228D44E33A4061 /* EmojiRenderTests.swift */; };
+		DB808F9A959C72ABCBAADCCE /* EdgeCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C010908C363337F4F938B12E /* EdgeCaseTests.swift */; };
+		73FAA1ED7C2DED2E7295E6FB /* AppStateEdgeCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB446EE552B31E1415C66B7 /* AppStateEdgeCaseTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -114,6 +116,8 @@
 		BEA6BF7DB8700734BA5B03AD /* Swatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Swatch.swift; sourceTree = "<group>"; };
 		D97E397B395ABA84D3E5BDA3 /* SkinToneTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SkinToneTests.swift; sourceTree = "<group>"; };
 		DB9C64A47EF14DB495CE715F /* WhichSpaceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WhichSpaceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C010908C363337F4F938B12E /* EdgeCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeCaseTests.swift; sourceTree = "<group>"; };
+		DFB446EE552B31E1415C66B7 /* AppStateEdgeCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStateEdgeCaseTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -199,6 +203,7 @@
 			isa = PBXGroup;
 			children = (
 				5EB458382EEDE9690021C6BD /* AppStateTests.swift */,
+				DFB446EE552B31E1415C66B7 /* AppStateEdgeCaseTests.swift */,
 				5EB458392EEDE9690021C6BD /* CGSStub.swift */,
 			);
 			path = AppState;
@@ -207,6 +212,7 @@
 		5EB4583F2EEDE9690021C6BD /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				C010908C363337F4F938B12E /* EdgeCaseTests.swift */,
 				5EB4583B2EEDE9690021C6BD /* IconColorsTests.swift */,
 				5EB4583C2EEDE9690021C6BD /* SpaceColorsBridgeTests.swift */,
 				5EB4583D2EEDE9690021C6BD /* SpaceIconGeneratorTests.swift */,
@@ -431,6 +437,8 @@
 				CB61E710EE0AA61181E63F29 /* EmojiRenderTests.swift in Sources */,
 				7F97118A9292E9AE61C94CC7 /* SkinToneTests.swift in Sources */,
 				97F4E259A2341F812A60881E /* ItemDataTests.swift in Sources */,
+				DB808F9A959C72ABCBAADCCE /* EdgeCaseTests.swift in Sources */,
+				73FAA1ED7C2DED2E7295E6FB /* AppStateEdgeCaseTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

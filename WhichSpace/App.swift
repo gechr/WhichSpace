@@ -920,11 +920,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             updateStatusBarIcon()
             skinToneSwatch.currentTone = tone
         }
-        skinToneSwatch.onHoverStart = { [weak self] index in
+        skinToneSwatch.onToneHoverStart = { [weak self] tone in
             guard let self, let symbol = appState.currentSymbol else {
                 return
             }
-            self.showPreviewIcon(symbol: symbol, skinTone: index)
+            self.showPreviewIcon(symbol: symbol, skinTone: tone)
         }
         skinToneSwatch.onHoverEnd = { [weak self] in
             self?.restoreIcon()
@@ -1196,7 +1196,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         foreground: NSColor? = nil,
         background: NSColor? = nil,
         clearSymbol: Bool = false,
-        skinTone: Int? = nil
+        skinTone: SkinTone? = nil
     ) {
         isPreviewingIcon = true
         let previewIcon = appState.generatePreviewIcon(
@@ -1891,7 +1891,7 @@ extension AppDelegate: NSMenuDelegate {
                     display: appState.currentDisplayID,
                     store: store
                 )
-                swatch.currentTone = spaceTone ?? 0
+                swatch.currentTone = spaceTone ?? .default
             }
 
             // Show symbol label and color swatch only when SF Symbol is active (not emoji)

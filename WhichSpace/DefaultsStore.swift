@@ -51,7 +51,7 @@ enum KeySpecs {
     )
     static let displaySpaceSkinTones = TypedKeySpec(
         name: "displaySpaceSkinTones",
-        defaultValue: [String: [Int: Int]]()
+        defaultValue: [String: [Int: SkinTone]]()
     )
     static let displaySpaceSymbols = TypedKeySpec(
         name: "displaySpaceSymbols",
@@ -67,7 +67,7 @@ enum KeySpecs {
     static let spaceColors = TypedKeySpec(name: "spaceColors", defaultValue: [Int: SpaceColors]())
     static let spaceFonts = TypedKeySpec(name: "spaceFonts", defaultValue: [Int: SpaceFont]())
     static let spaceIconStyles = TypedKeySpec(name: "spaceIconStyles", defaultValue: [Int: IconStyle]())
-    static let spaceSkinTones = TypedKeySpec(name: "spaceSkinTones", defaultValue: [Int: Int]())
+    static let spaceSkinTones = TypedKeySpec(name: "spaceSkinTones", defaultValue: [Int: SkinTone]())
     static let spaceSymbols = TypedKeySpec(name: "spaceSymbols", defaultValue: [Int: String]())
     static let uniqueIconsPerDisplay = TypedKeySpec(name: "uniqueIconsPerDisplay", defaultValue: false)
 
@@ -176,7 +176,7 @@ final class DefaultsStore: @unchecked Sendable {
         set { Defaults[keyDisplaySpaceIconStyles] = newValue }
     }
 
-    var displaySpaceSkinTones: [String: [Int: Int]] {
+    var displaySpaceSkinTones: [String: [Int: SkinTone]] {
         get { Defaults[keyDisplaySpaceSkinTones] }
         set { Defaults[keyDisplaySpaceSkinTones] = newValue }
     }
@@ -250,7 +250,7 @@ final class DefaultsStore: @unchecked Sendable {
         set { Defaults[keySpaceIconStyles] = newValue }
     }
 
-    var spaceSkinTones: [Int: Int] {
+    var spaceSkinTones: [Int: SkinTone] {
         get { Defaults[keySpaceSkinTones] }
         set { Defaults[keySpaceSkinTones] = newValue }
     }

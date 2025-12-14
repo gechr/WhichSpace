@@ -152,12 +152,12 @@ enum SpaceIconGenerator {
     ///   - symbolName: The SF Symbol name or emoji character
     ///   - darkMode: Whether dark mode is enabled
     ///   - customColors: Optional custom colors for the icon
-    ///   - skinTone: Optional skin tone index (0-5) for emojis. If nil, uses global default.
+    ///   - skinTone: Optional skin tone for emojis. If nil, uses global default.
     static func generateSymbolIcon(
         symbolName: String,
         darkMode: Bool,
         customColors: SpaceColors? = nil,
-        skinTone: Int? = nil
+        skinTone: SkinTone? = nil
     ) -> NSImage {
         // Check if it's an emoji (contains emoji Unicode characters)
         if symbolName.containsEmoji {
@@ -204,7 +204,7 @@ enum SpaceIconGenerator {
         emoji: String,
         darkMode _: Bool,
         customColors _: SpaceColors? = nil,
-        skinTone: Int? = nil
+        skinTone: SkinTone? = nil
     ) -> NSImage {
         let displayEmoji = SkinTone.apply(to: emoji, tone: skinTone)
         return NSImage(size: statusItemSize, flipped: false) { rect in

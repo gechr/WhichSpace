@@ -193,7 +193,7 @@ final class ItemPicker: NSView {
         // Tone label (emoji picker only) - custom view that handles mouseUp
         // Clicking cycles through skin tones (yellow -> light -> medium-light -> medium -> medium-dark -> dark)
         if itemType == .emojis {
-            let labelView = ToneLabelView(emoji: toneEmojis[Defaults[.emojiPickerSkinTone]])
+            let labelView = ToneLabelView(emoji: toneEmojis[Defaults[.emojiPickerSkinTone].rawValue])
             labelView.translatesAutoresizingMaskIntoConstraints = false
             labelView.onClick = { [weak self] in
                 self?.cycleTone()
@@ -267,7 +267,7 @@ final class ItemPicker: NSView {
         gridView.items = filteredItems
         gridView.selectedItem = selectedItem
         gridView.darkMode = darkMode
-        gridView.skinToneModifier = SkinTone.modifiers[Defaults[.emojiPickerSkinTone]]
+        gridView.skinToneModifier = Defaults[.emojiPickerSkinTone].modifier
         gridView.updateSize()
         if darkModeChanged {
             gridView.clearImageCache()
@@ -278,11 +278,12 @@ final class ItemPicker: NSView {
     // MARK: - Tone Selection
 
     private func cycleTone() {
-        let currentIndex = Defaults[.emojiPickerSkinTone]
-        let nextIndex = (currentIndex + 1) % toneEmojis.count
-        Defaults[.emojiPickerSkinTone] = nextIndex
+        let currentTone = Defaults[.emojiPickerSkinTone]
+        let nextIndex = (currentTone.rawValue + 1) % SkinTone.allCases.count
+        let nextTone = SkinTone(rawValueOrDefault: nextIndex)
+        Defaults[.emojiPickerSkinTone] = nextTone
         toneLabelView?.setEmoji(toneEmojis[nextIndex])
-        gridView.skinToneModifier = SkinTone.modifiers[nextIndex]
+        gridView.skinToneModifier = nextTone.modifier
         gridView.display()
     }
 }

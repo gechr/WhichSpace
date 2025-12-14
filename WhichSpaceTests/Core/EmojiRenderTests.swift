@@ -13,7 +13,7 @@ final class EmojiRenderTests: XCTestCase {
                 symbolName: emoji,
                 darkMode: false,
                 customColors: nil,
-                skinTone: 0
+                skinTone: .default
             )
 
             if !hasVisibleContent(image) {
@@ -30,10 +30,10 @@ final class EmojiRenderTests: XCTestCase {
     func testEmojiSkinnablVariantsRenderCorrectly() {
         // Test a sample of emojis that support skin tones
         let skinnableEmojis = ["👋", "👍", "🤞", "👨‍🍳", "👩‍💻"]
-        var failures: [(emoji: String, tone: Int)] = []
+        var failures: [(emoji: String, tone: SkinTone)] = []
 
         for emoji in skinnableEmojis {
-            for tone in 0 ... 5 {
+            for tone in SkinTone.allCases {
                 let image = SpaceIconGenerator.generateSymbolIcon(
                     symbolName: emoji,
                     darkMode: false,
@@ -63,7 +63,7 @@ final class EmojiRenderTests: XCTestCase {
                 symbolName: emoji,
                 darkMode: false,
                 customColors: nil,
-                skinTone: 0
+                skinTone: .default
             )
 
             guard let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
@@ -109,7 +109,7 @@ final class EmojiRenderTests: XCTestCase {
 
     func testEmojisWithoutSkinToneSupportRenderCorrectly() {
         // Emojis that don't support skin tones should still render correctly
-        // EmojiKit's hasSkinToneVariants correctly identifies these
+        // EmojiKit's hasSkinTones correctly identifies these
         let noSkinToneEmojis = ["👯", "👯‍♀️", "👯‍♂️", "🤼", "🤼‍♀️", "🤼‍♂️"]
 
         for emoji in noSkinToneEmojis {
@@ -117,7 +117,7 @@ final class EmojiRenderTests: XCTestCase {
                 symbolName: emoji,
                 darkMode: false,
                 customColors: nil,
-                skinTone: 3 // Medium tone - should be ignored by EmojiKit detection
+                skinTone: .medium // Should be ignored by EmojiKit detection
             )
 
             XCTAssertTrue(

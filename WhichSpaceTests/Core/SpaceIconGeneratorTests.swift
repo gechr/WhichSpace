@@ -215,7 +215,7 @@ final class SpaceIconGeneratorTests: IsolatedDefaultsTestCase {
     }
 
     func testEmojiWithSkinToneProducesValidImage() {
-        Defaults[.emojiPickerSkinTone] = 3 // Medium
+        Defaults[.emojiPickerSkinTone] = .medium
         let icon = SpaceIconGenerator.generateSymbolIcon(symbolName: "👋", darkMode: true)
         XCTAssertEqual(icon.size, Layout.statusItemSize)
         XCTAssertNotNil(icon.tiffRepresentation)
