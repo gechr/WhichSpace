@@ -46,6 +46,8 @@
 "menu_symbol" = "Σύμβολο";
 "search" = "Αναζήτηση...";
 "sound_none" = "Κανένας";
+"sound_system" = "Σύστημα";
+"sound_user" = "Χρήστης";
 "style_circle" = "Κύκλος";
 "style_circleOutline" = "Κύκλος (Περίγραμμα)";
 "style_hexagon" = "Εξάγωνο";

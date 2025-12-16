@@ -46,6 +46,8 @@
 "menu_symbol" = "Simbol";
 "search" = "Căutare...";
 "sound_none" = "Niciunul";
+"sound_system" = "Sistem";
+"sound_user" = "Utilizator";
 "style_circle" = "Cerc";
 "style_circleOutline" = "Cerc (Contur)";
 "style_hexagon" = "Hexagon";

@@ -46,6 +46,8 @@
 "menu_symbol" = "نماد";
 "search" = "جستجو...";
 "sound_none" = "هیچ‌کدام";
+"sound_system" = "سیستم";
+"sound_user" = "کاربر";
 "style_circle" = "دایره";
 "style_circleOutline" = "دایره (حاشیه)";
 "style_hexagon" = "شش‌ضلعی";

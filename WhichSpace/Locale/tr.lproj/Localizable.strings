@@ -46,6 +46,8 @@
 "menu_symbol" = "Sembol";
 "search" = "Ara...";
 "sound_none" = "Yok";
+"sound_system" = "Sistem";
+"sound_user" = "Kullanıcı";
 "style_circle" = "Daire";
 "style_circleOutline" = "Daire (Çerçeve)";
 "style_hexagon" = "Altıgen";

@@ -46,6 +46,8 @@
 "menu_symbol" = "Symboli";
 "search" = "Hae...";
 "sound_none" = "Ei mitään";
+"sound_system" = "Järjestelmä";
+"sound_user" = "Käyttäjä";
 "style_circle" = "Ympyrä";
 "style_circleOutline" = "Ympyrä (Ääriviiva)";
 "style_hexagon" = "Kuusikulmio";

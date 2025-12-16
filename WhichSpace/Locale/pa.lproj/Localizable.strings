@@ -46,6 +46,8 @@
 "menu_symbol" = "نشان";
 "search" = "لبّھو...";
 "sound_none" = "کجھ نہیں";
+"sound_system" = "سسٹم";
+"sound_user" = "صارف";
 "style_circle" = "دایرہ";
 "style_circleOutline" = "دایرہ (آؤٹ لائن)";
 "style_hexagon" = "شش ضلعی";

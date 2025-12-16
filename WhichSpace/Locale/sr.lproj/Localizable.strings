@@ -46,6 +46,8 @@
 "menu_symbol" = "Simbol";
 "search" = "Pretraga...";
 "sound_none" = "Ništa";
+"sound_system" = "Sistem";
+"sound_user" = "Korisnik";
 "style_circle" = "Krug";
 "style_circleOutline" = "Krug (kontura)";
 "style_hexagon" = "Heksagon";

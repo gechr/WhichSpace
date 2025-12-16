@@ -46,6 +46,8 @@
 "menu_symbol" = "Simbol";
 "search" = "Cari...";
 "sound_none" = "Tiada";
+"sound_system" = "Sistem";
+"sound_user" = "Pengguna";
 "style_circle" = "Bulatan";
 "style_circleOutline" = "Bulatan (Garis luar)";
 "style_hexagon" = "Heksagon";

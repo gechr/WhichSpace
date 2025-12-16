@@ -46,6 +46,8 @@
 "menu_symbol" = "سمبول";
 "search" = "لټون...";
 "sound_none" = "هیڅ";
+"sound_system" = "سیسټم";
+"sound_user" = "کاروونکی";
 "style_circle" = "دایره";
 "style_circleOutline" = "دایره (بڼکه)";
 "style_hexagon" = "شپږضلعي";

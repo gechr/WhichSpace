@@ -46,6 +46,8 @@
 "menu_symbol" = "Symbool";
 "search" = "Zoeken...";
 "sound_none" = "Geen";
+"sound_system" = "Systeem";
+"sound_user" = "Gebruiker";
 "style_circle" = "Cirkel";
 "style_circleOutline" = "Cirkel (Contour)";
 "style_hexagon" = "Zeshoek";

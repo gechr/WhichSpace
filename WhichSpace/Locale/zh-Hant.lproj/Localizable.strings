@@ -46,6 +46,8 @@
 "menu_symbol" = "符號";
 "search" = "搜尋...";
 "sound_none" = "無";
+"sound_system" = "系統";
+"sound_user" = "使用者";
 "style_circle" = "圓形";
 "style_circleOutline" = "圓形 (描邊)";
 "style_hexagon" = "六邊形";

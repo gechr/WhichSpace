@@ -46,6 +46,8 @@
 "menu_symbol" = "Symbol";
 "search" = "Hledat...";
 "sound_none" = "Žádný";
+"sound_system" = "Systémové";
+"sound_user" = "Uživatelské";
 "style_circle" = "Kruh";
 "style_circleOutline" = "Kruh (Obrys)";
 "style_hexagon" = "Šestiúhelník";

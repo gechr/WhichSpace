@@ -46,6 +46,8 @@
 "menu_symbol" = "الرمز";
 "search" = "بحث...";
 "sound_none" = "بدون";
+"sound_system" = "النظام";
+"sound_user" = "المستخدم";
 "style_circle" = "دائرة";
 "style_circleOutline" = "دائرة (حد خارجي)";
 "style_hexagon" = "سداسي";

@@ -46,6 +46,8 @@
 "menu_symbol" = "علامت";
 "search" = "تلاش...";
 "sound_none" = "کوئی نہیں";
+"sound_system" = "سسٹم";
+"sound_user" = "صارف";
 "style_circle" = "دائرہ";
 "style_circleOutline" = "دائرہ (خاکہ)";
 "style_hexagon" = "شَش ضلعی";

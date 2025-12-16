@@ -46,6 +46,8 @@
 "menu_symbol" = "प्रतीक";
 "search" = "खोजें...";
 "sound_none" = "कोई नहीं";
+"sound_system" = "सिस्टम";
+"sound_user" = "उपयोगकर्ता";
 "style_circle" = "वृत्त";
 "style_circleOutline" = "वृत्त (आउटलाइन)";
 "style_hexagon" = "षट्भुज";

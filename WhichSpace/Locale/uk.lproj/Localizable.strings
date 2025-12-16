@@ -46,6 +46,8 @@
 "menu_symbol" = "Символ";
 "search" = "Пошук...";
 "sound_none" = "Немає";
+"sound_system" = "Системні";
+"sound_user" = "Користувацькі";
 "style_circle" = "Коло";
 "style_circleOutline" = "Коло (контур)";
 "style_hexagon" = "Шестикутник";

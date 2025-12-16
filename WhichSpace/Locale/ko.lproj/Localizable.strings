@@ -46,6 +46,8 @@
 "menu_symbol" = "심볼";
 "search" = "검색...";
 "sound_none" = "없음";
+"sound_system" = "시스템";
+"sound_user" = "사용자";
 "style_circle" = "원";
 "style_circleOutline" = "원 (윤곽)";
 "style_hexagon" = "육각형";

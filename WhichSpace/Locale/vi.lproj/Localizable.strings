@@ -46,6 +46,8 @@
 "menu_symbol" = "Ký hiệu";
 "search" = "Tìm kiếm...";
 "sound_none" = "Không";
+"sound_system" = "Hệ thống";
+"sound_user" = "Người dùng";
 "style_circle" = "Hình tròn";
 "style_circleOutline" = "Hình tròn (Viền)";
 "style_hexagon" = "Hình lục giác";

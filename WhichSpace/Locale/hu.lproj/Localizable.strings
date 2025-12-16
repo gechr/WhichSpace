@@ -46,6 +46,8 @@
 "menu_symbol" = "Szimbólum";
 "search" = "Keresés...";
 "sound_none" = "Nincs";
+"sound_system" = "Rendszer";
+"sound_user" = "Felhasználó";
 "style_circle" = "Kör";
 "style_circleOutline" = "Kör (Körvonal)";
 "style_hexagon" = "Hatszög";

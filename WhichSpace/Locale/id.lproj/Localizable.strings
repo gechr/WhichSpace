@@ -46,6 +46,8 @@
 "menu_symbol" = "Simbol";
 "search" = "Cari...";
 "sound_none" = "Tidak ada";
+"sound_system" = "Sistem";
+"sound_user" = "Pengguna";
 "style_circle" = "Lingkaran";
 "style_circleOutline" = "Lingkaran (Outline)";
 "style_hexagon" = "Heksagon";

@@ -46,6 +46,8 @@
 "menu_symbol" = "Символ";
 "search" = "Поиск...";
 "sound_none" = "Нет";
+"sound_system" = "Системные";
+"sound_user" = "Пользовательские";
 "style_circle" = "Круг";
 "style_circleOutline" = "Круг (контур)";
 "style_hexagon" = "Шестиугольник";

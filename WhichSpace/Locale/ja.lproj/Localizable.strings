@@ -46,6 +46,8 @@
 "menu_symbol" = "シンボル";
 "search" = "検索...";
 "sound_none" = "なし";
+"sound_system" = "システム";
+"sound_user" = "ユーザー";
 "style_circle" = "円";
 "style_circleOutline" = "円（アウトライン）";
 "style_hexagon" = "六角形";

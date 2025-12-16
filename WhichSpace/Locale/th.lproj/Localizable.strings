@@ -46,6 +46,8 @@
 "menu_symbol" = "สัญลักษณ์";
 "search" = "ค้นหา...";
 "sound_none" = "ไม่มี";
+"sound_system" = "ระบบ";
+"sound_user" = "ผู้ใช้";
 "style_circle" = "วงกลม";
 "style_circleOutline" = "วงกลม (เส้นขอบ)";
 "style_hexagon" = "หกเหลี่ยม";

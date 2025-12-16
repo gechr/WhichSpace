@@ -46,6 +46,8 @@
 "menu_symbol" = "Symbol";
 "search" = "Sök...";
 "sound_none" = "Ingen";
+"sound_system" = "System";
+"sound_user" = "Användare";
 "style_circle" = "Cirkel";
 "style_circleOutline" = "Cirkel (Kontur)";
 "style_hexagon" = "Hexagon";

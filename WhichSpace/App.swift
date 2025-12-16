@@ -665,20 +665,30 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
     // MARK: Sound Menu
 
-    /// Available system sounds for space switch notification (discovered once at startup)
-    private static let systemSounds: [String] = {
-        let soundsURL = URL(fileURLWithPath: "/System/Library/Sounds")
+    /// Available sounds from a directory (discovered once at startup)
+    private static func discoverSounds(in directory: URL) -> [String] {
         guard let contents = try? FileManager.default.contentsOfDirectory(
-            at: soundsURL,
-            includingPropertiesForKeys: nil
+            at: directory,
+            includingPropertiesForKeys: [.contentTypeKey]
         ) else {
             return []
         }
-        return contents
-            .filter { $0.pathExtension == "aiff" }
-            .map { $0.deletingPathExtension().lastPathComponent }
-            .sorted()
-    }()
+        var sounds = Set<String>()
+        for url in contents {
+            guard let type = try? url.resourceValues(forKeys: [.contentTypeKey]).contentType,
+                  type.conforms(to: .audio)
+            else {
+                continue
+            }
+            sounds.insert(url.deletingPathExtension().lastPathComponent)
+        }
+        return sounds.sorted()
+    }
+
+    private static let systemSounds = discoverSounds(in: URL(fileURLWithPath: "/System/Library/Sounds"))
+    private static let userSounds = discoverSounds(
+        in: FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/Sounds")
+    )
 
     private func createSoundMenu() -> NSMenu {
         let soundMenu = NSMenu(title: Localization.menuSound)
@@ -696,6 +706,32 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         soundMenu.addItem(noneItem)
 
         soundMenu.addItem(.separator())
+
+        let hasUserSounds = !Self.userSounds.isEmpty
+
+        // User sounds (only if they exist)
+        if hasUserSounds {
+            let header = NSMenuItem(title: Localization.soundUser, action: nil, keyEquivalent: "")
+            header.isEnabled = false
+            soundMenu.addItem(header)
+
+            for soundName in Self.userSounds {
+                let item = NSMenuItem(
+                    title: soundName,
+                    action: #selector(selectSound(_:)),
+                    keyEquivalent: ""
+                )
+                item.target = self
+                item.representedObject = soundName
+                item.state = store.soundName == soundName ? .on : .off
+                soundMenu.addItem(item)
+            }
+
+            soundMenu.addItem(.separator())
+            let systemHeader = NSMenuItem(title: Localization.soundSystem, action: nil, keyEquivalent: "")
+            systemHeader.isEnabled = false
+            soundMenu.addItem(systemHeader)
+        }
 
         // System sounds
         for soundName in Self.systemSounds {

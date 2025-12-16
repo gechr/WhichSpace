@@ -46,6 +46,8 @@
 "menu_symbol" = "סמל";
 "search" = "חיפוש...";
 "sound_none" = "ללא";
+"sound_system" = "מערכת";
+"sound_user" = "משתמש";
 "style_circle" = "עיגול";
 "style_circleOutline" = "עיגול (קו מתאר)";
 "style_hexagon" = "משושה";
