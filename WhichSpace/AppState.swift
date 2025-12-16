@@ -369,7 +369,7 @@ final class AppState {
         invalidateSpacesWithWindowsCache()
 
         // Save previous values for space change detection
-        let oldSpace = currentSpace
+        let oldSpaceID = currentSpaceID
         let oldDisplayID = currentDisplayID
 
         guard let displays = displaySpaceProvider.copyManagedDisplaySpaces(),
@@ -519,7 +519,7 @@ final class AppState {
             allSpaceIDs = spaceIDs
 
             if foundActiveDisplay {
-                postSpaceChangeNotificationIfNeeded(oldSpace: oldSpace, oldDisplayID: oldDisplayID)
+                postSpaceChangeNotificationIfNeeded(oldSpaceID: oldSpaceID, oldDisplayID: oldDisplayID)
                 return
             }
         }
@@ -534,13 +534,14 @@ final class AppState {
         allDisplaysSpaceInfo = []
     }
 
-    /// Posts spaceDidChange notification if the space actually changed
-    private func postSpaceChangeNotificationIfNeeded(oldSpace: Int, oldDisplayID: String?) {
-        // Only notify if space or display actually changed
-        let spaceChanged = currentSpace != oldSpace || currentDisplayID != oldDisplayID
+    /// Posts spaceDidChange notification if the space changed on the same display
+    private func postSpaceChangeNotificationIfNeeded(oldSpaceID: Int, oldDisplayID: String?) {
+        // Only notify if space changed on the same display (not when switching displays)
+        let spaceChanged = currentSpaceID != oldSpaceID
+        let sameDisplay = currentDisplayID == oldDisplayID
 
-        // Skip on initial launch (oldSpace == 0 means no previous space)
-        guard spaceChanged, oldSpace != 0 else {
+        // Skip on initial launch (oldSpaceID == 0 means no previous space)
+        guard spaceChanged, sameDisplay, oldSpaceID != 0 else {
             return
         }
 
