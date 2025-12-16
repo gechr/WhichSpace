@@ -1043,13 +1043,18 @@ final class AppState {
         // Check if this is the current space (same display and same local index)
         let isCurrentSpace = displayID == currentDisplayID && localIndex == currentSpace
 
+        // When uniqueIconsPerDisplay is OFF, preview should apply to all spaces with same local index
+        // (since they share settings). When ON, only apply to the exact current space.
+        let shouldApplyPreview = localIndex == currentSpace
+            && (displayID == currentDisplayID || !store.uniqueIconsPerDisplay)
+
         // Look up colors, style, and font using local index and display ID (for per-display customization)
         var colors = SpacePreferences.colors(forSpace: localIndex, display: displayID, store: store)
         var style = SpacePreferences.iconStyle(forSpace: localIndex, display: displayID, store: store) ?? .square
         let font = SpacePreferences.font(forSpace: localIndex, display: displayID, store: store)?.font
 
-        // Apply preview overrides for current space
-        if isCurrentSpace {
+        // Apply preview overrides for affected spaces
+        if shouldApplyPreview {
             if let previewStyle {
                 style = previewStyle
             }
@@ -1075,8 +1080,8 @@ final class AppState {
             )
         }
 
-        // Check for preview symbol override first (current space only)
-        if isCurrentSpace, let previewSymbol {
+        // Check for preview symbol override first
+        if shouldApplyPreview, let previewSymbol {
             let skinTone = previewSkinTone
                 ?? SpacePreferences.skinTone(forSpace: localIndex, display: displayID, store: store)
                 ?? .default
@@ -1089,7 +1094,7 @@ final class AppState {
         }
 
         // Skip saved symbol if previewing a number style (previewClearSymbol)
-        let symbol = (isCurrentSpace && previewClearSymbol)
+        let symbol = (shouldApplyPreview && previewClearSymbol)
             ? nil
             : SpacePreferences.symbol(forSpace: localIndex, display: displayID, store: store)
 
