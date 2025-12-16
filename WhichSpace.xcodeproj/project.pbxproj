@@ -49,6 +49,7 @@
 		B4E235CBC3DD715950C1C319 /* Swatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA6BF7DB8700734BA5B03AD /* Swatch.swift */; };
 		CB61E710EE0AA61181E63F29 /* EmojiRenderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23AEB50704228D44E33A4061 /* EmojiRenderTests.swift */; };
 		DB808F9A959C72ABCBAADCCE /* EdgeCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C010908C363337F4F938B12E /* EdgeCaseTests.swift */; };
+		ABC98EC5F8E24F379B3B00FA /* LocalizationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9001E72867604936A813A394 /* LocalizationTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -159,6 +160,7 @@
 		DB9C64A47EF14DB495CE715F /* WhichSpaceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WhichSpaceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DFB446EE552B31E1415C66B7 /* AppStateEdgeCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStateEdgeCaseTests.swift; sourceTree = "<group>"; };
 		FDE6B678B7B34824A1E54F20 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = Locale/it.lproj/Localizable.strings; sourceTree = "<group>"; };
+		9001E72867604936A813A394 /* LocalizationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -285,11 +287,20 @@
 			path = UI;
 			sourceTree = "<group>";
 		};
+		9C14960108AB4F5FBD05F1BB /* Locale */ = {
+			isa = PBXGroup;
+			children = (
+				9001E72867604936A813A394 /* LocalizationTests.swift */,
+			);
+			path = Locale;
+			sourceTree = "<group>";
+		};
 		5EB458482EEDE9690021C6BD /* WhichSpaceTests */ = {
 			isa = PBXGroup;
 			children = (
 				5EB4583A2EEDE9690021C6BD /* AppState */,
 				5EB4583F2EEDE9690021C6BD /* Core */,
+				9C14960108AB4F5FBD05F1BB /* Locale */,
 				5EB458412EEDE9690021C6BD /* Preferences */,
 				5EB458472EEDE9690021C6BD /* UI */,
 			);
@@ -498,6 +509,7 @@
 				97F4E259A2341F812A60881E /* ItemDataTests.swift in Sources */,
 				DB808F9A959C72ABCBAADCCE /* EdgeCaseTests.swift in Sources */,
 				73FAA1ED7C2DED2E7295E6FB /* AppStateEdgeCaseTests.swift in Sources */,
+				ABC98EC5F8E24F379B3B00FA /* LocalizationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
