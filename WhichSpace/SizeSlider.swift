@@ -159,6 +159,20 @@ final class SizeSlider: NSView {
         }
     }
 
+    // MARK: - Scroll Events
+
+    override func scrollWheel(with event: NSEvent) {
+        // Positive deltaY = scroll up = increase value
+        // Negative deltaY = scroll down = decrease value
+        if event.deltaY > 0 {
+            stepper.doubleValue = min(stepper.maxValue, stepper.doubleValue + stepper.increment)
+            stepperChanged()
+        } else if event.deltaY < 0 {
+            stepper.doubleValue = max(stepper.minValue, stepper.doubleValue - stepper.increment)
+            stepperChanged()
+        }
+    }
+
     // MARK: - Actions
 
     @objc private func sliderChanged() {
