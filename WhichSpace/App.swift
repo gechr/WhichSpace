@@ -1084,6 +1084,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         separatorSwatch.onCustomColorRequested = { [weak self] in
             self?.showSeparatorColorPanel()
         }
+        separatorSwatch.onHoverStart = { [weak self] index in
+            guard index < ColorSwatch.presetColors.count else {
+                return
+            }
+            self?.showPreviewIcon(separatorColor: ColorSwatch.presetColors[index])
+        }
+        separatorSwatch.onHoverEnd = { [weak self] in
+            self?.restoreIcon()
+        }
         separatorSwatchItem.view = separatorSwatch
         colorsMenu.addItem(separatorSwatchItem)
 
@@ -1227,6 +1236,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         symbol: String? = nil,
         foreground: NSColor? = nil,
         background: NSColor? = nil,
+        separatorColor: NSColor? = nil,
         clearSymbol: Bool = false,
         skinTone: SkinTone? = nil
     ) {
@@ -1236,6 +1246,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             overrideSymbol: symbol,
             overrideForeground: foreground,
             overrideBackground: background,
+            overrideSeparatorColor: separatorColor,
             clearSymbol: clearSymbol,
             skinTone: skinTone
         )

@@ -616,6 +616,7 @@ final class AppState {
     @ObservationIgnored private var previewBackground: NSColor?
     @ObservationIgnored private var previewClearSymbol = false
     @ObservationIgnored private var previewForeground: NSColor?
+    @ObservationIgnored private var previewSeparatorColor: NSColor?
     @ObservationIgnored private var previewSkinTone: SkinTone?
     @ObservationIgnored private var previewStyle: IconStyle?
     @ObservationIgnored private var previewSymbol: String?
@@ -626,6 +627,7 @@ final class AppState {
         overrideSymbol: String? = nil,
         overrideForeground: NSColor? = nil,
         overrideBackground: NSColor? = nil,
+        overrideSeparatorColor: NSColor? = nil,
         clearSymbol: Bool = false,
         skinTone: SkinTone? = nil
     ) -> NSImage {
@@ -634,6 +636,7 @@ final class AppState {
         previewSymbol = overrideSymbol
         previewForeground = overrideForeground
         previewBackground = overrideBackground
+        previewSeparatorColor = overrideSeparatorColor
         previewClearSymbol = clearSymbol
         previewSkinTone = skinTone
 
@@ -655,6 +658,7 @@ final class AppState {
         previewSymbol = nil
         previewForeground = nil
         previewBackground = nil
+        previewSeparatorColor = nil
         previewClearSymbol = false
         previewSkinTone = nil
 
@@ -1110,7 +1114,7 @@ final class AppState {
 
     /// Draws a vertical separator line between displays
     private func drawDisplaySeparator(at xOffset: Double, darkMode: Bool) {
-        let separatorColor = store.separatorColor ?? (darkMode
+        let separatorColor = previewSeparatorColor ?? store.separatorColor ?? (darkMode
             ? NSColor(calibratedWhite: 0.5, alpha: 0.6)
             : NSColor(calibratedWhite: 0.4, alpha: 0.6))
         separatorColor.setStroke()
