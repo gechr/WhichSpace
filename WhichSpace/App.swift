@@ -665,8 +665,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
     // MARK: Sound Menu
 
-    /// Available system sounds for space switch notification (discovered dynamically)
-    private static var systemSounds: [String] {
+    /// Available system sounds for space switch notification (discovered once at startup)
+    private static let systemSounds: [String] = {
         let soundsURL = URL(fileURLWithPath: "/System/Library/Sounds")
         guard let contents = try? FileManager.default.contentsOfDirectory(
             at: soundsURL,
@@ -678,7 +678,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             .filter { $0.pathExtension == "aiff" }
             .map { $0.deletingPathExtension().lastPathComponent }
             .sorted()
-    }
+    }()
 
     private func createSoundMenu() -> NSMenu {
         let soundMenu = NSMenu(title: Localization.menuSound)
@@ -719,12 +719,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
 
         store.soundName = soundName
-
-        // Play preview of selected sound (unless "None")
-        if !soundName.isEmpty {
-            let sound = NSSound(named: NSSound.Name(soundName))?.copy() as? NSSound
-            sound?.play()
-        }
     }
 
     private func configureOptionsMenuItems() {
@@ -2019,6 +2013,11 @@ extension AppDelegate: NSMenuDelegate {
         case MenuTag.invertColors.rawValue:
             showInvertedColorPreview()
         default:
+            // Play sound preview on hover (sound items store name in representedObject)
+            if let soundName = item.representedObject as? String, !soundName.isEmpty {
+                let sound = NSSound(named: NSSound.Name(soundName))?.copy() as? NSSound
+                sound?.play()
+            }
             restoreIcon()
         }
     }
