@@ -262,7 +262,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
     private let alertFactory: ConfirmationAlertFactory
     private let appState: AppState
-    private let statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+    private var statusBarItem: NSStatusItem!
 
     private var isPickingForeground = true
     private var isPreviewingIcon = false
@@ -314,6 +314,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     func applicationDidFinishLaunching(_: Notification) {
         PFMoveToApplicationsFolderIfNecessary()
         NSApp.setActivationPolicy(.accessory)
+        statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         updaterController = SPUStandardUpdaterController(
             startingUpdater: true,
             updaterDelegate: nil,
@@ -477,10 +478,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         configureLaunchAtLoginMenuItem()
         configureUpdateAndQuitMenuItems()
         statusMenu.delegate = self
-        statusBarItem.button?.toolTip = appName
-        statusBarItem.button?.target = self
-        statusBarItem.button?.action = #selector(statusBarButtonClicked(_:))
-        statusBarItem.button?.sendAction(on: [.leftMouseUp, .rightMouseUp])
+        statusBarItem?.button?.toolTip = appName
+        statusBarItem?.button?.target = self
+        statusBarItem?.button?.action = #selector(statusBarButtonClicked(_:))
+        statusBarItem?.button?.sendAction(on: [.leftMouseUp, .rightMouseUp])
         updateStatusBarIcon()
     }
 
@@ -490,7 +491,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
 
         if event.type == .rightMouseUp {
-            guard let button = statusBarItem.button else {
+            guard let button = statusBarItem?.button else {
                 return
             }
             let position = NSPoint(x: 0, y: button.bounds.height + 5)
@@ -1253,10 +1254,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             return
         }
         statusBarIconUpdateCount += 1
+        statusBarIconUpdateNotifier?.yield()
+        guard let statusBarItem else {
+            return
+        }
         let icon = appState.statusBarIcon
         statusBarItem.length = icon.size.width
         statusBarItem.button?.image = icon
-        statusBarIconUpdateNotifier?.yield()
     }
 
     // MARK: - Preview
@@ -1270,6 +1274,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         clearSymbol: Bool = false,
         skinTone: SkinTone? = nil
     ) {
+        guard let statusBarItem else {
+            return
+        }
         isPreviewingIcon = true
         let previewIcon = appState.generatePreviewIcon(
             overrideStyle: style,
