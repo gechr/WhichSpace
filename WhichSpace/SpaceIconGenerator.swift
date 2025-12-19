@@ -1,5 +1,5 @@
 //
-//  Icon.swift
+//  SpaceIconGenerator.swift
 //  WhichSpace
 //
 //  Created by George Christou.

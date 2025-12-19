@@ -1,4 +1,5 @@
 import Defaults
+import Foundation
 import XCTest
 @testable import WhichSpace
 
@@ -21,6 +22,7 @@ struct TestSuite {
 enum TestSuiteFactory {
     private static let testSuitePrefix = "WhichSpaceTests"
     private static var hasCleanedUp = false
+    private static let cleanupLock = NSLock()
 
     /// Creates a new UserDefaults suite with a unique name.
     ///
@@ -45,6 +47,9 @@ enum TestSuiteFactory {
     /// Called once per test run. Files from previous runs are safe to delete
     /// because cfprefsd has long since forgotten about them.
     private static func cleanupOrphanedTestFilesOnce() {
+        cleanupLock.lock()
+        defer { cleanupLock.unlock() }
+
         guard !hasCleanedUp else {
             return
         }
