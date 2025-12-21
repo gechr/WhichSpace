@@ -117,6 +117,31 @@ struct DisplaySpaceInfo: Equatable {
     }
 }
 
+// MARK: - Space Snapshot
+
+/// Immutable snapshot of the current system space state, emitted by SpaceMonitor
+struct SpaceSnapshot: Equatable {
+    let allDisplaysSpaceInfo: [DisplaySpaceInfo]
+    let allSpaceIDs: [Int]
+    let allSpaceLabels: [String]
+    let currentDisplayID: String?
+    let currentGlobalSpaceIndex: Int
+    let currentSpace: Int
+    let currentSpaceID: Int
+    let currentSpaceLabel: String
+
+    static let empty = Self(
+        allDisplaysSpaceInfo: [],
+        allSpaceIDs: [],
+        allSpaceLabels: [],
+        currentDisplayID: nil,
+        currentGlobalSpaceIndex: 0,
+        currentSpace: 0,
+        currentSpaceID: 0,
+        currentSpaceLabel: "?"
+    )
+}
+
 // MARK: - Space Change Notification
 
 extension Notification.Name {
@@ -131,6 +156,33 @@ struct StatusBarIconSlot: Equatable {
     let label: String
     /// The numeric space to activate (nil for non-switchable items such as fullscreen apps)
     let targetSpace: Int?
+}
+
+/// Layout of status bar icons with hit testing support
+struct StatusBarLayout: Equatable {
+    let slots: [StatusBarIconSlot]
+
+    /// Returns the slot at the given x coordinate, or nil if none
+    func slot(at x: Double) -> StatusBarIconSlot? {
+        slots.first { slot in
+            x >= slot.startX && x <= slot.startX + slot.width
+        }
+    }
+
+    /// Returns the target space number at the given x coordinate, or nil if none or not switchable
+    func targetSpace(at x: Double) -> Int? {
+        slot(at: x)?.targetSpace
+    }
+
+    /// Total width of all slots
+    var totalWidth: Double {
+        guard let last = slots.last else {
+            return 0
+        }
+        return last.startX + last.width
+    }
+
+    static let empty = Self(slots: [])
 }
 
 @MainActor
@@ -148,7 +200,6 @@ final class AppState {
     static let shared = AppState()
 
     private static let debounceInterval: Duration = .milliseconds(50)
-    private static let logger = Logger(subsystem: "io.gechr.WhichSpace", category: "AppState")
     private static let spacesWithWindowsCacheTTL: TimeInterval = 0.2
 
     /// Space info for all displays (used when showAllDisplays is enabled)
@@ -165,7 +216,6 @@ final class AppState {
 
     private let displaySpaceProvider: DisplaySpaceProvider
     private let mainDisplay = "Main"
-    private let spacesMonitorFile = "~/Library/Preferences/com.apple.spaces.plist"
 
     let store: DefaultsStore
 
@@ -174,16 +224,18 @@ final class AppState {
     private var cachedSpacesWithWindowsTime: Date = .distantPast
     private var lastUpdateTime: Date = .distantPast
     private var mouseEventMonitor: Any?
+    private var notificationTasks: [Task<Void, Never>] = []
     private var pendingUpdateTask: Task<Void, Never>?
-    private var spacesMonitor: DispatchSourceFileSystemObject?
+    private var spaceMonitor: SpaceMonitor?
+    private var spaceMonitorTask: Task<Void, Never>?
 
     private init() {
         displaySpaceProvider = CGSDisplaySpaceProvider()
         store = .shared
         updateDarkModeStatus()
         configureObservers()
-        configureSpaceMonitor()
-        performSpaceUpdate()
+        startSpaceMonitor()
+        applySnapshot(buildSnapshot())
     }
 
     /// Internal initializer for testing with a custom display space provider
@@ -193,9 +245,26 @@ final class AppState {
         updateDarkModeStatus()
         if !skipObservers {
             configureObservers()
-            configureSpaceMonitor()
+            startSpaceMonitor()
         }
-        performSpaceUpdate()
+        applySnapshot(buildSnapshot())
+    }
+
+    deinit {
+        // Use assumeIsolated since AppState is MainActor-isolated and cleanup requires access
+        MainActor.assumeIsolated {
+            spaceMonitorTask?.cancel()
+            pendingUpdateTask?.cancel()
+            for task in notificationTasks {
+                task.cancel()
+            }
+            if let monitor = mouseEventMonitor {
+                NSEvent.removeMonitor(monitor)
+            }
+        }
+        DistributedNotificationCenter.default().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
+        NSWorkspace.shared.notificationCenter.removeObserver(self)
     }
 
     // MARK: - Test Helpers
@@ -204,7 +273,7 @@ final class AppState {
     func forceSpaceUpdate() {
         pendingUpdateTask?.cancel()
         pendingUpdateTask = nil
-        performSpaceUpdate()
+        applySnapshot(buildSnapshot())
     }
 
     /// Sets space labels and current space directly for testing the rendering path
@@ -246,18 +315,40 @@ final class AppState {
 
     private func configureObservers() {
         let workspace = NSWorkspace.shared
-        workspace.notificationCenter.addObserver(
-            self,
-            selector: #selector(updateActiveSpaceNumber),
-            name: NSWorkspace.activeSpaceDidChangeNotification,
-            object: workspace
-        )
+
+        // Workspace notifications via async sequences
+        notificationTasks.append(Task {
+            for await _ in workspace.notificationCenter
+                .notifications(named: NSWorkspace.activeSpaceDidChangeNotification)
+            {
+                updateActiveSpaceNumber()
+            }
+        })
+
+        notificationTasks.append(Task {
+            for await _ in workspace.notificationCenter
+                .notifications(named: NSWorkspace.didActivateApplicationNotification)
+            {
+                updateActiveSpaceNumber()
+            }
+        })
+
+        notificationTasks.append(Task {
+            for await _ in NotificationCenter.default
+                .notifications(named: NSApplication.didChangeScreenParametersNotification)
+            {
+                handleDisplayConfigurationChange()
+            }
+        })
+
+        // Distributed notifications still use selector pattern (no async API)
         DistributedNotificationCenter.default().addObserver(
             self,
             selector: #selector(updateDarkModeStatus),
             name: NSNotification.Name("AppleInterfaceThemeChangedNotification"),
             object: nil
         )
+
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(updateActiveSpaceNumber),
@@ -265,12 +356,6 @@ final class AppState {
             object: nil
         )
 
-        workspace.notificationCenter.addObserver(
-            self,
-            selector: #selector(updateActiveSpaceNumber),
-            name: NSWorkspace.didActivateApplicationNotification,
-            object: workspace
-        )
         workspace.notificationCenter.addObserver(
             self,
             selector: #selector(updateActiveSpaceNumber),
@@ -292,14 +377,6 @@ final class AppState {
             object: nil
         )
 
-        // Display configuration changes (connect/disconnect/rearrange)
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handleDisplayConfigurationChange),
-            name: NSApplication.didChangeScreenParametersNotification,
-            object: nil
-        )
-
         mouseEventMonitor = NSEvent.addGlobalMonitorForEvents(matching: .leftMouseDown) { [weak self] _ in
             Task { @MainActor in
                 try? await Task.sleep(for: .seconds(1))
@@ -313,41 +390,19 @@ final class AppState {
 
     // MARK: - Space Monitor
 
-    private func configureSpaceMonitor() {
-        spacesMonitor?.cancel()
-        spacesMonitor = nil
-
-        let path = spacesMonitorFile
-        let fullPath = (path as NSString).expandingTildeInPath
-        let queue = DispatchQueue.global(qos: .default)
-        let fildes = open(fullPath.cString(using: String.Encoding.utf8)!, O_EVTONLY)
-        if fildes == -1 {
-            Self.logger.error("Failed to open file: \(path)")
+    private func startSpaceMonitor() {
+        spaceMonitorTask?.cancel()
+        spaceMonitor = SpaceMonitor { [weak self] in
+            await self?.buildSnapshot() ?? .empty
+        }
+        guard let spaceMonitor else {
             return
         }
-
-        let source = DispatchSource.makeFileSystemObjectSource(
-            fileDescriptor: fildes,
-            eventMask: .delete,
-            queue: queue
-        )
-
-        source.setEventHandler { [weak self] in
-            let flags = source.data.rawValue
-            if flags & DispatchSource.FileSystemEvent.delete.rawValue != 0 {
-                Task { @MainActor in
-                    self?.updateActiveSpaceNumber()
-                    self?.configureSpaceMonitor()
-                }
+        spaceMonitorTask = Task {
+            for await snapshot in spaceMonitor.snapshots() {
+                applySnapshot(snapshot)
             }
         }
-
-        source.setCancelHandler {
-            close(fildes)
-        }
-
-        source.resume()
-        spacesMonitor = source
     }
 
     // MARK: - Space Detection
@@ -360,41 +415,21 @@ final class AppState {
             guard !Task.isCancelled else {
                 return
             }
-            performSpaceUpdate()
+            applySnapshot(buildSnapshot())
         }
     }
 
-    private func performSpaceUpdate() {
-        // Invalidate window cache on space change to get fresh window data
-        invalidateSpacesWithWindowsCache()
-
-        // Save previous values for space change detection
-        let oldSpaceID = currentSpaceID
-        let oldDisplayID = currentDisplayID
-
+    /// Builds an immutable snapshot of the current space state from system data
+    private func buildSnapshot() -> SpaceSnapshot {
         guard let displays = displaySpaceProvider.copyManagedDisplaySpaces(),
               let activeDisplay = displaySpaceProvider.copyActiveMenuBarDisplayIdentifier()
         else {
-            return
+            return .empty
         }
 
         // Collect space info from ALL displays
         var allDisplays: [DisplaySpaceInfo] = []
-        var foundActiveDisplay = false
 
-        // First pass: find the active space ID from the active display
-        for display in displays {
-            guard let current = display["Current Space"] as? [String: Any],
-                  let displayID = display["Display Identifier"] as? String
-            else {
-                continue
-            }
-            if displayID == mainDisplay || displayID == activeDisplay {
-                break
-            }
-        }
-
-        // Second pass: collect all displays' spaces
         for display in displays {
             guard let spaces = display["Spaces"] as? [[String: Any]],
                   let displayID = display["Display Identifier"] as? String
@@ -441,33 +476,29 @@ final class AppState {
             globalIndex += allDisplays[index].regularSpaceCount
         }
 
-        allDisplaysSpaceInfo = allDisplays
-
-        // Now find the active display and set current space info
-        // Prefer activeDisplay, only fall back to mainDisplay if activeDisplay not found
+        // Find the active display - prefer activeDisplay, fall back to mainDisplay
         let targetDisplayID = allDisplays.contains { $0.displayID == activeDisplay }
             ? activeDisplay
             : mainDisplay
 
+        // Find current space info from the active display
         for display in displays {
             guard let current = display["Current Space"] as? [String: Any],
                   let spaces = display["Spaces"] as? [[String: Any]],
-                  let displayID = display["Display Identifier"] as? String
+                  let displayID = display["Display Identifier"] as? String,
+                  displayID == targetDisplayID,
+                  let activeSpaceID = current["ManagedSpaceID"] as? Int
             else {
-                continue
-            }
-
-            guard displayID == targetDisplayID else {
-                continue
-            }
-
-            guard let activeSpaceID = current["ManagedSpaceID"] as? Int else {
                 continue
             }
 
             var regularSpaceIndex = 0
             var spaceLabels: [String] = []
             var spaceIDs: [Int] = []
+            var snapshotCurrentSpace = 0
+            var snapshotCurrentSpaceID = 0
+            var snapshotCurrentSpaceLabel = "?"
+            var snapshotGlobalSpaceIndex = 0
 
             for space in spaces {
                 guard let spaceID = space["ManagedSpaceID"] as? Int else {
@@ -488,50 +519,67 @@ final class AppState {
 
                 if spaceID == activeSpaceID {
                     let activeIndex = spaceLabels.count
-                    currentSpace = activeIndex
-                    currentSpaceID = spaceID
-                    currentDisplayID = displayID
-                    lastUpdateTime = Date()
-                    foundActiveDisplay = true
+                    snapshotCurrentSpace = activeIndex
+                    snapshotCurrentSpaceID = spaceID
 
                     // Calculate global space index
                     if let displayInfo = allDisplays.first(where: { $0.displayID == displayID }) {
                         let regularPosition = max(regularSpaceIndex, 1)
                         if isFullscreen {
-                            currentGlobalSpaceIndex = displayInfo.globalStartIndex + max(regularPosition - 1, 0)
+                            snapshotGlobalSpaceIndex = displayInfo.globalStartIndex + max(regularPosition - 1, 0)
                         } else {
-                            currentGlobalSpaceIndex = displayInfo.globalStartIndex + regularPosition - 1
+                            snapshotGlobalSpaceIndex = displayInfo.globalStartIndex + regularPosition - 1
                         }
                     } else {
-                        currentGlobalSpaceIndex = activeIndex
+                        snapshotGlobalSpaceIndex = activeIndex
                     }
 
                     // Use local or global numbering based on preference
                     if !isFullscreen, !store.localSpaceNumbers {
-                        currentSpaceLabel = String(currentGlobalSpaceIndex)
+                        snapshotCurrentSpaceLabel = String(snapshotGlobalSpaceIndex)
                     } else {
-                        currentSpaceLabel = label
+                        snapshotCurrentSpaceLabel = label
                     }
                 }
             }
 
-            allSpaceLabels = spaceLabels
-            allSpaceIDs = spaceIDs
-
-            if foundActiveDisplay {
-                postSpaceChangeNotificationIfNeeded(oldSpaceID: oldSpaceID, oldDisplayID: oldDisplayID)
-                return
-            }
+            return SpaceSnapshot(
+                allDisplaysSpaceInfo: allDisplays,
+                allSpaceIDs: spaceIDs,
+                allSpaceLabels: spaceLabels,
+                currentDisplayID: displayID,
+                currentGlobalSpaceIndex: snapshotGlobalSpaceIndex,
+                currentSpace: snapshotCurrentSpace,
+                currentSpaceID: snapshotCurrentSpaceID,
+                currentSpaceLabel: snapshotCurrentSpaceLabel
+            )
         }
 
-        currentSpace = 0
-        currentSpaceID = 0
-        currentSpaceLabel = "?"
-        currentDisplayID = nil
-        currentGlobalSpaceIndex = 0
-        allSpaceLabels = []
-        allSpaceIDs = []
-        allDisplaysSpaceInfo = []
+        return .empty
+    }
+
+    /// Applies a space snapshot to update AppState properties
+    private func applySnapshot(_ snapshot: SpaceSnapshot) {
+        // Invalidate window cache on space change to get fresh window data
+        invalidateSpacesWithWindowsCache()
+
+        // Save previous values for space change detection
+        let oldSpaceID = currentSpaceID
+        let oldDisplayID = currentDisplayID
+
+        // Apply snapshot to state
+        allDisplaysSpaceInfo = snapshot.allDisplaysSpaceInfo
+        allSpaceIDs = snapshot.allSpaceIDs
+        allSpaceLabels = snapshot.allSpaceLabels
+        currentDisplayID = snapshot.currentDisplayID
+        currentGlobalSpaceIndex = snapshot.currentGlobalSpaceIndex
+        currentSpace = snapshot.currentSpace
+        currentSpaceID = snapshot.currentSpaceID
+        currentSpaceLabel = snapshot.currentSpaceLabel
+        lastUpdateTime = Date()
+
+        // Post notification if space changed on the same display
+        postSpaceChangeNotificationIfNeeded(oldSpaceID: oldSpaceID, oldDisplayID: oldDisplayID)
     }
 
     /// Posts spaceDidChange notification if the space changed on the same display
@@ -667,11 +715,11 @@ final class AppState {
     }
 
     /// Returns the layout of visible icons in the status bar for the current mode
-    func visibleIconSlots() -> [StatusBarIconSlot] {
+    func statusBarLayout() -> StatusBarLayout {
         if showAllDisplays {
             let spacesPerDisplay = spacesToShowAcrossDisplays()
             guard !spacesPerDisplay.isEmpty else {
-                return []
+                return .empty
             }
 
             var slots: [StatusBarIconSlot] = []
@@ -701,13 +749,13 @@ final class AppState {
                 }
             }
 
-            return slots
+            return StatusBarLayout(slots: slots)
         }
 
         if showAllSpaces {
             let spacesToShow = spacesToShowForCurrentDisplay()
             guard !spacesToShow.isEmpty else {
-                return []
+                return .empty
             }
 
             // Get global start index for current display
@@ -737,10 +785,10 @@ final class AppState {
                     targetSpace: target
                 ))
             }
-            return slots
+            return StatusBarLayout(slots: slots)
         }
 
-        return []
+        return .empty
     }
 
     private func generateSingleIcon(for space: Int, label: String, darkMode: Bool) -> NSImage {
@@ -772,7 +820,8 @@ final class AppState {
                 darkMode: darkMode,
                 customColors: colors,
                 customFont: font,
-                style: style
+                style: style,
+                sizeScale: store.sizeScale
             )
         }
 
@@ -785,7 +834,8 @@ final class AppState {
                 symbolName: previewSymbol,
                 darkMode: darkMode,
                 customColors: colors,
-                skinTone: skinTone
+                skinTone: skinTone,
+                sizeScale: store.sizeScale
             )
         }
 
@@ -802,7 +852,8 @@ final class AppState {
                 symbolName: symbol,
                 darkMode: darkMode,
                 customColors: colors,
-                skinTone: skinTone
+                skinTone: skinTone,
+                sizeScale: store.sizeScale
             )
         }
         return SpaceIconGenerator.generateIcon(
@@ -810,7 +861,8 @@ final class AppState {
             darkMode: darkMode,
             customColors: colors,
             customFont: font,
-            style: style
+            style: style,
+            sizeScale: store.sizeScale
         )
     }
 
@@ -1041,9 +1093,6 @@ final class AppState {
         localIndex: Int,
         darkMode: Bool
     ) -> NSImage {
-        // Check if this is the current space (same display and same local index)
-        let isCurrentSpace = displayID == currentDisplayID && localIndex == currentSpace
-
         // When uniqueIconsPerDisplay is OFF, preview should apply to all spaces with same local index
         // (since they share settings). When ON, only apply to the exact current space.
         let shouldApplyPreview = localIndex == currentSpace
@@ -1077,7 +1126,8 @@ final class AppState {
                 darkMode: darkMode,
                 customColors: colors,
                 customFont: font,
-                style: style
+                style: style,
+                sizeScale: store.sizeScale
             )
         }
 
@@ -1090,7 +1140,8 @@ final class AppState {
                 symbolName: previewSymbol,
                 darkMode: darkMode,
                 customColors: colors,
-                skinTone: skinTone
+                skinTone: skinTone,
+                sizeScale: store.sizeScale
             )
         }
 
@@ -1106,7 +1157,8 @@ final class AppState {
                 symbolName: symbol,
                 darkMode: darkMode,
                 customColors: colors,
-                skinTone: skinTone
+                skinTone: skinTone,
+                sizeScale: store.sizeScale
             )
         }
         return SpaceIconGenerator.generateIcon(
@@ -1114,7 +1166,8 @@ final class AppState {
             darkMode: darkMode,
             customColors: colors,
             customFont: font,
-            style: style
+            style: style,
+            sizeScale: store.sizeScale
         )
     }
 

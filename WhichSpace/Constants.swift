@@ -5,19 +5,8 @@ import EmojiKit
 // MARK: - Defaults Keys
 
 extension Defaults.Keys {
-    static let clickToSwitchSpaces = Key<Bool>("clickToSwitchSpaces", default: false)
-    static let dimInactiveSpaces = Key<Bool>("dimInactiveSpaces", default: true)
+    /// Global emoji picker skin tone preference (used by ItemPicker UI)
     static let emojiPickerSkinTone = Key<SkinTone>("emojiPickerSkinTone", default: .default)
-    static let hideEmptySpaces = Key<Bool>("hideEmptySpaces", default: false)
-    static let hideFullscreenApps = Key<Bool>("hideFullscreenApps", default: false)
-    static let localSpaceNumbers = Key<Bool>("localSpaceNumbers", default: false)
-    static let separatorColor = Key<Data?>("separatorColor", default: nil)
-    static let showAllDisplays = Key<Bool>("showAllDisplays", default: false)
-    static let showAllSpaces = Key<Bool>("showAllSpaces", default: false)
-    static let sizeScale = Key<Double>("sizeScale", default: Layout.defaultSizeScale)
-    static let spaceColors = Key<[Int: SpaceColors]>("spaceColors", default: [:])
-    static let spaceIconStyles = Key<[Int: IconStyle]>("spaceIconStyles", default: [:])
-    static let spaceSymbols = Key<[Int: String]>("spaceSymbols", default: [:])
 }
 
 // MARK: - Labels

@@ -526,7 +526,7 @@ final class AppStateTests: XCTestCase {
 
     // MARK: - Visible Icon Slots
 
-    func testVisibleIconSlots_showAllSpacesUsesLabelsAndOffsets() {
+    func testStatusBarLayout_showAllSpacesUsesLabelsAndOffsets() {
         sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
         sut.setSpaceState(
             labels: ["1", "2", "3"],
@@ -536,13 +536,13 @@ final class AppStateTests: XCTestCase {
         )
         store.showAllSpaces = true
 
-        let slots = sut.visibleIconSlots()
+        let slots = sut.statusBarLayout().slots
 
         XCTAssertEqual(slots.map(\.targetSpace), [1, 2, 3])
         XCTAssertEqual(slots.map(\.startX), [0, Layout.statusItemWidth, Layout.statusItemWidth * 2])
     }
 
-    func testVisibleIconSlots_crossDisplayIncludesSeparatorAndSkipsFullscreenTargets() {
+    func testStatusBarLayout_crossDisplayIncludesSeparatorAndSkipsFullscreenTargets() {
         sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
         let displayA = DisplaySpaceInfo(
             displayID: "DisplayA",
@@ -568,7 +568,7 @@ final class AppStateTests: XCTestCase {
         )
         store.showAllDisplays = true
 
-        let slots = sut.visibleIconSlots()
+        let slots = sut.statusBarLayout().slots
 
         XCTAssertEqual(slots.map(\.targetSpace), [1, nil, 2, 3])
         XCTAssertEqual(

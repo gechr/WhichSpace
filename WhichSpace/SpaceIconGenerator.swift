@@ -7,7 +7,6 @@
 //
 
 import Cocoa
-import Defaults
 
 /// Generates status bar icon images using custom drawing
 enum SpaceIconGenerator {
@@ -17,9 +16,13 @@ enum SpaceIconGenerator {
     /// Maximum icon size must fit within status item bounds with margin
     private static let maxIconSize = min(statusItemSize.width, statusItemSize.height) - 1
 
-    private static var sizeScale: Double { Defaults[.sizeScale] / 100.0 }
-    private static var squareSize: Double { min(Layout.baseSquareSize * sizeScale, maxIconSize) }
-    private static var polygonSize: Double { min(Layout.basePolygonSize * sizeScale, maxIconSize) }
+    private static func squareSize(scale: Double) -> Double {
+        min(Layout.baseSquareSize * scale, maxIconSize)
+    }
+
+    private static func polygonSize(scale: Double) -> Double {
+        min(Layout.basePolygonSize * scale, maxIconSize)
+    }
 
     // MARK: - Public API
 
@@ -29,122 +32,138 @@ enum SpaceIconGenerator {
         darkMode: Bool,
         customColors: SpaceColors? = nil,
         customFont: NSFont? = nil,
-        style: IconStyle = .square
+        style: IconStyle = .square,
+        sizeScale: Double = Layout.defaultSizeScale
     ) -> NSImage {
+        let scale = sizeScale / 100.0
         switch style {
         case .square:
-            generateSquareIcon(
+            return generateSquareIcon(
                 for: spaceNumber,
                 darkMode: darkMode,
                 customColors: customColors,
                 customFont: customFont,
-                filled: true
+                filled: true,
+                scale: scale
             )
         case .squareOutline:
-            generateSquareIcon(
+            return generateSquareIcon(
                 for: spaceNumber,
                 darkMode: darkMode,
                 customColors: customColors,
                 customFont: customFont,
-                filled: false
+                filled: false,
+                scale: scale
             )
         case .slim:
-            generateSlimIcon(
+            return generateSlimIcon(
                 for: spaceNumber,
                 darkMode: darkMode,
                 customColors: customColors,
                 customFont: customFont,
-                filled: true
+                filled: true,
+                scale: scale
             )
         case .slimOutline:
-            generateSlimIcon(
+            return generateSlimIcon(
                 for: spaceNumber,
                 darkMode: darkMode,
                 customColors: customColors,
                 customFont: customFont,
-                filled: false
+                filled: false,
+                scale: scale
             )
         case .circle:
-            generateCircleIcon(
+            return generateCircleIcon(
                 for: spaceNumber,
                 darkMode: darkMode,
                 customColors: customColors,
                 customFont: customFont,
-                filled: true
+                filled: true,
+                scale: scale
             )
         case .circleOutline:
-            generateCircleIcon(
+            return generateCircleIcon(
                 for: spaceNumber,
                 darkMode: darkMode,
                 customColors: customColors,
                 customFont: customFont,
-                filled: false
+                filled: false,
+                scale: scale
             )
         case .triangle:
-            generateTriangleIcon(
+            return generateTriangleIcon(
                 for: spaceNumber,
                 darkMode: darkMode,
                 customColors: customColors,
                 customFont: customFont,
-                filled: true
+                filled: true,
+                scale: scale
             )
         case .triangleOutline:
-            generateTriangleIcon(
+            return generateTriangleIcon(
                 for: spaceNumber,
                 darkMode: darkMode,
                 customColors: customColors,
                 customFont: customFont,
-                filled: false
+                filled: false,
+                scale: scale
             )
         case .pentagon:
-            generatePolygonIcon(
+            return generatePolygonIcon(
                 for: spaceNumber,
                 darkMode: darkMode,
                 customColors: customColors,
                 customFont: customFont,
                 filled: true,
-                sides: 5
+                sides: 5,
+                scale: scale
             )
         case .pentagonOutline:
-            generatePolygonIcon(
+            return generatePolygonIcon(
                 for: spaceNumber,
                 darkMode: darkMode,
                 customColors: customColors,
                 customFont: customFont,
                 filled: false,
-                sides: 5
+                sides: 5,
+                scale: scale
             )
         case .hexagon:
-            generatePolygonIcon(
+            return generatePolygonIcon(
                 for: spaceNumber,
                 darkMode: darkMode,
                 customColors: customColors,
                 customFont: customFont,
                 filled: true,
-                sides: 6
+                sides: 6,
+                scale: scale
             )
         case .hexagonOutline:
-            generatePolygonIcon(
+            return generatePolygonIcon(
                 for: spaceNumber,
                 darkMode: darkMode,
                 customColors: customColors,
                 customFont: customFont,
                 filled: false,
-                sides: 6
+                sides: 6,
+                scale: scale
             )
         case .stroke:
-            generateStrokeIcon(
+            return generateStrokeIcon(
                 for: spaceNumber,
                 darkMode: darkMode,
                 customColors: customColors,
-                customFont: customFont
+                customFont: customFont,
+                scale: scale
             )
         case .transparent:
-            generateTransparentIcon(
+            return generateTransparentIcon(
                 for: spaceNumber,
                 darkMode: darkMode,
                 customColors: customColors,
-                customFont: customFont
+                customFont: customFont,
+                scale: scale
             )
         }
     }
@@ -155,30 +174,35 @@ enum SpaceIconGenerator {
     ///   - darkMode: Whether dark mode is enabled
     ///   - customColors: Optional custom colors for the icon
     ///   - skinTone: Optional skin tone for emojis. If nil, uses global default.
+    ///   - sizeScale: The size scale percentage (default 100)
     static func generateSymbolIcon(
         symbolName: String,
         darkMode: Bool,
         customColors: SpaceColors? = nil,
-        skinTone: SkinTone? = nil
+        skinTone: SkinTone? = nil,
+        sizeScale: Double = Layout.defaultSizeScale
     ) -> NSImage {
+        let scale = sizeScale / 100.0
+
         // Check if it's an emoji (contains emoji Unicode characters)
         if symbolName.containsEmoji {
             return generateEmojiIcon(
                 emoji: symbolName,
                 darkMode: darkMode,
                 customColors: customColors,
-                skinTone: skinTone
+                skinTone: skinTone,
+                scale: scale
             )
         }
 
         // Try SF Symbol
-        let scaledPointSize = Layout.Icon.sfSymbolPointSize * sizeScale
+        let scaledPointSize = Layout.Icon.sfSymbolPointSize * scale
         let symbolConfig = NSImage.SymbolConfiguration(pointSize: scaledPointSize, weight: .medium)
         guard let sfImage = NSImage(systemSymbolName: symbolName, accessibilityDescription: nil)?
             .withSymbolConfiguration(symbolConfig)
         else {
             // Fallback to question mark if symbol not found
-            return generateIcon(for: "?", darkMode: darkMode, customColors: customColors)
+            return generateIcon(for: "?", darkMode: darkMode, customColors: customColors, sizeScale: sizeScale)
         }
 
         let color: NSColor
@@ -206,12 +230,13 @@ enum SpaceIconGenerator {
         emoji: String,
         darkMode _: Bool,
         customColors _: SpaceColors? = nil,
-        skinTone: SkinTone? = nil
+        skinTone: SkinTone? = nil,
+        scale: Double
     ) -> NSImage {
         let displayEmoji = SkinTone.apply(to: emoji, tone: skinTone)
         return NSImage(size: statusItemSize, flipped: false) { rect in
             // Use smaller font for emoji to fit nicely in the status bar
-            let fontSize = 13.0 * sizeScale
+            let fontSize = 13.0 * scale
             let font = NSFont.systemFont(ofSize: fontSize)
 
             let attributes: [NSAttributedString.Key: Any] = [.font: font]
@@ -246,7 +271,8 @@ enum SpaceIconGenerator {
     private static func scaledFont(
         for digitCount: Int,
         customFont: NSFont? = nil,
-        sizeAdjustment: Double = 0
+        sizeAdjustment: Double = 0,
+        scale: Double
     ) -> NSFont {
         let baseFontSize: Double
         switch digitCount {
@@ -260,10 +286,10 @@ enum SpaceIconGenerator {
 
         if let customFont {
             // Scale the custom font proportionally
-            let scaledSize = customFont.pointSize * sizeScale
+            let scaledSize = customFont.pointSize * scale
             return NSFontManager.shared.convert(customFont, toSize: scaledSize)
         }
-        return NSFont.boldSystemFont(ofSize: (baseFontSize + sizeAdjustment) * sizeScale)
+        return NSFont.boldSystemFont(ofSize: (baseFontSize + sizeAdjustment) * scale)
     }
 
     private static func centeredRect(size: CGSize, in container: CGRect) -> CGRect {
@@ -311,9 +337,11 @@ enum SpaceIconGenerator {
         darkMode: Bool,
         customColors: SpaceColors?,
         customFont: NSFont?,
-        filled: Bool
+        filled: Bool,
+        scale: Double
     ) -> NSImage {
-        let iconSize = CGSize(width: squareSize, height: squareSize)
+        let size = squareSize(scale: scale)
+        let iconSize = CGSize(width: size, height: size)
         return NSImage(size: statusItemSize, flipped: false) { rect in
             let colors = getColors(darkMode: darkMode, customColors: customColors, filled: filled)
             let backgroundRect = centeredRect(size: iconSize, in: rect)
@@ -325,7 +353,7 @@ enum SpaceIconGenerator {
             )
             fillOrStroke(path: roundedPath, color: colors.background, filled: filled)
 
-            let font = scaledFont(for: spaceNumber.count, customFont: customFont)
+            let font = scaledFont(for: spaceNumber.count, customFont: customFont, scale: scale)
             drawCenteredText(spaceNumber, in: backgroundRect, font: font, color: colors.foreground)
 
             return true
@@ -337,17 +365,18 @@ enum SpaceIconGenerator {
         darkMode: Bool,
         customColors: SpaceColors?,
         customFont: NSFont?,
-        filled: Bool
+        filled: Bool,
+        scale: Double
     ) -> NSImage {
         NSImage(size: statusItemSize, flipped: false) { rect in
             let colors = getColors(darkMode: darkMode, customColors: customColors, filled: filled)
-            let font = scaledFont(for: spaceNumber.count, customFont: customFont)
+            let font = scaledFont(for: spaceNumber.count, customFont: customFont, scale: scale)
 
             // Calculate dynamic width based on text
             let attributes: [NSAttributedString.Key: Any] = [.font: font]
             let textSize = spaceNumber.size(withAttributes: attributes)
-            let horizontalPadding = 4.0 * sizeScale
-            let iconSize = CGSize(width: textSize.width + horizontalPadding * 2, height: squareSize)
+            let horizontalPadding = 4.0 * scale
+            let iconSize = CGSize(width: textSize.width + horizontalPadding * 2, height: squareSize(scale: scale))
             let backgroundRect = centeredRect(size: iconSize, in: rect)
 
             let roundedPath = NSBezierPath(
@@ -367,9 +396,11 @@ enum SpaceIconGenerator {
         darkMode: Bool,
         customColors: SpaceColors?,
         customFont: NSFont?,
-        filled: Bool
+        filled: Bool,
+        scale: Double
     ) -> NSImage {
-        let iconSize = CGSize(width: squareSize, height: squareSize)
+        let size = squareSize(scale: scale)
+        let iconSize = CGSize(width: size, height: size)
         return NSImage(size: statusItemSize, flipped: false) { rect in
             let colors = getColors(darkMode: darkMode, customColors: customColors, filled: filled)
             let circleRect = centeredRect(size: iconSize, in: rect)
@@ -377,7 +408,7 @@ enum SpaceIconGenerator {
             let circlePath = NSBezierPath(ovalIn: circleRect)
             fillOrStroke(path: circlePath, color: colors.background, filled: filled)
 
-            let font = scaledFont(for: spaceNumber.count, customFont: customFont)
+            let font = scaledFont(for: spaceNumber.count, customFont: customFont, scale: scale)
             drawCenteredText(spaceNumber, in: circleRect, font: font, color: colors.foreground)
 
             return true
@@ -389,9 +420,11 @@ enum SpaceIconGenerator {
         darkMode: Bool,
         customColors: SpaceColors?,
         customFont: NSFont?,
-        filled: Bool
+        filled: Bool,
+        scale: Double
     ) -> NSImage {
-        let iconSize = CGSize(width: polygonSize, height: polygonSize)
+        let size = polygonSize(scale: scale)
+        let iconSize = CGSize(width: size, height: size)
         return NSImage(size: statusItemSize, flipped: false) { rect in
             let colors = getColors(darkMode: darkMode, customColors: customColors, filled: filled)
             let shapeRect = centeredRect(size: iconSize, in: rect)
@@ -411,7 +444,12 @@ enum SpaceIconGenerator {
             // Triangle uses smaller font and lower text position
             let sizeAdjustment = spaceNumber.count <= 2 ? -2.0 : -1.0
             let yOffset = spaceNumber.count > 1 ? -4.0 : -2.0
-            let font = scaledFont(for: spaceNumber.count, customFont: customFont, sizeAdjustment: sizeAdjustment)
+            let font = scaledFont(
+                for: spaceNumber.count,
+                customFont: customFont,
+                sizeAdjustment: sizeAdjustment,
+                scale: scale
+            )
             drawCenteredText(spaceNumber, in: shapeRect, font: font, color: colors.foreground, yOffset: yOffset)
 
             return true
@@ -424,7 +462,8 @@ enum SpaceIconGenerator {
         customColors: SpaceColors?,
         customFont: NSFont?,
         filled: Bool,
-        sides: Int
+        sides: Int,
+        scale: Double
     ) -> NSImage {
         NSImage(size: statusItemSize, flipped: false) { rect in
             let colors = getColors(darkMode: darkMode, customColors: customColors, filled: filled)
@@ -435,7 +474,7 @@ enum SpaceIconGenerator {
                 sides: sides,
                 centerX: centerX,
                 centerY: centerY,
-                iconSize: polygonSize
+                iconSize: polygonSize(scale: scale)
             )
             let polygonPath = createRoundedPolygonPath(vertices: vertices)
             fillOrStroke(path: polygonPath, color: colors.background, filled: filled)
@@ -450,7 +489,12 @@ enum SpaceIconGenerator {
             default:
                 sizeAdjustment = 0
             }
-            let font = scaledFont(for: spaceNumber.count, customFont: customFont, sizeAdjustment: sizeAdjustment)
+            let font = scaledFont(
+                for: spaceNumber.count,
+                customFont: customFont,
+                sizeAdjustment: sizeAdjustment,
+                scale: scale
+            )
             drawCenteredText(spaceNumber, in: rect, font: font, color: colors.foreground)
 
             return true
@@ -461,7 +505,8 @@ enum SpaceIconGenerator {
         for spaceNumber: String,
         darkMode: Bool,
         customColors: SpaceColors?,
-        customFont: NSFont?
+        customFont: NSFont?,
+        scale: Double
     ) -> NSImage {
         NSImage(size: statusItemSize, flipped: false) { rect in
             let textColor: NSColor
@@ -472,7 +517,7 @@ enum SpaceIconGenerator {
             }
 
             // Transparent style uses slightly larger font since there's no background shape
-            let font = scaledFont(for: spaceNumber.count, customFont: customFont, sizeAdjustment: 1)
+            let font = scaledFont(for: spaceNumber.count, customFont: customFont, sizeAdjustment: 1, scale: scale)
             drawCenteredText(spaceNumber, in: rect, font: font, color: textColor)
 
             return true
@@ -483,7 +528,8 @@ enum SpaceIconGenerator {
         for spaceNumber: String,
         darkMode: Bool,
         customColors: SpaceColors?,
-        customFont: NSFont?
+        customFont: NSFont?,
+        scale: Double
     ) -> NSImage {
         NSImage(size: statusItemSize, flipped: false) { rect in
             guard let context = NSGraphicsContext.current?.cgContext else {
@@ -503,11 +549,11 @@ enum SpaceIconGenerator {
             }
 
             // Use larger font for stroke mode to match visual weight of other styles
-            let baseFont = scaledFont(for: spaceNumber.count, customFont: customFont)
+            let baseFont = scaledFont(for: spaceNumber.count, customFont: customFont, scale: scale)
             let enlargedSize = baseFont.pointSize * 1.1
             let font = NSFontManager.shared.convert(baseFont, toSize: enlargedSize)
             let ctFont = font as CTFont
-            let strokeWidth = 4.0 * sizeScale
+            let strokeWidth = 4.0 * scale
 
             // Create attributed string for measuring
             let attributes: [NSAttributedString.Key: Any] = [.font: font]

@@ -307,39 +307,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             return
         }
 
-        let slots = appState.visibleIconSlots()
-        guard !slots.isEmpty else {
+        let layout = appState.statusBarLayout()
+        guard !layout.slots.isEmpty else {
             return
         }
 
         let location = button.convert(event.locationInWindow, from: nil)
         let clickX = Double(location.x)
 
-        for slot in slots {
-            let endX = slot.startX + slot.width
-            guard clickX >= slot.startX, clickX <= endX else {
-                continue
-            }
+        // Use StatusBarLayout hit testing
+        guard let targetSpace = layout.targetSpace(at: clickX) else {
+            return
+        }
 
-            // Ignore non-switchable slots (e.g., fullscreen apps)
-            guard let targetSpace = slot.targetSpace else {
+        // For spaces > 16, need yabai (macOS only has hotkeys for 1-16)
+        if targetSpace > 16 {
+            guard SpaceSwitcher.isYabaiAvailable() else {
+                showYabaiRequiredAlert()
                 return
             }
 
-            // For spaces > 16, need yabai (macOS only has hotkeys for 1-16)
-            if targetSpace > 16 {
-                guard SpaceSwitcher.isYabaiAvailable() else {
-                    showYabaiRequiredAlert()
-                    return
-                }
-
-                if !SpaceSwitcher.switchToSpaceViaYabai(targetSpace) {
-                    showYabaiRequiredAlert()
-                }
-            } else {
-                SpaceSwitcher.switchToSpace(targetSpace)
+            if !SpaceSwitcher.switchToSpaceViaYabai(targetSpace) {
+                showYabaiRequiredAlert()
             }
-            return
+        } else {
+            SpaceSwitcher.switchToSpace(targetSpace)
         }
     }
 
@@ -436,6 +428,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         sizeSlider.onSizeChanged = { [weak self] scale in
             self?.store.sizeScale = scale
             self?.updateStatusBarIcon()
+            self?.updateStylePickerSizeScales()
         }
         sizeItem.view = sizeSlider
         sizeMenu.addItem(sizeItem)
@@ -973,6 +966,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             stylePicker.customColors = appState.currentColors
             stylePicker.darkMode = appState.darkModeEnabled
             stylePicker.previewNumber = appState.currentSpaceLabel == "?" ? "1" : appState.currentSpaceLabel
+            stylePicker.sizeScale = appState.store.sizeScale
             stylePicker.onSelected = { [weak self, weak stylePicker] in
                 self?.selectIconStyle(style, stylePicker: stylePicker)
             }
@@ -1055,6 +1049,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         let icon = appState.statusBarIcon
         statusBarItem.length = icon.size.width
         statusBarItem.button?.image = icon
+    }
+
+    /// Updates the sizeScale on all StylePicker views in the icon menu
+    private func updateStylePickerSizeScales() {
+        let scale = store.sizeScale
+        for item in statusMenu.items {
+            guard let submenu = item.submenu else {
+                continue
+            }
+            for subItem in submenu.items {
+                guard let iconSubmenu = subItem.submenu else {
+                    continue
+                }
+                for iconItem in iconSubmenu.items {
+                    if let stylePicker = iconItem.view as? StylePicker {
+                        stylePicker.sizeScale = scale
+                        stylePicker.needsDisplay = true
+                    }
+                }
+            }
+        }
     }
 
     // MARK: - Preview

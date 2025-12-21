@@ -216,6 +216,58 @@ final class StylePickerTests: XCTestCase {
         XCTAssertEqual(stylePicker.previewNumber, "1", "previewNumber should default to '1'")
     }
 
+    // MARK: - sizeScale Tests
+
+    func testSizeScale_defaultsToLayoutDefault() {
+        let stylePicker = StylePicker(style: .square)
+        XCTAssertEqual(
+            stylePicker.sizeScale,
+            Layout.defaultSizeScale,
+            "sizeScale should default to Layout.defaultSizeScale"
+        )
+    }
+
+    func testSizeScale_canBeSetAndRead() {
+        sut.sizeScale = 80.0
+        XCTAssertEqual(sut.sizeScale, 80.0)
+
+        sut.sizeScale = 120.0
+        XCTAssertEqual(sut.sizeScale, 120.0)
+    }
+
+    func testSizeScale_unchangedByOtherProperties() {
+        sut.sizeScale = 75.0
+
+        sut.customColors = SpaceColors(foreground: .red, background: .blue)
+        sut.darkMode = true
+        sut.previewNumber = "5"
+        sut.isChecked = true
+
+        XCTAssertEqual(sut.sizeScale, 75.0, "sizeScale should not be affected by other property changes")
+    }
+
+    func testIntrinsicContentSize_unchangedBySizeScale() {
+        let sizeBefore = sut.intrinsicContentSize
+
+        sut.sizeScale = 50.0
+        let sizeAfter = sut.intrinsicContentSize
+
+        XCTAssertEqual(sizeBefore, sizeAfter, "sizeScale should not affect intrinsicContentSize")
+    }
+
+    func testSizeScale_canDrawWithDifferentScales() {
+        // Verify the view can draw without crashing at different scales
+        for scale in [50.0, 75.0, 100.0, 125.0, 150.0] {
+            sut.sizeScale = scale
+            sut.frame = NSRect(origin: .zero, size: sut.intrinsicContentSize)
+
+            // This should not crash
+            sut.display()
+
+            XCTAssertEqual(sut.sizeScale, scale)
+        }
+    }
+
     // MARK: - Style Initialization Tests
 
     func testInit_withDifferentStyles() {

@@ -16,6 +16,7 @@ final class StylePicker: NSView {
     var onHoverStart: ((IconStyle) -> Void)?
     var onSelected: (() -> Void)?
     var previewNumber = "1"
+    var sizeScale = Layout.defaultSizeScale
 
     init(style: IconStyle) {
         self.style = style
@@ -54,7 +55,8 @@ final class StylePicker: NSView {
             for: previewNumber,
             darkMode: darkMode,
             customColors: customColors,
-            style: style
+            style: style,
+            sizeScale: sizeScale
         )
         let iconRect = CGRect(x: 24, y: (bounds.height - iconSize) / 2, width: iconSize, height: iconSize)
         icon.draw(in: iconRect)
