@@ -721,7 +721,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 0.12.11;
+				CURRENT_PROJECT_VERSION = 0.12.12;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = WH3AMFYJQK;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -734,7 +734,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.12.11;
+				MARKETING_VERSION = 0.12.12;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SkyLight,
@@ -753,7 +753,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 0.12.11;
+				CURRENT_PROJECT_VERSION = 0.12.12;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = WH3AMFYJQK;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -766,7 +766,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.12.11;
+				MARKETING_VERSION = 0.12.12;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SkyLight,
