@@ -12,8 +12,6 @@
 #import <Foundation/Foundation.h>
 #import <ApplicationServices/ApplicationServices.h>
 
-#import "PFMoveApplication.h"
-
 // Private CGS/SLS APIs for getting space information (no public alternative exists)
 int _CGSDefaultConnection();
 id CGSCopyManagedDisplaySpaces(int conn);

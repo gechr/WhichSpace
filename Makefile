@@ -1,4 +1,9 @@
+BUILD_CONFIGURATION      ?= Debug
 MACOSX_DEPLOYMENT_TARGET ?= 14.0
+
+ifdef RELEASE
+BUILD_CONFIGURATION := Release
+endif
 
 .DEFAULT_GOAL := run
 
@@ -7,6 +12,7 @@ build:
 	@xcodebuild build \
 		-project WhichSpace.xcodeproj \
 		-scheme WhichSpace \
+		-configuration $(BUILD_CONFIGURATION) \
 		-destination 'platform=macOS' \
 		MACOSX_DEPLOYMENT_TARGET=$(MACOSX_DEPLOYMENT_TARGET)
 

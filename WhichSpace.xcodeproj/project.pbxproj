@@ -7,13 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2AC6B73F32A349A282BF76F7 /* Localization/MoveApplication.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = AF0AF4972C51445493EFBEFE /* Localization/MoveApplication.xcstrings */; };
+		2AC6B73F32A349A282BF76F7 /* Localization/Relocator.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = AF0AF4972C51445493EFBEFE /* Localization/Relocator.xcstrings */; };
 		5E13C88D1BE03A6F00FF4305 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E13C88C1BE03A6F00FF4305 /* Assets.xcassets */; };
 		5E342D5E2E650D570003F863 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 5E342D5D2E650D570003F863 /* Sparkle */; };
 		5E4C3D012F890A230003F864 /* LaunchAtLogin in Frameworks */ = {isa = PBXBuildFile; productRef = 5E4C3D032F890A230003F866 /* LaunchAtLogin */; };
 		5E4C3D042F890A230003F867 /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = 5E4C3D062F890A230003F869 /* Defaults */; };
 		5E4C3D0A2F890A230003F86C /* EmojiKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5E4C3D092F890A230003F86B /* EmojiKit */; };
-		5E51B77F1E7C058F79A7FA905A69D2206B86 /* PFMoveApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E51B77E1E7C058F79A7FA905A69D2206B86 /* PFMoveApplication.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		5E51B7851E7EE7BF009395E6 /* (null) in CopyFiles */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5EB457D42EEDE8C00021C6BD /* SpaceIconGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB457CD2EEDE8C00021C6BD /* SpaceIconGenerator.swift */; };
 		5EB457D52EEDE8C00021C6BD /* SymbolPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB457D32EEDE8C00021C6BD /* SymbolPicker.swift */; };
@@ -26,6 +25,7 @@
 		5EB457DC2EEDE8C00021C6BD /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB457CB2EEDE8C00021C6BD /* Constants.swift */; };
 		5EB457DD2EEDE8C00021C6BD /* ItemPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB457CF2EEDE8C00021C6BD /* ItemPicker.swift */; };
 		5EB457DE2EEDE8C00021C6BD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB457C72EEDE8C00021C6BD /* AppDelegate.swift */; };
+		8F5ADAC35A5749F283408953 /* Relocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88EED3D389F4FBFB2F7B8EC /* Relocator.swift */; };
 		5EB457DF2EEDE8C00021C6BD /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB457D02EEDE8C00021C6BD /* Preferences.swift */; };
 		5EB457E02EEDE8C00021C6BD /* ColorSwatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB457C92EEDE8C00021C6BD /* ColorSwatch.swift */; };
 		5EB457F12EEDE8C00021C6BD /* SkinToneSwatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB457F02EEDE8C00021C6BD /* SkinToneSwatch.swift */; };
@@ -88,9 +88,8 @@
 		5E13C8871BE03A6F00FF4305 /* WhichSpace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhichSpace.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E13C88C1BE03A6F00FF4305 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5E13C8911BE03A6F00FF4305 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5E51B77D1E7C058F79A7FA905A69D2206B86 /* PFMoveApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PFMoveApplication.h; sourceTree = "<group>"; };
-		5E51B77E1E7C058F79A7FA905A69D2206B86 /* PFMoveApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PFMoveApplication.m; sourceTree = "<group>"; };
 		5EB457C72EEDE8C00021C6BD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		E88EED3D389F4FBFB2F7B8EC /* Relocator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Relocator.swift; sourceTree = "<group>"; };
 		5EB457C82EEDE8C00021C6BD /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		5EB457C92EEDE8C00021C6BD /* ColorSwatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorSwatch.swift; sourceTree = "<group>"; };
 		5EB457CA2EEDE8C00021C6BD /* Alerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alerts.swift; sourceTree = "<group>"; };
@@ -122,7 +121,7 @@
 		9E2F7B4B45454315A483BD4D /* Localization/Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localization/Localizable.xcstrings; sourceTree = "<group>"; };
 		A4A2C450B5934A628A010AA5 /* AppMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppMain.swift; sourceTree = "<group>"; };
 		ACE10FC5B04340818E50E9C5 /* SpaceSwitcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceSwitcher.swift; sourceTree = "<group>"; };
-		AF0AF4972C51445493EFBEFE /* Localization/MoveApplication.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localization/MoveApplication.xcstrings; sourceTree = "<group>"; };
+		AF0AF4972C51445493EFBEFE /* Localization/Relocator.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localization/Relocator.xcstrings; sourceTree = "<group>"; };
 		B166782E5DC04625A4473365 /* RapidOperationsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RapidOperationsTests.swift; sourceTree = "<group>"; };
 		BBF87F4927A14FB9AB7B91DB /* ComplexUnicodeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComplexUnicodeTests.swift; sourceTree = "<group>"; };
 		BEA6BF7DB8700734BA5B03AD /* Swatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Swatch.swift; sourceTree = "<group>"; };
@@ -179,6 +178,7 @@
 			children = (
 				A4A2C450B5934A628A010AA5 /* AppMain.swift */,
 				5EB457C72EEDE8C00021C6BD /* AppDelegate.swift */,
+				E88EED3D389F4FBFB2F7B8EC /* Relocator.swift */,
 				ACE10FC5B04340818E50E9C5 /* SpaceSwitcher.swift */,
 				5EB457C82EEDE8C00021C6BD /* AppState.swift */,
 				5EB457F22EEDE8C00021C6BD /* SpaceMonitor.swift */,
@@ -198,7 +198,7 @@
 				5E13C88C1BE03A6F00FF4305 /* Assets.xcassets */,
 				5E13C8911BE03A6F00FF4305 /* Info.plist */,
 				9E2F7B4B45454315A483BD4D /* Localization/Localizable.xcstrings */,
-				AF0AF4972C51445493EFBEFE /* Localization/MoveApplication.xcstrings */,
+				AF0AF4972C51445493EFBEFE /* Localization/Relocator.xcstrings */,
 			);
 			path = WhichSpace;
 			sourceTree = "<group>";
@@ -266,8 +266,6 @@
 		5EC84D811BEFB80900829140 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				5E51B77D1E7C058F79A7FA905A69D2206B86 /* PFMoveApplication.h */,
-				5E51B77E1E7C058F79A7FA905A69D2206B86 /* PFMoveApplication.m */,
 				3AE480071BE35A2F00E22248 /* WhichSpace-Bridging-Header.h */,
 			);
 			name = Classes;
@@ -416,7 +414,7 @@
 			files = (
 				5E13C88D1BE03A6F00FF4305 /* Assets.xcassets in Resources */,
 				A1E2D3C41B2F4A5B6C7D8E93 /* Localization/Localizable.xcstrings in Resources */,
-				2AC6B73F32A349A282BF76F7 /* Localization/MoveApplication.xcstrings in Resources */,
+				2AC6B73F32A349A282BF76F7 /* Localization/Relocator.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -446,13 +444,13 @@
 				5EB457DC2EEDE8C00021C6BD /* Constants.swift in Sources */,
 				5EB457DD2EEDE8C00021C6BD /* ItemPicker.swift in Sources */,
 				5EB457DE2EEDE8C00021C6BD /* AppDelegate.swift in Sources */,
+				8F5ADAC35A5749F283408953 /* Relocator.swift in Sources */,
 				C63F3F79D586496191407F75 /* AppMain.swift in Sources */,
 				D02BF5284E654581B9D8F8D2 /* SpaceSwitcher.swift in Sources */,
 				5EB457DF2EEDE8C00021C6BD /* Preferences.swift in Sources */,
 				5EB457E02EEDE8C00021C6BD /* ColorSwatch.swift in Sources */,
 				B4E235CBC3DD715950C1C319 /* Swatch.swift in Sources */,
 				5EB457F12EEDE8C00021C6BD /* SkinToneSwatch.swift in Sources */,
-				5E51B77F1E7C058F79A7FA905A69D2206B86 /* PFMoveApplication.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
