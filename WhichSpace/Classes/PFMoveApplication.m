@@ -27,11 +27,6 @@
 #define kStrMoveApplicationQuestionInfoWillRequirePasswd _I10NS(@"Note that this will require an administrator password.")
 #define kStrMoveApplicationQuestionInfoInDownloadsFolder _I10NS(@"This will keep your Downloads folder uncluttered.")
 
-// Needs to be defined for compiling under 10.5 SDK
-#ifndef NSAppKitVersionNumber10_5
-	#define NSAppKitVersionNumber10_5 949
-#endif
-
 // By default, we use a small control/font for the suppression button.
 // If you prefer to use the system default (to match your other alerts),
 // set this to 0.
