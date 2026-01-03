@@ -86,9 +86,11 @@ brew install --cask whichspace
 > Since the app is not notarized, macOS will show a warning: _"WhichSpace.app" cannot be opened because Apple cannot check it for malicious software._
 >
 > To bypass this, run the following command in Terminal:
+>
+> ```text
+> xattr -d com.apple.quarantine /path/to/WhichSpace.app
 > ```
-> xattr -cr /path/to/WhichSpace.app
-> ```
+>
 > Or right-click the app and select "Open" to add an exception.
 
 ## Contributing
