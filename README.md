@@ -21,25 +21,29 @@ Have you ever forgotten _which space_ is currently active on macOS and wanted a 
 
 ## Installation
 
-### Homebrew (recommended)
+### Homebrew _(recommended)_
 
 ```text
-brew tap gechr/whichspace https://github.com/gechr/WhichSpace
-brew install --cask gechr/whichspace/whichspace
+brew install --cask gechr/tap/whichspace
 ```
 
 > [!IMPORTANT]
-> If you previously installed via `brew install --cask whichspace`, uninstall it first with `brew uninstall --cask whichspace`.
+> If you previously installed via `brew install --cask whichspace`, uninstall it first with `brew uninstall --cask whichspace`
+
+---
 
 ### GitHub
 
-- Download and extract the [latest release](https://github.com/gechr/WhichSpace/releases/latest)
-- Run `WhichSpace.app`
+- Download [`WhichSpace.zip`](https://github.com/gechr/WhichSpace/releases/latest/download/WhichSpace.zip)
+- Extract `WhichSpace.zip` and run `WhichSpace.app`
+- Future updates will be handled automatically
 
-> [!WARNING]
-> Since the app is not notarized, macOS will show a warning: _"WhichSpace.app" cannot be opened because Apple cannot check it for malicious software._
+> [!IMPORTANT]
+> Since `WhichSpace.app` is not [notarized](https://developer.apple.com/documentation/security/notarizing-macos-software-before-distribution), macOS may show a warning along the lines of:
 >
-> To bypass this, run the following command in Terminal:
+> > **Apple could not verify "WhichSpace.app" is free of malware that may harm your Mac or compromise your privacy.**
+>
+> To bypass this, run the following command in [Terminal](https://support.apple.com/en-gb/guide/terminal/welcome/mac):
 >
 > ```text
 > xattr -d com.apple.quarantine /path/to/WhichSpace.app
