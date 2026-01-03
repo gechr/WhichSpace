@@ -64,6 +64,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     private var preferenceCancellables = Set<AnyCancellable>()
     private var updaterController: SPUStandardUpdaterController!
 
+    private var isHomebrewInstall: Bool {
+        let caskroomPaths = [
+            "/opt/homebrew/Caskroom/whichspace", // Apple Silicon
+            "/usr/local/Caskroom/whichspace", // Intel
+        ]
+        return caskroomPaths.contains { FileManager.default.fileExists(atPath: $0) }
+    }
+
     private(set) var observationTask: Task<Void, Never>?
     private(set) var statusBarIconUpdateCount = 0
     private(set) var statusMenu: NSMenu!
@@ -110,7 +118,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         NSApp.setActivationPolicy(.accessory)
         statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         updaterController = SPUStandardUpdaterController(
-            startingUpdater: true,
+            startingUpdater: !isHomebrewInstall,
             updaterDelegate: nil,
             userDriverDelegate: self
         )
@@ -270,7 +278,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         configureSizeMenuItem()
         configureOptionsMenuItems()
         configureLaunchAtLoginMenuItem()
-        configureUpdateAndQuitMenuItems()
+        configureUpdateMenuItem()
+        configureQuitMenuItem()
         statusMenu.delegate = self
         statusBarItem?.button?.toolTip = appName
         statusBarItem?.button?.target = self
@@ -709,7 +718,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         statusMenu.addItem(launchAtLoginItem)
     }
 
-    private func configureUpdateAndQuitMenuItems() {
+    private func configureUpdateMenuItem() {
+        guard !isHomebrewInstall else {
+            return
+        }
+
         let updateItem = NSMenuItem(
             title: Localization.actionCheckForUpdates,
             action: #selector(checkForUpdates),
@@ -719,6 +732,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         updateItem.image = NSImage(systemSymbolName: "square.and.arrow.down", accessibilityDescription: nil)
         updateItem.toolTip = String(format: Localization.tipCheckForUpdates, appName)
         statusMenu.addItem(updateItem)
+    }
+
+    private func configureQuitMenuItem() {
         statusMenu.addItem(.separator())
 
         let quitItem = NSMenuItem(

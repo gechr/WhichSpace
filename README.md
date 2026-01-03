@@ -21,6 +21,8 @@ Have you ever forgotten _which space_ is currently active on macOS and wanted a 
 
 ## Installation
 
+### Homebrew (recommended)
+
 ```text
 brew tap gechr/whichspace https://github.com/gechr/WhichSpace
 brew install --cask gechr/whichspace/whichspace
@@ -28,6 +30,22 @@ brew install --cask gechr/whichspace/whichspace
 
 > [!IMPORTANT]
 > If you previously installed via `brew install --cask whichspace`, uninstall it first with `brew uninstall --cask whichspace`.
+
+### GitHub
+
+- Download and extract the [latest release](https://github.com/gechr/WhichSpace/releases/latest)
+- Run `WhichSpace.app`
+
+> [!WARNING]
+> Since the app is not notarized, macOS will show a warning: _"WhichSpace.app" cannot be opened because Apple cannot check it for malicious software._
+>
+> To bypass this, run the following command in Terminal:
+>
+> ```text
+> xattr -d com.apple.quarantine /path/to/WhichSpace.app
+> ```
+>
+> Or right-click the app and select "Open" to add an exception.
 
 ## Features
 
