@@ -13102,7 +13102,6 @@
       }
     },
     "style_circle" : {
-      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -13365,7 +13364,6 @@
       }
     },
     "style_circleOutline" : {
-      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -13628,7 +13626,6 @@
       }
     },
     "style_hexagon" : {
-      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -13891,7 +13888,6 @@
       }
     },
     "style_hexagonOutline" : {
-      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -14154,7 +14150,6 @@
       }
     },
     "style_pentagon" : {
-      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -14417,7 +14412,6 @@
       }
     },
     "style_pentagonOutline" : {
-      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -14680,7 +14674,6 @@
       }
     },
     "style_slim" : {
-      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -14943,7 +14936,6 @@
       }
     },
     "style_slimOutline" : {
-      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -15206,7 +15198,6 @@
       }
     },
     "style_square" : {
-      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -15469,7 +15460,6 @@
       }
     },
     "style_squareOutline" : {
-      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -15732,7 +15722,6 @@
       }
     },
     "style_stroke" : {
-      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -15995,7 +15984,6 @@
       }
     },
     "style_transparent" : {
-      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -16258,7 +16246,6 @@
       }
     },
     "style_triangle" : {
-      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -16521,7 +16508,6 @@
       }
     },
     "style_triangleOutline" : {
-      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {

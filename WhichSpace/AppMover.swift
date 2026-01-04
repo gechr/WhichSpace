@@ -1,18 +1,7 @@
 import AppKit
 
-enum Relocator {
+enum AppMover {
     private static let alertSuppressKey = "moveToApplicationsFolderAlertSuppress"
-    private static let localizationTable = "Relocator"
-
-    private enum Strings {
-        static let couldNotMove = "Could not move to the Applications folder."
-        static let questionTitle = "Move to the Applications folder?"
-        static let questionTitleHome = "Move to the Applications folder in your Home folder?"
-        static let questionMessage = "%@ can move itself to the Applications folder."
-        static let buttonMove = "Move to Applications Folder"
-        static let buttonDoNotMove = "Do Not Move"
-        static let questionInfoDownloads = "This will keep your Downloads folder tidy."
-    }
 
     static func moveIfNecessary(appName: String) {
         let defaults = UserDefaults.standard
@@ -37,14 +26,19 @@ enum Relocator {
         }
 
         let alert = NSAlert()
-        alert.messageText = localized(preferred.isUserApplications ? Strings.questionTitleHome : Strings.questionTitle)
-        var informativeText = localized(Strings.questionMessage, appName)
+        alert.messageText = preferred.isUserApplications
+            ? String(localized: "question_title_home", table: "AppMover")
+            : String(localized: "question_title", table: "AppMover")
+        var informativeText = String(
+            format: String(localized: "question_message", table: "AppMover"),
+            appName
+        )
         if isInDownloadsFolder(bundleURL) {
-            informativeText += " " + localized(Strings.questionInfoDownloads)
+            informativeText += " " + String(localized: "question_info_downloads", table: "AppMover")
         }
         alert.informativeText = informativeText
-        alert.addButton(withTitle: localized(Strings.buttonMove))
-        let cancelButton = alert.addButton(withTitle: localized(Strings.buttonDoNotMove))
+        alert.addButton(withTitle: String(localized: "button_move", table: "AppMover"))
+        let cancelButton = alert.addButton(withTitle: String(localized: "button_do_not_move", table: "AppMover"))
         cancelButton.keyEquivalent = "\u{1b}"
 
         alert.showsSuppressionButton = true
@@ -80,9 +74,21 @@ enum Relocator {
         }
 
         if fileManager.fileExists(atPath: destinationURL.path) {
-            if isApplicationAtURLRunning(destinationURL) {
-                NSWorkspace.shared.open(destinationURL)
-                exit(0)
+            if let runningApp = runningApplication(at: destinationURL) {
+                if isSameBundleAndVersion(bundleURL, destinationURL) {
+                    if NSWorkspace.shared.open(destinationURL) {
+                        exit(0)
+                    }
+                    showFailureAlert()
+                    return
+                }
+                guard confirmReplaceRunningApp(appName: appName) else {
+                    return
+                }
+                guard terminateRunningApplication(runningApp) else {
+                    showFailureAlert()
+                    return
+                }
             }
             guard fileManager.isWritableFile(atPath: destinationURL.path),
                   (try? fileManager.trashItem(at: destinationURL, resultingItemURL: nil)) != nil
@@ -99,8 +105,7 @@ enum Relocator {
             return
         }
 
-        _ = try? fileManager.trashItem(at: bundleURL, resultingItemURL: nil)
-        relaunch(at: destinationURL)
+        relaunch(from: bundleURL, to: destinationURL)
     }
 
     private static func preferredInstallDirectory() -> (url: URL, isUserApplications: Bool)? {
@@ -146,10 +151,10 @@ enum Relocator {
     private static func isInApplicationsFolder(_ url: URL) -> Bool {
         let path = url.standardizedFileURL.path
         let appDirs = FileManager.default.urls(for: .applicationDirectory, in: .allDomainsMask)
-        if appDirs.contains { path.hasPrefix($0.standardizedFileURL.path) } {
-            return true
+        return appDirs.contains { appDir in
+            let appPath = appDir.standardizedFileURL.path
+            return path == appPath || path.hasPrefix(appPath + "/")
         }
-        return url.pathComponents.contains("Applications")
     }
 
     private static func isInDownloadsFolder(_ url: URL) -> Bool {
@@ -163,14 +168,63 @@ enum Relocator {
         return parentComponents.contains { $0.hasSuffix(".app") }
     }
 
-    private static func isApplicationAtURLRunning(_ url: URL) -> Bool {
+    private static func runningApplication(at url: URL) -> NSRunningApplication? {
         let standardizedURL = url.standardizedFileURL
-        return NSWorkspace.shared.runningApplications.contains {
+        return NSWorkspace.shared.runningApplications.first {
             $0.bundleURL?.standardizedFileURL == standardizedURL
         }
     }
 
-    private static func relaunch(at destinationURL: URL) {
+    private static func terminateRunningApplication(_ app: NSRunningApplication) -> Bool {
+        if app.isTerminated {
+            return true
+        }
+        app.terminate()
+        let deadline = Date().addingTimeInterval(5)
+        while !app.isTerminated, Date() < deadline {
+            RunLoop.current.run(mode: .default, before: Date().addingTimeInterval(0.05))
+        }
+        return app.isTerminated
+    }
+
+    private static func isSameBundleAndVersion(_ sourceURL: URL, _ destinationURL: URL) -> Bool {
+        guard let sourceInfo = bundleInfo(at: sourceURL),
+              let destinationInfo = bundleInfo(at: destinationURL),
+              let sourceBundleID = sourceInfo.bundleID,
+              let destinationBundleID = destinationInfo.bundleID
+        else {
+            return false
+        }
+        return sourceBundleID == destinationBundleID &&
+            sourceInfo.shortVersion == destinationInfo.shortVersion &&
+            sourceInfo.buildVersion == destinationInfo.buildVersion
+    }
+
+    private static func bundleInfo(
+        at url: URL
+    ) -> (bundleID: String?, shortVersion: String?, buildVersion: String?)? {
+        guard let bundle = Bundle(url: url) else {
+            return nil
+        }
+        let shortVersion = bundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+        let buildVersion = bundle.object(forInfoDictionaryKey: "CFBundleVersion") as? String
+        return (bundle.bundleIdentifier, shortVersion, buildVersion)
+    }
+
+    private static func confirmReplaceRunningApp(appName: String) -> Bool {
+        let alert = NSAlert()
+        alert.messageText = String(localized: "replace_title", table: "AppMover")
+        alert.informativeText = String(
+            format: String(localized: "replace_message", table: "AppMover"),
+            appName
+        )
+        alert.addButton(withTitle: String(localized: "button_quit_and_replace", table: "AppMover"))
+        let cancelButton = alert.addButton(withTitle: String(localized: "button_do_not_move", table: "AppMover"))
+        cancelButton.keyEquivalent = "\u{1b}"
+        return alert.runModal() == .alertFirstButtonReturn
+    }
+
+    private static func relaunch(from sourceURL: URL, to destinationURL: URL) {
         let xattr = Process()
         xattr.executableURL = URL(fileURLWithPath: "/usr/bin/xattr")
         xattr.arguments = ["-d", "-r", "com.apple.quarantine", destinationURL.path]
@@ -179,23 +233,21 @@ enum Relocator {
 
         let configuration = NSWorkspace.OpenConfiguration()
         configuration.createsNewApplicationInstance = true
-        NSWorkspace.shared.openApplication(at: destinationURL, configuration: configuration) { _, _ in
+        NSWorkspace.shared.openApplication(at: destinationURL, configuration: configuration) { _, error in
+            guard error == nil else {
+                DispatchQueue.main.async {
+                    showFailureAlert()
+                }
+                return
+            }
+            _ = try? FileManager.default.trashItem(at: sourceURL, resultingItemURL: nil)
             exit(0)
         }
     }
 
     private static func showFailureAlert() {
         let alert = NSAlert()
-        alert.messageText = localized(Strings.couldNotMove)
+        alert.messageText = String(localized: "error_could_not_move", table: "AppMover")
         alert.runModal()
-    }
-
-    private static func localized(_ key: String) -> String {
-        String(localized: .init(key), table: localizationTable, bundle: .main)
-    }
-
-    private static func localized(_ key: String, _ args: CVarArg...) -> String {
-        let format = localized(key)
-        return String(format: format, locale: Locale.current, arguments: args)
     }
 }

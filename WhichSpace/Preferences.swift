@@ -20,7 +20,36 @@ enum IconStyle: String, CaseIterable, Defaults.Serializable {
     case transparent
 
     var localizedTitle: String {
-        NSLocalizedString("style_\(rawValue)", comment: "Icon style name")
+        switch self {
+        case .square:
+            String(localized: "style_square")
+        case .squareOutline:
+            String(localized: "style_squareOutline")
+        case .slim:
+            String(localized: "style_slim")
+        case .slimOutline:
+            String(localized: "style_slimOutline")
+        case .circle:
+            String(localized: "style_circle")
+        case .circleOutline:
+            String(localized: "style_circleOutline")
+        case .triangle:
+            String(localized: "style_triangle")
+        case .triangleOutline:
+            String(localized: "style_triangleOutline")
+        case .pentagon:
+            String(localized: "style_pentagon")
+        case .pentagonOutline:
+            String(localized: "style_pentagonOutline")
+        case .hexagon:
+            String(localized: "style_hexagon")
+        case .hexagonOutline:
+            String(localized: "style_hexagonOutline")
+        case .stroke:
+            String(localized: "style_stroke")
+        case .transparent:
+            String(localized: "style_transparent")
+        }
     }
 }
 

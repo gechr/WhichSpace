@@ -114,7 +114,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     // MARK: - NSApplicationDelegate
 
     func applicationDidFinishLaunching(_: Notification) {
-        Relocator.moveIfNecessary(appName: appName)
+        AppMover.moveIfNecessary(appName: appName)
         NSApp.setActivationPolicy(.accessory)
         statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         updaterController = SPUStandardUpdaterController(
