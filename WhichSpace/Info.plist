@@ -39,5 +39,9 @@
 	<integer>86400</integer>
 	<key>SUEnableAutomaticChecks</key>
 	<true/>
+	<key>NSAppleScriptEnabled</key>
+	<true/>
+	<key>OSAScriptingDefinition</key>
+	<string>WhichSpace.sdef</string>
 </dict>
 </plist>

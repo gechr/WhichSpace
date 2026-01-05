@@ -655,7 +655,7 @@ extension SymbolPicker {
     }
 
     /// Returns the symbol index at the given point within the grid coordinate system,
-    /// or nil if the point is not over a clickable symbol (e.g., in spacing or padding).
+    /// or nil if the point is not over a clickable symbol (e.g. in spacing or padding).
     /// Uses the same hit testing logic as the actual click handler.
     func symbolIndex(at point: CGPoint) -> Int? {
         gridView.symbolIndex(at: point)

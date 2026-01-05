@@ -72,7 +72,7 @@ enum KeySpecs {
     static let spaceSymbols = TypedKeySpec(name: "spaceSymbols", defaultValue: [Int: String]())
     static let uniqueIconsPerDisplay = TypedKeySpec(name: "uniqueIconsPerDisplay", defaultValue: false)
 
-    /// All key names for enumeration (e.g., in tests).
+    /// All key names for enumeration (e.g. in tests).
     static let allKeyNames: Set<String> = [
         clickToSwitchSpaces.name,
         dimInactiveSpaces.name,

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dictionary SYSTEM "file://localhost/System/Library/DTDs/sdef.dtd">
+<dictionary title="WhichSpace Terminology">
+    <suite name="WhichSpace Suite" code="WSpc" description="WhichSpace specific classes and commands.">
+        <command name="current space number" code="WSpccusn" description="Get the current Space number.">
+            <cocoa class="WhichSpace.CurrentSpaceNumberCommand"/>
+            <result type="integer" description="The current Space number."/>
+        </command>
+        <command name="current space label" code="WSpccusl" description="Get the current Space label.">
+            <cocoa class="WhichSpace.CurrentSpaceLabelCommand"/>
+            <result type="text" description="The current Space label."/>
+        </command>
+        <class name="application" code="capp" description="The WhichSpace application.">
+            <cocoa class="NSApplication"/>
+            <property name="current space number" code="cusn" type="integer" access="r" description="The current Space number.">
+                <cocoa key="currentSpaceNumber"/>
+            </property>
+            <property name="current space label" code="cusl" type="text" access="r" description="The current Space label.">
+                <cocoa key="currentSpaceLabel"/>
+            </property>
+        </class>
+    </suite>
+</dictionary>
