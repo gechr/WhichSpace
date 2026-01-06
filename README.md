@@ -15,6 +15,7 @@ Have you ever forgotten _which space_ is currently active on macOS and wanted a 
 - **Emojis** - Use emojis to get even more creative
 - **Size** - Scale icons to your preference
 - **Sound** - Play a sound when switching Spaces
+- **AppleScript** - Automate with scripting support
 - **Launch at Login** - Start automatically with macOS
 - **Auto-Updates** - Stay up-to-date with automatic updates
 - **Languages** - Translated into multiple languages
@@ -46,7 +47,7 @@ brew install --cask gechr/tap/whichspace
 > To bypass this, run the following command in [Terminal](https://support.apple.com/en-gb/guide/terminal/welcome/mac):
 >
 > ```text
-> xattr -d com.apple.quarantine /path/to/WhichSpace.app
+> xattr -r -d com.apple.quarantine /path/to/WhichSpace.app
 > ```
 >
 > Or right-click the app and select "Open" to add an exception.
@@ -100,3 +101,15 @@ brew install --cask gechr/tap/whichspace
 #### Adjust the scale of the icons in the menu bar
 
 <img src="Screenshots/SizeMenu.png" width="60%">
+
+## Scripting
+
+#### Use AppleScript for automation
+
+```bash
+# Get the current space number (1-based numeric index)
+osascript -e 'tell application "WhichSpace" to get current space number'
+
+# Get the current space label (as shown in the menu bar, e.g. "1", "2", "F" for fullscreen)
+osascript -e 'tell application "WhichSpace" to get current space label'
+```
