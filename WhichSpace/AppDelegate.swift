@@ -1682,6 +1682,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         let response = alert.runModal()
 
         if response == .alertFirstButtonReturn {
+            // Reset stale TCC entry before requesting permission
+            SpaceSwitcher.resetAccessibilityPermission()
             // Request permission - this triggers the system prompt
             let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
             _ = AXIsProcessTrustedWithOptions(options)

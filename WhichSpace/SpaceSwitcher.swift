@@ -10,6 +10,27 @@ enum SpaceSwitcher {
     private static var binYabai: URL?
     private static var hasPromptedForAccessibility = false
 
+    /// Resets WhichSpace Accessibility permission to clear stale TCC entries.
+    static func resetAccessibilityPermission() {
+        let tccutil = "/usr/bin/tccutil"
+        guard FileManager.default.fileExists(atPath: tccutil),
+              let bundleID = Bundle.main.bundleIdentifier
+        else {
+            return
+        }
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: tccutil)
+        process.arguments = ["reset", "Accessibility", bundleID]
+        process.standardOutput = FileHandle.nullDevice
+        process.standardError = FileHandle.nullDevice
+        do {
+            try process.run()
+            process.waitUntilExit()
+        } catch {
+            NSLog("SpaceSwitcher: failed to reset accessibility permission: \(error)")
+        }
+    }
+
     static func switchToSpace(_ space: Int) {
         guard ensureAccessibilityPermission() else {
             NSLog("SpaceSwitcher: accessibility permission not granted; cannot switch")
@@ -29,6 +50,7 @@ enum SpaceSwitcher {
 
         // Request permission once so the user sees the System Settings prompt
         if !hasPromptedForAccessibility {
+            resetAccessibilityPermission()
             let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
             _ = AXIsProcessTrustedWithOptions(options)
             hasPromptedForAccessibility = true
