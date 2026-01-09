@@ -261,6 +261,149 @@ final class DynamicDisplayTests: XCTestCase {
     }
 }
 
+// MARK: - Regular Space Count Tests (for hideSingleSpace feature)
+
+@MainActor
+final class RegularSpaceCountTests: XCTestCase {
+    private var stub: CGSStub!
+    private var sut: AppState!
+    private var store: DefaultsStore!
+    private var testSuite: TestSuite!
+
+    override func setUp() {
+        super.setUp()
+        testSuite = TestSuiteFactory.createSuite()
+        store = DefaultsStore(suite: testSuite.suite)
+        stub = CGSStub()
+    }
+
+    override func tearDown() {
+        sut = nil
+        stub = nil
+        if let store, let testSuite {
+            store.resetAll()
+            TestSuiteFactory.destroySuite(testSuite)
+        }
+        store = nil
+        testSuite = nil
+        super.tearDown()
+    }
+
+    func testRegularSpaceCount_singleRegularSpace() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [(id: 100, isFullscreen: false)],
+                activeSpaceID: 100
+            ),
+        ]
+
+        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+
+        XCTAssertEqual(sut.regularSpaceCount, 1, "Should count 1 regular space")
+    }
+
+    func testRegularSpaceCount_multipleRegularSpaces() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [
+                    (id: 100, isFullscreen: false),
+                    (id: 101, isFullscreen: false),
+                    (id: 102, isFullscreen: false),
+                ],
+                activeSpaceID: 100
+            ),
+        ]
+
+        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+
+        XCTAssertEqual(sut.regularSpaceCount, 3, "Should count 3 regular spaces")
+    }
+
+    func testRegularSpaceCount_excludesFullscreenSpaces() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [
+                    (id: 100, isFullscreen: false),
+                    (id: 101, isFullscreen: true),
+                    (id: 102, isFullscreen: false),
+                    (id: 103, isFullscreen: true),
+                ],
+                activeSpaceID: 100
+            ),
+        ]
+
+        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+
+        XCTAssertEqual(sut.regularSpaceCount, 2, "Should count only 2 regular spaces, excluding fullscreen")
+    }
+
+    func testRegularSpaceCount_allFullscreenSpaces() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [
+                    (id: 100, isFullscreen: true),
+                    (id: 101, isFullscreen: true),
+                ],
+                activeSpaceID: 100
+            ),
+        ]
+
+        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+
+        XCTAssertEqual(sut.regularSpaceCount, 0, "Should count 0 regular spaces when all are fullscreen")
+    }
+
+    func testRegularSpaceCount_multipleDisplays() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [
+                    (id: 100, isFullscreen: false),
+                    (id: 101, isFullscreen: false),
+                ],
+                activeSpaceID: 100
+            ),
+            CGSStub.makeDisplay(
+                displayID: "External",
+                spaces: [
+                    (id: 200, isFullscreen: false),
+                    (id: 201, isFullscreen: true),
+                ],
+                activeSpaceID: 200
+            ),
+        ]
+
+        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+
+        // 2 regular on Main + 1 regular on External = 3 total
+        XCTAssertEqual(sut.regularSpaceCount, 3, "Should count regular spaces across all displays")
+    }
+
+    func testRegularSpaceCount_noSpaces() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [],
+                activeSpaceID: 0
+            ),
+        ]
+
+        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+
+        XCTAssertEqual(sut.regularSpaceCount, 0, "Should count 0 when no spaces")
+    }
+}
+
 // MARK: - Dark Mode Transition Tests
 
 @MainActor

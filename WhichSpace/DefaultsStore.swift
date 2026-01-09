@@ -59,6 +59,7 @@ enum KeySpecs {
     )
     static let hideEmptySpaces = TypedKeySpec(name: "hideEmptySpaces", defaultValue: false)
     static let hideFullscreenApps = TypedKeySpec(name: "hideFullscreenApps", defaultValue: false)
+    static let hideSingleSpace = TypedKeySpec(name: "hideSingleSpace", defaultValue: false)
     static let localSpaceNumbers = TypedKeySpec(name: "localSpaceNumbers", defaultValue: false)
     static let separatorColor = TypedKeySpec(name: "separatorColor", defaultValue: Data?.none)
     static let showAllDisplays = TypedKeySpec(name: "showAllDisplays", defaultValue: false)
@@ -83,6 +84,7 @@ enum KeySpecs {
         displaySpaceSymbols.name,
         hideEmptySpaces.name,
         hideFullscreenApps.name,
+        hideSingleSpace.name,
         localSpaceNumbers.name,
         separatorColor.name,
         showAllDisplays.name,
@@ -135,6 +137,7 @@ final class DefaultsStore: @unchecked Sendable {
     private(set) lazy var keyDisplaySpaceSymbols = KeySpecs.displaySpaceSymbols.key(suite: suite)
     private(set) lazy var keyHideEmptySpaces = KeySpecs.hideEmptySpaces.key(suite: suite)
     private(set) lazy var keyHideFullscreenApps = KeySpecs.hideFullscreenApps.key(suite: suite)
+    private(set) lazy var keyHideSingleSpace = KeySpecs.hideSingleSpace.key(suite: suite)
     private(set) lazy var keyLocalSpaceNumbers = KeySpecs.localSpaceNumbers.key(suite: suite)
     private(set) lazy var keySeparatorColor = KeySpecs.separatorColor.key(suite: suite)
     private(set) lazy var keyShowAllDisplays = KeySpecs.showAllDisplays.key(suite: suite)
@@ -197,6 +200,11 @@ final class DefaultsStore: @unchecked Sendable {
     var hideFullscreenApps: Bool {
         get { Defaults[keyHideFullscreenApps] }
         set { Defaults[keyHideFullscreenApps] = newValue }
+    }
+
+    var hideSingleSpace: Bool {
+        get { Defaults[keyHideSingleSpace] }
+        set { Defaults[keyHideSingleSpace] = newValue }
     }
 
     var localSpaceNumbers: Bool {
@@ -287,6 +295,7 @@ final class DefaultsStore: @unchecked Sendable {
             keyDisplaySpaceSymbols,
             keyHideEmptySpaces,
             keyHideFullscreenApps,
+            keyHideSingleSpace,
             keyLocalSpaceNumbers,
             keySeparatorColor,
             keyShowAllDisplays,

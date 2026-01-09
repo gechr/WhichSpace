@@ -81,6 +81,7 @@ enum MenuTag: Int {
     case foregroundSwatch
     case hideEmptySpaces
     case hideFullscreenApps
+    case hideSingleSpace
     case invertColors
     case launchAtLogin
     case localSpaceNumbers
@@ -159,6 +160,7 @@ enum Localization {
     static let tipFont = String(localized: "tip_font")
     static let tipHideEmptySpaces = String(localized: "tip_hide_empty_spaces")
     static let tipHideFullscreenApps = String(localized: "tip_hide_fullscreen_apps")
+    static let tipHideSingleSpace = String(localized: "tip_hide_single_space")
     static let tipInvertColors = String(localized: "tip_invert_colors")
     static let tipLaunchAtLogin = String(localized: "tip_launch_at_login")
     static let tipLocalSpaceNumbers = String(localized: "tip_local_space_numbers")
@@ -175,6 +177,7 @@ enum Localization {
     static let toggleDimInactiveSpaces = String(localized: "toggle_dim_inactive_spaces")
     static let toggleHideEmptySpaces = String(localized: "toggle_hide_empty_spaces")
     static let toggleHideFullscreenApps = String(localized: "toggle_hide_fullscreen_apps")
+    static let toggleHideSingleSpace = String(localized: "toggle_hide_single_space")
     static let toggleLaunchAtLogin = String(localized: "toggle_launch_at_login")
     static let toggleLocalSpaceNumbers = String(localized: "toggle_local_space_numbers")
     static let toggleShowAllDisplays = String(localized: "toggle_show_all_displays")

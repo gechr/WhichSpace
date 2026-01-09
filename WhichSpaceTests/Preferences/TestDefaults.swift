@@ -212,6 +212,7 @@ final class DefaultsIsolationGuardTests: IsolatedDefaultsTestCase {
             "displaySpaceSymbols",
             "hideEmptySpaces",
             "hideFullscreenApps",
+            "hideSingleSpace",
             "localSpaceNumbers",
             "separatorColor",
             "showAllDisplays",

@@ -328,6 +328,37 @@ final class AppDelegateActionsTests: XCTestCase {
         XCTAssertTrue(store.hideFullscreenApps)
     }
 
+    // MARK: - toggleHideSingleSpace Tests
+
+    func testToggleHideSingleSpace_togglesFromTrueToFalse() {
+        store.hideSingleSpace = true
+
+        sut.toggleHideSingleSpace()
+
+        XCTAssertFalse(store.hideSingleSpace, "hideSingleSpace should toggle to false")
+    }
+
+    func testToggleHideSingleSpace_togglesFromFalseToTrue() {
+        store.hideSingleSpace = false
+
+        sut.toggleHideSingleSpace()
+
+        XCTAssertTrue(store.hideSingleSpace, "hideSingleSpace should toggle to true")
+    }
+
+    func testToggleHideSingleSpace_multipleToggles() {
+        store.hideSingleSpace = false
+
+        sut.toggleHideSingleSpace()
+        XCTAssertTrue(store.hideSingleSpace)
+
+        sut.toggleHideSingleSpace()
+        XCTAssertFalse(store.hideSingleSpace)
+
+        sut.toggleHideSingleSpace()
+        XCTAssertTrue(store.hideSingleSpace)
+    }
+
     // MARK: - applyToAllSpaces. Tests
 
     func testApplyAllToAllSpaces_whenConfirmed_appliesStyleToAllSpaces() {
@@ -1463,6 +1494,26 @@ final class AppDelegateActionsTests: XCTestCase {
             hideFullscreenItem?.isHidden ?? false,
             "Hide full-screen apps should be hidden when Show All Spaces is off"
         )
+    }
+
+    func testMenuWillOpen_setsHideSingleSpaceCheckmark_whenEnabled() {
+        sut.configureMenuBarIcon()
+        store.hideSingleSpace = true
+
+        sut.menuWillOpen(sut.statusMenu)
+
+        let hideSingleSpaceItem = sut.statusMenu.item(withTag: MenuTag.hideSingleSpace.rawValue)
+        XCTAssertEqual(hideSingleSpaceItem?.state, .on, "Hide single Space should be checked when enabled")
+    }
+
+    func testMenuWillOpen_setsHideSingleSpaceCheckmark_whenDisabled() {
+        sut.configureMenuBarIcon()
+        store.hideSingleSpace = false
+
+        sut.menuWillOpen(sut.statusMenu)
+
+        let hideSingleSpaceItem = sut.statusMenu.item(withTag: MenuTag.hideSingleSpace.rawValue)
+        XCTAssertEqual(hideSingleSpaceItem?.state, .off, "Hide single Space should be unchecked when disabled")
     }
 
     func testMenuWillOpen_hidesColorSwatches_whenSymbolActive() {

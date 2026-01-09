@@ -652,11 +652,25 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         hideEmptySpacesItem.target = self
         hideEmptySpacesItem.tag = MenuTag.hideEmptySpaces.rawValue
         hideEmptySpacesItem.image = NSImage(
-            systemSymbolName: "eye.slash",
+            systemSymbolName: "eye.slash.fill",
             accessibilityDescription: nil
         )
         hideEmptySpacesItem.toolTip = Localization.tipHideEmptySpaces
         statusMenu.addItem(hideEmptySpacesItem)
+
+        let hideSingleSpaceItem = NSMenuItem(
+            title: Localization.toggleHideSingleSpace,
+            action: #selector(toggleHideSingleSpace),
+            keyEquivalent: ""
+        )
+        hideSingleSpaceItem.target = self
+        hideSingleSpaceItem.tag = MenuTag.hideSingleSpace.rawValue
+        hideSingleSpaceItem.image = NSImage(
+            systemSymbolName: "eye.slash.fill",
+            accessibilityDescription: nil
+        )
+        hideSingleSpaceItem.toolTip = Localization.tipHideSingleSpace
+        statusMenu.addItem(hideSingleSpaceItem)
 
         let hideFullscreenAppsItem = NSMenuItem(
             title: Localization.toggleHideFullscreenApps,
@@ -1065,6 +1079,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         let icon = appState.statusBarIcon
         statusBarItem.length = icon.size.width
         statusBarItem.button?.image = icon
+        updateStatusBarVisibility()
+    }
+
+    private func updateStatusBarVisibility() {
+        guard let statusBarItem else {
+            return
+        }
+        guard store.hideSingleSpace else {
+            statusBarItem.isVisible = true
+            return
+        }
+        // Hide if there's only one regular (non-fullscreen) space across all displays
+        statusBarItem.isVisible = appState.regularSpaceCount > 1
     }
 
     /// Updates the sizeScale on all StylePicker views in the icon menu
@@ -1143,6 +1170,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
     @objc func toggleHideFullscreenApps() {
         store.hideFullscreenApps.toggle()
+    }
+
+    @objc func toggleHideSingleSpace() {
+        store.hideSingleSpace.toggle()
+        updateStatusBarVisibility()
     }
 
     @objc func toggleLaunchAtLogin() {
@@ -1765,6 +1797,12 @@ extension AppDelegate: NSMenuDelegate {
         if let hideEmptyItem = menu.item(withTag: MenuTag.hideEmptySpaces.rawValue) {
             hideEmptyItem.state = store.hideEmptySpaces ? .on : .off
             hideEmptyItem.isHidden = !showMultiSpaceOptions
+        }
+
+        // Update Hide single Space checkmark and visibility
+        if let hideSingleSpaceItem = menu.item(withTag: MenuTag.hideSingleSpace.rawValue) {
+            hideSingleSpaceItem.state = store.hideSingleSpace ? .on : .off
+            hideSingleSpaceItem.isHidden = !showMultiSpaceOptions
         }
 
         // Update Hide full-screen applications checkmark and visibility

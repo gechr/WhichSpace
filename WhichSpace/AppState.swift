@@ -214,6 +214,11 @@ final class AppState {
     private(set) var currentSpaceLabel = "?"
     private(set) var darkModeEnabled = false
 
+    /// Total count of regular (non-fullscreen) spaces across all displays
+    var regularSpaceCount: Int {
+        allDisplaysSpaceInfo.reduce(0) { $0 + $1.regularSpaceCount }
+    }
+
     private let displaySpaceProvider: DisplaySpaceProvider
     private let mainDisplay = "Main"
 
