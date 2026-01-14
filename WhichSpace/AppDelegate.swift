@@ -4,6 +4,7 @@ import Defaults
 import LaunchAtLogin
 import Observation
 @preconcurrency import Sparkle
+import UniformTypeIdentifiers
 
 // MARK: - Launch at Login Protocol
 
@@ -279,6 +280,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         configureOptionsMenuItems()
         configureLaunchAtLoginMenuItem()
         configureUpdateMenuItem()
+        configureSettingsMenuItem()
         configureQuitMenuItem()
         statusMenu.delegate = self
         statusBarItem?.button?.toolTip = appName
@@ -746,6 +748,37 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         updateItem.image = NSImage(systemSymbolName: "square.and.arrow.down", accessibilityDescription: nil)
         updateItem.toolTip = String(format: Localization.tipCheckForUpdates, appName)
         statusMenu.addItem(updateItem)
+    }
+
+    private func configureSettingsMenuItem() {
+        statusMenu.addItem(.separator())
+
+        let settingsMenu = NSMenu(title: Localization.menuSettings)
+
+        let importItem = NSMenuItem(
+            title: Localization.actionImportSettings,
+            action: #selector(importSettings),
+            keyEquivalent: ""
+        )
+        importItem.target = self
+        importItem.image = NSImage(systemSymbolName: "square.and.arrow.down", accessibilityDescription: nil)
+        importItem.toolTip = Localization.tipImportSettings
+        settingsMenu.addItem(importItem)
+
+        let exportItem = NSMenuItem(
+            title: Localization.actionExportSettings,
+            action: #selector(exportSettings),
+            keyEquivalent: ""
+        )
+        exportItem.target = self
+        exportItem.image = NSImage(systemSymbolName: "square.and.arrow.up", accessibilityDescription: nil)
+        exportItem.toolTip = Localization.tipExportSettings
+        settingsMenu.addItem(exportItem)
+
+        let settingsMenuItem = NSMenuItem(title: Localization.menuSettings, action: nil, keyEquivalent: "")
+        settingsMenuItem.image = NSImage(systemSymbolName: "gearshape", accessibilityDescription: nil)
+        settingsMenuItem.submenu = settingsMenu
+        statusMenu.addItem(settingsMenuItem)
     }
 
     private func configureQuitMenuItem() {
@@ -1476,6 +1509,51 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         updateStatusBarIcon()
     }
 
+    // MARK: - Settings Import/Export
+
+    @objc func importSettings() {
+        let openPanel = NSOpenPanel()
+        openPanel.allowedContentTypes = [.json]
+        openPanel.allowsMultipleSelection = false
+        openPanel.canChooseDirectories = false
+
+        NSApp.activate(ignoringOtherApps: true)
+        let response = openPanel.runModal()
+
+        guard response == .OK, let url = openPanel.url else {
+            return
+        }
+
+        if BackupManager.load(from: url, store: store) {
+            updateStatusBarIcon()
+        } else {
+            showImportFailedAlert()
+        }
+    }
+
+    @objc func exportSettings() {
+        let savePanel = NSSavePanel()
+        savePanel.allowedContentTypes = [.json]
+        savePanel.nameFieldStringValue = BackupManager.defaultFilename
+
+        NSApp.activate(ignoringOtherApps: true)
+        let response = savePanel.runModal()
+
+        guard response == .OK, let url = savePanel.url else {
+            return
+        }
+
+        _ = BackupManager.export(to: url, store: store)
+    }
+
+    private func showImportFailedAlert() {
+        let alert = NSAlert()
+        alert.messageText = Localization.alertImportFailed
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: Localization.buttonOK)
+        alert.runModal()
+    }
+
     // MARK: - Color Helpers
 
     func setForegroundColor(_ color: NSColor) {
@@ -1793,23 +1871,21 @@ extension AppDelegate: NSMenuDelegate {
             dimInactiveItem.isHidden = !showMultiSpaceOptions
         }
 
-        // Update Hide empty Spaces checkmark and visibility
-        if let hideEmptyItem = menu.item(withTag: MenuTag.hideEmptySpaces.rawValue) {
-            hideEmptyItem.state = store.hideEmptySpaces ? .on : .off
-            hideEmptyItem.isHidden = !showMultiSpaceOptions
+        // Update hide option menu items (checkmark, icon, visibility)
+        let updateHideItem = { (tag: MenuTag, isEnabled: Bool) in
+            guard let item = menu.item(withTag: tag.rawValue) else {
+                return
+            }
+            item.state = isEnabled ? .on : .off
+            item.image = NSImage(
+                systemSymbolName: isEnabled ? "eye.slash" : "eye.fill",
+                accessibilityDescription: nil
+            )
+            item.isHidden = !showMultiSpaceOptions
         }
-
-        // Update Hide single Space checkmark and visibility
-        if let hideSingleSpaceItem = menu.item(withTag: MenuTag.hideSingleSpace.rawValue) {
-            hideSingleSpaceItem.state = store.hideSingleSpace ? .on : .off
-            hideSingleSpaceItem.isHidden = !showMultiSpaceOptions
-        }
-
-        // Update Hide full-screen applications checkmark and visibility
-        if let hideFullscreenItem = menu.item(withTag: MenuTag.hideFullscreenApps.rawValue) {
-            hideFullscreenItem.state = store.hideFullscreenApps ? .on : .off
-            hideFullscreenItem.isHidden = !showMultiSpaceOptions
-        }
+        updateHideItem(.hideEmptySpaces, store.hideEmptySpaces)
+        updateHideItem(.hideSingleSpace, store.hideSingleSpace)
+        updateHideItem(.hideFullscreenApps, store.hideFullscreenApps)
 
         // Determine if current symbol is an emoji vs SF Symbol
         let currentSymbolIsEmoji = currentSymbol?.containsEmoji ?? false

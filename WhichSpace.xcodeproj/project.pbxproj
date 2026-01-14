@@ -59,6 +59,8 @@
 		DBC4285F4D36492E9CDC1FE0 /* InputValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4787B4288A4A48AC80AEC9C0 /* InputValidationTests.swift */; };
 		2835185212764A50B1A84F2E /* ScriptingCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035A09D63D8844FCA079A1C0 /* ScriptingCommands.swift */; };
 		E73A40E4FB4441B3A2156727 /* WhichSpace.sdef in Resources */ = {isa = PBXBuildFile; fileRef = B27F1B6A56284EC7A38483EF /* WhichSpace.sdef */; };
+		D2D70ADA82964EB7A70A43FE /* Backup.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1583461EC9248878918878E /* Backup.swift */; };
+		AD2F9BA0FC424FB6AD1E4A05 /* BackupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18A849DF0DCE419FA63FF287 /* BackupTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -95,6 +97,7 @@
 		5EB457C82EEDE8C00021C6BD /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		5EB457C92EEDE8C00021C6BD /* ColorSwatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorSwatch.swift; sourceTree = "<group>"; };
 		5EB457CA2EEDE8C00021C6BD /* Alerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alerts.swift; sourceTree = "<group>"; };
+		E1583461EC9248878918878E /* Backup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backup.swift; sourceTree = "<group>"; };
 		5EB457CB2EEDE8C00021C6BD /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		5EB457CC2EEDE8C00021C6BD /* DefaultsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultsStore.swift; sourceTree = "<group>"; };
 		5EB457CD2EEDE8C00021C6BD /* SpaceIconGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceIconGenerator.swift; sourceTree = "<group>"; };
@@ -135,6 +138,7 @@
 		4ECDD602992244C2A87B9753 /* ScriptingCommandsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptingCommandsTests.swift; sourceTree = "<group>"; };
 		035A09D63D8844FCA079A1C0 /* ScriptingCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptingCommands.swift; sourceTree = "<group>"; };
 		B27F1B6A56284EC7A38483EF /* WhichSpace.sdef */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.sdef; path = WhichSpace.sdef; sourceTree = "<group>"; };
+		18A849DF0DCE419FA63FF287 /* BackupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -192,6 +196,7 @@
 				BEA6BF7DB8700734BA5B03AD /* Swatch.swift */,
 				5EB457F02EEDE8C00021C6BD /* SkinToneSwatch.swift */,
 				5EB457CA2EEDE8C00021C6BD /* Alerts.swift */,
+				E1583461EC9248878918878E /* Backup.swift */,
 				5EB457CB2EEDE8C00021C6BD /* Constants.swift */,
 				5EB457CC2EEDE8C00021C6BD /* DefaultsStore.swift */,
 				5EB457CD2EEDE8C00021C6BD /* SpaceIconGenerator.swift */,
@@ -225,6 +230,7 @@
 		5EB4583F2EEDE9690021C6BD /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				18A849DF0DCE419FA63FF287 /* BackupTests.swift */,
 				C010908C363337F4F938B12E /* ErrorRecoveryTests.swift */,
 				BBF87F4927A14FB9AB7B91DB /* ComplexUnicodeTests.swift */,
 				4787B4288A4A48AC80AEC9C0 /* InputValidationTests.swift */,
@@ -449,6 +455,7 @@
 				5EB457D72EEDE8C00021C6BD /* DefaultsStore.swift in Sources */,
 				5EB457D82EEDE8C00021C6BD /* ItemData.swift in Sources */,
 				5EB457D92EEDE8C00021C6BD /* Alerts.swift in Sources */,
+				D2D70ADA82964EB7A70A43FE /* Backup.swift in Sources */,
 				5EB457DA2EEDE8C00021C6BD /* SizeSlider.swift in Sources */,
 				5EB457DB2EEDE8C00021C6BD /* StylePicker.swift in Sources */,
 				5EB457DC2EEDE8C00021C6BD /* Constants.swift in Sources */,
@@ -469,6 +476,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AD2F9BA0FC424FB6AD1E4A05 /* BackupTests.swift in Sources */,
 				5EB458492EEDE9690021C6BD /* SymbolPickerTests.swift in Sources */,
 				5EB4584A2EEDE9690021C6BD /* SpaceColorsBridgeTests.swift in Sources */,
 				5EB4584B2EEDE9690021C6BD /* TestDefaults.swift in Sources */,
