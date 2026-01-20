@@ -11,6 +11,51 @@ struct Backup: Codable {
     let settings: BackupSettings
     let spacePreferences: BackupSpacePreferences
     let displaySpacePreferences: [String: BackupSpacePreferences]
+
+    private enum CodingKeys: String, CodingKey {
+        case bundleId, version, settings, spacePreferences, displaySpacePreferences
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(bundleId, forKey: .bundleId)
+        try container.encode(version, forKey: .version)
+        try container.encode(settings, forKey: .settings)
+        if !spacePreferences.isEmpty {
+            try container.encode(spacePreferences, forKey: .spacePreferences)
+        }
+        let nonEmpty = displaySpacePreferences.filter { !$0.value.isEmpty }
+        if !nonEmpty.isEmpty {
+            try container.encode(nonEmpty, forKey: .displaySpacePreferences)
+        }
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        bundleId = try container.decode(String.self, forKey: .bundleId)
+        version = try container.decode(String.self, forKey: .version)
+        settings = try container.decode(BackupSettings.self, forKey: .settings)
+        spacePreferences = try container.decodeIfPresent(BackupSpacePreferences.self, forKey: .spacePreferences)
+            ?? BackupSpacePreferences()
+        displaySpacePreferences = try container.decodeIfPresent(
+            [String: BackupSpacePreferences].self,
+            forKey: .displaySpacePreferences
+        ) ?? [:]
+    }
+
+    init(
+        bundleId: String,
+        version: String,
+        settings: BackupSettings,
+        spacePreferences: BackupSpacePreferences,
+        displaySpacePreferences: [String: BackupSpacePreferences]
+    ) {
+        self.bundleId = bundleId
+        self.version = version
+        self.settings = settings
+        self.spacePreferences = spacePreferences
+        self.displaySpacePreferences = displaySpacePreferences
+    }
 }
 
 // MARK: - BackupSettings
@@ -41,6 +86,32 @@ struct BackupSpacePreferences: Codable {
     var iconStyles: [String: String]
     var skinTones: [String: Int]
     var symbols: [String: String]
+
+    private enum CodingKeys: String, CodingKey {
+        case colors, fonts, iconStyles, skinTones, symbols
+    }
+
+    var isEmpty: Bool {
+        colors.isEmpty && fonts.isEmpty && iconStyles.isEmpty && skinTones.isEmpty && symbols.isEmpty
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        if !colors.isEmpty { try container.encode(colors, forKey: .colors) }
+        if !fonts.isEmpty { try container.encode(fonts, forKey: .fonts) }
+        if !iconStyles.isEmpty { try container.encode(iconStyles, forKey: .iconStyles) }
+        if !skinTones.isEmpty { try container.encode(skinTones, forKey: .skinTones) }
+        if !symbols.isEmpty { try container.encode(symbols, forKey: .symbols) }
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        colors = try container.decodeIfPresent([String: CodableSpaceColors].self, forKey: .colors) ?? [:]
+        fonts = try container.decodeIfPresent([String: CodableSpaceFont].self, forKey: .fonts) ?? [:]
+        iconStyles = try container.decodeIfPresent([String: String].self, forKey: .iconStyles) ?? [:]
+        skinTones = try container.decodeIfPresent([String: Int].self, forKey: .skinTones) ?? [:]
+        symbols = try container.decodeIfPresent([String: String].self, forKey: .symbols) ?? [:]
+    }
 
     init(
         colors: [Int: SpaceColors] = [:],

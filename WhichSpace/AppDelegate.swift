@@ -755,16 +755,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
         let settingsMenu = NSMenu(title: Localization.menuSettings)
 
-        let importItem = NSMenuItem(
-            title: Localization.actionImportSettings,
-            action: #selector(importSettings),
-            keyEquivalent: ""
-        )
-        importItem.target = self
-        importItem.image = NSImage(systemSymbolName: "square.and.arrow.down", accessibilityDescription: nil)
-        importItem.toolTip = Localization.tipImportSettings
-        settingsMenu.addItem(importItem)
-
         let exportItem = NSMenuItem(
             title: Localization.actionExportSettings,
             action: #selector(exportSettings),
@@ -774,6 +764,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         exportItem.image = NSImage(systemSymbolName: "square.and.arrow.up", accessibilityDescription: nil)
         exportItem.toolTip = Localization.tipExportSettings
         settingsMenu.addItem(exportItem)
+
+        let importItem = NSMenuItem(
+            title: Localization.actionImportSettings,
+            action: #selector(importSettings),
+            keyEquivalent: ""
+        )
+        importItem.target = self
+        importItem.image = NSImage(systemSymbolName: "square.and.arrow.down", accessibilityDescription: nil)
+        importItem.toolTip = Localization.tipImportSettings
+        settingsMenu.addItem(importItem)
 
         let settingsMenuItem = NSMenuItem(title: Localization.menuSettings, action: nil, keyEquivalent: "")
         settingsMenuItem.image = NSImage(systemSymbolName: "gearshape", accessibilityDescription: nil)
