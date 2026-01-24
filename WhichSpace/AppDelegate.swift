@@ -787,8 +787,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         let quitItem = NSMenuItem(
             title: Localization.actionQuit,
             action: #selector(NSApplication.terminate(_:)),
-            keyEquivalent: ""
+            keyEquivalent: "q"
         )
+        quitItem.keyEquivalentModifierMask = [.command]
         quitItem.image = NSImage(systemSymbolName: "xmark.rectangle", accessibilityDescription: nil)
         quitItem.toolTip = String(format: Localization.tipQuit, appName)
         statusMenu.addItem(quitItem)
