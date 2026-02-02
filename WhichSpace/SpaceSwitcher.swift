@@ -213,4 +213,49 @@ enum SpaceSwitcher {
         NSLog("SpaceSwitcher: yabai not found; searched PATH (\(pathEnv)) and common locations")
         return nil
     }
+
+    /// Activates an app that has a window on the given space ID (used for fullscreen spaces).
+    /// macOS will automatically switch to the fullscreen space when the app is activated.
+    /// Returns true if an app was found and activated.
+    static func activateAppOnSpace(_ spaceID: Int) -> Bool {
+        let conn = _CGSDefaultConnection()
+
+        // Get all windows
+        let options: CGWindowListOption = [.optionAll, .excludeDesktopElements]
+        guard let windowList = CGWindowListCopyWindowInfo(options, kCGNullWindowID) as? [[String: Any]] else {
+            NSLog("SpaceSwitcher: failed to get window list")
+            return false
+        }
+
+        // Find windows on the target space
+        for window in windowList {
+            // Filter to regular windows (layer 0)
+            guard let layer = window[kCGWindowLayer as String] as? Int, layer == 0,
+                  let windowNumber = window[kCGWindowNumber as String] as? Int,
+                  let ownerPID = window[kCGWindowOwnerPID as String] as? Int32
+            else {
+                continue
+            }
+
+            // Check if this window is on the target space
+            guard let spacesRef = SLSCopySpacesForWindows(conn, 0x7, [windowNumber] as CFArray) else {
+                continue
+            }
+            let spaces = spacesRef.takeRetainedValue() as? [Int] ?? []
+
+            if spaces.contains(spaceID) {
+                // Found a window on the target space - activate its app
+                if let app = NSRunningApplication(processIdentifier: ownerPID) {
+                    let activated = app.activate(options: [])
+                    if activated {
+                        NSLog("SpaceSwitcher: activated \(app.localizedName ?? "app") for fullscreen space \(spaceID)")
+                        return true
+                    }
+                }
+            }
+        }
+
+        NSLog("SpaceSwitcher: no app found on space \(spaceID)")
+        return false
+    }
 }

@@ -82,7 +82,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     var statusBarIconUpdateNotifier: AsyncStream<Void>.Continuation?
 
     /// Convenience accessor for the store via appState
-    private var store: DefaultsStore { appState.store }
+    private var store: DefaultsStore {
+        appState.store
+    }
 
     // MARK: - Initialization
 
@@ -327,9 +329,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         let clickX = Double(location.x)
 
         // Use StatusBarLayout hit testing
-        guard let targetSpace = layout.targetSpace(at: clickX) else {
+        guard let slot = layout.slot(at: clickX) else {
             return
         }
+
+        // Fullscreen spaces don't have a targetSpace - activate the app instead
+        if slot.targetSpace == nil {
+            _ = SpaceSwitcher.activateAppOnSpace(slot.spaceID)
+            return
+        }
+
+        let targetSpace = slot.targetSpace!
 
         // For spaces > 16, need yabai (macOS only has hotkeys for 1-16)
         if targetSpace > 16 {

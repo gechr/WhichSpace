@@ -154,8 +154,10 @@ struct StatusBarIconSlot: Equatable {
     let startX: Double
     let width: Double
     let label: String
-    /// The numeric space to activate (nil for non-switchable items such as fullscreen apps)
+    /// The numeric space to activate (nil for fullscreen apps - use spaceID instead)
     let targetSpace: Int?
+    /// The CGS space ID (used to find apps on fullscreen spaces)
+    let spaceID: Int
 }
 
 /// Layout of status bar icons with hit testing support
@@ -748,7 +750,8 @@ final class AppState {
                         startX: xOffset,
                         width: Layout.statusItemWidth,
                         label: displayLabel,
-                        targetSpace: target
+                        targetSpace: target,
+                        spaceID: space.spaceID
                     ))
                     xOffset += Layout.statusItemWidth
                 }
@@ -783,11 +786,13 @@ final class AppState {
                 let globalIndex = globalStartIndex + max(localRegularIndex - 1, 0)
                 let displayLabel = isFullscreen ? spaceInfo.label :
                     (store.localSpaceNumbers ? spaceInfo.label : String(globalIndex))
+                let spaceID = allSpaceIDs[spaceInfo.index]
                 slots.append(StatusBarIconSlot(
                     startX: Double(drawIndex) * Layout.statusItemWidth,
                     width: Layout.statusItemWidth,
                     label: displayLabel,
-                    targetSpace: target
+                    targetSpace: target,
+                    spaceID: spaceID
                 ))
             }
             return StatusBarLayout(slots: slots)
