@@ -128,9 +128,14 @@ struct SpaceColors: Equatable, Defaults.Serializable {
     var foreground: NSColor
     var background: NSColor
 
-    // Backwards compatibility aliases
-    var foregroundColor: NSColor { foreground }
-    var backgroundColor: NSColor { background }
+    /// Backwards compatibility aliases
+    var foregroundColor: NSColor {
+        foreground
+    }
+
+    var backgroundColor: NSColor {
+        background
+    }
 }
 
 // MARK: - SpacePreferences

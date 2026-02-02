@@ -285,7 +285,9 @@ final class SymbolPicker: NSView {
 
     // MARK: - Computed Properties
 
-    override var acceptsFirstResponder: Bool { true }
+    override var acceptsFirstResponder: Bool {
+        true
+    }
 
     override var intrinsicContentSize: CGSize {
         let gridWidth = padding * 2 + Double(columns) * symbolSize + Double(columns - 1) * spacing + scrollbarWidth
@@ -394,7 +396,9 @@ private final class SymbolGridView: NSView {
 
     // MARK: - Computed Properties
 
-    override var isFlipped: Bool { true }
+    override var isFlipped: Bool {
+        true
+    }
 
     // MARK: - Initialization
 

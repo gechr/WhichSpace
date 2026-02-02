@@ -23,8 +23,8 @@ final class ErrorRecoveryTests: IsolatedDefaultsTestCase {
 
     // MARK: - Corrupted Preference Data Tests
 
-    func testDeserializeWithCorruptedForegroundData() {
-        let validBackground = try! NSKeyedArchiver.archivedData(
+    func testDeserializeWithCorruptedForegroundData() throws {
+        let validBackground = try NSKeyedArchiver.archivedData(
             withRootObject: NSColor.blue,
             requiringSecureCoding: true
         )
@@ -38,8 +38,8 @@ final class ErrorRecoveryTests: IsolatedDefaultsTestCase {
         XCTAssertNil(result, "Should return nil for corrupted foreground data")
     }
 
-    func testDeserializeWithCorruptedBackgroundData() {
-        let validForeground = try! NSKeyedArchiver.archivedData(
+    func testDeserializeWithCorruptedBackgroundData() throws {
+        let validForeground = try NSKeyedArchiver.archivedData(
             withRootObject: NSColor.red,
             requiringSecureCoding: true
         )
@@ -75,13 +75,13 @@ final class ErrorRecoveryTests: IsolatedDefaultsTestCase {
         XCTAssertNil(result, "Should return nil for empty data")
     }
 
-    func testDeserializeWithWrongObjectType() {
+    func testDeserializeWithWrongObjectType() throws {
         // Archive a string instead of NSColor
-        let wrongTypeData = try! NSKeyedArchiver.archivedData(
+        let wrongTypeData = try NSKeyedArchiver.archivedData(
             withRootObject: "not a color" as NSString,
             requiringSecureCoding: true
         )
-        let validBackground = try! NSKeyedArchiver.archivedData(
+        let validBackground = try NSKeyedArchiver.archivedData(
             withRootObject: NSColor.blue,
             requiringSecureCoding: true
         )
@@ -94,8 +94,8 @@ final class ErrorRecoveryTests: IsolatedDefaultsTestCase {
         XCTAssertNil(result, "Should return nil when archived object is wrong type")
     }
 
-    func testDeserializeWithPartiallyValidData() {
-        let validForeground = try! NSKeyedArchiver.archivedData(
+    func testDeserializeWithPartiallyValidData() throws {
+        let validForeground = try NSKeyedArchiver.archivedData(
             withRootObject: NSColor.red,
             requiringSecureCoding: true
         )
@@ -105,12 +105,12 @@ final class ErrorRecoveryTests: IsolatedDefaultsTestCase {
         XCTAssertNil(result, "Should return nil when background is missing")
     }
 
-    func testDeserializeWithExtraKeys() {
-        let validForeground = try! NSKeyedArchiver.archivedData(
+    func testDeserializeWithExtraKeys() throws {
+        let validForeground = try NSKeyedArchiver.archivedData(
             withRootObject: NSColor.red,
             requiringSecureCoding: true
         )
-        let validBackground = try! NSKeyedArchiver.archivedData(
+        let validBackground = try NSKeyedArchiver.archivedData(
             withRootObject: NSColor.blue,
             requiringSecureCoding: true
         )

@@ -21,9 +21,16 @@ final class ColorSwatch: Swatch {
 
     // MARK: - SwatchView Overrides
 
-    override var itemCount: Int { Self.presetColors.count + 1 } // +1 for custom color button
-    override var swatchSize: Double { 16.0 }
-    override var spacing: Double { 6.0 }
+    override var itemCount: Int {
+        Self.presetColors.count + 1
+    } // +1 for custom color button
+    override var swatchSize: Double {
+        16.0
+    }
+
+    override var spacing: Double {
+        6.0
+    }
 
     override func drawItem(at index: Int, in rect: CGRect, highlighted: Bool) {
         if index < Self.presetColors.count {

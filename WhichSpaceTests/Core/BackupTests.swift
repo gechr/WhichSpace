@@ -115,12 +115,12 @@ final class CodableSpaceFontTests: XCTestCase {
         XCTAssertEqual(decoded.size, original.size)
     }
 
-    func testInvalidFontReturnsNil() {
+    func testInvalidFontReturnsNil() throws {
         // Create a CodableSpaceFont with an invalid font name
         let jsonString = """
         {"name": "NonExistentFontName12345", "size": 12.0}
         """
-        let data = jsonString.data(using: .utf8)!
+        let data = try XCTUnwrap(jsonString.data(using: .utf8))
         let decoded = try? JSONDecoder().decode(CodableSpaceFont.self, from: data)
 
         XCTAssertNotNil(decoded)
@@ -209,7 +209,7 @@ final class BackupSpacePreferencesTests: XCTestCase {
         XCTAssertEqual(restored[3], "moon.fill")
     }
 
-    func testInvalidKeyIsIgnored() {
+    func testInvalidKeyIsIgnored() throws {
         // Create JSON with invalid non-numeric key
         let jsonString = """
         {
@@ -220,7 +220,7 @@ final class BackupSpacePreferencesTests: XCTestCase {
             "symbols": {}
         }
         """
-        let data = jsonString.data(using: .utf8)!
+        let data = try XCTUnwrap(jsonString.data(using: .utf8))
         let decoded = try? JSONDecoder().decode(BackupSpacePreferences.self, from: data)
 
         XCTAssertNotNil(decoded)
@@ -292,7 +292,7 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
 
     // MARK: - Apply Tests
 
-    func testApplyUpdatesGlobalSettings() {
+    func testApplyUpdatesGlobalSettings() throws {
         let json = """
         {
             "bundleId": "com.test.app",
@@ -322,7 +322,7 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         }
         """
 
-        let backup = BackupManager.decode(jsonString: json)!
+        let backup = try XCTUnwrap(BackupManager.decode(jsonString: json))
         BackupManager.apply(backup, to: store)
 
         XCTAssertTrue(store.clickToSwitchSpaces)
@@ -338,7 +338,7 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         XCTAssertTrue(store.uniqueIconsPerDisplay)
     }
 
-    func testApplyUpdatesSpacePreferences() {
+    func testApplyUpdatesSpacePreferences() throws {
         let json = """
         {
             "bundleId": "com.test.app",
@@ -373,7 +373,7 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         }
         """
 
-        let backup = BackupManager.decode(jsonString: json)!
+        let backup = try XCTUnwrap(BackupManager.decode(jsonString: json))
         BackupManager.apply(backup, to: store)
 
         XCTAssertEqual(store.spaceColors.count, 1)
@@ -384,7 +384,7 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         XCTAssertEqual(store.spaceSymbols[1], "star.fill")
     }
 
-    func testApplyUpdatesDisplaySpacePreferences() {
+    func testApplyUpdatesDisplaySpacePreferences() throws {
         let json = """
         {
             "bundleId": "com.test.app",
@@ -429,7 +429,7 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         }
         """
 
-        let backup = BackupManager.decode(jsonString: json)!
+        let backup = try XCTUnwrap(BackupManager.decode(jsonString: json))
         BackupManager.apply(backup, to: store)
 
         XCTAssertEqual(store.displaySpaceIconStyles["Display1"]?[1], .triangle)
@@ -437,7 +437,7 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         XCTAssertEqual(store.displaySpaceIconStyles["Display2"]?[1], .square)
     }
 
-    func testApplyPostsNotification() {
+    func testApplyPostsNotification() throws {
         let json = """
         {
             "bundleId": "com.test.app",
@@ -467,7 +467,7 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         }
         """
 
-        let backup = BackupManager.decode(jsonString: json)!
+        let backup = try XCTUnwrap(BackupManager.decode(jsonString: json))
 
         let expectation = expectation(forNotification: .backupImported, object: nil)
         BackupManager.apply(backup, to: store)
@@ -475,7 +475,7 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         wait(for: [expectation], timeout: 1.0)
     }
 
-    func testApplySeparatorColor() {
+    func testApplySeparatorColor() throws {
         let json = """
         {
             "bundleId": "com.test.app",
@@ -506,7 +506,7 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         }
         """
 
-        let backup = BackupManager.decode(jsonString: json)!
+        let backup = try XCTUnwrap(BackupManager.decode(jsonString: json))
         BackupManager.apply(backup, to: store)
 
         XCTAssertNotNil(store.separatorColor)

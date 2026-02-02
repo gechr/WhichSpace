@@ -515,11 +515,11 @@ final class SymbolPickerTests: XCTestCase {
         XCTAssertNil(hitIndex, "symbolIndex should return nil for points in padding area")
     }
 
-    func testSymbolIndex_matchesClickBehavior() {
+    func testSymbolIndex_matchesClickBehavior() throws {
         // Verify that symbolIndex correctly predicts whether a click will fire
-        let testPoints: [(CGPoint, Bool)] = [
-            (centerPointForSymbol(at: 0)!, true), // Should hit
-            (centerPointForSymbol(at: 3)!, true), // Should hit
+        let testPoints: [(CGPoint, Bool)] = try [
+            (XCTUnwrap(centerPointForSymbol(at: 0)), true), // Should hit
+            (XCTUnwrap(centerPointForSymbol(at: 3)), true), // Should hit
             (CGPoint(x: 2, y: 2), false), // Padding - should miss
         ]
 

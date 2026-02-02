@@ -133,7 +133,9 @@ class IsolatedDefaultsTestCase: XCTestCase {
     private(set) var store: DefaultsStore!
 
     /// The underlying UserDefaults suite (for direct access if needed).
-    var suite: UserDefaults { store.suite }
+    var suite: UserDefaults {
+        store.suite
+    }
 
     /// The test suite with its name.
     private var testSuite: TestSuite!

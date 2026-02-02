@@ -6,19 +6,29 @@ class Swatch: NSView {
     // MARK: - Configuration (override in subclasses)
 
     /// Number of items to display
-    var itemCount: Int { 0 }
+    var itemCount: Int {
+        0
+    }
 
     /// Size of each swatch circle/item
-    var swatchSize: Double { 20.0 }
+    var swatchSize: Double {
+        20.0
+    }
 
     /// Spacing between swatches
-    var spacing: Double { 4.0 }
+    var spacing: Double {
+        4.0
+    }
 
     /// Left padding before first swatch
-    var leftPadding: Double { 16.0 }
+    var leftPadding: Double {
+        16.0
+    }
 
     /// Right padding after last swatch
-    var rightPadding: Double { 12.0 }
+    var rightPadding: Double {
+        12.0
+    }
 
     // MARK: - Callbacks
 

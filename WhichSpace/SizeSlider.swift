@@ -144,7 +144,9 @@ final class SizeSlider: NSView {
 
     // MARK: - Keyboard Events
 
-    override var acceptsFirstResponder: Bool { true }
+    override var acceptsFirstResponder: Bool {
+        true
+    }
 
     override func keyDown(with event: NSEvent) {
         switch event.keyCode {

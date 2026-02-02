@@ -44,8 +44,8 @@ final class SpaceColorsBridgeTests: IsolatedDefaultsTestCase {
         XCTAssertNil(result)
     }
 
-    func testDeserializeMissingForegroundReturnsNil() {
-        let backgroundData = try! NSKeyedArchiver.archivedData(
+    func testDeserializeMissingForegroundReturnsNil() throws {
+        let backgroundData = try NSKeyedArchiver.archivedData(
             withRootObject: NSColor.blue,
             requiringSecureCoding: true
         )
@@ -53,8 +53,8 @@ final class SpaceColorsBridgeTests: IsolatedDefaultsTestCase {
         XCTAssertNil(result)
     }
 
-    func testDeserializeMissingBackgroundReturnsNil() {
-        let foregroundData = try! NSKeyedArchiver.archivedData(
+    func testDeserializeMissingBackgroundReturnsNil() throws {
+        let foregroundData = try NSKeyedArchiver.archivedData(
             withRootObject: NSColor.red,
             requiringSecureCoding: true
         )

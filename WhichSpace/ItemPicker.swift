@@ -11,8 +11,13 @@ private final class ToneLabelView: NSView {
 
     var onClick: (() -> Void)?
 
-    override var acceptsFirstResponder: Bool { true }
-    override var isFlipped: Bool { true }
+    override var acceptsFirstResponder: Bool {
+        true
+    }
+
+    override var isFlipped: Bool {
+        true
+    }
 
     init(emoji: String) {
         self.emoji = emoji
@@ -129,7 +134,9 @@ final class ItemPicker: NSView {
 
     // MARK: - Computed Properties
 
-    override var acceptsFirstResponder: Bool { true }
+    override var acceptsFirstResponder: Bool {
+        true
+    }
 
     override var intrinsicContentSize: CGSize {
         let gridWidth = padding * 2 + Double(itemType.columns) * itemType.itemSize
@@ -332,7 +339,9 @@ private final class ItemGridView: NSView {
 
     // MARK: - Computed Properties
 
-    override var isFlipped: Bool { true }
+    override var isFlipped: Bool {
+        true
+    }
 
     // MARK: - Initialization
 

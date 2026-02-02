@@ -31,8 +31,13 @@ final class SkinToneSwatch: Swatch {
 
     // MARK: - Swatch Overrides
 
-    override var itemCount: Int { Self.skinToneEmojis.count }
-    override var spacing: Double { 12.0 }
+    override var itemCount: Int {
+        Self.skinToneEmojis.count
+    }
+
+    override var spacing: Double {
+        12.0
+    }
 
     override func drawItem(at index: Int, in rect: CGRect, highlighted: Bool) {
         let emoji = Self.skinToneEmojis[index]
