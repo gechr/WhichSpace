@@ -5,6 +5,7 @@ import XCTest
 
 // MARK: - Error Recovery Tests
 
+@MainActor
 final class ErrorRecoveryTests: IsolatedDefaultsTestCase {
     private var bridge: SpaceColors.Bridge!
     private var fontBridge: SpaceFont.Bridge!

@@ -1,29 +1,18 @@
 import XCTest
 @testable import WhichSpace
 
-@MainActor
-final class ScriptingCommandsTests: XCTestCase {
+final class ScriptingCommandsTests: IsolatedDefaultsTestCase {
     private var stub: CGSStub!
     private var appState: AppState!
-    private var store: DefaultsStore!
-    private var testSuite: TestSuite!
 
     override func setUp() {
         super.setUp()
-        testSuite = TestSuiteFactory.createSuite()
-        store = DefaultsStore(suite: testSuite.suite)
         stub = CGSStub()
     }
 
     override func tearDown() {
         appState = nil
         stub = nil
-        if let store, let testSuite {
-            store.resetAll()
-            TestSuiteFactory.destroySuite(testSuite)
-        }
-        store = nil
-        testSuite = nil
         super.tearDown()
     }
 

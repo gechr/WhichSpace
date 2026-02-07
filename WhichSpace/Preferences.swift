@@ -97,15 +97,20 @@ struct SpaceColors: Equatable, Defaults.Serializable {
             guard let value else {
                 return nil
             }
-            return [
-                "foreground": try! NSKeyedArchiver.archivedData(
-                    withRootObject: value.foreground,
-                    requiringSecureCoding: true
-                ),
-                "background": try! NSKeyedArchiver.archivedData(
+            guard let foregroundData = try? NSKeyedArchiver.archivedData(
+                withRootObject: value.foreground,
+                requiringSecureCoding: true
+            ),
+                let backgroundData = try? NSKeyedArchiver.archivedData(
                     withRootObject: value.background,
                     requiringSecureCoding: true
-                ),
+                )
+            else {
+                return nil
+            }
+            return [
+                "foreground": foregroundData,
+                "background": backgroundData,
             ]
         }
 
@@ -148,6 +153,7 @@ struct SpaceColors: Equatable, Defaults.Serializable {
 /// When `uniqueIconsPerDisplay` is enabled, preferences are stored per-display
 /// using the display identifier. When disabled, shared preferences are used.
 /// Both sets of preferences are stored separately for backwards compatibility.
+@MainActor
 enum SpacePreferences {
     // MARK: - Symbols (SF Symbols or Emojis)
 

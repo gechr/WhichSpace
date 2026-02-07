@@ -72,11 +72,15 @@ actor SpaceMonitor {
 
         source.setEventHandler { [weak self] in
             let flags = source.data.rawValue
-            if flags & DispatchSource.FileSystemEvent.delete.rawValue != 0 {
-                Task {
-                    await self?.emitSnapshot()
-                    await self?.restartMonitoring()
-                }
+            guard flags & DispatchSource.FileSystemEvent.delete.rawValue != 0,
+                  let self
+            else {
+                return
+            }
+
+            Task { [self] in
+                await self.emitSnapshot()
+                await self.restartMonitoring()
             }
         }
 

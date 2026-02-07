@@ -5,7 +5,7 @@ import Cocoa
 @MainActor
 final class CurrentSpaceNumberCommand: NSScriptCommand {
     override func performDefaultImplementation() -> Any? {
-        AppState.shared.currentSpace
+        AppEnvironment.shared.appState.currentSpace
     }
 }
 
@@ -14,7 +14,7 @@ final class CurrentSpaceNumberCommand: NSScriptCommand {
 @MainActor
 final class CurrentSpaceLabelCommand: NSScriptCommand {
     override func performDefaultImplementation() -> Any? {
-        AppState.shared.currentSpaceLabel
+        AppEnvironment.shared.appState.currentSpaceLabel
     }
 }
 
@@ -23,12 +23,12 @@ extension NSApplication {
     /// Returns the current space number (1-based index).
     /// Usage: `tell application "WhichSpace" to get current space number`
     @MainActor @objc var currentSpaceNumber: Int {
-        AppState.shared.currentSpace
+        AppEnvironment.shared.appState.currentSpace
     }
 
     /// Returns the current space label (e.g. "1", "2", "F" for fullscreen).
     /// Usage: `tell application "WhichSpace" to get current space label`
     @MainActor @objc var currentSpaceLabel: String {
-        AppState.shared.currentSpaceLabel
+        AppEnvironment.shared.appState.currentSpaceLabel
     }
 }

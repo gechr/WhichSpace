@@ -5,6 +5,7 @@ import XCTest
 
 // MARK: - Rapid Operations Tests
 
+@MainActor
 final class RapidOperationsTests: IsolatedDefaultsTestCase {
     // MARK: - Rapid Preference Changes
 

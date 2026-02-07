@@ -5,6 +5,7 @@ import XCTest
 
 // MARK: - Input Validation Tests
 
+@MainActor
 final class InputValidationTests: IsolatedDefaultsTestCase {
     // MARK: - Space Number Edge Cases
 

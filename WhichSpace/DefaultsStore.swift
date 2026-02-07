@@ -14,7 +14,7 @@ protocol KeySpec {
     var defaultValue: Value { get }
 }
 
-struct TypedKeySpec<Value: Defaults.Serializable>: KeySpec {
+struct TypedKeySpec<Value: Defaults.Serializable>: KeySpec, @unchecked Sendable {
     let name: String
     let defaultValue: Value
 
@@ -121,7 +121,8 @@ enum KeySpecs {
 ///
 /// ## Parallel Test Safety
 /// With per-test suites, tests can safely run in parallel without interference.
-final class DefaultsStore: @unchecked Sendable {
+@MainActor
+final class DefaultsStore {
     /// Shared instance using `UserDefaults.standard` for production use.
     static let shared = DefaultsStore(suite: .standard)
 
@@ -214,9 +215,8 @@ final class DefaultsStore: @unchecked Sendable {
 
     var separatorColor: NSColor? {
         get {
-            guard let data = Defaults[keySeparatorColor] else {
-                return nil
-            }
+            guard let data = Defaults[keySeparatorColor]
+            else { return nil }
             return try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSColor.self, from: data)
         }
         set {
@@ -229,6 +229,11 @@ final class DefaultsStore: @unchecked Sendable {
                 Defaults[keySeparatorColor] = nil
             }
         }
+    }
+
+    /// Raw separator color data for use as an equatable cache key
+    var separatorColorData: Data? {
+        Defaults[keySeparatorColor]
     }
 
     var showAllDisplays: Bool {
