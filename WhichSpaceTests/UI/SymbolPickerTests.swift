@@ -1,14 +1,14 @@
 import Cocoa
-import XCTest
+import Testing
 @testable import WhichSpace
 
+@Suite("Symbol Picker")
 @MainActor
-final class SymbolPickerTests: XCTestCase {
-    private var sut: SymbolPicker!
-    private var testWindow: NSWindow!
+struct SymbolPickerTests {
+    private let sut: SymbolPicker
+    private let testWindow: NSWindow
 
-    override func setUp() {
-        super.setUp()
+    init() {
         sut = SymbolPicker()
         sut.frame = NSRect(origin: .zero, size: sut.intrinsicContentSize)
 
@@ -22,43 +22,42 @@ final class SymbolPickerTests: XCTestCase {
         testWindow.contentView = sut
     }
 
-    override func tearDown() {
-        testWindow = nil
-        sut = nil
-        super.tearDown()
-    }
-
     // MARK: - selectedSymbol Tests
 
-    func testSelectedSymbol_defaultsToNil() {
+    @Test("selectedSymbol defaults to nil")
+    func selectedSymbol_defaultsToNil() {
         let symbolPicker = SymbolPicker()
-        XCTAssertNil(symbolPicker.selectedSymbol, "selectedSymbol should default to nil")
+        #expect(symbolPicker.selectedSymbol == nil, "selectedSymbol should default to nil")
     }
 
-    func testSelectedSymbol_canBeSet() {
+    @Test("selectedSymbol can be set")
+    func selectedSymbol_canBeSet() {
         sut.selectedSymbol = "star.fill"
-        XCTAssertEqual(sut.selectedSymbol, "star.fill")
+        #expect(sut.selectedSymbol == "star.fill")
     }
 
-    func testSelectedSymbol_canBeCleared() {
+    @Test("selectedSymbol can be cleared")
+    func selectedSymbol_canBeCleared() {
         sut.selectedSymbol = "star.fill"
         sut.selectedSymbol = nil
 
-        XCTAssertNil(sut.selectedSymbol)
+        #expect(sut.selectedSymbol == nil)
     }
 
-    func testSelectedSymbol_acceptsVariousSymbolNames() {
+    @Test("selectedSymbol accepts various symbol names")
+    func selectedSymbol_acceptsVariousSymbolNames() {
         let symbols = ["heart.fill", "bolt", "gear", "house.fill", "moon.stars"]
 
         for symbol in symbols {
             sut.selectedSymbol = symbol
-            XCTAssertEqual(sut.selectedSymbol, symbol, "Should accept symbol: \(symbol)")
+            #expect(sut.selectedSymbol == symbol, "Should accept symbol: \(symbol)")
         }
     }
 
     // MARK: - onSymbolSelected Closure Tests
 
-    func testOnSymbolSelected_canBeSet() {
+    @Test("onSymbolSelected can be set")
+    func onSymbolSelected_canBeSet() {
         var capturedSymbol: String?
         sut.onSymbolSelected = { symbol in
             capturedSymbol = symbol
@@ -67,10 +66,11 @@ final class SymbolPickerTests: XCTestCase {
         // Verify closure is set by calling it manually
         sut.onSymbolSelected?("test.symbol")
 
-        XCTAssertEqual(capturedSymbol, "test.symbol")
+        #expect(capturedSymbol == "test.symbol")
     }
 
-    func testOnSymbolSelected_receivesSymbolWhenClicked() {
+    @Test("onSymbolSelected receives symbol when clicked")
+    func onSymbolSelected_receivesSymbolWhenClicked() {
         var receivedSymbol: String?
         sut.onSymbolSelected = { symbol in
             receivedSymbol = symbol
@@ -79,10 +79,11 @@ final class SymbolPickerTests: XCTestCase {
         // Click on first symbol cell in grid
         simulateClickOnSymbolCell(row: 0, column: 0)
 
-        XCTAssertNotNil(receivedSymbol, "onSymbolSelected should be called when clicking a symbol cell")
+        #expect(receivedSymbol != nil, "onSymbolSelected should be called when clicking a symbol cell")
     }
 
-    func testOnSymbolSelected_receivesCorrectSymbolForDifferentCells() {
+    @Test("onSymbolSelected receives correct symbol for different cells")
+    func onSymbolSelected_receivesCorrectSymbolForDifferentCells() {
         var receivedSymbols: [String] = []
         sut.onSymbolSelected = { symbol in
             if let symbol {
@@ -94,18 +95,18 @@ final class SymbolPickerTests: XCTestCase {
         simulateClickOnSymbolCell(row: 0, column: 0)
         simulateClickOnSymbolCell(row: 0, column: 1)
 
-        XCTAssertEqual(receivedSymbols.count, 2, "Should receive callback for each click")
+        #expect(receivedSymbols.count == 2, "Should receive callback for each click")
         // The symbols should be different (from different cells)
         if receivedSymbols.count == 2 {
-            XCTAssertNotEqual(
-                receivedSymbols[0],
-                receivedSymbols[1],
+            #expect(
+                receivedSymbols[0] != receivedSymbols[1],
                 "Different cells should return different symbols"
             )
         }
     }
 
-    func testClickOnSymbolCell_firesOnSymbolSelectedWithValidSymbol() {
+    @Test("Click on symbol cell fires onSymbolSelected with valid symbol")
+    func clickOnSymbolCell_firesOnSymbolSelectedWithValidSymbol() {
         var selectedSymbolIsValid = false
         sut.onSymbolSelected = { symbol in
             // Symbol should be a non-empty string for valid symbol names
@@ -114,117 +115,129 @@ final class SymbolPickerTests: XCTestCase {
 
         simulateClickOnSymbolCell(row: 1, column: 2)
 
-        XCTAssertTrue(selectedSymbolIsValid, "Clicked symbol should have a valid non-empty name")
+        #expect(selectedSymbolIsValid, "Clicked symbol should have a valid non-empty name")
     }
 
-    func testOnSymbolSelected_nilClosureDoesNotCrash() {
+    @Test("onSymbolSelected nil closure does not crash")
+    func onSymbolSelected_nilClosureDoesNotCrash() {
         sut.onSymbolSelected = nil
 
         // Should not crash
-        XCTAssertNil(sut.onSymbolSelected)
+        #expect(sut.onSymbolSelected == nil)
     }
 
     // MARK: - darkMode Tests
 
-    func testDarkMode_defaultsToFalse() {
+    @Test("darkMode defaults to false")
+    func darkMode_defaultsToFalse() {
         let symbolPicker = SymbolPicker()
-        XCTAssertFalse(symbolPicker.darkMode)
+        #expect(!symbolPicker.darkMode)
     }
 
-    func testDarkMode_canBeToggled() {
+    @Test("darkMode can be toggled")
+    func darkMode_canBeToggled() {
         sut.darkMode = false
-        XCTAssertFalse(sut.darkMode)
+        #expect(!sut.darkMode)
 
         sut.darkMode = true
-        XCTAssertTrue(sut.darkMode)
+        #expect(sut.darkMode)
 
         sut.darkMode = false
-        XCTAssertFalse(sut.darkMode)
+        #expect(!sut.darkMode)
     }
 
     // MARK: - intrinsicContentSize Tests
 
-    func testIntrinsicContentSize_hasValidDimensions() {
+    @Test("intrinsicContentSize has valid dimensions")
+    func intrinsicContentSize_hasValidDimensions() {
         let size = sut.intrinsicContentSize
 
-        XCTAssertGreaterThan(size.width, 0, "Width should be positive")
-        XCTAssertGreaterThan(size.height, 0, "Height should be positive")
+        #expect(size.width > 0, "Width should be positive")
+        #expect(size.height > 0, "Height should be positive")
     }
 
-    func testIntrinsicContentSize_isStable() {
+    @Test("intrinsicContentSize is stable")
+    func intrinsicContentSize_isStable() {
         let size1 = sut.intrinsicContentSize
         let size2 = sut.intrinsicContentSize
         let size3 = sut.intrinsicContentSize
 
-        XCTAssertEqual(size1, size2)
-        XCTAssertEqual(size2, size3)
+        #expect(size1 == size2)
+        #expect(size2 == size3)
     }
 
-    func testIntrinsicContentSize_unchangedBySelectedSymbol() {
+    @Test("intrinsicContentSize unchanged by selectedSymbol")
+    func intrinsicContentSize_unchangedBySelectedSymbol() {
         let sizeBefore = sut.intrinsicContentSize
 
         sut.selectedSymbol = "star.fill"
         let sizeAfter = sut.intrinsicContentSize
 
-        XCTAssertEqual(sizeBefore, sizeAfter, "selectedSymbol should not affect intrinsicContentSize")
+        #expect(sizeBefore == sizeAfter, "selectedSymbol should not affect intrinsicContentSize")
     }
 
-    func testIntrinsicContentSize_unchangedByDarkMode() {
+    @Test("intrinsicContentSize unchanged by darkMode")
+    func intrinsicContentSize_unchangedByDarkMode() {
         let sizeBefore = sut.intrinsicContentSize
 
         sut.darkMode = true
         let sizeAfter = sut.intrinsicContentSize
 
-        XCTAssertEqual(sizeBefore, sizeAfter, "darkMode should not affect intrinsicContentSize")
+        #expect(sizeBefore == sizeAfter, "darkMode should not affect intrinsicContentSize")
     }
 
     // MARK: - First Responder Tests
 
-    func testAcceptsFirstResponder_returnsTrue() {
-        XCTAssertTrue(sut.acceptsFirstResponder, "Should accept first responder for keyboard interaction")
+    @Test("acceptsFirstResponder returns true")
+    func acceptsFirstResponder_returnsTrue() {
+        #expect(sut.acceptsFirstResponder, "Should accept first responder for keyboard interaction")
     }
 
     // MARK: - Configuration Propagation Tests
 
-    func testSelectedSymbol_propagatesToView() {
+    @Test("selectedSymbol propagates to view")
+    func selectedSymbol_propagatesToView() {
         // Set selection
         sut.selectedSymbol = "gear"
 
         // The selectedSymbol property should be accessible
-        XCTAssertEqual(sut.selectedSymbol, "gear", "selectedSymbol should propagate to view")
+        #expect(sut.selectedSymbol == "gear", "selectedSymbol should propagate to view")
     }
 
-    func testDarkMode_propagatesToView() {
+    @Test("darkMode propagates to view")
+    func darkMode_propagatesToView() {
         sut.darkMode = true
 
         // The darkMode property should be accessible
-        XCTAssertTrue(sut.darkMode, "darkMode should propagate to view")
+        #expect(sut.darkMode, "darkMode should propagate to view")
     }
 
     // MARK: - Multiple Updates Tests
 
-    func testMultipleUpdates_maintainCorrectState() {
+    @Test("Multiple updates maintain correct state")
+    func multipleUpdates_maintainCorrectState() {
         sut.selectedSymbol = "star"
         sut.darkMode = true
-        XCTAssertEqual(sut.selectedSymbol, "star")
-        XCTAssertTrue(sut.darkMode)
+        #expect(sut.selectedSymbol == "star")
+        #expect(sut.darkMode)
 
         sut.selectedSymbol = "heart"
-        XCTAssertEqual(sut.selectedSymbol, "heart")
-        XCTAssertTrue(sut.darkMode)
+        #expect(sut.selectedSymbol == "heart")
+        #expect(sut.darkMode)
 
         sut.darkMode = false
-        XCTAssertEqual(sut.selectedSymbol, "heart")
-        XCTAssertFalse(sut.darkMode)
+        #expect(sut.selectedSymbol == "heart")
+        #expect(!sut.darkMode)
 
         sut.selectedSymbol = nil
-        XCTAssertNil(sut.selectedSymbol)
-        XCTAssertFalse(sut.darkMode)
+        #expect(sut.selectedSymbol == nil)
+        #expect(!sut.darkMode)
     }
 
     // MARK: - Click Interaction Tests
 
-    func testClickOutsideSymbols_doesNotFireCallback() {
+    @Test("Click outside symbols does not fire callback")
+    func clickOutsideSymbols_doesNotFireCallback() {
         var callbackFired = false
         sut.onSymbolSelected = { _ in
             callbackFired = true
@@ -233,10 +246,11 @@ final class SymbolPickerTests: XCTestCase {
         // Click in padding area (outside symbol grid)
         simulateClickOnGrid(at: CGPoint(x: 2, y: 2))
 
-        XCTAssertFalse(callbackFired, "Clicking outside symbol cells should not fire callback")
+        #expect(!callbackFired, "Clicking outside symbol cells should not fire callback")
     }
 
-    func testClickInSpacingBetweenSymbols_doesNotFireCallback() {
+    @Test("Click in spacing between symbols does not fire callback")
+    func clickInSpacingBetweenSymbols_doesNotFireCallback() {
         var callbackFired = false
         sut.onSymbolSelected = { _ in
             callbackFired = true
@@ -245,7 +259,7 @@ final class SymbolPickerTests: XCTestCase {
         // Get cell frames from helper and click between them
         let cellFrames = symbolCellFrames(count: 2)
         guard cellFrames.count >= 2 else {
-            XCTFail("Could not get symbol cell frames")
+            Issue.record("Could not get symbol cell frames")
             return
         }
         // Click midway between first and second cell (in spacing)
@@ -253,12 +267,13 @@ final class SymbolPickerTests: XCTestCase {
         let spacingY = cellFrames[0].midY
         simulateClickOnGrid(at: CGPoint(x: spacingX, y: spacingY))
 
-        XCTAssertFalse(callbackFired, "Clicking in spacing between symbols should not fire callback")
+        #expect(!callbackFired, "Clicking in spacing between symbols should not fire callback")
     }
 
     // MARK: - Selection Visual Verification Tests
 
-    func testClickOnSymbolCell_setsSelectedSymbol() {
+    @Test("Click on symbol cell sets selectedSymbol")
+    func clickOnSymbolCell_setsSelectedSymbol() {
         var selectedSymbol: String?
         sut.onSymbolSelected = { symbol in
             selectedSymbol = symbol
@@ -268,24 +283,25 @@ final class SymbolPickerTests: XCTestCase {
         simulateClickOnSymbolCell(row: 0, column: 0)
 
         // Verify the callback fired with a symbol
-        XCTAssertNotNil(selectedSymbol, "Should receive selected symbol")
+        #expect(selectedSymbol != nil, "Should receive selected symbol")
 
         // Now set selectedSymbol on the view and verify draw path
         sut.selectedSymbol = selectedSymbol
         sut.needsDisplay = true
         sut.displayIfNeeded()
 
-        XCTAssertEqual(sut.selectedSymbol, selectedSymbol, "selectedSymbol should be set after click")
+        #expect(sut.selectedSymbol == selectedSymbol, "selectedSymbol should be set after click")
     }
 
-    func testSelectedSymbol_triggersRedraw() {
+    @Test("selectedSymbol triggers redraw")
+    func selectedSymbol_triggersRedraw() {
         // Set a symbol and verify the view updates
         sut.selectedSymbol = "star.fill"
         sut.needsDisplay = true
         sut.displayIfNeeded()
 
         // The selected symbol should persist through the draw cycle
-        XCTAssertEqual(sut.selectedSymbol, "star.fill", "selectedSymbol should persist after redraw")
+        #expect(sut.selectedSymbol == "star.fill", "selectedSymbol should persist after redraw")
     }
 
     // MARK: - Hover State Tests
@@ -293,93 +309,71 @@ final class SymbolPickerTests: XCTestCase {
     // Note: SymbolGridView uses setNeedsDisplay(rect) for partial invalidation (performance),
     // so we verify hover behavior through observable side effects (toolTip) rather than needsDisplay
 
-    func testMouseMoveOverSymbol_setsToolTip() {
-        guard let gridView = findGridView() else {
-            XCTFail("Could not find grid view")
-            return
-        }
-        XCTAssertNil(gridView.toolTip, "Initial toolTip should be nil")
+    @Test("Mouse move over symbol sets toolTip")
+    func mouseMoveOverSymbol_setsToolTip() throws {
+        let gridView = try #require(findGridView())
+        #expect(gridView.toolTip == nil, "Initial toolTip should be nil")
 
-        guard let symbolCenter = centerPointForSymbol(at: 0) else {
-            XCTFail("Could not get center for first symbol")
-            return
-        }
+        let symbolCenter = try #require(centerPointForSymbol(at: 0))
         simulateMouseMoveOnGrid(at: symbolCenter)
 
-        XCTAssertNotNil(gridView.toolTip, "Hovering over a symbol should set toolTip")
+        #expect(gridView.toolTip != nil, "Hovering over a symbol should set toolTip")
     }
 
-    func testMouseMoveToNewSymbol_changesToolTip() {
-        guard let gridView = findGridView() else {
-            XCTFail("Could not find grid view")
-            return
-        }
+    @Test("Mouse move to new symbol changes toolTip")
+    func mouseMoveToNewSymbol_changesToolTip() throws {
+        let gridView = try #require(findGridView())
 
         // Move to first symbol
-        guard let firstCenter = centerPointForSymbol(at: 0) else {
-            XCTFail("Could not get center for first symbol")
-            return
-        }
+        let firstCenter = try #require(centerPointForSymbol(at: 0))
         simulateMouseMoveOnGrid(at: firstCenter)
         let firstToolTip = gridView.toolTip
 
         // Move to second symbol
-        guard let secondCenter = centerPointForSymbol(at: 1) else {
-            XCTFail("Could not get center for second symbol")
-            return
-        }
+        let secondCenter = try #require(centerPointForSymbol(at: 1))
         simulateMouseMoveOnGrid(at: secondCenter)
         let secondToolTip = gridView.toolTip
 
-        XCTAssertNotNil(firstToolTip, "First symbol should have a toolTip")
-        XCTAssertNotNil(secondToolTip, "Second symbol should have a toolTip")
-        XCTAssertNotEqual(firstToolTip, secondToolTip, "Different symbols should have different toolTips")
+        #expect(firstToolTip != nil, "First symbol should have a toolTip")
+        #expect(secondToolTip != nil, "Second symbol should have a toolTip")
+        #expect(firstToolTip != secondToolTip, "Different symbols should have different toolTips")
     }
 
-    func testMouseMoveFromSymbolToOutside_clearsToolTip() {
-        guard let gridView = findGridView() else {
-            XCTFail("Could not find grid view")
-            return
-        }
+    @Test("Mouse move from symbol to outside clears toolTip")
+    func mouseMoveFromSymbolToOutside_clearsToolTip() throws {
+        let gridView = try #require(findGridView())
 
         // Move to first symbol
-        guard let symbolCenter = centerPointForSymbol(at: 0) else {
-            XCTFail("Could not get center for first symbol")
-            return
-        }
+        let symbolCenter = try #require(centerPointForSymbol(at: 0))
         simulateMouseMoveOnGrid(at: symbolCenter)
-        XCTAssertNotNil(gridView.toolTip, "Should have toolTip when over symbol")
+        #expect(gridView.toolTip != nil, "Should have toolTip when over symbol")
 
         // Move to padding area (outside symbols)
         let outsidePoint = CGPoint(x: 2, y: 2)
         simulateMouseMoveOnGrid(at: outsidePoint)
 
-        XCTAssertNil(gridView.toolTip, "Moving from symbol to outside should clear toolTip")
+        #expect(gridView.toolTip == nil, "Moving from symbol to outside should clear toolTip")
     }
 
-    func testMouseExit_clearsToolTip() {
-        guard let gridView = findGridView() else {
-            XCTFail("Could not find grid view")
-            return
-        }
+    @Test("Mouse exit clears toolTip")
+    func mouseExit_clearsToolTip() throws {
+        let gridView = try #require(findGridView())
 
         // First hover over a symbol
-        guard let symbolCenter = centerPointForSymbol(at: 0) else {
-            XCTFail("Could not get center for first symbol")
-            return
-        }
+        let symbolCenter = try #require(centerPointForSymbol(at: 0))
         simulateMouseMoveOnGrid(at: symbolCenter)
-        XCTAssertNotNil(gridView.toolTip, "Should have toolTip when over symbol")
+        #expect(gridView.toolTip != nil, "Should have toolTip when over symbol")
 
         // Trigger mouseExited
         gridView.mouseExited(with: createDummyMouseEvent())
 
-        XCTAssertNil(gridView.toolTip, "Mouse exit should clear toolTip")
+        #expect(gridView.toolTip == nil, "Mouse exit should clear toolTip")
     }
 
     // MARK: - Layout Robustness Tests
 
-    func testLayoutInfo_isConsistentWithIntrinsicContentSize() {
+    @Test("Layout info is consistent with intrinsicContentSize")
+    func layoutInfo_isConsistentWithIntrinsicContentSize() {
         let layout = sut.layoutInfo
         let intrinsicSize = sut.intrinsicContentSize
 
@@ -391,38 +385,35 @@ final class SymbolPickerTests: XCTestCase {
             + Double(layout.columns - 1) * layout.spacing
             + scrollbarWidth
 
-        XCTAssertEqual(
-            intrinsicSize.width,
-            expectedWidth,
-            accuracy: 1.0,
+        #expect(
+            abs(intrinsicSize.width - expectedWidth) <= 1.0,
             "Intrinsic width should be consistent with layout info"
         )
     }
 
-    func testFrameForSymbol_isWithinGridBounds() {
-        guard let gridView = findGridView() else {
-            XCTFail("Could not find grid view")
-            return
-        }
+    @Test("Frame for symbol is within grid bounds")
+    func frameForSymbol_isWithinGridBounds() throws {
+        let gridView = try #require(findGridView())
 
         // Check first few symbols are within bounds
         for index in 0 ..< min(10, sut.symbolCount) {
             guard let frame = frameForSymbol(at: index) else {
-                XCTFail("Could not get frame for symbol at index \(index)")
+                Issue.record("Could not get frame for symbol at index \(index)")
                 continue
             }
-            XCTAssertTrue(
+            #expect(
                 frame.maxX <= gridView.bounds.width,
                 "Symbol \(index) frame should be within grid width"
             )
-            XCTAssertTrue(
+            #expect(
                 frame.maxY <= gridView.bounds.height,
                 "Symbol \(index) frame should be within grid height"
             )
         }
     }
 
-    func testClicksUsingFrameForSymbol_consistentlyHitSymbols() {
+    @Test("Clicks using frameForSymbol consistently hit symbols")
+    func clicksUsingFrameForSymbol_consistentlyHitSymbols() {
         // This test verifies that clicks using the frame API reliably hit symbols
         // regardless of small changes in layout constants
         var successfulClicks = 0
@@ -444,82 +435,76 @@ final class SymbolPickerTests: XCTestCase {
             }
         }
 
-        XCTAssertEqual(
-            successfulClicks,
-            testCount,
+        #expect(
+            successfulClicks == testCount,
             "All clicks using frameForSymbol centers should hit symbols"
         )
     }
 
-    func testSpacingBetweenSymbols_isCorrectlyCalculated() {
+    @Test("Spacing between symbols is correctly calculated")
+    func spacingBetweenSymbols_isCorrectlyCalculated() throws {
         // Verify spacing calculation is correct by checking frames don't overlap
         let layout = sut.layoutInfo
 
-        guard let frame0 = frameForSymbol(at: 0),
-              let frame1 = frameForSymbol(at: 1)
-        else {
-            XCTFail("Could not get symbol frames")
-            return
-        }
+        let frame0 = try #require(frameForSymbol(at: 0))
+        let frame1 = try #require(frameForSymbol(at: 1))
 
         // Second symbol should start after first + spacing
         let expectedSecondX = frame0.maxX + layout.spacing
-        XCTAssertEqual(
-            frame1.minX,
-            expectedSecondX,
-            accuracy: 0.1,
+        #expect(
+            abs(frame1.minX - expectedSecondX) <= 0.1,
             "Second symbol should start after first + spacing"
         )
 
         // Frames should not overlap
-        XCTAssertFalse(
-            frame0.intersects(frame1),
+        #expect(
+            !frame0.intersects(frame1),
             "Adjacent symbol frames should not overlap"
         )
     }
 
     // MARK: - Hit Testing API Tests
 
-    func testSymbolIndex_returnsCorrectIndexForSymbolCenter() {
+    @Test("symbolIndex returns correct index for symbol center")
+    func symbolIndex_returnsCorrectIndexForSymbolCenter() {
         // Verify symbolIndex uses the same logic as click handling
         for index in 0 ..< min(5, sut.symbolCount) {
             guard let center = centerPointForSymbol(at: index) else {
-                XCTFail("Could not get center for symbol at index \(index)")
+                Issue.record("Could not get center for symbol at index \(index)")
                 continue
             }
             let hitIndex = sut.symbolIndex(at: center)
-            XCTAssertEqual(hitIndex, index, "symbolIndex should return \(index) for its center point")
+            #expect(hitIndex == index, "symbolIndex should return \(index) for its center point")
         }
     }
 
-    func testSymbolIndex_returnsNilForSpacingBetweenSymbols() {
-        guard let frame0 = frameForSymbol(at: 0),
-              let frame1 = frameForSymbol(at: 1)
-        else {
-            XCTFail("Could not get symbol frames")
-            return
-        }
+    @Test("symbolIndex returns nil for spacing between symbols")
+    func symbolIndex_returnsNilForSpacingBetweenSymbols() throws {
+        let frame0 = try #require(frameForSymbol(at: 0))
+        let frame1 = try #require(frameForSymbol(at: 1))
 
         // Point in the spacing between symbols
         let spacingPoint = CGPoint(x: (frame0.maxX + frame1.minX) / 2, y: frame0.midY)
         let hitIndex = sut.symbolIndex(at: spacingPoint)
 
-        XCTAssertNil(hitIndex, "symbolIndex should return nil for points in spacing")
+        #expect(hitIndex == nil, "symbolIndex should return nil for points in spacing")
     }
 
-    func testSymbolIndex_returnsNilForPaddingArea() {
+    @Test("symbolIndex returns nil for padding area")
+    func symbolIndex_returnsNilForPaddingArea() {
         // Point in the padding area (before first symbol)
         let paddingPoint = CGPoint(x: 2, y: 2)
         let hitIndex = sut.symbolIndex(at: paddingPoint)
 
-        XCTAssertNil(hitIndex, "symbolIndex should return nil for points in padding area")
+        #expect(hitIndex == nil, "symbolIndex should return nil for points in padding area")
     }
 
-    func testSymbolIndex_matchesClickBehavior() throws {
+    @Test("symbolIndex matches click behavior")
+    func symbolIndex_matchesClickBehavior() throws {
         // Verify that symbolIndex correctly predicts whether a click will fire
         let testPoints: [(CGPoint, Bool)] = try [
-            (XCTUnwrap(centerPointForSymbol(at: 0)), true), // Should hit
-            (XCTUnwrap(centerPointForSymbol(at: 3)), true), // Should hit
+            (#require(centerPointForSymbol(at: 0)), true), // Should hit
+            (#require(centerPointForSymbol(at: 3)), true), // Should hit
             (CGPoint(x: 2, y: 2), false), // Padding - should miss
         ]
 
@@ -531,14 +516,12 @@ final class SymbolPickerTests: XCTestCase {
             let hitIndex = sut.symbolIndex(at: point)
             let predictedHit = hitIndex != nil
 
-            XCTAssertEqual(
-                predictedHit,
-                shouldHit,
+            #expect(
+                predictedHit == shouldHit,
                 "symbolIndex prediction should match expected for point \(point)"
             )
-            XCTAssertEqual(
-                didFire,
-                shouldHit,
+            #expect(
+                didFire == shouldHit,
                 "Click behavior should match expected for point \(point)"
             )
         }
@@ -580,7 +563,7 @@ final class SymbolPickerTests: XCTestCase {
         let layout = sut.layoutInfo
         let index = row * layout.columns + column
         guard let center = centerPointForSymbol(at: index) else {
-            XCTFail("Could not get frame for symbol at row \(row), column \(column)")
+            Issue.record("Could not get frame for symbol at row \(row), column \(column)")
             return
         }
         simulateClickOnGrid(at: center)
@@ -589,7 +572,7 @@ final class SymbolPickerTests: XCTestCase {
     /// Simulates a click at a specific point within the grid view
     private func simulateClickOnGrid(at gridPoint: CGPoint) {
         guard let gridView = findGridView() else {
-            XCTFail("Could not find grid view")
+            Issue.record("Could not find grid view")
             return
         }
 
@@ -614,7 +597,7 @@ final class SymbolPickerTests: XCTestCase {
     /// Simulates a mouse move at a specific point within the grid view
     private func simulateMouseMoveOnGrid(at gridPoint: CGPoint) {
         guard let gridView = findGridView() else {
-            XCTFail("Could not find grid view")
+            Issue.record("Could not find grid view")
             return
         }
 

@@ -1,20 +1,29 @@
 import Cocoa
 import Defaults
-import XCTest
+import Testing
 @testable import WhichSpace
 
 // MARK: - Complex Unicode Tests
 
-final class ComplexUnicodeTests: IsolatedDefaultsTestCase {
+@Suite("Complex Unicode")
+@MainActor
+struct ComplexUnicodeTests {
+    private let testSuite: TestSuite
+
+    init() {
+        testSuite = TestSuiteFactory.createSuite()
+    }
+
     // MARK: - Multi-Person ZWJ Sequences
 
-    func testMultiPersonFamilyEmoji() {
+    @Test("multi-person family emoji")
+    func multiPersonFamilyEmoji() {
         // Family with man, woman, girl, boy (👨‍👩‍👧‍👦)
         let family = "👨‍👩‍👧‍👦"
         Defaults[.emojiPickerSkinTone] = .medium
 
         // Multi-person ZWJ sequences shouldn't get skin tones applied (not supported)
-        let result = SkinTone.apply(to: family)
+        _ = SkinTone.apply(to: family)
 
         // The family emoji should render without error
         let image = SpaceIconGenerator.generateSymbolIcon(
@@ -23,10 +32,11 @@ final class ComplexUnicodeTests: IsolatedDefaultsTestCase {
             customColors: nil,
             skinTone: .medium
         )
-        XCTAssertTrue(hasVisibleContent(image), "Family emoji should render with visible content")
+        #expect(hasVisibleContent(image), "Family emoji should render with visible content")
     }
 
-    func testCoupleWithHeartEmoji() {
+    @Test("couple with heart emoji")
+    func coupleWithHeartEmoji() {
         // Couple with heart (👩‍❤️‍👨)
         let couple = "👩‍❤️‍👨"
 
@@ -36,12 +46,13 @@ final class ComplexUnicodeTests: IsolatedDefaultsTestCase {
             customColors: nil,
             skinTone: .default
         )
-        XCTAssertTrue(hasVisibleContent(image), "Couple emoji should render with visible content")
+        #expect(hasVisibleContent(image), "Couple emoji should render with visible content")
     }
 
     // MARK: - Regional Indicator Sequences (Flags)
 
-    func testRegionalIndicatorFlags() {
+    @Test("regional indicator flags")
+    func regionalIndicatorFlags() {
         let flags = ["🇺🇸", "🇬🇧", "🇯🇵", "🇫🇷", "🇩🇪", "🇨🇦"]
 
         for flag in flags {
@@ -51,29 +62,30 @@ final class ComplexUnicodeTests: IsolatedDefaultsTestCase {
                 customColors: nil,
                 skinTone: nil
             )
-            XCTAssertTrue(hasVisibleContent(image), "Flag \(flag) should render with visible content")
+            #expect(hasVisibleContent(image), "Flag \(flag) should render with visible content")
         }
     }
 
-    func testSubdivisionFlags() {
+    @Test("subdivision flags")
+    func subdivisionFlags() {
         // England, Scotland, Wales flags
         let subdivisionFlags = ["🏴󠁧󠁢󠁥󠁮󠁧󠁿", "🏴󠁧󠁢󠁳󠁣󠁴󠁿", "🏴󠁧󠁢󠁷󠁬󠁳󠁿"]
 
         for flag in subdivisionFlags {
-            let image = SpaceIconGenerator.generateSymbolIcon(
+            // These complex flags may not render on all systems, but shouldn't crash
+            _ = SpaceIconGenerator.generateSymbolIcon(
                 symbolName: flag,
                 darkMode: false,
                 customColors: nil,
                 skinTone: nil
             )
-            // These complex flags may not render on all systems, but shouldn't crash
-            XCTAssertNotNil(image, "Subdivision flag should not crash")
         }
     }
 
     // MARK: - Keycap Sequences
 
-    func testKeycapSequences() {
+    @Test("keycap sequences")
+    func keycapSequences() {
         let keycaps = ["0️⃣", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "#️⃣", "*️⃣"]
 
         for keycap in keycaps {
@@ -83,13 +95,14 @@ final class ComplexUnicodeTests: IsolatedDefaultsTestCase {
                 customColors: nil,
                 skinTone: nil
             )
-            XCTAssertTrue(hasVisibleContent(image), "Keycap \(keycap) should render with visible content")
+            #expect(hasVisibleContent(image), "Keycap \(keycap) should render with visible content")
         }
     }
 
     // MARK: - Emoji Presentation Variants
 
-    func testEmojiPresentationVariants() {
+    @Test("emoji presentation variants")
+    func emojiPresentationVariants() {
         // Text vs emoji presentation
         let heart = "❤️" // With emoji presentation selector
         let heartText = "❤" // Without selector
@@ -107,146 +120,148 @@ final class ComplexUnicodeTests: IsolatedDefaultsTestCase {
             skinTone: nil
         )
 
-        XCTAssertTrue(hasVisibleContent(imageEmoji), "Emoji presentation heart should render")
-        XCTAssertTrue(hasVisibleContent(imageText), "Text presentation heart should render")
+        #expect(hasVisibleContent(imageEmoji), "Emoji presentation heart should render")
+        #expect(hasVisibleContent(imageText), "Text presentation heart should render")
     }
 
     // MARK: - Skin Tone Edge Cases
 
-    func testSkinToneModifierWithoutBaseEmoji() {
+    @Test("skin tone modifier without base emoji")
+    func skinToneModifierWithoutBaseEmoji() {
         // Standalone skin tone modifiers (should handle gracefully)
         let modifiers = ["\u{1F3FB}", "\u{1F3FC}", "\u{1F3FD}", "\u{1F3FE}", "\u{1F3FF}"]
 
         for modifier in modifiers {
-            let image = SpaceIconGenerator.generateSymbolIcon(
+            // Should not crash, may or may not have visible content
+            _ = SpaceIconGenerator.generateSymbolIcon(
                 symbolName: modifier,
                 darkMode: false,
                 customColors: nil,
                 skinTone: nil
             )
-            // Should not crash, may or may not have visible content
-            XCTAssertNotNil(image, "Standalone skin tone modifier should not crash")
         }
     }
 
-    func testSkinToneOnAlreadyModifiedEmoji() {
+    @Test("skin tone on already modified emoji")
+    func skinToneOnAlreadyModifiedEmoji() {
         // Emoji already has a skin tone, try to apply another
         let alreadyToned = "👋🏿" // Dark skin
         Defaults[.emojiPickerSkinTone] = .light // Try to apply light
 
         let result = SkinTone.apply(to: alreadyToned)
         // Should strip existing and apply new
-        XCTAssertEqual(result, "👋🏻", "Should replace existing skin tone")
+        #expect(result == "👋🏻", "Should replace existing skin tone")
     }
 
-    func testSkinToneOutOfBounds() {
+    @Test("skin tone out of bounds")
+    func skinToneOutOfBounds() {
         // Test with out-of-bounds tone values using rawValueOrDefault
         let emoji = "👋"
 
         // Tone 6 and above should be clamped to default
         let highTone = SkinTone(rawValueOrDefault: 10)
-        let resultHigh = SkinTone.apply(to: emoji, tone: highTone)
-        XCTAssertNotNil(resultHigh, "Should handle high tone value without crash")
-        XCTAssertEqual(highTone, .default, "Out-of-bounds tone should clamp to default")
+        _ = SkinTone.apply(to: emoji, tone: highTone)
+        #expect(highTone == .default, "Out-of-bounds tone should clamp to default")
 
         // Negative tone should clamp to default
         let negativeTone = SkinTone(rawValueOrDefault: -1)
-        let resultNegative = SkinTone.apply(to: emoji, tone: negativeTone)
-        XCTAssertNotNil(resultNegative, "Should handle negative tone value without crash")
-        XCTAssertEqual(negativeTone, .default, "Negative tone should clamp to default")
+        _ = SkinTone.apply(to: emoji, tone: negativeTone)
+        #expect(negativeTone == .default, "Negative tone should clamp to default")
     }
 
     // MARK: - Zero-Width Joiner Edge Cases
 
-    func testZWJWithoutProperBase() {
+    @Test("ZWJ without proper base")
+    func zwjWithoutProperBase() {
         // ZWJ character alone
         let zwj = "\u{200D}"
-        let image = SpaceIconGenerator.generateSymbolIcon(
+        // Should not crash
+        _ = SpaceIconGenerator.generateSymbolIcon(
             symbolName: zwj,
             darkMode: false,
             customColors: nil,
             skinTone: nil
         )
-        // Should not crash
-        XCTAssertNotNil(image, "ZWJ alone should not crash")
     }
 
-    func testMalformedZWJSequence() {
+    @Test("malformed ZWJ sequence")
+    func malformedZWJSequence() {
         // ZWJ sequence with invalid components
         let malformed = "A\u{200D}B" // Letters with ZWJ
 
-        let image = SpaceIconGenerator.generateSymbolIcon(
+        _ = SpaceIconGenerator.generateSymbolIcon(
             symbolName: malformed,
             darkMode: false,
             customColors: nil,
             skinTone: nil
         )
-        XCTAssertNotNil(image, "Malformed ZWJ sequence should not crash")
     }
 
     // MARK: - Variation Selector Edge Cases
 
-    func testVariationSelectorStripping() {
+    @Test("variation selector stripping")
+    func variationSelectorStripping() {
         // Emoji with variation selector
         let withSelector = "✌️" // U+270C U+FE0F
         Defaults[.emojiPickerSkinTone] = .mediumLight
 
         let result = SkinTone.apply(to: withSelector)
         // Should strip variation selector before applying skin tone
-        XCTAssertEqual(result, "✌🏼")
+        #expect(result == "✌🏼")
     }
 
-    func testMultipleVariationSelectors() {
+    @Test("multiple variation selectors")
+    func multipleVariationSelectors() {
         // Text with multiple variation selectors (edge case)
         let multiSelector = "☺\u{FE0F}\u{FE0E}" // Mixed selectors
 
-        let image = SpaceIconGenerator.generateSymbolIcon(
+        _ = SpaceIconGenerator.generateSymbolIcon(
             symbolName: multiSelector,
             darkMode: false,
             customColors: nil,
             skinTone: nil
         )
-        XCTAssertNotNil(image, "Multiple variation selectors should not crash")
     }
 
     // MARK: - Empty and Whitespace Strings
 
-    func testEmptyStringHandling() {
-        let image = SpaceIconGenerator.generateSymbolIcon(
+    @Test("empty string handling")
+    func emptyStringHandling() {
+        // Should not crash, will fall back to "?" icon
+        _ = SpaceIconGenerator.generateSymbolIcon(
             symbolName: "",
             darkMode: false,
             customColors: nil,
             skinTone: nil
         )
-        // Should not crash, will fall back to "?" icon
-        XCTAssertNotNil(image, "Empty string should not crash")
     }
 
-    func testWhitespaceOnlyString() {
+    @Test("whitespace-only string")
+    func whitespaceOnlyString() {
         let whitespace = "   "
-        let image = SpaceIconGenerator.generateSymbolIcon(
+        _ = SpaceIconGenerator.generateSymbolIcon(
             symbolName: whitespace,
             darkMode: false,
             customColors: nil,
             skinTone: nil
         )
-        XCTAssertNotNil(image, "Whitespace-only string should not crash")
     }
 
-    func testNewlineCharacter() {
+    @Test("newline character")
+    func newlineCharacter() {
         let newline = "\n"
-        let image = SpaceIconGenerator.generateSymbolIcon(
+        _ = SpaceIconGenerator.generateSymbolIcon(
             symbolName: newline,
             darkMode: false,
             customColors: nil,
             skinTone: nil
         )
-        XCTAssertNotNil(image, "Newline character should not crash")
     }
 
     // MARK: - Unicode Normalization
 
-    func testCombiningCharacters() {
+    @Test("combining characters")
+    func combiningCharacters() {
         // é as e + combining acute (NFC vs NFD)
         let nfc = "é" // Single character
         let nfd = "e\u{0301}" // e + combining acute
@@ -264,8 +279,8 @@ final class ComplexUnicodeTests: IsolatedDefaultsTestCase {
             skinTone: nil
         )
 
-        XCTAssertNotNil(imageNFC)
-        XCTAssertNotNil(imageNFD)
+        #expect(hasVisibleContent(imageNFC))
+        #expect(hasVisibleContent(imageNFD))
     }
 
     // MARK: - Helpers

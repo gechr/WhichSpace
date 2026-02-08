@@ -1,14 +1,14 @@
 import Cocoa
-import XCTest
+import Testing
 @testable import WhichSpace
 
+@Suite("Color Swatch")
 @MainActor
-final class ColorSwatchTests: XCTestCase {
-    private var sut: ColorSwatch!
-    private var testWindow: NSWindow!
+struct ColorSwatchTests {
+    private let sut: ColorSwatch
+    private let testWindow: NSWindow
 
-    override func setUp() {
-        super.setUp()
+    init() {
         sut = ColorSwatch()
         sut.frame = NSRect(origin: .zero, size: sut.intrinsicContentSize)
 
@@ -22,15 +22,10 @@ final class ColorSwatchTests: XCTestCase {
         testWindow.contentView = sut
     }
 
-    override func tearDown() {
-        testWindow = nil
-        sut = nil
-        super.tearDown()
-    }
-
     // MARK: - Color Selection Tests
 
-    func testClickOnFirstSwatch_callsOnColorSelectedWithBlack() {
+    @Test("Click on first swatch calls onColorSelected with black")
+    func clickOnFirstSwatch_callsOnColorSelectedWithBlack() {
         var selectedColor: NSColor?
         sut.onColorSelected = { color in
             selectedColor = color
@@ -38,10 +33,11 @@ final class ColorSwatchTests: XCTestCase {
 
         simulateClickOnSwatch(at: 0)
 
-        XCTAssertEqual(selectedColor, .black, "First swatch should be black")
+        #expect(selectedColor == .black, "First swatch should be black")
     }
 
-    func testClickOnSecondSwatch_callsOnColorSelectedWithWhite() {
+    @Test("Click on second swatch calls onColorSelected with white")
+    func clickOnSecondSwatch_callsOnColorSelectedWithWhite() {
         var selectedColor: NSColor?
         sut.onColorSelected = { color in
             selectedColor = color
@@ -49,10 +45,11 @@ final class ColorSwatchTests: XCTestCase {
 
         simulateClickOnSwatch(at: 1)
 
-        XCTAssertEqual(selectedColor, .white, "Second swatch should be white")
+        #expect(selectedColor == .white, "Second swatch should be white")
     }
 
-    func testClickOnThirdSwatch_callsOnColorSelectedWithSystemRed() {
+    @Test("Click on third swatch calls onColorSelected with systemRed")
+    func clickOnThirdSwatch_callsOnColorSelectedWithSystemRed() {
         var selectedColor: NSColor?
         sut.onColorSelected = { color in
             selectedColor = color
@@ -60,10 +57,11 @@ final class ColorSwatchTests: XCTestCase {
 
         simulateClickOnSwatch(at: 2)
 
-        XCTAssertEqual(selectedColor, .systemRed, "Third swatch should be systemRed")
+        #expect(selectedColor == .systemRed, "Third swatch should be systemRed")
     }
 
-    func testClickOnEachPresetColor_callsOnColorSelectedWithCorrectColor() {
+    @Test("Click on each preset color calls onColorSelected with correct color")
+    func clickOnEachPresetColor_callsOnColorSelectedWithCorrectColor() {
         let expectedColors = ColorSwatch.presetColors
 
         for (index, expectedColor) in expectedColors.enumerated() {
@@ -74,9 +72,8 @@ final class ColorSwatchTests: XCTestCase {
 
             simulateClickOnSwatch(at: index)
 
-            XCTAssertEqual(
-                selectedColor,
-                expectedColor,
+            #expect(
+                selectedColor == expectedColor,
                 "Swatch at index \(index) should select \(expectedColor)"
             )
         }
@@ -84,7 +81,8 @@ final class ColorSwatchTests: XCTestCase {
 
     // MARK: - Custom Color Circle Tests
 
-    func testClickOnCustomColorCircle_callsOnCustomColorRequested() {
+    @Test("Click on custom color circle calls onCustomColorRequested")
+    func clickOnCustomColorCircle_callsOnCustomColorRequested() {
         var customColorRequested = false
         sut.onCustomColorRequested = {
             customColorRequested = true
@@ -92,10 +90,11 @@ final class ColorSwatchTests: XCTestCase {
 
         simulateClickOnCustomColorButton()
 
-        XCTAssertTrue(customColorRequested, "Custom color circle should trigger onCustomColorRequested")
+        #expect(customColorRequested, "Custom color circle should trigger onCustomColorRequested")
     }
 
-    func testClickOnCustomColorCircle_doesNotCallOnColorSelected() {
+    @Test("Click on custom color circle does not call onColorSelected")
+    func clickOnCustomColorCircle_doesNotCallOnColorSelected() {
         var colorSelectedCalled = false
         sut.onColorSelected = { _ in
             colorSelectedCalled = true
@@ -104,12 +103,13 @@ final class ColorSwatchTests: XCTestCase {
 
         simulateClickOnCustomColorButton()
 
-        XCTAssertFalse(colorSelectedCalled, "Custom color circle should not trigger onColorSelected")
+        #expect(!colorSelectedCalled, "Custom color circle should not trigger onColorSelected")
     }
 
     // MARK: - Edge Case Tests
 
-    func testClickOutsideSwatches_doesNotCallCallbacks() {
+    @Test("Click outside swatches does not call callbacks")
+    func clickOutsideSwatches_doesNotCallCallbacks() {
         var colorSelectedCalled = false
         var customColorRequestedCalled = false
 
@@ -124,11 +124,12 @@ final class ColorSwatchTests: XCTestCase {
         let outsidePoint = CGPoint(x: sut.bounds.width + 10.0, y: sut.bounds.height / 2.0)
         simulateMouseUp(at: outsidePoint)
 
-        XCTAssertFalse(colorSelectedCalled, "Should not call onColorSelected when clicking outside")
-        XCTAssertFalse(customColorRequestedCalled, "Should not call onCustomColorRequested when clicking outside")
+        #expect(!colorSelectedCalled, "Should not call onColorSelected when clicking outside")
+        #expect(!customColorRequestedCalled, "Should not call onCustomColorRequested when clicking outside")
     }
 
-    func testClickInSpacingBetweenSwatches_doesNotCallCallbacks() {
+    @Test("Click in spacing between swatches does not call callbacks")
+    func clickInSpacingBetweenSwatches_doesNotCallCallbacks() {
         var colorSelectedCalled = false
         var customColorRequestedCalled = false
 
@@ -143,66 +144,73 @@ final class ColorSwatchTests: XCTestCase {
         let spacingPoint = spacingPointBetweenSwatches(0, 1)
         simulateMouseUp(at: spacingPoint)
 
-        XCTAssertFalse(colorSelectedCalled, "Should not call onColorSelected when clicking in spacing")
-        XCTAssertFalse(customColorRequestedCalled, "Should not call onCustomColorRequested when clicking in spacing")
+        #expect(!colorSelectedCalled, "Should not call onColorSelected when clicking in spacing")
+        #expect(!customColorRequestedCalled, "Should not call onCustomColorRequested when clicking in spacing")
     }
 
     // MARK: - Hover State Tests
 
-    func testMouseMoveOverSwatch_setsNeedsDisplay() {
-        sut.needsDisplay = false
+    @Test("Mouse move over swatch updates hoveredIndex")
+    func mouseMoveOverSwatch_updatesHoveredIndex() {
+        #expect(sut.hoveredIndex == nil)
 
         let swatchCenter = centerPointForSwatch(at: 0)
         simulateMouseMove(at: swatchCenter)
 
-        XCTAssertTrue(sut.needsDisplay, "Hovering over a swatch should set needsDisplay")
+        #expect(sut.hoveredIndex == 0, "Hovering over first swatch should set hoveredIndex to 0")
     }
 
-    func testMouseMoveToNewSwatch_setsNeedsDisplay() {
+    @Test("Mouse move to new swatch updates hoveredIndex")
+    func mouseMoveToNewSwatch_updatesHoveredIndex() {
         // Move to first swatch
         simulateMouseMove(at: centerPointForSwatch(at: 0))
-        sut.needsDisplay = false
+        #expect(sut.hoveredIndex == 0)
 
         // Move to second swatch
         simulateMouseMove(at: centerPointForSwatch(at: 1))
 
-        XCTAssertTrue(sut.needsDisplay, "Moving to a different swatch should set needsDisplay")
+        #expect(sut.hoveredIndex == 1, "Moving to a different swatch should update hoveredIndex")
     }
 
-    func testMouseMoveFromSwatchToOutside_setsNeedsDisplay() {
+    @Test("Mouse move from swatch to outside clears hoveredIndex")
+    func mouseMoveFromSwatchToOutside_clearsHoveredIndex() {
         // Move to first swatch
         simulateMouseMove(at: centerPointForSwatch(at: 0))
-        sut.needsDisplay = false
+        #expect(sut.hoveredIndex == 0)
 
         // Move outside all swatches
         let outsidePoint = CGPoint(x: sut.bounds.width + 10, y: sut.bounds.height / 2)
         simulateMouseMove(at: outsidePoint)
 
-        XCTAssertTrue(sut.needsDisplay, "Moving from swatch to outside should set needsDisplay")
+        #expect(sut.hoveredIndex == nil, "Moving from swatch to outside should clear hoveredIndex")
     }
 
-    func testMouseExit_setsNeedsDisplay() {
+    @Test("Mouse exit clears hoveredIndex")
+    func mouseExit_clearsHoveredIndex() {
         // First hover over a swatch
         simulateMouseMove(at: centerPointForSwatch(at: 0))
-        sut.needsDisplay = false
+        #expect(sut.hoveredIndex == 0)
 
         // Directly call mouseExited (simulating event creation for exit is problematic)
         sut.mouseExited(with: createDummyMouseEvent())
 
-        XCTAssertTrue(sut.needsDisplay, "Mouse exit should set needsDisplay")
+        #expect(sut.hoveredIndex == nil, "Mouse exit should clear hoveredIndex")
     }
 
-    func testMouseMoveToCustomColorButton_setsNeedsDisplay() {
-        sut.needsDisplay = false
+    @Test("Mouse move to custom color button updates hoveredIndex")
+    func mouseMoveToCustomColorButton_updatesHoveredIndex() {
+        #expect(sut.hoveredIndex == nil)
 
         simulateMouseMove(at: centerPointForCustomColorButton())
 
-        XCTAssertTrue(sut.needsDisplay, "Hovering over custom color button should set needsDisplay")
+        let customIndex = ColorSwatch.presetColors.count
+        #expect(sut.hoveredIndex == customIndex, "Hovering over custom color button should set hoveredIndex")
     }
 
     // MARK: - Intrinsic Content Size Tests
 
-    func testIntrinsicContentSize_hasExpectedDimensions() {
+    @Test("Intrinsic content size has expected dimensions")
+    func intrinsicContentSize_hasExpectedDimensions() {
         let size = sut.intrinsicContentSize
         let colorCount = Double(ColorSwatch.presetColors.count + 1) // +1 for custom button
 
@@ -215,8 +223,8 @@ final class ColorSwatchTests: XCTestCase {
         let expectedWidth = leftPadding + rightPadding + colorCount * swatchSize + (colorCount - 1) * spacing
         let expectedHeight: Double = swatchSize + rightPadding
 
-        XCTAssertEqual(size.width, expectedWidth, accuracy: 0.1, "Width should match expected calculation")
-        XCTAssertEqual(size.height, expectedHeight, accuracy: 0.1, "Height should match expected calculation")
+        #expect(abs(size.width - expectedWidth) <= 0.1, "Width should match expected calculation")
+        #expect(abs(size.height - expectedHeight) <= 0.1, "Height should match expected calculation")
     }
 
     // MARK: - Helpers

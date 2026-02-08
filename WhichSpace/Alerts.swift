@@ -1,5 +1,14 @@
 import Cocoa
 
+private func runAlertOnMain<T: Sendable>(_ work: @MainActor () -> T) -> T {
+    if Thread.isMainThread {
+        return MainActor.assumeIsolated(work)
+    }
+    return DispatchQueue.main.sync {
+        MainActor.assumeIsolated(work)
+    }
+}
+
 extension NSAlert {
     /// Configures the alert with a scaled-down app icon (32x32)
     func useSmallAppIcon() {
@@ -37,21 +46,23 @@ struct InfoAlert {
 
     /// Shows the alert and returns true if the user clicked the primary button
     func runModal() -> Bool {
-        NSApp.activate(ignoringOtherApps: true)
+        runAlertOnMain {
+            NSApp.activate(ignoringOtherApps: true)
 
-        let alert = NSAlert()
-        alert.messageText = message
-        alert.informativeText = detail
-        alert.alertStyle = .informational
-        if let icon {
-            alert.icon = icon
-        } else {
-            alert.useSmallAppIcon()
+            let alert = NSAlert()
+            alert.messageText = message
+            alert.informativeText = detail
+            alert.alertStyle = .informational
+            if let icon {
+                alert.icon = icon
+            } else {
+                alert.useSmallAppIcon()
+            }
+            alert.addButton(withTitle: primaryButtonTitle)
+            alert.addButton(withTitle: dismissButtonTitle)
+
+            return alert.runModal() == .alertFirstButtonReturn
         }
-        alert.addButton(withTitle: primaryButtonTitle)
-        alert.addButton(withTitle: dismissButtonTitle)
-
-        return alert.runModal() == .alertFirstButtonReturn
     }
 }
 
@@ -71,21 +82,23 @@ struct ConfirmationAlert {
 
     /// Shows the alert and returns true if the user confirmed
     func runModal() -> Bool {
-        NSApp.activate(ignoringOtherApps: true)
+        runAlertOnMain {
+            NSApp.activate(ignoringOtherApps: true)
 
-        let alert = NSAlert()
-        alert.messageText = message
-        alert.informativeText = detail
-        alert.alertStyle = .warning
-        alert.useSmallAppIcon()
-        alert.addButton(withTitle: confirmTitle)
-        alert.addButton(withTitle: Localization.buttonCancel)
-        if isDestructive {
-            alert.buttons[0].hasDestructiveAction = true
-            alert.buttons[0].keyEquivalent = ""
-            alert.buttons[1].keyEquivalent = "\r"
+            let alert = NSAlert()
+            alert.messageText = message
+            alert.informativeText = detail
+            alert.alertStyle = .warning
+            alert.useSmallAppIcon()
+            alert.addButton(withTitle: confirmTitle)
+            alert.addButton(withTitle: Localization.buttonCancel)
+            if isDestructive {
+                alert.buttons[0].hasDestructiveAction = true
+                alert.buttons[0].keyEquivalent = ""
+                alert.buttons[1].keyEquivalent = "\r"
+            }
+
+            return alert.runModal() == .alertFirstButtonReturn
         }
-
-        return alert.runModal() == .alertFirstButtonReturn
     }
 }

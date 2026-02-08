@@ -1,6 +1,8 @@
-import XCTest
+import Foundation
+import Testing
 
-final class LocalizationTests: XCTestCase {
+@Suite("Localization")
+struct LocalizationTests {
     /// All supported languages in Localizable.xcstrings
     private static let expectedLanguages: Set<String> = [
         "ar", "bg", "ca", "cs", "da", "de", "el", "en", "en-GB", "es",
@@ -10,10 +12,7 @@ final class LocalizationTests: XCTestCase {
         "zh-Hans", "zh-Hant", "zh-HK",
     ]
 
-    // Derive path at compile time from this source file's location
-    // This file: WhichSpaceTests/Localization/LocalizationTests.swift
-    // Target:    WhichSpace/Localization/Localizable.xcstrings
-    private static let catalogURL: URL = .init(fileURLWithPath: #file)
+    private static let catalogURL: URL = .init(fileURLWithPath: #filePath)
         .deletingLastPathComponent() // Remove LocalizationTests.swift
         .deletingLastPathComponent() // Remove Localization
         .deletingLastPathComponent() // Remove WhichSpaceTests
@@ -23,25 +22,26 @@ final class LocalizationTests: XCTestCase {
 
     // MARK: - Tests
 
-    func testAllExpectedLanguagesExist() throws {
+    @Test("all expected languages exist")
+    func allExpectedLanguagesExist() throws {
         let catalog = try loadCatalog()
         let actualLanguages = allLanguages(in: catalog)
 
         let missingLanguages = Self.expectedLanguages.subtracting(actualLanguages)
         let unexpectedLanguages = actualLanguages.subtracting(Self.expectedLanguages)
 
-        XCTAssertTrue(
+        #expect(
             missingLanguages.isEmpty,
             "Missing language entries: \(missingLanguages.sorted().joined(separator: ", "))"
         )
-        XCTAssertTrue(
+        #expect(
             unexpectedLanguages.isEmpty,
-            "Unexpected language entries (add to expectedLanguages if intentional): " +
-                "\(unexpectedLanguages.sorted().joined(separator: ", "))"
+            "Unexpected language entries: \(unexpectedLanguages.sorted().joined(separator: ", "))"
         )
     }
 
-    func testNoMissingTranslations() throws {
+    @Test("no missing translations")
+    func noMissingTranslations() throws {
         let catalog = try loadCatalog()
         let keys = catalog.strings.keys.sorted()
         var failures: [String] = []
@@ -65,13 +65,14 @@ final class LocalizationTests: XCTestCase {
             }
         }
 
-        XCTAssertTrue(
+        #expect(
             failures.isEmpty,
             "Languages with missing translations:\n\(failures.joined(separator: "\n"))"
         )
     }
 
-    func testNoExtraTranslations() throws {
+    @Test("no extra translations")
+    func noExtraTranslations() throws {
         let catalog = try loadCatalog()
         var failures: [String] = []
 
@@ -87,7 +88,7 @@ final class LocalizationTests: XCTestCase {
             }
         }
 
-        XCTAssertTrue(
+        #expect(
             failures.isEmpty,
             "Strings with unexpected language entries:\n\(failures.sorted().joined(separator: "\n"))"
         )

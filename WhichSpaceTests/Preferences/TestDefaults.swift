@@ -3,10 +3,13 @@ import Foundation
 import XCTest
 @testable import WhichSpace
 
+/// UserDefaults is thread-safe but not marked Sendable in the SDK.
+extension UserDefaults: @unchecked @retroactive Sendable {}
+
 // MARK: - TestSuite
 
 /// A test UserDefaults suite with its associated name.
-struct TestSuite {
+struct TestSuite: Sendable {
     let suite: UserDefaults
     let suiteName: String
 }
@@ -21,15 +24,17 @@ struct TestSuite {
 /// current run's files).
 enum TestSuiteFactory {
     private static let testSuitePrefix = "WhichSpaceTests"
-    private static var hasCleanedUp = false
-    private static let cleanupLock = NSLock()
+    private static let plistSuffix = ".plist"
+    private static let cleanupOnce: Void = {
+        cleanupOrphanedTestFiles()
+    }()
 
     /// Creates a new UserDefaults suite with a unique name.
     ///
     /// Each call returns a fresh, empty suite suitable for test isolation.
     /// The suite name includes a UUID to prevent collisions.
     static func createSuite() -> TestSuite {
-        cleanupOrphanedTestFilesOnce()
+        _ = cleanupOnce
         let name = "\(testSuitePrefix).\(UUID().uuidString)"
         return TestSuite(suite: UserDefaults(suiteName: name)!, suiteName: name)
     }
@@ -46,15 +51,7 @@ enum TestSuiteFactory {
     ///
     /// Called once per test run. Files from previous runs are safe to delete
     /// because cfprefsd has long since forgotten about them.
-    private static func cleanupOrphanedTestFilesOnce() {
-        cleanupLock.lock()
-        defer { cleanupLock.unlock() }
-
-        guard !hasCleanedUp else {
-            return
-        }
-        hasCleanedUp = true
-
+    private static func cleanupOrphanedTestFiles() {
         let prefsURL = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask).first!
             .appendingPathComponent("Preferences")
 
@@ -63,17 +60,27 @@ enum TestSuiteFactory {
             includingPropertiesForKeys: nil
         ) else { return }
 
-        for file in files where file.lastPathComponent.wholeMatch(of: testSuitePattern) != nil {
+        for file in files where isTestSuitePlist(filename: file.lastPathComponent) {
             try? FileManager.default.removeItem(at: file)
         }
     }
 
-    /// Pattern matching test suite plist files: "WhichSpaceTests.UUID.plist"
-    private static let testSuitePattern: Regex<Substring> = {
-        let uuid = "[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}"
-        // swiftlint:disable:next force_try
-        return try! Regex("^\(testSuitePrefix)\\.\(uuid)\\.plist$")
-    }()
+    /// Matches test suite plist filenames: "WhichSpaceTests.UUID.plist"
+    private static func isTestSuitePlist(filename: String) -> Bool {
+        let prefix = "\(testSuitePrefix)."
+        guard filename.hasPrefix(prefix), filename.hasSuffix(plistSuffix) else {
+            return false
+        }
+
+        let uuidStart = filename.index(filename.startIndex, offsetBy: prefix.count)
+        let uuidEnd = filename.index(filename.endIndex, offsetBy: -plistSuffix.count)
+        guard uuidStart < uuidEnd else {
+            return false
+        }
+
+        let uuidString = String(filename[uuidStart ..< uuidEnd])
+        return UUID(uuidString: uuidString) != nil
+    }
 }
 
 // MARK: - IsolatedDefaultsTestCase
@@ -96,34 +103,8 @@ enum TestSuiteFactory {
 //     }
 // }
 // ```
-//
-// ## Note for @MainActor Tests
-// If your test class needs `@MainActor`, don't inherit from this class.
-// Instead, create a `store` property directly and use `TestSuiteFactory` in setUp/tearDown:
-// ```swift
-// @MainActor
-// final class MyTests: XCTestCase {
-//     private var store: DefaultsStore!
-//     private var testSuite: TestSuite!
-//
-//     override func setUp() {
-//         super.setUp()
-//         testSuite = TestSuiteFactory.createSuite()
-//         store = DefaultsStore(suite: testSuite.suite)
-//     }
-//
-//     override func tearDown() {
-//         if let store, let testSuite {
-//             store.resetAll()
-//             TestSuiteFactory.destroySuite(testSuite)
-//         }
-//         store = nil
-//         testSuite = nil
-//         super.tearDown()
-//     }
-// }
-// ```
 // swiftformat:disable preferFinalClasses
+@MainActor
 // swiftlint:disable:next final_class final_test_case
 class IsolatedDefaultsTestCase: XCTestCase {
     // swiftformat:enable preferFinalClasses
@@ -150,11 +131,13 @@ class IsolatedDefaultsTestCase: XCTestCase {
 
         // Register cleanup that runs even if test crashes
         addTeardownBlock { [store, testSuite] in
-            guard let store, let testSuite else {
-                return
+            MainActor.assumeIsolated {
+                guard let store, let testSuite else {
+                    return
+                }
+                store.resetAll()
+                TestSuiteFactory.destroySuite(testSuite)
             }
-            store.resetAll()
-            TestSuiteFactory.destroySuite(testSuite)
         }
     }
 

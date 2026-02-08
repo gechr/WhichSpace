@@ -14,7 +14,7 @@ protocol KeySpec {
     var defaultValue: Value { get }
 }
 
-struct TypedKeySpec<Value: Defaults.Serializable>: KeySpec {
+struct TypedKeySpec<Value: Defaults.Serializable>: KeySpec, @unchecked Sendable {
     let name: String
     let defaultValue: Value
 
@@ -105,9 +105,9 @@ enum KeySpecs {
 /// Provides access to app preferences backed by a specific UserDefaults suite.
 ///
 /// ## Production Usage
-/// Use `DefaultsStore.shared` which uses `UserDefaults.standard`:
+/// Use `AppEnvironment.shared.store` which uses `UserDefaults.standard`:
 /// ```swift
-/// let store = DefaultsStore.shared
+/// let store = AppEnvironment.shared.store
 /// store.showAllSpaces = true
 /// ```
 ///
@@ -121,10 +121,8 @@ enum KeySpecs {
 ///
 /// ## Parallel Test Safety
 /// With per-test suites, tests can safely run in parallel without interference.
-final class DefaultsStore: @unchecked Sendable {
-    /// Shared instance using `UserDefaults.standard` for production use.
-    static let shared = DefaultsStore(suite: .standard)
-
+@MainActor
+final class DefaultsStore {
     let suite: UserDefaults
 
     // Lazily-created keys bound to this store's suite
@@ -214,21 +212,34 @@ final class DefaultsStore: @unchecked Sendable {
 
     var separatorColor: NSColor? {
         get {
-            guard let data = Defaults[keySeparatorColor] else {
+            guard let data = Defaults[keySeparatorColor]
+            else { return nil }
+            do {
+                return try NSKeyedUnarchiver.unarchivedObject(ofClass: NSColor.self, from: data)
+            } catch {
+                NSLog("DefaultsStore: failed to unarchive separatorColor: %@", error.localizedDescription)
                 return nil
             }
-            return try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSColor.self, from: data)
         }
         set {
             if let color = newValue {
-                Defaults[keySeparatorColor] = try? NSKeyedArchiver.archivedData(
-                    withRootObject: color,
-                    requiringSecureCoding: true
-                )
+                do {
+                    Defaults[keySeparatorColor] = try NSKeyedArchiver.archivedData(
+                        withRootObject: color,
+                        requiringSecureCoding: true
+                    )
+                } catch {
+                    NSLog("DefaultsStore: failed to archive separatorColor: %@", error.localizedDescription)
+                }
             } else {
                 Defaults[keySeparatorColor] = nil
             }
         }
+    }
+
+    /// Raw separator color data for use as an equatable cache key
+    var separatorColorData: Data? {
+        Defaults[keySeparatorColor]
     }
 
     var showAllDisplays: Bool {

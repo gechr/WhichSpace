@@ -1,14 +1,83 @@
 import AppKit
 
+// MARK: - HotKeyProvider
+
+/// Abstracts CGS symbolic hot key APIs for testability.
+protocol HotKeyProvider: Sendable {
+    func getHotKeyValue(for hotKey: CGSSymbolicHotKey) -> (keyChar: UniChar, keyCode: CGKeyCode, flags: UInt64)?
+    func isHotKeyEnabled(_ hotKey: CGSSymbolicHotKey) -> Bool
+    func setHotKeyEnabled(_ hotKey: CGSSymbolicHotKey, enabled: Bool)
+}
+
+// MARK: - CGSHotKeyProvider
+
+/// Default implementation that calls the private CGS APIs.
+struct CGSHotKeyProvider: HotKeyProvider {
+    /// Returns true if the CGS symbolic hot key APIs are available at runtime.
+    static var isAvailable: Bool {
+        guard let handle = dlopen(nil, RTLD_LAZY) else {
+            return false
+        }
+        defer { dlclose(handle) }
+        return dlsym(handle, "CGSGetSymbolicHotKeyValue") != nil
+    }
+
+    func getHotKeyValue(for hotKey: CGSSymbolicHotKey) -> (keyChar: UniChar, keyCode: CGKeyCode, flags: UInt64)? {
+        var keyCode: CGKeyCode = 0
+        var flags: CGSModifierFlags = 0
+
+        let error = CGSGetSymbolicHotKeyValue(hotKey, nil, &keyCode, &flags)
+        guard error == .success else {
+            return nil
+        }
+        return (0, keyCode, flags)
+    }
+
+    func isHotKeyEnabled(_ hotKey: CGSSymbolicHotKey) -> Bool {
+        CGSIsSymbolicHotKeyEnabled(hotKey)
+    }
+
+    func setHotKeyEnabled(_ hotKey: CGSSymbolicHotKey, enabled: Bool) {
+        _ = CGSSetSymbolicHotKeyEnabled(hotKey, enabled)
+    }
+}
+
 // MARK: - Space Switching
 
-enum SpaceSwitcher {
+struct SpaceSwitcher: @unchecked Sendable {
     private static let firstHotKey: UInt16 = 118
     private static let maxSupportedSpace = 16
     private static let yabaiExecutableName = "yabai"
+    private static let accessibilityPromptOptionKey = "AXTrustedCheckOptionPrompt"
 
-    private static var binYabai: URL?
-    private static var hasPromptedForAccessibility = false
+    private actor SharedState {
+        private var binYabai: URL?
+        private var hasPromptedForAccessibility = false
+
+        func claimAccessibilityPrompt() -> Bool {
+            guard !hasPromptedForAccessibility else {
+                return false
+            }
+            hasPromptedForAccessibility = true
+            return true
+        }
+
+        func cachedYabaiURL() -> URL? {
+            binYabai
+        }
+
+        func cacheYabaiURL(_ url: URL) {
+            binYabai = url
+        }
+    }
+
+    private static let sharedState = SharedState()
+
+    let hotKeyProvider: any HotKeyProvider
+
+    init(hotKeyProvider: any HotKeyProvider = CGSHotKeyProvider()) {
+        self.hotKeyProvider = hotKeyProvider
+    }
 
     /// Resets WhichSpace Accessibility permission to clear stale TCC entries.
     static func resetAccessibilityPermission() {
@@ -31,57 +100,62 @@ enum SpaceSwitcher {
         }
     }
 
-    static func switchToSpace(_ space: Int) {
-        guard ensureAccessibilityPermission() else {
+    func switchToSpace(_ space: Int) async {
+        guard CGSHotKeyProvider.isAvailable else {
+            NSLog("SpaceSwitcher: CGS hot key APIs unavailable; cannot switch spaces via keyboard shortcut")
+            return
+        }
+
+        guard await Self.ensureAccessibilityPermission() else {
             NSLog("SpaceSwitcher: accessibility permission not granted; cannot switch")
             return
         }
 
         guard let event = eventForSwitching(to: space) else {
+            NSLog("SpaceSwitcher: no event produced for space %d; aborting switch", space)
             return
         }
-        postSwitchEvents(with: event)
+        Self.postSwitchEvents(with: event)
     }
 
-    private static func ensureAccessibilityPermission() -> Bool {
+    private static func ensureAccessibilityPermission() async -> Bool {
         if AXIsProcessTrusted() {
             return true
         }
 
         // Request permission once so the user sees the System Settings prompt
-        if !hasPromptedForAccessibility {
+        if await sharedState.claimAccessibilityPrompt() {
             resetAccessibilityPermission()
-            let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
+            let options = [accessibilityPromptOptionKey: true] as CFDictionary
             _ = AXIsProcessTrustedWithOptions(options)
-            hasPromptedForAccessibility = true
         }
 
         return false
     }
 
-    private static func eventForSwitching(to space: Int) -> CGEvent? {
-        guard (1 ... maxSupportedSpace).contains(space) else {
+    func eventForSwitching(to space: Int) -> CGEvent? {
+        guard (1 ... Self.maxSupportedSpace).contains(space) else {
+            NSLog("SpaceSwitcher: space %d out of range (1-%d)", space, Self.maxSupportedSpace)
             return nil
         }
 
-        let hotKey = CGSSymbolicHotKey(firstHotKey + UInt16(space) - 1)
-        var keyCode: CGKeyCode = 0
-        var flags: CGSModifierFlags = 0
+        let hotKey = CGSSymbolicHotKey(Self.firstHotKey + UInt16(space) - 1)
 
-        let error = CGSGetSymbolicHotKeyValue(hotKey, nil, &keyCode, &flags)
-        guard error == .success else {
+        guard let value = hotKeyProvider.getHotKeyValue(for: hotKey) else {
+            NSLog("SpaceSwitcher: failed to get hot key value for space %d", space)
             return nil
         }
 
-        if !CGSIsSymbolicHotKeyEnabled(hotKey) {
-            _ = CGSSetSymbolicHotKeyEnabled(hotKey, true)
+        if !hotKeyProvider.isHotKeyEnabled(hotKey) {
+            hotKeyProvider.setHotKeyEnabled(hotKey, enabled: true)
         }
 
-        guard let keyDownEvent = CGEvent(keyboardEventSource: nil, virtualKey: keyCode, keyDown: true) else {
+        guard let keyDownEvent = CGEvent(keyboardEventSource: nil, virtualKey: value.keyCode, keyDown: true) else {
+            NSLog("SpaceSwitcher: failed to create CGEvent for space %d", space)
             return nil
         }
 
-        keyDownEvent.flags = CGEventFlags(rawValue: flags)
+        keyDownEvent.flags = CGEventFlags(rawValue: value.flags)
         return keyDownEvent
     }
 
@@ -98,8 +172,8 @@ enum SpaceSwitcher {
     }
 
     /// Returns true if the yabai CLI is available and responding
-    static func isYabaiAvailable() -> Bool {
-        guard let yabaiURL = resolveYabaiExecutable() else {
+    static func isYabaiAvailable() async -> Bool {
+        guard let yabaiURL = await resolveYabaiExecutable() else {
             return false
         }
 
@@ -113,7 +187,7 @@ enum SpaceSwitcher {
         do {
             try process.run()
 
-            guard let status = runWithTimeout(process) else {
+            guard let status = await runWithTimeout(process) else {
                 NSLog("SpaceSwitcher: yabai preflight timed out")
                 return false
             }
@@ -133,8 +207,8 @@ enum SpaceSwitcher {
     }
 
     /// Switches to space using yabai CLI. Returns true on success.
-    static func switchToSpaceViaYabai(_ space: Int) -> Bool {
-        guard let yabaiURL = resolveYabaiExecutable() else {
+    static func switchToSpaceViaYabai(_ space: Int) async -> Bool {
+        guard let yabaiURL = await resolveYabaiExecutable() else {
             return false
         }
 
@@ -148,7 +222,7 @@ enum SpaceSwitcher {
         do {
             try process.run()
 
-            guard let status = runWithTimeout(process) else {
+            guard let status = await runWithTimeout(process) else {
                 NSLog("SpaceSwitcher: yabai command timed out")
                 return false
             }
@@ -167,28 +241,40 @@ enum SpaceSwitcher {
         }
     }
 
-    /// Runs a process with a timeout to avoid blocking the main thread indefinitely
-    /// Returns the termination status, or nil if the process timed out
-    private static func runWithTimeout(_ process: Process, timeout: TimeInterval = 3) -> Int32? {
-        let semaphore = DispatchSemaphore(value: 0)
-        DispatchQueue.global().async {
-            process.waitUntilExit()
-            semaphore.signal()
-        }
+    /// Runs a process with a timeout to avoid blocking the main thread indefinitely.
+    /// Returns the termination status, or nil if the process timed out.
+    private static func runWithTimeout(_ process: Process, timeout: Duration = .seconds(3)) async -> Int32? {
+        await withTaskGroup(of: Int32?.self) { group in
+            group.addTask {
+                await withCheckedContinuation { continuation in
+                    DispatchQueue.global(qos: .utility).async {
+                        process.waitUntilExit()
+                        continuation.resume(returning: process.terminationStatus)
+                    }
+                }
+            }
 
-        if semaphore.wait(timeout: .now() + timeout) == .timedOut {
-            process.terminate()
-            return nil
-        }
+            group.addTask {
+                try? await Task.sleep(for: timeout)
+                return nil
+            }
 
-        return process.terminationStatus
+            let result = await group.next()!
+            group.cancelAll()
+
+            if result == nil {
+                process.terminate()
+            }
+
+            return result
+        }
     }
 
     /// Resolve the absolute path to the yabai executable once to avoid PATH issues when launched from Finder/Login
     /// Items
-    private static func resolveYabaiExecutable() -> URL? {
-        if let binYabai {
-            return binYabai
+    private static func resolveYabaiExecutable() async -> URL? {
+        if let cached = await sharedState.cachedYabaiURL() {
+            return cached
         }
 
         let pathEnv = ProcessInfo.processInfo.environment["PATH"] ?? ""
@@ -205,7 +291,7 @@ enum SpaceSwitcher {
             let candidate = URL(fileURLWithPath: path, isDirectory: true)
                 .appendingPathComponent(yabaiExecutableName)
             if FileManager.default.isExecutableFile(atPath: candidate.path) {
-                binYabai = candidate
+                await sharedState.cacheYabaiURL(candidate)
                 return candidate
             }
         }

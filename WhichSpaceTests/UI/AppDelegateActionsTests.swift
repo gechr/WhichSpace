@@ -14,7 +14,7 @@ struct StubConfirmationAlert: ConfirmationAlertProvider {
 }
 
 /// A factory that creates stub alerts with configurable confirmation behavior
-final class StubAlertFactory: ConfirmationAlertFactory {
+final class StubAlertFactory: ConfirmationAlertFactory, @unchecked Sendable {
     var shouldConfirm = true
     private(set) var alertsShown: [(message: String, detail: String, confirmTitle: String, isDestructive: Bool)] = []
 
@@ -36,7 +36,7 @@ final class StubAlertFactory: ConfirmationAlertFactory {
 // MARK: - Stub LaunchAtLogin for Testing
 
 /// A stub launch-at-login provider for testing
-final class StubLaunchAtLoginProvider: LaunchAtLoginProvider {
+final class StubLaunchAtLoginProvider: LaunchAtLoginProvider, @unchecked Sendable {
     var isEnabled = false
 }
 
@@ -99,15 +99,6 @@ final class AppDelegateActionsTests: XCTestCase {
     }
 
     // MARK: - Helper Methods
-
-    /// Creates an AsyncStream that receives notifications when updateStatusBarIcon() is called.
-    /// Call this before triggering state changes that require observation.
-    private func makeUpdateNotifier() -> (stream: AsyncStream<Void>, iterator: AsyncStream<Void>.AsyncIterator) {
-        var continuation: AsyncStream<Void>.Continuation!
-        let stream = AsyncStream<Void> { continuation = $0 }
-        sut.statusBarIconUpdateNotifier = continuation
-        return (stream, stream.makeAsyncIterator())
-    }
 
     /// Waits for statusBarIconUpdateCount to change from the given value.
     /// Returns true if count changed, false if timeout was reached.
@@ -956,7 +947,7 @@ final class AppDelegateActionsTests: XCTestCase {
     func testApplyAllToAllSpaces_whenCurrentSpaceIsZero_noOp() {
         // Setup with no active space
         stub.displays = []
-        appState = AppState(displaySpaceProvider: stub, skipObservers: true)
+        appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
         sut = AppDelegate(appState: appState, alertFactory: alertFactory)
         XCTAssertEqual(appState.currentSpace, 0)
 
@@ -967,7 +958,7 @@ final class AppDelegateActionsTests: XCTestCase {
 
     func testResetSpaceToDefault_whenCurrentSpaceIsZero_noOp() {
         stub.displays = []
-        appState = AppState(displaySpaceProvider: stub, skipObservers: true)
+        appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
         sut = AppDelegate(appState: appState, alertFactory: alertFactory)
 
         sut.resetSpaceToDefault()
@@ -977,7 +968,7 @@ final class AppDelegateActionsTests: XCTestCase {
 
     func testInvertColors_whenCurrentSpaceIsZero_noOp() {
         stub.displays = []
-        appState = AppState(displaySpaceProvider: stub, skipObservers: true)
+        appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
         sut = AppDelegate(appState: appState, alertFactory: alertFactory)
         let initialCount = sut.statusBarIconUpdateCount
 
@@ -988,7 +979,7 @@ final class AppDelegateActionsTests: XCTestCase {
 
     func testApplyColorsToAllSpaces_whenCurrentSpaceIsZero_noOp() {
         stub.displays = []
-        appState = AppState(displaySpaceProvider: stub, skipObservers: true)
+        appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
         sut = AppDelegate(appState: appState, alertFactory: alertFactory)
 
         sut.applyColorsToAllSpaces()
@@ -998,7 +989,7 @@ final class AppDelegateActionsTests: XCTestCase {
 
     func testApplyStyleToAllSpaces_whenCurrentSpaceIsZero_noOp() {
         stub.displays = []
-        appState = AppState(displaySpaceProvider: stub, skipObservers: true)
+        appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
         sut = AppDelegate(appState: appState, alertFactory: alertFactory)
 
         sut.applyStyleToAllSpaces()
@@ -1008,7 +999,7 @@ final class AppDelegateActionsTests: XCTestCase {
 
     func testResetStyleToDefault_whenCurrentSpaceIsZero_noOp() {
         stub.displays = []
-        appState = AppState(displaySpaceProvider: stub, skipObservers: true)
+        appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
         sut = AppDelegate(appState: appState, alertFactory: alertFactory)
 
         sut.resetStyleToDefault()
@@ -1857,9 +1848,6 @@ final class AppDelegateActionsTests: XCTestCase {
     }
 
     func testObservation_updatesStatusBarIconOnAppStateChange() async {
-        // Set up notifier before starting observation
-        var (_, iterator) = makeUpdateNotifier()
-
         sut.startObservingAppState()
         let initialCount = sut.statusBarIconUpdateCount
 
@@ -1869,10 +1857,11 @@ final class AppDelegateActionsTests: XCTestCase {
         // Trigger an app state change
         appState.setSpaceState(labels: ["1", "2", "3"], currentSpace: 3, currentLabel: "3")
 
-        // Wait for the onChange callback to fire (deterministic, no sleep needed)
-        _ = await iterator.next()
+        // Wait for the observation callback to fire
+        let didChange = await waitForCountChange(from: initialCount)
 
         // The observation task should have triggered updateStatusBarIcon
+        XCTAssertTrue(didChange, "status bar update count should change after appState mutation")
         XCTAssertGreaterThan(
             sut.statusBarIconUpdateCount,
             initialCount,
@@ -1930,7 +1919,7 @@ final class AppDelegateActionsTests: XCTestCase {
         localStub.displays = [
             CGSStub.makeDisplay(displayID: "Main", spaces: [(id: 100, isFullscreen: false)], activeSpaceID: 100),
         ]
-        let localAppState = AppState(displaySpaceProvider: localStub, skipObservers: true)
+        let localAppState = AppState(displaySpaceProvider: localStub, skipObservers: true, store: store)
         let localDelegate = AppDelegate(
             appState: localAppState,
             alertFactory: StubAlertFactory(),

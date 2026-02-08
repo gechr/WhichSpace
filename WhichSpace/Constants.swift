@@ -15,6 +15,22 @@ enum Labels {
     static let fullscreen = "F"
 }
 
+// MARK: - App Info
+
+enum AppInfo {
+    static var appName: String {
+        Bundle.main.infoDictionary?["CFBundleName"] as? String ?? "WhichSpace"
+    }
+
+    static var isHomebrewInstall: Bool {
+        let caskroomPaths = [
+            "/opt/homebrew/Caskroom/whichspace",
+            "/usr/local/Caskroom/whichspace",
+        ]
+        return caskroomPaths.contains { FileManager.default.fileExists(atPath: $0) }
+    }
+}
+
 // MARK: - Layout
 
 enum Layout {
@@ -115,13 +131,17 @@ enum Localization {
     static let actionResetFontToDefault = String(localized: "action_reset_font_to_default")
     static let actionResetSpaceToDefault = String(localized: "action_reset_space_to_default")
     static let actionResetStyleToDefault = String(localized: "action_reset_style_to_default")
+    static let alertAccessibilityDetail = String(localized: "alert_accessibility_detail")
+    static let alertAccessibilityRequired = String(localized: "alert_accessibility_required")
+    static let alertExportFailed = String(localized: "alert_export_failed")
+    static let alertImportFailed = String(localized: "alert_import_failed")
+    static let alertImportSuccess = String(localized: "alert_import_success")
     static let buttonCancel = String(localized: "button_cancel")
+    static let buttonContinue = String(localized: "button_continue")
     static let buttonLearnMore = String(localized: "button_learn_more")
     static let buttonOK = String(localized: "button_ok")
     static let buttonReset = String(localized: "button_reset")
     static let buttonResetAll = String(localized: "button_reset_all")
-    static let alertImportFailed = String(localized: "alert_import_failed")
-    static let alertImportSuccess = String(localized: "alert_import_success")
     static let confirmApplyColorToAll = String(localized: "confirm_apply_color_to_all")
     static let confirmApplyStyleToAll = String(localized: "confirm_apply_style_to_all")
     static let confirmApplyToAll = String(localized: "confirm_apply_to_all")

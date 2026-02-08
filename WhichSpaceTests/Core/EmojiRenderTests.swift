@@ -1,11 +1,13 @@
 import Cocoa
-import XCTest
+import Testing
 @testable import WhichSpace
 
-final class EmojiRenderTests: XCTestCase {
+@Suite("Emoji Rendering")
+struct EmojiRenderTests {
     // MARK: - Emoji Rendering Tests
 
-    func testAllEmojisRenderWithVisibleContent() {
+    @Test("all emojis render with visible content")
+    func allEmojisRenderWithVisibleContent() {
         var emptyRenders: [String] = []
 
         for emoji in ItemData.emojis {
@@ -21,14 +23,14 @@ final class EmojiRenderTests: XCTestCase {
             }
         }
 
-        XCTAssertTrue(
+        #expect(
             emptyRenders.isEmpty,
             "The following emojis rendered with no visible content: \(emptyRenders.joined(separator: " "))"
         )
     }
 
-    func testEmojiSkinnablVariantsRenderCorrectly() {
-        // Test a sample of emojis that support skin tones
+    @Test("skinnable emoji variants render correctly")
+    func emojiSkinnableVariantsRenderCorrectly() {
         let skinnableEmojis = ["👋", "👍", "🤞", "👨‍🍳", "👩‍💻"]
         var failures: [(emoji: String, tone: SkinTone)] = []
 
@@ -47,14 +49,14 @@ final class EmojiRenderTests: XCTestCase {
             }
         }
 
-        XCTAssertTrue(
+        #expect(
             failures.isEmpty,
             "Failed to render: \(failures.map { "\($0.emoji) tone:\($0.tone)" }.joined(separator: ", "))"
         )
     }
 
-    func testEmojiContentIsCenteredAndWithinBounds() {
-        // Test a sample of emojis to verify they're centered
+    @Test("emoji content is centered and within bounds")
+    func emojiContentIsCenteredAndWithinBounds() {
         let testEmojis = ["😀", "👋", "🎉", "❤️", "👨‍🍳"]
         var boundaryViolations: [String] = []
 
@@ -71,7 +73,6 @@ final class EmojiRenderTests: XCTestCase {
                 continue
             }
 
-            // Account for scale factor (Retina displays render at 2x)
             let scaleFactor = Double(cgImage.width) / image.size.width
 
             guard let bounds = contentBounds(of: image) else {
@@ -79,7 +80,6 @@ final class EmojiRenderTests: XCTestCase {
                 continue
             }
 
-            // Convert bounds from pixel coordinates to points
             let boundsInPoints = CGRect(
                 x: bounds.minX / scaleFactor,
                 y: bounds.minY / scaleFactor,
@@ -87,8 +87,6 @@ final class EmojiRenderTests: XCTestCase {
                 height: bounds.height / scaleFactor
             )
 
-            // Check content is within image bounds with some tolerance
-            // Emoji fonts may slightly exceed bounds, allow 2pt overflow
             let tolerance = 2.0
             if boundsInPoints.minX < -tolerance ||
                 boundsInPoints.minY < -tolerance ||
@@ -101,15 +99,14 @@ final class EmojiRenderTests: XCTestCase {
             }
         }
 
-        XCTAssertTrue(
+        #expect(
             boundaryViolations.isEmpty,
             "Boundary violations: \(boundaryViolations.joined(separator: "; "))"
         )
     }
 
-    func testEmojisWithoutSkinToneSupportRenderCorrectly() {
-        // Emojis that don't support skin tones should still render correctly
-        // EmojiKit's hasSkinTones correctly identifies these
+    @Test("emojis without skin tone support render correctly")
+    func emojisWithoutSkinToneSupportRenderCorrectly() {
         let noSkinToneEmojis = ["👯", "👯‍♀️", "👯‍♂️", "🤼", "🤼‍♀️", "🤼‍♂️"]
 
         for emoji in noSkinToneEmojis {
@@ -117,10 +114,10 @@ final class EmojiRenderTests: XCTestCase {
                 symbolName: emoji,
                 darkMode: false,
                 customColors: nil,
-                skinTone: .medium // Should be ignored by EmojiKit detection
+                skinTone: .medium
             )
 
-            XCTAssertTrue(
+            #expect(
                 hasVisibleContent(image),
                 "Emoji '\(emoji)' without skin tone support should render with visible content"
             )
@@ -129,7 +126,8 @@ final class EmojiRenderTests: XCTestCase {
 
     // MARK: - Symbol Rendering Tests
 
-    func testAllSymbolsRenderWithVisibleContent() {
+    @Test("all symbols render with visible content")
+    func allSymbolsRenderWithVisibleContent() {
         var emptyRenders: [String] = []
 
         for symbol in ItemData.symbols {
@@ -145,7 +143,7 @@ final class EmojiRenderTests: XCTestCase {
             }
         }
 
-        XCTAssertTrue(
+        #expect(
             emptyRenders.isEmpty,
             "The following symbols rendered with no visible content: \(emptyRenders.joined(separator: ", "))"
         )
@@ -153,7 +151,8 @@ final class EmojiRenderTests: XCTestCase {
 
     // MARK: - Number Icon Rendering Tests
 
-    func testNumberIconsRenderCorrectly() {
+    @Test("number icons render correctly for all styles")
+    func numberIconsRenderCorrectly() {
         let styles: [IconStyle] = [.square, .circle, .triangle, .pentagon, .hexagon, .transparent, .stroke]
 
         for style in styles {
@@ -166,7 +165,7 @@ final class EmojiRenderTests: XCTestCase {
                     style: style
                 )
 
-                XCTAssertTrue(
+                #expect(
                     hasVisibleContent(image),
                     "Number \(number) with style \(style) should render with visible content"
                 )
@@ -176,7 +175,6 @@ final class EmojiRenderTests: XCTestCase {
 
     // MARK: - Helpers
 
-    /// Checks if an NSImage has any visible (non-transparent) content
     private func hasVisibleContent(_ image: NSImage) -> Bool {
         guard let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
             return false
@@ -203,9 +201,8 @@ final class EmojiRenderTests: XCTestCase {
 
         context.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
 
-        // Check for any non-transparent pixel
         for idx in stride(from: 3, to: totalBytes, by: bytesPerPixel) {
-            if pixelData[idx] > 0 { // Alpha channel > 0
+            if pixelData[idx] > 0 {
                 return true
             }
         }
@@ -213,7 +210,6 @@ final class EmojiRenderTests: XCTestCase {
         return false
     }
 
-    /// Returns the bounding box of visible content in the image
     private func contentBounds(of image: NSImage) -> CGRect? {
         guard let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
             return nil
@@ -264,7 +260,6 @@ final class EmojiRenderTests: XCTestCase {
             return nil
         }
 
-        // Convert to NSImage coordinate space (flip Y)
         return CGRect(
             x: Double(minX),
             y: Double(height - maxY - 1),

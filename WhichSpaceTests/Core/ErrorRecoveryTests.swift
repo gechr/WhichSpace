@@ -1,29 +1,27 @@
 import Cocoa
 import Defaults
-import XCTest
+import Testing
 @testable import WhichSpace
 
-// MARK: - Error Recovery Tests
+@Suite("Error Recovery")
+@MainActor
+struct ErrorRecoveryTests {
+    private let store: DefaultsStore
+    private let testSuite: TestSuite
+    private let bridge: SpaceColors.Bridge
+    private let fontBridge: SpaceFont.Bridge
 
-final class ErrorRecoveryTests: IsolatedDefaultsTestCase {
-    private var bridge: SpaceColors.Bridge!
-    private var fontBridge: SpaceFont.Bridge!
-
-    override func setUp() {
-        super.setUp()
+    init() {
+        testSuite = TestSuiteFactory.createSuite()
+        store = DefaultsStore(suite: testSuite.suite)
         bridge = SpaceColors.Bridge()
         fontBridge = SpaceFont.Bridge()
     }
 
-    override func tearDown() {
-        bridge = nil
-        fontBridge = nil
-        super.tearDown()
-    }
-
     // MARK: - Corrupted Preference Data Tests
 
-    func testDeserializeWithCorruptedForegroundData() throws {
+    @Test("deserialize with corrupted foreground data returns nil")
+    func deserializeWithCorruptedForegroundData() throws {
         let validBackground = try NSKeyedArchiver.archivedData(
             withRootObject: NSColor.blue,
             requiringSecureCoding: true
@@ -35,10 +33,11 @@ final class ErrorRecoveryTests: IsolatedDefaultsTestCase {
             "background": validBackground,
         ])
 
-        XCTAssertNil(result, "Should return nil for corrupted foreground data")
+        #expect(result == nil, "Should return nil for corrupted foreground data")
     }
 
-    func testDeserializeWithCorruptedBackgroundData() throws {
+    @Test("deserialize with corrupted background data returns nil")
+    func deserializeWithCorruptedBackgroundData() throws {
         let validForeground = try NSKeyedArchiver.archivedData(
             withRootObject: NSColor.red,
             requiringSecureCoding: true
@@ -50,10 +49,11 @@ final class ErrorRecoveryTests: IsolatedDefaultsTestCase {
             "background": corruptedData,
         ])
 
-        XCTAssertNil(result, "Should return nil for corrupted background data")
+        #expect(result == nil, "Should return nil for corrupted background data")
     }
 
-    func testDeserializeWithBothCorruptedData() {
+    @Test("deserialize with both corrupted data returns nil")
+    func deserializeWithBothCorruptedData() {
         let corruptedData = Data([0x00, 0x01, 0x02, 0x03])
 
         let result = bridge.deserialize([
@@ -61,10 +61,11 @@ final class ErrorRecoveryTests: IsolatedDefaultsTestCase {
             "background": corruptedData,
         ])
 
-        XCTAssertNil(result, "Should return nil when both colors are corrupted")
+        #expect(result == nil, "Should return nil when both colors are corrupted")
     }
 
-    func testDeserializeWithEmptyData() {
+    @Test("deserialize with empty data returns nil")
+    func deserializeWithEmptyData() {
         let emptyData = Data()
 
         let result = bridge.deserialize([
@@ -72,13 +73,13 @@ final class ErrorRecoveryTests: IsolatedDefaultsTestCase {
             "background": emptyData,
         ])
 
-        XCTAssertNil(result, "Should return nil for empty data")
+        #expect(result == nil, "Should return nil for empty data")
     }
 
-    func testDeserializeWithWrongObjectType() throws {
-        // Archive a string instead of NSColor
+    @Test("deserialize with wrong object type returns nil")
+    func deserializeWithWrongObjectType() throws {
         let wrongTypeData = try NSKeyedArchiver.archivedData(
-            withRootObject: "not a color" as NSString,
+            withRootObject: NSFont.systemFont(ofSize: 12),
             requiringSecureCoding: true
         )
         let validBackground = try NSKeyedArchiver.archivedData(
@@ -91,21 +92,22 @@ final class ErrorRecoveryTests: IsolatedDefaultsTestCase {
             "background": validBackground,
         ])
 
-        XCTAssertNil(result, "Should return nil when archived object is wrong type")
+        #expect(result == nil, "Should return nil when archived object is wrong type")
     }
 
-    func testDeserializeWithPartiallyValidData() throws {
+    @Test("deserialize with partially valid data returns nil")
+    func deserializeWithPartiallyValidData() throws {
         let validForeground = try NSKeyedArchiver.archivedData(
             withRootObject: NSColor.red,
             requiringSecureCoding: true
         )
 
-        // Missing background entirely
         let result = bridge.deserialize(["foreground": validForeground])
-        XCTAssertNil(result, "Should return nil when background is missing")
+        #expect(result == nil, "Should return nil when background is missing")
     }
 
-    func testDeserializeWithExtraKeys() throws {
+    @Test("deserialize with extra keys succeeds")
+    func deserializeWithExtraKeys() throws {
         let validForeground = try NSKeyedArchiver.archivedData(
             withRootObject: NSColor.red,
             requiringSecureCoding: true
@@ -121,60 +123,61 @@ final class ErrorRecoveryTests: IsolatedDefaultsTestCase {
             "extraKey": Data([0x00]),
         ])
 
-        XCTAssertNotNil(result, "Should successfully deserialize even with extra keys")
-        XCTAssertEqual(result?.foreground, .red)
-        XCTAssertEqual(result?.background, .blue)
+        #expect(result != nil, "Should successfully deserialize even with extra keys")
+        #expect(result?.foreground == .red)
+        #expect(result?.background == .blue)
     }
 
     // MARK: - Font Bridge Tests
 
-    func testFontBridgeDeserializeWithCorruptedData() {
+    @Test("font bridge deserialize with corrupted data returns nil")
+    func fontBridgeDeserializeWithCorruptedData() {
         let corruptedData = Data([0xDE, 0xAD, 0xBE, 0xEF])
         let result = fontBridge.deserialize(corruptedData)
-        XCTAssertNil(result, "Should return nil for corrupted font data")
+        #expect(result == nil, "Should return nil for corrupted font data")
     }
 
-    func testFontBridgeDeserializeWithEmptyData() {
+    @Test("font bridge deserialize with empty data returns nil")
+    func fontBridgeDeserializeWithEmptyData() {
         let result = fontBridge.deserialize(Data())
-        XCTAssertNil(result, "Should return nil for empty font data")
+        #expect(result == nil, "Should return nil for empty font data")
     }
 
-    func testFontBridgeDeserializeWithNil() {
+    @Test("font bridge deserialize with nil returns nil")
+    func fontBridgeDeserializeWithNil() {
         let result = fontBridge.deserialize(nil)
-        XCTAssertNil(result, "Should return nil for nil font data")
+        #expect(result == nil, "Should return nil for nil font data")
     }
 
-    func testFontBridgeRoundTrip() {
+    @Test("font bridge round trip")
+    func fontBridgeRoundTrip() {
         let originalFont = NSFont.boldSystemFont(ofSize: 14)
         let spaceFont = SpaceFont(font: originalFont)
 
         let serialized = fontBridge.serialize(spaceFont)
-        XCTAssertNotNil(serialized)
+        #expect(serialized != nil)
 
         let deserialized = fontBridge.deserialize(serialized)
-        XCTAssertNotNil(deserialized)
-        XCTAssertEqual(deserialized?.font.pointSize, originalFont.pointSize)
+        #expect(deserialized != nil)
+        #expect(deserialized?.font.pointSize == originalFont.pointSize)
     }
 
     // MARK: - Recovery from Bad State Tests
 
-    func testPreferencesRecoverFromCorruptedStorage() {
-        // Set valid preferences
+    @Test("preferences recover from corrupted storage")
+    func preferencesRecoverFromCorruptedStorage() {
         let validColors = SpaceColors(foreground: .red, background: .blue)
         SpacePreferences.setColors(validColors, forSpace: 1, store: store)
 
-        // Verify retrieval works
         let retrieved = SpacePreferences.colors(forSpace: 1, store: store)
-        XCTAssertNotNil(retrieved)
+        #expect(retrieved != nil)
 
-        // Clear and verify clean state
         SpacePreferences.clearColors(forSpace: 1, store: store)
-        XCTAssertNil(SpacePreferences.colors(forSpace: 1, store: store))
+        #expect(SpacePreferences.colors(forSpace: 1, store: store) == nil)
 
-        // Should be able to set again after clearing
         let newColors = SpaceColors(foreground: .green, background: .yellow)
         SpacePreferences.setColors(newColors, forSpace: 1, store: store)
         let newRetrieved = SpacePreferences.colors(forSpace: 1, store: store)
-        XCTAssertEqual(newRetrieved?.foreground, .green)
+        #expect(newRetrieved?.foreground == .green)
     }
 }

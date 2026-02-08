@@ -245,17 +245,43 @@ struct CodableSpaceFont: Codable {
     }
 }
 
+// MARK: - BackupError
+
+enum BackupError: LocalizedError {
+    case encodingFailed
+    case decodingFailed(Error)
+    case fileReadFailed(URL, Error)
+    case fileWriteFailed(URL, Error)
+    case invalidData
+
+    var errorDescription: String? {
+        switch self {
+        case .encodingFailed:
+            "Failed to encode settings"
+        case let .decodingFailed(error):
+            "Failed to decode settings: \(error.localizedDescription)"
+        case let .fileReadFailed(url, error):
+            "Failed to read \(url.lastPathComponent): \(error.localizedDescription)"
+        case let .fileWriteFailed(url, error):
+            "Failed to write \(url.lastPathComponent): \(error.localizedDescription)"
+        case .invalidData:
+            "Invalid backup data"
+        }
+    }
+}
+
 // MARK: - BackupManager
 
 /// Handles encoding and decoding of WhichSpace configuration.
+@MainActor
 enum BackupManager {
     /// Default filename for exported backup.
     static let defaultFilename = "WhichSpaceSettings.json"
 
     /// Encodes the current settings to a JSON string.
-    static func encode(store: DefaultsStore = .shared) -> String? {
+    static func encode(store: DefaultsStore = AppEnvironment.shared.store) throws -> String {
         guard let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String else {
-            return nil
+            throw BackupError.encodingFailed
         }
 
         let settings = BackupSettings(
@@ -311,33 +337,42 @@ enum BackupManager {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
 
-        guard let data = try? encoder.encode(backup),
-              let jsonString = String(data: data, encoding: .utf8)
-        else {
-            return nil
+        do {
+            let data = try encoder.encode(backup)
+            guard let jsonString = String(data: data, encoding: .utf8) else {
+                throw BackupError.encodingFailed
+            }
+            return jsonString
+        } catch let error as BackupError {
+            throw error
+        } catch {
+            throw BackupError.encodingFailed
         }
-
-        return jsonString
     }
 
     /// Decodes a JSON string to a Backup object.
-    static func decode(jsonString: String) -> Backup? {
+    static func decode(jsonString: String) throws -> Backup {
         guard let data = jsonString.data(using: .utf8) else {
-            return nil
+            throw BackupError.invalidData
         }
-        return try? JSONDecoder().decode(Backup.self, from: data)
+        do {
+            return try JSONDecoder().decode(Backup.self, from: data)
+        } catch {
+            throw BackupError.decodingFailed(error)
+        }
     }
 
     /// Loads configuration from a file URL and applies it to the store.
-    static func load(from url: URL, store: DefaultsStore = .shared) -> Bool {
-        guard let jsonString = try? String(contentsOf: url, encoding: .utf8),
-              let config = decode(jsonString: jsonString)
-        else {
-            return false
+    static func load(from url: URL, store: DefaultsStore = AppEnvironment.shared.store) throws {
+        let jsonString: String
+        do {
+            jsonString = try String(contentsOf: url, encoding: .utf8)
+        } catch {
+            throw BackupError.fileReadFailed(url, error)
         }
 
+        let config = try decode(jsonString: jsonString)
         apply(config, to: store)
-        return true
     }
 
     /// Applies a config to the defaults store.
@@ -389,15 +424,12 @@ enum BackupManager {
     }
 
     /// Exports the current configuration to a file URL.
-    static func export(to url: URL, store: DefaultsStore = .shared) -> Bool {
-        guard let jsonString = encode(store: store) else {
-            return false
-        }
+    static func export(to url: URL, store: DefaultsStore = AppEnvironment.shared.store) throws {
+        let jsonString = try encode(store: store)
         do {
             try jsonString.write(to: url, atomically: true, encoding: .utf8)
-            return true
         } catch {
-            return false
+            throw BackupError.fileWriteFailed(url, error)
         }
     }
 }

@@ -1,36 +1,23 @@
-import XCTest
+import Testing
 @testable import WhichSpace
 
+@Suite("Scripting Commands")
 @MainActor
-final class ScriptingCommandsTests: XCTestCase {
-    private var stub: CGSStub!
-    private var appState: AppState!
-    private var store: DefaultsStore!
-    private var testSuite: TestSuite!
+struct ScriptingCommandsTests {
+    private let store: DefaultsStore
+    private let testSuite: TestSuite
+    private let stub: CGSStub
 
-    override func setUp() {
-        super.setUp()
+    init() {
         testSuite = TestSuiteFactory.createSuite()
         store = DefaultsStore(suite: testSuite.suite)
         stub = CGSStub()
     }
 
-    override func tearDown() {
-        appState = nil
-        stub = nil
-        if let store, let testSuite {
-            store.resetAll()
-            TestSuiteFactory.destroySuite(testSuite)
-        }
-        store = nil
-        testSuite = nil
-        super.tearDown()
-    }
-
     // MARK: - currentSpaceNumber Tests
 
-    func testCurrentSpaceNumber_returnsCorrectNumberFromAppState() {
-        // Given: Single display with 3 spaces, space 2 active
+    @Test("currentSpaceNumber returns correct number")
+    func currentSpaceNumber_returnsCorrectNumberFromAppState() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -43,17 +30,13 @@ final class ScriptingCommandsTests: XCTestCase {
                 activeSpaceID: 101
             ),
         ]
-        appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // When
-        let number = appState.currentSpace
-
-        // Then
-        XCTAssertEqual(number, 2, "currentSpaceNumber should return 2 for the second space")
+        #expect(appState.currentSpace == 2, "currentSpaceNumber should return 2 for the second space")
     }
 
-    func testCurrentSpaceNumber_space1Active() {
-        // Given: 3 spaces, space 1 active
+    @Test("currentSpaceNumber space 1 active")
+    func currentSpaceNumber_space1Active() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -66,17 +49,13 @@ final class ScriptingCommandsTests: XCTestCase {
                 activeSpaceID: 100
             ),
         ]
-        appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // When
-        let number = appState.currentSpace
-
-        // Then
-        XCTAssertEqual(number, 1, "currentSpaceNumber should return 1 for the first space")
+        #expect(appState.currentSpace == 1)
     }
 
-    func testCurrentSpaceNumber_space3Active() {
-        // Given: 3 spaces, space 3 active
+    @Test("currentSpaceNumber space 3 active")
+    func currentSpaceNumber_space3Active() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -89,19 +68,15 @@ final class ScriptingCommandsTests: XCTestCase {
                 activeSpaceID: 102
             ),
         ]
-        appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // When
-        let number = appState.currentSpace
-
-        // Then
-        XCTAssertEqual(number, 3, "currentSpaceNumber should return 3 for the third space")
+        #expect(appState.currentSpace == 3)
     }
 
     // MARK: - currentSpaceLabel Tests
 
-    func testCurrentSpaceLabel_returnsCorrectLabelFromAppState() {
-        // Given: Single display with 3 spaces, space 2 active
+    @Test("currentSpaceLabel returns correct label")
+    func currentSpaceLabel_returnsCorrectLabel() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -114,17 +89,13 @@ final class ScriptingCommandsTests: XCTestCase {
                 activeSpaceID: 101
             ),
         ]
-        appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // When
-        let label = appState.currentSpaceLabel
-
-        // Then
-        XCTAssertEqual(label, "2", "currentSpaceLabel should return '2' for the second space")
+        #expect(appState.currentSpaceLabel == "2")
     }
 
-    func testCurrentSpaceLabel_withFullscreenSpace() {
-        // Given: Display with regular, fullscreen, regular spaces - fullscreen active
+    @Test("currentSpaceLabel with fullscreen space")
+    func currentSpaceLabel_withFullscreenSpace() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -137,17 +108,13 @@ final class ScriptingCommandsTests: XCTestCase {
                 activeSpaceID: 101
             ),
         ]
-        appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // When
-        let label = appState.currentSpaceLabel
-
-        // Then: Fullscreen space should return "F"
-        XCTAssertEqual(label, Labels.fullscreen, "currentSpaceLabel should return 'F' for fullscreen space")
+        #expect(appState.currentSpaceLabel == Labels.fullscreen)
     }
 
-    func testCurrentSpaceLabel_multipleDisplays_returnsActiveDisplayLabel() {
-        // Given: Two displays, active display has space 2 active
+    @Test("currentSpaceLabel multiple displays returns active display label")
+    func currentSpaceLabel_multipleDisplays_returnsActiveDisplayLabel() {
         stub.activeDisplayIdentifier = "DisplayA"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -168,19 +135,15 @@ final class ScriptingCommandsTests: XCTestCase {
                 activeSpaceID: 200
             ),
         ]
-        appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // When
-        let label = appState.currentSpaceLabel
-
-        // Then: Should return label from active display
-        XCTAssertEqual(label, "2", "currentSpaceLabel should return label from active display")
+        #expect(appState.currentSpaceLabel == "2")
     }
 
     // MARK: - Number vs Label Difference
 
-    func testCurrentSpaceNumberAndLabel_fullscreen_numberIsIndexLabelIsF() {
-        // Given: Fullscreen space is active
+    @Test("fullscreen: number is index, label is F")
+    func currentSpaceNumberAndLabel_fullscreen() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -193,14 +156,9 @@ final class ScriptingCommandsTests: XCTestCase {
                 activeSpaceID: 101
             ),
         ]
-        appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // When
-        let number = appState.currentSpace
-        let label = appState.currentSpaceLabel
-
-        // Then: Number is the index (2), label is "F"
-        XCTAssertEqual(number, 2, "currentSpaceNumber should return index 2")
-        XCTAssertEqual(label, Labels.fullscreen, "currentSpaceLabel should return 'F'")
+        #expect(appState.currentSpace == 2)
+        #expect(appState.currentSpaceLabel == Labels.fullscreen)
     }
 }

@@ -569,7 +569,9 @@ enum SpaceIconGenerator {
             // Create text path
             let attrString = NSAttributedString(string: spaceNumber, attributes: [.font: font])
             let line = CTLineCreateWithAttributedString(attrString)
-            let glyphRuns = CTLineGetGlyphRuns(line) as! [CTRun]
+            guard let glyphRuns = CTLineGetGlyphRuns(line) as? [CTRun] else {
+                return true
+            }
 
             context.saveGState()
             context.translateBy(x: textX, y: textY)
@@ -578,7 +580,11 @@ enum SpaceIconGenerator {
             let textPath = CGMutablePath()
             for run in glyphRuns {
                 let glyphCount = CTRunGetGlyphCount(run)
-                let runFont = (CTRunGetAttributes(run) as Dictionary)[kCTFontAttributeName] as! CTFont
+                let attributes = CTRunGetAttributes(run) as NSDictionary
+                guard let runFontValue = attributes[kCTFontAttributeName],
+                      CFGetTypeID(runFontValue as CFTypeRef) == CTFontGetTypeID()
+                else { continue }
+                let runFont = runFontValue as! CTFont
 
                 for index in 0 ..< glyphCount {
                     let range = CFRange(location: index, length: 1)

@@ -1,16 +1,16 @@
 import Cocoa
-import XCTest
+import Testing
 @testable import WhichSpace
 
+@Suite("Size Slider")
 @MainActor
-final class SizeSliderTests: XCTestCase {
-    private var sut: SizeSlider!
-    private var testWindow: NSWindow!
+struct SizeSliderTests {
+    private let sut: SizeSlider
+    private let testWindow: NSWindow
     private let testRange = 60.0 ... 120.0
     private let initialSize = 100.0
 
-    override func setUp() {
-        super.setUp()
+    init() {
         sut = SizeSlider(initialSize: initialSize, range: testRange)
         sut.frame = NSRect(origin: .zero, size: sut.intrinsicContentSize)
         sut.layout()
@@ -26,57 +26,57 @@ final class SizeSliderTests: XCTestCase {
         testWindow.makeFirstResponder(sut)
     }
 
-    override func tearDown() {
-        testWindow = nil
-        sut = nil
-        super.tearDown()
-    }
-
     // MARK: - Initial State Tests
 
-    func testInitialState_currentSizeMatchesInitialValue() {
-        XCTAssertEqual(sut.currentSize, initialSize, "Initial currentSize should match initialSize")
+    @Test("Initial state current size matches initial value")
+    func initialState_currentSizeMatchesInitialValue() {
+        #expect(sut.currentSize == initialSize, "Initial currentSize should match initialSize")
     }
 
-    func testInitialState_withDifferentInitialSize() {
+    @Test("Initial state with different initial size")
+    func initialState_withDifferentInitialSize() {
         let customSize = 80.0
         let customSut = SizeSlider(initialSize: customSize, range: testRange)
 
-        XCTAssertEqual(customSut.currentSize, customSize, "currentSize should match custom initial size")
+        #expect(customSut.currentSize == customSize, "currentSize should match custom initial size")
     }
 
     // MARK: - Slider/Stepper Sync Tests
 
-    func testSettingCurrentSize_updatesInternalState() {
+    @Test("Setting current size updates internal state")
+    func settingCurrentSize_updatesInternalState() {
         sut.currentSize = 85.0
 
-        XCTAssertEqual(sut.currentSize, 85.0, "currentSize should update when set")
+        #expect(sut.currentSize == 85.0, "currentSize should update when set")
     }
 
-    func testSettingCurrentSize_staysWithinBounds() {
+    @Test("Setting current size stays within bounds")
+    func settingCurrentSize_staysWithinBounds() {
         // Set value at lower bound
         sut.currentSize = testRange.lowerBound
-        XCTAssertEqual(sut.currentSize, testRange.lowerBound, "Should accept lower bound")
+        #expect(sut.currentSize == testRange.lowerBound, "Should accept lower bound")
 
         // Set value at upper bound
         sut.currentSize = testRange.upperBound
-        XCTAssertEqual(sut.currentSize, testRange.upperBound, "Should accept upper bound")
+        #expect(sut.currentSize == testRange.upperBound, "Should accept upper bound")
     }
 
-    func testSettingCurrentSize_multipleTimesInSequence() {
+    @Test("Setting current size multiple times in sequence")
+    func settingCurrentSize_multipleTimesInSequence() {
         sut.currentSize = 70.0
-        XCTAssertEqual(sut.currentSize, 70.0)
+        #expect(sut.currentSize == 70.0)
 
         sut.currentSize = 90.0
-        XCTAssertEqual(sut.currentSize, 90.0)
+        #expect(sut.currentSize == 90.0)
 
         sut.currentSize = 110.0
-        XCTAssertEqual(sut.currentSize, 110.0)
+        #expect(sut.currentSize == 110.0)
     }
 
     // MARK: - onSizeChanged Callback Tests
 
-    func testOnSizeChanged_emitsRoundedPercentages() {
+    @Test("onSizeChanged emits rounded percentages")
+    func onSizeChanged_emitsRoundedPercentages() {
         var receivedValues: [Double] = []
         sut.onSizeChanged = { value in
             receivedValues.append(value)
@@ -85,13 +85,14 @@ final class SizeSliderTests: XCTestCase {
         // Simulate keyboard adjustment (which goes through stepperChanged)
         simulateKeyDown(keyCode: 124) // Right arrow
 
-        XCTAssertFalse(receivedValues.isEmpty, "Should have received at least one value")
+        #expect(!receivedValues.isEmpty, "Should have received at least one value")
         if let lastValue = receivedValues.last {
-            XCTAssertEqual(lastValue, round(lastValue), "Emitted value should be rounded")
+            #expect(lastValue == round(lastValue), "Emitted value should be rounded")
         }
     }
 
-    func testOnSizeChanged_calledOnKeyboardAdjustment() {
+    @Test("onSizeChanged called on keyboard adjustment")
+    func onSizeChanged_calledOnKeyboardAdjustment() {
         var callCount = 0
         sut.onSizeChanged = { _ in
             callCount += 1
@@ -99,58 +100,65 @@ final class SizeSliderTests: XCTestCase {
 
         simulateKeyDown(keyCode: 124) // Right arrow
 
-        XCTAssertEqual(callCount, 1, "onSizeChanged should be called once per keyboard adjustment")
+        #expect(callCount == 1, "onSizeChanged should be called once per keyboard adjustment")
     }
 
     // MARK: - Keyboard Arrow Tests
 
-    func testRightArrow_increasesValue() {
+    @Test("Right arrow increases value")
+    func rightArrow_increasesValue() {
         let originalValue = sut.currentSize
         simulateKeyDown(keyCode: 124) // Right arrow
 
-        XCTAssertEqual(sut.currentSize, originalValue + 1, "Right arrow should increase value by 1")
+        #expect(sut.currentSize == originalValue + 1, "Right arrow should increase value by 1")
     }
 
-    func testLeftArrow_decreasesValue() {
+    @Test("Left arrow decreases value")
+    func leftArrow_decreasesValue() {
         let originalValue = sut.currentSize
         simulateKeyDown(keyCode: 123) // Left arrow
 
-        XCTAssertEqual(sut.currentSize, originalValue - 1, "Left arrow should decrease value by 1")
+        #expect(sut.currentSize == originalValue - 1, "Left arrow should decrease value by 1")
     }
 
-    func testUpArrow_increasesValue() {
+    @Test("Up arrow increases value")
+    func upArrow_increasesValue() {
         let originalValue = sut.currentSize
         simulateKeyDown(keyCode: 126) // Up arrow
 
-        XCTAssertEqual(sut.currentSize, originalValue + 1, "Up arrow should increase value by 1")
+        #expect(sut.currentSize == originalValue + 1, "Up arrow should increase value by 1")
     }
 
-    func testDownArrow_decreasesValue() {
+    @Test("Down arrow decreases value")
+    func downArrow_decreasesValue() {
         let originalValue = sut.currentSize
         simulateKeyDown(keyCode: 125) // Down arrow
 
-        XCTAssertEqual(sut.currentSize, originalValue - 1, "Down arrow should decrease value by 1")
+        #expect(sut.currentSize == originalValue - 1, "Down arrow should decrease value by 1")
     }
 
-    func testKeyboardAdjustment_respectsUpperBound() {
+    @Test("Keyboard adjustment respects upper bound")
+    func keyboardAdjustment_respectsUpperBound() {
         sut.currentSize = testRange.upperBound
         let originalValue = sut.currentSize
 
         simulateKeyDown(keyCode: 124) // Right arrow (increase)
 
-        XCTAssertEqual(sut.currentSize, originalValue, "Should not exceed upper bound")
+        #expect(sut.currentSize == originalValue, "Should not exceed upper bound")
     }
 
-    func testKeyboardAdjustment_respectsLowerBound() {
+    @Test("Keyboard adjustment respects lower bound")
+    func keyboardAdjustment_respectsLowerBound() {
         sut.currentSize = testRange.lowerBound
         let originalValue = sut.currentSize
 
         simulateKeyDown(keyCode: 123) // Left arrow (decrease)
 
-        XCTAssertEqual(sut.currentSize, originalValue, "Should not go below lower bound")
+        #expect(sut.currentSize == originalValue, "Should not go below lower bound")
     }
 
-    func testMultipleKeyPresses_accumulateCorrectly() {
+    @Test("Multiple key presses accumulate correctly")
+    func multipleKeyPresses_accumulateCorrectly() {
         let startValue = sut.currentSize
 
         // Press right arrow 5 times
@@ -158,17 +166,18 @@ final class SizeSliderTests: XCTestCase {
             simulateKeyDown(keyCode: 124)
         }
 
-        XCTAssertEqual(sut.currentSize, startValue + 5, "Multiple right arrows should accumulate")
+        #expect(sut.currentSize == startValue + 5, "Multiple right arrows should accumulate")
 
         // Press left arrow 3 times
         for _ in 0 ..< 3 {
             simulateKeyDown(keyCode: 123)
         }
 
-        XCTAssertEqual(sut.currentSize, startValue + 2, "Should correctly handle mixed directions")
+        #expect(sut.currentSize == startValue + 2, "Should correctly handle mixed directions")
     }
 
-    func testKeyboardAtBounds_emitsCallbackEvenWhenClamped() {
+    @Test("Keyboard at bounds emits callback even when clamped")
+    func keyboardAtBounds_emitsCallbackEvenWhenClamped() {
         sut.currentSize = testRange.upperBound
         var callbackCalled = false
         sut.onSizeChanged = { _ in
@@ -180,26 +189,29 @@ final class SizeSliderTests: XCTestCase {
         // Note: Behavior depends on implementation - if clamped before callback,
         // callback may or may not fire. This test documents expected behavior.
         // Based on the implementation, it will fire with the clamped value.
-        XCTAssertTrue(callbackCalled, "Callback should still fire at bounds")
+        #expect(callbackCalled, "Callback should still fire at bounds")
     }
 
     // MARK: - Stepper Click Tests
 
-    func testStepperClickUp_increasesValue() {
+    @Test("Stepper click up increases value")
+    func stepperClickUp_increasesValue() {
         let originalValue = sut.currentSize
         simulateStepperClick(increment: true)
 
-        XCTAssertEqual(sut.currentSize, originalValue + 1, "Stepper up click should increase value by 1")
+        #expect(sut.currentSize == originalValue + 1, "Stepper up click should increase value by 1")
     }
 
-    func testStepperClickDown_decreasesValue() {
+    @Test("Stepper click down decreases value")
+    func stepperClickDown_decreasesValue() {
         let originalValue = sut.currentSize
         simulateStepperClick(increment: false)
 
-        XCTAssertEqual(sut.currentSize, originalValue - 1, "Stepper down click should decrease value by 1")
+        #expect(sut.currentSize == originalValue - 1, "Stepper down click should decrease value by 1")
     }
 
-    func testStepperClick_firesOnSizeChangedCallback() {
+    @Test("Stepper click fires onSizeChanged callback")
+    func stepperClick_firesOnSizeChangedCallback() {
         var receivedValue: Double?
         sut.onSizeChanged = { value in
             receivedValue = value
@@ -207,11 +219,12 @@ final class SizeSliderTests: XCTestCase {
 
         simulateStepperClick(increment: true)
 
-        XCTAssertNotNil(receivedValue, "onSizeChanged should be called on stepper click")
-        XCTAssertEqual(receivedValue, initialSize + 1, "Callback should receive the new value")
+        #expect(receivedValue != nil, "onSizeChanged should be called on stepper click")
+        #expect(receivedValue == initialSize + 1, "Callback should receive the new value")
     }
 
-    func testStepperClickAtUpperBound_clampsValue() {
+    @Test("Stepper click at upper bound clamps value")
+    func stepperClickAtUpperBound_clampsValue() {
         sut.currentSize = testRange.upperBound
         var receivedValue: Double?
         sut.onSizeChanged = { value in
@@ -220,11 +233,12 @@ final class SizeSliderTests: XCTestCase {
 
         simulateStepperClick(increment: true)
 
-        XCTAssertEqual(sut.currentSize, testRange.upperBound, "Value should stay at upper bound")
-        XCTAssertEqual(receivedValue, testRange.upperBound, "Callback should receive clamped value")
+        #expect(sut.currentSize == testRange.upperBound, "Value should stay at upper bound")
+        #expect(receivedValue == testRange.upperBound, "Callback should receive clamped value")
     }
 
-    func testStepperClickAtLowerBound_clampsValue() {
+    @Test("Stepper click at lower bound clamps value")
+    func stepperClickAtLowerBound_clampsValue() {
         sut.currentSize = testRange.lowerBound
         var receivedValue: Double?
         sut.onSizeChanged = { value in
@@ -233,13 +247,14 @@ final class SizeSliderTests: XCTestCase {
 
         simulateStepperClick(increment: false)
 
-        XCTAssertEqual(sut.currentSize, testRange.lowerBound, "Value should stay at lower bound")
-        XCTAssertEqual(receivedValue, testRange.lowerBound, "Callback should receive clamped value")
+        #expect(sut.currentSize == testRange.lowerBound, "Value should stay at lower bound")
+        #expect(receivedValue == testRange.lowerBound, "Callback should receive clamped value")
     }
 
     // MARK: - Value Clamping Tests
 
-    func testOnSizeChanged_receivesClampedValueAtUpperBound() {
+    @Test("onSizeChanged receives clamped value at upper bound")
+    func onSizeChanged_receivesClampedValueAtUpperBound() {
         sut.currentSize = testRange.upperBound - 0.5
         var receivedValues: [Double] = []
         sut.onSizeChanged = { value in
@@ -252,11 +267,12 @@ final class SizeSliderTests: XCTestCase {
 
         // All received values should be at or below upper bound
         for value in receivedValues {
-            XCTAssertLessThanOrEqual(value, testRange.upperBound, "Callback value should be clamped to upper bound")
+            #expect(value <= testRange.upperBound, "Callback value should be clamped to upper bound")
         }
     }
 
-    func testOnSizeChanged_receivesClampedValueAtLowerBound() {
+    @Test("onSizeChanged receives clamped value at lower bound")
+    func onSizeChanged_receivesClampedValueAtLowerBound() {
         sut.currentSize = testRange.lowerBound + 0.5
         var receivedValues: [Double] = []
         sut.onSizeChanged = { value in
@@ -269,11 +285,12 @@ final class SizeSliderTests: XCTestCase {
 
         // All received values should be at or above lower bound
         for value in receivedValues {
-            XCTAssertGreaterThanOrEqual(value, testRange.lowerBound, "Callback value should be clamped to lower bound")
+            #expect(value >= testRange.lowerBound, "Callback value should be clamped to lower bound")
         }
     }
 
-    func testOnSizeChanged_alwaysReceivesRoundedValues() {
+    @Test("onSizeChanged always receives rounded values")
+    func onSizeChanged_alwaysReceivesRoundedValues() {
         var receivedValues: [Double] = []
         sut.onSizeChanged = { value in
             receivedValues.append(value)
@@ -286,86 +303,95 @@ final class SizeSliderTests: XCTestCase {
         simulateStepperClick(increment: false)
 
         for value in receivedValues {
-            XCTAssertEqual(value, round(value), "All callback values should be rounded integers")
+            #expect(value == round(value), "All callback values should be rounded integers")
         }
     }
 
     // MARK: - Intrinsic Content Size Tests
 
-    func testIntrinsicContentSize_hasReasonableDimensions() {
+    @Test("Intrinsic content size has reasonable dimensions")
+    func intrinsicContentSize_hasReasonableDimensions() {
         let size = sut.intrinsicContentSize
 
-        XCTAssertGreaterThan(size.width, 0, "Width should be positive")
-        XCTAssertGreaterThan(size.height, 0, "Height should be positive")
-        XCTAssertLessThan(size.width, 500, "Width should be reasonable")
-        XCTAssertLessThan(size.height, 100, "Height should be reasonable")
+        #expect(size.width > 0, "Width should be positive")
+        #expect(size.height > 0, "Height should be positive")
+        #expect(size.width < 500, "Width should be reasonable")
+        #expect(size.height < 100, "Height should be reasonable")
     }
 
-    func testIntrinsicContentSize_isStable() {
+    @Test("Intrinsic content size is stable")
+    func intrinsicContentSize_isStable() {
         let size1 = sut.intrinsicContentSize
         sut.currentSize = 80.0
         let size2 = sut.intrinsicContentSize
         sut.currentSize = 110.0
         let size3 = sut.intrinsicContentSize
 
-        XCTAssertEqual(size1, size2, "Size should not change when value changes")
-        XCTAssertEqual(size2, size3, "Size should remain stable")
+        #expect(size1 == size2, "Size should not change when value changes")
+        #expect(size2 == size3, "Size should remain stable")
     }
 
     // MARK: - First Responder Tests
 
-    func testAcceptsFirstResponder_returnsTrue() {
-        XCTAssertTrue(sut.acceptsFirstResponder, "Should accept first responder for keyboard input")
+    @Test("Accepts first responder returns true")
+    func acceptsFirstResponder_returnsTrue() {
+        #expect(sut.acceptsFirstResponder, "Should accept first responder for keyboard input")
     }
 
     // MARK: - Value Label Update Tests
 
-    func testValueLabel_updatesAfterKeyboardInteraction() {
+    @Test("Value label updates after keyboard interaction")
+    func valueLabel_updatesAfterKeyboardInteraction() {
         let labelBefore = findValueLabel()?.stringValue
         simulateKeyDown(keyCode: 124) // Right arrow
         let labelAfter = findValueLabel()?.stringValue
 
-        XCTAssertNotEqual(labelBefore, labelAfter, "Value label should update after keyboard interaction")
-        XCTAssertEqual(labelAfter, "101%", "Value label should show new value with percent suffix")
+        #expect(labelBefore != labelAfter, "Value label should update after keyboard interaction")
+        #expect(labelAfter == "101%", "Value label should show new value with percent suffix")
     }
 
-    func testValueLabel_updatesAfterStepperClick() {
+    @Test("Value label updates after stepper click")
+    func valueLabel_updatesAfterStepperClick() {
         let labelBefore = findValueLabel()?.stringValue
         simulateStepperClick(increment: false)
         let labelAfter = findValueLabel()?.stringValue
 
-        XCTAssertNotEqual(labelBefore, labelAfter, "Value label should update after stepper click")
-        XCTAssertEqual(labelAfter, "99%", "Value label should show new value with percent suffix")
+        #expect(labelBefore != labelAfter, "Value label should update after stepper click")
+        #expect(labelAfter == "99%", "Value label should show new value with percent suffix")
     }
 
-    func testValueLabel_showsCorrectFormatAfterMultipleInteractions() {
+    @Test("Value label shows correct format after multiple interactions")
+    func valueLabel_showsCorrectFormatAfterMultipleInteractions() {
         // Increase to 105
         for _ in 0 ..< 5 {
             simulateKeyDown(keyCode: 124)
         }
 
         let label = findValueLabel()?.stringValue
-        XCTAssertEqual(label, "105%", "Value label should show current value with percent suffix")
+        #expect(label == "105%", "Value label should show current value with percent suffix")
     }
 
-    func testValueLabel_initialValueShowsCorrectFormat() {
+    @Test("Value label initial value shows correct format")
+    func valueLabel_initialValueShowsCorrectFormat() {
         let label = findValueLabel()?.stringValue
-        XCTAssertEqual(label, "100%", "Initial value label should show initialSize with percent suffix")
+        #expect(label == "100%", "Initial value label should show initialSize with percent suffix")
     }
 
-    func testValueLabel_atBoundsShowsCorrectFormat() {
+    @Test("Value label at bounds shows correct format")
+    func valueLabel_atBoundsShowsCorrectFormat() {
         sut.currentSize = testRange.lowerBound
         let lowerLabel = findValueLabel()?.stringValue
-        XCTAssertEqual(lowerLabel, "60%", "Lower bound should show correct label")
+        #expect(lowerLabel == "60%", "Lower bound should show correct label")
 
         sut.currentSize = testRange.upperBound
         let upperLabel = findValueLabel()?.stringValue
-        XCTAssertEqual(upperLabel, "120%", "Upper bound should show correct label")
+        #expect(upperLabel == "120%", "Upper bound should show correct label")
     }
 
     // MARK: - Slider Action Tests
 
-    func testSliderDrag_updatesValueAndLabel() {
+    @Test("Slider drag updates value and label")
+    func sliderDrag_updatesValueAndLabel() {
         var receivedValue: Double?
         sut.onSizeChanged = { value in
             receivedValue = value
@@ -373,28 +399,30 @@ final class SizeSliderTests: XCTestCase {
 
         simulateSliderDrag(to: 85.0)
 
-        XCTAssertEqual(sut.currentSize, 85.0, "currentSize should update after slider drag")
-        XCTAssertEqual(receivedValue, 85.0, "onSizeChanged should be called with new value")
-        XCTAssertEqual(findValueLabel()?.stringValue, "85%", "Value label should update")
+        #expect(sut.currentSize == 85.0, "currentSize should update after slider drag")
+        #expect(receivedValue == 85.0, "onSizeChanged should be called with new value")
+        #expect(findValueLabel()?.stringValue == "85%", "Value label should update")
     }
 
-    func testSliderDrag_roundsValue() {
+    @Test("Slider drag rounds value")
+    func sliderDrag_roundsValue() {
         simulateSliderDrag(to: 85.7)
 
         // The slider rounds values to integers
-        XCTAssertEqual(sut.currentSize, 86.0, "Slider should round to nearest integer")
-        XCTAssertEqual(findValueLabel()?.stringValue, "86%", "Label should show rounded value")
+        #expect(sut.currentSize == 86.0, "Slider should round to nearest integer")
+        #expect(findValueLabel()?.stringValue == "86%", "Label should show rounded value")
     }
 
-    func testSliderDrag_syncsStepper() {
+    @Test("Slider drag syncs stepper")
+    func sliderDrag_syncsStepper() {
         simulateSliderDrag(to: 90.0)
 
         guard let stepper = findStepper() else {
-            XCTFail("Could not find stepper")
+            Issue.record("Could not find stepper")
             return
         }
 
-        XCTAssertEqual(stepper.doubleValue, 90.0, "Stepper should sync with slider value")
+        #expect(stepper.doubleValue == 90.0, "Stepper should sync with slider value")
     }
 
     // MARK: - Helpers
@@ -440,7 +468,7 @@ final class SizeSliderTests: XCTestCase {
     /// and triggering the action. This is more robust than coordinate-based clicks.
     private func simulateStepperClick(increment: Bool) {
         guard let stepper = findStepper() else {
-            XCTFail("Could not find stepper")
+            Issue.record("Could not find stepper")
             return
         }
 
@@ -468,7 +496,7 @@ final class SizeSliderTests: XCTestCase {
     /// Simulates slider drag by setting value and triggering action
     private func simulateSliderDrag(to value: Double) {
         guard let slider = findSlider() else {
-            XCTFail("Could not find slider")
+            Issue.record("Could not find slider")
             return
         }
 
