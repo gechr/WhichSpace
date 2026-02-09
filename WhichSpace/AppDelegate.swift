@@ -302,6 +302,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         statusBarItem?.button?.target = self
         statusBarItem?.button?.action = #selector(statusBarButtonClicked(_:))
         statusBarItem?.button?.sendAction(on: [.leftMouseUp, .rightMouseUp])
+        NSEvent.addLocalMonitorForEvents(matching: .otherMouseUp) { [weak self] event in
+            guard event.buttonNumber == 2,
+                  let button = self?.statusBarItem?.button,
+                  button.isMousePoint(button.convert(event.locationInWindow, from: nil), in: button.bounds)
+            else {
+                return event
+            }
+            CoreDockSendNotification("com.apple.expose.awake" as CFString)
+            return nil
+        }
         updateStatusBarIcon()
     }
 

@@ -12,6 +12,9 @@
 #import <Foundation/Foundation.h>
 #import <ApplicationServices/ApplicationServices.h>
 
+// Private CoreDock API for triggering Mission Control
+int CoreDockSendNotification(CFStringRef notification);
+
 // Private CGS/SLS APIs for getting space information (no public alternative exists)
 int _CGSDefaultConnection();
 id CGSCopyManagedDisplaySpaces(int conn);
