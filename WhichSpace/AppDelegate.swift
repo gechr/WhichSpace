@@ -136,6 +136,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
     }
 
+    func applicationShouldHandleReopen(_: NSApplication, hasVisibleWindows _: Bool) -> Bool {
+        // Prevent macOS/SwiftUI from opening any windows when the app is relaunched
+        false
+    }
+
     // MARK: - Observation
 
     /// Test hook to start the observation task. In production, this is called from applicationDidFinishLaunching.

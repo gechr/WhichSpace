@@ -43,5 +43,7 @@
 	<true/>
 	<key>OSAScriptingDefinition</key>
 	<string>WhichSpace.sdef</string>
+	<key>LSUIElement</key>
+	<true/>
 </dict>
 </plist>
