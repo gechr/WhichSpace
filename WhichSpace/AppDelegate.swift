@@ -6,6 +6,14 @@ import Observation
 @preconcurrency import Sparkle
 import UniformTypeIdentifiers
 
+// MARK: - NSEvent Right-Click Detection
+
+extension NSEvent {
+    var isRightClick: Bool {
+        type == .rightMouseUp || modifierFlags.contains(.control)
+    }
+}
+
 // MARK: - Launch at Login Protocol
 
 /// Protocol for abstracting LaunchAtLogin for testability
@@ -302,13 +310,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             return
         }
 
-        if event.type == .rightMouseUp {
+        if event.isRightClick {
             guard let button = statusBarItem?.button else {
                 return
             }
             let position = NSPoint(x: 0, y: button.bounds.height + 5)
             statusMenu.popUp(positioning: nil, at: position, in: button)
-        } else if event.type == .leftMouseUp {
+        } else {
             handleLeftClick(event, button: button)
         }
     }
