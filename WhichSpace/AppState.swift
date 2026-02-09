@@ -81,7 +81,7 @@ struct DisplaySpaceInfo: Equatable {
     let labels: [String]
     let spaceIDs: [Int]
     /// Local regular-space index for each entry (nil for fullscreen entries)
-    let regularIndices: [Int?]
+    let spaceIndices: [Int?]
     /// Count of regular (non-fullscreen) spaces on this display
     let regularSpaceCount: Int
     /// The global starting index for this display's spaces (1-based)
@@ -92,15 +92,15 @@ struct DisplaySpaceInfo: Equatable {
         labels: [String],
         spaceIDs: [Int],
         globalStartIndex: Int = 1,
-        regularIndices: [Int?] = [],
+        spaceIndices: [Int?] = [],
         regularSpaceCount: Int? = nil
     ) {
         self.displayID = displayID
         self.labels = labels
         self.spaceIDs = spaceIDs
         let computedRegularIndices: [Int?]
-        if !regularIndices.isEmpty {
-            computedRegularIndices = regularIndices
+        if !spaceIndices.isEmpty {
+            computedRegularIndices = spaceIndices
         } else {
             var count = 0
             computedRegularIndices = labels.map {
@@ -111,7 +111,7 @@ struct DisplaySpaceInfo: Equatable {
                 return count
             }
         }
-        self.regularIndices = computedRegularIndices
+        self.spaceIndices = computedRegularIndices
         self.regularSpaceCount = regularSpaceCount ?? computedRegularIndices.compactMap(\.self).count
         self.globalStartIndex = globalStartIndex
     }
@@ -197,6 +197,7 @@ final class AppState {
         let label: String
         let spaceID: Int
         let isActive: Bool
+        let spaceIndex: Int?
     }
 
     static let shared = AppState()
@@ -731,7 +732,6 @@ final class AppState {
 
             var slots: [StatusBarIconSlot] = []
             var xOffset: Double = 0
-            var shortcutNum = 0
 
             for (displayIndex, displaySpaces) in spacesPerDisplay.enumerated() {
                 if displayIndex > 0 {
@@ -740,10 +740,7 @@ final class AppState {
 
                 for space in displaySpaces {
                     let isFullscreen = space.label == Labels.fullscreen
-                    if !isFullscreen {
-                        shortcutNum += 1
-                    }
-                    let target = isFullscreen ? nil : shortcutNum
+                    let target = isFullscreen ? nil : space.globalIndex
                     let displayLabel = isFullscreen ? space.label :
                         (store.localSpaceNumbers ? space.label : String(space.globalIndex))
                     slots.append(StatusBarIconSlot(
@@ -770,20 +767,13 @@ final class AppState {
             let globalStartIndex = allDisplaysSpaceInfo
                 .first { $0.displayID == currentDisplayID }?.globalStartIndex ?? 1
 
-            // Count only non-fullscreen spaces to get keyboard shortcut numbers
-            var shortcutNum = 0
             var slots: [StatusBarIconSlot] = []
 
             for (drawIndex, spaceInfo) in spacesToShow.enumerated() {
                 let isFullscreen = spaceInfo.label == Labels.fullscreen
-                if !isFullscreen {
-                    shortcutNum += 1
-                }
-                let target = isFullscreen ? nil : shortcutNum
-                let localRegularIndex = allDisplaysSpaceInfo
-                    .first { $0.displayID == currentDisplayID }?
-                    .regularIndices[spaceInfo.index] ?? 0
-                let globalIndex = globalStartIndex + max(localRegularIndex - 1, 0)
+                let spaceIndex = spaceInfo.spaceIndex ?? 0
+                let globalIndex = globalStartIndex + max(spaceIndex - 1, 0)
+                let target = isFullscreen ? nil : globalIndex
                 let displayLabel = isFullscreen ? spaceInfo.label :
                     (store.localSpaceNumbers ? spaceInfo.label : String(globalIndex))
                 let spaceID = allSpaceIDs[spaceInfo.index]
@@ -909,7 +899,8 @@ final class AppState {
         return true
     }
 
-    private func spacesToShowForCurrentDisplay() -> [(index: Int, label: String)] {
+    private func spacesToShowForCurrentDisplay() -> [(index: Int, label: String, spaceIndex: Int?)] {
+        let displayInfo = allDisplaysSpaceInfo.first { $0.displayID == currentDisplayID }
         let needsFiltering = store.hideEmptySpaces || store.hideFullscreenApps
         if needsFiltering {
             let nonEmptySpaceIDs: Set<Int>
@@ -931,10 +922,14 @@ final class AppState {
 
                 return shouldShowSpace(label: label, spaceID: spaceID, nonEmptySpaceIDs: nonEmptySpaceIDs)
             }
-            return filtered.map { (index: $0.offset, label: $0.element) }
+            return filtered.map {
+                (index: $0.offset, label: $0.element, spaceIndex: displayInfo?.spaceIndices[$0.offset])
+            }
         }
 
-        return allSpaceLabels.enumerated().map { (index: $0.offset, label: $0.element) }
+        return allSpaceLabels.enumerated().map {
+            (index: $0.offset, label: $0.element, spaceIndex: displayInfo?.spaceIndices[$0.offset])
+        }
     }
 
     private func spacesToShowAcrossDisplays() -> [[CrossDisplaySpace]] {
@@ -954,8 +949,8 @@ final class AppState {
 
             for (arrayIndex, label) in displayInfo.labels.enumerated() {
                 let localIndex = arrayIndex + 1
-                let localRegularIndex = displayInfo.regularIndices[arrayIndex] ?? 0
-                let globalIndex = displayInfo.globalStartIndex + max(localRegularIndex - 1, 0)
+                let spaceIndex = displayInfo.spaceIndices[arrayIndex] ?? 0
+                let globalIndex = displayInfo.globalStartIndex + max(spaceIndex - 1, 0)
                 let spaceID = displayInfo.spaceIDs[arrayIndex]
                 let isActive = spaceID == currentSpaceID
 
@@ -971,7 +966,8 @@ final class AppState {
                     globalIndex: globalIndex,
                     label: label,
                     spaceID: spaceID,
-                    isActive: isActive
+                    isActive: isActive,
+                    spaceIndex: displayInfo.spaceIndices[arrayIndex]
                 ))
             }
 
@@ -1004,10 +1000,8 @@ final class AppState {
             let spaceIndex = spaceInfo.index + 1
             let isActive = spaceIndex == currentSpace
             let isFullscreen = spaceInfo.label == Labels.fullscreen
-            let localRegularIndex = allDisplaysSpaceInfo
-                .first { $0.displayID == currentDisplayID }?
-                .regularIndices[spaceInfo.index] ?? 0
-            let globalIndex = globalStartIndex + max(localRegularIndex - 1, 0)
+            let localSpaceIndex = spaceInfo.spaceIndex ?? 0
+            let globalIndex = globalStartIndex + max(localSpaceIndex - 1, 0)
             let displayLabel = isFullscreen ? spaceInfo.label :
                 (store.localSpaceNumbers ? spaceInfo.label : String(globalIndex))
             let icon = generateSingleIcon(for: spaceIndex, label: displayLabel, darkMode: darkMode)

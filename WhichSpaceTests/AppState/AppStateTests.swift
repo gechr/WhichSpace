@@ -570,7 +570,7 @@ final class AppStateTests: XCTestCase {
 
         let slots = sut.statusBarLayout().slots
 
-        XCTAssertEqual(slots.map(\.targetSpace), [1, nil, 2, 3])
+        XCTAssertEqual(slots.map(\.targetSpace), [1, nil, 3, 4])
         XCTAssertEqual(
             slots.map(\.startX),
             [
@@ -580,6 +580,55 @@ final class AppStateTests: XCTestCase {
                 Layout.statusItemWidth * 3 + Layout.displaySeparatorWidth,
             ]
         )
+    }
+
+    func testStatusBarLayout_showAllSpaces_hideEmptySpaces_usesActualSpaceNumber() {
+        // Given: 5 spaces, only spaces 1 and 5 have windows, space 1 active
+        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        sut.setSpaceState(
+            labels: ["1", "2", "3", "4", "5"],
+            currentSpace: 1,
+            currentLabel: "1",
+            displayID: "Main"
+        )
+        store.showAllSpaces = true
+        store.hideEmptySpaces = true
+        stub.spacesWithWindowsSet = [100, 104]
+
+        // When
+        let slots = sut.statusBarLayout().slots
+
+        // Then: Should show spaces 1 and 5, with targetSpace matching actual space numbers
+        XCTAssertEqual(slots.map(\.targetSpace), [1, 5])
+    }
+
+    func testStatusBarLayout_showAllDisplays_hideEmptySpaces_usesActualSpaceNumber() {
+        // Given: Display with 5 spaces, only spaces 1 and 5 have windows, space 1 active
+        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let display = DisplaySpaceInfo(
+            displayID: "Main",
+            labels: ["1", "2", "3", "4", "5"],
+            spaceIDs: [100, 101, 102, 103, 104],
+            globalStartIndex: 1
+        )
+        sut.setSpaceState(
+            labels: ["1", "2", "3", "4", "5"],
+            currentSpace: 1,
+            currentLabel: "1",
+            displayID: "Main",
+            spaceIDs: [100, 101, 102, 103, 104],
+            allDisplays: [display],
+            globalSpaceIndex: 1
+        )
+        store.showAllDisplays = true
+        store.hideEmptySpaces = true
+        stub.spacesWithWindowsSet = [100, 104]
+
+        // When
+        let slots = sut.statusBarLayout().slots
+
+        // Then: Should show spaces 1 and 5, with targetSpace matching actual space numbers
+        XCTAssertEqual(slots.map(\.targetSpace), [1, 5])
     }
 
     func testUpdateDarkModeStatus_lightAppearance() {
