@@ -259,18 +259,9 @@ enum ItemData {
 
     // MARK: - Emojis
 
-    /// Skin tone modifier unicode scalars (🏻🏼🏽🏾🏿)
-    private static let skinToneModifiers: Set<Unicode.Scalar> = [
-        Unicode.Scalar(0x1F3FB)!, // Light
-        Unicode.Scalar(0x1F3FC)!, // Medium-light
-        Unicode.Scalar(0x1F3FD)!, // Medium
-        Unicode.Scalar(0x1F3FE)!, // Medium-dark
-        Unicode.Scalar(0x1F3FF)!, // Dark
-    ]
-
     /// Check if an emoji string contains a skin tone modifier
     private static func hasSkinToneModifier(_ emoji: String) -> Bool {
-        emoji.unicodeScalars.contains { skinToneModifiers.contains($0) }
+        emoji.unicodeScalars.contains { SkinTone.modifierScalars.contains($0) }
     }
 
     /// All emojis from EmojiKit, excluding pre-applied skin tone variants

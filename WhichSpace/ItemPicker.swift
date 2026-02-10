@@ -221,7 +221,7 @@ final class ItemPicker: NSView {
             }
             // Save the base emoji without skin tone - the per-space skin tone
             // from the Color menu will be applied at render time
-            self.onItemSelected?(item)
+            onItemSelected?(item)
         }
         gridView.onItemHoverStart = { [weak self] item in
             self?.onItemHoverStart?(item)
@@ -535,17 +535,22 @@ private final class ItemGridView: NSView {
         ))
     }
 
-    // MARK: - Private Helpers
+    // MARK: - Frame Calculation (shared by drawing, hit testing, and test support)
 
-    private func rectForIndex(_ index: Int) -> CGRect {
+    /// Returns the clickable frame for the item at the given index
+    func frameForItem(at index: Int) -> CGRect? {
+        guard index >= 0, index < items.count else {
+            return nil
+        }
         let col = index % columns
         let row = index / columns
         let xOffset = padding + Double(col) * (itemSize + spacing)
         let yOffset = padding + Double(row) * (itemSize + spacing)
-        return CGRect(x: xOffset - 2, y: yOffset - 2, width: itemSize + 4, height: itemSize + 4)
+        return CGRect(x: xOffset, y: yOffset, width: itemSize, height: itemSize)
     }
 
-    private func indexForLocation(_ location: CGPoint) -> Int? {
+    /// Returns the item index at the given location, or nil if not over an item
+    func itemIndex(at location: CGPoint) -> Int? {
         let col = Int((location.x - padding) / (itemSize + spacing))
         let row = Int((location.y - padding) / (itemSize + spacing))
 
@@ -554,30 +559,58 @@ private final class ItemGridView: NSView {
         }
 
         let index = row * columns + col
-        guard index < items.count else {
+        guard let frame = frameForItem(at: index) else {
             return nil
         }
 
-        let cellX = padding + Double(col) * (itemSize + spacing)
-        let cellY = padding + Double(row) * (itemSize + spacing)
-        let cellRect = CGRect(x: cellX, y: cellY, width: itemSize, height: itemSize)
+        return frame.contains(location) ? index : nil
+    }
 
-        return cellRect.contains(location) ? index : nil
+    // MARK: - Private Helpers
+
+    private func rectForIndex(_ index: Int) -> CGRect {
+        guard let frame = frameForItem(at: index) else {
+            return .zero
+        }
+        return frame.insetBy(dx: -2, dy: -2)
+    }
+
+    private func indexForLocation(_ location: CGPoint) -> Int? {
+        itemIndex(at: location)
     }
 }
 
-// MARK: - NSImage + Tinting
+// MARK: - Test Support
 
-private extension NSImage {
-    func tinted(with color: NSColor) -> NSImage {
-        guard let image = copy() as? NSImage else {
-            return self
-        }
-        image.lockFocus()
-        color.set()
-        let imageRect = CGRect(origin: .zero, size: image.size)
-        imageRect.fill(using: .sourceAtop)
-        image.unlockFocus()
-        return image
+extension ItemPicker {
+    /// Layout information for testing - allows tests to query actual layout without hardcoding constants
+    struct LayoutInfo {
+        let itemSize: Double
+        let spacing: Double
+        let padding: Double
+        let columns: Int
+    }
+
+    /// Layout info for testing (internal access allows @testable import)
+    var layoutInfo: LayoutInfo {
+        LayoutInfo(itemSize: itemType.itemSize, spacing: spacing, padding: padding, columns: itemType.columns)
+    }
+
+    /// Returns the frame for the item at the given index within the grid coordinate system.
+    /// Delegates to the grid view's actual frame calculation to ensure consistency.
+    func frameForItem(at index: Int) -> CGRect? {
+        gridView.frameForItem(at: index)
+    }
+
+    /// Returns the item index at the given point within the grid coordinate system,
+    /// or nil if the point is not over a clickable item (e.g. in spacing or padding).
+    /// Uses the same hit testing logic as the actual click handler.
+    func itemIndex(at point: CGPoint) -> Int? {
+        gridView.itemIndex(at: point)
+    }
+
+    /// Returns the current number of items in the grid (may change with filtering)
+    var itemCount: Int {
+        gridView.items.count
     }
 }

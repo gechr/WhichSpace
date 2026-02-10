@@ -10,14 +10,14 @@ final class DynamicDisplayTests: XCTestCase {
     private var store: DefaultsStore!
     private var testSuite: TestSuite!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         testSuite = TestSuiteFactory.createSuite()
         store = DefaultsStore(suite: testSuite.suite)
         stub = CGSStub()
     }
 
-    override func tearDown() {
+    override func tearDown() async throws {
         sut = nil
         stub = nil
         if let store, let testSuite {
@@ -26,7 +26,7 @@ final class DynamicDisplayTests: XCTestCase {
         }
         store = nil
         testSuite = nil
-        super.tearDown()
+        try await super.tearDown()
     }
 
     // MARK: - Multiple Display Configurations
@@ -270,14 +270,14 @@ final class RegularSpaceCountTests: XCTestCase {
     private var store: DefaultsStore!
     private var testSuite: TestSuite!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         testSuite = TestSuiteFactory.createSuite()
         store = DefaultsStore(suite: testSuite.suite)
         stub = CGSStub()
     }
 
-    override func tearDown() {
+    override func tearDown() async throws {
         sut = nil
         stub = nil
         if let store, let testSuite {
@@ -286,7 +286,7 @@ final class RegularSpaceCountTests: XCTestCase {
         }
         store = nil
         testSuite = nil
-        super.tearDown()
+        try await super.tearDown()
     }
 
     func testRegularSpaceCount_singleRegularSpace() {
@@ -413,8 +413,8 @@ final class DarkModeTransitionTests: XCTestCase {
     private var store: DefaultsStore!
     private var testSuite: TestSuite!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         testSuite = TestSuiteFactory.createSuite()
         store = DefaultsStore(suite: testSuite.suite)
         stub = CGSStub()
@@ -428,7 +428,7 @@ final class DarkModeTransitionTests: XCTestCase {
         ]
     }
 
-    override func tearDown() {
+    override func tearDown() async throws {
         sut = nil
         stub = nil
         if let store, let testSuite {
@@ -437,7 +437,7 @@ final class DarkModeTransitionTests: XCTestCase {
         }
         store = nil
         testSuite = nil
-        super.tearDown()
+        try await super.tearDown()
     }
 
     // MARK: - Rapid Dark Mode Toggle
@@ -558,8 +558,8 @@ final class ObserverLifecycleTests: XCTestCase {
     private var store: DefaultsStore!
     private var testSuite: TestSuite!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         testSuite = TestSuiteFactory.createSuite()
         store = DefaultsStore(suite: testSuite.suite)
         stub = CGSStub()
@@ -573,7 +573,7 @@ final class ObserverLifecycleTests: XCTestCase {
         ]
     }
 
-    override func tearDown() {
+    override func tearDown() async throws {
         stub = nil
         if let store, let testSuite {
             store.resetAll()
@@ -581,7 +581,7 @@ final class ObserverLifecycleTests: XCTestCase {
         }
         store = nil
         testSuite = nil
-        super.tearDown()
+        try await super.tearDown()
     }
 
     // MARK: - AppState Lifecycle
@@ -769,14 +769,14 @@ final class FullscreenSpaceEdgeCaseTests: XCTestCase {
     private var store: DefaultsStore!
     private var testSuite: TestSuite!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         testSuite = TestSuiteFactory.createSuite()
         store = DefaultsStore(suite: testSuite.suite)
         stub = CGSStub()
     }
 
-    override func tearDown() {
+    override func tearDown() async throws {
         sut = nil
         stub = nil
         if let store, let testSuite {
@@ -785,7 +785,7 @@ final class FullscreenSpaceEdgeCaseTests: XCTestCase {
         }
         store = nil
         testSuite = nil
-        super.tearDown()
+        try await super.tearDown()
     }
 
     func testAllFullscreenSpaces() {
@@ -886,14 +886,14 @@ final class ShowAllDisplaysEdgeCaseTests: XCTestCase {
     private var store: DefaultsStore!
     private var testSuite: TestSuite!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         testSuite = TestSuiteFactory.createSuite()
         store = DefaultsStore(suite: testSuite.suite)
         stub = CGSStub()
     }
 
-    override func tearDown() {
+    override func tearDown() async throws {
         sut = nil
         stub = nil
         if let store, let testSuite {
@@ -902,7 +902,7 @@ final class ShowAllDisplaysEdgeCaseTests: XCTestCase {
         }
         store = nil
         testSuite = nil
-        super.tearDown()
+        try await super.tearDown()
     }
 
     func testShowAllDisplaysWithSingleDisplay() {

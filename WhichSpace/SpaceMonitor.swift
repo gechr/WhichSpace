@@ -25,12 +25,10 @@ actor SpaceMonitor {
     }
 
     /// Creates an async stream of space snapshots
-    nonisolated func snapshots() -> AsyncStream<SpaceSnapshot> {
-        AsyncStream { continuation in
-            Task {
-                await self.setContinuation(continuation)
-            }
-        }
+    func snapshots() -> AsyncStream<SpaceSnapshot> {
+        let (stream, continuation) = AsyncStream.makeStream(of: SpaceSnapshot.self)
+        setContinuation(continuation)
+        return stream
     }
 
     private func setContinuation(_ continuation: AsyncStream<SpaceSnapshot>.Continuation) {
@@ -72,11 +70,15 @@ actor SpaceMonitor {
 
         source.setEventHandler { [weak self] in
             let flags = source.data.rawValue
-            if flags & DispatchSource.FileSystemEvent.delete.rawValue != 0 {
-                Task {
-                    await self?.emitSnapshot()
-                    await self?.restartMonitoring()
-                }
+            guard flags & DispatchSource.FileSystemEvent.delete.rawValue != 0,
+                  let self
+            else {
+                return
+            }
+
+            Task { [self] in
+                await emitSnapshot()
+                await restartMonitoring()
             }
         }
 

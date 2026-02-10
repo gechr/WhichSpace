@@ -1,6 +1,5 @@
 import AppKit
 import Defaults
-import LaunchAtLogin
 
 // MARK: - Backup
 
@@ -137,49 +136,33 @@ struct BackupSpacePreferences: Codable {
         }
     }
 
-    func toSpaceColors() -> [Int: SpaceColors] {
-        colors.reduce(into: [:]) { result, pair in
-            guard let key = Int(pair.key), let color = pair.value.toSpaceColors() else {
+    private func convertDict<V, R>(_ dict: [String: V], transform: (V) -> R?) -> [Int: R] {
+        dict.reduce(into: [:]) { result, pair in
+            guard let key = Int(pair.key), let value = transform(pair.value) else {
                 return
             }
-            result[key] = color
+            result[key] = value
         }
+    }
+
+    func toSpaceColors() -> [Int: SpaceColors] {
+        convertDict(colors) { $0.toSpaceColors() }
     }
 
     func toSpaceFonts() -> [Int: SpaceFont] {
-        fonts.reduce(into: [:]) { result, pair in
-            guard let key = Int(pair.key), let font = pair.value.toSpaceFont() else {
-                return
-            }
-            result[key] = font
-        }
+        convertDict(fonts) { $0.toSpaceFont() }
     }
 
     func toIconStyles() -> [Int: IconStyle] {
-        iconStyles.reduce(into: [:]) { result, pair in
-            guard let key = Int(pair.key), let style = IconStyle(rawValue: pair.value) else {
-                return
-            }
-            result[key] = style
-        }
+        convertDict(iconStyles) { IconStyle(rawValue: $0) }
     }
 
     func toSkinTones() -> [Int: SkinTone] {
-        skinTones.reduce(into: [:]) { result, pair in
-            guard let key = Int(pair.key), let tone = SkinTone(rawValue: pair.value) else {
-                return
-            }
-            result[key] = tone
-        }
+        convertDict(skinTones) { SkinTone(rawValue: $0) }
     }
 
     func toSymbols() -> [Int: String] {
-        symbols.reduce(into: [:]) { result, pair in
-            guard let key = Int(pair.key) else {
-                return
-            }
-            result[key] = pair.value
-        }
+        convertDict(symbols) { $0 }
     }
 }
 
@@ -245,17 +228,46 @@ struct CodableSpaceFont: Codable {
     }
 }
 
+// MARK: - BackupError
+
+enum BackupError: LocalizedError {
+    case encodingFailed
+    case decodingFailed(Error)
+    case fileReadFailed(URL, Error)
+    case fileWriteFailed(URL, Error)
+    case invalidData
+
+    var errorDescription: String? {
+        switch self {
+        case .encodingFailed:
+            Localization.errorBackupEncodingFailed
+        case let .decodingFailed(error):
+            String(format: Localization.errorBackupDecodingFailed, error.localizedDescription)
+        case let .fileReadFailed(url, error):
+            String(format: Localization.errorBackupFileReadFailed, url.lastPathComponent, error.localizedDescription)
+        case let .fileWriteFailed(url, error):
+            String(format: Localization.errorBackupFileWriteFailed, url.lastPathComponent, error.localizedDescription)
+        case .invalidData:
+            Localization.errorBackupInvalidData
+        }
+    }
+}
+
 // MARK: - BackupManager
 
 /// Handles encoding and decoding of WhichSpace configuration.
+@MainActor
 enum BackupManager {
     /// Default filename for exported backup.
     static let defaultFilename = "WhichSpaceSettings.json"
 
     /// Encodes the current settings to a JSON string.
-    static func encode(store: DefaultsStore = .shared) -> String? {
+    static func encode(
+        store: DefaultsStore = AppEnvironment.shared.store,
+        launchAtLogin: LaunchAtLoginProvider = DefaultLaunchAtLoginProvider()
+    ) throws -> String {
         guard let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String else {
-            return nil
+            throw BackupError.encodingFailed
         }
 
         let settings = BackupSettings(
@@ -264,7 +276,7 @@ enum BackupManager {
             hideEmptySpaces: store.hideEmptySpaces,
             hideFullscreenApps: store.hideFullscreenApps,
             hideSingleSpace: store.hideSingleSpace,
-            launchAtLogin: LaunchAtLogin.isEnabled,
+            launchAtLogin: launchAtLogin.isEnabled,
             localSpaceNumbers: store.localSpaceNumbers,
             separatorColor: store.separatorColor.map { CodableColor(from: $0) },
             showAllDisplays: store.showAllDisplays,
@@ -311,44 +323,62 @@ enum BackupManager {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
 
-        guard let data = try? encoder.encode(backup),
-              let jsonString = String(data: data, encoding: .utf8)
-        else {
-            return nil
+        do {
+            let data = try encoder.encode(backup)
+            guard let jsonString = String(data: data, encoding: .utf8) else {
+                throw BackupError.encodingFailed
+            }
+            return jsonString
+        } catch let error as BackupError {
+            throw error
+        } catch {
+            throw BackupError.encodingFailed
         }
-
-        return jsonString
     }
 
     /// Decodes a JSON string to a Backup object.
-    static func decode(jsonString: String) -> Backup? {
+    static func decode(jsonString: String) throws -> Backup {
         guard let data = jsonString.data(using: .utf8) else {
-            return nil
+            throw BackupError.invalidData
         }
-        return try? JSONDecoder().decode(Backup.self, from: data)
+        do {
+            return try JSONDecoder().decode(Backup.self, from: data)
+        } catch {
+            throw BackupError.decodingFailed(error)
+        }
     }
 
     /// Loads configuration from a file URL and applies it to the store.
-    static func load(from url: URL, store: DefaultsStore = .shared) -> Bool {
-        guard let jsonString = try? String(contentsOf: url, encoding: .utf8),
-              let config = decode(jsonString: jsonString)
-        else {
-            return false
+    static func load(
+        from url: URL,
+        store: DefaultsStore = AppEnvironment.shared.store,
+        launchAtLogin: LaunchAtLoginProvider = DefaultLaunchAtLoginProvider()
+    ) throws {
+        let jsonString: String
+        do {
+            jsonString = try String(contentsOf: url, encoding: .utf8)
+        } catch {
+            throw BackupError.fileReadFailed(url, error)
         }
 
-        apply(config, to: store)
-        return true
+        let config = try decode(jsonString: jsonString)
+        apply(config, to: store, launchAtLogin: launchAtLogin)
     }
 
     /// Applies a config to the defaults store.
-    static func apply(_ backup: Backup, to store: DefaultsStore) {
+    static func apply(
+        _ backup: Backup,
+        to store: DefaultsStore,
+        launchAtLogin: LaunchAtLoginProvider = DefaultLaunchAtLoginProvider()
+    ) {
         // Apply global settings
         store.clickToSwitchSpaces = backup.settings.clickToSwitchSpaces
         store.dimInactiveSpaces = backup.settings.dimInactiveSpaces
         store.hideEmptySpaces = backup.settings.hideEmptySpaces
         store.hideFullscreenApps = backup.settings.hideFullscreenApps
         store.hideSingleSpace = backup.settings.hideSingleSpace
-        LaunchAtLogin.isEnabled = backup.settings.launchAtLogin
+        var launchAtLogin = launchAtLogin
+        launchAtLogin.isEnabled = backup.settings.launchAtLogin
         store.localSpaceNumbers = backup.settings.localSpaceNumbers
         store.separatorColor = backup.settings.separatorColor?.toNSColor()
         store.showAllDisplays = backup.settings.showAllDisplays
@@ -389,15 +419,16 @@ enum BackupManager {
     }
 
     /// Exports the current configuration to a file URL.
-    static func export(to url: URL, store: DefaultsStore = .shared) -> Bool {
-        guard let jsonString = encode(store: store) else {
-            return false
-        }
+    static func export(
+        to url: URL,
+        store: DefaultsStore = AppEnvironment.shared.store,
+        launchAtLogin: LaunchAtLoginProvider = DefaultLaunchAtLoginProvider()
+    ) throws {
+        let jsonString = try encode(store: store, launchAtLogin: launchAtLogin)
         do {
             try jsonString.write(to: url, atomically: true, encoding: .utf8)
-            return true
         } catch {
-            return false
+            throw BackupError.fileWriteFailed(url, error)
         }
     }
 }

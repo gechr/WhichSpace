@@ -1,131 +1,115 @@
-import XCTest
+import AppKit
+import Testing
 @testable import WhichSpace
 
-final class IconColorsTests: XCTestCase {
+@Suite("IconColors")
+struct IconColorsTests {
     // MARK: - Static Color Constants
 
-    func testFilledDarkForegroundIsBlack() {
-        let color = IconColors.filledDarkForeground
-        XCTAssertEqual(color, NSColor(calibratedWhite: 0, alpha: 1))
+    @Test("filledDarkForeground is black")
+    func filledDarkForegroundIsBlack() {
+        #expect(IconColors.filledDarkForeground == NSColor(calibratedWhite: 0, alpha: 1))
     }
 
-    func testFilledDarkBackgroundIsLightGray() {
-        let color = IconColors.filledDarkBackground
-        XCTAssertEqual(color, NSColor(calibratedWhite: 0.7, alpha: 1))
+    @Test("filledDarkBackground is light gray")
+    func filledDarkBackgroundIsLightGray() {
+        #expect(IconColors.filledDarkBackground == NSColor(calibratedWhite: 0.7, alpha: 1))
     }
 
-    func testFilledLightForegroundIsWhite() {
-        let color = IconColors.filledLightForeground
-        XCTAssertEqual(color, NSColor(calibratedWhite: 1, alpha: 1))
+    @Test("filledLightForeground is white")
+    func filledLightForegroundIsWhite() {
+        #expect(IconColors.filledLightForeground == NSColor(calibratedWhite: 1, alpha: 1))
     }
 
-    func testFilledLightBackgroundIsDarkGray() {
-        let color = IconColors.filledLightBackground
-        XCTAssertEqual(color, NSColor(calibratedWhite: 0.3, alpha: 1))
+    @Test("filledLightBackground is dark gray")
+    func filledLightBackgroundIsDarkGray() {
+        #expect(IconColors.filledLightBackground == NSColor(calibratedWhite: 0.3, alpha: 1))
     }
 
-    func testOutlineDarkIsLightGray() {
-        let color = IconColors.outlineDark
-        XCTAssertEqual(color, NSColor(calibratedWhite: 0.7, alpha: 1))
+    @Test("outlineDark is light gray")
+    func outlineDarkIsLightGray() {
+        #expect(IconColors.outlineDark == NSColor(calibratedWhite: 0.7, alpha: 1))
     }
 
-    func testOutlineLightIsDarkGray() {
-        let color = IconColors.outlineLight
-        XCTAssertEqual(color, NSColor(calibratedWhite: 0.3, alpha: 1))
+    @Test("outlineLight is dark gray")
+    func outlineLightIsDarkGray() {
+        #expect(IconColors.outlineLight == NSColor(calibratedWhite: 0.3, alpha: 1))
     }
 
-    // MARK: - Filled Colors (Dark Mode)
+    // MARK: - Filled Colors
 
-    func testFilledColorsDarkModeReturnsDarkForeground() {
-        let (foreground, _) = IconColors.filledColors(darkMode: true)
-        XCTAssertEqual(foreground, IconColors.filledDarkForeground)
+    @Test("filled colors dark mode returns dark foreground and background")
+    func filledColorsDarkMode() {
+        let (foreground, background) = IconColors.filledColors(darkMode: true)
+        #expect(foreground == IconColors.filledDarkForeground)
+        #expect(background == IconColors.filledDarkBackground)
     }
 
-    func testFilledColorsDarkModeReturnsDarkBackground() {
-        let (_, background) = IconColors.filledColors(darkMode: true)
-        XCTAssertEqual(background, IconColors.filledDarkBackground)
+    @Test("filled colors light mode returns light foreground and background")
+    func filledColorsLightMode() {
+        let (foreground, background) = IconColors.filledColors(darkMode: false)
+        #expect(foreground == IconColors.filledLightForeground)
+        #expect(background == IconColors.filledLightBackground)
     }
 
-    // MARK: - Filled Colors (Light Mode)
+    // MARK: - Outline Colors
 
-    func testFilledColorsLightModeReturnsLightForeground() {
-        let (foreground, _) = IconColors.filledColors(darkMode: false)
-        XCTAssertEqual(foreground, IconColors.filledLightForeground)
-    }
-
-    func testFilledColorsLightModeReturnsLightBackground() {
-        let (_, background) = IconColors.filledColors(darkMode: false)
-        XCTAssertEqual(background, IconColors.filledLightBackground)
-    }
-
-    // MARK: - Outline Colors (Dark Mode)
-
-    func testOutlineColorsDarkModeReturnsSameForForegroundAndBackground() {
+    @Test("outline colors dark mode returns same color for both")
+    func outlineColorsDarkMode() {
         let (foreground, background) = IconColors.outlineColors(darkMode: true)
-        XCTAssertEqual(foreground, background)
+        #expect(foreground == background)
+        #expect(foreground == IconColors.outlineDark)
     }
 
-    func testOutlineColorsDarkModeReturnsOutlineDark() {
-        let (foreground, background) = IconColors.outlineColors(darkMode: true)
-        XCTAssertEqual(foreground, IconColors.outlineDark)
-        XCTAssertEqual(background, IconColors.outlineDark)
-    }
-
-    // MARK: - Outline Colors (Light Mode)
-
-    func testOutlineColorsLightModeReturnsSameForForegroundAndBackground() {
+    @Test("outline colors light mode returns same color for both")
+    func outlineColorsLightMode() {
         let (foreground, background) = IconColors.outlineColors(darkMode: false)
-        XCTAssertEqual(foreground, background)
-    }
-
-    func testOutlineColorsLightModeReturnsOutlineLight() {
-        let (foreground, background) = IconColors.outlineColors(darkMode: false)
-        XCTAssertEqual(foreground, IconColors.outlineLight)
-        XCTAssertEqual(background, IconColors.outlineLight)
+        #expect(foreground == background)
+        #expect(foreground == IconColors.outlineLight)
     }
 
     // MARK: - Mode Difference Tests
 
-    func testFilledColorsAreDifferentBetweenModes() {
+    @Test("filled colors differ between dark and light mode")
+    func filledColorsAreDifferentBetweenModes() {
         let darkColors = IconColors.filledColors(darkMode: true)
         let lightColors = IconColors.filledColors(darkMode: false)
 
-        XCTAssertNotEqual(darkColors.foreground, lightColors.foreground)
-        XCTAssertNotEqual(darkColors.background, lightColors.background)
+        #expect(darkColors.foreground != lightColors.foreground)
+        #expect(darkColors.background != lightColors.background)
     }
 
-    func testOutlineColorsAreDifferentBetweenModes() {
+    @Test("outline colors differ between dark and light mode")
+    func outlineColorsAreDifferentBetweenModes() {
         let darkColors = IconColors.outlineColors(darkMode: true)
         let lightColors = IconColors.outlineColors(darkMode: false)
 
-        XCTAssertNotEqual(darkColors.foreground, lightColors.foreground)
-        XCTAssertNotEqual(darkColors.background, lightColors.background)
+        #expect(darkColors.foreground != lightColors.foreground)
+        #expect(darkColors.background != lightColors.background)
     }
 
     // MARK: - Contrast Tests
 
-    func testFilledDarkModeHasSufficientContrast() {
+    @Test("filled dark mode has sufficient contrast")
+    func filledDarkModeHasSufficientContrast() {
         let (foreground, background) = IconColors.filledColors(darkMode: true)
 
-        // Dark foreground on light background should have good contrast
-        // Foreground is black (0.0), background is 0.7 gray
         let fgWhite = foreground.luminance
         let bgWhite = background.luminance
 
-        XCTAssertLessThan(fgWhite, bgWhite, "Foreground should be darker than background in dark mode")
-        XCTAssertGreaterThan(bgWhite - fgWhite, 0.5, "Contrast should be at least 0.5")
+        #expect(fgWhite < bgWhite, "Foreground should be darker than background in dark mode")
+        #expect(bgWhite - fgWhite > 0.5, "Contrast should be at least 0.5")
     }
 
-    func testFilledLightModeHasSufficientContrast() {
+    @Test("filled light mode has sufficient contrast")
+    func filledLightModeHasSufficientContrast() {
         let (foreground, background) = IconColors.filledColors(darkMode: false)
 
-        // Light foreground on dark background should have good contrast
-        // Foreground is white (1.0), background is 0.3 gray
         let fgWhite = foreground.luminance
         let bgWhite = background.luminance
 
-        XCTAssertGreaterThan(fgWhite, bgWhite, "Foreground should be lighter than background in light mode")
-        XCTAssertGreaterThan(fgWhite - bgWhite, 0.5, "Contrast should be at least 0.5")
+        #expect(fgWhite > bgWhite, "Foreground should be lighter than background in light mode")
+        #expect(fgWhite - bgWhite > 0.5, "Contrast should be at least 0.5")
     }
 }
 

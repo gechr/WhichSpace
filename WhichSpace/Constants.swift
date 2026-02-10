@@ -15,6 +15,22 @@ enum Labels {
     static let fullscreen = "F"
 }
 
+// MARK: - App Info
+
+enum AppInfo {
+    static var appName: String {
+        Bundle.main.infoDictionary?["CFBundleName"] as? String ?? "WhichSpace"
+    }
+
+    static var isHomebrewInstall: Bool {
+        let caskroomPaths = [
+            "/opt/homebrew/Caskroom/whichspace",
+            "/usr/local/Caskroom/whichspace",
+        ]
+        return caskroomPaths.contains { FileManager.default.fileExists(atPath: $0) }
+    }
+}
+
 // MARK: - Layout
 
 enum Layout {
@@ -105,23 +121,26 @@ enum Localization {
     static let actionApplyStyleToAll = String(localized: "action_apply_style_to_all")
     static let actionApplyToAll = String(localized: "action_apply_to_all")
     static let actionCheckForUpdates = String(localized: "action_check_for_updates")
-    static let actionFont = String(localized: "action_font")
-    static let actionInvertColors = String(localized: "action_invert_colors")
     static let actionExportSettings = String(localized: "action_export_settings")
+    static let actionFont = String(localized: "action_font")
     static let actionImportSettings = String(localized: "action_import_settings")
+    static let actionInvertColors = String(localized: "action_invert_colors")
     static let actionQuit = String(localized: "action_quit")
     static let actionResetAllSpacesToDefault = String(localized: "action_reset_all_spaces_to_default")
     static let actionResetColorToDefault = String(localized: "action_reset_color_to_default")
     static let actionResetFontToDefault = String(localized: "action_reset_font_to_default")
     static let actionResetSpaceToDefault = String(localized: "action_reset_space_to_default")
     static let actionResetStyleToDefault = String(localized: "action_reset_style_to_default")
+    static let alertAccessibilityDetail = String(localized: "alert_accessibility_detail")
+    static let alertAccessibilityRequired = String(localized: "alert_accessibility_required")
+    static let alertExportFailed = String(localized: "alert_export_failed")
+    static let alertImportFailed = String(localized: "alert_import_failed")
     static let buttonCancel = String(localized: "button_cancel")
+    static let buttonContinue = String(localized: "button_continue")
     static let buttonLearnMore = String(localized: "button_learn_more")
     static let buttonOK = String(localized: "button_ok")
     static let buttonReset = String(localized: "button_reset")
     static let buttonResetAll = String(localized: "button_reset_all")
-    static let alertImportFailed = String(localized: "alert_import_failed")
-    static let alertImportSuccess = String(localized: "alert_import_success")
     static let confirmApplyColorToAll = String(localized: "confirm_apply_color_to_all")
     static let confirmApplyStyleToAll = String(localized: "confirm_apply_style_to_all")
     static let confirmApplyToAll = String(localized: "confirm_apply_to_all")
@@ -138,6 +157,11 @@ enum Localization {
     static let detailResetFont = String(localized: "detail_reset_font")
     static let detailResetSpace = String(localized: "detail_reset_space")
     static let detailResetStyle = String(localized: "detail_reset_style")
+    static let errorBackupDecodingFailed = String(localized: "error_backup_decoding_failed")
+    static let errorBackupEncodingFailed = String(localized: "error_backup_encoding_failed")
+    static let errorBackupFileReadFailed = String(localized: "error_backup_file_read_failed")
+    static let errorBackupFileWriteFailed = String(localized: "error_backup_file_write_failed")
+    static let errorBackupInvalidData = String(localized: "error_backup_invalid_data")
     static let labelNumber = String(localized: "label_number")
     static let labelNumberBackground = String(localized: "label_number_background")
     static let labelNumberForeground = String(localized: "label_number_foreground")
@@ -152,10 +176,10 @@ enum Localization {
     static let menuSound = String(localized: "menu_sound")
     static let menuStyle = String(localized: "menu_style")
     static let menuSymbol = String(localized: "menu_symbol")
+    static let search = String(localized: "search")
     static let soundNone = String(localized: "sound_none")
     static let soundSystem = String(localized: "sound_system")
     static let soundUser = String(localized: "sound_user")
-    static let search = String(localized: "search")
     static let tipApplyColorToAll = String(localized: "tip_apply_color_to_all")
     static let tipApplyStyleToAll = String(localized: "tip_apply_style_to_all")
     static let tipApplyToAll = String(localized: "tip_apply_to_all")
@@ -164,10 +188,10 @@ enum Localization {
     static let tipDimInactiveSpaces = String(localized: "tip_dim_inactive_spaces")
     static let tipExportSettings = String(localized: "tip_export_settings")
     static let tipFont = String(localized: "tip_font")
-    static let tipImportSettings = String(localized: "tip_import_settings")
     static let tipHideEmptySpaces = String(localized: "tip_hide_empty_spaces")
     static let tipHideFullscreenApps = String(localized: "tip_hide_fullscreen_apps")
     static let tipHideSingleSpace = String(localized: "tip_hide_single_space")
+    static let tipImportSettings = String(localized: "tip_import_settings")
     static let tipInvertColors = String(localized: "tip_invert_colors")
     static let tipLaunchAtLogin = String(localized: "tip_launch_at_login")
     static let tipLocalSpaceNumbers = String(localized: "tip_local_space_numbers")
@@ -236,7 +260,7 @@ enum SkinTone: Int, CaseIterable, Codable, Defaults.Serializable {
 
     // MARK: - Emoji Modification
 
-    private static let modifierScalars: Set<Unicode.Scalar> = [
+    static let modifierScalars: Set<Unicode.Scalar> = [
         Unicode.Scalar(0x1F3FB)!,
         Unicode.Scalar(0x1F3FC)!,
         Unicode.Scalar(0x1F3FD)!,

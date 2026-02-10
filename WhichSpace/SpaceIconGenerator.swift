@@ -8,6 +8,51 @@
 
 import Cocoa
 
+// MARK: - IconStyle Shape Metadata
+
+enum ShapeType {
+    case square
+    case slim
+    case circle
+    case triangle
+    case polygon(sides: Int)
+    case stroke
+    case transparent
+}
+
+extension IconStyle {
+    var shapeType: ShapeType {
+        switch self {
+        case .square, .squareOutline:
+            .square
+        case .slim, .slimOutline:
+            .slim
+        case .circle, .circleOutline:
+            .circle
+        case .triangle, .triangleOutline:
+            .triangle
+        case .pentagon, .pentagonOutline:
+            .polygon(sides: 5)
+        case .hexagon, .hexagonOutline:
+            .polygon(sides: 6)
+        case .stroke:
+            .stroke
+        case .transparent:
+            .transparent
+        }
+    }
+
+    var isFilled: Bool {
+        switch self {
+        case .square, .slim, .circle, .triangle, .pentagon, .hexagon:
+            true
+        case .squareOutline, .slimOutline, .circleOutline, .triangleOutline,
+             .pentagonOutline, .hexagonOutline, .stroke, .transparent:
+            false
+        }
+    }
+}
+
 /// Generates status bar icon images using custom drawing
 enum SpaceIconGenerator {
     // MARK: - Properties
@@ -26,7 +71,6 @@ enum SpaceIconGenerator {
 
     // MARK: - Public API
 
-    // swiftlint:disable:next function_body_length
     static func generateIcon(
         for spaceNumber: String,
         darkMode: Bool,
@@ -36,129 +80,146 @@ enum SpaceIconGenerator {
         sizeScale: Double = Layout.defaultSizeScale
     ) -> NSImage {
         let scale = sizeScale / 100.0
-        switch style {
+        let filled = style.isFilled
+
+        switch style.shapeType {
         case .square:
-            return generateSquareIcon(
+            let size = squareSize(scale: scale)
+            let iconSize = CGSize(width: size, height: size)
+            return generateShapedIcon(
                 for: spaceNumber,
                 darkMode: darkMode,
                 customColors: customColors,
                 customFont: customFont,
-                filled: true,
+                filled: filled,
                 scale: scale
-            )
-        case .squareOutline:
-            return generateSquareIcon(
-                for: spaceNumber,
-                darkMode: darkMode,
-                customColors: customColors,
-                customFont: customFont,
-                filled: false,
-                scale: scale
-            )
+            ) { rect, color, filled in
+                let shapeRect = centeredRect(size: iconSize, in: rect)
+                let path = NSBezierPath(
+                    roundedRect: shapeRect,
+                    xRadius: Layout.Icon.cornerRadius,
+                    yRadius: Layout.Icon.cornerRadius
+                )
+                fillOrStroke(path: path, color: color, filled: filled)
+                return shapeRect
+            }
+
         case .slim:
-            return generateSlimIcon(
+            return generateShapedIcon(
                 for: spaceNumber,
                 darkMode: darkMode,
                 customColors: customColors,
                 customFont: customFont,
-                filled: true,
+                filled: filled,
                 scale: scale
-            )
-        case .slimOutline:
-            return generateSlimIcon(
-                for: spaceNumber,
-                darkMode: darkMode,
-                customColors: customColors,
-                customFont: customFont,
-                filled: false,
-                scale: scale
-            )
+            ) { rect, color, filled in
+                let font = scaledFont(for: spaceNumber.count, customFont: customFont, scale: scale)
+                let attributes: [NSAttributedString.Key: Any] = [.font: font]
+                let textSize = spaceNumber.size(withAttributes: attributes)
+                let horizontalPadding = 4.0 * scale
+                let iconSize = CGSize(
+                    width: textSize.width + horizontalPadding * 2, height: squareSize(scale: scale)
+                )
+                let shapeRect = centeredRect(size: iconSize, in: rect)
+                let path = NSBezierPath(
+                    roundedRect: shapeRect,
+                    xRadius: Layout.Icon.cornerRadius,
+                    yRadius: Layout.Icon.cornerRadius
+                )
+                fillOrStroke(path: path, color: color, filled: filled)
+                return shapeRect
+            }
+
         case .circle:
-            return generateCircleIcon(
+            let size = squareSize(scale: scale)
+            let iconSize = CGSize(width: size, height: size)
+            return generateShapedIcon(
                 for: spaceNumber,
                 darkMode: darkMode,
                 customColors: customColors,
                 customFont: customFont,
-                filled: true,
+                filled: filled,
                 scale: scale
-            )
-        case .circleOutline:
-            return generateCircleIcon(
-                for: spaceNumber,
-                darkMode: darkMode,
-                customColors: customColors,
-                customFont: customFont,
-                filled: false,
-                scale: scale
-            )
+            ) { rect, color, filled in
+                let shapeRect = centeredRect(size: iconSize, in: rect)
+                let path = NSBezierPath(ovalIn: shapeRect)
+                fillOrStroke(path: path, color: color, filled: filled)
+                return shapeRect
+            }
+
         case .triangle:
-            return generateTriangleIcon(
+            let size = polygonSize(scale: scale)
+            let iconSize = CGSize(width: size, height: size)
+            let sizeAdjustment = spaceNumber.count <= 2 ? -2.0 : -1.0
+            let yOffset = spaceNumber.count > 1 ? -4.0 : -2.0
+            return generateShapedIcon(
                 for: spaceNumber,
                 darkMode: darkMode,
                 customColors: customColors,
                 customFont: customFont,
-                filled: true,
-                scale: scale
-            )
-        case .triangleOutline:
-            return generateTriangleIcon(
+                filled: filled,
+                scale: scale,
+                fontSizeAdjustment: sizeAdjustment,
+                textYOffset: yOffset
+            ) { rect, color, filled in
+                let shapeRect = centeredRect(size: iconSize, in: rect)
+                let top = CGPoint(x: shapeRect.midX, y: shapeRect.maxY)
+                let bottomLeft = CGPoint(x: shapeRect.minX, y: shapeRect.minY)
+                let bottomRight = CGPoint(x: shapeRect.maxX, y: shapeRect.minY)
+                let path = createRoundedPolygonPath(
+                    vertices: [top, bottomRight, bottomLeft],
+                    cornerRadius: Layout.Icon.triangleCornerRadius
+                )
+                fillOrStroke(path: path, color: color, filled: filled)
+                return shapeRect
+            }
+
+        case let .polygon(sides):
+            let sizeAdjustment: Double = switch (spaceNumber.count, sides) {
+            case (2, 5):
+                -2
+            case (2, 6):
+                -1
+            default:
+                0
+            }
+            return generateShapedIcon(
+                for: spaceNumber,
+                darkMode: darkMode,
+                customColors: customColors,
+                customFont: customFont,
+                filled: filled,
+                scale: scale,
+                fontSizeAdjustment: sizeAdjustment
+            ) { rect, color, filled in
+                let centerX = rect.width / 2
+                let centerY = rect.height / 2
+                let vertices = generatePolygonVertices(
+                    sides: sides,
+                    centerX: centerX,
+                    centerY: centerY,
+                    iconSize: polygonSize(scale: scale)
+                )
+                let path = createRoundedPolygonPath(vertices: vertices)
+                fillOrStroke(path: path, color: color, filled: filled)
+                return rect
+            }
+
+        case .transparent:
+            return generateShapedIcon(
                 for: spaceNumber,
                 darkMode: darkMode,
                 customColors: customColors,
                 customFont: customFont,
                 filled: false,
-                scale: scale
-            )
-        case .pentagon:
-            return generatePolygonIcon(
-                for: spaceNumber,
-                darkMode: darkMode,
-                customColors: customColors,
-                customFont: customFont,
-                filled: true,
-                sides: 5,
-                scale: scale
-            )
-        case .pentagonOutline:
-            return generatePolygonIcon(
-                for: spaceNumber,
-                darkMode: darkMode,
-                customColors: customColors,
-                customFont: customFont,
-                filled: false,
-                sides: 5,
-                scale: scale
-            )
-        case .hexagon:
-            return generatePolygonIcon(
-                for: spaceNumber,
-                darkMode: darkMode,
-                customColors: customColors,
-                customFont: customFont,
-                filled: true,
-                sides: 6,
-                scale: scale
-            )
-        case .hexagonOutline:
-            return generatePolygonIcon(
-                for: spaceNumber,
-                darkMode: darkMode,
-                customColors: customColors,
-                customFont: customFont,
-                filled: false,
-                sides: 6,
-                scale: scale
-            )
+                scale: scale,
+                fontSizeAdjustment: 1
+            ) { rect, _, _ in
+                rect
+            }
+
         case .stroke:
             return generateStrokeIcon(
-                for: spaceNumber,
-                darkMode: darkMode,
-                customColors: customColors,
-                customFont: customFont,
-                scale: scale
-            )
-        case .transparent:
-            return generateTransparentIcon(
                 for: spaceNumber,
                 darkMode: darkMode,
                 customColors: customColors,
@@ -188,8 +249,6 @@ enum SpaceIconGenerator {
         if symbolName.containsEmoji {
             return generateEmojiIcon(
                 emoji: symbolName,
-                darkMode: darkMode,
-                customColors: customColors,
                 skinTone: skinTone,
                 scale: scale
             )
@@ -205,13 +264,12 @@ enum SpaceIconGenerator {
             return generateIcon(for: "?", darkMode: darkMode, customColors: customColors, sizeScale: sizeScale)
         }
 
-        let color: NSColor
-        if let customColors {
-            color = customColors.foregroundColor
+        let color: NSColor = if let customColors {
+            customColors.foreground
         } else if darkMode {
-            color = NSColor(calibratedWhite: 0.7, alpha: 1)
+            NSColor(calibratedWhite: 0.7, alpha: 1)
         } else {
-            color = NSColor(calibratedWhite: 0.3, alpha: 1)
+            NSColor(calibratedWhite: 0.3, alpha: 1)
         }
 
         return NSImage(size: statusItemSize, flipped: false) { rect in
@@ -228,8 +286,6 @@ enum SpaceIconGenerator {
     /// Generates an icon for an emoji character
     private static func generateEmojiIcon(
         emoji: String,
-        darkMode _: Bool,
-        customColors _: SpaceColors? = nil,
         skinTone: SkinTone? = nil,
         scale: Double
     ) -> NSImage {
@@ -260,7 +316,7 @@ enum SpaceIconGenerator {
         filled: Bool
     ) -> (foreground: NSColor, background: NSColor) {
         if let customColors {
-            (customColors.foregroundColor, customColors.backgroundColor)
+            (customColors.foreground, customColors.background)
         } else if filled {
             IconColors.filledColors(darkMode: darkMode)
         } else {
@@ -274,14 +330,13 @@ enum SpaceIconGenerator {
         sizeAdjustment: Double = 0,
         scale: Double
     ) -> NSFont {
-        let baseFontSize: Double
-        switch digitCount {
+        let baseFontSize: Double = switch digitCount {
         case 1:
-            baseFontSize = Layout.baseFontSize
+            Layout.baseFontSize
         case 2:
-            baseFontSize = Layout.baseFontSizeSmall
+            Layout.baseFontSizeSmall
         default:
-            baseFontSize = Layout.baseFontSizeTiny
+            Layout.baseFontSizeTiny
         }
 
         if let customFont {
@@ -332,194 +387,30 @@ enum SpaceIconGenerator {
 
     // MARK: - Shape Generators
 
-    private static func generateSquareIcon(
+    private static func generateShapedIcon(
         for spaceNumber: String,
         darkMode: Bool,
         customColors: SpaceColors?,
         customFont: NSFont?,
         filled: Bool,
-        scale: Double
-    ) -> NSImage {
-        let size = squareSize(scale: scale)
-        let iconSize = CGSize(width: size, height: size)
-        return NSImage(size: statusItemSize, flipped: false) { rect in
-            let colors = getColors(darkMode: darkMode, customColors: customColors, filled: filled)
-            let backgroundRect = centeredRect(size: iconSize, in: rect)
-
-            let roundedPath = NSBezierPath(
-                roundedRect: backgroundRect,
-                xRadius: Layout.Icon.cornerRadius,
-                yRadius: Layout.Icon.cornerRadius
-            )
-            fillOrStroke(path: roundedPath, color: colors.background, filled: filled)
-
-            let font = scaledFont(for: spaceNumber.count, customFont: customFont, scale: scale)
-            drawCenteredText(spaceNumber, in: backgroundRect, font: font, color: colors.foreground)
-
-            return true
-        }
-    }
-
-    private static func generateSlimIcon(
-        for spaceNumber: String,
-        darkMode: Bool,
-        customColors: SpaceColors?,
-        customFont: NSFont?,
-        filled: Bool,
-        scale: Double
+        scale: Double,
+        fontSizeAdjustment: Double = 0,
+        textYOffset: Double = 0,
+        drawShape: @escaping (CGRect, NSColor, Bool) -> CGRect
     ) -> NSImage {
         NSImage(size: statusItemSize, flipped: false) { rect in
             let colors = getColors(darkMode: darkMode, customColors: customColors, filled: filled)
-            let font = scaledFont(for: spaceNumber.count, customFont: customFont, scale: scale)
+            let textRect = drawShape(rect, colors.background, filled)
 
-            // Calculate dynamic width based on text
-            let attributes: [NSAttributedString.Key: Any] = [.font: font]
-            let textSize = spaceNumber.size(withAttributes: attributes)
-            let horizontalPadding = 4.0 * scale
-            let iconSize = CGSize(width: textSize.width + horizontalPadding * 2, height: squareSize(scale: scale))
-            let backgroundRect = centeredRect(size: iconSize, in: rect)
-
-            let roundedPath = NSBezierPath(
-                roundedRect: backgroundRect,
-                xRadius: Layout.Icon.cornerRadius,
-                yRadius: Layout.Icon.cornerRadius
-            )
-            fillOrStroke(path: roundedPath, color: colors.background, filled: filled)
-            drawCenteredText(spaceNumber, in: backgroundRect, font: font, color: colors.foreground)
-
-            return true
-        }
-    }
-
-    private static func generateCircleIcon(
-        for spaceNumber: String,
-        darkMode: Bool,
-        customColors: SpaceColors?,
-        customFont: NSFont?,
-        filled: Bool,
-        scale: Double
-    ) -> NSImage {
-        let size = squareSize(scale: scale)
-        let iconSize = CGSize(width: size, height: size)
-        return NSImage(size: statusItemSize, flipped: false) { rect in
-            let colors = getColors(darkMode: darkMode, customColors: customColors, filled: filled)
-            let circleRect = centeredRect(size: iconSize, in: rect)
-
-            let circlePath = NSBezierPath(ovalIn: circleRect)
-            fillOrStroke(path: circlePath, color: colors.background, filled: filled)
-
-            let font = scaledFont(for: spaceNumber.count, customFont: customFont, scale: scale)
-            drawCenteredText(spaceNumber, in: circleRect, font: font, color: colors.foreground)
-
-            return true
-        }
-    }
-
-    private static func generateTriangleIcon(
-        for spaceNumber: String,
-        darkMode: Bool,
-        customColors: SpaceColors?,
-        customFont: NSFont?,
-        filled: Bool,
-        scale: Double
-    ) -> NSImage {
-        let size = polygonSize(scale: scale)
-        let iconSize = CGSize(width: size, height: size)
-        return NSImage(size: statusItemSize, flipped: false) { rect in
-            let colors = getColors(darkMode: darkMode, customColors: customColors, filled: filled)
-            let shapeRect = centeredRect(size: iconSize, in: rect)
-
-            // Triangle vertices (pointing up)
-            let top = CGPoint(x: shapeRect.midX, y: shapeRect.maxY)
-            let bottomLeft = CGPoint(x: shapeRect.minX, y: shapeRect.minY)
-            let bottomRight = CGPoint(x: shapeRect.maxX, y: shapeRect.minY)
-            let vertices = [top, bottomRight, bottomLeft]
-
-            let trianglePath = createRoundedPolygonPath(
-                vertices: vertices,
-                cornerRadius: Layout.Icon.triangleCornerRadius
-            )
-            fillOrStroke(path: trianglePath, color: colors.background, filled: filled)
-
-            // Triangle uses smaller font and lower text position
-            let sizeAdjustment = spaceNumber.count <= 2 ? -2.0 : -1.0
-            let yOffset = spaceNumber.count > 1 ? -4.0 : -2.0
             let font = scaledFont(
                 for: spaceNumber.count,
                 customFont: customFont,
-                sizeAdjustment: sizeAdjustment,
+                sizeAdjustment: fontSizeAdjustment,
                 scale: scale
             )
-            drawCenteredText(spaceNumber, in: shapeRect, font: font, color: colors.foreground, yOffset: yOffset)
-
-            return true
-        }
-    }
-
-    private static func generatePolygonIcon(
-        for spaceNumber: String,
-        darkMode: Bool,
-        customColors: SpaceColors?,
-        customFont: NSFont?,
-        filled: Bool,
-        sides: Int,
-        scale: Double
-    ) -> NSImage {
-        NSImage(size: statusItemSize, flipped: false) { rect in
-            let colors = getColors(darkMode: darkMode, customColors: customColors, filled: filled)
-
-            let centerX = rect.width / 2
-            let centerY = rect.height / 2
-            let vertices = generatePolygonVertices(
-                sides: sides,
-                centerX: centerX,
-                centerY: centerY,
-                iconSize: polygonSize(scale: scale)
+            drawCenteredText(
+                spaceNumber, in: textRect, font: font, color: colors.foreground, yOffset: textYOffset
             )
-            let polygonPath = createRoundedPolygonPath(vertices: vertices)
-            fillOrStroke(path: polygonPath, color: colors.background, filled: filled)
-
-            // Polygon font size adjustment depends on digit count and shape
-            let sizeAdjustment: Double
-            switch (spaceNumber.count, sides) {
-            case (2, 5):
-                sizeAdjustment = -2
-            case (2, 6):
-                sizeAdjustment = -1
-            default:
-                sizeAdjustment = 0
-            }
-            let font = scaledFont(
-                for: spaceNumber.count,
-                customFont: customFont,
-                sizeAdjustment: sizeAdjustment,
-                scale: scale
-            )
-            drawCenteredText(spaceNumber, in: rect, font: font, color: colors.foreground)
-
-            return true
-        }
-    }
-
-    private static func generateTransparentIcon(
-        for spaceNumber: String,
-        darkMode: Bool,
-        customColors: SpaceColors?,
-        customFont: NSFont?,
-        scale: Double
-    ) -> NSImage {
-        NSImage(size: statusItemSize, flipped: false) { rect in
-            let textColor: NSColor
-            if let customColors {
-                textColor = customColors.foregroundColor
-            } else {
-                textColor = darkMode ? IconColors.outlineDark : IconColors.outlineLight
-            }
-
-            // Transparent style uses slightly larger font since there's no background shape
-            let font = scaledFont(for: spaceNumber.count, customFont: customFont, sizeAdjustment: 1, scale: scale)
-            drawCenteredText(spaceNumber, in: rect, font: font, color: textColor)
-
             return true
         }
     }
@@ -540,8 +431,8 @@ enum SpaceIconGenerator {
             let fillColor: NSColor
             let strokeColor: NSColor
             if let customColors {
-                fillColor = customColors.foregroundColor
-                strokeColor = customColors.backgroundColor
+                fillColor = customColors.foreground
+                strokeColor = customColors.background
             } else {
                 let colors = IconColors.filledColors(darkMode: darkMode)
                 fillColor = colors.foreground
@@ -566,33 +457,10 @@ enum SpaceIconGenerator {
             let textHeight = ascent + descent
             let textY = (rect.height - textHeight) / 2 + descent
 
-            // Create text path
-            let attrString = NSAttributedString(string: spaceNumber, attributes: [.font: font])
-            let line = CTLineCreateWithAttributedString(attrString)
-            let glyphRuns = CTLineGetGlyphRuns(line) as! [CTRun]
+            let textPath = textPath(for: spaceNumber, font: font)
 
             context.saveGState()
             context.translateBy(x: textX, y: textY)
-
-            // Build path from all glyphs
-            let textPath = CGMutablePath()
-            for run in glyphRuns {
-                let glyphCount = CTRunGetGlyphCount(run)
-                let runFont = (CTRunGetAttributes(run) as Dictionary)[kCTFontAttributeName] as! CTFont
-
-                for index in 0 ..< glyphCount {
-                    let range = CFRange(location: index, length: 1)
-                    var glyph = CGGlyph()
-                    var position = CGPoint()
-                    CTRunGetGlyphs(run, range, &glyph)
-                    CTRunGetPositions(run, range, &position)
-
-                    if let glyphPath = CTFontCreatePathForGlyph(runFont, glyph, nil) {
-                        let transform = CGAffineTransform(translationX: position.x, y: position.y)
-                        textPath.addPath(glyphPath, transform: transform)
-                    }
-                }
-            }
 
             // Draw stroke (behind)
             context.addPath(textPath)
@@ -612,6 +480,37 @@ enum SpaceIconGenerator {
         }
     }
 
+    /// Builds a CGPath from the glyphs in a string using CoreText
+    private static func textPath(for string: String, font: NSFont) -> CGMutablePath {
+        let attrString = NSAttributedString(string: string, attributes: [.font: font])
+        let line = CTLineCreateWithAttributedString(attrString)
+        let glyphRuns = CTLineGetGlyphRuns(line) as? [CTRun] ?? []
+
+        let path = CGMutablePath()
+        for run in glyphRuns {
+            let glyphCount = CTRunGetGlyphCount(run)
+            let attributes = CTRunGetAttributes(run) as NSDictionary
+            guard let runFontValue = attributes[kCTFontAttributeName],
+                  CFGetTypeID(runFontValue as CFTypeRef) == CTFontGetTypeID()
+            else { continue }
+            let runFont = runFontValue as! CTFont
+
+            for index in 0 ..< glyphCount {
+                let range = CFRange(location: index, length: 1)
+                var glyph = CGGlyph()
+                var position = CGPoint()
+                CTRunGetGlyphs(run, range, &glyph)
+                CTRunGetPositions(run, range, &position)
+
+                if let glyphPath = CTFontCreatePathForGlyph(runFont, glyph, nil) {
+                    let transform = CGAffineTransform(translationX: position.x, y: position.y)
+                    path.addPath(glyphPath, transform: transform)
+                }
+            }
+        }
+        return path
+    }
+
     // MARK: - Polygon Helpers
 
     private static func generatePolygonVertices(
@@ -621,14 +520,13 @@ enum SpaceIconGenerator {
         iconSize: Double
     ) -> [CGPoint] {
         let radius = iconSize / 2
-        let angleOffset: Double
-        switch sides {
+        let angleOffset: Double = switch sides {
         case 5:
-            angleOffset = .pi / 2
+            .pi / 2
         case 6:
-            angleOffset = .pi / 6
+            .pi / 6
         default:
-            angleOffset = -.pi / 2
+            -.pi / 2
         }
 
         var vertices: [CGPoint] = []
@@ -687,16 +585,14 @@ enum SpaceIconGenerator {
 // MARK: - NSImage Tinting Extension
 
 extension NSImage {
-    fileprivate func tinted(with color: NSColor) -> NSImage {
-        guard let image = copy() as? NSImage else {
-            return self
+    func tinted(with color: NSColor) -> NSImage {
+        let size = size
+        return NSImage(size: size, flipped: false) { rect in
+            self.draw(in: rect)
+            color.set()
+            rect.fill(using: .sourceAtop)
+            return true
         }
-        image.lockFocus()
-        color.set()
-        let imageRect = CGRect(origin: .zero, size: image.size)
-        imageRect.fill(using: .sourceAtop)
-        image.unlockFocus()
-        return image
     }
 }
 
@@ -715,9 +611,13 @@ extension Character {
         guard let scalar = unicodeScalars.first else {
             return false
         }
-        // Check for emoji presentation or emoji modifier base
+        // An emoji needs isEmoji=true plus one of:
+        // - Default emoji presentation (most common emojis)
+        // - Multiple scalars (has FE0F variation selector, skin tone, ZWJ, etc.)
+        // - Scalar value >= 0x00A9 (text-default emojis stored without FE0F;
+        //   excludes keycap bases #, *, 0-9 which need FE0F+U+20E3 to be emoji)
         return scalar.properties.isEmoji && (
-            scalar.properties.isEmojiPresentation || unicodeScalars.count > 1
+            scalar.properties.isEmojiPresentation || unicodeScalars.count > 1 || scalar.value >= 0x00A9
         )
     }
 }

@@ -1,25 +1,21 @@
 import Cocoa
-import XCTest
+import Testing
 @testable import WhichSpace
 
+@Suite("Style Picker")
 @MainActor
-final class StylePickerTests: XCTestCase {
-    private var sut: StylePicker!
+struct StylePickerTests {
+    private let sut: StylePicker
 
-    override func setUp() {
-        super.setUp()
+    init() {
         sut = StylePicker(style: .square)
         sut.frame = NSRect(origin: .zero, size: sut.intrinsicContentSize)
     }
 
-    override func tearDown() {
-        sut = nil
-        super.tearDown()
-    }
-
     // MARK: - onSelected Tests
 
-    func testMouseUp_triggersOnSelected() {
+    @Test("mouseUp triggers onSelected")
+    func mouseUp_triggersOnSelected() {
         var onSelectedCalled = false
         sut.onSelected = {
             onSelectedCalled = true
@@ -27,10 +23,11 @@ final class StylePickerTests: XCTestCase {
 
         simulateMouseUp(at: CGPoint(x: sut.bounds.midX, y: sut.bounds.midY))
 
-        XCTAssertTrue(onSelectedCalled, "mouseUp should trigger onSelected callback")
+        #expect(onSelectedCalled, "mouseUp should trigger onSelected callback")
     }
 
-    func testMouseUp_triggersOnSelectedForEachStyle() {
+    @Test("mouseUp triggers onSelected for each style")
+    func mouseUp_triggersOnSelectedForEachStyle() {
         for style in IconStyle.allCases {
             let stylePicker = StylePicker(style: style)
             stylePicker.frame = NSRect(origin: .zero, size: stylePicker.intrinsicContentSize)
@@ -42,11 +39,12 @@ final class StylePickerTests: XCTestCase {
 
             simulateMouseUp(on: stylePicker, at: CGPoint(x: stylePicker.bounds.midX, y: stylePicker.bounds.midY))
 
-            XCTAssertTrue(onSelectedCalled, "mouseUp should trigger onSelected for style \(style.rawValue)")
+            #expect(onSelectedCalled, "mouseUp should trigger onSelected for style \(style.rawValue)")
         }
     }
 
-    func testMouseUp_withNilCallback_doesNotCrash() {
+    @Test("mouseUp with nil callback does not crash")
+    func mouseUp_withNilCallback_doesNotCrash() {
         sut.onSelected = nil
 
         // Should not crash
@@ -55,41 +53,46 @@ final class StylePickerTests: XCTestCase {
 
     // MARK: - isChecked Tests
 
-    func testIsChecked_defaultsToFalse() {
+    @Test("isChecked defaults to false")
+    func isChecked_defaultsToFalse() {
         let stylePicker = StylePicker(style: .circle)
-        XCTAssertFalse(stylePicker.isChecked, "isChecked should default to false")
+        #expect(!stylePicker.isChecked, "isChecked should default to false")
     }
 
-    func testSettingIsChecked_toTrue_updatesProperty() {
+    @Test("setting isChecked to true updates property")
+    func settingIsChecked_toTrue_updatesProperty() {
         sut.isChecked = false
 
         sut.isChecked = true
 
-        XCTAssertTrue(sut.isChecked, "Setting isChecked to true should update the property")
+        #expect(sut.isChecked, "Setting isChecked to true should update the property")
     }
 
-    func testSettingIsChecked_toFalse_updatesProperty() {
+    @Test("setting isChecked to false updates property")
+    func settingIsChecked_toFalse_updatesProperty() {
         sut.isChecked = true
 
         sut.isChecked = false
 
-        XCTAssertFalse(sut.isChecked, "Setting isChecked to false should update the property")
+        #expect(!sut.isChecked, "Setting isChecked to false should update the property")
     }
 
-    func testSettingIsChecked_togglesCorrectly() {
-        XCTAssertFalse(sut.isChecked)
+    @Test("setting isChecked toggles correctly")
+    func settingIsChecked_togglesCorrectly() {
+        #expect(!sut.isChecked)
 
         sut.isChecked = true
-        XCTAssertTrue(sut.isChecked)
+        #expect(sut.isChecked)
 
         sut.isChecked = false
-        XCTAssertFalse(sut.isChecked)
+        #expect(!sut.isChecked)
 
         sut.isChecked = true
-        XCTAssertTrue(sut.isChecked)
+        #expect(sut.isChecked)
     }
 
-    func testIsChecked_canDrawWhenChecked() {
+    @Test("isChecked can draw when checked")
+    func isChecked_canDrawWhenChecked() {
         // Verify the view can draw without crashing when checked
         sut.isChecked = true
         sut.frame = NSRect(origin: .zero, size: sut.intrinsicContentSize)
@@ -97,10 +100,11 @@ final class StylePickerTests: XCTestCase {
         // This should not crash - drawing with isChecked = true shows checkmark
         sut.display()
 
-        XCTAssertTrue(sut.isChecked)
+        #expect(sut.isChecked)
     }
 
-    func testIsChecked_canDrawWhenUnchecked() {
+    @Test("isChecked can draw when unchecked")
+    func isChecked_canDrawWhenUnchecked() {
         // Verify the view can draw without crashing when unchecked
         sut.isChecked = false
         sut.frame = NSRect(origin: .zero, size: sut.intrinsicContentSize)
@@ -108,57 +112,63 @@ final class StylePickerTests: XCTestCase {
         // This should not crash - drawing with isChecked = false hides checkmark
         sut.display()
 
-        XCTAssertFalse(sut.isChecked)
+        #expect(!sut.isChecked)
     }
 
     // MARK: - intrinsicContentSize Tests
 
-    func testIntrinsicContentSize_isStable() {
+    @Test("intrinsicContentSize is stable")
+    func intrinsicContentSize_isStable() {
         let size1 = sut.intrinsicContentSize
         let size2 = sut.intrinsicContentSize
         let size3 = sut.intrinsicContentSize
 
-        XCTAssertEqual(size1, size2, "intrinsicContentSize should be stable")
-        XCTAssertEqual(size2, size3, "intrinsicContentSize should remain stable across calls")
+        #expect(size1 == size2, "intrinsicContentSize should be stable")
+        #expect(size2 == size3, "intrinsicContentSize should remain stable across calls")
     }
 
-    func testIntrinsicContentSize_unchangedByIsChecked() {
+    @Test("intrinsicContentSize unchanged by isChecked")
+    func intrinsicContentSize_unchangedByIsChecked() {
         let sizeUnchecked = sut.intrinsicContentSize
 
         sut.isChecked = true
         let sizeChecked = sut.intrinsicContentSize
 
-        XCTAssertEqual(sizeUnchecked, sizeChecked, "isChecked should not affect intrinsicContentSize")
+        #expect(sizeUnchecked == sizeChecked, "isChecked should not affect intrinsicContentSize")
     }
 
-    func testIntrinsicContentSize_unchangedByCustomColors() {
+    @Test("intrinsicContentSize unchanged by custom colors")
+    func intrinsicContentSize_unchangedByCustomColors() {
         let sizeBefore = sut.intrinsicContentSize
 
         sut.customColors = SpaceColors(foreground: .red, background: .blue)
         let sizeAfter = sut.intrinsicContentSize
 
-        XCTAssertEqual(sizeBefore, sizeAfter, "customColors should not affect intrinsicContentSize")
+        #expect(sizeBefore == sizeAfter, "customColors should not affect intrinsicContentSize")
     }
 
-    func testIntrinsicContentSize_unchangedByDarkMode() {
+    @Test("intrinsicContentSize unchanged by dark mode")
+    func intrinsicContentSize_unchangedByDarkMode() {
         let sizeBefore = sut.intrinsicContentSize
 
         sut.darkMode = true
         let sizeAfter = sut.intrinsicContentSize
 
-        XCTAssertEqual(sizeBefore, sizeAfter, "darkMode should not affect intrinsicContentSize")
+        #expect(sizeBefore == sizeAfter, "darkMode should not affect intrinsicContentSize")
     }
 
-    func testIntrinsicContentSize_unchangedByPreviewNumber() {
+    @Test("intrinsicContentSize unchanged by preview number")
+    func intrinsicContentSize_unchangedByPreviewNumber() {
         let sizeBefore = sut.intrinsicContentSize
 
         sut.previewNumber = "99"
         let sizeAfter = sut.intrinsicContentSize
 
-        XCTAssertEqual(sizeBefore, sizeAfter, "previewNumber should not affect intrinsicContentSize")
+        #expect(sizeBefore == sizeAfter, "previewNumber should not affect intrinsicContentSize")
     }
 
-    func testIntrinsicContentSize_consistentAcrossStyles() {
+    @Test("intrinsicContentSize consistent across styles")
+    func intrinsicContentSize_consistentAcrossStyles() {
         var sizes: [CGSize] = []
 
         for style in IconStyle.allCases {
@@ -169,73 +179,79 @@ final class StylePickerTests: XCTestCase {
         // All sizes should be the same
         let firstSize = sizes[0]
         for (index, size) in sizes.enumerated() {
-            XCTAssertEqual(
-                size,
-                firstSize,
+            #expect(
+                size == firstSize,
                 "All styles should have same intrinsicContentSize, but \(IconStyle.allCases[index].rawValue) differs"
             )
         }
     }
 
-    func testIntrinsicContentSize_hasExpectedDimensions() {
+    @Test("intrinsicContentSize has expected dimensions")
+    func intrinsicContentSize_hasExpectedDimensions() {
         let size = sut.intrinsicContentSize
 
         // Based on the implementation: width = 180, height = Layout.statusItemHeight (22)
-        XCTAssertEqual(size.width, 180, "Width should be 180")
-        XCTAssertEqual(size.height, Layout.statusItemHeight, "Height should match statusItemHeight")
+        #expect(size.width == 180, "Width should be 180")
+        #expect(size.height == 22.0, "Height should match statusItemHeight")
     }
 
     // MARK: - Configuration Properties Tests
 
-    func testCustomColors_canBeSetAndRead() {
+    @Test("customColors can be set and read")
+    func customColors_canBeSetAndRead() {
         let colors = SpaceColors(foreground: .systemGreen, background: .systemPurple)
         sut.customColors = colors
 
-        XCTAssertEqual(sut.customColors?.foreground, colors.foreground)
-        XCTAssertEqual(sut.customColors?.background, colors.background)
+        #expect(sut.customColors?.foreground == colors.foreground)
+        #expect(sut.customColors?.background == colors.background)
     }
 
-    func testDarkMode_canBeSetAndRead() {
+    @Test("darkMode can be set and read")
+    func darkMode_canBeSetAndRead() {
         sut.darkMode = false
-        XCTAssertFalse(sut.darkMode)
+        #expect(!sut.darkMode)
 
         sut.darkMode = true
-        XCTAssertTrue(sut.darkMode)
+        #expect(sut.darkMode)
     }
 
-    func testPreviewNumber_canBeSetAndRead() {
+    @Test("previewNumber can be set and read")
+    func previewNumber_canBeSetAndRead() {
         sut.previewNumber = "5"
-        XCTAssertEqual(sut.previewNumber, "5")
+        #expect(sut.previewNumber == "5")
 
         sut.previewNumber = "F"
-        XCTAssertEqual(sut.previewNumber, "F")
+        #expect(sut.previewNumber == "F")
     }
 
-    func testPreviewNumber_defaultsToOne() {
+    @Test("previewNumber defaults to one")
+    func previewNumber_defaultsToOne() {
         let stylePicker = StylePicker(style: .square)
-        XCTAssertEqual(stylePicker.previewNumber, "1", "previewNumber should default to '1'")
+        #expect(stylePicker.previewNumber == "1", "previewNumber should default to '1'")
     }
 
     // MARK: - sizeScale Tests
 
-    func testSizeScale_defaultsToLayoutDefault() {
+    @Test("sizeScale defaults to Layout default")
+    func sizeScale_defaultsToLayoutDefault() {
         let stylePicker = StylePicker(style: .square)
-        XCTAssertEqual(
-            stylePicker.sizeScale,
-            Layout.defaultSizeScale,
+        #expect(
+            stylePicker.sizeScale == Layout.defaultSizeScale,
             "sizeScale should default to Layout.defaultSizeScale"
         )
     }
 
-    func testSizeScale_canBeSetAndRead() {
+    @Test("sizeScale can be set and read")
+    func sizeScale_canBeSetAndRead() {
         sut.sizeScale = 80.0
-        XCTAssertEqual(sut.sizeScale, 80.0)
+        #expect(sut.sizeScale == 80.0)
 
         sut.sizeScale = 120.0
-        XCTAssertEqual(sut.sizeScale, 120.0)
+        #expect(sut.sizeScale == 120.0)
     }
 
-    func testSizeScale_unchangedByOtherProperties() {
+    @Test("sizeScale unchanged by other properties")
+    func sizeScale_unchangedByOtherProperties() {
         sut.sizeScale = 75.0
 
         sut.customColors = SpaceColors(foreground: .red, background: .blue)
@@ -243,19 +259,21 @@ final class StylePickerTests: XCTestCase {
         sut.previewNumber = "5"
         sut.isChecked = true
 
-        XCTAssertEqual(sut.sizeScale, 75.0, "sizeScale should not be affected by other property changes")
+        #expect(sut.sizeScale == 75.0, "sizeScale should not be affected by other property changes")
     }
 
-    func testIntrinsicContentSize_unchangedBySizeScale() {
+    @Test("intrinsicContentSize unchanged by sizeScale")
+    func intrinsicContentSize_unchangedBySizeScale() {
         let sizeBefore = sut.intrinsicContentSize
 
         sut.sizeScale = 50.0
         let sizeAfter = sut.intrinsicContentSize
 
-        XCTAssertEqual(sizeBefore, sizeAfter, "sizeScale should not affect intrinsicContentSize")
+        #expect(sizeBefore == sizeAfter, "sizeScale should not affect intrinsicContentSize")
     }
 
-    func testSizeScale_canDrawWithDifferentScales() {
+    @Test("sizeScale can draw with different scales")
+    func sizeScale_canDrawWithDifferentScales() {
         // Verify the view can draw without crashing at different scales
         for scale in [50.0, 75.0, 100.0, 125.0, 150.0] {
             sut.sizeScale = scale
@@ -264,23 +282,24 @@ final class StylePickerTests: XCTestCase {
             // This should not crash
             sut.display()
 
-            XCTAssertEqual(sut.sizeScale, scale)
+            #expect(sut.sizeScale == scale)
         }
     }
 
     // MARK: - Style Initialization Tests
 
-    func testInit_withDifferentStyles() {
+    @Test("init with different styles")
+    func init_withDifferentStyles() {
         for style in IconStyle.allCases {
             let stylePicker = StylePicker(style: style)
 
             // View should be created successfully
-            XCTAssertNotNil(stylePicker, "Should create view for style \(style.rawValue)")
+            #expect(stylePicker != nil, "Should create view for style \(style.rawValue)")
 
             // Should have valid intrinsic size
             let size = stylePicker.intrinsicContentSize
-            XCTAssertGreaterThan(size.width, 0, "Width should be positive for style \(style.rawValue)")
-            XCTAssertGreaterThan(size.height, 0, "Height should be positive for style \(style.rawValue)")
+            #expect(size.width > 0, "Width should be positive for style \(style.rawValue)")
+            #expect(size.height > 0, "Height should be positive for style \(style.rawValue)")
         }
     }
 

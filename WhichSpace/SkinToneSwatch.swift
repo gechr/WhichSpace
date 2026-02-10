@@ -27,7 +27,6 @@ final class SkinToneSwatch: Swatch {
     }
 
     var onToneSelected: ((SkinTone) -> Void)?
-    var onToneHoverStart: ((SkinTone) -> Void)?
 
     // MARK: - Swatch Overrides
 
@@ -80,12 +79,5 @@ final class SkinToneSwatch: Swatch {
         }
         onToneSelected?(tone)
         needsDisplay = true
-    }
-
-    override func mouseMoved(with event: NSEvent) {
-        super.mouseMoved(with: event)
-        if let index = hoveredIndex, let tone = SkinTone(rawValue: index) {
-            onToneHoverStart?(tone)
-        }
     }
 }

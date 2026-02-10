@@ -20,36 +20,7 @@ enum IconStyle: String, CaseIterable, Defaults.Serializable {
     case transparent
 
     var localizedTitle: String {
-        switch self {
-        case .square:
-            String(localized: "style_square")
-        case .squareOutline:
-            String(localized: "style_squareOutline")
-        case .slim:
-            String(localized: "style_slim")
-        case .slimOutline:
-            String(localized: "style_slimOutline")
-        case .circle:
-            String(localized: "style_circle")
-        case .circleOutline:
-            String(localized: "style_circleOutline")
-        case .triangle:
-            String(localized: "style_triangle")
-        case .triangleOutline:
-            String(localized: "style_triangleOutline")
-        case .pentagon:
-            String(localized: "style_pentagon")
-        case .pentagonOutline:
-            String(localized: "style_pentagonOutline")
-        case .hexagon:
-            String(localized: "style_hexagon")
-        case .hexagonOutline:
-            String(localized: "style_hexagonOutline")
-        case .stroke:
-            String(localized: "style_stroke")
-        case .transparent:
-            String(localized: "style_transparent")
-        }
+        String(localized: String.LocalizationValue("style_\(rawValue)"))
     }
 }
 
@@ -64,19 +35,30 @@ struct SpaceFont: Equatable, Defaults.Serializable {
             guard let value else {
                 return nil
             }
-            return try? NSKeyedArchiver.archivedData(
-                withRootObject: value.font,
-                requiringSecureCoding: true
-            )
+            do {
+                return try NSKeyedArchiver.archivedData(
+                    withRootObject: value.font,
+                    requiringSecureCoding: true
+                )
+            } catch {
+                NSLog("SpaceFont: failed to archive font: %@", error.localizedDescription)
+                return nil
+            }
         }
 
         func deserialize(_ object: Data?) -> SpaceFont? {
-            guard let object,
-                  let font = try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSFont.self, from: object)
-            else {
+            guard let object else {
                 return nil
             }
-            return SpaceFont(font: font)
+            do {
+                guard let font = try NSKeyedUnarchiver.unarchivedObject(ofClass: NSFont.self, from: object) else {
+                    return nil
+                }
+                return SpaceFont(font: font)
+            } catch {
+                NSLog("SpaceFont: failed to unarchive font: %@", error.localizedDescription)
+                return nil
+            }
         }
     }
 
@@ -97,29 +79,50 @@ struct SpaceColors: Equatable, Defaults.Serializable {
             guard let value else {
                 return nil
             }
-            return [
-                "foreground": try! NSKeyedArchiver.archivedData(
+            do {
+                let foregroundData = try NSKeyedArchiver.archivedData(
                     withRootObject: value.foreground,
                     requiringSecureCoding: true
-                ),
-                "background": try! NSKeyedArchiver.archivedData(
+                )
+                let backgroundData = try NSKeyedArchiver.archivedData(
                     withRootObject: value.background,
                     requiringSecureCoding: true
-                ),
-            ]
+                )
+                return [
+                    "foreground": foregroundData,
+                    "background": backgroundData,
+                ]
+            } catch {
+                NSLog("SpaceColors: failed to archive colors: %@", error.localizedDescription)
+                return nil
+            }
         }
 
         // swiftlint:disable:next discouraged_optional_collection
         func deserialize(_ object: [String: Data]?) -> SpaceColors? {
             guard let object,
                   let foregroundData = object["foreground"],
-                  let backgroundData = object["background"],
-                  let foreground = try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSColor.self, from: foregroundData),
-                  let background = try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSColor.self, from: backgroundData)
+                  let backgroundData = object["background"]
             else {
                 return nil
             }
-            return SpaceColors(foreground: foreground, background: background)
+            do {
+                guard let foreground = try NSKeyedUnarchiver.unarchivedObject(
+                    ofClass: NSColor.self,
+                    from: foregroundData
+                ),
+                    let background = try NSKeyedUnarchiver.unarchivedObject(
+                        ofClass: NSColor.self,
+                        from: backgroundData
+                    )
+                else {
+                    return nil
+                }
+                return SpaceColors(foreground: foreground, background: background)
+            } catch {
+                NSLog("SpaceColors: failed to unarchive colors: %@", error.localizedDescription)
+                return nil
+            }
         }
     }
 
@@ -127,68 +130,95 @@ struct SpaceColors: Equatable, Defaults.Serializable {
 
     var foreground: NSColor
     var background: NSColor
-
-    /// Backwards compatibility aliases
-    var foregroundColor: NSColor {
-        foreground
-    }
-
-    var backgroundColor: NSColor {
-        background
-    }
 }
 
 // MARK: - SpacePreferences
 
 /// Manages per-space preferences (colors, icon styles, symbols/emojis).
 ///
-/// All methods accept an optional `DefaultsStore` parameter. In production, pass
-/// `.shared` (the default). In tests, pass a per-test store for isolation.
+/// All methods accept an optional `DefaultsStore` parameter. In production the
+/// default is `AppEnvironment.shared.store`. In tests, pass a per-test store for isolation.
 ///
 /// When `uniqueIconsPerDisplay` is enabled, preferences are stored per-display
 /// using the display identifier. When disabled, shared preferences are used.
 /// Both sets of preferences are stored separately for backwards compatibility.
+@MainActor
 enum SpacePreferences {
+    // MARK: - Generic Accessor
+
+    @MainActor private struct Accessor<T> {
+        let shared: ReferenceWritableKeyPath<DefaultsStore, [Int: T]>
+        let perDisplay: ReferenceWritableKeyPath<DefaultsStore, [String: [Int: T]]>
+
+        func get(forSpace spaceNumber: Int, display: String?, store: DefaultsStore) -> T? {
+            if store.uniqueIconsPerDisplay, let display {
+                return store[keyPath: perDisplay][display]?[spaceNumber]
+            }
+            return store[keyPath: shared][spaceNumber]
+        }
+
+        func set(_ value: T?, forSpace spaceNumber: Int, display: String?, store: DefaultsStore) {
+            if store.uniqueIconsPerDisplay, let display {
+                var perDisplayMap = store[keyPath: perDisplay]
+                var spaceMap = perDisplayMap[display] ?? [:]
+                if let value {
+                    spaceMap[spaceNumber] = value
+                } else {
+                    spaceMap.removeValue(forKey: spaceNumber)
+                }
+                perDisplayMap[display] = spaceMap
+                store[keyPath: perDisplay] = perDisplayMap
+            } else {
+                if let value {
+                    store[keyPath: shared][spaceNumber] = value
+                } else {
+                    store[keyPath: shared].removeValue(forKey: spaceNumber)
+                }
+            }
+        }
+    }
+
+    private static let symbols = Accessor<String>(
+        shared: \.spaceSymbols, perDisplay: \.displaySpaceSymbols
+    )
+    private static let iconStyles = Accessor<IconStyle>(
+        shared: \.spaceIconStyles, perDisplay: \.displaySpaceIconStyles
+    )
+    private static let colorsAccessor = Accessor<SpaceColors>(
+        shared: \.spaceColors, perDisplay: \.displaySpaceColors
+    )
+    private static let fonts = Accessor<SpaceFont>(
+        shared: \.spaceFonts, perDisplay: \.displaySpaceFonts
+    )
+    private static let skinTones = Accessor<SkinTone>(
+        shared: \.spaceSkinTones, perDisplay: \.displaySpaceSkinTones
+    )
+
     // MARK: - Symbols (SF Symbols or Emojis)
 
     static func symbol(
         forSpace spaceNumber: Int,
         display: String? = nil,
-        store: DefaultsStore = .shared
+        store: DefaultsStore = AppEnvironment.shared.store
     ) -> String? {
-        if store.uniqueIconsPerDisplay, let display {
-            return store.displaySpaceSymbols[display]?[spaceNumber]
-        }
-        return store.spaceSymbols[spaceNumber]
+        symbols.get(forSpace: spaceNumber, display: display, store: store)
     }
 
     static func setSymbol(
         _ symbol: String?,
         forSpace spaceNumber: Int,
         display: String? = nil,
-        store: DefaultsStore = .shared
+        store: DefaultsStore = AppEnvironment.shared.store
     ) {
-        if store.uniqueIconsPerDisplay, let display {
-            var displaySymbols = store.displaySpaceSymbols
-            var symbols = displaySymbols[display] ?? [:]
-            if let symbol {
-                symbols[spaceNumber] = symbol
-            } else {
-                symbols.removeValue(forKey: spaceNumber)
-            }
-            displaySymbols[display] = symbols
-            store.displaySpaceSymbols = displaySymbols
-        } else {
-            if let symbol {
-                store.spaceSymbols[spaceNumber] = symbol
-            } else {
-                store.spaceSymbols.removeValue(forKey: spaceNumber)
-            }
-        }
+        symbols.set(symbol, forSpace: spaceNumber, display: display, store: store)
     }
 
-    static func clearSymbol(forSpace spaceNumber: Int, display: String? = nil, store: DefaultsStore = .shared) {
-        setSymbol(nil, forSpace: spaceNumber, display: display, store: store)
+    static func clearSymbol(
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) {
+        symbols.set(nil, forSpace: spaceNumber, display: display, store: store)
     }
 
     // MARK: - Icon Style
@@ -196,41 +226,26 @@ enum SpacePreferences {
     static func iconStyle(
         forSpace spaceNumber: Int,
         display: String? = nil,
-        store: DefaultsStore = .shared
+        store: DefaultsStore = AppEnvironment.shared.store
     ) -> IconStyle? {
-        if store.uniqueIconsPerDisplay, let display {
-            return store.displaySpaceIconStyles[display]?[spaceNumber]
-        }
-        return store.spaceIconStyles[spaceNumber]
+        iconStyles.get(forSpace: spaceNumber, display: display, store: store)
     }
 
     static func setIconStyle(
         _ style: IconStyle?,
         forSpace spaceNumber: Int,
         display: String? = nil,
-        store: DefaultsStore = .shared
+        store: DefaultsStore = AppEnvironment.shared.store
     ) {
-        if store.uniqueIconsPerDisplay, let display {
-            var displayStyles = store.displaySpaceIconStyles
-            var spaceStyles = displayStyles[display] ?? [:]
-            if let style {
-                spaceStyles[spaceNumber] = style
-            } else {
-                spaceStyles.removeValue(forKey: spaceNumber)
-            }
-            displayStyles[display] = spaceStyles
-            store.displaySpaceIconStyles = displayStyles
-        } else {
-            if let style {
-                store.spaceIconStyles[spaceNumber] = style
-            } else {
-                store.spaceIconStyles.removeValue(forKey: spaceNumber)
-            }
-        }
+        iconStyles.set(style, forSpace: spaceNumber, display: display, store: store)
     }
 
-    static func clearIconStyle(forSpace spaceNumber: Int, display: String? = nil, store: DefaultsStore = .shared) {
-        setIconStyle(nil, forSpace: spaceNumber, display: display, store: store)
+    static func clearIconStyle(
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) {
+        iconStyles.set(nil, forSpace: spaceNumber, display: display, store: store)
     }
 
     // MARK: - Colors
@@ -238,41 +253,26 @@ enum SpacePreferences {
     static func colors(
         forSpace spaceNumber: Int,
         display: String? = nil,
-        store: DefaultsStore = .shared
+        store: DefaultsStore = AppEnvironment.shared.store
     ) -> SpaceColors? {
-        if store.uniqueIconsPerDisplay, let display {
-            return store.displaySpaceColors[display]?[spaceNumber]
-        }
-        return store.spaceColors[spaceNumber]
+        colorsAccessor.get(forSpace: spaceNumber, display: display, store: store)
     }
 
     static func setColors(
         _ colors: SpaceColors?,
         forSpace spaceNumber: Int,
         display: String? = nil,
-        store: DefaultsStore = .shared
+        store: DefaultsStore = AppEnvironment.shared.store
     ) {
-        if store.uniqueIconsPerDisplay, let display {
-            var displayColors = store.displaySpaceColors
-            var spaceColors = displayColors[display] ?? [:]
-            if let colors {
-                spaceColors[spaceNumber] = colors
-            } else {
-                spaceColors.removeValue(forKey: spaceNumber)
-            }
-            displayColors[display] = spaceColors
-            store.displaySpaceColors = displayColors
-        } else {
-            if let colors {
-                store.spaceColors[spaceNumber] = colors
-            } else {
-                store.spaceColors.removeValue(forKey: spaceNumber)
-            }
-        }
+        colorsAccessor.set(colors, forSpace: spaceNumber, display: display, store: store)
     }
 
-    static func clearColors(forSpace spaceNumber: Int, display: String? = nil, store: DefaultsStore = .shared) {
-        setColors(nil, forSpace: spaceNumber, display: display, store: store)
+    static func clearColors(
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) {
+        colorsAccessor.set(nil, forSpace: spaceNumber, display: display, store: store)
     }
 
     // MARK: - Font
@@ -280,90 +280,59 @@ enum SpacePreferences {
     static func font(
         forSpace spaceNumber: Int,
         display: String? = nil,
-        store: DefaultsStore = .shared
+        store: DefaultsStore = AppEnvironment.shared.store
     ) -> SpaceFont? {
-        if store.uniqueIconsPerDisplay, let display {
-            return store.displaySpaceFonts[display]?[spaceNumber]
-        }
-        return store.spaceFonts[spaceNumber]
+        fonts.get(forSpace: spaceNumber, display: display, store: store)
     }
 
     static func setFont(
         _ font: SpaceFont?,
         forSpace spaceNumber: Int,
         display: String? = nil,
-        store: DefaultsStore = .shared
+        store: DefaultsStore = AppEnvironment.shared.store
     ) {
-        if store.uniqueIconsPerDisplay, let display {
-            var displayFonts = store.displaySpaceFonts
-            var spaceFonts = displayFonts[display] ?? [:]
-            if let font {
-                spaceFonts[spaceNumber] = font
-            } else {
-                spaceFonts.removeValue(forKey: spaceNumber)
-            }
-            displayFonts[display] = spaceFonts
-            store.displaySpaceFonts = displayFonts
-        } else {
-            if let font {
-                store.spaceFonts[spaceNumber] = font
-            } else {
-                store.spaceFonts.removeValue(forKey: spaceNumber)
-            }
-        }
+        fonts.set(font, forSpace: spaceNumber, display: display, store: store)
     }
 
-    static func clearFont(forSpace spaceNumber: Int, display: String? = nil, store: DefaultsStore = .shared) {
-        setFont(nil, forSpace: spaceNumber, display: display, store: store)
+    static func clearFont(
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) {
+        fonts.set(nil, forSpace: spaceNumber, display: display, store: store)
     }
 
     // MARK: - Skin Tone
 
-    /// Returns the skin tone for a space, or nil to use the global default
     static func skinTone(
         forSpace spaceNumber: Int,
         display: String? = nil,
-        store: DefaultsStore = .shared
+        store: DefaultsStore = AppEnvironment.shared.store
     ) -> SkinTone? {
-        if store.uniqueIconsPerDisplay, let display {
-            return store.displaySpaceSkinTones[display]?[spaceNumber]
-        }
-        return store.spaceSkinTones[spaceNumber]
+        skinTones.get(forSpace: spaceNumber, display: display, store: store)
     }
 
     static func setSkinTone(
         _ tone: SkinTone?,
         forSpace spaceNumber: Int,
         display: String? = nil,
-        store: DefaultsStore = .shared
+        store: DefaultsStore = AppEnvironment.shared.store
     ) {
-        if store.uniqueIconsPerDisplay, let display {
-            var displayTones = store.displaySpaceSkinTones
-            var tones = displayTones[display] ?? [:]
-            if let tone {
-                tones[spaceNumber] = tone
-            } else {
-                tones.removeValue(forKey: spaceNumber)
-            }
-            displayTones[display] = tones
-            store.displaySpaceSkinTones = displayTones
-        } else {
-            if let tone {
-                store.spaceSkinTones[spaceNumber] = tone
-            } else {
-                store.spaceSkinTones.removeValue(forKey: spaceNumber)
-            }
-        }
+        skinTones.set(tone, forSpace: spaceNumber, display: display, store: store)
     }
 
-    static func clearSkinTone(forSpace spaceNumber: Int, display: String? = nil, store: DefaultsStore = .shared) {
-        setSkinTone(nil, forSpace: spaceNumber, display: display, store: store)
+    static func clearSkinTone(
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) {
+        skinTones.set(nil, forSpace: spaceNumber, display: display, store: store)
     }
 
     // MARK: - Clear All
 
     /// Clears all preferences for all displays and shared settings.
-    static func clearAll(store: DefaultsStore = .shared) {
+    static func clearAll(store: DefaultsStore = AppEnvironment.shared.store) {
         store.spaceColors = [:]
         store.spaceIconStyles = [:]
         store.spaceSymbols = [:]

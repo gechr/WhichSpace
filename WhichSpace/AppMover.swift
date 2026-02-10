@@ -4,6 +4,7 @@ enum AppMover {
     private static let alertSuppressKey = "moveToApplicationsFolderAlertSuppress"
 
     static func moveIfNecessary(appName: String) {
+        // Early-exit checks that don't require the run loop
         let defaults = UserDefaults.standard
         guard !defaults.bool(forKey: alertSuppressKey) else {
             return
@@ -19,93 +20,97 @@ enum AppMover {
             return
         }
 
-        let fileManager = FileManager.default
-        let destinationURL = preferred.url.appendingPathComponent(bundleURL.lastPathComponent)
-        if !NSApp.isActive {
-            NSApp.activate(ignoringOtherApps: true)
-        }
-
-        let alert = NSAlert()
-        alert.messageText = preferred.isUserApplications
-            ? String(localized: "question_title_home", table: "AppMover")
-            : String(localized: "question_title", table: "AppMover")
-        var informativeText = String(
-            format: String(localized: "question_message", table: "AppMover"),
-            appName
-        )
-        if isInDownloadsFolder(bundleURL) {
-            informativeText += " " + String(localized: "question_info_downloads", table: "AppMover")
-        }
-        alert.informativeText = informativeText
-        alert.addButton(withTitle: String(localized: "button_move", table: "AppMover"))
-        let cancelButton = alert.addButton(withTitle: String(localized: "button_do_not_move", table: "AppMover"))
-        cancelButton.keyEquivalent = "\u{1b}"
-
-        alert.showsSuppressionButton = true
-        if let cell = alert.suppressionButton?.cell {
-            cell.controlSize = .small
-            cell.font = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
-        }
-
-        let response = alert.runModal()
-        if response != .alertFirstButtonReturn {
-            if alert.suppressionButton?.state == .on {
-                defaults.set(true, forKey: alertSuppressKey)
+        // Defer modal UI to a Task so applicationDidFinishLaunching returns
+        // immediately and the run loop / status bar can initialize.
+        Task { @MainActor in
+            let fileManager = FileManager.default
+            let destinationURL = preferred.url.appendingPathComponent(bundleURL.lastPathComponent)
+            if !NSApp.isActive {
+                NSApp.activate(ignoringOtherApps: true)
             }
-            return
-        }
 
-        if !fileManager.fileExists(atPath: preferred.url.path) {
+            let alert = NSAlert()
+            alert.messageText = preferred.isUserApplications
+                ? String(localized: "question_title_home", table: "AppMover")
+                : String(localized: "question_title", table: "AppMover")
+            var informativeText = String(
+                format: String(localized: "question_message", table: "AppMover"),
+                appName
+            )
+            if isInDownloadsFolder(bundleURL) {
+                informativeText += " " + String(localized: "question_info_downloads", table: "AppMover")
+            }
+            alert.informativeText = informativeText
+            alert.addButton(withTitle: String(localized: "button_move", table: "AppMover"))
+            let cancelButton = alert.addButton(withTitle: String(localized: "button_do_not_move", table: "AppMover"))
+            cancelButton.keyEquivalent = "\u{1b}"
+
+            alert.showsSuppressionButton = true
+            if let cell = alert.suppressionButton?.cell {
+                cell.controlSize = .small
+                cell.font = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
+            }
+
+            let response = alert.runModal()
+            if response != .alertFirstButtonReturn {
+                if alert.suppressionButton?.state == .on {
+                    defaults.set(true, forKey: alertSuppressKey)
+                }
+                return
+            }
+
+            if !fileManager.fileExists(atPath: preferred.url.path) {
+                do {
+                    try fileManager.createDirectory(
+                        at: preferred.url,
+                        withIntermediateDirectories: true,
+                        attributes: nil
+                    )
+                } catch {
+                    showFailureAlert()
+                    return
+                }
+            }
+
+            guard fileManager.isWritableFile(atPath: preferred.url.path) else {
+                showFailureAlert()
+                return
+            }
+
+            if fileManager.fileExists(atPath: destinationURL.path) {
+                if let runningApp = runningApplication(at: destinationURL) {
+                    if isSameBundleAndVersion(bundleURL, destinationURL) {
+                        if NSWorkspace.shared.open(destinationURL) {
+                            exit(0)
+                        }
+                        showFailureAlert()
+                        return
+                    }
+                    guard confirmReplaceRunningApp(appName: appName) else {
+                        return
+                    }
+                    guard terminateRunningApplication(runningApp) else {
+                        showFailureAlert()
+                        return
+                    }
+                }
+                guard fileManager.isWritableFile(atPath: destinationURL.path),
+                      (try? fileManager.trashItem(at: destinationURL, resultingItemURL: nil)) != nil
+                else {
+                    showFailureAlert()
+                    return
+                }
+            }
+
             do {
-                try fileManager.createDirectory(
-                    at: preferred.url,
-                    withIntermediateDirectories: true,
-                    attributes: nil
-                )
+                try fileManager.copyItem(at: bundleURL, to: destinationURL)
             } catch {
                 showFailureAlert()
                 return
             }
-        }
 
-        guard fileManager.isWritableFile(atPath: preferred.url.path) else {
-            showFailureAlert()
-            return
+            await relaunch(from: bundleURL, to: destinationURL)
         }
-
-        if fileManager.fileExists(atPath: destinationURL.path) {
-            if let runningApp = runningApplication(at: destinationURL) {
-                if isSameBundleAndVersion(bundleURL, destinationURL) {
-                    if NSWorkspace.shared.open(destinationURL) {
-                        exit(0)
-                    }
-                    showFailureAlert()
-                    return
-                }
-                guard confirmReplaceRunningApp(appName: appName) else {
-                    return
-                }
-                guard terminateRunningApplication(runningApp) else {
-                    showFailureAlert()
-                    return
-                }
-            }
-            guard fileManager.isWritableFile(atPath: destinationURL.path),
-                  (try? fileManager.trashItem(at: destinationURL, resultingItemURL: nil)) != nil
-            else {
-                showFailureAlert()
-                return
-            }
-        }
-
-        do {
-            try fileManager.copyItem(at: bundleURL, to: destinationURL)
-        } catch {
-            showFailureAlert()
-            return
-        }
-
-        relaunch(from: bundleURL, to: destinationURL)
     }
 
     private static func preferredInstallDirectory() -> (url: URL, isUserApplications: Bool)? {
@@ -211,6 +216,7 @@ enum AppMover {
         return (bundle.bundleIdentifier, shortVersion, buildVersion)
     }
 
+    @MainActor
     private static func confirmReplaceRunningApp(appName: String) -> Bool {
         let alert = NSAlert()
         alert.messageText = String(localized: "replace_title", table: "AppMover")
@@ -224,27 +230,39 @@ enum AppMover {
         return alert.runModal() == .alertFirstButtonReturn
     }
 
-    private static func relaunch(from sourceURL: URL, to destinationURL: URL) {
+    private static func relaunch(from sourceURL: URL, to destinationURL: URL) async {
         let xattr = Process()
         xattr.executableURL = URL(fileURLWithPath: "/usr/bin/xattr")
         xattr.arguments = ["-d", "-r", "com.apple.quarantine", destinationURL.path]
-        try? xattr.run()
-        xattr.waitUntilExit()
+        do {
+            try xattr.run()
+        } catch {
+            NSLog("AppMover: failed to remove quarantine attribute: %@", error.localizedDescription)
+        }
+
+        await withCheckedContinuation { continuation in
+            DispatchQueue.global(qos: .utility).async {
+                xattr.waitUntilExit()
+                continuation.resume()
+            }
+        }
 
         let configuration = NSWorkspace.OpenConfiguration()
         configuration.createsNewApplicationInstance = true
-        NSWorkspace.shared.openApplication(at: destinationURL, configuration: configuration) { _, error in
-            guard error == nil else {
-                DispatchQueue.main.async {
-                    showFailureAlert()
-                }
-                return
+        do {
+            _ = try await NSWorkspace.shared.openApplication(at: destinationURL, configuration: configuration)
+            do {
+                try FileManager.default.trashItem(at: sourceURL, resultingItemURL: nil)
+            } catch {
+                NSLog("AppMover: failed to trash source bundle at %@: %@", sourceURL.path, error.localizedDescription)
             }
-            _ = try? FileManager.default.trashItem(at: sourceURL, resultingItemURL: nil)
             exit(0)
+        } catch {
+            await showFailureAlert()
         }
     }
 
+    @MainActor
     private static func showFailureAlert() {
         let alert = NSAlert()
         alert.messageText = String(localized: "error_could_not_move", table: "AppMover")

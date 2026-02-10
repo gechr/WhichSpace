@@ -2,30 +2,16 @@ import AppKit
 import XCTest
 @testable import WhichSpace
 
-// MARK: - Stub Alert for Testing
+// MARK: - Stub Confirm Action for Testing
 
-/// A stub alert that returns a predetermined result
-struct StubConfirmationAlert: ConfirmationAlertProvider {
-    let shouldConfirm: Bool
-
-    func runModal() -> Bool {
-        shouldConfirm
-    }
-}
-
-/// A factory that creates stub alerts with configurable confirmation behavior
-final class StubAlertFactory: ConfirmationAlertFactory {
+/// A stub that records confirmation alerts and returns a predetermined result
+final class StubConfirmAction: @unchecked Sendable {
     var shouldConfirm = true
     private(set) var alertsShown: [(message: String, detail: String, confirmTitle: String, isDestructive: Bool)] = []
 
-    func makeAlert(
-        message: String,
-        detail: String,
-        confirmTitle: String,
-        isDestructive: Bool
-    ) -> ConfirmationAlertProvider {
+    func callAsFunction(message: String, detail: String, confirmTitle: String, isDestructive: Bool) -> Bool {
         alertsShown.append((message, detail, confirmTitle, isDestructive))
-        return StubConfirmationAlert(shouldConfirm: shouldConfirm)
+        return shouldConfirm
     }
 
     func reset() {
@@ -36,7 +22,7 @@ final class StubAlertFactory: ConfirmationAlertFactory {
 // MARK: - Stub LaunchAtLogin for Testing
 
 /// A stub launch-at-login provider for testing
-final class StubLaunchAtLoginProvider: LaunchAtLoginProvider {
+final class StubLaunchAtLoginProvider: LaunchAtLoginProvider, @unchecked Sendable {
     var isEnabled = false
 }
 
@@ -50,7 +36,7 @@ final class AppDelegateActionsTests: XCTestCase {
     private var testSuite: TestSuite!
     private var stub: CGSStub!
     private var appState: AppState!
-    private var alertFactory: StubAlertFactory!
+    private var confirmStub: StubConfirmAction!
     private var launchAtLoginStub: StubLaunchAtLoginProvider!
     private var sut: AppDelegate!
 
@@ -77,9 +63,13 @@ final class AppDelegateActionsTests: XCTestCase {
         ]
 
         appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
-        alertFactory = StubAlertFactory()
+        confirmStub = StubConfirmAction()
         launchAtLoginStub = StubLaunchAtLoginProvider()
-        sut = AppDelegate(appState: appState, alertFactory: alertFactory, launchAtLogin: launchAtLoginStub)
+        sut = AppDelegate(
+            appState: appState,
+            confirmAction: confirmStub.callAsFunction,
+            launchAtLogin: launchAtLoginStub
+        )
     }
 
     override func tearDown() {
@@ -87,7 +77,7 @@ final class AppDelegateActionsTests: XCTestCase {
         sut = nil
         launchAtLoginStub = nil
         appState = nil
-        alertFactory = nil
+        confirmStub = nil
         stub = nil
         if let store, let testSuite {
             store.resetAll()
@@ -99,15 +89,6 @@ final class AppDelegateActionsTests: XCTestCase {
     }
 
     // MARK: - Helper Methods
-
-    /// Creates an AsyncStream that receives notifications when updateStatusBarIcon() is called.
-    /// Call this before triggering state changes that require observation.
-    private func makeUpdateNotifier() -> (stream: AsyncStream<Void>, iterator: AsyncStream<Void>.AsyncIterator) {
-        var continuation: AsyncStream<Void>.Continuation!
-        let stream = AsyncStream<Void> { continuation = $0 }
-        sut.statusBarIconUpdateNotifier = continuation
-        return (stream, stream.makeAsyncIterator())
-    }
 
     /// Waits for statusBarIconUpdateCount to change from the given value.
     /// Returns true if count changed, false if timeout was reached.
@@ -146,12 +127,119 @@ final class AppDelegateActionsTests: XCTestCase {
         }
     }
 
+    private func makeOtherMouseUpEvent(location: CGPoint) throws -> NSEvent {
+        let cgEvent = try XCTUnwrap(CGEvent(
+            mouseEventSource: nil,
+            mouseType: .otherMouseUp,
+            mouseCursorPosition: CGPoint(x: location.x, y: location.y),
+            mouseButton: .center
+        ))
+        return try XCTUnwrap(NSEvent(cgEvent: cgEvent))
+    }
+
+    // MARK: - Click Event Tests
+
+    func testNSEventIsRightClick_trueForRightMouseUp() {
+        let event = NSEvent.mouseEvent(
+            with: .rightMouseUp,
+            location: .zero,
+            modifierFlags: [],
+            timestamp: 0,
+            windowNumber: 0,
+            context: nil,
+            eventNumber: 0,
+            clickCount: 1,
+            pressure: 1
+        )
+
+        XCTAssertTrue(event?.isRightClick ?? false)
+    }
+
+    func testNSEventIsRightClick_trueForControlClick() {
+        let event = NSEvent.mouseEvent(
+            with: .leftMouseUp,
+            location: .zero,
+            modifierFlags: .control,
+            timestamp: 0,
+            windowNumber: 0,
+            context: nil,
+            eventNumber: 0,
+            clickCount: 1,
+            pressure: 1
+        )
+
+        XCTAssertTrue(event?.isRightClick ?? false)
+    }
+
+    func testNSEventIsRightClick_falseForPlainLeftClick() {
+        let event = NSEvent.mouseEvent(
+            with: .leftMouseUp,
+            location: .zero,
+            modifierFlags: [],
+            timestamp: 0,
+            windowNumber: 0,
+            context: nil,
+            eventNumber: 0,
+            clickCount: 1,
+            pressure: 1
+        )
+
+        XCTAssertFalse(event?.isRightClick ?? true)
+    }
+
+    func testHandleMiddleClickEvent_consumesMiddleClickInsideButtonAndSendsNotification() throws {
+        var notifications: [String] = []
+        let sender: (CFString) -> Void = { notifications.append($0 as String) }
+        let localSut = AppDelegate(
+            appState: appState,
+            confirmAction: confirmStub.callAsFunction,
+            launchAtLogin: launchAtLoginStub,
+            missionControlNotificationSender: sender
+        )
+        let event = try makeOtherMouseUpEvent(location: CGPoint(x: 12, y: 12))
+        let button = NSView(frame: NSRect(
+            x: event.locationInWindow.x - 5,
+            y: event.locationInWindow.y - 5,
+            width: 10,
+            height: 10
+        ))
+
+        let result = localSut.handleMiddleClickEvent(event, in: button)
+
+        XCTAssertEqual(event.buttonNumber, 2)
+        XCTAssertNil(result)
+        XCTAssertEqual(notifications, ["com.apple.expose.awake"])
+    }
+
+    func testHandleMiddleClickEvent_ignoresMiddleClickOutsideButton() throws {
+        var notificationCount = 0
+        let sender: (CFString) -> Void = { _ in notificationCount += 1 }
+        let localSut = AppDelegate(
+            appState: appState,
+            confirmAction: confirmStub.callAsFunction,
+            launchAtLogin: launchAtLoginStub,
+            missionControlNotificationSender: sender
+        )
+        let event = try makeOtherMouseUpEvent(location: CGPoint(x: 100, y: 100))
+        let button = NSView(frame: NSRect(
+            x: event.locationInWindow.x + 100,
+            y: event.locationInWindow.y + 100,
+            width: 10,
+            height: 10
+        ))
+
+        let result = localSut.handleMiddleClickEvent(event, in: button)
+
+        XCTAssertNotNil(result)
+        XCTAssertEqual(notificationCount, 0)
+    }
+
     // MARK: - toggleShowAllSpaces Tests
 
     func testToggleShowAllSpaces_togglesFromFalseToTrue() {
         store.showAllSpaces = false
 
-        sut.toggleShowAllSpaces()
+        sut.actionHandler.toggleShowAllSpaces()
 
         XCTAssertTrue(store.showAllSpaces, "showAllSpaces should toggle to true")
     }
@@ -159,7 +247,7 @@ final class AppDelegateActionsTests: XCTestCase {
     func testToggleShowAllSpaces_togglesFromTrueToFalse() {
         store.showAllSpaces = true
 
-        sut.toggleShowAllSpaces()
+        sut.actionHandler.toggleShowAllSpaces()
 
         XCTAssertFalse(store.showAllSpaces, "showAllSpaces should toggle to false")
     }
@@ -167,13 +255,13 @@ final class AppDelegateActionsTests: XCTestCase {
     func testToggleShowAllSpaces_multipleToggles() {
         store.showAllSpaces = false
 
-        sut.toggleShowAllSpaces()
+        sut.actionHandler.toggleShowAllSpaces()
         XCTAssertTrue(store.showAllSpaces)
 
-        sut.toggleShowAllSpaces()
+        sut.actionHandler.toggleShowAllSpaces()
         XCTAssertFalse(store.showAllSpaces)
 
-        sut.toggleShowAllSpaces()
+        sut.actionHandler.toggleShowAllSpaces()
         XCTAssertTrue(store.showAllSpaces)
     }
 
@@ -181,7 +269,7 @@ final class AppDelegateActionsTests: XCTestCase {
         store.showAllDisplays = true
         store.showAllSpaces = false
 
-        sut.toggleShowAllSpaces()
+        sut.actionHandler.toggleShowAllSpaces()
 
         XCTAssertTrue(store.showAllSpaces, "showAllSpaces should be enabled")
         XCTAssertFalse(store.showAllDisplays, "showAllDisplays should be disabled when showAllSpaces is enabled")
@@ -191,7 +279,7 @@ final class AppDelegateActionsTests: XCTestCase {
         store.showAllDisplays = true
         store.showAllSpaces = true
 
-        sut.toggleShowAllSpaces()
+        sut.actionHandler.toggleShowAllSpaces()
 
         XCTAssertFalse(store.showAllSpaces, "showAllSpaces should be disabled")
         XCTAssertTrue(store.showAllDisplays, "showAllDisplays should remain unchanged when showAllSpaces is disabled")
@@ -202,7 +290,7 @@ final class AppDelegateActionsTests: XCTestCase {
     func testToggleShowAllDisplays_togglesFromFalseToTrue() {
         store.showAllDisplays = false
 
-        sut.toggleShowAllDisplays()
+        sut.actionHandler.toggleShowAllDisplays()
 
         XCTAssertTrue(store.showAllDisplays, "showAllDisplays should toggle to true")
     }
@@ -210,7 +298,7 @@ final class AppDelegateActionsTests: XCTestCase {
     func testToggleShowAllDisplays_togglesFromTrueToFalse() {
         store.showAllDisplays = true
 
-        sut.toggleShowAllDisplays()
+        sut.actionHandler.toggleShowAllDisplays()
 
         XCTAssertFalse(store.showAllDisplays, "showAllDisplays should toggle to false")
     }
@@ -219,7 +307,7 @@ final class AppDelegateActionsTests: XCTestCase {
         store.showAllSpaces = true
         store.showAllDisplays = false
 
-        sut.toggleShowAllDisplays()
+        sut.actionHandler.toggleShowAllDisplays()
 
         XCTAssertTrue(store.showAllDisplays, "showAllDisplays should be enabled")
         XCTAssertFalse(store.showAllSpaces, "showAllSpaces should be disabled when showAllDisplays is enabled")
@@ -229,7 +317,7 @@ final class AppDelegateActionsTests: XCTestCase {
         store.showAllSpaces = true
         store.showAllDisplays = true
 
-        sut.toggleShowAllDisplays()
+        sut.actionHandler.toggleShowAllDisplays()
 
         XCTAssertFalse(store.showAllDisplays, "showAllDisplays should be disabled")
         XCTAssertTrue(store.showAllSpaces, "showAllSpaces should remain unchanged when showAllDisplays is disabled")
@@ -240,7 +328,7 @@ final class AppDelegateActionsTests: XCTestCase {
     func testToggleDimInactiveSpaces_togglesFromTrueToFalse() {
         store.dimInactiveSpaces = true
 
-        sut.toggleDimInactiveSpaces()
+        sut.actionHandler.toggleDimInactiveSpaces()
 
         XCTAssertFalse(store.dimInactiveSpaces, "dimInactiveSpaces should toggle to false")
     }
@@ -248,7 +336,7 @@ final class AppDelegateActionsTests: XCTestCase {
     func testToggleDimInactiveSpaces_togglesFromFalseToTrue() {
         store.dimInactiveSpaces = false
 
-        sut.toggleDimInactiveSpaces()
+        sut.actionHandler.toggleDimInactiveSpaces()
 
         XCTAssertTrue(store.dimInactiveSpaces, "dimInactiveSpaces should toggle to true")
     }
@@ -256,13 +344,13 @@ final class AppDelegateActionsTests: XCTestCase {
     func testToggleDimInactiveSpaces_multipleToggles() {
         store.dimInactiveSpaces = true
 
-        sut.toggleDimInactiveSpaces()
+        sut.actionHandler.toggleDimInactiveSpaces()
         XCTAssertFalse(store.dimInactiveSpaces)
 
-        sut.toggleDimInactiveSpaces()
+        sut.actionHandler.toggleDimInactiveSpaces()
         XCTAssertTrue(store.dimInactiveSpaces)
 
-        sut.toggleDimInactiveSpaces()
+        sut.actionHandler.toggleDimInactiveSpaces()
         XCTAssertFalse(store.dimInactiveSpaces)
     }
 
@@ -271,7 +359,7 @@ final class AppDelegateActionsTests: XCTestCase {
     func testToggleHideEmptySpaces_togglesFromTrueToFalse() {
         store.hideEmptySpaces = true
 
-        sut.toggleHideEmptySpaces()
+        sut.actionHandler.toggleHideEmptySpaces()
 
         XCTAssertFalse(store.hideEmptySpaces, "hideEmptySpaces should toggle to false")
     }
@@ -279,7 +367,7 @@ final class AppDelegateActionsTests: XCTestCase {
     func testToggleHideEmptySpaces_togglesFromFalseToTrue() {
         store.hideEmptySpaces = false
 
-        sut.toggleHideEmptySpaces()
+        sut.actionHandler.toggleHideEmptySpaces()
 
         XCTAssertTrue(store.hideEmptySpaces, "hideEmptySpaces should toggle to true")
     }
@@ -287,13 +375,13 @@ final class AppDelegateActionsTests: XCTestCase {
     func testToggleHideEmptySpaces_multipleToggles() {
         store.hideEmptySpaces = false
 
-        sut.toggleHideEmptySpaces()
+        sut.actionHandler.toggleHideEmptySpaces()
         XCTAssertTrue(store.hideEmptySpaces)
 
-        sut.toggleHideEmptySpaces()
+        sut.actionHandler.toggleHideEmptySpaces()
         XCTAssertFalse(store.hideEmptySpaces)
 
-        sut.toggleHideEmptySpaces()
+        sut.actionHandler.toggleHideEmptySpaces()
         XCTAssertTrue(store.hideEmptySpaces)
     }
 
@@ -302,7 +390,7 @@ final class AppDelegateActionsTests: XCTestCase {
     func testToggleHideFullscreenApps_togglesFromTrueToFalse() {
         store.hideFullscreenApps = true
 
-        sut.toggleHideFullscreenApps()
+        sut.actionHandler.toggleHideFullscreenApps()
 
         XCTAssertFalse(store.hideFullscreenApps, "hideFullscreenApps should toggle to false")
     }
@@ -310,7 +398,7 @@ final class AppDelegateActionsTests: XCTestCase {
     func testToggleHideFullscreenApps_togglesFromFalseToTrue() {
         store.hideFullscreenApps = false
 
-        sut.toggleHideFullscreenApps()
+        sut.actionHandler.toggleHideFullscreenApps()
 
         XCTAssertTrue(store.hideFullscreenApps, "hideFullscreenApps should toggle to true")
     }
@@ -318,13 +406,13 @@ final class AppDelegateActionsTests: XCTestCase {
     func testToggleHideFullscreenApps_multipleToggles() {
         store.hideFullscreenApps = false
 
-        sut.toggleHideFullscreenApps()
+        sut.actionHandler.toggleHideFullscreenApps()
         XCTAssertTrue(store.hideFullscreenApps)
 
-        sut.toggleHideFullscreenApps()
+        sut.actionHandler.toggleHideFullscreenApps()
         XCTAssertFalse(store.hideFullscreenApps)
 
-        sut.toggleHideFullscreenApps()
+        sut.actionHandler.toggleHideFullscreenApps()
         XCTAssertTrue(store.hideFullscreenApps)
     }
 
@@ -333,7 +421,7 @@ final class AppDelegateActionsTests: XCTestCase {
     func testToggleHideSingleSpace_togglesFromTrueToFalse() {
         store.hideSingleSpace = true
 
-        sut.toggleHideSingleSpace()
+        sut.actionHandler.toggleHideSingleSpace()
 
         XCTAssertFalse(store.hideSingleSpace, "hideSingleSpace should toggle to false")
     }
@@ -341,7 +429,7 @@ final class AppDelegateActionsTests: XCTestCase {
     func testToggleHideSingleSpace_togglesFromFalseToTrue() {
         store.hideSingleSpace = false
 
-        sut.toggleHideSingleSpace()
+        sut.actionHandler.toggleHideSingleSpace()
 
         XCTAssertTrue(store.hideSingleSpace, "hideSingleSpace should toggle to true")
     }
@@ -349,13 +437,13 @@ final class AppDelegateActionsTests: XCTestCase {
     func testToggleHideSingleSpace_multipleToggles() {
         store.hideSingleSpace = false
 
-        sut.toggleHideSingleSpace()
+        sut.actionHandler.toggleHideSingleSpace()
         XCTAssertTrue(store.hideSingleSpace)
 
-        sut.toggleHideSingleSpace()
+        sut.actionHandler.toggleHideSingleSpace()
         XCTAssertFalse(store.hideSingleSpace)
 
-        sut.toggleHideSingleSpace()
+        sut.actionHandler.toggleHideSingleSpace()
         XCTAssertTrue(store.hideSingleSpace)
     }
 
@@ -364,10 +452,10 @@ final class AppDelegateActionsTests: XCTestCase {
     func testApplyAllToAllSpaces_whenConfirmed_appliesStyleToAllSpaces() {
         let testStyle = IconStyle.circle
         setupSpaceWithPreferences(space: appState.currentSpace, style: testStyle)
-        alertFactory.shouldConfirm = true
+        confirmStub.shouldConfirm = true
         let initialCount = sut.statusBarIconUpdateCount
 
-        sut.applyToAllSpaces()
+        sut.actionHandler.applyToAllSpaces()
 
         for space in 1 ... 4 {
             XCTAssertEqual(
@@ -377,15 +465,15 @@ final class AppDelegateActionsTests: XCTestCase {
             )
         }
         XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 1, "updateStatusBarIcon should be called")
-        XCTAssertEqual(alertFactory.alertsShown.count, 1, "One alert should be shown")
+        XCTAssertEqual(confirmStub.alertsShown.count, 1, "One alert should be shown")
     }
 
     func testApplyAllToAllSpaces_whenConfirmed_appliesColorsToAllSpaces() {
         let testColors = SpaceColors(foreground: .systemRed, background: .systemBlue)
         setupSpaceWithPreferences(space: appState.currentSpace, colors: testColors)
-        alertFactory.shouldConfirm = true
+        confirmStub.shouldConfirm = true
 
-        sut.applyToAllSpaces()
+        sut.actionHandler.applyToAllSpaces()
 
         for space in 1 ... 4 {
             let colors = SpacePreferences.colors(forSpace: space, store: store)
@@ -398,9 +486,9 @@ final class AppDelegateActionsTests: XCTestCase {
     func testApplyAllToAllSpaces_whenConfirmed_appliesSymbolToAllSpaces() {
         let testSymbol = "star.fill"
         setupSpaceWithPreferences(space: appState.currentSpace, symbol: testSymbol)
-        alertFactory.shouldConfirm = true
+        confirmStub.shouldConfirm = true
 
-        sut.applyToAllSpaces()
+        sut.actionHandler.applyToAllSpaces()
 
         for space in 1 ... 4 {
             XCTAssertEqual(
@@ -414,9 +502,9 @@ final class AppDelegateActionsTests: XCTestCase {
     func testApplyAllToAllSpaces_whenConfirmed_appliesFontToAllSpaces() {
         let testFont = NSFont.boldSystemFont(ofSize: 15)
         setupSpaceWithPreferences(space: appState.currentSpace, font: testFont)
-        alertFactory.shouldConfirm = true
+        confirmStub.shouldConfirm = true
 
-        sut.applyToAllSpaces()
+        sut.actionHandler.applyToAllSpaces()
 
         for space in 1 ... 4 {
             let font = SpacePreferences.font(forSpace: space, store: store)?.font
@@ -428,10 +516,10 @@ final class AppDelegateActionsTests: XCTestCase {
     func testApplyAllToAllSpaces_whenDeclined_doesNotApply() {
         let testStyle = IconStyle.hexagon
         setupSpaceWithPreferences(space: appState.currentSpace, style: testStyle)
-        alertFactory.shouldConfirm = false
+        confirmStub.shouldConfirm = false
         let initialCount = sut.statusBarIconUpdateCount
 
-        sut.applyToAllSpaces()
+        sut.actionHandler.applyToAllSpaces()
 
         // Other spaces should not have the style
         XCTAssertNil(SpacePreferences.iconStyle(forSpace: 1, store: store))
@@ -447,9 +535,9 @@ final class AppDelegateActionsTests: XCTestCase {
         }
         // Current space has no symbol (number mode)
         SpacePreferences.clearSymbol(forSpace: appState.currentSpace, store: store)
-        alertFactory.shouldConfirm = true
+        confirmStub.shouldConfirm = true
 
-        sut.applyToAllSpaces()
+        sut.actionHandler.applyToAllSpaces()
 
         for space in 1 ... 4 {
             XCTAssertNil(
@@ -466,9 +554,9 @@ final class AppDelegateActionsTests: XCTestCase {
         }
         // Current space has no colors
         SpacePreferences.clearColors(forSpace: appState.currentSpace, store: store)
-        alertFactory.shouldConfirm = true
+        confirmStub.shouldConfirm = true
 
-        sut.applyToAllSpaces()
+        sut.actionHandler.applyToAllSpaces()
 
         for space in 1 ... 4 {
             XCTAssertNil(
@@ -485,9 +573,9 @@ final class AppDelegateActionsTests: XCTestCase {
         }
         // Current space has no font
         SpacePreferences.clearFont(forSpace: appState.currentSpace, store: store)
-        alertFactory.shouldConfirm = true
+        confirmStub.shouldConfirm = true
 
-        sut.applyToAllSpaces()
+        sut.actionHandler.applyToAllSpaces()
 
         for space in 1 ... 4 {
             XCTAssertNil(
@@ -507,10 +595,10 @@ final class AppDelegateActionsTests: XCTestCase {
             symbol: "star.fill",
             font: NSFont.boldSystemFont(ofSize: 14)
         )
-        alertFactory.shouldConfirm = true
+        confirmStub.shouldConfirm = true
         let initialCount = sut.statusBarIconUpdateCount
 
-        sut.resetSpaceToDefault()
+        sut.actionHandler.resetSpaceToDefault()
 
         XCTAssertNil(SpacePreferences.colors(forSpace: appState.currentSpace, store: store))
         XCTAssertNil(SpacePreferences.iconStyle(forSpace: appState.currentSpace, store: store))
@@ -522,9 +610,9 @@ final class AppDelegateActionsTests: XCTestCase {
     func testResetSpaceToDefault_whenDeclined_preservesPreferences() {
         let testColors = SpaceColors(foreground: .red, background: .blue)
         setupSpaceWithPreferences(space: appState.currentSpace, colors: testColors)
-        alertFactory.shouldConfirm = false
+        confirmStub.shouldConfirm = false
 
-        sut.resetSpaceToDefault()
+        sut.actionHandler.resetSpaceToDefault()
 
         XCTAssertNotNil(
             SpacePreferences.colors(forSpace: appState.currentSpace, store: store),
@@ -540,9 +628,9 @@ final class AppDelegateActionsTests: XCTestCase {
             colors: SpaceColors(foreground: .red, background: .blue)
         )
         setupSpaceWithPreferences(space: otherSpace, colors: otherColors)
-        alertFactory.shouldConfirm = true
+        confirmStub.shouldConfirm = true
 
-        sut.resetSpaceToDefault()
+        sut.actionHandler.resetSpaceToDefault()
 
         XCTAssertNotNil(
             SpacePreferences.colors(forSpace: otherSpace, store: store),
@@ -563,10 +651,10 @@ final class AppDelegateActionsTests: XCTestCase {
             )
         }
         store.sizeScale = 80.0
-        alertFactory.shouldConfirm = true
+        confirmStub.shouldConfirm = true
         let initialCount = sut.statusBarIconUpdateCount
 
-        sut.resetAllSpacesToDefault()
+        sut.actionHandler.resetAllSpacesToDefault()
 
         for space in 1 ... 4 {
             XCTAssertNil(SpacePreferences.colors(forSpace: space, store: store))
@@ -581,9 +669,9 @@ final class AppDelegateActionsTests: XCTestCase {
         let testColors = SpaceColors(foreground: .red, background: .blue)
         setupSpaceWithPreferences(space: 1, colors: testColors)
         store.sizeScale = 80.0
-        alertFactory.shouldConfirm = false
+        confirmStub.shouldConfirm = false
 
-        sut.resetAllSpacesToDefault()
+        sut.actionHandler.resetAllSpacesToDefault()
 
         XCTAssertNotNil(SpacePreferences.colors(forSpace: 1, store: store), "Colors should be preserved")
         XCTAssertEqual(store.sizeScale, 80.0, "Size scale should be preserved")
@@ -614,10 +702,10 @@ final class AppDelegateActionsTests: XCTestCase {
         appState.forceSpaceUpdate()
         XCTAssertEqual(appState.getAllSpaceIndices().count, 2, "Should only have 2 active spaces")
 
-        alertFactory.shouldConfirm = true
+        confirmStub.shouldConfirm = true
 
         // Reset all spaces
-        sut.resetAllSpacesToDefault()
+        sut.actionHandler.resetAllSpacesToDefault()
 
         // Verify ALL 10 spaces are cleared, not just the 2 active ones
         for space in 1 ... 10 {
@@ -647,7 +735,7 @@ final class AppDelegateActionsTests: XCTestCase {
         )
         let initialCount = sut.statusBarIconUpdateCount
 
-        sut.invertColors()
+        sut.actionHandler.invertColors()
 
         let colors = SpacePreferences.colors(forSpace: appState.currentSpace, store: store)
         XCTAssertEqual(colors?.foreground, originalBackground, "Foreground should become original background")
@@ -663,7 +751,7 @@ final class AppDelegateActionsTests: XCTestCase {
             colors: SpaceColors(foreground: customForeground, background: customBackground)
         )
 
-        sut.invertColors()
+        sut.actionHandler.invertColors()
 
         let colors = SpacePreferences.colors(forSpace: appState.currentSpace, store: store)
         XCTAssertEqual(colors?.foreground, customBackground)
@@ -674,8 +762,8 @@ final class AppDelegateActionsTests: XCTestCase {
         let originalColors = SpaceColors(foreground: .systemGreen, background: .systemPurple)
         setupSpaceWithPreferences(space: appState.currentSpace, colors: originalColors)
 
-        sut.invertColors()
-        sut.invertColors()
+        sut.actionHandler.invertColors()
+        sut.actionHandler.invertColors()
 
         let colors = SpacePreferences.colors(forSpace: appState.currentSpace, store: store)
         XCTAssertEqual(colors?.foreground, originalColors.foreground)
@@ -687,10 +775,10 @@ final class AppDelegateActionsTests: XCTestCase {
     func testApplyColorsToAllSpaces_whenConfirmed_appliesColors() {
         let testColors = SpaceColors(foreground: .systemOrange, background: .systemTeal)
         setupSpaceWithPreferences(space: appState.currentSpace, colors: testColors)
-        alertFactory.shouldConfirm = true
+        confirmStub.shouldConfirm = true
         let initialCount = sut.statusBarIconUpdateCount
 
-        sut.applyColorsToAllSpaces()
+        sut.actionHandler.applyColorsToAllSpaces()
 
         for space in 1 ... 4 {
             let colors = SpacePreferences.colors(forSpace: space, store: store)
@@ -703,9 +791,9 @@ final class AppDelegateActionsTests: XCTestCase {
     func testApplyColorsToAllSpaces_whenDeclined_doesNotApply() {
         let testColors = SpaceColors(foreground: .systemOrange, background: .systemTeal)
         setupSpaceWithPreferences(space: appState.currentSpace, colors: testColors)
-        alertFactory.shouldConfirm = false
+        confirmStub.shouldConfirm = false
 
-        sut.applyColorsToAllSpaces()
+        sut.actionHandler.applyColorsToAllSpaces()
 
         for space in [1, 3, 4] {
             XCTAssertNil(SpacePreferences.colors(forSpace: space, store: store))
@@ -719,9 +807,9 @@ final class AppDelegateActionsTests: XCTestCase {
         }
         // Clear colors on current space
         SpacePreferences.clearColors(forSpace: appState.currentSpace, store: store)
-        alertFactory.shouldConfirm = true
+        confirmStub.shouldConfirm = true
 
-        sut.applyColorsToAllSpaces()
+        sut.actionHandler.applyColorsToAllSpaces()
 
         for space in 1 ... 4 {
             XCTAssertNil(SpacePreferences.colors(forSpace: space, store: store))
@@ -738,9 +826,9 @@ final class AppDelegateActionsTests: XCTestCase {
         // Apply colors to all spaces
         let testColors = SpaceColors(foreground: .systemOrange, background: .systemTeal)
         setupSpaceWithPreferences(space: appState.currentSpace, colors: testColors)
-        alertFactory.shouldConfirm = true
+        confirmStub.shouldConfirm = true
 
-        sut.applyColorsToAllSpaces()
+        sut.actionHandler.applyColorsToAllSpaces()
 
         // Verify styles and symbols are preserved
         for space in 1 ... 4 {
@@ -762,10 +850,10 @@ final class AppDelegateActionsTests: XCTestCase {
     func testApplyStyleToAllSpaces_whenConfirmed_appliesStyle() {
         let testStyle = IconStyle.triangle
         setupSpaceWithPreferences(space: appState.currentSpace, style: testStyle)
-        alertFactory.shouldConfirm = true
+        confirmStub.shouldConfirm = true
         let initialCount = sut.statusBarIconUpdateCount
 
-        sut.applyStyleToAllSpaces()
+        sut.actionHandler.applyStyleToAllSpaces()
 
         for space in 1 ... 4 {
             XCTAssertEqual(SpacePreferences.iconStyle(forSpace: space, store: store), testStyle)
@@ -776,9 +864,9 @@ final class AppDelegateActionsTests: XCTestCase {
     func testApplyStyleToAllSpaces_appliesSymbolToAllIndices() {
         let testSymbol = "heart.fill"
         setupSpaceWithPreferences(space: appState.currentSpace, symbol: testSymbol)
-        alertFactory.shouldConfirm = true
+        confirmStub.shouldConfirm = true
 
-        sut.applyStyleToAllSpaces()
+        sut.actionHandler.applyStyleToAllSpaces()
 
         for space in 1 ... 4 {
             XCTAssertEqual(SpacePreferences.symbol(forSpace: space, store: store), testSymbol)
@@ -788,9 +876,9 @@ final class AppDelegateActionsTests: XCTestCase {
     func testApplyStyleToAllSpaces_whenDeclined_doesNotApply() {
         let testStyle = IconStyle.pentagon
         setupSpaceWithPreferences(space: appState.currentSpace, style: testStyle)
-        alertFactory.shouldConfirm = false
+        confirmStub.shouldConfirm = false
 
-        sut.applyStyleToAllSpaces()
+        sut.actionHandler.applyStyleToAllSpaces()
 
         for space in [1, 3, 4] {
             XCTAssertNil(SpacePreferences.iconStyle(forSpace: space, store: store))
@@ -806,9 +894,9 @@ final class AppDelegateActionsTests: XCTestCase {
         // Current space has no symbol (number mode)
         SpacePreferences.clearSymbol(forSpace: appState.currentSpace, store: store)
         setupSpaceWithPreferences(space: appState.currentSpace, style: .hexagon)
-        alertFactory.shouldConfirm = true
+        confirmStub.shouldConfirm = true
 
-        sut.applyStyleToAllSpaces()
+        sut.actionHandler.applyStyleToAllSpaces()
 
         for space in 1 ... 4 {
             XCTAssertNil(
@@ -833,9 +921,9 @@ final class AppDelegateActionsTests: XCTestCase {
         // Apply style to all spaces
         let testStyle = IconStyle.pentagon
         setupSpaceWithPreferences(space: appState.currentSpace, style: testStyle)
-        alertFactory.shouldConfirm = true
+        confirmStub.shouldConfirm = true
 
-        sut.applyStyleToAllSpaces()
+        sut.actionHandler.applyStyleToAllSpaces()
 
         // Verify colors are preserved
         for space in 1 ... 4 {
@@ -861,10 +949,10 @@ final class AppDelegateActionsTests: XCTestCase {
             style: .pentagon,
             symbol: "bolt.fill"
         )
-        alertFactory.shouldConfirm = true
+        confirmStub.shouldConfirm = true
         let initialCount = sut.statusBarIconUpdateCount
 
-        sut.resetStyleToDefault()
+        sut.actionHandler.resetStyleToDefault()
 
         XCTAssertNil(SpacePreferences.iconStyle(forSpace: appState.currentSpace, store: store))
         XCTAssertNil(SpacePreferences.symbol(forSpace: appState.currentSpace, store: store))
@@ -873,9 +961,9 @@ final class AppDelegateActionsTests: XCTestCase {
 
     func testResetStyleToDefault_whenDeclined_preservesPreferences() {
         setupSpaceWithPreferences(space: appState.currentSpace, style: .pentagon)
-        alertFactory.shouldConfirm = false
+        confirmStub.shouldConfirm = false
 
-        sut.resetStyleToDefault()
+        sut.actionHandler.resetStyleToDefault()
 
         XCTAssertEqual(SpacePreferences.iconStyle(forSpace: appState.currentSpace, store: store), .pentagon)
     }
@@ -888,9 +976,9 @@ final class AppDelegateActionsTests: XCTestCase {
             colors: testColors,
             symbol: "star.fill"
         )
-        alertFactory.shouldConfirm = true
+        confirmStub.shouldConfirm = true
 
-        sut.resetStyleToDefault()
+        sut.actionHandler.resetStyleToDefault()
 
         // Verify colors are preserved
         let colors = SpacePreferences.colors(forSpace: appState.currentSpace, store: store)
@@ -906,10 +994,10 @@ final class AppDelegateActionsTests: XCTestCase {
             space: appState.currentSpace,
             colors: SpaceColors(foreground: .cyan, background: .magenta)
         )
-        alertFactory.shouldConfirm = true
+        confirmStub.shouldConfirm = true
         let initialCount = sut.statusBarIconUpdateCount
 
-        sut.resetColorToDefault()
+        sut.actionHandler.resetColorToDefault()
 
         XCTAssertNil(SpacePreferences.colors(forSpace: appState.currentSpace, store: store))
         XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 1, "updateStatusBarIcon should be called")
@@ -918,9 +1006,9 @@ final class AppDelegateActionsTests: XCTestCase {
     func testResetColorToDefault_whenDeclined_preservesColors() {
         let testColors = SpaceColors(foreground: .cyan, background: .magenta)
         setupSpaceWithPreferences(space: appState.currentSpace, colors: testColors)
-        alertFactory.shouldConfirm = false
+        confirmStub.shouldConfirm = false
 
-        sut.resetColorToDefault()
+        sut.actionHandler.resetColorToDefault()
 
         XCTAssertNotNil(SpacePreferences.colors(forSpace: appState.currentSpace, store: store))
     }
@@ -934,9 +1022,9 @@ final class AppDelegateActionsTests: XCTestCase {
             colors: SpaceColors(foreground: .cyan, background: .magenta),
             symbol: testSymbol
         )
-        alertFactory.shouldConfirm = true
+        confirmStub.shouldConfirm = true
 
-        sut.resetColorToDefault()
+        sut.actionHandler.resetColorToDefault()
 
         // Verify style and symbol are preserved
         XCTAssertEqual(
@@ -956,64 +1044,64 @@ final class AppDelegateActionsTests: XCTestCase {
     func testApplyAllToAllSpaces_whenCurrentSpaceIsZero_noOp() {
         // Setup with no active space
         stub.displays = []
-        appState = AppState(displaySpaceProvider: stub, skipObservers: true)
-        sut = AppDelegate(appState: appState, alertFactory: alertFactory)
+        appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        sut = AppDelegate(appState: appState, confirmAction: confirmStub.callAsFunction)
         XCTAssertEqual(appState.currentSpace, 0)
 
-        sut.applyToAllSpaces()
+        sut.actionHandler.applyToAllSpaces()
 
-        XCTAssertEqual(alertFactory.alertsShown.count, 0, "No alert should be shown when currentSpace is 0")
+        XCTAssertEqual(confirmStub.alertsShown.count, 0, "No alert should be shown when currentSpace is 0")
     }
 
     func testResetSpaceToDefault_whenCurrentSpaceIsZero_noOp() {
         stub.displays = []
-        appState = AppState(displaySpaceProvider: stub, skipObservers: true)
-        sut = AppDelegate(appState: appState, alertFactory: alertFactory)
+        appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        sut = AppDelegate(appState: appState, confirmAction: confirmStub.callAsFunction)
 
-        sut.resetSpaceToDefault()
+        sut.actionHandler.resetSpaceToDefault()
 
-        XCTAssertEqual(alertFactory.alertsShown.count, 0, "No alert should be shown when currentSpace is 0")
+        XCTAssertEqual(confirmStub.alertsShown.count, 0, "No alert should be shown when currentSpace is 0")
     }
 
     func testInvertColors_whenCurrentSpaceIsZero_noOp() {
         stub.displays = []
-        appState = AppState(displaySpaceProvider: stub, skipObservers: true)
-        sut = AppDelegate(appState: appState, alertFactory: alertFactory)
+        appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        sut = AppDelegate(appState: appState, confirmAction: confirmStub.callAsFunction)
         let initialCount = sut.statusBarIconUpdateCount
 
-        sut.invertColors()
+        sut.actionHandler.invertColors()
 
         XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount, "updateStatusBarIcon should not be called")
     }
 
     func testApplyColorsToAllSpaces_whenCurrentSpaceIsZero_noOp() {
         stub.displays = []
-        appState = AppState(displaySpaceProvider: stub, skipObservers: true)
-        sut = AppDelegate(appState: appState, alertFactory: alertFactory)
+        appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        sut = AppDelegate(appState: appState, confirmAction: confirmStub.callAsFunction)
 
-        sut.applyColorsToAllSpaces()
+        sut.actionHandler.applyColorsToAllSpaces()
 
-        XCTAssertEqual(alertFactory.alertsShown.count, 0, "No alert should be shown when currentSpace is 0")
+        XCTAssertEqual(confirmStub.alertsShown.count, 0, "No alert should be shown when currentSpace is 0")
     }
 
     func testApplyStyleToAllSpaces_whenCurrentSpaceIsZero_noOp() {
         stub.displays = []
-        appState = AppState(displaySpaceProvider: stub, skipObservers: true)
-        sut = AppDelegate(appState: appState, alertFactory: alertFactory)
+        appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        sut = AppDelegate(appState: appState, confirmAction: confirmStub.callAsFunction)
 
-        sut.applyStyleToAllSpaces()
+        sut.actionHandler.applyStyleToAllSpaces()
 
-        XCTAssertEqual(alertFactory.alertsShown.count, 0, "No alert should be shown when currentSpace is 0")
+        XCTAssertEqual(confirmStub.alertsShown.count, 0, "No alert should be shown when currentSpace is 0")
     }
 
     func testResetStyleToDefault_whenCurrentSpaceIsZero_noOp() {
         stub.displays = []
-        appState = AppState(displaySpaceProvider: stub, skipObservers: true)
-        sut = AppDelegate(appState: appState, alertFactory: alertFactory)
+        appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        sut = AppDelegate(appState: appState, confirmAction: confirmStub.callAsFunction)
 
-        sut.resetStyleToDefault()
+        sut.actionHandler.resetStyleToDefault()
 
-        XCTAssertEqual(alertFactory.alertsShown.count, 0, "No alert should be shown when currentSpace is 0")
+        XCTAssertEqual(confirmStub.alertsShown.count, 0, "No alert should be shown when currentSpace is 0")
     }
 
     // MARK: - Edge Cases: Symbol vs Number Mode
@@ -1021,9 +1109,9 @@ final class AppDelegateActionsTests: XCTestCase {
     func testApplyAllToAllSpaces_inSymbolMode_appliesSymbolToAll() {
         let testSymbol = "star.fill"
         setupSpaceWithPreferences(space: appState.currentSpace, style: .circle, symbol: testSymbol)
-        alertFactory.shouldConfirm = true
+        confirmStub.shouldConfirm = true
 
-        sut.applyToAllSpaces()
+        sut.actionHandler.applyToAllSpaces()
 
         for space in 1 ... 4 {
             XCTAssertEqual(
@@ -1047,9 +1135,9 @@ final class AppDelegateActionsTests: XCTestCase {
         // Current space is in number mode (no symbol)
         SpacePreferences.clearSymbol(forSpace: appState.currentSpace, store: store)
         setupSpaceWithPreferences(space: appState.currentSpace, style: .triangle)
-        alertFactory.shouldConfirm = true
+        confirmStub.shouldConfirm = true
 
-        sut.applyToAllSpaces()
+        sut.actionHandler.applyToAllSpaces()
 
         for space in 1 ... 4 {
             XCTAssertNil(SpacePreferences.symbol(forSpace: space, store: store), "Symbol should be cleared")
@@ -1064,9 +1152,9 @@ final class AppDelegateActionsTests: XCTestCase {
     func testApplyStyleToAllSpaces_inSymbolMode_preservesSymbol() {
         let testSymbol = "bolt.fill"
         setupSpaceWithPreferences(space: appState.currentSpace, style: .hexagon, symbol: testSymbol)
-        alertFactory.shouldConfirm = true
+        confirmStub.shouldConfirm = true
 
-        sut.applyStyleToAllSpaces()
+        sut.actionHandler.applyStyleToAllSpaces()
 
         for space in 1 ... 4 {
             XCTAssertEqual(SpacePreferences.symbol(forSpace: space, store: store), testSymbol)
@@ -1074,15 +1162,15 @@ final class AppDelegateActionsTests: XCTestCase {
         }
     }
 
-    // MARK: - setForegroundColor Tests
+    // MARK: - setColor Tests
 
-    func testSetForegroundColor_withNoExistingColors_usesDefaultBackground() {
+    func testSetColor_foreground_withNoExistingColors_usesDefaultBackground() {
         // Ensure no custom colors exist
         SpacePreferences.clearColors(forSpace: appState.currentSpace, store: store)
         XCTAssertNil(appState.currentColors, "Should have no custom colors initially")
 
         // Set only foreground color
-        sut.setForegroundColor(.systemRed)
+        sut.actionHandler.setColor(.systemRed, isForeground: true)
 
         // Verify the background uses the default (not black)
         let colors = SpacePreferences.colors(forSpace: appState.currentSpace, store: store)
@@ -1093,7 +1181,7 @@ final class AppDelegateActionsTests: XCTestCase {
         XCTAssertEqual(colors?.background, defaults.background, "Background should use the default, not black")
     }
 
-    func testSetForegroundColor_withExistingColors_preservesBackground() {
+    func testSetColor_foreground_withExistingColors_preservesBackground() {
         // Set up existing colors
         let existingBackground = NSColor.systemBlue
         SpacePreferences.setColors(
@@ -1103,7 +1191,7 @@ final class AppDelegateActionsTests: XCTestCase {
         )
 
         // Set foreground color
-        sut.setForegroundColor(.systemGreen)
+        sut.actionHandler.setColor(.systemGreen, isForeground: true)
 
         // Verify background is preserved
         let colors = SpacePreferences.colors(forSpace: appState.currentSpace, store: store)
@@ -1111,15 +1199,13 @@ final class AppDelegateActionsTests: XCTestCase {
         XCTAssertEqual(colors?.background, existingBackground, "Background should be preserved")
     }
 
-    // MARK: - setBackgroundColor Tests
-
-    func testSetBackgroundColor_withNoExistingColors_usesDefaultForeground() {
+    func testSetColor_background_withNoExistingColors_usesDefaultForeground() {
         // Ensure no custom colors exist
         SpacePreferences.clearColors(forSpace: appState.currentSpace, store: store)
         XCTAssertNil(appState.currentColors, "Should have no custom colors initially")
 
         // Set only background color
-        sut.setBackgroundColor(.systemBlue)
+        sut.actionHandler.setColor(.systemBlue, isForeground: false)
 
         // Verify the foreground uses the default (not white)
         let colors = SpacePreferences.colors(forSpace: appState.currentSpace, store: store)
@@ -1130,7 +1216,7 @@ final class AppDelegateActionsTests: XCTestCase {
         XCTAssertEqual(colors?.foreground, defaults.foreground, "Foreground should use the default, not white")
     }
 
-    func testSetBackgroundColor_withExistingColors_preservesForeground() {
+    func testSetColor_background_withExistingColors_preservesForeground() {
         // Set up existing colors
         let existingForeground = NSColor.systemRed
         SpacePreferences.setColors(
@@ -1140,7 +1226,7 @@ final class AppDelegateActionsTests: XCTestCase {
         )
 
         // Set background color
-        sut.setBackgroundColor(.systemYellow)
+        sut.actionHandler.setColor(.systemYellow, isForeground: false)
 
         // Verify foreground is preserved
         let colors = SpacePreferences.colors(forSpace: appState.currentSpace, store: store)
@@ -1156,7 +1242,7 @@ final class AppDelegateActionsTests: XCTestCase {
         NSApp.appearance = NSAppearance(named: .darkAqua)
         appState.updateDarkModeStatus()
 
-        sut.invertColors()
+        sut.actionHandler.invertColors()
 
         let colors = SpacePreferences.colors(forSpace: appState.currentSpace, store: store)
         XCTAssertNotNil(colors, "Colors should be set after invert")
@@ -1176,7 +1262,7 @@ final class AppDelegateActionsTests: XCTestCase {
         NSApp.appearance = NSAppearance(named: .aqua)
         appState.updateDarkModeStatus()
 
-        sut.invertColors()
+        sut.actionHandler.invertColors()
 
         let colors = SpacePreferences.colors(forSpace: appState.currentSpace, store: store)
         XCTAssertNotNil(colors, "Colors should be set after invert")
@@ -1194,78 +1280,78 @@ final class AppDelegateActionsTests: XCTestCase {
     // MARK: - Alert Verification Tests
 
     func testApplyAllToAllSpaces_showsCorrectAlert() {
-        alertFactory.shouldConfirm = true
+        confirmStub.shouldConfirm = true
 
-        sut.applyToAllSpaces()
+        sut.actionHandler.applyToAllSpaces()
 
-        XCTAssertEqual(alertFactory.alertsShown.count, 1)
-        let alert = alertFactory.alertsShown.first
+        XCTAssertEqual(confirmStub.alertsShown.count, 1)
+        let alert = confirmStub.alertsShown.first
         XCTAssertEqual(alert?.message, Localization.confirmApplyToAll)
         XCTAssertEqual(alert?.isDestructive, false)
     }
 
     func testResetSpaceToDefault_showsDestructiveAlert() {
-        alertFactory.shouldConfirm = true
+        confirmStub.shouldConfirm = true
 
-        sut.resetSpaceToDefault()
+        sut.actionHandler.resetSpaceToDefault()
 
-        XCTAssertEqual(alertFactory.alertsShown.count, 1)
-        let alert = alertFactory.alertsShown.first
+        XCTAssertEqual(confirmStub.alertsShown.count, 1)
+        let alert = confirmStub.alertsShown.first
         XCTAssertEqual(alert?.message, Localization.confirmResetSpace)
         XCTAssertEqual(alert?.isDestructive, true)
     }
 
     func testResetAllSpacesToDefault_showsDestructiveAlert() {
-        alertFactory.shouldConfirm = true
+        confirmStub.shouldConfirm = true
 
-        sut.resetAllSpacesToDefault()
+        sut.actionHandler.resetAllSpacesToDefault()
 
-        XCTAssertEqual(alertFactory.alertsShown.count, 1)
-        let alert = alertFactory.alertsShown.first
+        XCTAssertEqual(confirmStub.alertsShown.count, 1)
+        let alert = confirmStub.alertsShown.first
         XCTAssertEqual(alert?.message, Localization.confirmResetAllSpaces)
         XCTAssertEqual(alert?.isDestructive, true)
     }
 
     func testApplyColorsToAllSpaces_showsNonDestructiveAlert() {
-        alertFactory.shouldConfirm = true
+        confirmStub.shouldConfirm = true
 
-        sut.applyColorsToAllSpaces()
+        sut.actionHandler.applyColorsToAllSpaces()
 
-        XCTAssertEqual(alertFactory.alertsShown.count, 1)
-        let alert = alertFactory.alertsShown.first
+        XCTAssertEqual(confirmStub.alertsShown.count, 1)
+        let alert = confirmStub.alertsShown.first
         XCTAssertEqual(alert?.message, Localization.confirmApplyColorToAll)
         XCTAssertEqual(alert?.isDestructive, false)
     }
 
     func testApplyStyleToAllSpaces_showsNonDestructiveAlert() {
-        alertFactory.shouldConfirm = true
+        confirmStub.shouldConfirm = true
 
-        sut.applyStyleToAllSpaces()
+        sut.actionHandler.applyStyleToAllSpaces()
 
-        XCTAssertEqual(alertFactory.alertsShown.count, 1)
-        let alert = alertFactory.alertsShown.first
+        XCTAssertEqual(confirmStub.alertsShown.count, 1)
+        let alert = confirmStub.alertsShown.first
         XCTAssertEqual(alert?.message, Localization.confirmApplyStyleToAll)
         XCTAssertEqual(alert?.isDestructive, false)
     }
 
     func testResetStyleToDefault_showsDestructiveAlert() {
-        alertFactory.shouldConfirm = true
+        confirmStub.shouldConfirm = true
 
-        sut.resetStyleToDefault()
+        sut.actionHandler.resetStyleToDefault()
 
-        XCTAssertEqual(alertFactory.alertsShown.count, 1)
-        let alert = alertFactory.alertsShown.first
+        XCTAssertEqual(confirmStub.alertsShown.count, 1)
+        let alert = confirmStub.alertsShown.first
         XCTAssertEqual(alert?.message, Localization.confirmResetStyle)
         XCTAssertEqual(alert?.isDestructive, true)
     }
 
     func testResetColorToDefault_showsDestructiveAlert() {
-        alertFactory.shouldConfirm = true
+        confirmStub.shouldConfirm = true
 
-        sut.resetColorToDefault()
+        sut.actionHandler.resetColorToDefault()
 
-        XCTAssertEqual(alertFactory.alertsShown.count, 1)
-        let alert = alertFactory.alertsShown.first
+        XCTAssertEqual(confirmStub.alertsShown.count, 1)
+        let alert = confirmStub.alertsShown.first
         XCTAssertEqual(alert?.message, Localization.confirmResetColor)
         XCTAssertEqual(alert?.isDestructive, true)
     }
@@ -1745,18 +1831,18 @@ final class AppDelegateActionsTests: XCTestCase {
 
     func testResetColorToDefault_clearsSeparatorColor() {
         store.separatorColor = .systemRed
-        alertFactory.shouldConfirm = true
+        confirmStub.shouldConfirm = true
 
-        sut.resetColorToDefault()
+        sut.actionHandler.resetColorToDefault()
 
         XCTAssertNil(store.separatorColor, "Separator color should be cleared on reset")
     }
 
     func testResetAllSpacesToDefault_clearsSeparatorColor() {
         store.separatorColor = .systemBlue
-        alertFactory.shouldConfirm = true
+        confirmStub.shouldConfirm = true
 
-        sut.resetAllSpacesToDefault()
+        sut.actionHandler.resetAllSpacesToDefault()
 
         XCTAssertNil(store.separatorColor, "Separator color should be cleared on reset all")
     }
@@ -1766,7 +1852,7 @@ final class AppDelegateActionsTests: XCTestCase {
     func testToggleLaunchAtLogin_togglesFromFalseToTrue() {
         launchAtLoginStub.isEnabled = false
 
-        sut.toggleLaunchAtLogin()
+        sut.actionHandler.toggleLaunchAtLogin()
 
         XCTAssertTrue(launchAtLoginStub.isEnabled, "LaunchAtLogin should toggle to true")
     }
@@ -1774,7 +1860,7 @@ final class AppDelegateActionsTests: XCTestCase {
     func testToggleLaunchAtLogin_togglesFromTrueToFalse() {
         launchAtLoginStub.isEnabled = true
 
-        sut.toggleLaunchAtLogin()
+        sut.actionHandler.toggleLaunchAtLogin()
 
         XCTAssertFalse(launchAtLoginStub.isEnabled, "LaunchAtLogin should toggle to false")
     }
@@ -1782,13 +1868,13 @@ final class AppDelegateActionsTests: XCTestCase {
     func testToggleLaunchAtLogin_multipleToggles() {
         launchAtLoginStub.isEnabled = false
 
-        sut.toggleLaunchAtLogin()
+        sut.actionHandler.toggleLaunchAtLogin()
         XCTAssertTrue(launchAtLoginStub.isEnabled)
 
-        sut.toggleLaunchAtLogin()
+        sut.actionHandler.toggleLaunchAtLogin()
         XCTAssertFalse(launchAtLoginStub.isEnabled)
 
-        sut.toggleLaunchAtLogin()
+        sut.actionHandler.toggleLaunchAtLogin()
         XCTAssertTrue(launchAtLoginStub.isEnabled)
     }
 
@@ -1797,7 +1883,7 @@ final class AppDelegateActionsTests: XCTestCase {
         launchAtLoginStub.isEnabled = false
 
         // Toggle launch at login
-        sut.toggleLaunchAtLogin()
+        sut.actionHandler.toggleLaunchAtLogin()
         XCTAssertTrue(launchAtLoginStub.isEnabled, "LaunchAtLogin should be enabled after toggle")
 
         // Refresh menu state via menuWillOpen
@@ -1812,7 +1898,7 @@ final class AppDelegateActionsTests: XCTestCase {
         )
 
         // Toggle again to disabled
-        sut.toggleLaunchAtLogin()
+        sut.actionHandler.toggleLaunchAtLogin()
         XCTAssertFalse(launchAtLoginStub.isEnabled, "LaunchAtLogin should be disabled after second toggle")
 
         // Refresh menu state again
@@ -1857,9 +1943,6 @@ final class AppDelegateActionsTests: XCTestCase {
     }
 
     func testObservation_updatesStatusBarIconOnAppStateChange() async {
-        // Set up notifier before starting observation
-        var (_, iterator) = makeUpdateNotifier()
-
         sut.startObservingAppState()
         let initialCount = sut.statusBarIconUpdateCount
 
@@ -1869,10 +1952,11 @@ final class AppDelegateActionsTests: XCTestCase {
         // Trigger an app state change
         appState.setSpaceState(labels: ["1", "2", "3"], currentSpace: 3, currentLabel: "3")
 
-        // Wait for the onChange callback to fire (deterministic, no sleep needed)
-        _ = await iterator.next()
+        // Wait for the observation callback to fire
+        let didChange = await waitForCountChange(from: initialCount)
 
         // The observation task should have triggered updateStatusBarIcon
+        XCTAssertTrue(didChange, "status bar update count should change after appState mutation")
         XCTAssertGreaterThan(
             sut.statusBarIconUpdateCount,
             initialCount,
@@ -1930,10 +2014,10 @@ final class AppDelegateActionsTests: XCTestCase {
         localStub.displays = [
             CGSStub.makeDisplay(displayID: "Main", spaces: [(id: 100, isFullscreen: false)], activeSpaceID: 100),
         ]
-        let localAppState = AppState(displaySpaceProvider: localStub, skipObservers: true)
+        let localAppState = AppState(displaySpaceProvider: localStub, skipObservers: true, store: store)
         let localDelegate = AppDelegate(
             appState: localAppState,
-            alertFactory: StubAlertFactory(),
+            confirmAction: StubConfirmAction().callAsFunction,
             launchAtLogin: StubLaunchAtLoginProvider()
         )
 

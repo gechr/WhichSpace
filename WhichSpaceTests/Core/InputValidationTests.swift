@@ -1,78 +1,99 @@
 import Cocoa
 import Defaults
-import XCTest
+import Testing
 @testable import WhichSpace
 
 // MARK: - Input Validation Tests
 
-final class InputValidationTests: IsolatedDefaultsTestCase {
+@Suite("Input Validation")
+@MainActor
+struct InputValidationTests {
+    private let store: DefaultsStore
+    private let testSuite: TestSuite
+
+    init() {
+        testSuite = TestSuiteFactory.createSuite()
+        store = DefaultsStore(suite: testSuite.suite)
+    }
+
     // MARK: - Space Number Edge Cases
 
-    func testSpaceNumberZero() {
+    @Test("space number zero can be set and cleared")
+    func spaceNumberZero() {
         // Space 0 is often used as "unknown" state
         SpacePreferences.setIconStyle(.circle, forSpace: 0, store: store)
-        XCTAssertEqual(SpacePreferences.iconStyle(forSpace: 0, store: store), .circle)
+        #expect(SpacePreferences.iconStyle(forSpace: 0, store: store) == .circle)
 
         SpacePreferences.clearIconStyle(forSpace: 0, store: store)
-        XCTAssertNil(SpacePreferences.iconStyle(forSpace: 0, store: store))
+        #expect(SpacePreferences.iconStyle(forSpace: 0, store: store) == nil)
     }
 
-    func testNegativeSpaceNumber() {
+    @Test("negative space number stores icon style")
+    func negativeSpaceNumber() {
         // Negative space numbers (edge case)
         SpacePreferences.setIconStyle(.square, forSpace: -1, store: store)
-        XCTAssertEqual(SpacePreferences.iconStyle(forSpace: -1, store: store), .square)
+        #expect(SpacePreferences.iconStyle(forSpace: -1, store: store) == .square)
     }
 
-    func testVeryLargeSpaceNumber() {
+    @Test("very large space number stores symbol")
+    func veryLargeSpaceNumber() {
         // Very large space numbers
         let largeNumber = Int.max - 1
         SpacePreferences.setSymbol("star", forSpace: largeNumber, store: store)
-        XCTAssertEqual(SpacePreferences.symbol(forSpace: largeNumber, store: store), "star")
+        #expect(SpacePreferences.symbol(forSpace: largeNumber, store: store) == "star")
     }
 
     // MARK: - Symbol Name Edge Cases
 
-    func testEmptySymbolName() {
+    @Test("empty symbol name can be stored")
+    func emptySymbolName() throws {
         SpacePreferences.setSymbol("", forSpace: 1, store: store)
-        XCTAssertEqual(SpacePreferences.symbol(forSpace: 1, store: store), "")
+        let symbol = try #require(SpacePreferences.symbol(forSpace: 1, store: store))
+        #expect(symbol.isEmpty)
     }
 
-    func testVeryLongSymbolName() {
+    @Test("very long symbol name can be stored")
+    func veryLongSymbolName() {
         let longName = String(repeating: "a", count: 10_000)
         SpacePreferences.setSymbol(longName, forSpace: 1, store: store)
-        XCTAssertEqual(SpacePreferences.symbol(forSpace: 1, store: store), longName)
+        #expect(SpacePreferences.symbol(forSpace: 1, store: store) == longName)
     }
 
-    func testSymbolNameWithSpecialCharacters() {
+    @Test("symbol name with special characters can be stored")
+    func symbolNameWithSpecialCharacters() {
         let specialChars = "star.fill<>&\"'\n\t\0"
         SpacePreferences.setSymbol(specialChars, forSpace: 1, store: store)
-        XCTAssertEqual(SpacePreferences.symbol(forSpace: 1, store: store), specialChars)
+        #expect(SpacePreferences.symbol(forSpace: 1, store: store) == specialChars)
     }
 
-    func testSymbolNameWithUnicodeNullCharacter() {
+    @Test("symbol name with unicode null character can be stored")
+    func symbolNameWithUnicodeNullCharacter() {
         let withNull = "star\u{0000}fill"
         SpacePreferences.setSymbol(withNull, forSpace: 1, store: store)
-        XCTAssertEqual(SpacePreferences.symbol(forSpace: 1, store: store), withNull)
+        #expect(SpacePreferences.symbol(forSpace: 1, store: store) == withNull)
     }
 
     // MARK: - Display ID Edge Cases
 
-    func testEmptyDisplayID() {
+    @Test("empty display ID stores icon style")
+    func emptyDisplayID() {
         store.uniqueIconsPerDisplay = true
         SpacePreferences.setIconStyle(.hexagon, forSpace: 1, display: "", store: store)
-        XCTAssertEqual(SpacePreferences.iconStyle(forSpace: 1, display: "", store: store), .hexagon)
+        #expect(SpacePreferences.iconStyle(forSpace: 1, display: "", store: store) == .hexagon)
     }
 
-    func testDisplayIDWithSpecialCharacters() {
+    @Test("display ID with special characters stores icon style")
+    func displayIDWithSpecialCharacters() {
         store.uniqueIconsPerDisplay = true
         let specialID = "Display<>\"'&\n\t"
         SpacePreferences.setIconStyle(.circle, forSpace: 1, display: specialID, store: store)
-        XCTAssertEqual(SpacePreferences.iconStyle(forSpace: 1, display: specialID, store: store), .circle)
+        #expect(SpacePreferences.iconStyle(forSpace: 1, display: specialID, store: store) == .circle)
     }
 
     // MARK: - Color Edge Cases
 
-    func testColorWithZeroAlpha() {
+    @Test("color with zero alpha can be stored and retrieved")
+    func colorWithZeroAlpha() {
         let transparentColors = SpaceColors(
             foreground: NSColor(calibratedWhite: 0, alpha: 0),
             background: NSColor(calibratedWhite: 1, alpha: 0)
@@ -80,11 +101,12 @@ final class InputValidationTests: IsolatedDefaultsTestCase {
         SpacePreferences.setColors(transparentColors, forSpace: 1, store: store)
 
         let retrieved = SpacePreferences.colors(forSpace: 1, store: store)
-        XCTAssertNotNil(retrieved)
-        XCTAssertEqual(retrieved?.foreground.alphaComponent, 0)
+        #expect(retrieved != nil)
+        #expect(retrieved?.foreground.alphaComponent == 0)
     }
 
-    func testColorWithPartialAlpha() {
+    @Test("color with partial alpha can be stored and retrieved")
+    func colorWithPartialAlpha() {
         let semiTransparent = SpaceColors(
             foreground: NSColor(calibratedWhite: 0.5, alpha: 0.5),
             background: NSColor(calibratedWhite: 0.5, alpha: 0.5)
@@ -92,10 +114,11 @@ final class InputValidationTests: IsolatedDefaultsTestCase {
         SpacePreferences.setColors(semiTransparent, forSpace: 1, store: store)
 
         let retrieved = SpacePreferences.colors(forSpace: 1, store: store)
-        XCTAssertEqual(Double(retrieved?.foreground.alphaComponent ?? 0), 0.5, accuracy: 0.01)
+        #expect(abs(Double(retrieved?.foreground.alphaComponent ?? 0) - 0.5) <= 0.01)
     }
 
-    func testColorInDifferentColorSpaces() {
+    @Test("colors in different color spaces can be stored and retrieved")
+    func colorInDifferentColorSpaces() {
         // DeviceRGB
         let deviceRGB = SpaceColors(
             foreground: NSColor(deviceRed: 1, green: 0, blue: 0, alpha: 1),
@@ -118,33 +141,36 @@ final class InputValidationTests: IsolatedDefaultsTestCase {
         SpacePreferences.setColors(calibrated, forSpace: 3, store: store)
 
         // All should be retrievable
-        XCTAssertNotNil(SpacePreferences.colors(forSpace: 1, store: store))
-        XCTAssertNotNil(SpacePreferences.colors(forSpace: 2, store: store))
-        XCTAssertNotNil(SpacePreferences.colors(forSpace: 3, store: store))
+        #expect(SpacePreferences.colors(forSpace: 1, store: store) != nil)
+        #expect(SpacePreferences.colors(forSpace: 2, store: store) != nil)
+        #expect(SpacePreferences.colors(forSpace: 3, store: store) != nil)
     }
 
     // MARK: - Skin Tone Edge Cases
 
-    func testSkinToneAtBoundaries() {
+    @Test("skin tone at boundaries can be stored")
+    func skinToneAtBoundaries() {
         // Valid range is default through dark
         SpacePreferences.setSkinTone(.default, forSpace: 1, store: store)
-        XCTAssertEqual(SpacePreferences.skinTone(forSpace: 1, store: store), .default)
+        #expect(SpacePreferences.skinTone(forSpace: 1, store: store) == .default)
 
         SpacePreferences.setSkinTone(.dark, forSpace: 2, store: store)
-        XCTAssertEqual(SpacePreferences.skinTone(forSpace: 2, store: store), .dark)
+        #expect(SpacePreferences.skinTone(forSpace: 2, store: store) == .dark)
     }
 
-    func testSkinToneAllVariants() {
+    @Test("all skin tone variants can be stored and retrieved")
+    func skinToneAllVariants() {
         // Test all skin tone variants can be stored and retrieved
         for (index, tone) in SkinTone.allCases.enumerated() {
             SpacePreferences.setSkinTone(tone, forSpace: index + 1, store: store)
-            XCTAssertEqual(SpacePreferences.skinTone(forSpace: index + 1, store: store), tone)
+            #expect(SpacePreferences.skinTone(forSpace: index + 1, store: store) == tone)
         }
     }
 
     // MARK: - Icon Generation Edge Cases
 
-    func testIconGenerationWithVeryLongNumber() {
+    @Test("icon generation handles very long number")
+    func iconGenerationWithVeryLongNumber() {
         let longNumber = "12345678901234567890"
         let image = SpaceIconGenerator.generateIcon(
             for: longNumber,
@@ -153,11 +179,12 @@ final class InputValidationTests: IsolatedDefaultsTestCase {
             customFont: nil,
             style: .square
         )
-        XCTAssertNotNil(image, "Should handle very long numbers")
-        XCTAssertGreaterThan(image.size.width, 0)
+        #expect(image.size.height > 0, "Should handle very long numbers")
+        #expect(image.size.width > 0)
     }
 
-    func testIconGenerationWithSpecialCharacters() {
+    @Test("icon generation handles special characters")
+    func iconGenerationWithSpecialCharacters() {
         let specialChars = "!@#$%"
         let image = SpaceIconGenerator.generateIcon(
             for: specialChars,
@@ -166,10 +193,12 @@ final class InputValidationTests: IsolatedDefaultsTestCase {
             customFont: nil,
             style: .circle
         )
-        XCTAssertNotNil(image, "Should handle special characters")
+        #expect(image.size.width > 0, "Should handle special characters")
+        #expect(image.size.height > 0, "Should handle special characters")
     }
 
-    func testIconGenerationWithEmptyString() {
+    @Test("icon generation handles empty string")
+    func iconGenerationWithEmptyString() {
         let image = SpaceIconGenerator.generateIcon(
             for: "",
             darkMode: false,
@@ -177,10 +206,12 @@ final class InputValidationTests: IsolatedDefaultsTestCase {
             customFont: nil,
             style: .square
         )
-        XCTAssertNotNil(image, "Should handle empty string")
+        #expect(image.size.width > 0, "Should handle empty string")
+        #expect(image.size.height > 0, "Should handle empty string")
     }
 
-    func testIconGenerationWithNewlines() {
+    @Test("icon generation handles newlines")
+    func iconGenerationWithNewlines() {
         let multiline = "1\n2"
         let image = SpaceIconGenerator.generateIcon(
             for: multiline,
@@ -189,10 +220,12 @@ final class InputValidationTests: IsolatedDefaultsTestCase {
             customFont: nil,
             style: .square
         )
-        XCTAssertNotNil(image, "Should handle newlines in text")
+        #expect(image.size.width > 0, "Should handle newlines in text")
+        #expect(image.size.height > 0, "Should handle newlines in text")
     }
 
-    func testIconGenerationFullscreenLabel() {
+    @Test("icon generation handles fullscreen label")
+    func iconGenerationFullscreenLabel() {
         let image = SpaceIconGenerator.generateIcon(
             for: Labels.fullscreen,
             darkMode: false,
@@ -200,6 +233,7 @@ final class InputValidationTests: IsolatedDefaultsTestCase {
             customFont: nil,
             style: .square
         )
-        XCTAssertNotNil(image, "Should handle fullscreen label 'F'")
+        #expect(image.size.width > 0, "Should handle fullscreen label 'F'")
+        #expect(image.size.height > 0, "Should handle fullscreen label 'F'")
     }
 }
