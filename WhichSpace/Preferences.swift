@@ -20,7 +20,7 @@ enum IconStyle: String, CaseIterable, Defaults.Serializable {
     case transparent
 
     var localizedTitle: String {
-        String(localized: String.LocalizationValue("style_\(rawValue)"))
+        NSLocalizedString("style_\(rawValue)", comment: "")
     }
 }
 
