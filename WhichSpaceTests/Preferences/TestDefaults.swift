@@ -9,7 +9,7 @@ extension UserDefaults: @unchecked @retroactive Sendable {}
 // MARK: - TestSuite
 
 /// A test UserDefaults suite with its associated name.
-struct TestSuite: Sendable {
+struct TestSuite {
     let suite: UserDefaults
     let suiteName: String
 }
@@ -187,7 +187,7 @@ final class DefaultsIsolationGuardTests: IsolatedDefaultsTestCase {
 
     /// Verifies that KeySpecs matches Defaults.Keys definitions.
     func testKeySpecsMatchDefaultsKeys() {
-        let expectedKeyNames: Set<String> = [
+        let expectedKeyNames: Set = [
             "clickToSwitchSpaces",
             "dimInactiveSpaces",
             "displaySpaceColors",

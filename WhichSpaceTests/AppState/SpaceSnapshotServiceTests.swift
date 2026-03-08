@@ -1,7 +1,6 @@
 import Testing
 @testable import WhichSpace
 
-@Suite("SpaceSnapshotService")
 @MainActor
 struct SpaceSnapshotServiceTests {
     // MARK: - Nil CGS Data

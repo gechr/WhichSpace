@@ -332,9 +332,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     }
 
     private func handleLeftClick(_ event: NSEvent, button: NSStatusBarButton) {
-        // Only handle clicks if the setting is enabled
-        guard store.clickToSwitchSpaces else {
-            return
+        // Auto-enable click-to-switch on first left click
+        if !store.clickToSwitchSpaces {
+            if !SettingsConstraints.setClickToSwitchSpaces(true, store: store) {
+                // Accessibility permission not granted — trigger the permission flow
+                actionHandler.requestAccessibilityForClickToSwitch()
+                return
+            }
         }
 
         // If user denied accessibility permission, disable the setting

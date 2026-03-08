@@ -5,7 +5,8 @@ ifdef RELEASE
 BUILD_CONFIGURATION := Release
 endif
 
-.DEFAULT_GOAL := run
+.PHONY: all
+all: fmt lint test
 
 .PHONY: build
 build:

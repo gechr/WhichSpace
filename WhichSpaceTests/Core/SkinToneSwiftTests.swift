@@ -4,7 +4,6 @@ import Testing
 
 /// Swift Testing proof-of-concept: reimplements a subset of SkinToneTests
 /// to demonstrate coexistence with XCTest in the same target.
-@Suite("SkinTone (Swift Testing)")
 @MainActor
 struct SkinToneSwiftTests {
     private let store: DefaultsStore

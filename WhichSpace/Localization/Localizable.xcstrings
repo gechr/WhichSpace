@@ -3674,259 +3674,259 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "تتطلب هذه الميزة إذن إمكانية الوصول لمحاكاة اختصارات لوحة المفاتيح.\n\nبعد النقر على متابعة، سيطلب منك macOS الإذن. انقر على \"فتح إعدادات النظام\"، ثم ابحث عن WhichSpace في القائمة وقم بتفعيله."
+            "value" : "يتطلب تبديل المساحات إذن إمكانية الوصول لمحاكاة اختصارات لوحة المفاتيح.\n\nبعد النقر على متابعة، سيطلب منك macOS الإذن. انقر على \"فتح إعدادات النظام\"، ثم ابحث عن WhichSpace في القائمة وقم بتفعيله."
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Тази функция изисква разрешение за достъпност, за да симулира клавишни комбинации.\n\nСлед като натиснете Продължи, macOS ще поиска разрешение. Натиснете „Отвори Системни настройки“, намерете WhichSpace в списъка и го активирайте."
+            "value" : "Превключването на Spaces изисква разрешение за достъпност, за да симулира клавишни комбинации.\n\nСлед като натиснете Продължи, macOS ще поиска разрешение. Натиснете „Отвори Системни настройки“, намерете WhichSpace в списъка и го активирайте."
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aquesta funció requereix permís d’accessibilitat per simular dreceres de teclat.\n\nDesprés de fer clic a Continuar, macOS us demanarà permís. Feu clic a «Obre Configuració del Sistema» i activeu WhichSpace a la llista."
+            "value" : "Canviar de Spaces requereix permís d’accessibilitat per simular dreceres de teclat.\n\nDesprés de fer clic a Continuar, macOS us demanarà permís. Feu clic a «Obre Configuració del Sistema» i activeu WhichSpace a la llista."
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tato funkce vyžaduje oprávnění přístupnosti pro simulaci klávesových zkratek.\n\nPo kliknutí na Pokračovat vás macOS požádá o oprávnění. Klikněte na „Otevřít Nastavení systému“, najděte WhichSpace v seznamu a povolte jej."
+            "value" : "Přepínání Spaces vyžaduje oprávnění přístupnosti pro simulaci klávesových zkratek.\n\nPo kliknutí na Pokračovat vás macOS požádá o oprávnění. Klikněte na „Otevřít Nastavení systému“, najděte WhichSpace v seznamu a povolte jej."
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Denne funktion kræver tilladelse til tilgængelighed for at simulere tastaturgenveje.\n\nEfter du klikker Fortsæt, vil macOS bede om tilladelse. Klik på \"Åbn Systemindstillinger\", find WhichSpace på listen, og aktivér den."
+            "value" : "Skift mellem Spaces kræver tilladelse til tilgængelighed for at simulere tastaturgenveje.\n\nEfter du klikker Fortsæt, vil macOS bede om tilladelse. Klik på \"Åbn Systemindstillinger\", find WhichSpace på listen, og aktivér den."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diese Funktion erfordert die Bedienungshilfen-Berechtigung, um Tastaturkurzbefehle zu simulieren.\n\nNachdem Sie auf Fortfahren klicken, wird macOS um Berechtigung bitten. Klicken Sie auf „Systemeinstellungen öffnen“, suchen Sie WhichSpace in der Liste und aktivieren Sie es."
+            "value" : "Das Wechseln von Spaces erfordert die Bedienungshilfen-Berechtigung, um Tastaturkurzbefehle zu simulieren.\n\nNachdem Sie auf Fortfahren klicken, wird macOS um Berechtigung bitten. Klicken Sie auf „Systemeinstellungen öffnen“, suchen Sie WhichSpace in der Liste und aktivieren Sie es."
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Αυτή η λειτουργία απαιτεί άδεια Προσβασιμότητας για την προσομοίωση συντομεύσεων πληκτρολογίου.\n\nΑφού πατήσετε Συνέχεια, το macOS θα ζητήσει άδεια. Πατήστε «Άνοιγμα Ρυθμίσεων Συστήματος», βρείτε το WhichSpace στη λίστα και ενεργοποιήστε το."
+            "value" : "Η εναλλαγή Spaces απαιτεί άδεια Προσβασιμότητας για την προσομοίωση συντομεύσεων πληκτρολογίου.\n\nΑφού πατήσετε Συνέχεια, το macOS θα ζητήσει άδεια. Πατήστε «Άνοιγμα Ρυθμίσεων Συστήματος», βρείτε το WhichSpace στη λίστα και ενεργοποιήστε το."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This feature requires Accessibility permission to simulate keyboard shortcuts.\n\nAfter clicking Continue, macOS will prompt you for permission. Click \"Open System Settings\", then find WhichSpace in the list and enable it."
+            "value" : "Switching Spaces requires Accessibility permission to simulate keyboard shortcuts.\n\nAfter clicking Continue, macOS will prompt you for permission. Click \"Open System Settings\", then find WhichSpace in the list and enable it."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This feature requires Accessibility permission to simulate keyboard shortcuts.\n\nAfter clicking Continue, macOS will prompt you for permission. Click \"Open System Settings\", then find WhichSpace in the list and enable it."
+            "value" : "Switching Spaces requires Accessibility permission to simulate keyboard shortcuts.\n\nAfter clicking Continue, macOS will prompt you for permission. Click \"Open System Settings\", then find WhichSpace in the list and enable it."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta función requiere permiso de Accesibilidad para simular atajos de teclado.\n\nDespués de hacer clic en Continuar, macOS le pedirá permiso. Haga clic en \"Abrir Configuración del Sistema\", busque WhichSpace en la lista y actívelo."
+            "value" : "Cambiar de Spaces requiere permiso de Accesibilidad para simular atajos de teclado.\n\nDespués de hacer clic en Continuar, macOS le pedirá permiso. Haga clic en \"Abrir Configuración del Sistema\", busque WhichSpace en la lista y actívelo."
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "این قابلیت به مجوز دسترس‌پذیری برای شبیه‌سازی میانبرهای صفحه‌کلید نیاز دارد.\n\nپس از کلیک روی ادامه، macOS از شما مجوز می‌خواهد. روی «باز کردن تنظیمات سیستم» کلیک کنید، سپس WhichSpace را در لیست پیدا و فعال کنید."
+            "value" : "تغییر Spaces به مجوز دسترس‌پذیری برای شبیه‌سازی میانبرهای صفحه‌کلید نیاز دارد.\n\nپس از کلیک روی ادامه، macOS از شما مجوز می‌خواهد. روی «باز کردن تنظیمات سیستم» کلیک کنید، سپس WhichSpace را در لیست پیدا و فعال کنید."
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tämä ominaisuus vaatii Saavutettavuus-luvan näppäinoikoteiden simuloimiseen.\n\nKun napsautat Jatka, macOS pyytää lupaa. Napsauta \"Avaa Järjestelmäasetukset\", etsi WhichSpace luettelosta ja ota se käyttöön."
+            "value" : "Spaces-tilojen vaihtaminen vaatii Saavutettavuus-luvan näppäinoikoteiden simuloimiseen.\n\nKun napsautat Jatka, macOS pyytää lupaa. Napsauta \"Avaa Järjestelmäasetukset\", etsi WhichSpace luettelosta ja ota se käyttöön."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cette fonctionnalité nécessite l’autorisation d’accessibilité pour simuler des raccourcis clavier.\n\nAprès avoir cliqué sur Continuer, macOS vous demandera l’autorisation. Cliquez sur « Ouvrir les Réglages Système », puis trouvez WhichSpace dans la liste et activez-le."
+            "value" : "Le changement de Spaces nécessite l’autorisation d’accessibilité pour simuler des raccourcis clavier.\n\nAprès avoir cliqué sur Continuer, macOS vous demandera l’autorisation. Cliquez sur « Ouvrir les Réglages Système », puis trouvez WhichSpace dans la liste et activez-le."
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "תכונה זו דורשת הרשאת נגישות כדי לדמות קיצורי מקלדת.\n\nלאחר לחיצה על המשך, macOS יבקש ממך הרשאה. לחצו על \"פתח הגדרות מערכת\", מצאו את WhichSpace ברשימה והפעילו אותו."
+            "value" : "מעבר בין Spaces דורש הרשאת נגישות כדי לדמות קיצורי מקלדת.\n\nלאחר לחיצה על המשך, macOS יבקש ממך הרשאה. לחצו על \"פתח הגדרות מערכת\", מצאו את WhichSpace ברשימה והפעילו אותו."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "इस सुविधा को कीबोर्ड शॉर्टकट अनुकरण करने के लिए एक्सेसिबिलिटी अनुमति की आवश्यकता है।\n\nजारी रखें पर क्लिक करने के बाद, macOS आपसे अनुमति माँगेगा। \"सिस्टम सेटिंग्स खोलें\" पर क्लिक करें, फिर सूची में WhichSpace ढूँढें और इसे सक्षम करें।"
+            "value" : "Spaces स्विच करने के लिए कीबोर्ड शॉर्टकट अनुकरण हेतु एक्सेसिबिलिटी अनुमति आवश्यक है।\n\nजारी रखें पर क्लिक करने के बाद, macOS आपसे अनुमति माँगेगा। \"सिस्टम सेटिंग्स खोलें\" पर क्लिक करें, फिर सूची में WhichSpace ढूँढें और इसे सक्षम करें।"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ez a funkció Kisegítő lehetőségek engedélyt igényel a billentyűparancsok szimulálásához.\n\nA Folytatás gombra kattintva a macOS engedélyt kér. Kattintson a „Rendszerbeállítások megnyitása“ lehetőségre, keresse meg a WhichSpace alkalmazást a listában, és engedélyezze."
+            "value" : "A Spaces váltásához Kisegítő lehetőségek engedély szükséges a billentyűparancsok szimulálásához.\n\nA Folytatás gombra kattintva a macOS engedélyt kér. Kattintson a „Rendszerbeállítások megnyitása“ lehetőségre, keresse meg a WhichSpace alkalmazást a listában, és engedélyezze."
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fitur ini memerlukan izin Aksesibilitas untuk mensimulasikan pintasan keyboard.\n\nSetelah mengklik Lanjutkan, macOS akan meminta izin. Klik \"Buka Pengaturan Sistem\", temukan WhichSpace dalam daftar, dan aktifkan."
+            "value" : "Beralih Space memerlukan izin Aksesibilitas untuk mensimulasikan pintasan keyboard.\n\nSetelah mengklik Lanjutkan, macOS akan meminta izin. Klik \"Buka Pengaturan Sistem\", temukan WhichSpace dalam daftar, dan aktifkan."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Questa funzione richiede l’autorizzazione Accessibilità per simulare le scorciatoie da tastiera.\n\nDopo aver fatto clic su Continua, macOS chiederà l’autorizzazione. Fai clic su \"Apri Impostazioni di Sistema\", cerca WhichSpace nell’elenco e abilitalo."
+            "value" : "Il passaggio tra Spaces richiede l’autorizzazione Accessibilità per simulare le scorciatoie da tastiera.\n\nDopo aver fatto clic su Continua, macOS chiederà l’autorizzazione. Fai clic su \"Apri Impostazioni di Sistema\", cerca WhichSpace nell’elenco e abilitalo."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "この機能はキーボードショートカットをシミュレートするためにアクセシビリティの許可が必要です。\n\n「続ける」をクリックすると、macOSが許可を求めます。「システム設定を開く」をクリックし、リストからWhichSpaceを見つけて有効にしてください。"
+            "value" : "操作スペースの切り替えには、キーボードショートカットをシミュレートするためにアクセシビリティの許可が必要です。\n\n「続ける」をクリックすると、macOSが許可を求めます。「システム設定を開く」をクリックし、リストからWhichSpaceを見つけて有効にしてください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이 기능은 키보드 단축키를 시뮬레이션하기 위해 손쉬운 사용 권한이 필요합니다.\n\n계속을 클릭하면 macOS에서 권한을 요청합니다. \"시스템 설정 열기\"를 클릭한 다음 목록에서 WhichSpace를 찾아 활성화하세요."
+            "value" : "Space 전환에는 키보드 단축키를 시뮬레이션하기 위해 손쉬운 사용 권한이 필요합니다.\n\n계속을 클릭하면 macOS에서 권한을 요청합니다. \"시스템 설정 열기\"를 클릭한 다음 목록에서 WhichSpace를 찾아 활성화하세요."
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Оваа функција бара дозвола за пристапност за симулирање кратенки на тастатура.\n\nОткако ќе кликнете Продолжи, macOS ќе побара дозвола. Кликнете на „Отвори Системски поставки“, пронајдете WhichSpace во списокот и овозможете го."
+            "value" : "Менувањето на Spaces бара дозвола за пристапност за симулирање кратенки на тастатура.\n\nОткако ќе кликнете Продолжи, macOS ќе побара дозвола. Кликнете на „Отвори Системски поставки“, пронајдете WhichSpace во списокот и овозможете го."
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ciri ini memerlukan kebenaran Kebolehcapaian untuk mensimulasikan pintasan papan kekunci.\n\nSelepas mengklik Teruskan, macOS akan meminta kebenaran. Klik \"Buka Tetapan Sistem\", cari WhichSpace dalam senarai dan dayakannya."
+            "value" : "Menukar Space memerlukan kebenaran Kebolehcapaian untuk mensimulasikan pintasan papan kekunci.\n\nSelepas mengklik Teruskan, macOS akan meminta kebenaran. Klik \"Buka Tetapan Sistem\", cari WhichSpace dalam senarai dan dayakannya."
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Denne funksjonen krever tilgjengelighetstillatelse for å simulere tastatursnarveier.\n\nEtter at du klikker Fortsett, vil macOS be om tillatelse. Klikk på \"Åpne Systeminnstillinger\", finn WhichSpace i listen og aktiver den."
+            "value" : "Bytte mellom Spaces krever tilgjengelighetstillatelse for å simulere tastatursnarveier.\n\nEtter at du klikker Fortsett, vil macOS be om tillatelse. Klikk på \"Åpne Systeminnstillinger\", finn WhichSpace i listen og aktiver den."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deze functie vereist Toegankelijkheid-toestemming om sneltoetsen te simuleren.\n\nNadat je op Ga door klikt, vraagt macOS om toestemming. Klik op \"Open Systeeminstellingen\", zoek WhichSpace in de lijst en schakel het in."
+            "value" : "Het wisselen van Spaces vereist Toegankelijkheid-toestemming om sneltoetsen te simuleren.\n\nNadat je op Ga door klikt, vraagt macOS om toestemming. Klik op \"Open Systeeminstellingen\", zoek WhichSpace in de lijst en schakel het in."
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Denne funksjonen krev løyve for tilgjenge for å simulere tastatursnarvegar.\n\nEtter at du klikkar Hald fram, vil macOS be om løyve. Klikk på \"Opne Systeminnstillingar\", finn WhichSpace i lista og slå det på."
+            "value" : "Byte mellom Spaces krev løyve for tilgjenge for å simulere tastatursnarvegar.\n\nEtter at du klikkar Hald fram, vil macOS be om løyve. Klikk på \"Opne Systeminnstillingar\", finn WhichSpace i lista og slå det på."
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ایہ خصوصیت کیبورڈ شارٹکٹ نقل کرن لئی ایکسیسبلٹی اجازت دی لوڑ ہے۔\n\nجاری رکھو تے کلک کرن مگروں، macOS اجازت منگے گا۔ \"سسٹم سیٹنگز کھولو\" تے کلک کرو، فیر لسٹ وچ WhichSpace لبھو تے اینوں چالو کرو۔"
+            "value" : "Spaces بدلن لئی کیبورڈ شارٹکٹ نقل کرن لئی ایکسیسبلٹی اجازت دی لوڑ ہے۔\n\nجاری رکھو تے کلک کرن مگروں، macOS اجازت منگے گا۔ \"سسٹم سیٹنگز کھولو\" تے کلک کرو، فیر لسٹ وچ WhichSpace لبھو تے اینوں چالو کرو۔"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ta funkcja wymaga uprawnienia Dostępności do symulowania skrótów klawiaturowych.\n\nPo kliknięciu Kontynuuj macOS poprosi o uprawnienie. Kliknij „Otwórz Ustawienia systemowe“, znajdź WhichSpace na liście i włącz."
+            "value" : "Przełączanie Spaces wymaga uprawnienia Dostępności do symulowania skrótów klawiaturowych.\n\nPo kliknięciu Kontynuuj macOS poprosi o uprawnienie. Kliknij „Otwórz Ustawienia systemowe“, znajdź WhichSpace na liście i włącz."
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "دا ځانګړتیا د کيبورډ شارٹکٹ سمولیشن لپاره د لاسرسي اجازے ته اړتیا لري.\n\nد دوام ورکړئ کلیک کولو وروسته، macOS به اجازه وغواړي. \"د سیسٹم ترتیبات خلاصول\" کلیک وکړئ، بیا په لیست کې WhichSpace ومومئ او فعال یې کړئ."
+            "value" : "د Spaces بدلول د کيبورډ شارٹکٹ سمولیشن لپاره د لاسرسي اجازے ته اړتیا لري.\n\nد دوام ورکړئ کلیک کولو وروسته، macOS به اجازه وغواړي. \"د سیسٹم ترتیبات خلاصول\" کلیک وکړئ، بیا په لیست کې WhichSpace ومومئ او فعال یې کړئ."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta funcionalidade requer permissão de Acessibilidade para simular atalhos de teclado.\n\nApós clicar em Continuar, o macOS pedirá permissão. Clique em \"Abrir Definições do Sistema\", encontre o WhichSpace na lista e ative-o."
+            "value" : "Mudar de Spaces requer permissão de Acessibilidade para simular atalhos de teclado.\n\nApós clicar em Continuar, o macOS pedirá permissão. Clique em \"Abrir Definições do Sistema\", encontre o WhichSpace na lista e ative-o."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Este recurso requer permissão de Acessibilidade para simular atalhos de teclado.\n\nApós clicar em Continuar, o macOS pedirá permissão. Clique em \"Abrir Ajustes do Sistema\", encontre o WhichSpace na lista e ative-o."
+            "value" : "Trocar de Spaces requer permissão de Acessibilidade para simular atalhos de teclado.\n\nApós clicar em Continuar, o macOS pedirá permissão. Clique em \"Abrir Ajustes do Sistema\", encontre o WhichSpace na lista e ative-o."
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Această funcție necesită permisiunea de Accesibilitate pentru a simula scurtături de tastatură.\n\nDupă ce faceți clic pe Continuă, macOS va solicita permisiunea. Faceți clic pe „Deschide Setări sistem“, găsiți WhichSpace în listă și activați-l."
+            "value" : "Comutarea între Spaces necesită permisiunea de Accesibilitate pentru a simula scurtături de tastatură.\n\nDupă ce faceți clic pe Continuă, macOS va solicita permisiunea. Faceți clic pe „Deschide Setări sistem“, găsiți WhichSpace în listă și activați-l."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Для этой функции требуется разрешение Универсального доступа для имитации сочетаний клавиш.\n\nПосле нажатия «Продолжить» macOS запросит разрешение. Нажмите «Открыть Системные настройки», найдите WhichSpace в списке и включите."
+            "value" : "Для переключения Spaces требуется разрешение Универсального доступа для имитации сочетаний клавиш.\n\nПосле нажатия «Продолжить» macOS запросит разрешение. Нажмите «Открыть Системные настройки», найдите WhichSpace в списке и включите."
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Táto funkcia vyžaduje povolenie Prístupnosti na simuláciu klávesových skratiek.\n\nPo kliknutí na Pokračovať vás macOS požiada o povolenie. Kliknite na „Otvoriť Systémové nastavenia“, nájdite WhichSpace v zozname a povoľte ho."
+            "value" : "Prepínanie Spaces vyžaduje povolenie Prístupnosti na simuláciu klávesových skratiek.\n\nPo kliknutí na Pokračovať vás macOS požiada o povolenie. Kliknite na „Otvoriť Systémové nastavenia“, nájdite WhichSpace v zozname a povoľte ho."
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ova funkcija zahteva dozvolu pristupačnosti za simuliranje prečica na tastaturi.\n\nNakon što kliknete Nastavi, macOS će zatražiti dozvolu. Kliknite na „Otvori Podešavanja sistema“, pronađite WhichSpace na listi i omogućite ga."
+            "value" : "Prebacivanje Spaces zahteva dozvolu pristupačnosti za simuliranje prečica na tastaturi.\n\nNakon što kliknete Nastavi, macOS će zatražiti dozvolu. Kliknite na „Otvori Podešavanja sistema“, pronađite WhichSpace na listi i omogućite ga."
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Den här funktionen kräver Tillgänglighetsbehörighet för att simulera tangentbordsgenvägar.\n\nEfter att du klickar Fortsätt kommer macOS att be om behörighet. Klicka på \"Öppna Systeminställningar\", hitta WhichSpace i listan och aktivera."
+            "value" : "Att byta Spaces kräver Tillgänglighetsbehörighet för att simulera tangentbordsgenvägar.\n\nEfter att du klickar Fortsätt kommer macOS att be om behörighet. Klicka på \"Öppna Systeminställningar\", hitta WhichSpace i listan och aktivera."
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "คุณสมบัตินี้ต้องการสิทธิ์การช่วยการเข้าถึงเพื่อจำลองปุ่มลัดคีย์บอร์ด\n\nหลังจากคลิกดำเนินการต่อ macOS จะขอสิทธิ์ คลิก \"เปิดการตั้งค่าระบบ\" จากนั้นค้นหา WhichSpace ในรายการและเปิดใช้งาน"
+            "value" : "การสลับ Spaces ต้องการสิทธิ์การช่วยการเข้าถึงเพื่อจำลองปุ่มลัดคีย์บอร์ด\n\nหลังจากคลิกดำเนินการต่อ macOS จะขอสิทธิ์ คลิก \"เปิดการตั้งค่าระบบ\" จากนั้นค้นหา WhichSpace ในรายการและเปิดใช้งาน"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bu özellik, klavye kısayollarını simüle etmek için Erişilebilirlik izni gerektirir.\n\nDevam Et’e tıkladıktan sonra macOS sizden izin isteyecektir. \"Sistem Ayarlarını Aç\"ı tıklayın, listede WhichSpace’i bulun ve etkinleştirin."
+            "value" : "Space değiştirmek, klavye kısayollarını simüle etmek için Erişilebilirlik izni gerektirir.\n\nDevam Et’e tıkladıktan sonra macOS sizden izin isteyecektir. \"Sistem Ayarlarını Aç\"ı tıklayın, listede WhichSpace’i bulun ve etkinleştirin."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ця функція потребує дозволу Доступності для імітації клавіатурних скорочень.\n\nПісля натискання «Продовжити» macOS запросить дозвіл. Натисніть «Відкрити Системні параметри», знайдіть WhichSpace у списку та увімкніть."
+            "value" : "Перемикання Spaces потребує дозволу Доступності для імітації клавіатурних скорочень.\n\nПісля натискання «Продовжити» macOS запросить дозвіл. Натисніть «Відкрити Системні параметри», знайдіть WhichSpace у списку та увімкніть."
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "اس خصوصیت کو کیبورڈ شارٹکٹ کی نقل کے لیے ایکسیسبلٹی اجازت درکار ہے۔\n\nجاری رکھیں پر کلک کرنے کے بعد، macOS اجازت مانگے گا۔ \"سسٹم سیٹنگز کھولیں\" پر کلک کریں، فہرست میں WhichSpace تلاش کریں اور اسے فعال کریں۔"
+            "value" : "Spaces تبدیل کرنے کے لیے کیبورڈ شارٹکٹ کی نقل کے لیے ایکسیسبلٹی اجازت درکار ہے۔\n\nجاری رکھیں پر کلک کرنے کے بعد، macOS اجازت مانگے گا۔ \"سسٹم سیٹنگز کھولیں\" پر کلک کریں، فہرست میں WhichSpace تلاش کریں اور اسے فعال کریں۔"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tính năng này yêu cầu quyền Trợ năng để mô phỏng phím tắt bàn phím.\n\nSau khi nhấp Tiếp tục, macOS sẽ yêu cầu quyền. Nhấp vào \"Mở Cài đặt Hệ thống\", tìm WhichSpace trong danh sách và bật lên."
+            "value" : "Chuyển đổi Spaces yêu cầu quyền Trợ năng để mô phỏng phím tắt bàn phím.\n\nSau khi nhấp Tiếp tục, macOS sẽ yêu cầu quyền. Nhấp vào \"Mở Cài đặt Hệ thống\", tìm WhichSpace trong danh sách và bật lên."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "此功能需要辅助功能权限来模拟键盘快捷键。\n\n点击“继续”后，macOS 会请求权限。点击“打开系统设置”，在列表中找到 WhichSpace 并启用。"
+            "value" : "切换 Space 需要辅助功能权限来模拟键盘快捷键。\n\n点击“继续”后，macOS 会请求权限。点击“打开系统设置”，在列表中找到 WhichSpace 并启用。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "此功能需要輔助使用權限來模擬鍵盤快速鍵。\n\n按一下「繼續」後，macOS 會要求權限。按一下「打開系統設定」，在列表中找到 WhichSpace 並啟用。"
+            "value" : "切換 Space 需要輔助使用權限來模擬鍵盤快速鍵。\n\n按一下「繼續」後，macOS 會要求權限。按一下「打開系統設定」，在列表中找到 WhichSpace 並啟用。"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "此功能需要輔助使用權限嘶模擬鍵盤快捷鍵。\n\n撞「繼續」之後，macOS 會要求權限。撞「打開系統設定」，喺列表搞到 WhichSpace 然後啟用。"
+            "value" : "切換 Space 需要輔助使用權限嚟模擬鍵盤快捷鍵。\n\n撞「繼續」之後，macOS 會要求權限。撞「打開系統設定」，喺列表搞到 WhichSpace 然後啟用。"
           }
         }
       }

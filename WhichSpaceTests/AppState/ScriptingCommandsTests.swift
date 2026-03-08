@@ -1,7 +1,6 @@
 import Testing
 @testable import WhichSpace
 
-@Suite("Scripting Commands")
 @MainActor
 struct ScriptingCommandsTests {
     private let store: DefaultsStore

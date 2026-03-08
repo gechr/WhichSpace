@@ -1,7 +1,6 @@
 import Testing
 @testable import WhichSpace
 
-@Suite("ItemData")
 struct ItemDataTests {
     // MARK: - Skin Tone Modifiers
 

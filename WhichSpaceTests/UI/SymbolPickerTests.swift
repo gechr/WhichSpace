@@ -2,7 +2,6 @@ import Cocoa
 import Testing
 @testable import WhichSpace
 
-@Suite("Symbol Picker")
 @MainActor
 struct SymbolPickerTests {
     private let sut: ItemPicker

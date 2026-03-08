@@ -2,7 +2,6 @@ import Cocoa
 import Testing
 @testable import WhichSpace
 
-@Suite("Size Slider")
 @MainActor
 struct SizeSliderTests {
     private let sut: SizeSlider

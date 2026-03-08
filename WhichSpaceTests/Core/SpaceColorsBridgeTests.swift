@@ -3,7 +3,6 @@ import Defaults
 import Testing
 @testable import WhichSpace
 
-@Suite("SpaceColors Bridge")
 @MainActor
 struct SpaceColorsBridgeTests {
     private let store: DefaultsStore

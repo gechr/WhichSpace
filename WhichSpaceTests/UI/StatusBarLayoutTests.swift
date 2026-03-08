@@ -1,7 +1,6 @@
 import Testing
 @testable import WhichSpace
 
-@Suite("StatusBarLayout")
 @MainActor
 struct StatusBarLayoutTests {
     // MARK: - slot(at:)

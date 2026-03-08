@@ -1,7 +1,6 @@
 import Testing
 @testable import WhichSpace
 
-@Suite("Settings Constraints")
 @MainActor
 struct SettingsConstraintsTests {
     private let store: DefaultsStore

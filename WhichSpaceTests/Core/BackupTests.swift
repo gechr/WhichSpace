@@ -5,7 +5,6 @@ import XCTest
 
 // MARK: - CodableColor Tests
 
-@Suite("CodableColor")
 struct CodableColorTests {
     @Test("round-trip conversion preserves red")
     func roundTripConversion() {
@@ -55,7 +54,6 @@ struct CodableColorTests {
 
 // MARK: - CodableSpaceColors Tests
 
-@Suite("CodableSpaceColors")
 struct CodableSpaceColorsTests {
     @Test("round-trip conversion preserves white/black")
     func roundTripConversion() throws {
@@ -84,7 +82,6 @@ struct CodableSpaceColorsTests {
 
 // MARK: - CodableSpaceFont Tests
 
-@Suite("CodableSpaceFont")
 struct CodableSpaceFontTests {
     @Test("round-trip conversion preserves point size")
     func roundTripConversion() throws {
@@ -131,7 +128,6 @@ struct CodableSpaceFontTests {
 
 // MARK: - BackupSpacePreferences Tests
 
-@Suite("BackupSpacePreferences")
 // swiftlint:disable:next type_body_length
 struct BackupSpacePreferencesTests {
     @Test("empty initialization has empty collections")

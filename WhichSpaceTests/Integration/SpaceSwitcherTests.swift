@@ -1,7 +1,6 @@
 import Testing
 @testable import WhichSpace
 
-@Suite("Space Switcher")
 @MainActor
 struct SpaceSwitcherTests {
     private let mockProvider: MockHotKeyProvider

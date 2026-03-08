@@ -2,7 +2,6 @@ import Cocoa
 import Testing
 @testable import WhichSpace
 
-@Suite("Style Picker")
 @MainActor
 struct StylePickerTests {
     private let sut: StylePicker

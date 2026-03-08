@@ -2,7 +2,6 @@ import Defaults
 import Testing
 @testable import WhichSpace
 
-@Suite("Space Preferences")
 @MainActor
 struct SpacePreferencesTests {
     private let store: DefaultsStore

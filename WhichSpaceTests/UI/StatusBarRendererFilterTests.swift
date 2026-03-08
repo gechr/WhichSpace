@@ -1,7 +1,6 @@
 import Testing
 @testable import WhichSpace
 
-@Suite("StatusBarRenderer Filtering")
 @MainActor
 struct StatusBarRendererFilterTests {
     private let store: DefaultsStore

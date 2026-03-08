@@ -2,7 +2,6 @@ import Cocoa
 import Testing
 @testable import WhichSpace
 
-@Suite("Emoji Rendering")
 struct EmojiRenderTests {
     // MARK: - Emoji Rendering Tests
 

@@ -3,7 +3,6 @@ import Defaults
 import Testing
 @testable import WhichSpace
 
-@Suite("Error Recovery")
 @MainActor
 struct ErrorRecoveryTests {
     private let store: DefaultsStore

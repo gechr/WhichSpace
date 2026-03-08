@@ -2,7 +2,6 @@ import Cocoa
 import Testing
 @testable import WhichSpace
 
-@Suite("Color Swatch")
 @MainActor
 struct ColorSwatchTests {
     private let sut: ColorSwatch

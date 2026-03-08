@@ -561,6 +561,12 @@ final class ActionHandler: NSObject {
         alert.runModal()
     }
 
+    /// Requests accessibility permission for click-to-switch, showing the permission alert.
+    /// Called when the user left-clicks the status bar and click-to-switch is not yet enabled.
+    func requestAccessibilityForClickToSwitch() {
+        showAccessibilityPermissionAlert()
+    }
+
     private func showAccessibilityPermissionAlert() {
         let alert = NSAlert()
         alert.messageText = Localization.alertAccessibilityRequired

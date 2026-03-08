@@ -5,7 +5,6 @@ import Testing
 
 // MARK: - Input Validation Tests
 
-@Suite("Input Validation")
 @MainActor
 struct InputValidationTests {
     private let store: DefaultsStore

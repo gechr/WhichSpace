@@ -2,7 +2,6 @@ import Defaults
 import Testing
 @testable import WhichSpace
 
-@Suite("Skin Tone")
 @MainActor
 struct SkinToneTests {
     private let store: DefaultsStore

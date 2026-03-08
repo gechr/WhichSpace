@@ -2,7 +2,6 @@ import Testing
 @testable import WhichSpace
 
 /// Integration tests that verify the full AppState -> StatusBarRenderer -> icon generation flow.
-@Suite("Integration")
 @MainActor
 struct IntegrationTests {
     private let store: DefaultsStore

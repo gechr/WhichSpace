@@ -5,7 +5,6 @@ import Testing
 
 // MARK: - Complex Unicode Tests
 
-@Suite("Complex Unicode")
 @MainActor
 struct ComplexUnicodeTests {
     private let testSuite: TestSuite

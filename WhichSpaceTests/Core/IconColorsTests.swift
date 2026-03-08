@@ -2,7 +2,6 @@ import AppKit
 import Testing
 @testable import WhichSpace
 
-@Suite("IconColors")
 struct IconColorsTests {
     // MARK: - Static Color Constants
 

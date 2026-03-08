@@ -1,7 +1,6 @@
 import Foundation
 import Testing
 
-@Suite("Localization")
 struct LocalizationTests {
     /// All supported languages in Localizable.xcstrings
     private static let expectedLanguages: Set<String> = [
