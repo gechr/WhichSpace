@@ -231,11 +231,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             store.keyLocalSpaceNumbers,
             store.keySizeScale,
             store.keySeparatorColor,
+            store.keySpaceBadges,
             store.keySpaceColors,
             store.keySpaceIconStyles,
             store.keySpaceSymbols,
             store.keySpaceFonts,
             store.keySpaceSkinTones,
+            store.keyDisplaySpaceBadges,
             store.keyDisplaySpaceColors,
             store.keyDisplaySpaceIconStyles,
             store.keyDisplaySpaceSymbols,
@@ -335,7 +337,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         // Auto-enable click-to-switch on first left click
         if !store.clickToSwitchSpaces {
             if !SettingsConstraints.setClickToSwitchSpaces(true, store: store) {
-                // Accessibility permission not granted — trigger the permission flow
+                // Accessibility permission not granted - trigger the permission flow
                 actionHandler.requestAccessibilityForClickToSwitch()
                 return
             }
@@ -401,6 +403,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         updateStatusBarVisibility()
     }
 
+    private func updateBadgeMenuVisibility() {
+        let symbolIsActive = appState.currentSymbol != nil
+        statusMenu.item(withTag: MenuTag.badgeMenuItem.rawValue)?.isHidden = symbolIsActive
+    }
+
     private func updateStatusBarVisibility() {
         guard let statusBarItem else {
             return
@@ -443,7 +450,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         background: NSColor? = nil,
         separatorColor: NSColor? = nil,
         clearSymbol: Bool = false,
-        skinTone: SkinTone? = nil
+        skinTone: SkinTone? = nil,
+        badgePosition: BadgePosition? = nil
     ) {
         guard let statusBarItem else {
             return
@@ -456,7 +464,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             overrideBackground: background,
             overrideSeparatorColor: separatorColor,
             clearSymbol: clearSymbol,
-            skinTone: skinTone
+            skinTone: skinTone,
+            overrideBadgePosition: badgePosition
         )
         statusBarItem.length = previewIcon.size.width
         statusBarItem.button?.image = previewIcon
@@ -597,10 +606,38 @@ extension AppDelegate: MenuActionDelegate {
 
     func symbolSelected(_ symbol: String?) {
         actionHandler.setSymbol(symbol)
+        updateBadgeMenuVisibility()
     }
 
     func iconStyleSelected(_ style: IconStyle, stylePicker: StylePicker?) {
         actionHandler.selectIconStyle(style, stylePicker: stylePicker)
+        updateBadgeMenuVisibility()
+    }
+
+    func badgeCharacterChanged(_ character: String?) {
+        actionHandler.setBadgeCharacter(character)
+    }
+
+    func badgePositionSelected(_ position: BadgePosition) {
+        guard appState.currentSpace > 0 else {
+            return
+        }
+        let currentBadge = SpacePreferences.badge(
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
+        let character = currentBadge?.character ?? ""
+        guard !character.isEmpty else {
+            return
+        }
+        SpacePreferences.setBadge(
+            SpaceBadge(character: character, position: position),
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
+        updateStatusBarIcon()
     }
 
     func skinToneHoverStarted(_ tone: SkinTone) {
@@ -656,6 +693,18 @@ extension AppDelegate: NSMenuDelegate {
     func menu(_: NSMenu, willHighlight item: NSMenuItem?) {
         guard let item else {
             restoreIcon()
+            return
+        }
+
+        let badgePositionTags: [Int: BadgePosition] = [
+            MenuTag.badgePositionTopLeft.rawValue: .topLeft,
+            MenuTag.badgePositionTopRight.rawValue: .topRight,
+            MenuTag.badgePositionBottomLeft.rawValue: .bottomLeft,
+            MenuTag.badgePositionBottomRight.rawValue: .bottomRight,
+        ]
+
+        if let position = badgePositionTags[item.tag] {
+            showPreviewIcon(badgePosition: position)
             return
         }
 

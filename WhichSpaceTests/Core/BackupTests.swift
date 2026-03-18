@@ -126,6 +126,51 @@ struct CodableSpaceFontTests {
     }
 }
 
+// MARK: - CodableBadge Tests
+
+struct CodableBadgeTests {
+    @Test("round-trip conversion preserves values")
+    func roundTripConversion() throws {
+        let original = SpaceBadge(character: "A", position: .topRight)
+        let codable = CodableBadge(from: original)
+        let restored = try #require(codable.toSpaceBadge())
+
+        #expect(restored.character == "A")
+        #expect(restored.position == .topRight)
+    }
+
+    @Test("emoji badge round-trip")
+    func emojiBadgeRoundTrip() throws {
+        let original = SpaceBadge(character: "🔴", position: .bottomLeft)
+        let codable = CodableBadge(from: original)
+        let restored = try #require(codable.toSpaceBadge())
+
+        #expect(restored.character == "🔴")
+        #expect(restored.position == .bottomLeft)
+    }
+
+    @Test("invalid position returns nil")
+    func invalidPositionReturnsNil() throws {
+        let jsonString = """
+        {"character": "X", "position": "invalidPosition"}
+        """
+        let data = try #require(jsonString.data(using: .utf8))
+        let decoded = try JSONDecoder().decode(CodableBadge.self, from: data)
+
+        #expect(decoded.toSpaceBadge() == nil)
+    }
+
+    @Test("JSON encode/decode round-trip")
+    func jsonEncodeDecode() throws {
+        let original = CodableBadge(from: SpaceBadge(character: "B", position: .topLeft))
+        let data = try JSONEncoder().encode(original)
+        let decoded = try JSONDecoder().decode(CodableBadge.self, from: data)
+
+        #expect(decoded.character == "B")
+        #expect(decoded.position == "topLeft")
+    }
+}
+
 // MARK: - BackupSpacePreferences Tests
 
 // swiftlint:disable:next type_body_length
@@ -134,11 +179,32 @@ struct BackupSpacePreferencesTests {
     func emptyInitialization() {
         let prefs = BackupSpacePreferences()
 
+        #expect(prefs.badges.isEmpty)
         #expect(prefs.colors.isEmpty)
         #expect(prefs.fonts.isEmpty)
         #expect(prefs.iconStyles.isEmpty)
         #expect(prefs.skinTones.isEmpty)
         #expect(prefs.symbols.isEmpty)
+    }
+
+    @Test("badges conversion round-trip")
+    func badgesConversion() {
+        let badges: [Int: SpaceBadge] = [
+            1: SpaceBadge(character: "A", position: .topRight),
+            2: SpaceBadge(character: "🔴", position: .bottomLeft),
+        ]
+        let prefs = BackupSpacePreferences(badges: badges)
+
+        #expect(prefs.badges.count == 2)
+        #expect(prefs.badges["1"] != nil)
+        #expect(prefs.badges["2"] != nil)
+
+        let restored = prefs.toBadges()
+        #expect(restored.count == 2)
+        #expect(restored[1]?.character == "A")
+        #expect(restored[1]?.position == .topRight)
+        #expect(restored[2]?.character == "🔴")
+        #expect(restored[2]?.position == .bottomLeft)
     }
 
     @Test("colors conversion round-trip")

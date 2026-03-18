@@ -435,6 +435,10 @@ final class AppState {
 
     // MARK: - Helpers
 
+    var currentBadge: SpaceBadge? {
+        SpacePreferences.badge(forSpace: currentSpace, display: currentDisplayID, store: store)
+    }
+
     var currentIconStyle: IconStyle {
         SpacePreferences.iconStyle(forSpace: currentSpace, display: currentDisplayID, store: store) ?? .square
     }
@@ -472,7 +476,8 @@ final class AppState {
         overrideBackground: NSColor? = nil,
         overrideSeparatorColor: NSColor? = nil,
         clearSymbol: Bool = false,
-        skinTone: SkinTone? = nil
+        skinTone: SkinTone? = nil,
+        overrideBadgePosition: BadgePosition? = nil
     ) -> NSImage {
         renderer.generatePreviewIcon(
             overrideStyle: overrideStyle,
@@ -481,7 +486,8 @@ final class AppState {
             overrideBackground: overrideBackground,
             overrideSeparatorColor: overrideSeparatorColor,
             clearSymbol: clearSymbol,
-            skinTone: skinTone
+            skinTone: skinTone,
+            overrideBadgePosition: overrideBadgePosition
         )
     }
 

@@ -8,7 +8,7 @@ struct AppEnvironment {
     static let shared: AppEnvironment = {
         let store = DefaultsStore(suite: .standard)
         let appState = if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil {
-            // Running as a test host — use a no-op provider to avoid blocking
+            // Running as a test host - use a no-op provider to avoid blocking
             // on private CGS/SLS APIs that require a window server connection.
             AppState(
                 displaySpaceProvider: NullDisplaySpaceProvider(),

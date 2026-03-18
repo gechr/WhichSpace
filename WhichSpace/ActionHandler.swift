@@ -259,6 +259,72 @@ final class ActionHandler: NSObject {
         }
     }
 
+    // MARK: - Badge Actions
+
+    @objc func applyBadgeToAllSpaces() {
+        withConfirmation(
+            message: Localization.confirmApplyBadgeToAll,
+            detail: Localization.detailApplyBadgeToAll,
+            confirmTitle: Localization.buttonOK,
+            isDestructive: false
+        ) {
+            let badge = SpacePreferences.badge(
+                forSpace: appState.currentSpace,
+                display: appState.currentDisplayID,
+                store: store
+            )
+            let display = appState.currentDisplayID
+            for space in appState.getAllSpaceIndices() {
+                if let badge {
+                    SpacePreferences.setBadge(badge, forSpace: space, display: display, store: store)
+                } else {
+                    SpacePreferences.clearBadge(forSpace: space, display: display, store: store)
+                }
+            }
+        }
+    }
+
+    @objc func resetBadgeToDefault() {
+        withConfirmation(
+            message: Localization.confirmResetBadge,
+            detail: Localization.detailResetBadge,
+            confirmTitle: Localization.buttonReset,
+            isDestructive: true
+        ) {
+            SpacePreferences.clearBadge(
+                forSpace: appState.currentSpace,
+                display: appState.currentDisplayID,
+                store: store
+            )
+        }
+    }
+
+    @objc func badgePositionSelected(_ sender: NSMenuItem) {
+        guard appState.currentSpace > 0,
+              let rawValue = sender.representedObject as? String,
+              let position = BadgePosition(rawValue: rawValue)
+        else {
+            return
+        }
+
+        let currentBadge = SpacePreferences.badge(
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
+        let character = currentBadge?.character ?? ""
+        guard !character.isEmpty else {
+            return
+        }
+        SpacePreferences.setBadge(
+            SpaceBadge(character: character, position: position),
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
+        onStatusBarIconNeedsUpdate?()
+    }
+
     // MARK: - Apply / Reset All Actions
 
     // swiftlint:disable:next function_body_length
@@ -312,6 +378,11 @@ final class ActionHandler: NSObject {
             confirmTitle: Localization.buttonReset,
             isDestructive: true
         ) {
+            SpacePreferences.clearBadge(
+                forSpace: appState.currentSpace,
+                display: appState.currentDisplayID,
+                store: store
+            )
             SpacePreferences.clearColors(
                 forSpace: appState.currentSpace,
                 display: appState.currentDisplayID,
@@ -515,6 +586,29 @@ final class ActionHandler: NSObject {
             }
         }
 
+        onStatusBarIconNeedsUpdate?()
+    }
+
+    // MARK: - Badge Selection
+
+    func setBadgeCharacter(_ character: String?) {
+        guard appState.currentSpace > 0 else {
+            return
+        }
+        let currentBadge = SpacePreferences.badge(
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
+        let position = currentBadge?.position ?? .topLeft
+        // Save with empty character (preserves position) rather than clearing entirely,
+        // so the position is remembered when a new character is entered later.
+        SpacePreferences.setBadge(
+            SpaceBadge(character: character ?? "", position: position),
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
         onStatusBarIconNeedsUpdate?()
     }
 

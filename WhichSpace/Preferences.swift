@@ -132,6 +132,22 @@ struct SpaceColors: Equatable, Defaults.Serializable {
     var background: NSColor
 }
 
+// MARK: - BadgePosition
+
+enum BadgePosition: String, CaseIterable, Codable, Defaults.Serializable {
+    case topLeft
+    case topRight
+    case bottomLeft
+    case bottomRight
+}
+
+// MARK: - SpaceBadge
+
+struct SpaceBadge: Codable, Equatable, Defaults.Serializable {
+    let character: String
+    let position: BadgePosition
+}
+
 // MARK: - SpacePreferences
 
 /// Manages per-space preferences (colors, icon styles, symbols/emojis).
@@ -189,6 +205,9 @@ enum SpacePreferences {
     )
     private static let fonts = Accessor<SpaceFont>(
         shared: \.spaceFonts, perDisplay: \.displaySpaceFonts
+    )
+    private static let badges = Accessor<SpaceBadge>(
+        shared: \.spaceBadges, perDisplay: \.displaySpaceBadges
     )
     private static let skinTones = Accessor<SkinTone>(
         shared: \.spaceSkinTones, perDisplay: \.displaySpaceSkinTones
@@ -302,6 +321,33 @@ enum SpacePreferences {
         fonts.set(nil, forSpace: spaceNumber, display: display, store: store)
     }
 
+    // MARK: - Badge
+
+    static func badge(
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) -> SpaceBadge? {
+        badges.get(forSpace: spaceNumber, display: display, store: store)
+    }
+
+    static func setBadge(
+        _ badge: SpaceBadge?,
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) {
+        badges.set(badge, forSpace: spaceNumber, display: display, store: store)
+    }
+
+    static func clearBadge(
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) {
+        badges.set(nil, forSpace: spaceNumber, display: display, store: store)
+    }
+
     // MARK: - Skin Tone
 
     static func skinTone(
@@ -333,11 +379,13 @@ enum SpacePreferences {
 
     /// Clears all preferences for all displays and shared settings.
     static func clearAll(store: DefaultsStore = AppEnvironment.shared.store) {
+        store.spaceBadges = [:]
         store.spaceColors = [:]
         store.spaceIconStyles = [:]
         store.spaceSymbols = [:]
         store.spaceFonts = [:]
         store.spaceSkinTones = [:]
+        store.displaySpaceBadges = [:]
         store.displaySpaceColors = [:]
         store.displaySpaceIconStyles = [:]
         store.displaySpaceSymbols = [:]

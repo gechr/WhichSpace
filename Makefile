@@ -6,7 +6,7 @@ BUILD_CONFIGURATION := Release
 endif
 
 .PHONY: all
-all: fmt lint test
+all: clean fmt lint test
 
 .PHONY: build
 build:
@@ -16,6 +16,14 @@ build:
 		-configuration $(BUILD_CONFIGURATION) \
 		-destination 'platform=macOS' \
 		MACOSX_DEPLOYMENT_TARGET=$(MACOSX_DEPLOYMENT_TARGET)
+
+.PHONY: clean
+clean:
+	@xcodebuild clean \
+		-project WhichSpace.xcodeproj \
+		-scheme WhichSpace \
+		-configuration $(BUILD_CONFIGURATION) \
+		-destination 'platform=macOS'
 
 .PHONY: check
 check:

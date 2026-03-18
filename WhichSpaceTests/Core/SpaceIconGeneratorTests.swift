@@ -285,6 +285,99 @@ final class SpaceIconGeneratorTests: IsolatedDefaultsTestCase {
         XCTAssertNotEqual(singleData, doubleData, "Slim icons should differ for different digit counts")
     }
 
+    // MARK: - Badge Tests
+
+    func testBadgeDoesNotChangeIconSize() {
+        let badge = SpaceBadge(character: "A", position: .topRight)
+        let badgedIcon = SpaceIconGenerator.generateIcon(for: "1", darkMode: true, badge: badge)
+        XCTAssertEqual(badgedIcon.size, Layout.statusItemSize)
+    }
+
+    func testBadgeProducesDifferentImage() {
+        let baseIcon = SpaceIconGenerator.generateIcon(for: "1", darkMode: true)
+        let badge = SpaceBadge(character: "X", position: .topRight)
+        let badgedIcon = SpaceIconGenerator.generateIcon(for: "1", darkMode: true, badge: badge)
+        XCTAssertNotEqual(
+            baseIcon.tiffRepresentation,
+            badgedIcon.tiffRepresentation,
+            "Badge should change the icon"
+        )
+    }
+
+    func testEmojiBadgeProducesValidImage() {
+        let badge = SpaceBadge(character: "🔴", position: .bottomLeft)
+        let badgedIcon = SpaceIconGenerator.generateIcon(for: "1", darkMode: true, badge: badge)
+        XCTAssertEqual(badgedIcon.size, Layout.statusItemSize)
+        XCTAssertNotNil(badgedIcon.tiffRepresentation)
+    }
+
+    func testBadgeAllPositionsProduceValidImages() {
+        for position in BadgePosition.allCases {
+            let badge = SpaceBadge(character: "B", position: position)
+            let badgedIcon = SpaceIconGenerator.generateIcon(for: "1", darkMode: true, badge: badge)
+            XCTAssertEqual(
+                badgedIcon.size,
+                Layout.statusItemSize,
+                "\(position) should produce correct size"
+            )
+            XCTAssertNotNil(
+                badgedIcon.tiffRepresentation,
+                "\(position) should produce valid image"
+            )
+        }
+    }
+
+    func testBadgeWithAllStylesProducesValidImages() {
+        let badge = SpaceBadge(character: "A", position: .topRight)
+        for style in IconStyle.allCases {
+            let icon = SpaceIconGenerator.generateIcon(
+                for: "1",
+                darkMode: true,
+                style: style,
+                badge: badge
+            )
+            XCTAssertEqual(
+                icon.size,
+                Layout.statusItemSize,
+                "Badge with style \(style.rawValue) should produce correct size"
+            )
+            XCTAssertNotNil(
+                icon.tiffRepresentation,
+                "Badge with style \(style.rawValue) should produce valid image"
+            )
+        }
+    }
+
+    func testBadgeWithMultiDigitNumber() {
+        let badge = SpaceBadge(character: "X", position: .topLeft)
+        let icon = SpaceIconGenerator.generateIcon(for: "12", darkMode: true, badge: badge)
+        XCTAssertEqual(icon.size, Layout.statusItemSize)
+        XCTAssertNotNil(icon.tiffRepresentation)
+    }
+
+    func testEmptyBadgeCharacterMatchesNoBadge() {
+        let emptyBadge = SpaceBadge(character: "", position: .topRight)
+        let withEmpty = SpaceIconGenerator.generateIcon(for: "1", darkMode: true, badge: emptyBadge)
+        let withNil = SpaceIconGenerator.generateIcon(for: "1", darkMode: true)
+        XCTAssertEqual(
+            withEmpty.tiffRepresentation,
+            withNil.tiffRepresentation,
+            "Empty badge character should produce same image as no badge"
+        )
+    }
+
+    func testDifferentPositionsProduceDifferentImages() {
+        let badgeLeft = SpaceBadge(character: "A", position: .topLeft)
+        let badgeRight = SpaceBadge(character: "A", position: .topRight)
+        let iconLeft = SpaceIconGenerator.generateIcon(for: "1", darkMode: true, badge: badgeLeft)
+        let iconRight = SpaceIconGenerator.generateIcon(for: "1", darkMode: true, badge: badgeRight)
+        XCTAssertNotEqual(
+            iconLeft.tiffRepresentation,
+            iconRight.tiffRepresentation,
+            "Different badge positions should produce different images"
+        )
+    }
+
     // MARK: - Helpers
 
     private func samplePixelColor(from image: NSImage, at point: CGPoint) -> NSColor? {

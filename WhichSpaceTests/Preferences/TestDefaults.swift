@@ -190,6 +190,7 @@ final class DefaultsIsolationGuardTests: IsolatedDefaultsTestCase {
         let expectedKeyNames: Set = [
             "clickToSwitchSpaces",
             "dimInactiveSpaces",
+            "displaySpaceBadges",
             "displaySpaceColors",
             "displaySpaceFonts",
             "displaySpaceIconStyles",
@@ -204,6 +205,7 @@ final class DefaultsIsolationGuardTests: IsolatedDefaultsTestCase {
             "showAllSpaces",
             "sizeScale",
             "soundName",
+            "spaceBadges",
             "spaceColors",
             "spaceFonts",
             "spaceIconStyles",

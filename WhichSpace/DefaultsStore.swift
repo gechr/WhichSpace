@@ -24,6 +24,10 @@ struct TypedKeySpec<Value: Defaults.Serializable>: @unchecked Sendable {
 enum KeySpecs {
     static let clickToSwitchSpaces = TypedKeySpec(name: "clickToSwitchSpaces", defaultValue: false)
     static let dimInactiveSpaces = TypedKeySpec(name: "dimInactiveSpaces", defaultValue: true)
+    static let displaySpaceBadges = TypedKeySpec(
+        name: "displaySpaceBadges",
+        defaultValue: [String: [Int: SpaceBadge]]()
+    )
     static let displaySpaceColors = TypedKeySpec(
         name: "displaySpaceColors",
         defaultValue: [String: [Int: SpaceColors]]()
@@ -53,6 +57,7 @@ enum KeySpecs {
     static let showAllSpaces = TypedKeySpec(name: "showAllSpaces", defaultValue: false)
     static let sizeScale = TypedKeySpec(name: "sizeScale", defaultValue: Layout.defaultSizeScale)
     static let soundName = TypedKeySpec(name: "soundName", defaultValue: "")
+    static let spaceBadges = TypedKeySpec(name: "spaceBadges", defaultValue: [Int: SpaceBadge]())
     static let spaceColors = TypedKeySpec(name: "spaceColors", defaultValue: [Int: SpaceColors]())
     static let spaceFonts = TypedKeySpec(name: "spaceFonts", defaultValue: [Int: SpaceFont]())
     static let spaceIconStyles = TypedKeySpec(name: "spaceIconStyles", defaultValue: [Int: IconStyle]())
@@ -64,6 +69,7 @@ enum KeySpecs {
     static let allKeyNames: Set<String> = [
         clickToSwitchSpaces.name,
         dimInactiveSpaces.name,
+        displaySpaceBadges.name,
         displaySpaceColors.name,
         displaySpaceFonts.name,
         displaySpaceIconStyles.name,
@@ -78,6 +84,7 @@ enum KeySpecs {
         showAllSpaces.name,
         sizeScale.name,
         soundName.name,
+        spaceBadges.name,
         spaceColors.name,
         spaceFonts.name,
         spaceIconStyles.name,
@@ -115,6 +122,7 @@ final class DefaultsStore {
     // Lazily-created keys bound to this store's suite
     private(set) lazy var keyClickToSwitchSpaces = KeySpecs.clickToSwitchSpaces.key(suite: suite)
     private(set) lazy var keyDimInactiveSpaces = KeySpecs.dimInactiveSpaces.key(suite: suite)
+    private(set) lazy var keyDisplaySpaceBadges = KeySpecs.displaySpaceBadges.key(suite: suite)
     private(set) lazy var keyDisplaySpaceColors = KeySpecs.displaySpaceColors.key(suite: suite)
     private(set) lazy var keyDisplaySpaceFonts = KeySpecs.displaySpaceFonts.key(suite: suite)
     private(set) lazy var keyDisplaySpaceIconStyles = KeySpecs.displaySpaceIconStyles.key(suite: suite)
@@ -129,6 +137,7 @@ final class DefaultsStore {
     private(set) lazy var keyShowAllSpaces = KeySpecs.showAllSpaces.key(suite: suite)
     private(set) lazy var keySizeScale = KeySpecs.sizeScale.key(suite: suite)
     private(set) lazy var keySoundName = KeySpecs.soundName.key(suite: suite)
+    private(set) lazy var keySpaceBadges = KeySpecs.spaceBadges.key(suite: suite)
     private(set) lazy var keySpaceColors = KeySpecs.spaceColors.key(suite: suite)
     private(set) lazy var keySpaceFonts = KeySpecs.spaceFonts.key(suite: suite)
     private(set) lazy var keySpaceIconStyles = KeySpecs.spaceIconStyles.key(suite: suite)
@@ -150,6 +159,11 @@ final class DefaultsStore {
     var dimInactiveSpaces: Bool {
         get { Defaults[keyDimInactiveSpaces] }
         set { Defaults[keyDimInactiveSpaces] = newValue }
+    }
+
+    var displaySpaceBadges: [String: [Int: SpaceBadge]] {
+        get { Defaults[keyDisplaySpaceBadges] }
+        set { Defaults[keyDisplaySpaceBadges] = newValue }
     }
 
     var displaySpaceColors: [String: [Int: SpaceColors]] {
@@ -249,6 +263,11 @@ final class DefaultsStore {
         set { Defaults[keySoundName] = newValue }
     }
 
+    var spaceBadges: [Int: SpaceBadge] {
+        get { Defaults[keySpaceBadges] }
+        set { Defaults[keySpaceBadges] = newValue }
+    }
+
     var spaceColors: [Int: SpaceColors] {
         get { Defaults[keySpaceColors] }
         set { Defaults[keySpaceColors] = newValue }
@@ -286,6 +305,7 @@ final class DefaultsStore {
         Defaults.reset(
             keyClickToSwitchSpaces,
             keyDimInactiveSpaces,
+            keyDisplaySpaceBadges,
             keyDisplaySpaceColors,
             keyDisplaySpaceFonts,
             keyDisplaySpaceIconStyles,
@@ -300,6 +320,7 @@ final class DefaultsStore {
             keyShowAllSpaces,
             keySizeScale,
             keySoundName,
+            keySpaceBadges,
             keySpaceColors,
             keySpaceFonts,
             keySpaceIconStyles,

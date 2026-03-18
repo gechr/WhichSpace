@@ -77,7 +77,8 @@ enum SpaceIconGenerator {
         customColors: SpaceColors? = nil,
         customFont: NSFont? = nil,
         style: IconStyle = .square,
-        sizeScale: Double = Layout.defaultSizeScale
+        sizeScale: Double = Layout.defaultSizeScale,
+        badge: SpaceBadge? = nil
     ) -> NSImage {
         let scale = sizeScale / 100.0
         let filled = style.isFilled
@@ -92,7 +93,8 @@ enum SpaceIconGenerator {
                 customColors: customColors,
                 customFont: customFont,
                 filled: filled,
-                scale: scale
+                scale: scale,
+                badge: badge
             ) { rect, color, filled in
                 let shapeRect = centeredRect(size: iconSize, in: rect)
                 let path = NSBezierPath(
@@ -111,11 +113,14 @@ enum SpaceIconGenerator {
                 customColors: customColors,
                 customFont: customFont,
                 filled: filled,
-                scale: scale
+                scale: scale,
+                badge: badge
             ) { rect, color, filled in
                 let font = scaledFont(for: spaceNumber.count, customFont: customFont, scale: scale)
-                let attributes: [NSAttributedString.Key: Any] = [.font: font]
-                let textSize = spaceNumber.size(withAttributes: attributes)
+                let measuredText = buildBadgedAttributedString(
+                    number: spaceNumber, badge: badge, font: font, color: color
+                )
+                let textSize = measuredText.size()
                 let horizontalPadding = 4.0 * scale
                 let iconSize = CGSize(
                     width: textSize.width + horizontalPadding * 2, height: squareSize(scale: scale)
@@ -139,7 +144,8 @@ enum SpaceIconGenerator {
                 customColors: customColors,
                 customFont: customFont,
                 filled: filled,
-                scale: scale
+                scale: scale,
+                badge: badge
             ) { rect, color, filled in
                 let shapeRect = centeredRect(size: iconSize, in: rect)
                 let path = NSBezierPath(ovalIn: shapeRect)
@@ -160,7 +166,8 @@ enum SpaceIconGenerator {
                 filled: filled,
                 scale: scale,
                 fontSizeAdjustment: sizeAdjustment,
-                textYOffset: yOffset
+                textYOffset: yOffset,
+                badge: badge
             ) { rect, color, filled in
                 let shapeRect = centeredRect(size: iconSize, in: rect)
                 let top = CGPoint(x: shapeRect.midX, y: shapeRect.maxY)
@@ -190,7 +197,8 @@ enum SpaceIconGenerator {
                 customFont: customFont,
                 filled: filled,
                 scale: scale,
-                fontSizeAdjustment: sizeAdjustment
+                fontSizeAdjustment: sizeAdjustment,
+                badge: badge
             ) { rect, color, filled in
                 let centerX = rect.width / 2
                 let centerY = rect.height / 2
@@ -213,7 +221,8 @@ enum SpaceIconGenerator {
                 customFont: customFont,
                 filled: false,
                 scale: scale,
-                fontSizeAdjustment: 1
+                fontSizeAdjustment: 1,
+                badge: badge
             ) { rect, _, _ in
                 rect
             }
@@ -224,7 +233,8 @@ enum SpaceIconGenerator {
                 darkMode: darkMode,
                 customColors: customColors,
                 customFont: customFont,
-                scale: scale
+                scale: scale,
+                badge: badge
             )
         }
     }
@@ -385,6 +395,70 @@ enum SpaceIconGenerator {
         text.draw(in: textRect, withAttributes: attributes)
     }
 
+    // MARK: - Badge Helpers
+
+    /// Builds an NSAttributedString with the badge character as superscript/subscript before/after the number.
+    private static func buildBadgedAttributedString(
+        number: String,
+        badge: SpaceBadge?,
+        font: NSFont,
+        color: NSColor
+    ) -> NSAttributedString {
+        guard let badge, !badge.character.isEmpty else {
+            return NSAttributedString(
+                string: number,
+                attributes: [.font: font, .foregroundColor: color]
+            )
+        }
+
+        let numberAttrs: [NSAttributedString.Key: Any] = [
+            .font: font,
+            .foregroundColor: color,
+        ]
+
+        let badgeFontSize = font.pointSize * 0.55
+        let badgeFont = NSFont.boldSystemFont(ofSize: badgeFontSize)
+        let isEmoji = badge.character.containsEmoji
+
+        let baselineOffset: Double = switch badge.position {
+        case .topLeft, .topRight:
+            font.pointSize * 0.35
+        case .bottomLeft, .bottomRight:
+            -font.pointSize * 0.1
+        }
+
+        var badgeAttrs: [NSAttributedString.Key: Any] = [
+            .font: badgeFont,
+            .baselineOffset: baselineOffset,
+        ]
+        if !isEmoji {
+            badgeAttrs[.foregroundColor] = color
+        }
+
+        let result = NSMutableAttributedString()
+        switch badge.position {
+        case .topLeft, .bottomLeft:
+            result.append(NSAttributedString(string: badge.character, attributes: badgeAttrs))
+            result.append(NSAttributedString(string: number, attributes: numberAttrs))
+        case .topRight, .bottomRight:
+            result.append(NSAttributedString(string: number, attributes: numberAttrs))
+            result.append(NSAttributedString(string: badge.character, attributes: badgeAttrs))
+        }
+
+        return result
+    }
+
+    private static func drawCenteredAttributedText(
+        _ attrString: NSAttributedString,
+        in rect: CGRect,
+        yOffset: Double = 0
+    ) {
+        let textSize = attrString.size()
+        var textRect = centeredRect(size: textSize, in: rect)
+        textRect.origin.y += yOffset
+        attrString.draw(in: textRect)
+    }
+
     // MARK: - Shape Generators
 
     private static func generateShapedIcon(
@@ -396,6 +470,7 @@ enum SpaceIconGenerator {
         scale: Double,
         fontSizeAdjustment: Double = 0,
         textYOffset: Double = 0,
+        badge: SpaceBadge? = nil,
         drawShape: @escaping (CGRect, NSColor, Bool) -> CGRect
     ) -> NSImage {
         NSImage(size: statusItemSize, flipped: false) { rect in
@@ -408,9 +483,17 @@ enum SpaceIconGenerator {
                 sizeAdjustment: fontSizeAdjustment,
                 scale: scale
             )
-            drawCenteredText(
-                spaceNumber, in: textRect, font: font, color: colors.foreground, yOffset: textYOffset
-            )
+
+            if let badge, !badge.character.isEmpty {
+                let attrString = buildBadgedAttributedString(
+                    number: spaceNumber, badge: badge, font: font, color: colors.foreground
+                )
+                drawCenteredAttributedText(attrString, in: textRect, yOffset: textYOffset)
+            } else {
+                drawCenteredText(
+                    spaceNumber, in: textRect, font: font, color: colors.foreground, yOffset: textYOffset
+                )
+            }
             return true
         }
     }
@@ -420,7 +503,8 @@ enum SpaceIconGenerator {
         darkMode: Bool,
         customColors: SpaceColors?,
         customFont: NSFont?,
-        scale: Double
+        scale: Double,
+        badge: SpaceBadge? = nil
     ) -> NSImage {
         NSImage(size: statusItemSize, flipped: false) { rect in
             guard let context = NSGraphicsContext.current?.cgContext else {
@@ -443,34 +527,36 @@ enum SpaceIconGenerator {
             let baseFont = scaledFont(for: spaceNumber.count, customFont: customFont, scale: scale)
             let enlargedSize = baseFont.pointSize * 1.1
             let font = NSFontManager.shared.convert(baseFont, toSize: enlargedSize)
-            let ctFont = font as CTFont
             let strokeWidth = 4.0 * scale
 
-            // Create attributed string for measuring
-            let attributes: [NSAttributedString.Key: Any] = [.font: font]
-            let textSize = spaceNumber.size(withAttributes: attributes)
+            // Build attributed string (with badge if set)
+            let attrString = buildBadgedAttributedString(
+                number: spaceNumber, badge: badge, font: font, color: fillColor
+            )
+            let textSize = attrString.size()
             let textX = (rect.width - textSize.width) / 2
 
             // Account for font metrics - CTFont draws from baseline
+            let ctFont = font as CTFont
             let ascent = CTFontGetAscent(ctFont)
             let descent = CTFontGetDescent(ctFont)
             let textHeight = ascent + descent
             let textY = (rect.height - textHeight) / 2 + descent
 
-            let textPath = textPath(for: spaceNumber, font: font)
+            let path = textPath(for: attrString)
 
             context.saveGState()
             context.translateBy(x: textX, y: textY)
 
             // Draw stroke (behind)
-            context.addPath(textPath)
+            context.addPath(path)
             context.setStrokeColor(strokeColor.cgColor)
             context.setLineWidth(strokeWidth)
             context.setLineJoin(.round)
             context.strokePath()
 
             // Draw fill (on top)
-            context.addPath(textPath)
+            context.addPath(path)
             context.setFillColor(fillColor.cgColor)
             context.fillPath()
 
@@ -480,9 +566,8 @@ enum SpaceIconGenerator {
         }
     }
 
-    /// Builds a CGPath from the glyphs in a string using CoreText
-    private static func textPath(for string: String, font: NSFont) -> CGMutablePath {
-        let attrString = NSAttributedString(string: string, attributes: [.font: font])
+    /// Builds a CGPath from the glyphs in an attributed string using CoreText
+    private static func textPath(for attrString: NSAttributedString) -> CGMutablePath {
         let line = CTLineCreateWithAttributedString(attrString)
         let glyphRuns = CTLineGetGlyphRuns(line) as? [CTRun] ?? []
 

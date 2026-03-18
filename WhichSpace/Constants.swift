@@ -89,6 +89,12 @@ enum IconColors {
 enum MenuTag: Int {
     case backgroundLabel = 1
     case backgroundSwatch
+    case badgeCharacterField
+    case badgeMenuItem
+    case badgePositionBottomLeft
+    case badgePositionBottomRight
+    case badgePositionTopLeft
+    case badgePositionTopRight
     case clickToSwitchSpaces
     case colorMenuItem
     case colorSeparator
@@ -117,6 +123,7 @@ enum MenuTag: Int {
 // MARK: - Localization
 
 enum Localization {
+    static let actionApplyBadgeToAll = String(localized: "action_apply_badge_to_all")
     static let actionApplyColorToAll = String(localized: "action_apply_color_to_all")
     static let actionApplyStyleToAll = String(localized: "action_apply_style_to_all")
     static let actionApplyToAll = String(localized: "action_apply_to_all")
@@ -127,6 +134,7 @@ enum Localization {
     static let actionInvertColors = String(localized: "action_invert_colors")
     static let actionQuit = String(localized: "action_quit")
     static let actionResetAllSpacesToDefault = String(localized: "action_reset_all_spaces_to_default")
+    static let actionResetBadgeToDefault = String(localized: "action_reset_badge_to_default")
     static let actionResetColorToDefault = String(localized: "action_reset_color_to_default")
     static let actionResetFontToDefault = String(localized: "action_reset_font_to_default")
     static let actionResetSpaceToDefault = String(localized: "action_reset_space_to_default")
@@ -135,24 +143,32 @@ enum Localization {
     static let alertAccessibilityRequired = String(localized: "alert_accessibility_required")
     static let alertExportFailed = String(localized: "alert_export_failed")
     static let alertImportFailed = String(localized: "alert_import_failed")
+    static let badgePositionBottomLeft = String(localized: "badge_position_bottom_left")
+    static let badgePositionBottomRight = String(localized: "badge_position_bottom_right")
+    static let badgePositionTopLeft = String(localized: "badge_position_top_left")
+    static let badgePositionTopRight = String(localized: "badge_position_top_right")
     static let buttonCancel = String(localized: "button_cancel")
     static let buttonContinue = String(localized: "button_continue")
     static let buttonLearnMore = String(localized: "button_learn_more")
     static let buttonOK = String(localized: "button_ok")
     static let buttonReset = String(localized: "button_reset")
     static let buttonResetAll = String(localized: "button_reset_all")
+    static let confirmApplyBadgeToAll = String(localized: "confirm_apply_badge_to_all")
     static let confirmApplyColorToAll = String(localized: "confirm_apply_color_to_all")
     static let confirmApplyStyleToAll = String(localized: "confirm_apply_style_to_all")
     static let confirmApplyToAll = String(localized: "confirm_apply_to_all")
     static let confirmResetAllSpaces = String(localized: "confirm_reset_all_spaces")
+    static let confirmResetBadge = String(localized: "confirm_reset_badge")
     static let confirmResetColor = String(localized: "confirm_reset_color")
     static let confirmResetFont = String(localized: "confirm_reset_font")
     static let confirmResetSpace = String(localized: "confirm_reset_space")
     static let confirmResetStyle = String(localized: "confirm_reset_style")
+    static let detailApplyBadgeToAll = String(localized: "detail_apply_badge_to_all")
     static let detailApplyColorToAll = String(localized: "detail_apply_color_to_all")
     static let detailApplyStyleToAll = String(localized: "detail_apply_style_to_all")
     static let detailApplyToAll = String(localized: "detail_apply_to_all")
     static let detailResetAllSpaces = String(localized: "detail_reset_all_spaces")
+    static let detailResetBadge = String(localized: "detail_reset_badge")
     static let detailResetColor = String(localized: "detail_reset_color")
     static let detailResetFont = String(localized: "detail_reset_font")
     static let detailResetSpace = String(localized: "detail_reset_space")
@@ -162,12 +178,15 @@ enum Localization {
     static let errorBackupFileReadFailed = String(localized: "error_backup_file_read_failed")
     static let errorBackupFileWriteFailed = String(localized: "error_backup_file_write_failed")
     static let errorBackupInvalidData = String(localized: "error_backup_invalid_data")
+
+    static let labelBadgePosition = String(localized: "label_badge_position")
     static let labelNumber = String(localized: "label_number")
     static let labelNumberBackground = String(localized: "label_number_background")
     static let labelNumberForeground = String(localized: "label_number_foreground")
     static let labelSeparator = String(localized: "label_separator")
     static let labelSkinTone = String(localized: "label_skin_tone")
     static let labelSymbol = String(localized: "label_symbol")
+    static let menuBadge = String(localized: "menu_badge")
     static let menuColor = String(localized: "menu_color")
     static let menuEmoji = String(localized: "menu_emoji")
     static let menuNumber = String(localized: "menu_number")
@@ -180,6 +199,7 @@ enum Localization {
     static let soundNone = String(localized: "sound_none")
     static let soundSystem = String(localized: "sound_system")
     static let soundUser = String(localized: "sound_user")
+    static let tipApplyBadgeToAll = String(localized: "tip_apply_badge_to_all")
     static let tipApplyColorToAll = String(localized: "tip_apply_color_to_all")
     static let tipApplyStyleToAll = String(localized: "tip_apply_style_to_all")
     static let tipApplyToAll = String(localized: "tip_apply_to_all")
@@ -197,6 +217,7 @@ enum Localization {
     static let tipLocalSpaceNumbers = String(localized: "tip_local_space_numbers")
     static let tipQuit = String(localized: "tip_quit")
     static let tipResetAllSpacesToDefault = String(localized: "tip_reset_all_spaces_to_default")
+    static let tipResetBadgeToDefault = String(localized: "tip_reset_badge_to_default")
     static let tipResetColorToDefault = String(localized: "tip_reset_color_to_default")
     static let tipResetFontToDefault = String(localized: "tip_reset_font_to_default")
     static let tipResetSpaceToDefault = String(localized: "tip_reset_space_to_default")

@@ -17,6 +17,8 @@ protocol MenuActionDelegate: AnyObject {
     func customSeparatorColorRequested()
     func symbolSelected(_ symbol: String?)
     func iconStyleSelected(_ style: IconStyle, stylePicker: StylePicker?)
+    func badgeCharacterChanged(_ character: String?)
+    func badgePositionSelected(_ position: BadgePosition)
 
     // Preview hover callbacks
     func skinToneHoverStarted(_ tone: SkinTone)
@@ -100,6 +102,9 @@ final class MenuBuilder {
         let currentSymbolIsEmoji = currentSymbol?.containsEmoji ?? false
         let currentSymbolIsSFSymbol = symbolIsActive && !currentSymbolIsEmoji
 
+        // Hide badge menu when symbol/emoji is active (badges only apply to number icons)
+        menu.item(withTag: MenuTag.badgeMenuItem.rawValue)?.isHidden = symbolIsActive
+
         for item in menu.items {
             // Update icon style views - only show checkmark when not in symbol mode
             if let view = item.view as? StylePicker {
@@ -177,8 +182,36 @@ final class MenuBuilder {
                 view.currentSize = store.sizeScale
             }
 
-            // Update sound menu checkmarks
-            if item.representedObject is String {
+            // Update badge character input
+            if item.tag == MenuTag.badgeCharacterField.rawValue, let badgeInput = item.view as? BadgeInput {
+                let currentBadge = SpacePreferences.badge(
+                    forSpace: appState.currentSpace,
+                    display: appState.currentDisplayID,
+                    store: store
+                )
+                badgeInput.currentCharacter = currentBadge?.character
+            }
+
+            // Update badge position checkmarks
+            let badgePositionTags: [MenuTag: BadgePosition] = [
+                .badgePositionTopLeft: .topLeft,
+                .badgePositionTopRight: .topRight,
+                .badgePositionBottomLeft: .bottomLeft,
+                .badgePositionBottomRight: .bottomRight,
+            ]
+            if let position = badgePositionTags.first(where: { $0.key.rawValue == item.tag })?.value {
+                let currentBadge = SpacePreferences.badge(
+                    forSpace: appState.currentSpace,
+                    display: appState.currentDisplayID,
+                    store: store
+                )
+                let activePosition = currentBadge?.position ?? .topLeft
+                item.state = activePosition == position ? .on : .off
+            }
+
+            // Update sound menu checkmarks (skip badge position items which also use String representedObject)
+            let isBadgePositionItem = MenuTag(rawValue: item.tag).flatMap { badgePositionTags[$0] } != nil
+            if item.representedObject is String, !isBadgePositionItem {
                 let soundName = item.representedObject as? String ?? ""
                 item.state = soundName == store.soundName ? .on : .off
             }
@@ -219,6 +252,7 @@ final class MenuBuilder {
 
         configureVersionHeader(in: menu)
         configureColorMenuItem(in: menu, target: target, delegate: menuDelegate, actionDelegate: actionDelegate)
+        configureBadgeMenuItem(in: menu, target: target, delegate: menuDelegate, actionDelegate: actionDelegate)
         configureStyleMenuItem(in: menu, target: target, delegate: menuDelegate, actionDelegate: actionDelegate)
         configureSoundMenuItem(in: menu, target: target, delegate: menuDelegate)
         configureSizeMenuItem(in: menu, delegate: menuDelegate, actionDelegate: actionDelegate)
@@ -408,6 +442,119 @@ final class MenuBuilder {
         )
     }
 
+    // MARK: - Badge Menu
+
+    private func configureBadgeMenuItem(
+        in menu: NSMenu, target: AnyObject, delegate: NSMenuDelegate?, actionDelegate: MenuActionDelegate
+    ) {
+        let badgeMenu = NSMenu(title: Localization.menuBadge)
+        badgeMenu.delegate = delegate
+
+        // Badge header
+        let badgeLabel = NSMenuItem(title: Localization.menuBadge, action: nil, keyEquivalent: "")
+        badgeLabel.isEnabled = false
+        badgeLabel.image = NSImage(systemSymbolName: "tag", accessibilityDescription: nil)
+        badgeMenu.addItem(badgeLabel)
+
+        // Character input
+        let characterItem = NSMenuItem()
+        characterItem.tag = MenuTag.badgeCharacterField.rawValue
+        let badgeInput = BadgeInput()
+        badgeInput.frame = NSRect(origin: .zero, size: badgeInput.intrinsicContentSize)
+        badgeInput.onCharacterChanged = { [weak self, weak actionDelegate, weak badgeMenu] character in
+            actionDelegate?.badgeCharacterChanged(character)
+            guard let self, let badgeMenu else {
+                return
+            }
+            let currentBadge = SpacePreferences.badge(
+                forSpace: appState.currentSpace,
+                display: appState.currentDisplayID,
+                store: store
+            )
+            let badgePositionTags: [MenuTag: BadgePosition] = [
+                .badgePositionTopLeft: .topLeft,
+                .badgePositionTopRight: .topRight,
+                .badgePositionBottomLeft: .bottomLeft,
+                .badgePositionBottomRight: .bottomRight,
+            ]
+            for item in badgeMenu.items {
+                if let position = badgePositionTags.first(where: { $0.key.rawValue == item.tag })?.value {
+                    let activePosition = currentBadge?.position ?? .topLeft
+                    item.state = activePosition == position ? .on : .off
+                }
+            }
+        }
+        characterItem.view = badgeInput
+        badgeMenu.addItem(characterItem)
+
+        badgeMenu.addItem(.separator())
+
+        // Position header
+        let positionLabel = NSMenuItem(title: Localization.labelBadgePosition, action: nil, keyEquivalent: "")
+        positionLabel.isEnabled = false
+        positionLabel.image = NSImage(
+            systemSymbolName: "arrow.up.and.down.and.arrow.left.and.right",
+            accessibilityDescription: nil
+        )
+        badgeMenu.addItem(positionLabel)
+
+        // Position items
+        let positions: [(BadgePosition, MenuTag, String, String)] = [
+            (.topLeft, .badgePositionTopLeft, Localization.badgePositionTopLeft, "rectangle.inset.topleft.filled"),
+            (.topRight, .badgePositionTopRight, Localization.badgePositionTopRight, "rectangle.inset.topright.filled"),
+            (
+                .bottomLeft,
+                .badgePositionBottomLeft,
+                Localization.badgePositionBottomLeft,
+                "rectangle.inset.bottomleft.filled"
+            ),
+            (
+                .bottomRight,
+                .badgePositionBottomRight,
+                Localization.badgePositionBottomRight,
+                "rectangle.inset.bottomright.filled"
+            ),
+        ]
+
+        for (position, tag, title, symbolName) in positions {
+            let item = NSMenuItem(
+                title: title,
+                action: #selector(ActionHandler.badgePositionSelected(_:)),
+                keyEquivalent: ""
+            )
+            item.target = target
+            item.tag = tag.rawValue
+            item.representedObject = position.rawValue
+            item.image = NSImage(systemSymbolName: symbolName, accessibilityDescription: nil)
+            badgeMenu.addItem(item)
+        }
+
+        badgeMenu.addItem(.separator())
+
+        addMenuItem(
+            to: badgeMenu,
+            title: Localization.actionApplyBadgeToAll,
+            action: #selector(ActionHandler.applyBadgeToAllSpaces),
+            target: target,
+            symbolName: "square.on.square",
+            toolTip: Localization.tipApplyBadgeToAll
+        )
+        addMenuItem(
+            to: badgeMenu,
+            title: Localization.actionResetBadgeToDefault,
+            action: #selector(ActionHandler.resetBadgeToDefault),
+            target: target,
+            symbolName: "arrow.uturn.backward",
+            toolTip: Localization.tipResetBadgeToDefault
+        )
+
+        let badgeMenuItem = NSMenuItem(title: Localization.menuBadge, action: nil, keyEquivalent: "")
+        badgeMenuItem.tag = MenuTag.badgeMenuItem.rawValue
+        badgeMenuItem.image = NSImage(systemSymbolName: "tag", accessibilityDescription: nil)
+        badgeMenuItem.submenu = badgeMenu
+        menu.addItem(badgeMenuItem)
+    }
+
     // MARK: - Style Menu
 
     // swiftlint:disable:next function_body_length
@@ -418,7 +565,7 @@ final class MenuBuilder {
         styleMenu.delegate = delegate
 
         // Number submenu (icon shapes)
-        let iconMenu = createIconMenu(target: target, actionDelegate: actionDelegate)
+        let iconMenu = createIconMenu(target: target, delegate: delegate, actionDelegate: actionDelegate)
         let iconMenuItem = NSMenuItem(title: Localization.menuNumber, action: nil, keyEquivalent: "")
         iconMenuItem.image = NSImage(systemSymbolName: "textformat.123", accessibilityDescription: nil)
         iconMenuItem.submenu = iconMenu
@@ -463,8 +610,11 @@ final class MenuBuilder {
         menu.addItem(styleMenuItem)
     }
 
-    private func createIconMenu(target: AnyObject, actionDelegate: MenuActionDelegate) -> NSMenu {
+    private func createIconMenu(
+        target: AnyObject, delegate: NSMenuDelegate?, actionDelegate: MenuActionDelegate
+    ) -> NSMenu {
         let iconMenu = NSMenu(title: Localization.menuNumber)
+        iconMenu.delegate = delegate
 
         for style in IconStyle.allCases {
             let item = NSMenuItem()

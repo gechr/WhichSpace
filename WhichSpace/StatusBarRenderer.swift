@@ -25,6 +25,7 @@ final class StatusBarRenderer {
         let currentSpace: Int
         let currentSpaceID: Int
         let dimInactiveSpaces: Bool
+        let displaySpaceBadges: [String: [Int: SpaceBadge]]
         let displaySpaceColors: [String: [Int: SpaceColors]]
         let displaySpaceFonts: [String: [Int: SpaceFont]]
         let displaySpaceIconStyles: [String: [Int: IconStyle]]
@@ -38,6 +39,7 @@ final class StatusBarRenderer {
         let showAllDisplays: Bool
         let showAllSpaces: Bool
         let sizeScale: Double
+        let spaceBadges: [Int: SpaceBadge]
         let spaceColors: [Int: SpaceColors]
         let spaceFonts: [Int: SpaceFont]
         let spaceIconStyles: [Int: IconStyle]
@@ -71,6 +73,7 @@ final class StatusBarRenderer {
 
     /// Temporary overrides for previewing style changes (only applied to current space)
     private struct PreviewState {
+        var badge: SpaceBadge?
         var background: NSColor?
         var clearSymbol = false
         var foreground: NSColor?
@@ -119,9 +122,24 @@ final class StatusBarRenderer {
         overrideBackground: NSColor? = nil,
         overrideSeparatorColor: NSColor? = nil,
         clearSymbol: Bool = false,
-        skinTone: SkinTone? = nil
+        skinTone: SkinTone? = nil,
+        overrideBadgePosition: BadgePosition? = nil
     ) -> NSImage {
+        var badgeOverride: SpaceBadge?
+        if let position = overrideBadgePosition {
+            let current = SpacePreferences.badge(
+                forSpace: appState.currentSpace,
+                display: appState.currentDisplayID,
+                store: store
+            )
+            let character = current?.character ?? ""
+            if !character.isEmpty {
+                badgeOverride = SpaceBadge(character: character, position: position)
+            }
+        }
+
         preview = PreviewState(
+            badge: badgeOverride,
             background: overrideBackground,
             clearSymbol: clearSymbol,
             foreground: overrideForeground,
@@ -215,6 +233,7 @@ final class StatusBarRenderer {
             currentSpace: appState.currentSpace,
             currentSpaceID: appState.currentSpaceID,
             dimInactiveSpaces: store.dimInactiveSpaces,
+            displaySpaceBadges: store.displaySpaceBadges,
             displaySpaceColors: store.displaySpaceColors,
             displaySpaceFonts: store.displaySpaceFonts,
             displaySpaceIconStyles: store.displaySpaceIconStyles,
@@ -228,6 +247,7 @@ final class StatusBarRenderer {
             showAllDisplays: store.showAllDisplays,
             showAllSpaces: store.showAllSpaces,
             sizeScale: store.sizeScale,
+            spaceBadges: store.spaceBadges,
             spaceColors: store.spaceColors,
             spaceFonts: store.spaceFonts,
             spaceIconStyles: store.spaceIconStyles,
@@ -427,6 +447,10 @@ final class StatusBarRenderer {
             ? nil
             : SpacePreferences.symbol(forSpace: space, display: displayID, store: store)
 
+        // Look up badge (only applied to number icons, not symbols)
+        let badge = (applyPreview ? preview?.badge : nil)
+            ?? SpacePreferences.badge(forSpace: space, display: displayID, store: store)
+
         if let symbol {
             let skinTone = SpacePreferences
                 .skinTone(forSpace: space, display: displayID, store: store) ?? .default
@@ -438,13 +462,15 @@ final class StatusBarRenderer {
                 sizeScale: store.sizeScale
             )
         }
+
         return SpaceIconGenerator.generateIcon(
             for: label,
             darkMode: darkMode,
             customColors: colors,
             customFont: font,
             style: style,
-            sizeScale: store.sizeScale
+            sizeScale: store.sizeScale,
+            badge: badge
         )
     }
 

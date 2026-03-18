@@ -146,6 +146,78 @@ struct SpacePreferencesTests {
         #expect(SpacePreferences.symbol(forSpace: 3, store: store) == "3.circle")
     }
 
+    // MARK: - Badge Tests
+
+    @Test("badge get returns nil when not set")
+    func badgeGetReturnsNilWhenNotSet() {
+        #expect(SpacePreferences.badge(forSpace: 1, store: store) == nil)
+        #expect(SpacePreferences.badge(forSpace: 5, store: store) == nil)
+    }
+
+    @Test("badge set and get")
+    func badgeSetAndGet() {
+        let badge = SpaceBadge(character: "A", position: .topRight)
+        SpacePreferences.setBadge(badge, forSpace: 1, store: store)
+
+        let retrieved = SpacePreferences.badge(forSpace: 1, store: store)
+        #expect(retrieved != nil)
+        #expect(retrieved?.character == "A")
+        #expect(retrieved?.position == .topRight)
+    }
+
+    @Test("badge set nil removes")
+    func badgeSetNilRemoves() {
+        let badge = SpaceBadge(character: "B", position: .bottomLeft)
+        SpacePreferences.setBadge(badge, forSpace: 2, store: store)
+        #expect(SpacePreferences.badge(forSpace: 2, store: store) != nil)
+
+        SpacePreferences.setBadge(nil, forSpace: 2, store: store)
+        #expect(SpacePreferences.badge(forSpace: 2, store: store) == nil)
+    }
+
+    @Test("badge clear")
+    func badgeClear() {
+        let badge = SpaceBadge(character: "C", position: .topLeft)
+        SpacePreferences.setBadge(badge, forSpace: 3, store: store)
+        #expect(SpacePreferences.badge(forSpace: 3, store: store) != nil)
+
+        SpacePreferences.clearBadge(forSpace: 3, store: store)
+        #expect(SpacePreferences.badge(forSpace: 3, store: store) == nil)
+    }
+
+    @Test("badge multiple spaces")
+    func badgeMultipleSpaces() {
+        SpacePreferences.setBadge(SpaceBadge(character: "1", position: .topLeft), forSpace: 1, store: store)
+        SpacePreferences.setBadge(SpaceBadge(character: "2", position: .topRight), forSpace: 2, store: store)
+
+        #expect(SpacePreferences.badge(forSpace: 1, store: store)?.character == "1")
+        #expect(SpacePreferences.badge(forSpace: 2, store: store)?.character == "2")
+    }
+
+    @Test("badge per-display when enabled")
+    func badgePerDisplayWhenEnabled() {
+        store.uniqueIconsPerDisplay = true
+
+        let display1 = "Display1"
+        let display2 = "Display2"
+
+        SpacePreferences.setBadge(
+            SpaceBadge(character: "A", position: .topLeft),
+            forSpace: 1,
+            display: display1,
+            store: store
+        )
+        SpacePreferences.setBadge(
+            SpaceBadge(character: "B", position: .bottomRight),
+            forSpace: 1,
+            display: display2,
+            store: store
+        )
+
+        #expect(SpacePreferences.badge(forSpace: 1, display: display1, store: store)?.character == "A")
+        #expect(SpacePreferences.badge(forSpace: 1, display: display2, store: store)?.character == "B")
+    }
+
     // MARK: - Cross-Preference Tests
 
     @Test("different preferences are independent")

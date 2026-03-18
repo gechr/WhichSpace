@@ -78,8 +78,9 @@ struct BackupSettings: Codable {
 
 // MARK: - BackupSpacePreferences
 
-/// Per-space preferences (colors, styles, symbols, fonts, skin tones).
+/// Per-space preferences (badges, colors, styles, symbols, fonts, skin tones).
 struct BackupSpacePreferences: Codable {
+    var badges: [String: CodableBadge]
     var colors: [String: CodableSpaceColors]
     var fonts: [String: CodableSpaceFont]
     var iconStyles: [String: String]
@@ -87,15 +88,16 @@ struct BackupSpacePreferences: Codable {
     var symbols: [String: String]
 
     private enum CodingKeys: String, CodingKey {
-        case colors, fonts, iconStyles, skinTones, symbols
+        case badges, colors, fonts, iconStyles, skinTones, symbols
     }
 
     var isEmpty: Bool {
-        colors.isEmpty && fonts.isEmpty && iconStyles.isEmpty && skinTones.isEmpty && symbols.isEmpty
+        badges.isEmpty && colors.isEmpty && fonts.isEmpty && iconStyles.isEmpty && skinTones.isEmpty && symbols.isEmpty
     }
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        if !badges.isEmpty { try container.encode(badges, forKey: .badges) }
         if !colors.isEmpty { try container.encode(colors, forKey: .colors) }
         if !fonts.isEmpty { try container.encode(fonts, forKey: .fonts) }
         if !iconStyles.isEmpty { try container.encode(iconStyles, forKey: .iconStyles) }
@@ -105,6 +107,7 @@ struct BackupSpacePreferences: Codable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        badges = try container.decodeIfPresent([String: CodableBadge].self, forKey: .badges) ?? [:]
         colors = try container.decodeIfPresent([String: CodableSpaceColors].self, forKey: .colors) ?? [:]
         fonts = try container.decodeIfPresent([String: CodableSpaceFont].self, forKey: .fonts) ?? [:]
         iconStyles = try container.decodeIfPresent([String: String].self, forKey: .iconStyles) ?? [:]
@@ -113,12 +116,16 @@ struct BackupSpacePreferences: Codable {
     }
 
     init(
+        badges: [Int: SpaceBadge] = [:],
         colors: [Int: SpaceColors] = [:],
         fonts: [Int: SpaceFont] = [:],
         iconStyles: [Int: IconStyle] = [:],
         skinTones: [Int: SkinTone] = [:],
         symbols: [Int: String] = [:]
     ) {
+        self.badges = badges.reduce(into: [:]) { result, pair in
+            result[String(pair.key)] = CodableBadge(from: pair.value)
+        }
         self.colors = colors.reduce(into: [:]) { result, pair in
             result[String(pair.key)] = CodableSpaceColors(from: pair.value)
         }
@@ -145,6 +152,10 @@ struct BackupSpacePreferences: Codable {
         }
     }
 
+    func toBadges() -> [Int: SpaceBadge] {
+        convertDict(badges) { $0.toSpaceBadge() }
+    }
+
     func toSpaceColors() -> [Int: SpaceColors] {
         convertDict(colors) { $0.toSpaceColors() }
     }
@@ -163,6 +174,26 @@ struct BackupSpacePreferences: Codable {
 
     func toSymbols() -> [Int: String] {
         convertDict(symbols) { $0 }
+    }
+}
+
+// MARK: - CodableBadge
+
+/// A badge (character + position) for JSON serialization.
+struct CodableBadge: Codable {
+    let character: String
+    let position: String
+
+    init(from badge: SpaceBadge) {
+        character = badge.character
+        position = badge.position.rawValue
+    }
+
+    func toSpaceBadge() -> SpaceBadge? {
+        guard let pos = BadgePosition(rawValue: position) else {
+            return nil
+        }
+        return SpaceBadge(character: character, position: pos)
     }
 }
 
@@ -287,6 +318,7 @@ enum BackupManager {
         )
 
         let spacePreferences = BackupSpacePreferences(
+            badges: store.spaceBadges,
             colors: store.spaceColors,
             fonts: store.spaceFonts,
             iconStyles: store.spaceIconStyles,
@@ -296,6 +328,7 @@ enum BackupManager {
 
         var displaySpacePreferences = [String: BackupSpacePreferences]()
         var displayIds = Set<String>()
+        displayIds.formUnion(store.displaySpaceBadges.keys)
         displayIds.formUnion(store.displaySpaceColors.keys)
         displayIds.formUnion(store.displaySpaceFonts.keys)
         displayIds.formUnion(store.displaySpaceIconStyles.keys)
@@ -304,6 +337,7 @@ enum BackupManager {
 
         for displayId in displayIds {
             displaySpacePreferences[displayId] = BackupSpacePreferences(
+                badges: store.displaySpaceBadges[displayId] ?? [:],
                 colors: store.displaySpaceColors[displayId] ?? [:],
                 fonts: store.displaySpaceFonts[displayId] ?? [:],
                 iconStyles: store.displaySpaceIconStyles[displayId] ?? [:],
@@ -388,6 +422,7 @@ enum BackupManager {
         store.uniqueIconsPerDisplay = backup.settings.uniqueIconsPerDisplay
 
         // Apply shared space preferences
+        store.spaceBadges = backup.spacePreferences.toBadges()
         store.spaceColors = backup.spacePreferences.toSpaceColors()
         store.spaceFonts = backup.spacePreferences.toSpaceFonts()
         store.spaceIconStyles = backup.spacePreferences.toIconStyles()
@@ -395,6 +430,7 @@ enum BackupManager {
         store.spaceSymbols = backup.spacePreferences.toSymbols()
 
         // Apply per-display space preferences
+        var displayBadges = [String: [Int: SpaceBadge]]()
         var displayColors = [String: [Int: SpaceColors]]()
         var displayFonts = [String: [Int: SpaceFont]]()
         var displayStyles = [String: [Int: IconStyle]]()
@@ -402,6 +438,7 @@ enum BackupManager {
         var displaySymbols = [String: [Int: String]]()
 
         for (displayId, prefs) in backup.displaySpacePreferences {
+            displayBadges[displayId] = prefs.toBadges()
             displayColors[displayId] = prefs.toSpaceColors()
             displayFonts[displayId] = prefs.toSpaceFonts()
             displayStyles[displayId] = prefs.toIconStyles()
@@ -409,6 +446,7 @@ enum BackupManager {
             displaySymbols[displayId] = prefs.toSymbols()
         }
 
+        store.displaySpaceBadges = displayBadges
         store.displaySpaceColors = displayColors
         store.displaySpaceFonts = displayFonts
         store.displaySpaceIconStyles = displayStyles

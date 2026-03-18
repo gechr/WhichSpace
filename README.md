@@ -13,6 +13,7 @@ Have you ever forgotten _which space_ is currently active on macOS and wanted a 
 - **Icons** - Choose from multiple icon styles (square, circle, triangle, and more)
 - **Symbols** - Use native macOS symbols instead of numbers
 - **Emojis** - Use emojis to get even more creative
+- **Badges** - Add a small character of your choice next to the Space number
 - **Size** - Scale icons to your preference
 - **Sound** - Play a sound when switching Spaces
 - **AppleScript** - Automate with scripting support
