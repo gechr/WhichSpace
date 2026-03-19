@@ -200,6 +200,7 @@ final class DefaultsIsolationGuardTests: IsolatedDefaultsTestCase {
             "hideFullscreenApps",
             "hideSingleSpace",
             "localSpaceNumbers",
+            "paddingScale",
             "separatorColor",
             "showAllDisplays",
             "showAllSpaces",

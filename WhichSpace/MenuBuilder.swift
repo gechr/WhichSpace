@@ -8,6 +8,7 @@ import Defaults
 @MainActor
 protocol MenuActionDelegate: AnyObject {
     func sizeChanged(to scale: Double)
+    func paddingChanged(to scale: Double)
     func skinToneSelected(_ tone: SkinTone)
     func foregroundColorSelected(_ color: NSColor)
     func backgroundColorSelected(_ color: NSColor)
@@ -177,9 +178,12 @@ final class MenuBuilder {
                     : Localization.labelNumberForeground
             }
 
-            // Update size row view (tag 310)
             if item.tag == MenuTag.sizeRow.rawValue, let view = item.view as? SizeSlider {
                 view.currentSize = store.sizeScale
+            }
+
+            if item.tag == MenuTag.paddingRow.rawValue, let view = item.view as? SizeSlider {
+                view.currentSize = store.paddingScale
             }
 
             // Update badge character input
@@ -766,6 +770,10 @@ final class MenuBuilder {
         let sizeMenu = NSMenu(title: Localization.menuSize)
         sizeMenu.delegate = delegate
 
+        let iconLabel = NSMenuItem(title: Localization.menuIcon, action: nil, keyEquivalent: "")
+        iconLabel.isEnabled = false
+        sizeMenu.addItem(iconLabel)
+
         let sizeItem = NSMenuItem()
         sizeItem.tag = MenuTag.sizeRow.rawValue
         let sizeSlider = SizeSlider(
@@ -778,6 +786,25 @@ final class MenuBuilder {
         }
         sizeItem.view = sizeSlider
         sizeMenu.addItem(sizeItem)
+
+        sizeMenu.addItem(.separator())
+
+        let paddingLabel = NSMenuItem(title: Localization.menuPadding, action: nil, keyEquivalent: "")
+        paddingLabel.isEnabled = false
+        sizeMenu.addItem(paddingLabel)
+
+        let paddingItem = NSMenuItem()
+        paddingItem.tag = MenuTag.paddingRow.rawValue
+        let paddingSlider = SizeSlider(
+            initialSize: store.paddingScale,
+            range: Layout.paddingScaleRange
+        )
+        paddingSlider.frame = NSRect(origin: .zero, size: paddingSlider.intrinsicContentSize)
+        paddingSlider.onSizeChanged = { [weak actionDelegate] scale in
+            actionDelegate?.paddingChanged(to: scale)
+        }
+        paddingItem.view = paddingSlider
+        sizeMenu.addItem(paddingItem)
 
         let sizeMenuItem = NSMenuItem(title: Localization.menuSize, action: nil, keyEquivalent: "")
         sizeMenuItem.image = NSImage(

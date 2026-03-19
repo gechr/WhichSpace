@@ -421,6 +421,7 @@ final class ActionHandler: NSObject {
         ) {
             SpacePreferences.clearAll(store: store)
             store.sizeScale = Layout.defaultSizeScale
+            store.paddingScale = Layout.defaultPaddingScale
             store.soundName = ""
             store.separatorColor = nil
         }

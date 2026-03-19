@@ -61,12 +61,95 @@ enum SpaceIconGenerator {
     /// Maximum icon size must fit within status item bounds with margin
     private static let maxIconSize = min(statusItemSize.width, statusItemSize.height) - 1
 
-    private static func squareSize(scale: Double) -> Double {
-        min(Layout.baseSquareSize * scale, maxIconSize)
+    private static func effectiveStatusItemSize(
+        contentWidth: Double,
+        sizeScale: Double,
+        paddingScale: Double
+    ) -> CGSize {
+        let defaultWidth = max(Layout.statusItemWidth * sizeScale, contentWidth)
+        let effectiveWidth = contentWidth + (defaultWidth - contentWidth) * paddingScale / 100.0
+        return CGSize(width: max(effectiveWidth, 1), height: Layout.statusItemHeight)
     }
 
-    private static func polygonSize(scale: Double) -> Double {
-        min(Layout.basePolygonSize * scale, maxIconSize)
+    private static func squareSize(scale: Double, maxIcon: Double? = nil) -> Double {
+        min(Layout.baseSquareSize * scale, maxIcon ?? maxIconSize)
+    }
+
+    private static func polygonSize(scale: Double, maxIcon: Double? = nil) -> Double {
+        min(Layout.basePolygonSize * scale, maxIcon ?? maxIconSize)
+    }
+
+    private static func measuredTextSize(
+        for spaceNumber: String,
+        badge: SpaceBadge?,
+        customFont: NSFont?,
+        scale: Double,
+        sizeAdjustment: Double = 0
+    ) -> CGSize {
+        let font = scaledFont(
+            for: spaceNumber.count,
+            customFont: customFont,
+            sizeAdjustment: sizeAdjustment,
+            scale: scale
+        )
+        return buildBadgedAttributedString(
+            number: spaceNumber,
+            badge: badge,
+            font: font,
+            color: .labelColor
+        ).size()
+    }
+
+    private static func isVisibleSlimDecoration(customColors: SpaceColors?) -> Bool {
+        guard let customColors else {
+            return true
+        }
+        return customColors.background.alphaComponent > 0.001
+    }
+
+    private static func minimumContentWidth(
+        for spaceNumber: String,
+        customColors: SpaceColors?,
+        customFont: NSFont?,
+        style: IconStyle,
+        scale: Double,
+        badge: SpaceBadge?
+    ) -> Double {
+        switch style.shapeType {
+        case .square, .circle:
+            return min(Layout.baseSquareSize * scale, Layout.statusItemHeight - 1)
+        case .slim:
+            let textWidth = measuredTextSize(
+                for: spaceNumber,
+                badge: badge,
+                customFont: customFont,
+                scale: scale
+            ).width
+            guard isVisibleSlimDecoration(customColors: customColors) else {
+                return textWidth
+            }
+            return textWidth + (4.0 * scale * 2)
+        case .triangle:
+            return polygonSize(scale: scale)
+        case .polygon:
+            return polygonSize(scale: scale)
+        case .stroke:
+            let textWidth = measuredTextSize(
+                for: spaceNumber,
+                badge: badge,
+                customFont: customFont,
+                scale: scale
+            ).width
+            return textWidth + 4.0 * scale
+        case .transparent:
+            return measuredTextSize(
+                for: spaceNumber,
+                badge: badge,
+                customFont: customFont,
+                scale: scale,
+                sizeAdjustment: 1
+            ).width
+        }
     }
 
     // MARK: - Public API
@@ -78,10 +161,24 @@ enum SpaceIconGenerator {
         customFont: NSFont? = nil,
         style: IconStyle = .square,
         sizeScale: Double = Layout.defaultSizeScale,
+        paddingScale: Double = Layout.defaultPaddingScale,
         badge: SpaceBadge? = nil
     ) -> NSImage {
         let scale = sizeScale / 100.0
         let filled = style.isFilled
+        let contentWidth = minimumContentWidth(
+            for: spaceNumber,
+            customColors: customColors,
+            customFont: customFont,
+            style: style,
+            scale: scale,
+            badge: badge
+        )
+        let canvasSize = effectiveStatusItemSize(
+            contentWidth: contentWidth,
+            sizeScale: scale,
+            paddingScale: paddingScale
+        )
 
         switch style.shapeType {
         case .square:
@@ -94,6 +191,7 @@ enum SpaceIconGenerator {
                 customFont: customFont,
                 filled: filled,
                 scale: scale,
+                canvasSize: canvasSize,
                 badge: badge
             ) { rect, color, filled in
                 let shapeRect = centeredRect(size: iconSize, in: rect)
@@ -114,6 +212,7 @@ enum SpaceIconGenerator {
                 customFont: customFont,
                 filled: filled,
                 scale: scale,
+                canvasSize: canvasSize,
                 badge: badge
             ) { rect, color, filled in
                 let font = scaledFont(for: spaceNumber.count, customFont: customFont, scale: scale)
@@ -123,7 +222,8 @@ enum SpaceIconGenerator {
                 let textSize = measuredText.size()
                 let horizontalPadding = 4.0 * scale
                 let iconSize = CGSize(
-                    width: textSize.width + horizontalPadding * 2, height: squareSize(scale: scale)
+                    width: textSize.width + horizontalPadding * 2,
+                    height: squareSize(scale: scale)
                 )
                 let shapeRect = centeredRect(size: iconSize, in: rect)
                 let path = NSBezierPath(
@@ -145,6 +245,7 @@ enum SpaceIconGenerator {
                 customFont: customFont,
                 filled: filled,
                 scale: scale,
+                canvasSize: canvasSize,
                 badge: badge
             ) { rect, color, filled in
                 let shapeRect = centeredRect(size: iconSize, in: rect)
@@ -165,6 +266,7 @@ enum SpaceIconGenerator {
                 customFont: customFont,
                 filled: filled,
                 scale: scale,
+                canvasSize: canvasSize,
                 fontSizeAdjustment: sizeAdjustment,
                 textYOffset: yOffset,
                 badge: badge
@@ -197,6 +299,7 @@ enum SpaceIconGenerator {
                 customFont: customFont,
                 filled: filled,
                 scale: scale,
+                canvasSize: canvasSize,
                 fontSizeAdjustment: sizeAdjustment,
                 badge: badge
             ) { rect, color, filled in
@@ -221,6 +324,7 @@ enum SpaceIconGenerator {
                 customFont: customFont,
                 filled: false,
                 scale: scale,
+                canvasSize: canvasSize,
                 fontSizeAdjustment: 1,
                 badge: badge
             ) { rect, _, _ in
@@ -234,6 +338,7 @@ enum SpaceIconGenerator {
                 customColors: customColors,
                 customFont: customFont,
                 scale: scale,
+                canvasSize: canvasSize,
                 badge: badge
             )
         }
@@ -251,16 +356,24 @@ enum SpaceIconGenerator {
         darkMode: Bool,
         customColors: SpaceColors? = nil,
         skinTone: SkinTone? = nil,
-        sizeScale: Double = Layout.defaultSizeScale
+        sizeScale: Double = Layout.defaultSizeScale,
+        paddingScale: Double = Layout.defaultPaddingScale
     ) -> NSImage {
         let scale = sizeScale / 100.0
+        let defaultContentWidth = min(Layout.baseSquareSize * scale, Layout.statusItemHeight - 1)
+        let canvasSize = effectiveStatusItemSize(
+            contentWidth: defaultContentWidth,
+            sizeScale: scale,
+            paddingScale: paddingScale
+        )
 
         // Check if it's an emoji (contains emoji Unicode characters)
         if symbolName.containsEmoji {
             return generateEmojiIcon(
                 emoji: symbolName,
                 skinTone: skinTone,
-                scale: scale
+                scale: scale,
+                canvasSize: canvasSize
             )
         }
 
@@ -271,7 +384,13 @@ enum SpaceIconGenerator {
             .withSymbolConfiguration(symbolConfig)
         else {
             // Fallback to question mark if symbol not found
-            return generateIcon(for: "?", darkMode: darkMode, customColors: customColors, sizeScale: sizeScale)
+            return generateIcon(
+                for: "?",
+                darkMode: darkMode,
+                customColors: customColors,
+                sizeScale: sizeScale,
+                paddingScale: paddingScale
+            )
         }
 
         let color: NSColor = if let customColors {
@@ -282,7 +401,7 @@ enum SpaceIconGenerator {
             NSColor(calibratedWhite: 0.3, alpha: 1)
         }
 
-        return NSImage(size: statusItemSize, flipped: false) { rect in
+        return NSImage(size: canvasSize, flipped: false) { rect in
             let tintedImage = sfImage.tinted(with: color)
             let imageSize = tintedImage.size
             let xStart = (rect.width - imageSize.width) / 2
@@ -297,10 +416,11 @@ enum SpaceIconGenerator {
     private static func generateEmojiIcon(
         emoji: String,
         skinTone: SkinTone? = nil,
-        scale: Double
+        scale: Double,
+        canvasSize: CGSize = statusItemSize
     ) -> NSImage {
         let displayEmoji = SkinTone.apply(to: emoji, tone: skinTone)
-        return NSImage(size: statusItemSize, flipped: false) { rect in
+        return NSImage(size: canvasSize, flipped: false) { rect in
             // Use smaller font for emoji to fit nicely in the status bar
             let fontSize = 13.0 * scale
             let font = NSFont.systemFont(ofSize: fontSize)
@@ -468,12 +588,13 @@ enum SpaceIconGenerator {
         customFont: NSFont?,
         filled: Bool,
         scale: Double,
+        canvasSize: CGSize = statusItemSize,
         fontSizeAdjustment: Double = 0,
         textYOffset: Double = 0,
         badge: SpaceBadge? = nil,
         drawShape: @escaping (CGRect, NSColor, Bool) -> CGRect
     ) -> NSImage {
-        NSImage(size: statusItemSize, flipped: false) { rect in
+        NSImage(size: canvasSize, flipped: false) { rect in
             let colors = getColors(darkMode: darkMode, customColors: customColors, filled: filled)
             let textRect = drawShape(rect, colors.background, filled)
 
@@ -504,9 +625,10 @@ enum SpaceIconGenerator {
         customColors: SpaceColors?,
         customFont: NSFont?,
         scale: Double,
+        canvasSize: CGSize = statusItemSize,
         badge: SpaceBadge? = nil
     ) -> NSImage {
-        NSImage(size: statusItemSize, flipped: false) { rect in
+        NSImage(size: canvasSize, flipped: false) { rect in
             guard let context = NSGraphicsContext.current?.cgContext else {
                 return false
             }

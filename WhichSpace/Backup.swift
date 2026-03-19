@@ -68,6 +68,7 @@ struct BackupSettings: Codable {
     var hideSingleSpace: Bool
     var launchAtLogin: Bool
     var localSpaceNumbers: Bool
+    var paddingScale: Double?
     var separatorColor: CodableColor?
     var showAllDisplays: Bool
     var showAllSpaces: Bool
@@ -309,6 +310,7 @@ enum BackupManager {
             hideSingleSpace: store.hideSingleSpace,
             launchAtLogin: launchAtLogin.isEnabled,
             localSpaceNumbers: store.localSpaceNumbers,
+            paddingScale: store.paddingScale,
             separatorColor: store.separatorColor.map { CodableColor(from: $0) },
             showAllDisplays: store.showAllDisplays,
             showAllSpaces: store.showAllSpaces,
@@ -414,6 +416,7 @@ enum BackupManager {
         var launchAtLogin = launchAtLogin
         launchAtLogin.isEnabled = backup.settings.launchAtLogin
         store.localSpaceNumbers = backup.settings.localSpaceNumbers
+        store.paddingScale = backup.settings.paddingScale ?? Layout.defaultPaddingScale
         store.separatorColor = backup.settings.separatorColor?.toNSColor()
         store.showAllDisplays = backup.settings.showAllDisplays
         store.showAllSpaces = backup.settings.showAllSpaces

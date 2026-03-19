@@ -38,6 +38,11 @@ enum Layout {
     static let defaultSizeScale = 100.0
     static let sizeScaleRange = 60.0 ... 120.0
 
+    // Padding scale (percentage)
+    static let defaultPaddingScale = 100.0
+    static let paddingScaleRange = 0.0 ... 120.0
+    static let defaultHorizontalPadding = statusItemWidth - baseSquareSize // 4.0pt
+
     // Base sizes (at 100% scale)
     static let baseSquareSize = 20.0
     static let basePolygonSize = 21.0
@@ -112,6 +117,7 @@ enum MenuTag: Int {
     case separatorSwatch
     case showAllDisplays
     case showAllSpaces
+    case paddingRow
     case sizeRow
     case skinToneLabel
     case skinToneSwatch
@@ -189,7 +195,9 @@ enum Localization {
     static let menuBadge = String(localized: "menu_badge")
     static let menuColor = String(localized: "menu_color")
     static let menuEmoji = String(localized: "menu_emoji")
+    static let menuIcon = String(localized: "menu_icon")
     static let menuNumber = String(localized: "menu_number")
+    static let menuPadding = String(localized: "menu_padding")
     static let menuSettings = String(localized: "menu_settings")
     static let menuSize = String(localized: "menu_size")
     static let menuSound = String(localized: "menu_sound")

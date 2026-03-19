@@ -178,6 +178,7 @@ final class SizeSlider: NSView {
     // MARK: - Actions
 
     @objc private func sliderChanged() {
+        window?.makeFirstResponder(self)
         let value = round(slider.doubleValue)
         slider.doubleValue = value
         stepper.doubleValue = value
@@ -186,6 +187,7 @@ final class SizeSlider: NSView {
     }
 
     @objc private func stepperChanged() {
+        window?.makeFirstResponder(self)
         let value = stepper.doubleValue
         slider.doubleValue = value
         valueLabel.stringValue = String(format: "%.0f%%", value)

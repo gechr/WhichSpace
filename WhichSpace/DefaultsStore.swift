@@ -48,6 +48,7 @@ enum KeySpecs {
         name: "displaySpaceSymbols",
         defaultValue: [String: [Int: String]]()
     )
+    static let paddingScale = TypedKeySpec(name: "paddingScale", defaultValue: Layout.defaultPaddingScale)
     static let hideEmptySpaces = TypedKeySpec(name: "hideEmptySpaces", defaultValue: false)
     static let hideFullscreenApps = TypedKeySpec(name: "hideFullscreenApps", defaultValue: false)
     static let hideSingleSpace = TypedKeySpec(name: "hideSingleSpace", defaultValue: false)
@@ -79,6 +80,7 @@ enum KeySpecs {
         hideFullscreenApps.name,
         hideSingleSpace.name,
         localSpaceNumbers.name,
+        paddingScale.name,
         separatorColor.name,
         showAllDisplays.name,
         showAllSpaces.name,
@@ -132,6 +134,7 @@ final class DefaultsStore {
     private(set) lazy var keyHideFullscreenApps = KeySpecs.hideFullscreenApps.key(suite: suite)
     private(set) lazy var keyHideSingleSpace = KeySpecs.hideSingleSpace.key(suite: suite)
     private(set) lazy var keyLocalSpaceNumbers = KeySpecs.localSpaceNumbers.key(suite: suite)
+    private(set) lazy var keyPaddingScale = KeySpecs.paddingScale.key(suite: suite)
     private(set) lazy var keySeparatorColor = KeySpecs.separatorColor.key(suite: suite)
     private(set) lazy var keyShowAllDisplays = KeySpecs.showAllDisplays.key(suite: suite)
     private(set) lazy var keyShowAllSpaces = KeySpecs.showAllSpaces.key(suite: suite)
@@ -209,6 +212,11 @@ final class DefaultsStore {
     var localSpaceNumbers: Bool {
         get { Defaults[keyLocalSpaceNumbers] }
         set { Defaults[keyLocalSpaceNumbers] = newValue }
+    }
+
+    var paddingScale: Double {
+        get { Defaults[keyPaddingScale] }
+        set { Defaults[keyPaddingScale] = newValue }
     }
 
     var separatorColor: NSColor? {
@@ -315,6 +323,7 @@ final class DefaultsStore {
             keyHideFullscreenApps,
             keyHideSingleSpace,
             keyLocalSpaceNumbers,
+            keyPaddingScale,
             keySeparatorColor,
             keyShowAllDisplays,
             keyShowAllSpaces,

@@ -40,6 +40,8 @@ typealias ConfirmAction = (
 final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverDelegate {
     // MARK: - Properties
 
+    private static let previewHoverDebounceInterval = 0.08
+
     private let confirmAction: ConfirmAction
     private let appState: AppState
     private let missionControlNotificationSender: (CFString) -> Void
@@ -51,6 +53,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     private var isPickingForeground = true
     private var isPreviewingIcon = false
     private var launchAtLogin: LaunchAtLoginProvider
+    private var pendingPreviewWorkItem: DispatchWorkItem?
     private var preferenceObservationTasks: [Task<Void, Never>] = []
     private var updaterController: SPUStandardUpdaterController!
 
@@ -230,6 +233,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             store.keyUniqueIconsPerDisplay,
             store.keyLocalSpaceNumbers,
             store.keySizeScale,
+            store.keyPaddingScale,
             store.keySeparatorColor,
             store.keySpaceBadges,
             store.keySpaceColors,
@@ -390,6 +394,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     // MARK: - Status Bar
 
     func updateStatusBarIcon() {
+        cancelPendingPreview()
         guard !isPreviewingIcon else {
             return
         }
@@ -443,7 +448,43 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
     // MARK: - Preview
 
-    private func showPreviewIcon(
+    private func schedulePreviewIcon(
+        style: IconStyle? = nil,
+        symbol: String? = nil,
+        foreground: NSColor? = nil,
+        background: NSColor? = nil,
+        separatorColor: NSColor? = nil,
+        clearSymbol: Bool = false,
+        skinTone: SkinTone? = nil,
+        badgePosition: BadgePosition? = nil
+    ) {
+        cancelPendingPreview()
+
+        let workItem = DispatchWorkItem { [weak self] in
+            self?.showPreviewIconImmediately(
+                style: style,
+                symbol: symbol,
+                foreground: foreground,
+                background: background,
+                separatorColor: separatorColor,
+                clearSymbol: clearSymbol,
+                skinTone: skinTone,
+                badgePosition: badgePosition
+            )
+        }
+        pendingPreviewWorkItem = workItem
+        DispatchQueue.main.asyncAfter(
+            deadline: .now() + Self.previewHoverDebounceInterval,
+            execute: workItem
+        )
+    }
+
+    private func cancelPendingPreview() {
+        pendingPreviewWorkItem?.cancel()
+        pendingPreviewWorkItem = nil
+    }
+
+    private func showPreviewIconImmediately(
         style: IconStyle? = nil,
         symbol: String? = nil,
         foreground: NSColor? = nil,
@@ -456,6 +497,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         guard let statusBarItem else {
             return
         }
+        cancelPendingPreview()
         isPreviewingIcon = true
         let previewIcon = appState.generatePreviewIcon(
             overrideStyle: style,
@@ -472,6 +514,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     }
 
     private func restoreIcon() {
+        cancelPendingPreview()
         guard isPreviewingIcon else {
             return
         }
@@ -483,7 +526,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         let defaults = IconColors.filledColors(darkMode: appState.darkModeEnabled)
         let foreground = appState.currentColors?.foreground ?? defaults.foreground
         let background = appState.currentColors?.background ?? defaults.background
-        showPreviewIcon(foreground: background, background: foreground)
+        schedulePreviewIcon(foreground: background, background: foreground)
     }
 
     // MARK: - Color Panel
@@ -565,6 +608,11 @@ extension AppDelegate: MenuActionDelegate {
         updateStylePickerSizeScales()
     }
 
+    func paddingChanged(to scale: Double) {
+        store.paddingScale = scale
+        updateStatusBarIcon()
+    }
+
     func skinToneSelected(_ tone: SkinTone) {
         guard appState.currentSpace > 0 else {
             return
@@ -644,27 +692,27 @@ extension AppDelegate: MenuActionDelegate {
         guard let symbol = appState.currentSymbol else {
             return
         }
-        showPreviewIcon(symbol: symbol, skinTone: tone)
+        schedulePreviewIcon(symbol: symbol, skinTone: tone)
     }
 
     func colorHoverStarted(index: Int, isForeground _: Bool) {
-        showPreviewIcon(foreground: ColorSwatch.presetColors[index])
+        schedulePreviewIcon(foreground: ColorSwatch.presetColors[index])
     }
 
     func backgroundColorHoverStarted(index: Int) {
-        showPreviewIcon(background: ColorSwatch.presetColors[index])
+        schedulePreviewIcon(background: ColorSwatch.presetColors[index])
     }
 
     func separatorColorHoverStarted(index: Int) {
-        showPreviewIcon(separatorColor: ColorSwatch.presetColors[index])
+        schedulePreviewIcon(separatorColor: ColorSwatch.presetColors[index])
     }
 
     func symbolHoverStarted(_ symbol: String, foreground: NSColor?, background: NSColor?, skinTone: SkinTone?) {
-        showPreviewIcon(symbol: symbol, foreground: foreground, background: background, skinTone: skinTone)
+        schedulePreviewIcon(symbol: symbol, foreground: foreground, background: background, skinTone: skinTone)
     }
 
     func styleHoverStarted(_ style: IconStyle) {
-        showPreviewIcon(style: style, clearSymbol: true)
+        schedulePreviewIcon(style: style, clearSymbol: true)
     }
 
     func hoverEnded() {
@@ -683,6 +731,7 @@ extension AppDelegate: NSMenuDelegate {
     }
 
     func menuDidClose(_: NSMenu) {
+        cancelPendingPreview()
         // Reset preview state in case menu closed while hovering (onHoverEnd may not fire)
         if isPreviewingIcon {
             isPreviewingIcon = false
@@ -704,7 +753,7 @@ extension AppDelegate: NSMenuDelegate {
         ]
 
         if let position = badgePositionTags[item.tag] {
-            showPreviewIcon(badgePosition: position)
+            schedulePreviewIcon(badgePosition: position)
             return
         }
 

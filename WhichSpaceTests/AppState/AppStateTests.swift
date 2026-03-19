@@ -536,10 +536,48 @@ final class AppStateTests: XCTestCase {
         )
         store.showAllSpaces = true
 
-        let slots = sut.statusBarLayout().slots
+        let layout = sut.statusBarLayout()
+        let slots = layout.slots
 
         XCTAssertEqual(slots.map(\.targetSpace), [1, 2, 3])
         XCTAssertEqual(slots.map(\.startX), [0, Layout.statusItemWidth, Layout.statusItemWidth * 2])
+    }
+
+    func testStatusBarLayout_showAllSpaces_usesRenderedWidthsForTransparentIcons() {
+        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        sut.setSpaceState(
+            labels: ["1", "2", "3"],
+            currentSpace: 2,
+            currentLabel: "2",
+            displayID: "Main"
+        )
+        store.showAllSpaces = true
+        store.paddingScale = 0
+
+        let transparentColors = SpaceColors(foreground: .white, background: .clear)
+        for space in 1 ... 3 {
+            SpacePreferences.setIconStyle(.transparent, forSpace: space, store: store)
+            SpacePreferences.setColors(transparentColors, forSpace: space, store: store)
+        }
+
+        let layout = sut.statusBarLayout()
+        let slots = layout.slots
+        let expectedWidths: [Double] = ["1", "2", "3"].map {
+            SpaceIconGenerator.generateIcon(
+                for: $0,
+                darkMode: sut.darkModeEnabled,
+                customColors: transparentColors,
+                style: .transparent,
+                sizeScale: store.sizeScale,
+                paddingScale: store.paddingScale
+            ).size.width
+        }
+        let expectedStartX: [Double] = [0, expectedWidths[0], expectedWidths[0] + expectedWidths[1]]
+
+        XCTAssertEqual(slots.count, expectedWidths.count)
+        XCTAssertEqual(slots.map(\.width), expectedWidths)
+        XCTAssertEqual(slots.map(\.startX), expectedStartX)
+        XCTAssertLessThan(layout.totalWidth, Layout.statusItemWidth * 3)
     }
 
     func testStatusBarLayout_crossDisplayIncludesSeparatorAndSkipsFullscreenTargets() {

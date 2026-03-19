@@ -17,6 +17,12 @@ final class StatusBarRenderer {
         let isFullscreen: Bool
     }
 
+    /// Couples a resolved slot with the rendered icon so layout and drawing stay in sync.
+    private struct RenderedSlotIcon {
+        let slot: ResolvedSlot
+        let icon: NSImage
+    }
+
     /// Captures all state that affects icon rendering so we can detect changes and serve a cached image.
     private struct IconCacheKey: Equatable {
         let allDisplaysSpaceInfo: [DisplaySpaceInfo]
@@ -35,6 +41,7 @@ final class StatusBarRenderer {
         let hideFullscreenApps: Bool
         let isDarkMode: Bool
         let localSpaceNumbers: Bool
+        let paddingScale: Double
         let separatorColorData: Data?
         let showAllDisplays: Bool
         let showAllSpaces: Bool
@@ -156,27 +163,27 @@ final class StatusBarRenderer {
     /// Returns the layout of visible icons in the status bar for the current mode
     func statusBarLayout() -> StatusBarLayout {
         if showAllDisplays {
-            let slotsPerDisplay = resolveCrossDisplaySlots()
-            guard !slotsPerDisplay.isEmpty else {
+            let renderedDisplays = renderedCrossDisplayIcons(darkMode: appState.darkModeEnabled)
+            guard !renderedDisplays.isEmpty else {
                 return .empty
             }
 
             var iconSlots: [StatusBarIconSlot] = []
             var xOffset: Double = 0
 
-            for (displayIndex, displaySlots) in slotsPerDisplay.enumerated() {
+            for (displayIndex, displayIcons) in renderedDisplays.enumerated() {
                 if displayIndex > 0 {
                     xOffset += Layout.displaySeparatorWidth
                 }
-                for slot in displaySlots {
+                for rendered in displayIcons {
                     iconSlots.append(StatusBarIconSlot(
                         startX: xOffset,
-                        width: Layout.statusItemWidth,
-                        label: slot.displayLabel,
-                        targetSpace: slot.isFullscreen ? nil : slot.globalIndex,
-                        spaceID: slot.spaceID
+                        width: rendered.icon.size.width,
+                        label: rendered.slot.displayLabel,
+                        targetSpace: rendered.slot.isFullscreen ? nil : rendered.slot.globalIndex,
+                        spaceID: rendered.slot.spaceID
                     ))
-                    xOffset += Layout.statusItemWidth
+                    xOffset += rendered.icon.size.width
                 }
             }
 
@@ -184,19 +191,22 @@ final class StatusBarRenderer {
         }
 
         if showAllSpaces {
-            let resolved = resolveCurrentDisplaySlots()
-            guard !resolved.isEmpty else {
+            let renderedIcons = renderedCurrentDisplayIcons(darkMode: appState.darkModeEnabled)
+            guard !renderedIcons.isEmpty else {
                 return .empty
             }
 
-            let iconSlots = resolved.enumerated().map { drawIndex, slot in
-                StatusBarIconSlot(
-                    startX: Double(drawIndex) * Layout.statusItemWidth,
-                    width: Layout.statusItemWidth,
-                    label: slot.displayLabel,
-                    targetSpace: slot.isFullscreen ? nil : slot.globalIndex,
-                    spaceID: slot.spaceID
+            var xOffset: Double = 0
+            let iconSlots = renderedIcons.map { rendered in
+                let iconSlot = StatusBarIconSlot(
+                    startX: xOffset,
+                    width: rendered.icon.size.width,
+                    label: rendered.slot.displayLabel,
+                    targetSpace: rendered.slot.isFullscreen ? nil : rendered.slot.globalIndex,
+                    spaceID: rendered.slot.spaceID
                 )
+                xOffset += rendered.icon.size.width
+                return iconSlot
             }
             return StatusBarLayout(slots: iconSlots)
         }
@@ -243,6 +253,7 @@ final class StatusBarRenderer {
             hideFullscreenApps: store.hideFullscreenApps,
             isDarkMode: isDark,
             localSpaceNumbers: store.localSpaceNumbers,
+            paddingScale: store.paddingScale,
             separatorColorData: store.separatorColorData,
             showAllDisplays: store.showAllDisplays,
             showAllSpaces: store.showAllSpaces,
@@ -285,83 +296,109 @@ final class StatusBarRenderer {
         )
     }
 
+    private func renderedCurrentDisplayIcons(darkMode: Bool) -> [RenderedSlotIcon] {
+        resolveCurrentDisplaySlots().map { slot in
+            RenderedSlotIcon(
+                slot: slot,
+                icon: generateSingleIcon(for: slot.localIndex, label: slot.displayLabel, darkMode: darkMode)
+            )
+        }
+    }
+
+    private func renderedCrossDisplayIcons(darkMode: Bool) -> [[RenderedSlotIcon]] {
+        resolveCrossDisplaySlots().map { displaySlots in
+            displaySlots.map { slot in
+                RenderedSlotIcon(
+                    slot: slot,
+                    icon: generateSingleIconForCrossDisplay(
+                        label: slot.displayLabel,
+                        displayID: slot.displayID,
+                        localIndex: slot.localIndex,
+                        darkMode: darkMode
+                    )
+                )
+            }
+        }
+    }
+
     private func generateCombinedIcon(darkMode: Bool) -> NSImage {
-        let resolved = resolveCurrentDisplaySlots()
+        let renderedIcons = renderedCurrentDisplayIcons(darkMode: darkMode)
 
         // If no spaces to show, show just the current space
-        guard !resolved.isEmpty else {
+        guard !renderedIcons.isEmpty else {
             return generateSingleIcon(
                 for: appState.currentSpace, label: appState.currentSpaceLabel, darkMode: darkMode
             )
         }
 
-        let totalWidth = Double(resolved.count) * Layout.statusItemWidth
+        let totalWidth = renderedIcons.reduce(0) { $0 + $1.icon.size.width }
         let imageSize = NSSize(width: totalWidth, height: Layout.statusItemHeight)
         return Self.drawImmediate(size: imageSize) {
-            for (drawIndex, slot) in resolved.enumerated() {
-                let icon = generateSingleIcon(
-                    for: slot.localIndex, label: slot.displayLabel, darkMode: darkMode
-                )
-
-                let xOffset = Double(drawIndex) * Layout.statusItemWidth
+            var xOffset: Double = 0
+            for rendered in renderedIcons {
                 let drawRect = NSRect(
                     x: xOffset,
                     y: 0,
-                    width: Layout.statusItemWidth,
+                    width: rendered.icon.size.width,
                     height: Layout.statusItemHeight
                 )
 
-                let alpha = slot.isActive || !store.dimInactiveSpaces ? 1.0 : 0.35
-                icon.draw(in: drawRect, from: .zero, operation: .sourceOver, fraction: alpha)
+                let alpha = rendered.slot.isActive || !store.dimInactiveSpaces ? 1.0 : 0.35
+                rendered.icon.draw(
+                    in: drawRect,
+                    from: NSRect(origin: .zero, size: rendered.icon.size),
+                    operation: .sourceOver,
+                    fraction: alpha
+                )
+                xOffset += rendered.icon.size.width
             }
         }
     }
 
     private func generateCrossDisplayIcon(darkMode: Bool) -> NSImage {
-        let slotsPerDisplay = resolveCrossDisplaySlots()
+        let renderedDisplays = renderedCrossDisplayIcons(darkMode: darkMode)
 
         // If no spaces to show at all, return single icon
-        guard !slotsPerDisplay.isEmpty else {
+        guard !renderedDisplays.isEmpty else {
             return generateSingleIcon(
                 for: appState.currentSpace, label: appState.currentSpaceLabel, darkMode: darkMode
             )
         }
 
         // Calculate total width: spaces + separators between displays
-        let totalSpaces = slotsPerDisplay.reduce(0) { $0 + $1.count }
-        let separatorCount = max(0, slotsPerDisplay.count - 1)
-        let totalWidth = Double(totalSpaces) * Layout.statusItemWidth +
-            Double(separatorCount) * Layout.displaySeparatorWidth
+        let totalSpacesWidth = renderedDisplays
+            .flatMap(\.self)
+            .reduce(0) { $0 + $1.icon.size.width }
+        let separatorCount = max(0, renderedDisplays.count - 1)
+        let totalWidth = totalSpacesWidth + Double(separatorCount) * Layout.displaySeparatorWidth
 
         let imageSize = NSSize(width: totalWidth, height: Layout.statusItemHeight)
         return Self.drawImmediate(size: imageSize) {
             var xOffset: Double = 0
 
-            for (displayIndex, displaySlots) in slotsPerDisplay.enumerated() {
+            for (displayIndex, displayIcons) in renderedDisplays.enumerated() {
                 if displayIndex > 0 {
                     drawDisplaySeparator(at: xOffset, darkMode: darkMode)
                     xOffset += Layout.displaySeparatorWidth
                 }
 
-                for slot in displaySlots {
-                    let icon = generateSingleIconForCrossDisplay(
-                        label: slot.displayLabel,
-                        displayID: slot.displayID,
-                        localIndex: slot.localIndex,
-                        darkMode: darkMode
-                    )
-
+                for rendered in displayIcons {
                     let drawRect = NSRect(
                         x: xOffset,
                         y: 0,
-                        width: Layout.statusItemWidth,
+                        width: rendered.icon.size.width,
                         height: Layout.statusItemHeight
                     )
 
-                    let alpha = slot.isActive || !store.dimInactiveSpaces ? 1.0 : 0.35
-                    icon.draw(in: drawRect, from: .zero, operation: .sourceOver, fraction: alpha)
+                    let alpha = rendered.slot.isActive || !store.dimInactiveSpaces ? 1.0 : 0.35
+                    rendered.icon.draw(
+                        in: drawRect,
+                        from: NSRect(origin: .zero, size: rendered.icon.size),
+                        operation: .sourceOver,
+                        fraction: alpha
+                    )
 
-                    xOffset += Layout.statusItemWidth
+                    xOffset += rendered.icon.size.width
                 }
             }
         }
@@ -424,7 +461,8 @@ final class StatusBarRenderer {
                 customColors: colors,
                 customFont: font,
                 style: style,
-                sizeScale: store.sizeScale
+                sizeScale: store.sizeScale,
+                paddingScale: store.paddingScale
             )
         }
 
@@ -438,7 +476,8 @@ final class StatusBarRenderer {
                 darkMode: darkMode,
                 customColors: colors,
                 skinTone: skinTone,
-                sizeScale: store.sizeScale
+                sizeScale: store.sizeScale,
+                paddingScale: store.paddingScale
             )
         }
 
@@ -459,7 +498,8 @@ final class StatusBarRenderer {
                 darkMode: darkMode,
                 customColors: colors,
                 skinTone: skinTone,
-                sizeScale: store.sizeScale
+                sizeScale: store.sizeScale,
+                paddingScale: store.paddingScale
             )
         }
 
@@ -470,6 +510,7 @@ final class StatusBarRenderer {
             customFont: font,
             style: style,
             sizeScale: store.sizeScale,
+            paddingScale: store.paddingScale,
             badge: badge
         )
     }

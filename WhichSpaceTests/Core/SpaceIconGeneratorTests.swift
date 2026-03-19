@@ -378,6 +378,127 @@ final class SpaceIconGeneratorTests: IsolatedDefaultsTestCase {
         )
     }
 
+    // MARK: - Padding Scale Tests
+
+    func testPaddingScaleDefaultProducesStandardWidth() {
+        let icon = SpaceIconGenerator.generateIcon(
+            for: "1", darkMode: true, paddingScale: Layout.defaultPaddingScale
+        )
+        XCTAssertEqual(icon.size.width, Layout.statusItemWidth, accuracy: 0.1)
+        XCTAssertEqual(icon.size.height, Layout.statusItemHeight)
+    }
+
+    func testPaddingScaleZeroProducesTighterIcon() {
+        let icon = SpaceIconGenerator.generateIcon(for: "1", darkMode: true, paddingScale: 0)
+        XCTAssertLessThan(icon.size.width, Layout.statusItemWidth)
+        XCTAssertEqual(icon.size.height, Layout.statusItemHeight)
+    }
+
+    func testTransparentStyleZeroPaddingUsesTextTightWidth() {
+        let icon = SpaceIconGenerator.generateIcon(
+            for: "1",
+            darkMode: true,
+            style: .transparent,
+            paddingScale: 0
+        )
+        XCTAssertLessThan(icon.size.width, Layout.baseSquareSize)
+    }
+
+    func testSlimWithClearBackgroundCollapsesToVisibleTextWidth() {
+        let opaqueSlim = SpaceIconGenerator.generateIcon(
+            for: "1",
+            darkMode: true,
+            style: .slim,
+            paddingScale: 0
+        )
+        let clearSlim = SpaceIconGenerator.generateIcon(
+            for: "1",
+            darkMode: true,
+            customColors: SpaceColors(foreground: .white, background: .clear),
+            style: .slim,
+            paddingScale: 0
+        )
+
+        XCTAssertLessThan(clearSlim.size.width, opaqueSlim.size.width)
+    }
+
+    func testSlimPaddingDoesNotChangeVisibleShape() {
+        let colors = SpaceColors(foreground: .black, background: .white)
+        let tight = SpaceIconGenerator.generateIcon(
+            for: "1",
+            darkMode: true,
+            customColors: colors,
+            style: .slim,
+            paddingScale: 0
+        )
+        let standard = SpaceIconGenerator.generateIcon(
+            for: "1",
+            darkMode: true,
+            customColors: colors,
+            style: .slim,
+            paddingScale: Layout.defaultPaddingScale
+        )
+
+        let tightBounds = nonTransparentBounds(of: tight)
+        let standardBounds = nonTransparentBounds(of: standard)
+
+        guard let tightBounds, let standardBounds else {
+            XCTFail("Expected visible slim bounds for both padding settings")
+            return
+        }
+        XCTAssertEqual(tightBounds.width, standardBounds.width, accuracy: 1.0)
+        XCTAssertEqual(tightBounds.height, standardBounds.height, accuracy: 1.0)
+    }
+
+    func testPaddingScaleMaxProducesWiderIcon() {
+        let icon = SpaceIconGenerator.generateIcon(
+            for: "1", darkMode: true, paddingScale: Layout.paddingScaleRange.upperBound
+        )
+        XCTAssertGreaterThan(icon.size.width, Layout.statusItemWidth)
+        XCTAssertEqual(icon.size.height, Layout.statusItemHeight)
+    }
+
+    func testPaddingScaleAffectsSymbolIconWidth() {
+        let tight = SpaceIconGenerator.generateSymbolIcon(
+            symbolName: "star.fill", darkMode: true, paddingScale: 0
+        )
+        let wide = SpaceIconGenerator.generateSymbolIcon(
+            symbolName: "star.fill", darkMode: true, paddingScale: 120
+        )
+        XCTAssertLessThan(tight.size.width, wide.size.width)
+    }
+
+    func testPaddingScaleAffectsEmojiIconWidth() {
+        let tight = SpaceIconGenerator.generateSymbolIcon(
+            symbolName: "😀", darkMode: true, paddingScale: 0
+        )
+        let wide = SpaceIconGenerator.generateSymbolIcon(
+            symbolName: "😀", darkMode: true, paddingScale: 120
+        )
+        XCTAssertLessThan(tight.size.width, wide.size.width)
+    }
+
+    func testAllStylesProduceValidImagesWithCustomPadding() {
+        for style in IconStyle.allCases {
+            let icon = SpaceIconGenerator.generateIcon(
+                for: "1", darkMode: true, style: style, paddingScale: 50
+            )
+            XCTAssertGreaterThan(icon.size.width, 0, "\(style) should have non-zero width at padding 50%")
+            XCTAssertEqual(icon.size.height, Layout.statusItemHeight, "\(style) height should be unchanged")
+            XCTAssertNotNil(icon.tiffRepresentation, "\(style) should produce valid image at padding 50%")
+        }
+    }
+
+    func testPaddingScaleRangeIsValid() {
+        XCTAssertEqual(Layout.paddingScaleRange.lowerBound, 0.0)
+        XCTAssertLessThan(Layout.defaultPaddingScale, Layout.paddingScaleRange.upperBound)
+        XCTAssertEqual(Layout.defaultPaddingScale, 100.0)
+    }
+
+    func testDefaultHorizontalPadding() {
+        XCTAssertEqual(Layout.defaultHorizontalPadding, Layout.statusItemWidth - Layout.baseSquareSize)
+    }
+
     // MARK: - Helpers
 
     private func samplePixelColor(from image: NSImage, at point: CGPoint) -> NSColor? {
@@ -481,5 +602,65 @@ final class SpaceIconGeneratorTests: IsolatedDefaultsTestCase {
         }
 
         return false
+    }
+
+    private func nonTransparentBounds(of image: NSImage, alphaThreshold: Double = 0.05) -> CGRect? {
+        guard let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
+            return nil
+        }
+
+        let width = cgImage.width
+        let height = cgImage.height
+        let bitmapInfo = CGImageAlphaInfo.premultipliedLast.rawValue
+
+        guard let context = CGContext(
+            data: nil,
+            width: width,
+            height: height,
+            bitsPerComponent: 8,
+            bytesPerRow: width * 4,
+            space: CGColorSpaceCreateDeviceRGB(),
+            bitmapInfo: bitmapInfo
+        ) else {
+            return nil
+        }
+
+        context.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
+
+        guard let data = context.data else {
+            return nil
+        }
+
+        let pointer = data.bindMemory(to: UInt8.self, capacity: width * height * 4)
+        let alphaCutoff = UInt8(alphaThreshold * 255)
+        var minX = width
+        var maxX = -1
+        var minY = height
+        var maxY = -1
+
+        for py in 0 ..< height {
+            for px in 0 ..< width {
+                let offset = (py * width + px) * 4
+                let alpha = pointer[offset + 3]
+                if alpha <= alphaCutoff {
+                    continue
+                }
+                minX = min(minX, px)
+                maxX = max(maxX, px)
+                minY = min(minY, py)
+                maxY = max(maxY, py)
+            }
+        }
+
+        guard maxX >= minX, maxY >= minY else {
+            return nil
+        }
+
+        return CGRect(
+            x: minX,
+            y: minY,
+            width: maxX - minX + 1,
+            height: maxY - minY + 1
+        )
     }
 }
