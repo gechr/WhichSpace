@@ -40,7 +40,7 @@ enum Layout {
 
     // Padding scale (percentage)
     static let defaultPaddingScale = 100.0
-    static let paddingScaleRange = 0.0 ... 120.0
+    static let paddingScaleRange = 0.0 ... 200.0
     static let defaultHorizontalPadding = statusItemWidth - baseSquareSize // 4.0pt
 
     // Base sizes (at 100% scale)
