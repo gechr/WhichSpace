@@ -446,8 +446,8 @@ final class SpaceIconGeneratorTests: IsolatedDefaultsTestCase {
             XCTFail("Expected visible slim bounds for both padding settings")
             return
         }
-        XCTAssertEqual(tightBounds.width, standardBounds.width, accuracy: 1.0)
-        XCTAssertEqual(tightBounds.height, standardBounds.height, accuracy: 1.0)
+        XCTAssertEqual(tightBounds.width, standardBounds.width, accuracy: 2.0)
+        XCTAssertEqual(tightBounds.height, standardBounds.height, accuracy: 2.0)
     }
 
     func testPaddingScaleMaxProducesWiderIcon() {

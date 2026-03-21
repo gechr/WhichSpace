@@ -20,6 +20,9 @@ protocol MenuActionDelegate: AnyObject {
     func iconStyleSelected(_ style: IconStyle, stylePicker: StylePicker?)
     func badgeCharacterChanged(_ character: String?)
     func badgePositionSelected(_ position: BadgePosition)
+    func labelChanged(_ label: String?)
+    func labelStyleSelected(_ style: IconStyle, stylePicker: StylePicker?)
+    func labelStyleHoverStarted(_ style: IconStyle)
 
     // Preview hover callbacks
     func skinToneHoverStarted(_ tone: SkinTone)
@@ -103,8 +106,53 @@ final class MenuBuilder {
         let currentSymbolIsEmoji = currentSymbol?.containsEmoji ?? false
         let currentSymbolIsSFSymbol = symbolIsActive && !currentSymbolIsEmoji
 
-        // Hide badge menu when symbol/emoji is active (badges only apply to number icons)
+        // Hide badge menu when symbol/emoji is active (badges only apply to number/label icons)
         menu.item(withTag: MenuTag.badgeMenuItem.rawValue)?.isHidden = symbolIsActive
+
+        // Update label input value and label style pickers
+        if let labelItem = Self.findMenuItem(withTag: MenuTag.labelInput.rawValue, in: menu),
+           let labelInput = labelItem.view as? LabelInput
+        {
+            labelInput.currentLabel = SpacePreferences.label(
+                forSpace: appState.currentSpace,
+                display: appState.currentDisplayID,
+                store: store
+            )
+        }
+        let currentLabel = SpacePreferences.label(
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
+        let hasLabel = currentLabel.map { !$0.isEmpty } ?? false
+        let currentLabelStyle = SpacePreferences.labelStyle(
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        ) ?? .square
+        if let labelMenu = menu.item(withTag: MenuTag.labelMenuItem.rawValue)?.submenu {
+            var pastInput = false
+            for item in labelMenu.items {
+                if item.tag == MenuTag.labelInput.rawValue {
+                    pastInput = true
+                    continue
+                }
+                // Hide separators, headers, and style pickers when label is empty (not copy/reset)
+                if pastInput, item.tag != MenuTag.fontMenuItem.rawValue,
+                   item.isSeparatorItem || item.view is StylePicker || !item.isEnabled
+                {
+                    item.isHidden = !hasLabel
+                }
+                if let view = item.view as? StylePicker {
+                    view.isChecked = item.representedObject as? IconStyle == currentLabelStyle
+                    view.customColors = customColors
+                    view.darkMode = appState.darkModeEnabled
+                    view.previewNumber = previewNumber
+                    view.sizeScale = store.sizeScale
+                    view.needsDisplay = true
+                }
+            }
+        }
 
         for item in menu.items {
             // Update icon style views - only show checkmark when not in symbol mode
@@ -256,8 +304,8 @@ final class MenuBuilder {
 
         configureVersionHeader(in: menu)
         configureColorMenuItem(in: menu, target: target, delegate: menuDelegate, actionDelegate: actionDelegate)
-        configureBadgeMenuItem(in: menu, target: target, delegate: menuDelegate, actionDelegate: actionDelegate)
         configureStyleMenuItem(in: menu, target: target, delegate: menuDelegate, actionDelegate: actionDelegate)
+        configureBadgeMenuItem(in: menu, target: target, delegate: menuDelegate, actionDelegate: actionDelegate)
         configureSoundMenuItem(in: menu, target: target, delegate: menuDelegate)
         configureSizeMenuItem(in: menu, delegate: menuDelegate, actionDelegate: actionDelegate)
         configureOptionsMenuItems(in: menu, target: target)
@@ -430,11 +478,11 @@ final class MenuBuilder {
 
         addMenuItem(
             to: menu,
-            title: Localization.actionApplyColorToAll,
-            action: #selector(ActionHandler.applyColorsToAllSpaces),
+            title: Localization.actionCopyColorToAll,
+            action: #selector(ActionHandler.copyColorsToAllSpaces),
             target: target,
             symbolName: "square.on.square",
-            toolTip: Localization.tipApplyColorToAll
+            toolTip: Localization.tipCopyColorToAll
         )
         addMenuItem(
             to: menu,
@@ -537,11 +585,11 @@ final class MenuBuilder {
 
         addMenuItem(
             to: badgeMenu,
-            title: Localization.actionApplyBadgeToAll,
-            action: #selector(ActionHandler.applyBadgeToAllSpaces),
+            title: Localization.actionCopyBadgeToAll,
+            action: #selector(ActionHandler.copyBadgeToAllSpaces),
             target: target,
             symbolName: "square.on.square",
-            toolTip: Localization.tipApplyBadgeToAll
+            toolTip: Localization.tipCopyBadgeToAll
         )
         addMenuItem(
             to: badgeMenu,
@@ -575,6 +623,14 @@ final class MenuBuilder {
         iconMenuItem.submenu = iconMenu
         styleMenu.addItem(iconMenuItem)
 
+        // Label submenu (custom text labels)
+        let labelMenu = createLabelMenu(target: target, delegate: delegate, actionDelegate: actionDelegate)
+        let labelMenuItem = NSMenuItem(title: Localization.menuLabel, action: nil, keyEquivalent: "")
+        labelMenuItem.image = NSImage(systemSymbolName: "character.textbox", accessibilityDescription: nil)
+        labelMenuItem.submenu = labelMenu
+        labelMenuItem.tag = MenuTag.labelMenuItem.rawValue
+        styleMenu.addItem(labelMenuItem)
+
         // Symbol submenu
         let symbolMenu = createItemMenu(type: .symbols, actionDelegate: actionDelegate)
         let symbolMenuItem = NSMenuItem(title: Localization.menuSymbol, action: nil, keyEquivalent: "")
@@ -593,11 +649,11 @@ final class MenuBuilder {
 
         addMenuItem(
             to: styleMenu,
-            title: Localization.actionApplyStyleToAll,
-            action: #selector(ActionHandler.applyStyleToAllSpaces),
+            title: Localization.actionCopyStyleToAll,
+            action: #selector(ActionHandler.copyStyleToAllSpaces),
             target: target,
             symbolName: "square.on.square",
-            toolTip: Localization.tipApplyStyleToAll
+            toolTip: Localization.tipCopyStyleToAll
         )
         addMenuItem(
             to: styleMenu,
@@ -668,6 +724,126 @@ final class MenuBuilder {
         )
 
         return iconMenu
+    }
+
+    private static let labelStyles: [IconStyle] = [.square, .squareOutline, .stroke, .transparent]
+
+    private static func labelStyleTitle(for style: IconStyle) -> String? {
+        switch style {
+        case .square:
+            Localization.labelStyleBox
+        case .squareOutline:
+            Localization.labelStyleBoxOutline
+        default:
+            nil
+        }
+    }
+
+    private func createLabelMenu(
+        target: AnyObject, delegate: NSMenuDelegate?, actionDelegate: MenuActionDelegate
+    ) -> NSMenu {
+        let labelMenu = NSMenu(title: Localization.menuLabel)
+        labelMenu.delegate = delegate
+
+        // Label header
+        let labelHeader = NSMenuItem(title: Localization.menuLabel, action: nil, keyEquivalent: "")
+        labelHeader.isEnabled = false
+        labelHeader.image = NSImage(systemSymbolName: "character.textbox", accessibilityDescription: nil)
+        labelMenu.addItem(labelHeader)
+
+        // Label text input
+        let inputItem = NSMenuItem()
+        let labelInput = LabelInput()
+        labelInput.frame = NSRect(origin: .zero, size: labelInput.intrinsicContentSize)
+        labelInput.currentLabel = SpacePreferences.label(
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
+        labelInput.onLabelChanged = { [weak actionDelegate] label in
+            actionDelegate?.labelChanged(label)
+        }
+        inputItem.view = labelInput
+        inputItem.tag = MenuTag.labelInput.rawValue
+        labelMenu.addItem(inputItem)
+
+        labelMenu.addItem(.separator())
+
+        // Layout header
+        let styleHeader = NSMenuItem(title: Localization.menuStyle, action: nil, keyEquivalent: "")
+        styleHeader.isEnabled = false
+        styleHeader.image = NSImage(systemSymbolName: "photo.artframe", accessibilityDescription: nil)
+        labelMenu.addItem(styleHeader)
+
+        // Style pickers (subset)
+        let currentLabelStyle = SpacePreferences.labelStyle(
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        ) ?? .square
+
+        for style in Self.labelStyles {
+            let item = NSMenuItem()
+            let stylePicker = StylePicker(style: style)
+            stylePicker.frame = NSRect(origin: .zero, size: stylePicker.intrinsicContentSize)
+            stylePicker.titleOverride = Self.labelStyleTitle(for: style)
+            stylePicker.isChecked = style == currentLabelStyle
+            stylePicker.customColors = appState.currentColors
+            stylePicker.darkMode = appState.darkModeEnabled
+            stylePicker.previewNumber = appState.currentSpaceLabel == "?" ? "1" : appState.currentSpaceLabel
+            stylePicker.sizeScale = store.sizeScale
+            stylePicker.onSelected = { [weak stylePicker, weak actionDelegate] in
+                actionDelegate?.labelStyleSelected(style, stylePicker: stylePicker)
+            }
+            stylePicker.onHoverStart = { [weak actionDelegate] hoveredStyle in
+                actionDelegate?.labelStyleHoverStarted(hoveredStyle)
+            }
+            stylePicker.onHoverEnd = { [weak actionDelegate] in
+                actionDelegate?.hoverEnded()
+            }
+            item.view = stylePicker
+            item.representedObject = style
+            labelMenu.addItem(item)
+        }
+
+        let fontSepBefore = NSMenuItem.separator()
+        fontSepBefore.tag = MenuTag.fontMenuItem.rawValue
+        labelMenu.addItem(fontSepBefore)
+
+        // showFontPanel uses responder chain (target: nil) because AppDelegate intercepts
+        // it to configure the font manager before delegating to ActionHandler.
+        addMenuItem(
+            to: labelMenu,
+            title: Localization.actionFont,
+            action: #selector(ActionHandler.showFontPanel),
+            target: nil,
+            tag: .fontMenuItem,
+            symbolName: "textformat",
+            toolTip: Localization.tipFont
+        )
+
+        let fontSepAfter = NSMenuItem.separator()
+        fontSepAfter.tag = MenuTag.fontMenuItem.rawValue
+        labelMenu.addItem(fontSepAfter)
+
+        addMenuItem(
+            to: labelMenu,
+            title: Localization.actionCopyLabelToAll,
+            action: #selector(ActionHandler.copyLabelToAllSpaces),
+            target: target,
+            symbolName: "square.on.square",
+            toolTip: Localization.tipCopyLabelToAll
+        )
+        addMenuItem(
+            to: labelMenu,
+            title: Localization.actionResetLabelToDefault,
+            action: #selector(ActionHandler.resetLabelToDefault),
+            target: target,
+            symbolName: "arrow.uturn.backward",
+            toolTip: Localization.tipResetLabelToDefault
+        )
+
+        return labelMenu
     }
 
     private func createItemMenu(type: ItemPicker.ItemType, actionDelegate: MenuActionDelegate) -> NSMenu {
@@ -901,10 +1077,10 @@ final class MenuBuilder {
         )),
         .separator,
         .item(OptionItem(
-            title: Localization.actionApplyToAll,
-            action: #selector(ActionHandler.applyToAllSpaces),
+            title: Localization.actionCopyToAll,
+            action: #selector(ActionHandler.copyToAllSpaces),
             symbolName: "square.on.square",
-            toolTip: Localization.tipApplyToAll
+            toolTip: Localization.tipCopyToAll
         )),
         .item(OptionItem(
             title: Localization.actionResetSpaceToDefault,
@@ -1073,5 +1249,20 @@ final class MenuBuilder {
         spacer.isEnabled = false
         spacer.view = NSView(frame: NSRect(x: 0, y: 0, width: 1, height: 5))
         menu.addItem(spacer)
+    }
+
+    // MARK: - Helpers
+
+    /// Recursively searches for a menu item with the given tag across submenus.
+    static func findMenuItem(withTag tag: Int, in menu: NSMenu) -> NSMenuItem? {
+        for item in menu.items {
+            if item.tag == tag {
+                return item
+            }
+            if let submenu = item.submenu, let found = findMenuItem(withTag: tag, in: submenu) {
+                return found
+            }
+        }
+        return nil
     }
 }

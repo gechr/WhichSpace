@@ -24,10 +24,20 @@ final class CurrentSpaceNumberCommand: NSScriptCommand {
 
 /// Command handler for AppleScript "current space label" command.
 /// Usage: `tell application "WhichSpace" to get current space label`
+/// Returns the custom label if one is set, otherwise the default space label.
 final class CurrentSpaceLabelCommand: NSScriptCommand {
     override func performDefaultImplementation() -> Any? {
-        runScriptQueryOnMain {
-            AppEnvironment.shared.appState.currentSpaceLabel
+        runScriptQueryOnMain { () -> String in
+            let appState = AppEnvironment.shared.appState
+            let store = AppEnvironment.shared.store
+            if let customLabel = SpacePreferences.label(
+                forSpace: appState.currentSpace,
+                display: appState.currentDisplayID,
+                store: store
+            ), !customLabel.isEmpty {
+                return customLabel
+            }
+            return appState.currentSpaceLabel
         }
     }
 }
@@ -40,9 +50,18 @@ extension NSApplication {
         AppEnvironment.shared.appState.currentSpace
     }
 
-    /// Returns the current space label (e.g. "1", "2", "F" for fullscreen).
+    /// Returns the current space label (custom label if set, otherwise "1", "2", "F" for fullscreen).
     /// Usage: `tell application "WhichSpace" to get current space label`
     @MainActor @objc var currentSpaceLabel: String {
-        AppEnvironment.shared.appState.currentSpaceLabel
+        let appState = AppEnvironment.shared.appState
+        let store = AppEnvironment.shared.store
+        if let customLabel = SpacePreferences.label(
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        ), !customLabel.isEmpty {
+            return customLabel
+        }
+        return appState.currentSpaceLabel
     }
 }

@@ -471,6 +471,7 @@ final class AppState {
     /// Sets preview overrides and returns the full status bar icon with previewed changes
     func generatePreviewIcon(
         overrideStyle: IconStyle? = nil,
+        overrideLabelStyle: IconStyle? = nil,
         overrideSymbol: String? = nil,
         overrideForeground: NSColor? = nil,
         overrideBackground: NSColor? = nil,
@@ -481,6 +482,7 @@ final class AppState {
     ) -> NSImage {
         renderer.generatePreviewIcon(
             overrideStyle: overrideStyle,
+            overrideLabelStyle: overrideLabelStyle,
             overrideSymbol: overrideSymbol,
             overrideForeground: overrideForeground,
             overrideBackground: overrideBackground,

@@ -11,6 +11,7 @@ Have you ever forgotten _which space_ is currently active on macOS and wanted a 
 - **Click-to-Switch** - Jump to any Space directly from the menu bar
 - **Colors** - Set foreground and background colors per Space
 - **Icons** - Choose from multiple icon styles (square, circle, triangle, and more)
+- **Labels** - Replace Space numbers with custom text labels
 - **Symbols** - Use native macOS symbols instead of numbers
 - **Emojis** - Use emojis to get even more creative
 - **Badges** - Add a small character of your choice next to the Space number
@@ -96,6 +97,18 @@ brew install --cask gechr/tap/whichspace
 #### Use custom symbols instead of numbers for a more personalised look
 
 <img src="Screenshots/SymbolsMenu.png" width="60%">
+
+### Badges
+
+#### Add a small character next to the Space number
+
+<img src="Screenshots/BadgesMenu.png" width="60%">
+
+### Labels
+
+#### Replace Space numbers with custom text labels
+
+<img src="Screenshots/LabelsMenu.png" width="60%">
 
 ### Size
 

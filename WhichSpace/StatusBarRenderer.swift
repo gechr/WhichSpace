@@ -35,6 +35,8 @@ final class StatusBarRenderer {
         let displaySpaceColors: [String: [Int: SpaceColors]]
         let displaySpaceFonts: [String: [Int: SpaceFont]]
         let displaySpaceIconStyles: [String: [Int: IconStyle]]
+        let displaySpaceLabels: [String: [Int: String]]
+        let displaySpaceLabelStyles: [String: [Int: IconStyle]]
         let displaySpaceSkinTones: [String: [Int: SkinTone]]
         let displaySpaceSymbols: [String: [Int: String]]
         let hideEmptySpaces: Bool
@@ -50,6 +52,8 @@ final class StatusBarRenderer {
         let spaceColors: [Int: SpaceColors]
         let spaceFonts: [Int: SpaceFont]
         let spaceIconStyles: [Int: IconStyle]
+        let spaceLabels: [Int: String]
+        let spaceLabelStyles: [Int: IconStyle]
         let spaceSkinTones: [Int: SkinTone]
         let spaceSymbols: [Int: String]
         let spacesWithWindows: Set<Int>
@@ -84,6 +88,7 @@ final class StatusBarRenderer {
         var background: NSColor?
         var clearSymbol = false
         var foreground: NSColor?
+        var labelStyle: IconStyle?
         var separatorColor: NSColor?
         var skinTone: SkinTone?
         var style: IconStyle?
@@ -124,6 +129,7 @@ final class StatusBarRenderer {
     /// Sets preview overrides and returns the full status bar icon with previewed changes
     func generatePreviewIcon(
         overrideStyle: IconStyle? = nil,
+        overrideLabelStyle: IconStyle? = nil,
         overrideSymbol: String? = nil,
         overrideForeground: NSColor? = nil,
         overrideBackground: NSColor? = nil,
@@ -150,6 +156,7 @@ final class StatusBarRenderer {
             background: overrideBackground,
             clearSymbol: clearSymbol,
             foreground: overrideForeground,
+            labelStyle: overrideLabelStyle,
             separatorColor: overrideSeparatorColor,
             skinTone: skinTone,
             style: overrideStyle,
@@ -247,6 +254,8 @@ final class StatusBarRenderer {
             displaySpaceColors: store.displaySpaceColors,
             displaySpaceFonts: store.displaySpaceFonts,
             displaySpaceIconStyles: store.displaySpaceIconStyles,
+            displaySpaceLabels: store.displaySpaceLabels,
+            displaySpaceLabelStyles: store.displaySpaceLabelStyles,
             displaySpaceSkinTones: store.displaySpaceSkinTones,
             displaySpaceSymbols: store.displaySpaceSymbols,
             hideEmptySpaces: store.hideEmptySpaces,
@@ -262,6 +271,8 @@ final class StatusBarRenderer {
             spaceColors: store.spaceColors,
             spaceFonts: store.spaceFonts,
             spaceIconStyles: store.spaceIconStyles,
+            spaceLabels: store.spaceLabels,
+            spaceLabelStyles: store.spaceLabelStyles,
             spaceSkinTones: store.spaceSkinTones,
             spaceSymbols: store.spaceSymbols,
             spacesWithWindows: cachedSpacesWithWindows,
@@ -280,16 +291,22 @@ final class StatusBarRenderer {
             return generateCombinedIcon(darkMode: isDark)
         }
 
-        return generateSingleIcon(for: appState.currentSpace, label: appState.currentSpaceLabel, darkMode: isDark)
+        let labels = fetchLabels(displayID: appState.currentDisplayID ?? "")
+        let defaultLabel = appState.currentSpaceLabel
+        let label = labels[appState.currentSpace].flatMap { $0.isEmpty ? nil : $0 } ?? defaultLabel
+        return generateSingleIcon(for: appState.currentSpace, label: label, labels: labels, darkMode: isDark)
     }
 
     // MARK: - Icon Generation
 
-    private func generateSingleIcon(for space: Int, label: String, darkMode: Bool) -> NSImage {
+    private func generateSingleIcon(
+        for space: Int, label: String, labels: [Int: String], darkMode: Bool
+    ) -> NSImage {
         let isCurrentSpace = space == appState.currentSpace
         return generateIcon(
             forSpace: space,
             label: label,
+            labels: labels,
             displayID: appState.currentDisplayID,
             applyPreview: isCurrentSpace,
             darkMode: darkMode
@@ -297,21 +314,26 @@ final class StatusBarRenderer {
     }
 
     private func renderedCurrentDisplayIcons(darkMode: Bool) -> [RenderedSlotIcon] {
-        resolveCurrentDisplaySlots().map { slot in
+        let labels = fetchLabels(displayID: appState.currentDisplayID ?? "")
+        return resolveCurrentDisplaySlots().map { slot in
             RenderedSlotIcon(
                 slot: slot,
-                icon: generateSingleIcon(for: slot.localIndex, label: slot.displayLabel, darkMode: darkMode)
+                icon: generateSingleIcon(
+                    for: slot.localIndex, label: slot.displayLabel, labels: labels, darkMode: darkMode
+                )
             )
         }
     }
 
     private func renderedCrossDisplayIcons(darkMode: Bool) -> [[RenderedSlotIcon]] {
         resolveCrossDisplaySlots().map { displaySlots in
-            displaySlots.map { slot in
+            let labels = displaySlots.first.map { fetchLabels(displayID: $0.displayID) } ?? [:]
+            return displaySlots.map { slot in
                 RenderedSlotIcon(
                     slot: slot,
                     icon: generateSingleIconForCrossDisplay(
                         label: slot.displayLabel,
+                        labels: labels,
                         displayID: slot.displayID,
                         localIndex: slot.localIndex,
                         darkMode: darkMode
@@ -326,8 +348,11 @@ final class StatusBarRenderer {
 
         // If no spaces to show, show just the current space
         guard !renderedIcons.isEmpty else {
+            let labels = fetchLabels(displayID: appState.currentDisplayID ?? "")
+            let label = labels[appState.currentSpace].flatMap { $0.isEmpty ? nil : $0 }
+                ?? appState.currentSpaceLabel
             return generateSingleIcon(
-                for: appState.currentSpace, label: appState.currentSpaceLabel, darkMode: darkMode
+                for: appState.currentSpace, label: label, labels: labels, darkMode: darkMode
             )
         }
 
@@ -360,8 +385,11 @@ final class StatusBarRenderer {
 
         // If no spaces to show at all, return single icon
         guard !renderedDisplays.isEmpty else {
+            let labels = fetchLabels(displayID: appState.currentDisplayID ?? "")
+            let label = labels[appState.currentSpace].flatMap { $0.isEmpty ? nil : $0 }
+                ?? appState.currentSpaceLabel
             return generateSingleIcon(
-                for: appState.currentSpace, label: appState.currentSpaceLabel, darkMode: darkMode
+                for: appState.currentSpace, label: label, labels: labels, darkMode: darkMode
             )
         }
 
@@ -407,6 +435,7 @@ final class StatusBarRenderer {
     /// Generates a single icon for cross-display mode, looking up preferences by display and local index
     private func generateSingleIconForCrossDisplay(
         label: String,
+        labels: [Int: String],
         displayID: String,
         localIndex: Int,
         darkMode: Bool
@@ -419,6 +448,7 @@ final class StatusBarRenderer {
         return generateIcon(
             forSpace: localIndex,
             label: label,
+            labels: labels,
             displayID: displayID,
             applyPreview: shouldApplyPreview,
             darkMode: darkMode
@@ -429,27 +459,57 @@ final class StatusBarRenderer {
     private func generateIcon(
         forSpace space: Int,
         label: String,
+        labels: [Int: String],
         displayID: String?,
         applyPreview: Bool,
         darkMode: Bool
     ) -> NSImage {
-        var colors = SpacePreferences.colors(forSpace: space, display: displayID, store: store)
-        var style = SpacePreferences.iconStyle(forSpace: space, display: displayID, store: store) ?? .square
-        let font = SpacePreferences.font(forSpace: space, display: displayID, store: store)?.font
+        // During style preview, skip all preference reads for speed
+        let isStylePreview = applyPreview && preview?.style != nil
+        let isLabelStylePreview = applyPreview && preview?.labelStyle != nil
+        var colors: SpaceColors?
+        var style: IconStyle
+        let font: NSFont?
+        if isStylePreview {
+            colors = SpacePreferences.colors(forSpace: space, display: displayID, store: store)
+            style = preview!.style!
+            font = SpacePreferences.font(forSpace: space, display: displayID, store: store)?.font
+        } else if isLabelStylePreview {
+            colors = SpacePreferences.colors(forSpace: space, display: displayID, store: store)
+            let customLabel = labels[space].flatMap { $0.isEmpty ? nil : $0 }
+            style = Self.renderStyle(for: preview!.labelStyle!, labelLength: customLabel?.count ?? 1)
+            let userFont = SpacePreferences.font(forSpace: space, display: displayID, store: store)?.font
+            font = (customLabel?.count ?? 0) > 1 && userFont == nil
+                ? NSFont.boldSystemFont(ofSize: Layout.baseFontSizeSmall)
+                : userFont
+        } else {
+            colors = SpacePreferences.colors(forSpace: space, display: displayID, store: store)
+            let customLabel = labels[space].flatMap { $0.isEmpty ? nil : $0 }
+            if let customLabel {
+                let labelStyle = SpacePreferences.labelStyle(
+                    forSpace: space, display: displayID, store: store
+                ) ?? .square
+                style = Self.renderStyle(for: labelStyle, labelLength: customLabel.count)
+                let userFont = SpacePreferences.font(forSpace: space, display: displayID, store: store)?.font
+                font = customLabel.count > 1 && userFont == nil
+                    ? NSFont.boldSystemFont(ofSize: Layout.baseFontSizeSmall)
+                    : userFont
+            } else {
+                style = SpacePreferences.iconStyle(forSpace: space, display: displayID, store: store) ?? .square
+                font = SpacePreferences.font(forSpace: space, display: displayID, store: store)?.font
+            }
 
-        // Apply preview overrides
-        if applyPreview, let preview {
-            if let previewStyle = preview.style {
-                style = previewStyle
-            }
-            let defaults = IconColors.filledColors(darkMode: darkMode)
-            if let fg = preview.foreground {
-                let bg = colors?.background ?? defaults.background
-                colors = SpaceColors(foreground: fg, background: bg)
-            }
-            if let bg = preview.background {
-                let fg = colors?.foreground ?? defaults.foreground
-                colors = SpaceColors(foreground: fg, background: bg)
+            // Apply non-style preview overrides (color)
+            if applyPreview, let preview {
+                let defaults = IconColors.filledColors(darkMode: darkMode)
+                if let fg = preview.foreground {
+                    let bg = colors?.background ?? defaults.background
+                    colors = SpaceColors(foreground: fg, background: bg)
+                }
+                if let bg = preview.background {
+                    let fg = colors?.foreground ?? defaults.foreground
+                    colors = SpaceColors(foreground: fg, background: bg)
+                }
             }
         }
 
@@ -481,14 +541,18 @@ final class StatusBarRenderer {
             )
         }
 
-        // Skip saved symbol if previewing a number style (previewClearSymbol)
-        let symbol = (applyPreview && (preview?.clearSymbol ?? false))
+        // Skip all pref reads during style preview
+        let skipSymbolAndBadge = isStylePreview || isLabelStylePreview
+        let symbol: String? = skipSymbolAndBadge
             ? nil
-            : SpacePreferences.symbol(forSpace: space, display: displayID, store: store)
+            : ((applyPreview && (preview?.clearSymbol ?? false))
+                ? nil
+                : SpacePreferences.symbol(forSpace: space, display: displayID, store: store))
 
-        // Look up badge (only applied to number icons, not symbols)
-        let badge = (applyPreview ? preview?.badge : nil)
-            ?? SpacePreferences.badge(forSpace: space, display: displayID, store: store)
+        let badge: SpaceBadge? = skipSymbolAndBadge
+            ? nil
+            : ((applyPreview ? preview?.badge : nil)
+                ?? SpacePreferences.badge(forSpace: space, display: displayID, store: store))
 
         if let symbol {
             let skinTone = SpacePreferences
@@ -503,8 +567,10 @@ final class StatusBarRenderer {
             )
         }
 
+        // During number style preview, show space number instead of custom label
+        let displayText = isStylePreview ? String(space) : label
         return SpaceIconGenerator.generateIcon(
-            for: label,
+            for: displayText,
             darkMode: darkMode,
             customColors: colors,
             customFont: font,
@@ -633,6 +699,7 @@ final class StatusBarRenderer {
             []
         }
 
+        let labels = fetchLabels(displayID: displayID)
         var slots: [ResolvedSlot] = []
 
         for (arrayIndex, entry) in appState.allSpaceEntries.enumerated() {
@@ -647,7 +714,13 @@ final class StatusBarRenderer {
             }
 
             let globalIndex = Self.globalIndex(entry: entry, globalStartIndex: globalStartIndex)
-            let displayLabel = displayLabel(entry: entry, globalIndex: globalIndex, isFullscreen: isFullscreen)
+            let displayLabel = displayLabel(
+                entry: entry,
+                globalIndex: globalIndex,
+                localIndex: localIndex,
+                labels: labels,
+                isFullscreen: isFullscreen
+            )
 
             slots.append(ResolvedSlot(
                 displayID: displayID,
@@ -675,6 +748,7 @@ final class StatusBarRenderer {
         var slotsPerDisplay: [[ResolvedSlot]] = []
 
         for displayInfo in appState.allDisplaysSpaceInfo {
+            let labels = fetchLabels(displayID: displayInfo.displayID)
             var displaySlots: [ResolvedSlot] = []
 
             for (arrayIndex, entry) in displayInfo.entries.enumerated() {
@@ -690,7 +764,13 @@ final class StatusBarRenderer {
                     continue
                 }
 
-                let displayLabel = displayLabel(entry: entry, globalIndex: globalIndex, isFullscreen: isFullscreen)
+                let displayLabel = displayLabel(
+                    entry: entry,
+                    globalIndex: globalIndex,
+                    localIndex: localIndex,
+                    labels: labels,
+                    isFullscreen: isFullscreen
+                )
 
                 displaySlots.append(ResolvedSlot(
                     displayID: displayInfo.displayID,
@@ -718,7 +798,43 @@ final class StatusBarRenderer {
         return globalStartIndex + max(localRegularIndex - 1, 0)
     }
 
-    private func displayLabel(entry: SpaceEntry, globalIndex: Int, isFullscreen: Bool) -> String {
-        isFullscreen ? entry.label : (store.localSpaceNumbers ? entry.label : String(globalIndex))
+    /// Fetches all custom labels for a display in a single read.
+    private func fetchLabels(displayID: String) -> [Int: String] {
+        if store.uniqueIconsPerDisplay {
+            return store.displaySpaceLabels[displayID] ?? [:]
+        }
+        return store.spaceLabels
+    }
+
+    /// Maps a stored label style to the rendering style used by SpaceIconGenerator.
+    /// Multi-character labels use Slim/SlimOutline for auto-expanding width.
+    private static func renderStyle(for labelStyle: IconStyle, labelLength: Int) -> IconStyle {
+        guard labelLength > 1 else {
+            return labelStyle
+        }
+        return switch labelStyle {
+        case .square:
+            .slim
+        case .squareOutline:
+            .slimOutline
+        default:
+            labelStyle
+        }
+    }
+
+    private func displayLabel(
+        entry: SpaceEntry,
+        globalIndex: Int,
+        localIndex: Int,
+        labels: [Int: String],
+        isFullscreen: Bool
+    ) -> String {
+        if isFullscreen {
+            return entry.label
+        }
+        if let label = labels[localIndex], !label.isEmpty {
+            return label
+        }
+        return store.localSpaceNumbers ? entry.label : String(globalIndex)
     }
 }

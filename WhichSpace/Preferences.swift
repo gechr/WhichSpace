@@ -209,6 +209,12 @@ enum SpacePreferences {
     private static let badges = Accessor<SpaceBadge>(
         shared: \.spaceBadges, perDisplay: \.displaySpaceBadges
     )
+    private static let labels = Accessor<String>(
+        shared: \.spaceLabels, perDisplay: \.displaySpaceLabels
+    )
+    private static let labelStyles = Accessor<IconStyle>(
+        shared: \.spaceLabelStyles, perDisplay: \.displaySpaceLabelStyles
+    )
     private static let skinTones = Accessor<SkinTone>(
         shared: \.spaceSkinTones, perDisplay: \.displaySpaceSkinTones
     )
@@ -265,6 +271,60 @@ enum SpacePreferences {
         store: DefaultsStore = AppEnvironment.shared.store
     ) {
         iconStyles.set(nil, forSpace: spaceNumber, display: display, store: store)
+    }
+
+    // MARK: - Label
+
+    static func label(
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) -> String? {
+        labels.get(forSpace: spaceNumber, display: display, store: store)
+    }
+
+    static func setLabel(
+        _ label: String?,
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) {
+        labels.set(label, forSpace: spaceNumber, display: display, store: store)
+    }
+
+    static func clearLabel(
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) {
+        labels.set(nil, forSpace: spaceNumber, display: display, store: store)
+    }
+
+    // MARK: - Label Style
+
+    static func labelStyle(
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) -> IconStyle? {
+        labelStyles.get(forSpace: spaceNumber, display: display, store: store)
+    }
+
+    static func setLabelStyle(
+        _ style: IconStyle?,
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) {
+        labelStyles.set(style, forSpace: spaceNumber, display: display, store: store)
+    }
+
+    static func clearLabelStyle(
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) {
+        labelStyles.set(nil, forSpace: spaceNumber, display: display, store: store)
     }
 
     // MARK: - Colors
@@ -382,12 +442,16 @@ enum SpacePreferences {
         store.spaceBadges = [:]
         store.spaceColors = [:]
         store.spaceIconStyles = [:]
+        store.spaceLabels = [:]
+        store.spaceLabelStyles = [:]
         store.spaceSymbols = [:]
         store.spaceFonts = [:]
         store.spaceSkinTones = [:]
         store.displaySpaceBadges = [:]
         store.displaySpaceColors = [:]
         store.displaySpaceIconStyles = [:]
+        store.displaySpaceLabels = [:]
+        store.displaySpaceLabelStyles = [:]
         store.displaySpaceSymbols = [:]
         store.displaySpaceFonts = [:]
         store.displaySpaceSkinTones = [:]

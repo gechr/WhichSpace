@@ -85,15 +85,18 @@ struct BackupSpacePreferences: Codable {
     var colors: [String: CodableSpaceColors]
     var fonts: [String: CodableSpaceFont]
     var iconStyles: [String: String]
+    var labels: [String: String]
+    var labelStyles: [String: String]
     var skinTones: [String: Int]
     var symbols: [String: String]
 
     private enum CodingKeys: String, CodingKey {
-        case badges, colors, fonts, iconStyles, skinTones, symbols
+        case badges, colors, fonts, iconStyles, labels, labelStyles, skinTones, symbols
     }
 
     var isEmpty: Bool {
-        badges.isEmpty && colors.isEmpty && fonts.isEmpty && iconStyles.isEmpty && skinTones.isEmpty && symbols.isEmpty
+        badges.isEmpty && colors.isEmpty && fonts.isEmpty && iconStyles.isEmpty
+            && labels.isEmpty && labelStyles.isEmpty && skinTones.isEmpty && symbols.isEmpty
     }
 
     func encode(to encoder: Encoder) throws {
@@ -102,6 +105,8 @@ struct BackupSpacePreferences: Codable {
         if !colors.isEmpty { try container.encode(colors, forKey: .colors) }
         if !fonts.isEmpty { try container.encode(fonts, forKey: .fonts) }
         if !iconStyles.isEmpty { try container.encode(iconStyles, forKey: .iconStyles) }
+        if !labels.isEmpty { try container.encode(labels, forKey: .labels) }
+        if !labelStyles.isEmpty { try container.encode(labelStyles, forKey: .labelStyles) }
         if !skinTones.isEmpty { try container.encode(skinTones, forKey: .skinTones) }
         if !symbols.isEmpty { try container.encode(symbols, forKey: .symbols) }
     }
@@ -112,6 +117,8 @@ struct BackupSpacePreferences: Codable {
         colors = try container.decodeIfPresent([String: CodableSpaceColors].self, forKey: .colors) ?? [:]
         fonts = try container.decodeIfPresent([String: CodableSpaceFont].self, forKey: .fonts) ?? [:]
         iconStyles = try container.decodeIfPresent([String: String].self, forKey: .iconStyles) ?? [:]
+        labels = try container.decodeIfPresent([String: String].self, forKey: .labels) ?? [:]
+        labelStyles = try container.decodeIfPresent([String: String].self, forKey: .labelStyles) ?? [:]
         skinTones = try container.decodeIfPresent([String: Int].self, forKey: .skinTones) ?? [:]
         symbols = try container.decodeIfPresent([String: String].self, forKey: .symbols) ?? [:]
     }
@@ -121,6 +128,8 @@ struct BackupSpacePreferences: Codable {
         colors: [Int: SpaceColors] = [:],
         fonts: [Int: SpaceFont] = [:],
         iconStyles: [Int: IconStyle] = [:],
+        labels: [Int: String] = [:],
+        labelStyles: [Int: IconStyle] = [:],
         skinTones: [Int: SkinTone] = [:],
         symbols: [Int: String] = [:]
     ) {
@@ -134,6 +143,12 @@ struct BackupSpacePreferences: Codable {
             result[String(pair.key)] = CodableSpaceFont(from: pair.value)
         }
         self.iconStyles = iconStyles.reduce(into: [:]) { result, pair in
+            result[String(pair.key)] = pair.value.rawValue
+        }
+        self.labels = labels.reduce(into: [:]) { result, pair in
+            result[String(pair.key)] = pair.value
+        }
+        self.labelStyles = labelStyles.reduce(into: [:]) { result, pair in
             result[String(pair.key)] = pair.value.rawValue
         }
         self.skinTones = skinTones.reduce(into: [:]) { result, pair in
@@ -167,6 +182,14 @@ struct BackupSpacePreferences: Codable {
 
     func toIconStyles() -> [Int: IconStyle] {
         convertDict(iconStyles) { IconStyle(rawValue: $0) }
+    }
+
+    func toLabels() -> [Int: String] {
+        convertDict(labels) { $0 }
+    }
+
+    func toLabelStyles() -> [Int: IconStyle] {
+        convertDict(labelStyles) { IconStyle(rawValue: $0) }
     }
 
     func toSkinTones() -> [Int: SkinTone] {
@@ -324,6 +347,8 @@ enum BackupManager {
             colors: store.spaceColors,
             fonts: store.spaceFonts,
             iconStyles: store.spaceIconStyles,
+            labels: store.spaceLabels,
+            labelStyles: store.spaceLabelStyles,
             skinTones: store.spaceSkinTones,
             symbols: store.spaceSymbols
         )
@@ -334,6 +359,8 @@ enum BackupManager {
         displayIds.formUnion(store.displaySpaceColors.keys)
         displayIds.formUnion(store.displaySpaceFonts.keys)
         displayIds.formUnion(store.displaySpaceIconStyles.keys)
+        displayIds.formUnion(store.displaySpaceLabels.keys)
+        displayIds.formUnion(store.displaySpaceLabelStyles.keys)
         displayIds.formUnion(store.displaySpaceSkinTones.keys)
         displayIds.formUnion(store.displaySpaceSymbols.keys)
 
@@ -343,6 +370,8 @@ enum BackupManager {
                 colors: store.displaySpaceColors[displayId] ?? [:],
                 fonts: store.displaySpaceFonts[displayId] ?? [:],
                 iconStyles: store.displaySpaceIconStyles[displayId] ?? [:],
+                labels: store.displaySpaceLabels[displayId] ?? [:],
+                labelStyles: store.displaySpaceLabelStyles[displayId] ?? [:],
                 skinTones: store.displaySpaceSkinTones[displayId] ?? [:],
                 symbols: store.displaySpaceSymbols[displayId] ?? [:]
             )
@@ -429,6 +458,8 @@ enum BackupManager {
         store.spaceColors = backup.spacePreferences.toSpaceColors()
         store.spaceFonts = backup.spacePreferences.toSpaceFonts()
         store.spaceIconStyles = backup.spacePreferences.toIconStyles()
+        store.spaceLabels = backup.spacePreferences.toLabels()
+        store.spaceLabelStyles = backup.spacePreferences.toLabelStyles()
         store.spaceSkinTones = backup.spacePreferences.toSkinTones()
         store.spaceSymbols = backup.spacePreferences.toSymbols()
 
@@ -437,6 +468,8 @@ enum BackupManager {
         var displayColors = [String: [Int: SpaceColors]]()
         var displayFonts = [String: [Int: SpaceFont]]()
         var displayStyles = [String: [Int: IconStyle]]()
+        var displayLabels = [String: [Int: String]]()
+        var displayLabelStyles = [String: [Int: IconStyle]]()
         var displayTones = [String: [Int: SkinTone]]()
         var displaySymbols = [String: [Int: String]]()
 
@@ -445,6 +478,8 @@ enum BackupManager {
             displayColors[displayId] = prefs.toSpaceColors()
             displayFonts[displayId] = prefs.toSpaceFonts()
             displayStyles[displayId] = prefs.toIconStyles()
+            displayLabels[displayId] = prefs.toLabels()
+            displayLabelStyles[displayId] = prefs.toLabelStyles()
             displayTones[displayId] = prefs.toSkinTones()
             displaySymbols[displayId] = prefs.toSymbols()
         }
@@ -453,6 +488,8 @@ enum BackupManager {
         store.displaySpaceColors = displayColors
         store.displaySpaceFonts = displayFonts
         store.displaySpaceIconStyles = displayStyles
+        store.displaySpaceLabels = displayLabels
+        store.displaySpaceLabelStyles = displayLabelStyles
         store.displaySpaceSkinTones = displayTones
         store.displaySpaceSymbols = displaySymbols
 

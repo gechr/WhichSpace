@@ -17,6 +17,7 @@ final class StylePicker: NSView {
     var onSelected: (() -> Void)?
     var previewNumber = "1"
     var sizeScale = Layout.defaultSizeScale
+    var titleOverride: String?
 
     init(style: IconStyle) {
         self.style = style
@@ -67,7 +68,7 @@ final class StylePicker: NSView {
             .foregroundColor: isHighlighted ? NSColor.white : NSColor.labelColor,
         ]
         let labelPoint = CGPoint(x: 24 + iconSize + 8, y: 3)
-        style.localizedTitle.draw(at: labelPoint, withAttributes: labelAttrs)
+        (titleOverride ?? style.localizedTitle).draw(at: labelPoint, withAttributes: labelAttrs)
     }
 
     override func mouseEntered(with _: NSEvent) {

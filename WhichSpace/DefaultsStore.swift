@@ -40,6 +40,14 @@ enum KeySpecs {
         name: "displaySpaceIconStyles",
         defaultValue: [String: [Int: IconStyle]]()
     )
+    static let displaySpaceLabels = TypedKeySpec(
+        name: "displaySpaceLabels",
+        defaultValue: [String: [Int: String]]()
+    )
+    static let displaySpaceLabelStyles = TypedKeySpec(
+        name: "displaySpaceLabelStyles",
+        defaultValue: [String: [Int: IconStyle]]()
+    )
     static let displaySpaceSkinTones = TypedKeySpec(
         name: "displaySpaceSkinTones",
         defaultValue: [String: [Int: SkinTone]]()
@@ -62,6 +70,8 @@ enum KeySpecs {
     static let spaceColors = TypedKeySpec(name: "spaceColors", defaultValue: [Int: SpaceColors]())
     static let spaceFonts = TypedKeySpec(name: "spaceFonts", defaultValue: [Int: SpaceFont]())
     static let spaceIconStyles = TypedKeySpec(name: "spaceIconStyles", defaultValue: [Int: IconStyle]())
+    static let spaceLabels = TypedKeySpec(name: "spaceLabels", defaultValue: [Int: String]())
+    static let spaceLabelStyles = TypedKeySpec(name: "spaceLabelStyles", defaultValue: [Int: IconStyle]())
     static let spaceSkinTones = TypedKeySpec(name: "spaceSkinTones", defaultValue: [Int: SkinTone]())
     static let spaceSymbols = TypedKeySpec(name: "spaceSymbols", defaultValue: [Int: String]())
     static let uniqueIconsPerDisplay = TypedKeySpec(name: "uniqueIconsPerDisplay", defaultValue: false)
@@ -74,6 +84,8 @@ enum KeySpecs {
         displaySpaceColors.name,
         displaySpaceFonts.name,
         displaySpaceIconStyles.name,
+        displaySpaceLabels.name,
+        displaySpaceLabelStyles.name,
         displaySpaceSkinTones.name,
         displaySpaceSymbols.name,
         hideEmptySpaces.name,
@@ -90,6 +102,8 @@ enum KeySpecs {
         spaceColors.name,
         spaceFonts.name,
         spaceIconStyles.name,
+        spaceLabels.name,
+        spaceLabelStyles.name,
         spaceSkinTones.name,
         spaceSymbols.name,
         uniqueIconsPerDisplay.name,
@@ -128,6 +142,8 @@ final class DefaultsStore {
     private(set) lazy var keyDisplaySpaceColors = KeySpecs.displaySpaceColors.key(suite: suite)
     private(set) lazy var keyDisplaySpaceFonts = KeySpecs.displaySpaceFonts.key(suite: suite)
     private(set) lazy var keyDisplaySpaceIconStyles = KeySpecs.displaySpaceIconStyles.key(suite: suite)
+    private(set) lazy var keyDisplaySpaceLabels = KeySpecs.displaySpaceLabels.key(suite: suite)
+    private(set) lazy var keyDisplaySpaceLabelStyles = KeySpecs.displaySpaceLabelStyles.key(suite: suite)
     private(set) lazy var keyDisplaySpaceSkinTones = KeySpecs.displaySpaceSkinTones.key(suite: suite)
     private(set) lazy var keyDisplaySpaceSymbols = KeySpecs.displaySpaceSymbols.key(suite: suite)
     private(set) lazy var keyHideEmptySpaces = KeySpecs.hideEmptySpaces.key(suite: suite)
@@ -144,6 +160,8 @@ final class DefaultsStore {
     private(set) lazy var keySpaceColors = KeySpecs.spaceColors.key(suite: suite)
     private(set) lazy var keySpaceFonts = KeySpecs.spaceFonts.key(suite: suite)
     private(set) lazy var keySpaceIconStyles = KeySpecs.spaceIconStyles.key(suite: suite)
+    private(set) lazy var keySpaceLabels = KeySpecs.spaceLabels.key(suite: suite)
+    private(set) lazy var keySpaceLabelStyles = KeySpecs.spaceLabelStyles.key(suite: suite)
     private(set) lazy var keySpaceSkinTones = KeySpecs.spaceSkinTones.key(suite: suite)
     private(set) lazy var keySpaceSymbols = KeySpecs.spaceSymbols.key(suite: suite)
     private(set) lazy var keyUniqueIconsPerDisplay = KeySpecs.uniqueIconsPerDisplay.key(suite: suite)
@@ -182,6 +200,16 @@ final class DefaultsStore {
     var displaySpaceIconStyles: [String: [Int: IconStyle]] {
         get { Defaults[keyDisplaySpaceIconStyles] }
         set { Defaults[keyDisplaySpaceIconStyles] = newValue }
+    }
+
+    var displaySpaceLabels: [String: [Int: String]] {
+        get { Defaults[keyDisplaySpaceLabels] }
+        set { Defaults[keyDisplaySpaceLabels] = newValue }
+    }
+
+    var displaySpaceLabelStyles: [String: [Int: IconStyle]] {
+        get { Defaults[keyDisplaySpaceLabelStyles] }
+        set { Defaults[keyDisplaySpaceLabelStyles] = newValue }
     }
 
     var displaySpaceSkinTones: [String: [Int: SkinTone]] {
@@ -291,6 +319,16 @@ final class DefaultsStore {
         set { Defaults[keySpaceIconStyles] = newValue }
     }
 
+    var spaceLabels: [Int: String] {
+        get { Defaults[keySpaceLabels] }
+        set { Defaults[keySpaceLabels] = newValue }
+    }
+
+    var spaceLabelStyles: [Int: IconStyle] {
+        get { Defaults[keySpaceLabelStyles] }
+        set { Defaults[keySpaceLabelStyles] = newValue }
+    }
+
     var spaceSkinTones: [Int: SkinTone] {
         get { Defaults[keySpaceSkinTones] }
         set { Defaults[keySpaceSkinTones] = newValue }
@@ -317,6 +355,8 @@ final class DefaultsStore {
             keyDisplaySpaceColors,
             keyDisplaySpaceFonts,
             keyDisplaySpaceIconStyles,
+            keyDisplaySpaceLabels,
+            keyDisplaySpaceLabelStyles,
             keyDisplaySpaceSkinTones,
             keyDisplaySpaceSymbols,
             keyHideEmptySpaces,
@@ -333,6 +373,8 @@ final class DefaultsStore {
             keySpaceColors,
             keySpaceFonts,
             keySpaceIconStyles,
+            keySpaceLabels,
+            keySpaceLabelStyles,
             keySpaceSkinTones,
             keySpaceSymbols,
             keyUniqueIconsPerDisplay

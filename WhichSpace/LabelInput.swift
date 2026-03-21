@@ -1,17 +1,18 @@
 import Cocoa
 
-// MARK: - Badge Input View
+// MARK: - Label Input View
 
-final class BadgeInput: NSView {
+final class LabelInput: NSView {
     private let textField: NSTextField
 
     private let padding = 28.0
-    private let fieldWidth = 40.0
+    private let fieldWidth = 80.0
     private let fieldHeight = 22.0
 
-    var onCharacterChanged: ((String?) -> Void)?
+    let maxLength = 6
+    var onLabelChanged: ((String?) -> Void)?
 
-    var currentCharacter: String? {
+    var currentLabel: String? {
         get {
             let value = textField.stringValue
             return value.isEmpty ? nil : value
@@ -38,7 +39,7 @@ final class BadgeInput: NSView {
 
     private func setupTextField() {
         textField.font = NSFont.boldSystemFont(ofSize: Layout.menuFontSize)
-        textField.alignment = .center
+        textField.alignment = .left
         textField.placeholderString = ""
         textField.delegate = self
         textField.maximumNumberOfLines = 1
@@ -72,21 +73,18 @@ final class BadgeInput: NSView {
 
 // MARK: - NSTextFieldDelegate
 
-extension BadgeInput: NSTextFieldDelegate {
+extension LabelInput: NSTextFieldDelegate {
     func controlTextDidChange(_ obj: Notification) {
         guard let field = obj.object as? NSTextField else {
             return
         }
 
-        // Limit to a single character (including multi-scalar emoji)
         var text = field.stringValue
-        if !text.isEmpty {
-            text = String(text.prefix(1))
-            if field.stringValue != text {
-                field.stringValue = text
-            }
+        if text.count > maxLength {
+            text = String(text.prefix(maxLength))
+            field.stringValue = text
         }
 
-        onCharacterChanged?(text.isEmpty ? nil : text)
+        onLabelChanged?(text.isEmpty ? nil : text)
     }
 }

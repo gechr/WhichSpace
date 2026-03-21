@@ -237,12 +237,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             store.keySpaceIconStyles,
             store.keySpaceSymbols,
             store.keySpaceFonts,
+            store.keySpaceLabels,
+            store.keySpaceLabelStyles,
             store.keySpaceSkinTones,
             store.keyDisplaySpaceBadges,
             store.keyDisplaySpaceColors,
             store.keyDisplaySpaceIconStyles,
             store.keyDisplaySpaceSymbols,
             store.keyDisplaySpaceFonts,
+            store.keyDisplaySpaceLabels,
+            store.keyDisplaySpaceLabelStyles,
             store.keyDisplaySpaceSkinTones,
         ]
 
@@ -449,6 +453,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
     private func showPreviewIcon(
         style: IconStyle? = nil,
+        labelStyle: IconStyle? = nil,
         symbol: String? = nil,
         foreground: NSColor? = nil,
         background: NSColor? = nil,
@@ -463,6 +468,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         isPreviewingIcon = true
         let previewIcon = appState.generatePreviewIcon(
             overrideStyle: style,
+            overrideLabelStyle: labelStyle,
             overrideSymbol: symbol,
             overrideForeground: foreground,
             overrideBackground: background,
@@ -628,6 +634,40 @@ extension AppDelegate: MenuActionDelegate {
 
     func badgeCharacterChanged(_ character: String?) {
         actionHandler.setBadgeCharacter(character)
+    }
+
+    func labelChanged(_ label: String?) {
+        isPreviewingIcon = false
+        actionHandler.setLabel(label)
+        updateLabelMenuVisibility(hasLabel: label != nil && !label!.isEmpty)
+    }
+
+    private func updateLabelMenuVisibility(hasLabel: Bool) {
+        guard let labelMenu = MenuBuilder.findMenuItem(withTag: MenuTag.labelMenuItem.rawValue, in: statusMenu)?.submenu
+        else {
+            return
+        }
+        var pastInput = false
+        for item in labelMenu.items {
+            if item.tag == MenuTag.labelInput.rawValue {
+                pastInput = true
+                continue
+            }
+            // Only hide separators, disabled headers, and style pickers - not copy/reset actions
+            if pastInput, item.tag != MenuTag.fontMenuItem.rawValue,
+               item.isSeparatorItem || item.view is StylePicker || !item.isEnabled
+            {
+                item.isHidden = !hasLabel
+            }
+        }
+    }
+
+    func labelStyleSelected(_ style: IconStyle, stylePicker: StylePicker?) {
+        actionHandler.selectLabelStyle(style, stylePicker: stylePicker)
+    }
+
+    func labelStyleHoverStarted(_ style: IconStyle) {
+        showPreviewIcon(labelStyle: style)
     }
 
     func badgePositionSelected(_ position: BadgePosition) {

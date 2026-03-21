@@ -447,15 +447,15 @@ final class AppDelegateActionsTests: XCTestCase {
         XCTAssertTrue(store.hideSingleSpace)
     }
 
-    // MARK: - applyToAllSpaces. Tests
+    // MARK: - copyToAllSpaces. Tests
 
-    func testApplyAllToAllSpaces_whenConfirmed_appliesStyleToAllSpaces() {
+    func testCopyAllToAllSpaces_whenConfirmed_copiesStyleToAllSpaces() {
         let testStyle = IconStyle.circle
         setupSpaceWithPreferences(space: appState.currentSpace, style: testStyle)
         confirmStub.shouldConfirm = true
         let initialCount = sut.statusBarIconUpdateCount
 
-        sut.actionHandler.applyToAllSpaces()
+        sut.actionHandler.copyToAllSpaces()
 
         for space in 1 ... 4 {
             XCTAssertEqual(
@@ -468,12 +468,12 @@ final class AppDelegateActionsTests: XCTestCase {
         XCTAssertEqual(confirmStub.alertsShown.count, 1, "One alert should be shown")
     }
 
-    func testApplyAllToAllSpaces_whenConfirmed_appliesColorsToAllSpaces() {
+    func testCopyAllToAllSpaces_whenConfirmed_copiesColorsToAllSpaces() {
         let testColors = SpaceColors(foreground: .systemRed, background: .systemBlue)
         setupSpaceWithPreferences(space: appState.currentSpace, colors: testColors)
         confirmStub.shouldConfirm = true
 
-        sut.actionHandler.applyToAllSpaces()
+        sut.actionHandler.copyToAllSpaces()
 
         for space in 1 ... 4 {
             let colors = SpacePreferences.colors(forSpace: space, store: store)
@@ -483,12 +483,12 @@ final class AppDelegateActionsTests: XCTestCase {
         }
     }
 
-    func testApplyAllToAllSpaces_whenConfirmed_appliesSymbolToAllSpaces() {
+    func testCopyAllToAllSpaces_whenConfirmed_copiesSymbolToAllSpaces() {
         let testSymbol = "star.fill"
         setupSpaceWithPreferences(space: appState.currentSpace, symbol: testSymbol)
         confirmStub.shouldConfirm = true
 
-        sut.actionHandler.applyToAllSpaces()
+        sut.actionHandler.copyToAllSpaces()
 
         for space in 1 ... 4 {
             XCTAssertEqual(
@@ -499,12 +499,12 @@ final class AppDelegateActionsTests: XCTestCase {
         }
     }
 
-    func testApplyAllToAllSpaces_whenConfirmed_appliesFontToAllSpaces() {
+    func testCopyAllToAllSpaces_whenConfirmed_copiesFontToAllSpaces() {
         let testFont = NSFont.boldSystemFont(ofSize: 15)
         setupSpaceWithPreferences(space: appState.currentSpace, font: testFont)
         confirmStub.shouldConfirm = true
 
-        sut.actionHandler.applyToAllSpaces()
+        sut.actionHandler.copyToAllSpaces()
 
         for space in 1 ... 4 {
             let font = SpacePreferences.font(forSpace: space, store: store)?.font
@@ -513,13 +513,13 @@ final class AppDelegateActionsTests: XCTestCase {
         }
     }
 
-    func testApplyAllToAllSpaces_whenDeclined_doesNotApply() {
+    func testCopyAllToAllSpaces_whenDeclined_doesNotCopy() {
         let testStyle = IconStyle.hexagon
         setupSpaceWithPreferences(space: appState.currentSpace, style: testStyle)
         confirmStub.shouldConfirm = false
         let initialCount = sut.statusBarIconUpdateCount
 
-        sut.actionHandler.applyToAllSpaces()
+        sut.actionHandler.copyToAllSpaces()
 
         // Other spaces should not have the style
         XCTAssertNil(SpacePreferences.iconStyle(forSpace: 1, store: store))
@@ -528,7 +528,7 @@ final class AppDelegateActionsTests: XCTestCase {
         XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount, "updateStatusBarIcon should not be called")
     }
 
-    func testApplyAllToAllSpaces_clearsSymbolWhenNil() {
+    func testCopyAllToAllSpaces_clearsSymbolWhenNil() {
         // Set symbols on other spaces
         for space in 1 ... 4 {
             SpacePreferences.setSymbol("star.fill", forSpace: space, store: store)
@@ -537,7 +537,7 @@ final class AppDelegateActionsTests: XCTestCase {
         SpacePreferences.clearSymbol(forSpace: appState.currentSpace, store: store)
         confirmStub.shouldConfirm = true
 
-        sut.actionHandler.applyToAllSpaces()
+        sut.actionHandler.copyToAllSpaces()
 
         for space in 1 ... 4 {
             XCTAssertNil(
@@ -547,7 +547,7 @@ final class AppDelegateActionsTests: XCTestCase {
         }
     }
 
-    func testApplyAllToAllSpaces_clearsColorsWhenNil() {
+    func testCopyAllToAllSpaces_clearsColorsWhenNil() {
         // Set colors on other spaces
         for space in 1 ... 4 {
             SpacePreferences.setColors(SpaceColors(foreground: .red, background: .blue), forSpace: space, store: store)
@@ -556,7 +556,7 @@ final class AppDelegateActionsTests: XCTestCase {
         SpacePreferences.clearColors(forSpace: appState.currentSpace, store: store)
         confirmStub.shouldConfirm = true
 
-        sut.actionHandler.applyToAllSpaces()
+        sut.actionHandler.copyToAllSpaces()
 
         for space in 1 ... 4 {
             XCTAssertNil(
@@ -566,7 +566,7 @@ final class AppDelegateActionsTests: XCTestCase {
         }
     }
 
-    func testApplyAllToAllSpaces_clearsFontWhenNil() {
+    func testCopyAllToAllSpaces_clearsFontWhenNil() {
         // Set fonts on other spaces
         for space in 1 ... 4 {
             SpacePreferences.setFont(SpaceFont(font: NSFont.systemFont(ofSize: 13)), forSpace: space, store: store)
@@ -575,7 +575,7 @@ final class AppDelegateActionsTests: XCTestCase {
         SpacePreferences.clearFont(forSpace: appState.currentSpace, store: store)
         confirmStub.shouldConfirm = true
 
-        sut.actionHandler.applyToAllSpaces()
+        sut.actionHandler.copyToAllSpaces()
 
         for space in 1 ... 4 {
             XCTAssertNil(
@@ -770,15 +770,15 @@ final class AppDelegateActionsTests: XCTestCase {
         XCTAssertEqual(colors?.background, originalColors.background)
     }
 
-    // MARK: - applyColorsToAllSpaces Tests
+    // MARK: - copyColorsToAllSpaces Tests
 
-    func testApplyColorsToAllSpaces_whenConfirmed_appliesColors() {
+    func testCopyColorsToAllSpaces_whenConfirmed_copiesColors() {
         let testColors = SpaceColors(foreground: .systemOrange, background: .systemTeal)
         setupSpaceWithPreferences(space: appState.currentSpace, colors: testColors)
         confirmStub.shouldConfirm = true
         let initialCount = sut.statusBarIconUpdateCount
 
-        sut.actionHandler.applyColorsToAllSpaces()
+        sut.actionHandler.copyColorsToAllSpaces()
 
         for space in 1 ... 4 {
             let colors = SpacePreferences.colors(forSpace: space, store: store)
@@ -788,19 +788,19 @@ final class AppDelegateActionsTests: XCTestCase {
         XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 1, "updateStatusBarIcon should be called")
     }
 
-    func testApplyColorsToAllSpaces_whenDeclined_doesNotApply() {
+    func testCopyColorsToAllSpaces_whenDeclined_doesNotCopy() {
         let testColors = SpaceColors(foreground: .systemOrange, background: .systemTeal)
         setupSpaceWithPreferences(space: appState.currentSpace, colors: testColors)
         confirmStub.shouldConfirm = false
 
-        sut.actionHandler.applyColorsToAllSpaces()
+        sut.actionHandler.copyColorsToAllSpaces()
 
         for space in [1, 3, 4] {
             XCTAssertNil(SpacePreferences.colors(forSpace: space, store: store))
         }
     }
 
-    func testApplyColorsToAllSpaces_clearsColorsWhenNil() {
+    func testCopyColorsToAllSpaces_clearsColorsWhenNil() {
         // Set colors on all spaces
         for space in 1 ... 4 {
             SpacePreferences.setColors(SpaceColors(foreground: .red, background: .blue), forSpace: space, store: store)
@@ -809,51 +809,51 @@ final class AppDelegateActionsTests: XCTestCase {
         SpacePreferences.clearColors(forSpace: appState.currentSpace, store: store)
         confirmStub.shouldConfirm = true
 
-        sut.actionHandler.applyColorsToAllSpaces()
+        sut.actionHandler.copyColorsToAllSpaces()
 
         for space in 1 ... 4 {
             XCTAssertNil(SpacePreferences.colors(forSpace: space, store: store))
         }
     }
 
-    func testApplyColorsToAllSpaces_preservesStyleAndSymbol() {
+    func testCopyColorsToAllSpaces_preservesStyleAndSymbol() {
         // Set up different styles and symbols for each space
         for space in 1 ... 4 {
             SpacePreferences.setIconStyle(.circle, forSpace: space, store: store)
             SpacePreferences.setSymbol("star.fill", forSpace: space, store: store)
         }
 
-        // Apply colors to all spaces
+        // Copy colors to all spaces
         let testColors = SpaceColors(foreground: .systemOrange, background: .systemTeal)
         setupSpaceWithPreferences(space: appState.currentSpace, colors: testColors)
         confirmStub.shouldConfirm = true
 
-        sut.actionHandler.applyColorsToAllSpaces()
+        sut.actionHandler.copyColorsToAllSpaces()
 
         // Verify styles and symbols are preserved
         for space in 1 ... 4 {
             XCTAssertEqual(
                 SpacePreferences.iconStyle(forSpace: space, store: store),
                 .circle,
-                "Space \(space) style should be preserved after applying colors"
+                "Space \(space) style should be preserved after copying colors"
             )
             XCTAssertEqual(
                 SpacePreferences.symbol(forSpace: space, store: store),
                 "star.fill",
-                "Space \(space) symbol should be preserved after applying colors"
+                "Space \(space) symbol should be preserved after copying colors"
             )
         }
     }
 
-    // MARK: - applyStyleToAllSpaces Tests
+    // MARK: - copyStyleToAllSpaces Tests
 
-    func testApplyStyleToAllSpaces_whenConfirmed_appliesStyle() {
+    func testCopyStyleToAllSpaces_whenConfirmed_copiesStyle() {
         let testStyle = IconStyle.triangle
         setupSpaceWithPreferences(space: appState.currentSpace, style: testStyle)
         confirmStub.shouldConfirm = true
         let initialCount = sut.statusBarIconUpdateCount
 
-        sut.actionHandler.applyStyleToAllSpaces()
+        sut.actionHandler.copyStyleToAllSpaces()
 
         for space in 1 ... 4 {
             XCTAssertEqual(SpacePreferences.iconStyle(forSpace: space, store: store), testStyle)
@@ -861,31 +861,31 @@ final class AppDelegateActionsTests: XCTestCase {
         XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount + 1, "updateStatusBarIcon should be called")
     }
 
-    func testApplyStyleToAllSpaces_appliesSymbolToAllIndices() {
+    func testCopyStyleToAllSpaces_copiesSymbolToAllIndices() {
         let testSymbol = "heart.fill"
         setupSpaceWithPreferences(space: appState.currentSpace, symbol: testSymbol)
         confirmStub.shouldConfirm = true
 
-        sut.actionHandler.applyStyleToAllSpaces()
+        sut.actionHandler.copyStyleToAllSpaces()
 
         for space in 1 ... 4 {
             XCTAssertEqual(SpacePreferences.symbol(forSpace: space, store: store), testSymbol)
         }
     }
 
-    func testApplyStyleToAllSpaces_whenDeclined_doesNotApply() {
+    func testCopyStyleToAllSpaces_whenDeclined_doesNotCopy() {
         let testStyle = IconStyle.pentagon
         setupSpaceWithPreferences(space: appState.currentSpace, style: testStyle)
         confirmStub.shouldConfirm = false
 
-        sut.actionHandler.applyStyleToAllSpaces()
+        sut.actionHandler.copyStyleToAllSpaces()
 
         for space in [1, 3, 4] {
             XCTAssertNil(SpacePreferences.iconStyle(forSpace: space, store: store))
         }
     }
 
-    func testApplyStyleToAllSpaces_clearsSymbolWhenNil() {
+    func testCopyStyleToAllSpaces_clearsSymbolWhenNil() {
         // First set symbols for all spaces
         for space in 1 ... 4 {
             SpacePreferences.setSymbol("moon.fill", forSpace: space, store: store)
@@ -896,7 +896,7 @@ final class AppDelegateActionsTests: XCTestCase {
         setupSpaceWithPreferences(space: appState.currentSpace, style: .hexagon)
         confirmStub.shouldConfirm = true
 
-        sut.actionHandler.applyStyleToAllSpaces()
+        sut.actionHandler.copyStyleToAllSpaces()
 
         for space in 1 ... 4 {
             XCTAssertNil(
@@ -911,19 +911,19 @@ final class AppDelegateActionsTests: XCTestCase {
         }
     }
 
-    func testApplyStyleToAllSpaces_preservesColors() {
+    func testCopyStyleToAllSpaces_preservesColors() {
         // Set up colors for each space
         let testColors = SpaceColors(foreground: .systemRed, background: .systemBlue)
         for space in 1 ... 4 {
             SpacePreferences.setColors(testColors, forSpace: space, store: store)
         }
 
-        // Apply style to all spaces
+        // Copy style to all spaces
         let testStyle = IconStyle.pentagon
         setupSpaceWithPreferences(space: appState.currentSpace, style: testStyle)
         confirmStub.shouldConfirm = true
 
-        sut.actionHandler.applyStyleToAllSpaces()
+        sut.actionHandler.copyStyleToAllSpaces()
 
         // Verify colors are preserved
         for space in 1 ... 4 {
@@ -931,12 +931,12 @@ final class AppDelegateActionsTests: XCTestCase {
             XCTAssertEqual(
                 colors?.foreground,
                 testColors.foreground,
-                "Space \(space) foreground color should be preserved after applying style"
+                "Space \(space) foreground color should be preserved after copying style"
             )
             XCTAssertEqual(
                 colors?.background,
                 testColors.background,
-                "Space \(space) background color should be preserved after applying style"
+                "Space \(space) background color should be preserved after copying style"
             )
         }
     }
@@ -1041,14 +1041,14 @@ final class AppDelegateActionsTests: XCTestCase {
 
     // MARK: - Edge Cases: currentSpace == 0 (No-ops)
 
-    func testApplyAllToAllSpaces_whenCurrentSpaceIsZero_noOp() {
+    func testCopyAllToAllSpaces_whenCurrentSpaceIsZero_noOp() {
         // Setup with no active space
         stub.displays = []
         appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
         sut = AppDelegate(appState: appState, confirmAction: confirmStub.callAsFunction)
         XCTAssertEqual(appState.currentSpace, 0)
 
-        sut.actionHandler.applyToAllSpaces()
+        sut.actionHandler.copyToAllSpaces()
 
         XCTAssertEqual(confirmStub.alertsShown.count, 0, "No alert should be shown when currentSpace is 0")
     }
@@ -1074,22 +1074,22 @@ final class AppDelegateActionsTests: XCTestCase {
         XCTAssertEqual(sut.statusBarIconUpdateCount, initialCount, "updateStatusBarIcon should not be called")
     }
 
-    func testApplyColorsToAllSpaces_whenCurrentSpaceIsZero_noOp() {
+    func testCopyColorsToAllSpaces_whenCurrentSpaceIsZero_noOp() {
         stub.displays = []
         appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
         sut = AppDelegate(appState: appState, confirmAction: confirmStub.callAsFunction)
 
-        sut.actionHandler.applyColorsToAllSpaces()
+        sut.actionHandler.copyColorsToAllSpaces()
 
         XCTAssertEqual(confirmStub.alertsShown.count, 0, "No alert should be shown when currentSpace is 0")
     }
 
-    func testApplyStyleToAllSpaces_whenCurrentSpaceIsZero_noOp() {
+    func testCopyStyleToAllSpaces_whenCurrentSpaceIsZero_noOp() {
         stub.displays = []
         appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
         sut = AppDelegate(appState: appState, confirmAction: confirmStub.callAsFunction)
 
-        sut.actionHandler.applyStyleToAllSpaces()
+        sut.actionHandler.copyStyleToAllSpaces()
 
         XCTAssertEqual(confirmStub.alertsShown.count, 0, "No alert should be shown when currentSpace is 0")
     }
@@ -1106,12 +1106,12 @@ final class AppDelegateActionsTests: XCTestCase {
 
     // MARK: - Edge Cases: Symbol vs Number Mode
 
-    func testApplyAllToAllSpaces_inSymbolMode_appliesSymbolToAll() {
+    func testCopyAllToAllSpaces_inSymbolMode_copiesSymbolToAll() {
         let testSymbol = "star.fill"
         setupSpaceWithPreferences(space: appState.currentSpace, style: .circle, symbol: testSymbol)
         confirmStub.shouldConfirm = true
 
-        sut.actionHandler.applyToAllSpaces()
+        sut.actionHandler.copyToAllSpaces()
 
         for space in 1 ... 4 {
             XCTAssertEqual(
@@ -1127,7 +1127,7 @@ final class AppDelegateActionsTests: XCTestCase {
         }
     }
 
-    func testApplyAllToAllSpaces_inNumberMode_clearsSymbolsOnAllSpaces() {
+    func testCopyAllToAllSpaces_inNumberMode_clearsSymbolsOnAllSpaces() {
         // Set symbols on all spaces first
         for space in 1 ... 4 {
             SpacePreferences.setSymbol("heart.fill", forSpace: space, store: store)
@@ -1137,7 +1137,7 @@ final class AppDelegateActionsTests: XCTestCase {
         setupSpaceWithPreferences(space: appState.currentSpace, style: .triangle)
         confirmStub.shouldConfirm = true
 
-        sut.actionHandler.applyToAllSpaces()
+        sut.actionHandler.copyToAllSpaces()
 
         for space in 1 ... 4 {
             XCTAssertNil(SpacePreferences.symbol(forSpace: space, store: store), "Symbol should be cleared")
@@ -1149,12 +1149,12 @@ final class AppDelegateActionsTests: XCTestCase {
         }
     }
 
-    func testApplyStyleToAllSpaces_inSymbolMode_preservesSymbol() {
+    func testCopyStyleToAllSpaces_inSymbolMode_preservesSymbol() {
         let testSymbol = "bolt.fill"
         setupSpaceWithPreferences(space: appState.currentSpace, style: .hexagon, symbol: testSymbol)
         confirmStub.shouldConfirm = true
 
-        sut.actionHandler.applyStyleToAllSpaces()
+        sut.actionHandler.copyStyleToAllSpaces()
 
         for space in 1 ... 4 {
             XCTAssertEqual(SpacePreferences.symbol(forSpace: space, store: store), testSymbol)
@@ -1279,14 +1279,14 @@ final class AppDelegateActionsTests: XCTestCase {
 
     // MARK: - Alert Verification Tests
 
-    func testApplyAllToAllSpaces_showsCorrectAlert() {
+    func testCopyAllToAllSpaces_showsCorrectAlert() {
         confirmStub.shouldConfirm = true
 
-        sut.actionHandler.applyToAllSpaces()
+        sut.actionHandler.copyToAllSpaces()
 
         XCTAssertEqual(confirmStub.alertsShown.count, 1)
         let alert = confirmStub.alertsShown.first
-        XCTAssertEqual(alert?.message, Localization.confirmApplyToAll)
+        XCTAssertEqual(alert?.message, Localization.confirmCopyToAll)
         XCTAssertEqual(alert?.isDestructive, false)
     }
 
@@ -1312,25 +1312,25 @@ final class AppDelegateActionsTests: XCTestCase {
         XCTAssertEqual(alert?.isDestructive, true)
     }
 
-    func testApplyColorsToAllSpaces_showsNonDestructiveAlert() {
+    func testCopyColorsToAllSpaces_showsNonDestructiveAlert() {
         confirmStub.shouldConfirm = true
 
-        sut.actionHandler.applyColorsToAllSpaces()
+        sut.actionHandler.copyColorsToAllSpaces()
 
         XCTAssertEqual(confirmStub.alertsShown.count, 1)
         let alert = confirmStub.alertsShown.first
-        XCTAssertEqual(alert?.message, Localization.confirmApplyColorToAll)
+        XCTAssertEqual(alert?.message, Localization.confirmCopyColorToAll)
         XCTAssertEqual(alert?.isDestructive, false)
     }
 
-    func testApplyStyleToAllSpaces_showsNonDestructiveAlert() {
+    func testCopyStyleToAllSpaces_showsNonDestructiveAlert() {
         confirmStub.shouldConfirm = true
 
-        sut.actionHandler.applyStyleToAllSpaces()
+        sut.actionHandler.copyStyleToAllSpaces()
 
         XCTAssertEqual(confirmStub.alertsShown.count, 1)
         let alert = confirmStub.alertsShown.first
-        XCTAssertEqual(alert?.message, Localization.confirmApplyStyleToAll)
+        XCTAssertEqual(alert?.message, Localization.confirmCopyStyleToAll)
         XCTAssertEqual(alert?.isDestructive, false)
     }
 

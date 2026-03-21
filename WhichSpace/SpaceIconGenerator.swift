@@ -141,7 +141,8 @@ enum SpaceIconGenerator {
                 customFont: customFont,
                 scale: scale
             ).width
-            return textWidth + 4.0 * scale
+            // Account for enlarged font (1.1x) and stroke width extending beyond glyphs
+            return textWidth * 1.1 + 4.0 * scale
         case .transparent:
             return measuredTextSize(
                 for: spaceNumber,

@@ -165,10 +165,10 @@ final class ActionHandler: NSObject {
         onStatusBarIconNeedsUpdate?()
     }
 
-    @objc func applyColorsToAllSpaces() {
+    @objc func copyColorsToAllSpaces() {
         withConfirmation(
-            message: Localization.confirmApplyColorToAll,
-            detail: Localization.detailApplyColorToAll,
+            message: Localization.confirmCopyColorToAll,
+            detail: Localization.detailCopyColorToAll,
             confirmTitle: Localization.buttonOK,
             isDestructive: false
         ) {
@@ -218,10 +218,10 @@ final class ActionHandler: NSObject {
 
     // MARK: - Style Actions
 
-    @objc func applyStyleToAllSpaces() {
+    @objc func copyStyleToAllSpaces() {
         withConfirmation(
-            message: Localization.confirmApplyStyleToAll,
-            detail: Localization.detailApplyStyleToAll,
+            message: Localization.confirmCopyStyleToAll,
+            detail: Localization.detailCopyStyleToAll,
             confirmTitle: Localization.buttonOK,
             isDestructive: false
         ) {
@@ -261,10 +261,10 @@ final class ActionHandler: NSObject {
 
     // MARK: - Badge Actions
 
-    @objc func applyBadgeToAllSpaces() {
+    @objc func copyBadgeToAllSpaces() {
         withConfirmation(
-            message: Localization.confirmApplyBadgeToAll,
-            detail: Localization.detailApplyBadgeToAll,
+            message: Localization.confirmCopyBadgeToAll,
+            detail: Localization.detailCopyBadgeToAll,
             confirmTitle: Localization.buttonOK,
             isDestructive: false
         ) {
@@ -325,13 +325,13 @@ final class ActionHandler: NSObject {
         onStatusBarIconNeedsUpdate?()
     }
 
-    // MARK: - Apply / Reset All Actions
+    // MARK: - Copy / Reset All Actions
 
     // swiftlint:disable:next function_body_length
-    @objc func applyToAllSpaces() {
+    @objc func copyToAllSpaces() {
         withConfirmation(
-            message: Localization.confirmApplyToAll,
-            detail: Localization.detailApplyToAll,
+            message: Localization.confirmCopyToAll,
+            detail: Localization.detailCopyToAll,
             confirmTitle: Localization.buttonOK,
             isDestructive: false
         ) {
@@ -394,6 +394,16 @@ final class ActionHandler: NSObject {
                 store: store
             )
             SpacePreferences.clearFont(
+                forSpace: appState.currentSpace,
+                display: appState.currentDisplayID,
+                store: store
+            )
+            SpacePreferences.clearLabel(
+                forSpace: appState.currentSpace,
+                display: appState.currentDisplayID,
+                store: store
+            )
+            SpacePreferences.clearLabelStyle(
                 forSpace: appState.currentSpace,
                 display: appState.currentDisplayID,
                 store: store
@@ -565,8 +575,13 @@ final class ActionHandler: NSObject {
             return
         }
 
-        // Clear SF Symbol to switch to number mode
+        // Clear SF Symbol and custom label to switch to number mode
         SpacePreferences.clearSymbol(
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
+        SpacePreferences.clearLabel(
             forSpace: appState.currentSpace,
             display: appState.currentDisplayID,
             store: store
@@ -613,6 +628,105 @@ final class ActionHandler: NSObject {
         onStatusBarIconNeedsUpdate?()
     }
 
+    // MARK: - Label Selection
+
+    func setLabel(_ label: String?) {
+        guard appState.currentSpace > 0 else {
+            return
+        }
+        SpacePreferences.setLabel(
+            label,
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
+        // Clear symbol so the label takes effect immediately
+        if let label, !label.isEmpty {
+            SpacePreferences.clearSymbol(
+                forSpace: appState.currentSpace,
+                display: appState.currentDisplayID,
+                store: store
+            )
+        }
+        onStatusBarIconNeedsUpdate?()
+    }
+
+    func selectLabelStyle(_ style: IconStyle, stylePicker: StylePicker?) {
+        guard appState.currentSpace > 0 else {
+            return
+        }
+        SpacePreferences.setLabelStyle(
+            style,
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
+
+        // Update checkmarks in all row views
+        if let menu = stylePicker?.enclosingMenuItem?.menu {
+            for item in menu.items {
+                if let view = item.view as? StylePicker {
+                    view.isChecked = item.representedObject as? IconStyle == style
+                }
+            }
+        }
+
+        onStatusBarIconNeedsUpdate?()
+    }
+
+    @objc func copyLabelToAllSpaces() {
+        withConfirmation(
+            message: Localization.confirmCopyLabelToAll,
+            detail: Localization.detailCopyLabelToAll,
+            confirmTitle: Localization.buttonOK,
+            isDestructive: false
+        ) {
+            let label = SpacePreferences.label(
+                forSpace: appState.currentSpace,
+                display: appState.currentDisplayID,
+                store: store
+            )
+            let labelStyle = SpacePreferences.labelStyle(
+                forSpace: appState.currentSpace,
+                display: appState.currentDisplayID,
+                store: store
+            )
+            let display = appState.currentDisplayID
+            for space in appState.getAllSpaceIndices() {
+                if let label {
+                    SpacePreferences.setLabel(label, forSpace: space, display: display, store: store)
+                } else {
+                    SpacePreferences.clearLabel(forSpace: space, display: display, store: store)
+                }
+                if let labelStyle {
+                    SpacePreferences.setLabelStyle(labelStyle, forSpace: space, display: display, store: store)
+                } else {
+                    SpacePreferences.clearLabelStyle(forSpace: space, display: display, store: store)
+                }
+            }
+        }
+    }
+
+    @objc func resetLabelToDefault() {
+        withConfirmation(
+            message: Localization.confirmResetLabel,
+            detail: Localization.detailResetLabel,
+            confirmTitle: Localization.buttonReset,
+            isDestructive: true
+        ) {
+            SpacePreferences.clearLabel(
+                forSpace: appState.currentSpace,
+                display: appState.currentDisplayID,
+                store: store
+            )
+            SpacePreferences.clearLabelStyle(
+                forSpace: appState.currentSpace,
+                display: appState.currentDisplayID,
+                store: store
+            )
+        }
+    }
+
     // MARK: - Symbol Selection
 
     func setSymbol(_ symbol: String?) {
@@ -625,6 +739,14 @@ final class ActionHandler: NSObject {
             display: appState.currentDisplayID,
             store: store
         )
+        // Clear label so the symbol takes effect immediately
+        if symbol != nil {
+            SpacePreferences.clearLabel(
+                forSpace: appState.currentSpace,
+                display: appState.currentDisplayID,
+                store: store
+            )
+        }
         // When setting an emoji, also set the per-space skin tone to match the current global picker tone
         if let symbol, symbol.containsEmoji {
             SpacePreferences.setSkinTone(
