@@ -118,7 +118,7 @@ brew install --cask gechr/tap/whichspace
 
 ### Size
 
-#### Adjust the scale of the icons in the menu bar
+#### Adjust the scale and padding of the icons in the menu bar
 
 <img src="Screenshots/SizeMenu.png" width="60%">
 
