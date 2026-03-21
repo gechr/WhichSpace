@@ -6,7 +6,7 @@ final class LabelInput: NSView {
     private let textField: NSTextField
 
     private let padding = 28.0
-    private let minFieldWidth = 80.0
+    private let fieldWidth = 180.0
     private let fieldHeight = 22.0
 
     let maxLength = 10
@@ -19,7 +19,6 @@ final class LabelInput: NSView {
         }
         set {
             textField.stringValue = newValue ?? ""
-            invalidateIntrinsicContentSize()
         }
     }
 
@@ -45,6 +44,8 @@ final class LabelInput: NSView {
         textField.delegate = self
         textField.maximumNumberOfLines = 1
         textField.usesSingleLineMode = true
+        textField.cell?.isScrollable = true
+        textField.cell?.wraps = false
         addSubview(textField)
     }
 
@@ -60,20 +61,15 @@ final class LabelInput: NSView {
 
     // MARK: - Layout
 
-    private var currentFieldWidth: Double {
-        let textWidth = textField.attributedStringValue.size().width
-        return max(minFieldWidth, textWidth + 20)
-    }
-
     override var intrinsicContentSize: CGSize {
-        CGSize(width: padding + currentFieldWidth + padding, height: fieldHeight + 12)
+        CGSize(width: padding + fieldWidth + padding, height: fieldHeight + 12)
     }
 
     override func layout() {
         super.layout()
 
         let yCenter = (bounds.height - fieldHeight) / 2
-        textField.frame = CGRect(x: padding, y: yCenter, width: currentFieldWidth, height: fieldHeight)
+        textField.frame = CGRect(x: padding, y: yCenter, width: fieldWidth, height: fieldHeight)
     }
 }
 
@@ -94,7 +90,6 @@ extension LabelInput: NSTextFieldDelegate {
             field.stringValue = text
         }
 
-        invalidateIntrinsicContentSize()
         onLabelChanged?(text.isEmpty ? nil : text)
     }
 }
