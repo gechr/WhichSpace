@@ -293,7 +293,8 @@ final class StatusBarRenderer {
 
         let labels = fetchLabels(displayID: appState.currentDisplayID ?? "")
         let defaultLabel = appState.currentSpaceLabel
-        let label = labels[appState.currentSpace].flatMap { $0.isEmpty ? nil : $0 } ?? defaultLabel
+        let rawLabel = labels[appState.currentSpace].flatMap { $0.isEmpty ? nil : $0 }
+        let label = rawLabel.map { LabelTemplate.resolve($0, space: appState.currentSpace) } ?? defaultLabel
         return generateSingleIcon(for: appState.currentSpace, label: label, labels: labels, darkMode: isDark)
     }
 
@@ -349,7 +350,8 @@ final class StatusBarRenderer {
         // If no spaces to show, show just the current space
         guard !renderedIcons.isEmpty else {
             let labels = fetchLabels(displayID: appState.currentDisplayID ?? "")
-            let label = labels[appState.currentSpace].flatMap { $0.isEmpty ? nil : $0 }
+            let rawLabel = labels[appState.currentSpace].flatMap { $0.isEmpty ? nil : $0 }
+            let label = rawLabel.map { LabelTemplate.resolve($0, space: appState.currentSpace) }
                 ?? appState.currentSpaceLabel
             return generateSingleIcon(
                 for: appState.currentSpace, label: label, labels: labels, darkMode: darkMode
@@ -386,7 +388,8 @@ final class StatusBarRenderer {
         // If no spaces to show at all, return single icon
         guard !renderedDisplays.isEmpty else {
             let labels = fetchLabels(displayID: appState.currentDisplayID ?? "")
-            let label = labels[appState.currentSpace].flatMap { $0.isEmpty ? nil : $0 }
+            let rawLabel = labels[appState.currentSpace].flatMap { $0.isEmpty ? nil : $0 }
+            let label = rawLabel.map { LabelTemplate.resolve($0, space: appState.currentSpace) }
                 ?? appState.currentSpaceLabel
             return generateSingleIcon(
                 for: appState.currentSpace, label: label, labels: labels, darkMode: darkMode
@@ -476,22 +479,24 @@ final class StatusBarRenderer {
             font = SpacePreferences.font(forSpace: space, display: displayID, store: store)?.font
         } else if isLabelStylePreview {
             colors = SpacePreferences.colors(forSpace: space, display: displayID, store: store)
-            let customLabel = labels[space].flatMap { $0.isEmpty ? nil : $0 }
-            style = Self.renderStyle(for: preview!.labelStyle!, labelLength: customLabel?.count ?? 1)
+            let resolvedLabel = labels[space].flatMap { $0.isEmpty ? nil : $0 }
+                .map { LabelTemplate.resolve($0, space: space) }
+            style = Self.renderStyle(for: preview!.labelStyle!, labelLength: resolvedLabel?.count ?? 1)
             let userFont = SpacePreferences.font(forSpace: space, display: displayID, store: store)?.font
-            font = (customLabel?.count ?? 0) > 1 && userFont == nil
+            font = (resolvedLabel?.count ?? 0) > 1 && userFont == nil
                 ? NSFont.boldSystemFont(ofSize: Layout.baseFontSizeSmall)
                 : userFont
         } else {
             colors = SpacePreferences.colors(forSpace: space, display: displayID, store: store)
-            let customLabel = labels[space].flatMap { $0.isEmpty ? nil : $0 }
-            if let customLabel {
+            let resolvedLabel = labels[space].flatMap { $0.isEmpty ? nil : $0 }
+                .map { LabelTemplate.resolve($0, space: space) }
+            if let resolvedLabel {
                 let labelStyle = SpacePreferences.labelStyle(
                     forSpace: space, display: displayID, store: store
                 ) ?? .square
-                style = Self.renderStyle(for: labelStyle, labelLength: customLabel.count)
+                style = Self.renderStyle(for: labelStyle, labelLength: resolvedLabel.count)
                 let userFont = SpacePreferences.font(forSpace: space, display: displayID, store: store)?.font
-                font = customLabel.count > 1 && userFont == nil
+                font = resolvedLabel.count > 1 && userFont == nil
                     ? NSFont.boldSystemFont(ofSize: Layout.baseFontSizeSmall)
                     : userFont
             } else {
@@ -549,10 +554,11 @@ final class StatusBarRenderer {
                 ? nil
                 : SpacePreferences.symbol(forSpace: space, display: displayID, store: store))
 
-        let badge: SpaceBadge? = skipSymbolAndBadge
+        let rawBadge: SpaceBadge? = skipSymbolAndBadge
             ? nil
             : ((applyPreview ? preview?.badge : nil)
                 ?? SpacePreferences.badge(forSpace: space, display: displayID, store: store))
+        let badge = rawBadge.map { Self.resolveBadge($0, space: space) }
 
         if let symbol {
             let skinTone = SpacePreferences
@@ -806,6 +812,14 @@ final class StatusBarRenderer {
         return store.spaceLabels
     }
 
+    /// Resolves the `#` badge token to the current space number.
+    private static func resolveBadge(_ badge: SpaceBadge, space: Int) -> SpaceBadge {
+        guard badge.character == "#" else {
+            return badge
+        }
+        return SpaceBadge(character: String(space), position: badge.position)
+    }
+
     /// Maps a stored label style to the rendering style used by SpaceIconGenerator.
     /// Multi-character labels use Slim/SlimOutline for auto-expanding width.
     private static func renderStyle(for labelStyle: IconStyle, labelLength: Int) -> IconStyle {
@@ -833,7 +847,7 @@ final class StatusBarRenderer {
             return entry.label
         }
         if let label = labels[localIndex], !label.isEmpty {
-            return label
+            return LabelTemplate.resolve(label, space: globalIndex)
         }
         return store.localSpaceNumbers ? entry.label : String(globalIndex)
     }

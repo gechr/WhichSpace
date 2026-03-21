@@ -6,10 +6,10 @@ final class LabelInput: NSView {
     private let textField: NSTextField
 
     private let padding = 28.0
-    private let fieldWidth = 80.0
+    private let minFieldWidth = 80.0
     private let fieldHeight = 22.0
 
-    let maxLength = 6
+    let maxLength = 10
     var onLabelChanged: ((String?) -> Void)?
 
     var currentLabel: String? {
@@ -19,6 +19,7 @@ final class LabelInput: NSView {
         }
         set {
             textField.stringValue = newValue ?? ""
+            invalidateIntrinsicContentSize()
         }
     }
 
@@ -40,7 +41,7 @@ final class LabelInput: NSView {
     private func setupTextField() {
         textField.font = NSFont.boldSystemFont(ofSize: Layout.menuFontSize)
         textField.alignment = .left
-        textField.placeholderString = ""
+        textField.placeholderString = "{space}"
         textField.delegate = self
         textField.maximumNumberOfLines = 1
         textField.usesSingleLineMode = true
@@ -59,15 +60,20 @@ final class LabelInput: NSView {
 
     // MARK: - Layout
 
+    private var currentFieldWidth: Double {
+        let textWidth = textField.attributedStringValue.size().width
+        return max(minFieldWidth, textWidth + 20)
+    }
+
     override var intrinsicContentSize: CGSize {
-        CGSize(width: padding + fieldWidth + padding, height: fieldHeight + 12)
+        CGSize(width: padding + currentFieldWidth + padding, height: fieldHeight + 12)
     }
 
     override func layout() {
         super.layout()
 
         let yCenter = (bounds.height - fieldHeight) / 2
-        textField.frame = CGRect(x: padding, y: yCenter, width: fieldWidth, height: fieldHeight)
+        textField.frame = CGRect(x: padding, y: yCenter, width: currentFieldWidth, height: fieldHeight)
     }
 }
 
@@ -80,11 +86,15 @@ extension LabelInput: NSTextFieldDelegate {
         }
 
         var text = field.stringValue
-        if text.count > maxLength {
-            text = String(text.prefix(maxLength))
+        if LabelTemplate.contentLength(text) > maxLength {
+            // Trim from the end, but preserve complete {space} tokens
+            while LabelTemplate.contentLength(text) > maxLength {
+                text = String(text.dropLast())
+            }
             field.stringValue = text
         }
 
+        invalidateIntrinsicContentSize()
         onLabelChanged?(text.isEmpty ? nil : text)
     }
 }

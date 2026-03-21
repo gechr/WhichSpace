@@ -35,7 +35,7 @@ final class CurrentSpaceLabelCommand: NSScriptCommand {
                 display: appState.currentDisplayID,
                 store: store
             ), !customLabel.isEmpty {
-                return customLabel
+                return LabelTemplate.resolve(customLabel, space: appState.currentSpace)
             }
             return appState.currentSpaceLabel
         }

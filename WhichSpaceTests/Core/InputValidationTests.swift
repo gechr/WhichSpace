@@ -235,4 +235,38 @@ struct InputValidationTests {
         #expect(image.size.width > 0, "Should handle fullscreen label 'F'")
         #expect(image.size.height > 0, "Should handle fullscreen label 'F'")
     }
+
+    // MARK: - Label Template Tests
+
+    @Test("LabelTemplate resolves {space} token")
+    func labelTemplateResolvesSpace() {
+        #expect(LabelTemplate.resolve("{space}", space: 3) == "3")
+        #expect(LabelTemplate.resolve("{space} - Work", space: 5) == "5 - Work")
+        #expect(LabelTemplate.resolve("S{space}", space: 10) == "S10")
+    }
+
+    @Test("LabelTemplate resolves multiple {space} tokens")
+    func labelTemplateResolvesMultiple() {
+        #expect(LabelTemplate.resolve("{space}/{space}", space: 2) == "2/2")
+    }
+
+    @Test("LabelTemplate passes through text without tokens")
+    func labelTemplateNoTokens() {
+        #expect(LabelTemplate.resolve("Work", space: 1) == "Work")
+        #expect(LabelTemplate.resolve("", space: 1).isEmpty)
+    }
+
+    @Test("LabelTemplate contentLength excludes {space} tokens")
+    func labelTemplateContentLength() {
+        #expect(LabelTemplate.contentLength("{space}") == 0)
+        #expect(LabelTemplate.contentLength("{space} - Work") == 7)
+        #expect(LabelTemplate.contentLength("Hello") == 5)
+        #expect(LabelTemplate.contentLength("{space}{space}") == 0)
+    }
+
+    @Test("LabelTemplate handles large space numbers")
+    func labelTemplateHandlesLargeSpaceNumbers() {
+        #expect(LabelTemplate.resolve("{space}", space: 99) == "99")
+        #expect(LabelTemplate.resolve("S{space}", space: 16) == "S16")
+    }
 }

@@ -104,11 +104,17 @@ brew install --cask gechr/tap/whichspace
 
 <img src="Screenshots/BadgesMenu.png" width="60%">
 
+> [!NOTE]
+> Use `#` as the badge character to insert the current Space number.
+
 ### Labels
 
 #### Replace Space numbers with custom text labels
 
 <img src="Screenshots/LabelsMenu.png" width="60%">
+
+> [!NOTE]
+> Use `{space}` in a label to insert the current Space number, e.g. `{space} - Work` → `3 - Work`.
 
 ### Size
 
@@ -116,7 +122,7 @@ brew install --cask gechr/tap/whichspace
 
 <img src="Screenshots/SizeMenu.png" width="60%">
 
-## Scripting
+### Scripting
 
 #### Use AppleScript for automation
 

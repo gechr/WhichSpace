@@ -123,4 +123,52 @@ struct StatusBarRendererFilterTests {
         let labels = layout.slots.map(\.label)
         #expect(labels.contains("F"), "Active fullscreen space should be shown")
     }
+
+    // MARK: - Label Templates
+
+    @Test("label with {space} template resolves to space number")
+    func labelTemplateResolvesInLayout() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [
+                    (id: 100, isFullscreen: false),
+                    (id: 101, isFullscreen: false),
+                    (id: 102, isFullscreen: false),
+                ],
+                activeSpaceID: 100
+            ),
+        ]
+        store.showAllSpaces = true
+        store.spaceLabels = [2: "{space} - Work"]
+
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let layout = appState.statusBarLayout()
+
+        let labels = layout.slots.map(\.label)
+        #expect(labels == ["1", "2 - Work", "3"])
+    }
+
+    @Test("label with only {space} template shows space number")
+    func labelTemplateOnlySpace() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [
+                    (id: 100, isFullscreen: false),
+                    (id: 101, isFullscreen: false),
+                ],
+                activeSpaceID: 100
+            ),
+        ]
+        store.showAllSpaces = true
+        store.spaceLabels = [1: "{space}"]
+
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let layout = appState.statusBarLayout()
+
+        #expect(layout.slots.first?.label == "1")
+    }
 }

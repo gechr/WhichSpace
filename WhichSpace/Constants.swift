@@ -15,6 +15,24 @@ enum Labels {
     static let fullscreen = "F"
 }
 
+// MARK: - Label Templates
+
+enum LabelTemplate {
+    static let spaceToken = "{space}"
+
+    /// Resolves template tokens in a label string.
+    /// Currently supports `{space}` which is replaced with the space number.
+    static func resolve(_ label: String, space: Int) -> String {
+        label.replacingOccurrences(of: spaceToken, with: String(space))
+    }
+
+    /// Returns the content length of a label, excluding template tokens.
+    /// Used for character limit validation in the input field.
+    static func contentLength(_ label: String) -> Int {
+        label.replacingOccurrences(of: spaceToken, with: "").count
+    }
+}
+
 // MARK: - App Info
 
 enum AppInfo {
