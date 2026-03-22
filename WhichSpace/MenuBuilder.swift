@@ -41,6 +41,9 @@ protocol MenuActionDelegate: AnyObject {
 final class MenuBuilder {
     private let appState: AppState
     private let store: DefaultsStore
+    private var userSounds: [String] = []
+    private weak var soundMenu: NSMenu?
+    private weak var soundMenuTarget: AnyObject?
 
     init(appState: AppState, store: DefaultsStore) {
         self.appState = appState
@@ -273,11 +276,10 @@ final class MenuBuilder {
     // MARK: - Sound Discovery
 
     private static let systemSounds = discoverSounds(in: URL(fileURLWithPath: "/System/Library/Sounds"))
-    private static let userSounds = discoverSounds(
-        in: FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/Sounds")
-    )
+    private static let userSoundsDirectory =
+        FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/Sounds")
 
-    private static func discoverSounds(in directory: URL) -> [String] {
+    private nonisolated static func discoverSounds(in directory: URL) -> [String] {
         guard let contents = try? FileManager.default.contentsOfDirectory(
             at: directory,
             includingPropertiesForKeys: [.contentTypeKey]
@@ -294,6 +296,89 @@ final class MenuBuilder {
             sounds.insert(url.deletingPathExtension().lastPathComponent)
         }
         return sounds.sorted()
+    }
+
+    /// Asynchronously rescans ~/Library/Sounds and rebuilds the sound submenu.
+    /// Called when the main menu opens so results are ready before the user reaches the Sound submenu.
+    func refreshUserSounds() {
+        guard soundMenu != nil else {
+            return
+        }
+        let directory = Self.userSoundsDirectory
+        nonisolated(unsafe) let target = soundMenuTarget
+        let selectedSound = store.soundName
+
+        DispatchQueue.global(qos: .userInitiated).async {
+            let sounds = Self.discoverSounds(in: directory)
+
+            DispatchQueue.main.async { [weak self] in
+                guard let self, let soundMenu else {
+                    return
+                }
+                userSounds = sounds
+                rebuildSoundMenuItems(
+                    in: soundMenu,
+                    target: target,
+                    userSounds: sounds,
+                    selectedSound: selectedSound
+                )
+            }
+        }
+    }
+
+    private func rebuildSoundMenuItems(
+        in menu: NSMenu, target: AnyObject?, userSounds: [String], selectedSound: String
+    ) {
+        menu.removeAllItems()
+
+        let noneItem = NSMenuItem(
+            title: Localization.soundNone,
+            action: #selector(ActionHandler.selectSound(_:)),
+            keyEquivalent: ""
+        )
+        noneItem.target = target
+        noneItem.representedObject = ""
+        noneItem.state = selectedSound.isEmpty ? .on : .off
+        menu.addItem(noneItem)
+
+        menu.addItem(.separator())
+
+        let hasUserSounds = !userSounds.isEmpty
+
+        if hasUserSounds {
+            let header = NSMenuItem(title: Localization.soundUser, action: nil, keyEquivalent: "")
+            header.isEnabled = false
+            menu.addItem(header)
+
+            for soundName in userSounds {
+                let item = NSMenuItem(
+                    title: soundName,
+                    action: #selector(ActionHandler.selectSound(_:)),
+                    keyEquivalent: ""
+                )
+                item.target = target
+                item.representedObject = soundName
+                item.state = selectedSound == soundName ? .on : .off
+                menu.addItem(item)
+            }
+
+            menu.addItem(.separator())
+            let systemHeader = NSMenuItem(title: Localization.soundSystem, action: nil, keyEquivalent: "")
+            systemHeader.isEnabled = false
+            menu.addItem(systemHeader)
+        }
+
+        for soundName in Self.systemSounds {
+            let item = NSMenuItem(
+                title: soundName,
+                action: #selector(ActionHandler.selectSound(_:)),
+                keyEquivalent: ""
+            )
+            item.target = target
+            item.representedObject = soundName
+            item.state = selectedSound == soundName ? .on : .off
+            menu.addItem(item)
+        }
     }
 
     // MARK: - Public Build Methods
@@ -876,68 +961,17 @@ final class MenuBuilder {
     // MARK: - Sound Menu
 
     private func configureSoundMenuItem(in menu: NSMenu, target: AnyObject, delegate: NSMenuDelegate?) {
-        let soundMenu = createSoundMenu(target: target)
+        soundMenuTarget = target
+        let soundMenu = NSMenu(title: Localization.menuSound)
+        self.soundMenu = soundMenu
         soundMenu.delegate = delegate
+        rebuildSoundMenuItems(
+            in: soundMenu, target: target, userSounds: userSounds, selectedSound: store.soundName
+        )
         let soundMenuItem = NSMenuItem(title: Localization.menuSound, action: nil, keyEquivalent: "")
         soundMenuItem.image = NSImage(systemSymbolName: "speaker.wave.2", accessibilityDescription: nil)
         soundMenuItem.submenu = soundMenu
         menu.addItem(soundMenuItem)
-    }
-
-    private func createSoundMenu(target: AnyObject) -> NSMenu {
-        let soundMenu = NSMenu(title: Localization.menuSound)
-
-        // "None" option at top (disables sound)
-        let noneItem = NSMenuItem(
-            title: Localization.soundNone,
-            action: #selector(ActionHandler.selectSound(_:)),
-            keyEquivalent: ""
-        )
-        noneItem.target = target
-        noneItem.representedObject = ""
-        noneItem.state = store.soundName.isEmpty ? NSControl.StateValue.on : NSControl.StateValue.off
-        soundMenu.addItem(noneItem)
-
-        soundMenu.addItem(.separator())
-
-        let hasUserSounds = !Self.userSounds.isEmpty
-
-        if hasUserSounds {
-            let header = NSMenuItem(title: Localization.soundUser, action: nil, keyEquivalent: "")
-            header.isEnabled = false
-            soundMenu.addItem(header)
-
-            for soundName in Self.userSounds {
-                let item = NSMenuItem(
-                    title: soundName,
-                    action: #selector(ActionHandler.selectSound(_:)),
-                    keyEquivalent: ""
-                )
-                item.target = target
-                item.representedObject = soundName
-                item.state = store.soundName == soundName ? NSControl.StateValue.on : NSControl.StateValue.off
-                soundMenu.addItem(item)
-            }
-
-            soundMenu.addItem(.separator())
-            let systemHeader = NSMenuItem(title: Localization.soundSystem, action: nil, keyEquivalent: "")
-            systemHeader.isEnabled = false
-            soundMenu.addItem(systemHeader)
-        }
-
-        for soundName in Self.systemSounds {
-            let item = NSMenuItem(
-                title: soundName,
-                action: #selector(ActionHandler.selectSound(_:)),
-                keyEquivalent: ""
-            )
-            item.target = target
-            item.representedObject = soundName
-            item.state = store.soundName == soundName ? .on : .off
-            soundMenu.addItem(item)
-        }
-
-        return soundMenu
     }
 
     // MARK: - Size Menu

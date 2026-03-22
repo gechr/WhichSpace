@@ -730,6 +730,10 @@ extension AppDelegate: NSMenuDelegate {
     func menuWillOpen(_ menu: NSMenu) {
         menuBuilder.updateMenuState(menu: menu, launchAtLoginEnabled: launchAtLogin.isEnabled)
 
+        if menu == statusMenu {
+            menuBuilder.refreshUserSounds()
+        }
+
         // Update status bar icon when menu opens
         updateStatusBarIcon()
     }
