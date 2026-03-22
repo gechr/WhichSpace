@@ -40,6 +40,7 @@ final class BadgeInput: NSView {
         textField.font = NSFont.boldSystemFont(ofSize: Layout.menuFontSize)
         textField.alignment = .center
         textField.placeholderString = "#"
+        textField.toolTip = Localization.tipBadgeInput
         textField.delegate = self
         textField.maximumNumberOfLines = 1
         textField.usesSingleLineMode = true

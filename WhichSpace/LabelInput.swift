@@ -41,6 +41,7 @@ final class LabelInput: NSView {
         textField.font = NSFont.boldSystemFont(ofSize: Layout.menuFontSize)
         textField.alignment = .left
         textField.placeholderString = "{space}"
+        textField.toolTip = Localization.tipLabelInput
         textField.delegate = self
         textField.maximumNumberOfLines = 1
         textField.usesSingleLineMode = true
