@@ -35,6 +35,7 @@ fix: fmt
 
 .PHONY: fmt
 fmt:
+	@rumdl fmt --quiet
 	@swiftformat .
 
 .PHONY: lint

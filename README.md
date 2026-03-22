@@ -122,6 +122,18 @@ brew install --cask gechr/tap/whichspace
 
 <img src="Screenshots/SizeMenu.png" width="60%">
 
+### Sounds
+
+#### Play a sound when switching Spaces
+
+Choose from built-in macOS system sounds, or add your own custom sounds.
+
+To add a custom sound:
+
+1. Create the `~/Library/Sounds` directory (if it doesn't already exist)
+2. Copy your sound file into the directory
+3. The sound will appear under the **User** section in the Sound menu
+
 ### Scripting
 
 #### Use AppleScript for automation
