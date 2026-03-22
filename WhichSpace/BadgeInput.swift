@@ -39,7 +39,7 @@ final class BadgeInput: NSView {
     private func setupTextField() {
         textField.font = NSFont.boldSystemFont(ofSize: Layout.menuFontSize)
         textField.alignment = .center
-        textField.placeholderString = ""
+        textField.placeholderString = "#"
         textField.delegate = self
         textField.maximumNumberOfLines = 1
         textField.usesSingleLineMode = true
