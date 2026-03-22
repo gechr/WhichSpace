@@ -173,6 +173,9 @@ final class AppState {
     )
 
     private var lastUpdateTime: Date = .distantPast
+    private var previousRegularSpaceCount = 0
+    private var previousSpace = 0
+    private var previousDisplayID: String?
     private var mouseEventMonitor: Any?
     private var notificationTasks: [Task<Void, Never>] = []
     private var pendingUpdateTask: Task<Void, Never>?
@@ -397,6 +400,9 @@ final class AppState {
         // Save previous values for space change detection
         let oldSpaceID = currentSpaceID
         let oldDisplayID = currentDisplayID
+        let oldSpace = previousSpace
+        let oldPreviousDisplayID = previousDisplayID
+        let oldRegularSpaceCount = previousRegularSpaceCount
 
         // Apply snapshot to state
         allDisplaysSpaceInfo = snapshot.allDisplaysSpaceInfo
@@ -408,8 +414,53 @@ final class AppState {
         currentSpaceLabel = snapshot.currentSpaceLabel
         lastUpdateTime = Date()
 
+        // Inherit preferences from previous space to newly created spaces
+        inheritPreferencesForNewSpaces(
+            oldSpace: oldSpace,
+            oldDisplayID: oldPreviousDisplayID,
+            oldRegularSpaceCount: oldRegularSpaceCount
+        )
+
+        // Track state for next snapshot
+        previousSpace = currentSpace
+        previousDisplayID = currentDisplayID
+        previousRegularSpaceCount = regularSpaceCount
+
         // Post notification if space changed on the same display
         postSpaceChangeNotificationIfNeeded(oldSpaceID: oldSpaceID, oldDisplayID: oldDisplayID)
+    }
+
+    /// When a new space is created (space count increases by one), inherit the previous space's
+    /// customization to the new space if it doesn't already have preferences set.
+    private func inheritPreferencesForNewSpaces(
+        oldSpace: Int,
+        oldDisplayID: String?,
+        oldRegularSpaceCount: Int
+    ) {
+        // Skip if inheritance is disabled or on initial launch
+        guard store.inheritStyle, oldSpace > 0, oldRegularSpaceCount > 0 else {
+            return
+        }
+
+        let newCount = regularSpaceCount
+        guard newCount > oldRegularSpaceCount else {
+            return
+        }
+
+        // macOS adds one space at a time, at the end
+        let newSpace = newCount
+        let display = store.uniqueIconsPerDisplay ? currentDisplayID : nil
+
+        guard !SpacePreferences.hasAnyPreference(forSpace: newSpace, display: display, store: store) else {
+            return
+        }
+
+        SpacePreferences.inheritPreferences(
+            from: oldSpace,
+            to: newSpace,
+            display: store.uniqueIconsPerDisplay ? oldDisplayID : nil,
+            store: store
+        )
     }
 
     /// Posts spaceDidChange notification if the space changed on the same display

@@ -57,6 +57,10 @@ final class ActionHandler: NSObject {
         store.dimInactiveSpaces.toggle()
     }
 
+    @objc func toggleInheritStyle() {
+        store.inheritStyle.toggle()
+    }
+
     @objc func toggleHideEmptySpaces() {
         store.hideEmptySpaces.toggle()
     }

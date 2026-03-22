@@ -89,6 +89,8 @@ final class MenuBuilder {
         setCheckmark(.dimInactiveSpaces, store.dimInactiveSpaces)
         menu.item(withTag: MenuTag.dimInactiveSpaces.rawValue)?.isHidden = !showMultiSpaceOptions
 
+        setCheckmark(.inheritStyle, store.inheritStyle)
+
         // Update hide option menu items (checkmark, icon, visibility)
         let updateHideItem = { (tag: MenuTag, isEnabled: Bool) in
             guard let item = menu.item(withTag: tag.rawValue) else {
@@ -1070,6 +1072,13 @@ final class MenuBuilder {
             tag: .dimInactiveSpaces,
             symbolName: "aqi.low",
             toolTip: Localization.tipDimInactiveSpaces
+        )),
+        .item(OptionItem(
+            title: Localization.toggleInheritStyle,
+            action: #selector(ActionHandler.toggleInheritStyle),
+            tag: .inheritStyle,
+            symbolName: "sparkles.rectangle.stack",
+            toolTip: Localization.tipInheritStyle
         )),
         .separator,
         .item(OptionItem(

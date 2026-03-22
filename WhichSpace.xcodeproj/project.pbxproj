@@ -36,6 +36,7 @@
 		5EB4584C2EEDE9690021C6BD /* CGSStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB458392EEDE9690021C6BD /* CGSStub.swift */; };
 		5EB4584D2EEDE9690021C6BD /* SizeSliderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB458442EEDE9690021C6BD /* SizeSliderTests.swift */; };
 		5EB4584E2EEDE9690021C6BD /* AppStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB458382EEDE9690021C6BD /* AppStateTests.swift */; };
+		8A27559715C6420AA4812FEF /* SpaceInheritanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362B58BC4F194B83889B0E5C /* SpaceInheritanceTests.swift */; };
 		5EB4584F2EEDE9690021C6BD /* SpaceIconGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB4583D2EEDE9690021C6BD /* SpaceIconGeneratorTests.swift */; };
 		5EB458502EEDE9690021C6BD /* AppDelegateActionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB458422EEDE9690021C6BD /* AppDelegateActionsTests.swift */; };
 		5EB458512EEDE9690021C6BD /* SpacePreferencesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB4583E2EEDE9690021C6BD /* SpacePreferencesTests.swift */; };
@@ -128,6 +129,7 @@
 		5EB457F02EEDE8C00021C6BD /* SkinToneSwatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkinToneSwatch.swift; sourceTree = "<group>"; };
 		5EB457F22EEDE8C00021C6BD /* SpaceMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceMonitor.swift; sourceTree = "<group>"; };
 		5EB458382EEDE9690021C6BD /* AppStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStateTests.swift; sourceTree = "<group>"; };
+		362B58BC4F194B83889B0E5C /* SpaceInheritanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceInheritanceTests.swift; sourceTree = "<group>"; };
 		5EB458392EEDE9690021C6BD /* CGSStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGSStub.swift; sourceTree = "<group>"; };
 		5EB4583B2EEDE9690021C6BD /* IconColorsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconColorsTests.swift; sourceTree = "<group>"; };
 		5EB4583C2EEDE9690021C6BD /* SpaceColorsBridgeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceColorsBridgeTests.swift; sourceTree = "<group>"; };
@@ -267,6 +269,7 @@
 				5EB458392EEDE9690021C6BD /* CGSStub.swift */,
 				CF401C1F09AA421A9A916A37 /* MockHotKeyProvider.swift */,
 				2846E68501F241D1B6B97942 /* SpaceSnapshotServiceTests.swift */,
+				362B58BC4F194B83889B0E5C /* SpaceInheritanceTests.swift */,
 			);
 			path = AppState;
 			sourceTree = "<group>";
@@ -558,6 +561,7 @@
 				5EB4584C2EEDE9690021C6BD /* CGSStub.swift in Sources */,
 				5EB4584D2EEDE9690021C6BD /* SizeSliderTests.swift in Sources */,
 				5EB4584E2EEDE9690021C6BD /* AppStateTests.swift in Sources */,
+				8A27559715C6420AA4812FEF /* SpaceInheritanceTests.swift in Sources */,
 				5EB4584F2EEDE9690021C6BD /* SpaceIconGeneratorTests.swift in Sources */,
 				5EB458502EEDE9690021C6BD /* AppDelegateActionsTests.swift in Sources */,
 				5EB458512EEDE9690021C6BD /* SpacePreferencesTests.swift in Sources */,

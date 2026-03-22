@@ -437,6 +437,58 @@ enum SpacePreferences {
         skinTones.set(nil, forSpace: spaceNumber, display: display, store: store)
     }
 
+    // MARK: - Inheritance
+
+    /// Returns true if the space has any per-space preference set.
+    static func hasAnyPreference(
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) -> Bool {
+        colorsAccessor.get(forSpace: spaceNumber, display: display, store: store) != nil
+            || iconStyles.get(forSpace: spaceNumber, display: display, store: store) != nil
+            || fonts.get(forSpace: spaceNumber, display: display, store: store) != nil
+            || symbols.get(forSpace: spaceNumber, display: display, store: store) != nil
+            || badges.get(forSpace: spaceNumber, display: display, store: store) != nil
+            || labels.get(forSpace: spaceNumber, display: display, store: store) != nil
+            || labelStyles.get(forSpace: spaceNumber, display: display, store: store) != nil
+            || skinTones.get(forSpace: spaceNumber, display: display, store: store) != nil
+    }
+
+    /// Copies all per-space preferences from one space to another.
+    /// Only copies preferences that exist on the source; does not clear existing target preferences.
+    static func inheritPreferences(
+        from source: Int,
+        to target: Int,
+        display: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) {
+        if let colors = colorsAccessor.get(forSpace: source, display: display, store: store) {
+            colorsAccessor.set(colors, forSpace: target, display: display, store: store)
+        }
+        if let style = iconStyles.get(forSpace: source, display: display, store: store) {
+            iconStyles.set(style, forSpace: target, display: display, store: store)
+        }
+        if let font = fonts.get(forSpace: source, display: display, store: store) {
+            fonts.set(font, forSpace: target, display: display, store: store)
+        }
+        if let symbol = symbols.get(forSpace: source, display: display, store: store) {
+            symbols.set(symbol, forSpace: target, display: display, store: store)
+        }
+        if let badge = badges.get(forSpace: source, display: display, store: store) {
+            badges.set(badge, forSpace: target, display: display, store: store)
+        }
+        if let label = labels.get(forSpace: source, display: display, store: store) {
+            labels.set(label, forSpace: target, display: display, store: store)
+        }
+        if let labelStyle = labelStyles.get(forSpace: source, display: display, store: store) {
+            labelStyles.set(labelStyle, forSpace: target, display: display, store: store)
+        }
+        if let tone = skinTones.get(forSpace: source, display: display, store: store) {
+            skinTones.set(tone, forSpace: target, display: display, store: store)
+        }
+    }
+
     // MARK: - Clear All
 
     /// Clears all preferences for all displays and shared settings.

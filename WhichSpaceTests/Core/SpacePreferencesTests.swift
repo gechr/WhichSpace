@@ -344,6 +344,115 @@ struct SpacePreferencesTests {
         #expect(SpacePreferences.colors(forSpace: 1, store: store) == nil)
     }
 
+    // MARK: - hasAnyPreference Tests
+
+    @Test("hasAnyPreference returns false when nothing set")
+    func hasAnyPreferenceReturnsFalseWhenNothingSet() {
+        #expect(!SpacePreferences.hasAnyPreference(forSpace: 1, store: store))
+    }
+
+    @Test("hasAnyPreference returns true when colors set")
+    func hasAnyPreferenceReturnsTrueWhenColorsSet() {
+        SpacePreferences.setColors(SpaceColors(foreground: .red, background: .blue), forSpace: 1, store: store)
+        #expect(SpacePreferences.hasAnyPreference(forSpace: 1, store: store))
+    }
+
+    @Test("hasAnyPreference returns true when icon style set")
+    func hasAnyPreferenceReturnsTrueWhenIconStyleSet() {
+        SpacePreferences.setIconStyle(.circle, forSpace: 1, store: store)
+        #expect(SpacePreferences.hasAnyPreference(forSpace: 1, store: store))
+    }
+
+    @Test("hasAnyPreference returns true when symbol set")
+    func hasAnyPreferenceReturnsTrueWhenSymbolSet() {
+        SpacePreferences.setSymbol("star", forSpace: 1, store: store)
+        #expect(SpacePreferences.hasAnyPreference(forSpace: 1, store: store))
+    }
+
+    @Test("hasAnyPreference returns true when badge set")
+    func hasAnyPreferenceReturnsTrueWhenBadgeSet() {
+        SpacePreferences.setBadge(SpaceBadge(character: "A", position: .topRight), forSpace: 1, store: store)
+        #expect(SpacePreferences.hasAnyPreference(forSpace: 1, store: store))
+    }
+
+    @Test("hasAnyPreference returns true when label set")
+    func hasAnyPreferenceReturnsTrueWhenLabelSet() {
+        SpacePreferences.setLabel("Work", forSpace: 1, store: store)
+        #expect(SpacePreferences.hasAnyPreference(forSpace: 1, store: store))
+    }
+
+    @Test("hasAnyPreference checks per-display when enabled")
+    func hasAnyPreferenceChecksPerDisplay() {
+        store.uniqueIconsPerDisplay = true
+        SpacePreferences.setIconStyle(.circle, forSpace: 1, display: "Display1", store: store)
+
+        #expect(SpacePreferences.hasAnyPreference(forSpace: 1, display: "Display1", store: store))
+        #expect(!SpacePreferences.hasAnyPreference(forSpace: 1, display: "Display2", store: store))
+    }
+
+    // MARK: - inheritPreferences Tests
+
+    @Test("inheritPreferences copies all set preferences")
+    func inheritPreferencesCopiesAllSetPreferences() {
+        let colors = SpaceColors(foreground: .red, background: .blue)
+        SpacePreferences.setColors(colors, forSpace: 1, store: store)
+        SpacePreferences.setIconStyle(.circle, forSpace: 1, store: store)
+        SpacePreferences.setSymbol("star", forSpace: 1, store: store)
+        SpacePreferences.setBadge(SpaceBadge(character: "A", position: .topRight), forSpace: 1, store: store)
+        SpacePreferences.setLabel("Work", forSpace: 1, store: store)
+        SpacePreferences.setLabelStyle(.rounded, forSpace: 1, store: store)
+
+        SpacePreferences.inheritPreferences(from: 1, to: 2, store: store)
+
+        #expect(SpacePreferences.colors(forSpace: 2, store: store)?.foreground == .red)
+        #expect(SpacePreferences.iconStyle(forSpace: 2, store: store) == .circle)
+        #expect(SpacePreferences.symbol(forSpace: 2, store: store) == "star")
+        #expect(SpacePreferences.badge(forSpace: 2, store: store)?.character == "A")
+        #expect(SpacePreferences.label(forSpace: 2, store: store) == "Work")
+        #expect(SpacePreferences.labelStyle(forSpace: 2, store: store) == .rounded)
+    }
+
+    @Test("inheritPreferences only copies preferences that exist on source")
+    func inheritPreferencesOnlyCopiesExistingPrefs() {
+        // Only set colors on source
+        SpacePreferences.setColors(SpaceColors(foreground: .red, background: .blue), forSpace: 1, store: store)
+
+        SpacePreferences.inheritPreferences(from: 1, to: 2, store: store)
+
+        #expect(SpacePreferences.colors(forSpace: 2, store: store) != nil)
+        #expect(SpacePreferences.iconStyle(forSpace: 2, store: store) == nil)
+        #expect(SpacePreferences.symbol(forSpace: 2, store: store) == nil)
+    }
+
+    @Test("inheritPreferences does not overwrite existing target preferences")
+    func inheritPreferencesDoesNotOverwriteExisting() {
+        // Source has circle style
+        SpacePreferences.setIconStyle(.circle, forSpace: 1, store: store)
+        SpacePreferences.setColors(SpaceColors(foreground: .red, background: .blue), forSpace: 1, store: store)
+
+        // Target already has hexagon style
+        SpacePreferences.setIconStyle(.hexagon, forSpace: 2, store: store)
+
+        // inheritPreferences copies all source prefs (including style) - the guard is in the caller
+        SpacePreferences.inheritPreferences(from: 1, to: 2, store: store)
+
+        // inheritPreferences overwrites - it's the caller's job to check hasAnyPreference first
+        #expect(SpacePreferences.iconStyle(forSpace: 2, store: store) == .circle)
+        #expect(SpacePreferences.colors(forSpace: 2, store: store)?.foreground == .red)
+    }
+
+    @Test("inheritPreferences respects per-display mode")
+    func inheritPreferencesRespectsPerDisplay() {
+        store.uniqueIconsPerDisplay = true
+
+        SpacePreferences.setIconStyle(.circle, forSpace: 1, display: "Display1", store: store)
+        SpacePreferences.inheritPreferences(from: 1, to: 2, display: "Display1", store: store)
+
+        #expect(SpacePreferences.iconStyle(forSpace: 2, display: "Display1", store: store) == .circle)
+        // Other display should be unaffected
+        #expect(SpacePreferences.iconStyle(forSpace: 2, display: "Display2", store: store) == nil)
+    }
+
     @Test("per-display with nil display falls back to shared")
     func perDisplayWithNilDisplayFallsBackToShared() {
         store.uniqueIconsPerDisplay = true

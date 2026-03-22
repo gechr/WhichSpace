@@ -128,6 +128,7 @@ enum MenuTag: Int {
     case hideEmptySpaces
     case hideFullscreenApps
     case hideSingleSpace
+    case inheritStyle
     case invertColors
     case labelInput
     case labelMenuItem
@@ -248,6 +249,7 @@ enum Localization {
     static let tipCheckForUpdates = String(localized: "tip_check_for_updates")
     static let tipClickToSwitchSpaces = String(localized: "tip_click_to_switch_spaces")
     static let tipDimInactiveSpaces = String(localized: "tip_dim_inactive_spaces")
+    static let tipInheritStyle = String(localized: "tip_inherit_style")
     static let tipExportSettings = String(localized: "tip_export_settings")
     static let tipFont = String(localized: "tip_font")
     static let tipHideEmptySpaces = String(localized: "tip_hide_empty_spaces")
@@ -271,6 +273,7 @@ enum Localization {
     static let tipUniqueIconsPerDisplay = String(localized: "tip_unique_icons_per_display")
     static let toggleClickToSwitchSpaces = String(localized: "toggle_click_to_switch_spaces")
     static let toggleDimInactiveSpaces = String(localized: "toggle_dim_inactive_spaces")
+    static let toggleInheritStyle = String(localized: "toggle_inherit_style")
     static let toggleHideEmptySpaces = String(localized: "toggle_hide_empty_spaces")
     static let toggleHideFullscreenApps = String(localized: "toggle_hide_fullscreen_apps")
     static let toggleHideSingleSpace = String(localized: "toggle_hide_single_space")
