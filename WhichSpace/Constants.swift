@@ -18,10 +18,10 @@ enum Labels {
 // MARK: - Label Templates
 
 enum LabelTemplate {
-    static let spaceToken = "{space}"
+    static let spaceToken = "{number}"
 
     /// Resolves template tokens in a label string.
-    /// Currently supports `{space}` which is replaced with the space number.
+    /// Currently supports `{number}` which is replaced with the space number.
     static func resolve(_ label: String, space: Int) -> String {
         label.replacingOccurrences(of: spaceToken, with: String(space))
     }

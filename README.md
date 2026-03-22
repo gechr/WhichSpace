@@ -114,7 +114,7 @@ brew install --cask gechr/tap/whichspace
 <img src="Screenshots/LabelsMenu.png" width="60%">
 
 > [!NOTE]
-> Use `{space}` in a label to insert the current Space number, e.g. `{space} - Work` → `3 - Work`.
+> Use `{number}` in a label to insert the current Space number, e.g. `{number} - Work` → `3 - Work`.
 
 ### Size
 

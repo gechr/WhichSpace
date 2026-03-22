@@ -30660,259 +30660,259 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "نص مخصص، حتى 10 أحرف. استخدم {space} لرقم الفضاء"
+            "value" : "نص مخصص، حتى 10 أحرف. استخدم {number} لرقم الفضاء"
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Персонализиран текст, до 10 знака. Използвай {space} за номера на пространството"
+            "value" : "Персонализиран текст, до 10 знака. Използвай {number} за номера на пространството"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Text personalitzat, fins a 10 caràcters. Usa {space} per al número de l'espai"
+            "value" : "Text personalitzat, fins a 10 caràcters. Usa {number} per al número de l'espai"
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vlastní text, až 10 znaků. Použijte {space} pro číslo prostoru"
+            "value" : "Vlastní text, až 10 znaků. Použijte {number} pro číslo prostoru"
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tilpasset tekst, op til 10 tegn. Brug {space} for Space-nummeret"
+            "value" : "Tilpasset tekst, op til 10 tegn. Brug {number} for Space-nummeret"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Benutzerdefinierter Text, bis zu 10 Zeichen. {space} für die Space-Nummer verwenden"
+            "value" : "Benutzerdefinierter Text, bis zu 10 Zeichen. {number} für die Space-Nummer verwenden"
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Προσαρμοσμένο κείμενο, έως 10 χαρακτήρες. Χρησιμοποιήστε {space} για τον αριθμό Space"
+            "value" : "Προσαρμοσμένο κείμενο, έως 10 χαρακτήρες. Χρησιμοποιήστε {number} για τον αριθμό Space"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Custom text, up to 10 characters. Use {space} for the Space number"
+            "value" : "Custom text, up to 10 characters. Use {number} for the Space number"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Custom text, up to 10 characters. Use {space} for the Space number"
+            "value" : "Custom text, up to 10 characters. Use {number} for the Space number"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Texto personalizado, hasta 10 caracteres. Usa {space} para el número de espacio"
+            "value" : "Texto personalizado, hasta 10 caracteres. Usa {number} para el número de espacio"
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "متن دلخواه، تا ۱۰ کاراکتر. از {space} برای شماره فضا استفاده کنید"
+            "value" : "متن دلخواه، تا ۱۰ کاراکتر. از {number} برای شماره فضا استفاده کنید"
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mukautettu teksti, enintään 10 merkkiä. Käytä {space} tilan numeroon"
+            "value" : "Mukautettu teksti, enintään 10 merkkiä. Käytä {number} tilan numeroon"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Texte personnalisé, jusqu'à 10 caractères. Utilisez {space} pour le numéro d'espace"
+            "value" : "Texte personnalisé, jusqu'à 10 caractères. Utilisez {number} pour le numéro d'espace"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "טקסט מותאם אישית, עד 10 תווים. השתמש ב-{space} למספר ה-Space"
+            "value" : "טקסט מותאם אישית, עד 10 תווים. השתמש ב-{number} למספר ה-Space"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "कस्टम टेक्स्ट, अधिकतम 10 वर्ण। Space नंबर के लिए {space} उपयोग करें"
+            "value" : "कस्टम टेक्स्ट, अधिकतम 10 वर्ण। Space नंबर के लिए {number} उपयोग करें"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Egyéni szöveg, legfeljebb 10 karakter. Használj {space} karaktert a tér számához"
+            "value" : "Egyéni szöveg, legfeljebb 10 karakter. Használj {number} karaktert a tér számához"
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Teks kustom, hingga 10 karakter. Gunakan {space} untuk nomor Space"
+            "value" : "Teks kustom, hingga 10 karakter. Gunakan {number} untuk nomor Space"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Testo personalizzato, fino a 10 caratteri. Usa {space} per il numero dello spazio"
+            "value" : "Testo personalizzato, fino a 10 caratteri. Usa {number} per il numero dello spazio"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "カスタムテキスト（最大10文字）。Space番号には{space}を使用"
+            "value" : "カスタムテキスト（最大10文字）。Space番号には{number}を使用"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "사용자 지정 텍스트, 최대 10자. Space 번호에는 {space} 사용"
+            "value" : "사용자 지정 텍스트, 최대 10자. Space 번호에는 {number} 사용"
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Прилагоден текст, до 10 знаци. Користи {space} за бројот на просторот"
+            "value" : "Прилагоден текст, до 10 знаци. Користи {number} за бројот на просторот"
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Teks tersuai, sehingga 10 aksara. Gunakan {space} untuk nombor Space"
+            "value" : "Teks tersuai, sehingga 10 aksara. Gunakan {number} untuk nombor Space"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Egendefinert tekst, opptil 10 tegn. Bruk {space} for Space-nummeret"
+            "value" : "Egendefinert tekst, opptil 10 tegn. Bruk {number} for Space-nummeret"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aangepaste tekst, tot 10 tekens. Gebruik {space} voor het Space-nummer"
+            "value" : "Aangepaste tekst, tot 10 tekens. Gebruik {number} voor het Space-nummer"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eigendefinert tekst, opptil 10 teikn. Bruk {space} for Space-nummeret"
+            "value" : "Eigendefinert tekst, opptil 10 teikn. Bruk {number} for Space-nummeret"
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "کسٹم ٹیکسٹ، زیادہ سے زیادہ 10 حروف۔ Space نمبر لئی {space} ورتو"
+            "value" : "کسٹم ٹیکسٹ، زیادہ سے زیادہ 10 حروف۔ Space نمبر لئی {number} ورتو"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Niestandardowy tekst, do 10 znaków. Użyj {space} dla numeru przestrzeni"
+            "value" : "Niestandardowy tekst, do 10 znaków. Użyj {number} dla numeru przestrzeni"
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "دودیز متن، تر ۱۰ توري. د Space شمیرې لپاره {space} وکاروئ"
+            "value" : "دودیز متن، تر ۱۰ توري. د Space شمیرې لپاره {number} وکاروئ"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Texto personalizado, até 10 caracteres. Use {space} para o número do espaço"
+            "value" : "Texto personalizado, até 10 caracteres. Use {number} para o número do espaço"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Texto personalizado, até 10 caracteres. Use {space} para o número do espaço"
+            "value" : "Texto personalizado, até 10 caracteres. Use {number} para o número do espaço"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Text personalizat, până la 10 caractere. Folosiți {space} pentru numărul spațiului"
+            "value" : "Text personalizat, până la 10 caractere. Folosiți {number} pentru numărul spațiului"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Произвольный текст, до 10 символов. Используйте {space} для номера Space"
+            "value" : "Произвольный текст, до 10 символов. Используйте {number} для номера Space"
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vlastný text, až 10 znakov. Použite {space} pre číslo priestoru"
+            "value" : "Vlastný text, až 10 znakov. Použite {number} pre číslo priestoru"
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prilagođeni tekst, do 10 znakova. Koristite {space} za broj prostora"
+            "value" : "Prilagođeni tekst, do 10 znakova. Koristite {number} za broj prostora"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Anpassad text, upp till 10 tecken. Använd {space} för Space-numret"
+            "value" : "Anpassad text, upp till 10 tecken. Använd {number} för Space-numret"
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ข้อความกำหนดเอง สูงสุด 10 ตัวอักษร ใช้ {space} สำหรับหมายเลข Space"
+            "value" : "ข้อความกำหนดเอง สูงสุด 10 ตัวอักษร ใช้ {number} สำหรับหมายเลข Space"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Özel metin, en fazla 10 karakter. Space numarası için {space} kullanın"
+            "value" : "Özel metin, en fazla 10 karakter. Space numarası için {number} kullanın"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Довільний текст, до 10 символів. Використовуйте {space} для номера Space"
+            "value" : "Довільний текст, до 10 символів. Використовуйте {number} для номера Space"
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "کسٹم متن، زیادہ سے زیادہ 10 حروف۔ Space نمبر کے لیے {space} استعمال کریں"
+            "value" : "کسٹم متن، زیادہ سے زیادہ 10 حروف۔ Space نمبر کے لیے {number} استعمال کریں"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Văn bản tùy chỉnh, tối đa 10 ký tự. Dùng {space} cho số Space"
+            "value" : "Văn bản tùy chỉnh, tối đa 10 ký tự. Dùng {number} cho số Space"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "自定义文本，最多 10 个字符。用 {space} 表示 Space 编号"
+            "value" : "自定义文本，最多 10 个字符。用 {number} 表示 Space 编号"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "自訂文字，最多 10 個字元。用 {space} 代表 Space 編號"
+            "value" : "自訂文字，最多 10 個字元。用 {number} 代表 Space 編號"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "自訂文字，最多 10 個字元。用 {space} 代表 Space 編號"
+            "value" : "自訂文字，最多 10 個字元。用 {number} 代表 Space 編號"
           }
         }
       }

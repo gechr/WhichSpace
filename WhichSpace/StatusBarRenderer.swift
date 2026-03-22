@@ -847,7 +847,8 @@ final class StatusBarRenderer {
             return entry.label
         }
         if let label = labels[localIndex], !label.isEmpty {
-            return LabelTemplate.resolve(label, space: globalIndex)
+            let spaceNumber = store.localSpaceNumbers ? localIndex : globalIndex
+            return LabelTemplate.resolve(label, space: spaceNumber)
         }
         return store.localSpaceNumbers ? entry.label : String(globalIndex)
     }

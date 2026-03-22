@@ -126,7 +126,7 @@ struct StatusBarRendererFilterTests {
 
     // MARK: - Label Templates
 
-    @Test("label with {space} template resolves to space number")
+    @Test("label with {number} template resolves to space number")
     func labelTemplateResolvesInLayout() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
@@ -141,7 +141,7 @@ struct StatusBarRendererFilterTests {
             ),
         ]
         store.showAllSpaces = true
-        store.spaceLabels = [2: "{space} - Work"]
+        store.spaceLabels = [2: "{number} - Work"]
 
         let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
         let layout = appState.statusBarLayout()
@@ -150,7 +150,7 @@ struct StatusBarRendererFilterTests {
         #expect(labels == ["1", "2 - Work", "3"])
     }
 
-    @Test("label with only {space} template shows space number")
+    @Test("label with only {number} template shows space number")
     func labelTemplateOnlySpace() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
@@ -164,7 +164,7 @@ struct StatusBarRendererFilterTests {
             ),
         ]
         store.showAllSpaces = true
-        store.spaceLabels = [1: "{space}"]
+        store.spaceLabels = [1: "{number}"]
 
         let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
         let layout = appState.statusBarLayout()

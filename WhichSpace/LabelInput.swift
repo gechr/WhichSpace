@@ -40,7 +40,7 @@ final class LabelInput: NSView {
     private func setupTextField() {
         textField.font = NSFont.boldSystemFont(ofSize: Layout.menuFontSize)
         textField.alignment = .left
-        textField.placeholderString = "{space}"
+        textField.placeholderString = "{number}"
         textField.toolTip = Localization.tipLabelInput
         textField.delegate = self
         textField.maximumNumberOfLines = 1
@@ -84,7 +84,7 @@ extension LabelInput: NSTextFieldDelegate {
 
         var text = field.stringValue
         if LabelTemplate.contentLength(text) > maxLength {
-            // Trim from the end, but preserve complete {space} tokens
+            // Trim from the end, but preserve complete {number} tokens
             while LabelTemplate.contentLength(text) > maxLength {
                 text = String(text.dropLast())
             }
