@@ -11,7 +11,9 @@ final class SpaceIconGeneratorTests: IsolatedDefaultsTestCase {
     }
 
     func testAllStylesGenerateCorrectSize() {
-        for style in IconStyle.allCases {
+        // Rounded styles have dynamic width (capsule shape), so skip fixed-size check
+        let dynamicWidthStyles: Set<IconStyle> = [.rounded, .roundedOutline]
+        for style in IconStyle.allCases where !dynamicWidthStyles.contains(style) {
             let icon = SpaceIconGenerator.generateIcon(for: "1", darkMode: true, style: style)
             XCTAssertEqual(
                 icon.size,
@@ -247,6 +249,7 @@ final class SpaceIconGeneratorTests: IsolatedDefaultsTestCase {
     func testOutlineStyleProducesValidImage() {
         let outlineStyles: [IconStyle] = [
             .squareOutline,
+            .roundedOutline,
             .slimOutline,
             .circleOutline,
             .triangleOutline,
@@ -256,17 +259,21 @@ final class SpaceIconGeneratorTests: IsolatedDefaultsTestCase {
 
         for style in outlineStyles {
             let icon = SpaceIconGenerator.generateIcon(for: "1", darkMode: true, style: style)
-            XCTAssertEqual(icon.size, Layout.statusItemSize, "\(style) should have correct size")
+            if style != .roundedOutline {
+                XCTAssertEqual(icon.size, Layout.statusItemSize, "\(style) should have correct size")
+            }
             XCTAssertNotNil(icon.tiffRepresentation, "\(style) should produce valid image")
         }
     }
 
     func testFilledStyleProducesValidImage() {
-        let filledStyles: [IconStyle] = [.square, .slim, .circle, .triangle, .pentagon, .hexagon]
+        let filledStyles: [IconStyle] = [.square, .rounded, .slim, .circle, .triangle, .pentagon, .hexagon]
 
         for style in filledStyles {
             let icon = SpaceIconGenerator.generateIcon(for: "1", darkMode: true, style: style)
-            XCTAssertEqual(icon.size, Layout.statusItemSize, "\(style) should have correct size")
+            if style != .rounded {
+                XCTAssertEqual(icon.size, Layout.statusItemSize, "\(style) should have correct size")
+            }
             XCTAssertNotNil(icon.tiffRepresentation, "\(style) should produce valid image")
         }
     }
@@ -329,6 +336,8 @@ final class SpaceIconGeneratorTests: IsolatedDefaultsTestCase {
 
     func testBadgeWithAllStylesProducesValidImages() {
         let badge = SpaceBadge(character: "A", position: .topRight)
+        // Rounded styles have dynamic width (capsule shape), so skip fixed-size check
+        let dynamicWidthStyles: Set<IconStyle> = [.rounded, .roundedOutline]
         for style in IconStyle.allCases {
             let icon = SpaceIconGenerator.generateIcon(
                 for: "1",
@@ -336,11 +345,13 @@ final class SpaceIconGeneratorTests: IsolatedDefaultsTestCase {
                 style: style,
                 badge: badge
             )
-            XCTAssertEqual(
-                icon.size,
-                Layout.statusItemSize,
-                "Badge with style \(style.rawValue) should produce correct size"
-            )
+            if !dynamicWidthStyles.contains(style) {
+                XCTAssertEqual(
+                    icon.size,
+                    Layout.statusItemSize,
+                    "Badge with style \(style.rawValue) should produce correct size"
+                )
+            }
             XCTAssertNotNil(
                 icon.tiffRepresentation,
                 "Badge with style \(style.rawValue) should produce valid image"

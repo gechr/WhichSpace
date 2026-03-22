@@ -831,6 +831,10 @@ final class StatusBarRenderer {
             .slim
         case .squareOutline:
             .slimOutline
+        case .rounded:
+            .rounded
+        case .roundedOutline:
+            .roundedOutline
         default:
             labelStyle
         }

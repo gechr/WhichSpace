@@ -811,7 +811,9 @@ final class MenuBuilder {
         return iconMenu
     }
 
-    private static let labelStyles: [IconStyle] = [.square, .squareOutline, .stroke, .transparent]
+    private static let labelStyles: [IconStyle] = [
+        .square, .squareOutline, .rounded, .roundedOutline, .stroke, .transparent,
+    ]
 
     private static func labelStyleTitle(for style: IconStyle) -> String? {
         switch style {
@@ -819,6 +821,10 @@ final class MenuBuilder {
             Localization.labelStyleBox
         case .squareOutline:
             Localization.labelStyleBoxOutline
+        case .rounded:
+            Localization.labelStyleRounded
+        case .roundedOutline:
+            Localization.labelStyleRoundedOutline
         default:
             nil
         }

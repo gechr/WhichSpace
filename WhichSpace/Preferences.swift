@@ -6,6 +6,8 @@ import Defaults
 enum IconStyle: String, CaseIterable, Defaults.Serializable {
     case square
     case squareOutline
+    case rounded
+    case roundedOutline
     case slim
     case slimOutline
     case circle

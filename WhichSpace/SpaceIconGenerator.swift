@@ -12,6 +12,7 @@ import Cocoa
 
 enum ShapeType {
     case square
+    case rounded
     case slim
     case circle
     case triangle
@@ -25,6 +26,8 @@ extension IconStyle {
         switch self {
         case .square, .squareOutline:
             .square
+        case .rounded, .roundedOutline:
+            .rounded
         case .slim, .slimOutline:
             .slim
         case .circle, .circleOutline:
@@ -44,9 +47,9 @@ extension IconStyle {
 
     var isFilled: Bool {
         switch self {
-        case .square, .slim, .circle, .triangle, .pentagon, .hexagon:
+        case .square, .rounded, .slim, .circle, .triangle, .pentagon, .hexagon:
             true
-        case .squareOutline, .slimOutline, .circleOutline, .triangleOutline,
+        case .squareOutline, .roundedOutline, .slimOutline, .circleOutline, .triangleOutline,
              .pentagonOutline, .hexagonOutline, .stroke, .transparent:
             false
         }
@@ -119,6 +122,18 @@ enum SpaceIconGenerator {
         switch style.shapeType {
         case .square, .circle:
             return min(Layout.baseSquareSize * scale, Layout.statusItemHeight - 1)
+        case .rounded:
+            let textWidth = measuredTextSize(
+                for: spaceNumber,
+                badge: badge,
+                customFont: customFont,
+                scale: scale
+            ).width
+            let height = min(Layout.baseSquareSize * scale, Layout.statusItemHeight - 1)
+            guard isVisibleSlimDecoration(customColors: customColors) else {
+                return textWidth
+            }
+            return textWidth + height
         case .slim:
             let textWidth = measuredTextSize(
                 for: spaceNumber,
@@ -201,6 +216,39 @@ enum SpaceIconGenerator {
                     roundedRect: shapeRect,
                     xRadius: Layout.Icon.cornerRadius,
                     yRadius: Layout.Icon.cornerRadius
+                )
+                fillOrStroke(path: path, color: color, filled: filled)
+                return shapeRect
+            }
+
+        case .rounded:
+            return generateShapedIcon(
+                for: spaceNumber,
+                darkMode: darkMode,
+                customColors: customColors,
+                customFont: customFont,
+                filled: filled,
+                scale: scale,
+                canvasSize: canvasSize,
+                badge: badge
+            ) { rect, color, filled in
+                let font = scaledFont(for: spaceNumber.count, customFont: customFont, scale: scale)
+                let measuredText = buildBadgedAttributedString(
+                    number: spaceNumber, badge: badge, font: font, color: color
+                )
+                let textSize = measuredText.size()
+                let height = squareSize(scale: scale)
+                let horizontalPadding = height / 2
+                let iconSize = CGSize(
+                    width: textSize.width + horizontalPadding * 2,
+                    height: height
+                )
+                let shapeRect = centeredRect(size: iconSize, in: rect)
+                let radius = height / 2
+                let path = NSBezierPath(
+                    roundedRect: shapeRect,
+                    xRadius: radius,
+                    yRadius: radius
                 )
                 fillOrStroke(path: path, color: color, filled: filled)
                 return shapeRect
