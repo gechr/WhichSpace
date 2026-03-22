@@ -469,6 +469,23 @@ final class SpaceIconGeneratorTests: IsolatedDefaultsTestCase {
         XCTAssertEqual(icon.size.height, Layout.statusItemHeight)
     }
 
+    func testRoundedStylePaddingAffectsOverflowingWidth() {
+        let tight = SpaceIconGenerator.generateIcon(
+            for: "1",
+            darkMode: true,
+            style: .rounded,
+            paddingScale: 0
+        )
+        let standard = SpaceIconGenerator.generateIcon(
+            for: "1",
+            darkMode: true,
+            style: .rounded,
+            paddingScale: Layout.defaultPaddingScale
+        )
+
+        XCTAssertLessThan(tight.size.width, standard.size.width)
+    }
+
     func testPaddingScaleAffectsSymbolIconWidth() {
         let tight = SpaceIconGenerator.generateSymbolIcon(
             symbolName: "star.fill", darkMode: true, paddingScale: 0

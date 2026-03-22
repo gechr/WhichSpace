@@ -69,7 +69,10 @@ enum SpaceIconGenerator {
         sizeScale: Double,
         paddingScale: Double
     ) -> CGSize {
-        let defaultWidth = max(Layout.statusItemWidth * sizeScale, contentWidth)
+        let baseWidth = Layout.statusItemWidth * sizeScale
+        let defaultWidth = contentWidth > baseWidth
+            ? contentWidth + Layout.defaultHorizontalPadding * sizeScale
+            : baseWidth
         let minimumWidth = contentWidth + Layout.Icon.outlineWidth
         let effectiveWidth = contentWidth + (defaultWidth - contentWidth) * paddingScale / 100.0
         return CGSize(width: max(effectiveWidth, minimumWidth), height: Layout.statusItemHeight)
