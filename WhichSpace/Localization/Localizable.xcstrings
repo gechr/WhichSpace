@@ -12058,259 +12058,259 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "تعيين النمط الافتراضي؟"
+            "value" : "تعيين الافتراضي للمساحات الجديدة؟"
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Задаване на стил по подразбиране?"
+            "value" : "Задаване като стандарт за нови пространства?"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Establir l'estil predeterminat?"
+            "value" : "Establir com a predeterminat per als nous Espais?"
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nastavit výchozí styl?"
+            "value" : "Nastavit jako výchozí pro nové Spaces?"
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Indstil standardstil?"
+            "value" : "Indstil som standard for nye Spaces?"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Standardstil festlegen?"
+            "value" : "Als Standard für neue Spaces festlegen?"
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ορισμός προεπιλεγμένου στιλ;"
+            "value" : "Ορισμός ως προεπιλογή για νέους Χώρους;"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Set default Style?"
+            "value" : "Set default for new Spaces?"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Set default Style?"
+            "value" : "Set default for new Spaces?"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Establecer el estilo predeterminado?"
+            "value" : "¿Establecer como predeterminado para los nuevos Espacios?"
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "استایل پیش‌فرض تنظیم شود؟"
+            "value" : "پیش‌فرض برای فضاهای جدید تنظیم شود؟"
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Asetetaanko oletustyyli?"
+            "value" : "Asetetaanko oletukseksi uusille Spaceille?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Définir le style par défaut ?"
+            "value" : "Définir comme défaut pour les nouveaux Espaces ?"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "להגדיר סגנון ברירת מחדל?"
+            "value" : "להגדיר כברירת מחדל למרחבים חדשים?"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "डिफ़ॉल्ट स्टाइल सेट करें?"
+            "value" : "नए स्पेसेस के लिए डिफ़ॉल्ट सेट करें?"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alapértelmezett stílus beállítása?"
+            "value" : "Beállítás alapértelmezettként az új Space-ekhez?"
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Atur gaya bawaan?"
+            "value" : "Atur sebagai bawaan untuk Space baru?"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impostare lo stile predefinito?"
+            "value" : "Impostare come predefinito per i nuovi Spazi?"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "デフォルトスタイルを設定しますか？"
+            "value" : "新しいスペースのデフォルトに設定しますか？"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "기본 스타일을 설정할까요?"
+            "value" : "새 공간의 기본값으로 설정할까요?"
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Да се постави стандарден стил?"
+            "value" : "Да се постави како стандард за нови Простори?"
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tetapkan gaya lalai?"
+            "value" : "Tetapkan sebagai lalai untuk Ruang baharu?"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Angi standardstil?"
+            "value" : "Angi som standard for nye Spaces?"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Standaardstijl instellen?"
+            "value" : "Instellen als standaard voor nieuwe Spaces?"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Setje standardstil?"
+            "value" : "Setje som standard for nye Spaces?"
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "پہلے توں مقررہ سٹائل سیٹ کرو؟"
+            "value" : "نویں سپیسز لئی پہلے توں مقررہ سیٹ کرو؟"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ustawić styl domyślny?"
+            "value" : "Ustawić jako domyślne dla nowych Spaces?"
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "تلواليز سټایل وټاکل شي؟"
+            "value" : "د نویو سپېسونو لپاره تلواليز وټاکل شي؟"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Definir o estilo predefinido?"
+            "value" : "Definir como predefinição para novos Espaços?"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Definir o estilo padrão?"
+            "value" : "Definir como padrão para novos Espaços?"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Setați stilul implicit?"
+            "value" : "Setați ca implicit pentru spațiile noi?"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Задать стиль по умолчанию?"
+            "value" : "Задать как стандарт для новых пространств?"
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nastaviť predvolený štýl?"
+            "value" : "Nastaviť ako predvolené pre nové priestory?"
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Postaviti podrazumevani stil?"
+            "value" : "Postaviti kao podrazumevano za nove Prostore?"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ange standardstil?"
+            "value" : "Ange som standard för nya Spaces?"
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ตั้งสไตล์เริ่มต้น?"
+            "value" : "ตั้งเป็นค่าเริ่มต้นสำหรับ Space ใหม่?"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Varsayılan stil ayarlansın mı?"
+            "value" : "Yeni Alanlar için varsayılan olarak ayarlansın mı?"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Встановити стиль за замовчуванням?"
+            "value" : "Встановити як типове для нових просторів?"
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "طے شدہ انداز مقرر کریں؟"
+            "value" : "نئی اسپیسز کے لیے طے شدہ مقرر کریں؟"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Đặt kiểu mặc định?"
+            "value" : "Đặt làm mặc định cho các Không gian mới?"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "设置默认样式？"
+            "value" : "设为新空间的默认值？"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "設定預設樣式？"
+            "value" : "設為新空間的預設值？"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "設定預設樣式？"
+            "value" : "設為新空間的預設值？"
           }
         }
       }
@@ -15464,259 +15464,259 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ستُستخدم تخصيصات المساحة الحالية كإعدادات افتراضية للمساحات الجديدة."
+            "value" : "سيتم استخدام لون هذه المساحة ونمطها ورمزها وخطها كإعدادات افتراضية للمساحات الجديدة."
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Персонализациите за текущото пространство ще се използват по подразбиране за нови пространства."
+            "value" : "Цветът, стилът, символът и шрифтът на това пространство ще се използват като стандартни за нови пространства."
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les personalitzacions de l'Espai actual s'utilitzaran com a predeterminades per als nous Espais."
+            "value" : "El color, l'estil, el símbol i la lletra d'aquest Espai s'utilitzaran com a predeterminats per als nous Espais."
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Přizpůsobení aktuálního Space budou použita jako výchozí pro nové Spaces."
+            "value" : "Barva, styl, symbol a písmo tohoto Space budou použity jako výchozí pro nové Spaces."
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tilpasningerne for det aktuelle Space vil blive brugt som standard for nye Spaces."
+            "value" : "Farve, stil, symbol og skrifttype fra dette Space vil blive brugt som standard for nye Spaces."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Anpassungen des aktuellen Spaces werden als Standard für neue Spaces verwendet."
+            "value" : "Farbe, Stil, Symbol und Schriftart dieses Spaces werden als Standard für neue Spaces verwendet."
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Οι προσαρμογές του τρέχοντος Χώρου θα χρησιμοποιηθούν ως προεπιλογή για νέους Χώρους."
+            "value" : "Το χρώμα, το στιλ, το σύμβολο και η γραμματοσειρά αυτού του Χώρου θα χρησιμοποιηθούν ως προεπιλογή για νέους Χώρους."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The customizations for the current Space will be used as the default for new Spaces."
+            "value" : "This Space's color, style, symbol, and font will be used as the default for new Spaces."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The customisations for the current Space will be used as the default for new Spaces."
+            "value" : "This Space's colour, style, symbol, and font will be used as the default for new Spaces."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las personalizaciones del Espacio actual se usarán como predeterminadas para los nuevos Espacios."
+            "value" : "El color, estilo, símbolo y fuente de este Espacio se usarán como predeterminados para los nuevos Espacios."
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "سفارشی‌سازی‌های فضای فعلی به عنوان پیش‌فرض برای فضاهای جدید استفاده خواهند شد."
+            "value" : "رنگ، استایل، نماد و فونت این فضا به عنوان پیش‌فرض برای فضاهای جدید استفاده خواهند شد."
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nykyisen Spacen mukautukset käytetään oletuksena uusille Spaceille."
+            "value" : "Tämän Spacen väri, tyyli, symboli ja fontti käytetään oletuksena uusille Spaceille."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les personnalisations de l'Espace actuel seront utilisées par défaut pour les nouveaux Espaces."
+            "value" : "La couleur, le style, le symbole et la police de cet Espace seront utilisés par défaut pour les nouveaux Espaces."
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ההתאמות האישיות של המרחב הנוכחי ישמשו כברירת מחדל למרחבים חדשים."
+            "value" : "הצבע, הסגנון, הסמל והגופן של המרחב הזה ישמשו כברירת מחדל למרחבים חדשים."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "मौजूदा स्पेस की कस्टमाइज़ेशन नए स्पेसेस के लिए डिफ़ॉल्ट के रूप में उपयोग की जाएँगी।"
+            "value" : "इस स्पेस का रंग, स्टाइल, प्रतीक और फ़ॉन्ट नए स्पेसेस के लिए डिफ़ॉल्ट के रूप में उपयोग किए जाएँगे।"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Az aktuális Space testreszabásai lesznek az alapértelmezettek az új Space-ekhez."
+            "value" : "Ennek a Space-nek a színe, stílusa, szimbóluma és betűtípusa lesz az alapértelmezett az új Space-ekhez."
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Penyesuaian untuk Space saat ini akan digunakan sebagai bawaan untuk Space baru."
+            "value" : "Warna, gaya, simbol, dan font Space ini akan digunakan sebagai bawaan untuk Space baru."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le personalizzazioni dello Spazio corrente verranno utilizzate come predefinite per i nuovi Spazi."
+            "value" : "Colore, stile, simbolo e font di questo Spazio verranno utilizzati come predefiniti per i nuovi Spazi."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "現在のスペースのカスタマイズが新しいスペースのデフォルトとして使用されます。"
+            "value" : "このスペースの色、スタイル、シンボル、フォントが新しいスペースのデフォルトとして使用されます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "현재 공간의 사용자 지정이 새 공간의 기본값으로 사용됩니다."
+            "value" : "이 공간의 색상, 스타일, 심볼, 글꼴이 새 공간의 기본값으로 사용됩니다."
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Прилагодувањата за тековниот Простор ќе се користат како стандардни за нови Простори."
+            "value" : "Бојата, стилот, симболот и фонтот на овој Простор ќе се користат како стандардни за нови Простори."
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Penyesuaian untuk Ruang semasa akan digunakan sebagai lalai untuk Ruang baharu."
+            "value" : "Warna, gaya, simbol dan fon Ruang ini akan digunakan sebagai lalai untuk Ruang baharu."
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tilpasningene for gjeldende Space vil bli brukt som standard for nye Spaces."
+            "value" : "Farge, stil, symbol og skrifttype fra dette Space vil bli brukt som standard for nye Spaces."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "De aanpassingen van de huidige Space worden als standaard gebruikt voor nieuwe Spaces."
+            "value" : "Kleur, stijl, symbool en lettertype van deze Space worden als standaard gebruikt voor nieuwe Spaces."
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tilpassingane for gjeldande Space vil bli brukte som standard for nye Spaces."
+            "value" : "Farge, stil, symbol og skrifttype frå dette Space vil bli brukte som standard for nye Spaces."
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "موجودہ سپیس دیاں تبدیلیاں نویں سپیسز لئی پہلے توں مقررہ وجوں ورتیاں جان گیاں۔"
+            "value" : "اس سپیس دا رنگ، سٹائل، نشان تے فونٹ نویں سپیسز لئی پہلے توں مقررہ وجوں ورتے جان گے۔"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dostosowania bieżącego Space zostaną użyte jako domyślne dla nowych Spaces."
+            "value" : "Kolor, styl, symbol i czcionka tego Space zostaną użyte jako domyślne dla nowych Spaces."
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "د روان سپېس دودیزې به د نویو سپېسونو لپاره تلواليز په توګه وکارول شي."
+            "value" : "د دې سپېس رنګ، سټایل، سمبول او فانټ به د نویو سپېسونو لپاره تلواليز په توګه وکارول شي."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "As personalizações do Espaço atual serão usadas como predefinição para novos Espaços."
+            "value" : "A cor, o estilo, o símbolo e o tipo de letra deste Espaço serão usados como predefinição para novos Espaços."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "As personalizações do Espaço atual serão usadas como padrão para novos Espaços."
+            "value" : "A cor, o estilo, o símbolo e a fonte deste Espaço serão usados como padrão para novos Espaços."
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Personalizările spațiului curent vor fi utilizate ca implicite pentru spațiile noi."
+            "value" : "Culoarea, stilul, simbolul și fontul acestui spațiu vor fi utilizate ca implicite pentru spațiile noi."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Настройки текущего пространства будут использоваться по умолчанию для новых пространств."
+            "value" : "Цвет, стиль, символ и шрифт этого пространства будут использоваться как стандартные для новых пространств."
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prispôsobenia aktuálneho priestoru sa použijú ako predvolené pre nové priestory."
+            "value" : "Farba, štýl, symbol a písmo tohto priestoru sa použijú ako predvolené pre nové priestory."
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prilagođavanja tekućeg Prostora će se koristiti kao podrazumevana za nove Prostore."
+            "value" : "Boja, stil, simbol i font ovog Prostora će se koristiti kao podrazumevani za nove Prostore."
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Anpassningarna för aktuellt Space kommer att användas som standard för nya Spaces."
+            "value" : "Färg, stil, symbol och teckensnitt från det här Space kommer att användas som standard för nya Spaces."
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "การปรับแต่งของ Space ปัจจุบันจะถูกใช้เป็นค่าเริ่มต้นสำหรับ Space ใหม่"
+            "value" : "สี สไตล์ สัญลักษณ์ และฟอนต์ของ Space นี้จะถูกใช้เป็นค่าเริ่มต้นสำหรับ Space ใหม่"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Geçerli Alanın özelleştirmeleri yeni Alanlar için varsayılan olarak kullanılacaktır."
+            "value" : "Bu Alanın renk, stil, sembol ve yazı tipi yeni Alanlar için varsayılan olarak kullanılacaktır."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Налаштування поточного простору будуть використовуватися як типові для нових просторів."
+            "value" : "Колір, стиль, символ і шрифт цього простору будуть використовуватися як типові для нових просторів."
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "موجودہ اسپیس کی تخصیصات نئی اسپیسز کے لیے طے شدہ کے طور پر استعمال ہوں گی۔"
+            "value" : "اس اسپیس کا رنگ، انداز، علامت اور فونٹ نئی اسپیسز کے لیے طے شدہ کے طور پر استعمال ہوں گے۔"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Các tùy chỉnh của Không gian hiện tại sẽ được sử dụng làm mặc định cho các Không gian mới."
+            "value" : "Màu, kiểu, ký hiệu và phông chữ của Không gian này sẽ được sử dụng làm mặc định cho các Không gian mới."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "当前空间的自定义设置将用作新空间的默认值。"
+            "value" : "此空间的颜色、样式、符号和字体将用作新空间的默认值。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "目前空間的自訂設定將用作新空間的預設值。"
+            "value" : "此空間的顏色、樣式、符號和字體將用作新空間的預設值。"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "目前空間的自訂設定將用作新空間的預設值。"
+            "value" : "此空間的顏色、樣式、符號與字體將用作新空間的預設值。"
           }
         }
       }
@@ -32232,259 +32232,259 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "حفظ تخصيصات المساحة الحالية كإعدادات افتراضية للمساحات الجديدة"
+            "value" : "حفظ لون هذه المساحة ونمطها ورمزها وخطها كإعدادات افتراضية للمساحات الجديدة"
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Запази персонализациите на текущото пространство като стандартни за нови пространства"
+            "value" : "Запази цвета, стила, символа и шрифта на това пространство като стандартни за нови пространства"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Desa les personalitzacions de l'Espai actual com a predeterminades per als nous Espais"
+            "value" : "Desa el color, l'estil, el símbol i la lletra d'aquest Espai com a predeterminats per als nous Espais"
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Uložte přizpůsobení aktuálního Space jako výchozí pro nové Spaces"
+            "value" : "Uložte barvu, styl, symbol a písmo tohoto Space jako výchozí pro nové Spaces"
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gem tilpasningerne for det aktuelle Space som standard for nye Spaces"
+            "value" : "Gem farve, stil, symbol og skrifttype fra dette Space som standard for nye Spaces"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Anpassungen des aktuellen Spaces als Standard für neue Spaces speichern"
+            "value" : "Farbe, Stil, Symbol und Schriftart dieses Spaces als Standard für neue Spaces speichern"
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Αποθήκευση των προσαρμογών του τρέχοντος Χώρου ως προεπιλογή για νέους Χώρους"
+            "value" : "Αποθήκευση χρώματος, στιλ, συμβόλου και γραμματοσειράς αυτού του Χώρου ως προεπιλογή για νέους Χώρους"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Save the current Space's customizations as the default for new Spaces"
+            "value" : "Save this Space's color, style, symbol, and font as the default for new Spaces"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Save the current Space's customisations as the default for new Spaces"
+            "value" : "Save this Space's colour, style, symbol, and font as the default for new Spaces"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Guardar las personalizaciones del Espacio actual como predeterminadas para los nuevos Espacios"
+            "value" : "Guardar el color, estilo, símbolo y fuente de este Espacio como predeterminados para los nuevos Espacios"
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ذخیره سفارشی‌سازی‌های فضای فعلی به عنوان پیش‌فرض برای فضاهای جدید"
+            "value" : "رنگ، استایل، نماد و فونت این فضا را به عنوان پیش‌فرض برای فضاهای جدید ذخیره کن"
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tallenna nykyisen Spacen mukautukset oletukseksi uusille Spaceille"
+            "value" : "Tallenna tämän Spacen väri, tyyli, symboli ja fontti oletukseksi uusille Spaceille"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enregistrer les personnalisations de l'Espace actuel comme défaut pour les nouveaux Espaces"
+            "value" : "Enregistrer la couleur, le style, le symbole et la police de cet Espace comme défaut pour les nouveaux Espaces"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "שמור את ההתאמות האישיות של המרחב הנוכחי כברירת מחדל למרחבים חדשים"
+            "value" : "שמור את הצבע, הסגנון, הסמל והגופן של המרחב הזה כברירת מחדל למרחבים חדשים"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "मौजूदा स्पेस की कस्टमाइज़ेशन नए स्पेसेस के लिए डिफ़ॉल्ट के रूप में सहेजें"
+            "value" : "इस स्पेस का रंग, स्टाइल, प्रतीक और फ़ॉन्ट नए स्पेसेस के लिए डिफ़ॉल्ट के रूप में सहेजें"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Az aktuális Space testreszabásainak mentése alapértelmezettként az új Space-ekhez"
+            "value" : "Ennek a Space-nek a színe, stílusa, szimbóluma és betűtípusa mentése alapértelmezettként az új Space-ekhez"
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Simpan penyesuaian Space saat ini sebagai bawaan untuk Space baru"
+            "value" : "Simpan warna, gaya, simbol, dan font Space ini sebagai bawaan untuk Space baru"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Salva le personalizzazioni dello Spazio corrente come predefinite per i nuovi Spazi"
+            "value" : "Salva colore, stile, simbolo e font di questo Spazio come predefiniti per i nuovi Spazi"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "現在のスペースのカスタマイズを新しいスペースのデフォルトとして保存"
+            "value" : "このスペースの色、スタイル、シンボル、フォントを新しいスペースのデフォルトとして保存"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "현재 공간의 사용자 지정을 새 공간의 기본값으로 저장"
+            "value" : "이 공간의 색상, 스타일, 심볼, 글꼴을 새 공간의 기본값으로 저장"
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Зачувај ги прилагодувањата на тековниот Простор како стандардни за нови Простори"
+            "value" : "Зачувај ги бојата, стилот, симболот и фонтот на овој Простор како стандардни за нови Простори"
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Simpan penyesuaian Ruang semasa sebagai lalai untuk Ruang baharu"
+            "value" : "Simpan warna, gaya, simbol dan fon Ruang ini sebagai lalai untuk Ruang baharu"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lagre tilpasningene til gjeldende Space som standard for nye Spaces"
+            "value" : "Lagre farge, stil, symbol og skrifttype fra dette Space som standard for nye Spaces"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aanpassingen van de huidige Space opslaan als standaard voor nieuwe Spaces"
+            "value" : "Kleur, stijl, symbool en lettertype van deze Space opslaan als standaard voor nieuwe Spaces"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lagre tilpassingane til gjeldande Space som standard for nye Spaces"
+            "value" : "Lagre farge, stil, symbol og skrifttype frå dette Space som standard for nye Spaces"
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "موجودہ سپیس دیاں تبدیلیاں نویں سپیسز لئی پہلے توں مقررہ وجوں محفوظ کرو"
+            "value" : "اس سپیس دا رنگ، سٹائل، نشان تے فونٹ نویں سپیسز لئی پہلے توں مقررہ وجوں محفوظ کرو"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zapisz dostosowania bieżącego Space jako domyślne dla nowych Spaces"
+            "value" : "Zapisz kolor, styl, symbol i czcionkę tego Space jako domyślne dla nowych Spaces"
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "د روان سپېس دودیزې د نویو سپېسونو لپاره تلواليز په توګه خوندي کړئ"
+            "value" : "د دې سپېس رنګ، سټایل، سمبول او فانټ د نویو سپېسونو لپاره تلواليز په توګه خوندي کړئ"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Guardar as personalizações do Espaço atual como predefinição para novos Espaços"
+            "value" : "Guardar a cor, o estilo, o símbolo e o tipo de letra deste Espaço como predefinição para novos Espaços"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Salvar as personalizações do Espaço atual como padrão para novos Espaços"
+            "value" : "Salvar a cor, o estilo, o símbolo e a fonte deste Espaço como padrão para novos Espaços"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Salvează personalizările spațiului curent ca implicite pentru spațiile noi"
+            "value" : "Salvează culoarea, stilul, simbolul și fontul acestui spațiu ca implicite pentru spațiile noi"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Сохранить настройки текущего пространства как стандартные для новых пространств"
+            "value" : "Сохранить цвет, стиль, символ и шрифт этого пространства как стандартные для новых пространств"
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Uložiť prispôsobenia aktuálneho priestoru ako predvolené pre nové priestory"
+            "value" : "Uložiť farbu, štýl, symbol a písmo tohto priestoru ako predvolené pre nové priestory"
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sačuvaj prilagođavanja tekućeg Prostora kao podrazumevana za nove Prostore"
+            "value" : "Sačuvaj boju, stil, simbol i font ovog Prostora kao podrazumevane za nove Prostore"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spara anpassningarna för aktuellt Space som standard för nya Spaces"
+            "value" : "Spara färg, stil, symbol och teckensnitt från det här Space som standard för nya Spaces"
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "บันทึกการปรับแต่งของ Space ปัจจุบันเป็นค่าเริ่มต้นสำหรับ Space ใหม่"
+            "value" : "บันทึกสี สไตล์ สัญลักษณ์ และฟอนต์ของ Space นี้เป็นค่าเริ่มต้นสำหรับ Space ใหม่"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Geçerli Alanın özelleştirmelerini yeni Alanlar için varsayılan olarak kaydet"
+            "value" : "Bu Alanın renk, stil, sembol ve yazı tipini yeni Alanlar için varsayılan olarak kaydet"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Зберегти налаштування поточного простору як типові для нових просторів"
+            "value" : "Зберегти колір, стиль, символ і шрифт цього простору як типові для нових просторів"
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "موجودہ اسپیس کی تخصیصات کو نئی اسپیسز کے لیے طے شدہ کے طور پر محفوظ کریں"
+            "value" : "اس اسپیس کا رنگ، انداز، علامت اور فونٹ نئی اسپیسز کے لیے طے شدہ کے طور پر محفوظ کریں"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lưu các tùy chỉnh của Không gian hiện tại làm mặc định cho các Không gian mới"
+            "value" : "Lưu màu, kiểu, ký hiệu và phông chữ của Không gian này làm mặc định cho các Không gian mới"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "将当前空间的自定义设置保存为新空间的默认值"
+            "value" : "将此空间的颜色、样式、符号和字体保存为新空间的默认值"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "將目前空間的自訂設定儲存為新空間的預設值"
+            "value" : "將此空間的顏色、樣式、符號和字體儲存為新空間的預設值"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "將目前空間的自訂設定儲存為新空間的預設值"
+            "value" : "將此空間的顏色、樣式、符號與字體儲存為新空間的預設值"
           }
         }
       }
