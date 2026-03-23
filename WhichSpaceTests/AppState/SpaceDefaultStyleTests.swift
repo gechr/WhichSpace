@@ -2,7 +2,7 @@ import XCTest
 @testable import WhichSpace
 
 @MainActor
-final class SpaceInheritanceTests: XCTestCase {
+final class SpaceDefaultStyleTests: XCTestCase {
     private var stub: CGSStub!
     private var sut: AppState!
     private var store: DefaultsStore!
@@ -43,14 +43,96 @@ final class SpaceInheritanceTests: XCTestCase {
         ]
     }
 
-    // MARK: - Inheritance on New Space
+    // MARK: - Default Style Applied to New Spaces
 
-    func testNewSpace_inheritsStyleFromPreviousSpace() {
-        // Given: 2 spaces, space 2 active with circle style
+    func testNewSpace_appliesDefaultStyle() {
+        // Given: A default style is saved with circle icon style
+        SpacePreferences.setIconStyle(.circle, forSpace: 1, store: store)
+        SpacePreferences.saveDefaultStyle(fromSpace: 1, store: store)
+
         sut = makeAppState(
             spaces: [(100, false), (101, false)],
             activeSpaceID: 101
         )
+
+        // When: A 3rd space is added
+        updateStub(
+            spaces: [(100, false), (101, false), (102, false)],
+            activeSpaceID: 102
+        )
+        sut.forceSpaceUpdate()
+
+        // Then: Space 3 gets the default style
+        XCTAssertEqual(
+            SpacePreferences.iconStyle(forSpace: 3, store: store),
+            .circle,
+            "New space should get the default style"
+        )
+    }
+
+    func testNewSpace_appliesDefaultColorsAndSymbol() {
+        // Given: Default style with colors and symbol
+        let colors = SpaceColors(foreground: .red, background: .blue)
+        SpacePreferences.setColors(colors, forSpace: 1, store: store)
+        SpacePreferences.setSymbol("star.fill", forSpace: 1, store: store)
+        SpacePreferences.saveDefaultStyle(fromSpace: 1, store: store)
+
+        sut = makeAppState(
+            spaces: [(100, false)],
+            activeSpaceID: 100
+        )
+
+        // When: A 2nd space is added
+        updateStub(
+            spaces: [(100, false), (101, false)],
+            activeSpaceID: 101
+        )
+        sut.forceSpaceUpdate()
+
+        // Then: Space 2 gets the default colors and symbol
+        let inherited = SpacePreferences.colors(forSpace: 2, store: store)
+        XCTAssertNotNil(inherited, "New space should get default colors")
+        XCTAssertEqual(inherited?.foreground, .red)
+        XCTAssertEqual(inherited?.background, .blue)
+        XCTAssertEqual(SpacePreferences.symbol(forSpace: 2, store: store), "star.fill")
+    }
+
+    func testNewSpace_appliesMultipleDefaultPreferences() {
+        // Given: Default style with multiple customizations
+        SpacePreferences.setIconStyle(.circle, forSpace: 1, store: store)
+        SpacePreferences.setColors(SpaceColors(foreground: .red, background: .blue), forSpace: 1, store: store)
+        SpacePreferences.setSymbol("star", forSpace: 1, store: store)
+        SpacePreferences.setBadge(SpaceBadge(character: "A", position: .topRight), forSpace: 1, store: store)
+        SpacePreferences.saveDefaultStyle(fromSpace: 1, store: store)
+
+        sut = makeAppState(
+            spaces: [(100, false)],
+            activeSpaceID: 100
+        )
+
+        // When: A 2nd space is added
+        updateStub(
+            spaces: [(100, false), (101, false)],
+            activeSpaceID: 101
+        )
+        sut.forceSpaceUpdate()
+
+        // Then: All default preferences are applied
+        XCTAssertEqual(SpacePreferences.iconStyle(forSpace: 2, store: store), .circle)
+        XCTAssertEqual(SpacePreferences.colors(forSpace: 2, store: store)?.foreground, .red)
+        XCTAssertEqual(SpacePreferences.symbol(forSpace: 2, store: store), "star")
+        XCTAssertEqual(SpacePreferences.badge(forSpace: 2, store: store)?.character, "A")
+    }
+
+    // MARK: - No Default Style
+
+    func testNewSpace_noDefaultStyle_getsNoCustomization() {
+        // Given: No default style is saved
+        sut = makeAppState(
+            spaces: [(100, false), (101, false)],
+            activeSpaceID: 101
+        )
+        // Even though space 2 has a style, no default is saved
         SpacePreferences.setIconStyle(.circle, forSpace: 2, store: store)
 
         // When: A 3rd space is added
@@ -60,68 +142,25 @@ final class SpaceInheritanceTests: XCTestCase {
         )
         sut.forceSpaceUpdate()
 
-        // Then: Space 3 inherits circle style from space 2
-        XCTAssertEqual(
-            SpacePreferences.iconStyle(forSpace: 3, store: store),
-            .circle,
-            "New space should inherit icon style from previous space"
+        // Then: Space 3 has no preferences (app defaults)
+        XCTAssertFalse(
+            SpacePreferences.hasAnyPreference(forSpace: 3, store: store),
+            "New space should have no preferences when no default style is set"
         )
     }
 
-    func testNewSpace_inheritsColorsFromPreviousSpace() {
-        // Given: 2 spaces, space 1 active with custom colors
-        let colors = SpaceColors(foreground: .red, background: .blue)
-        sut = makeAppState(
-            spaces: [(100, false), (101, false)],
-            activeSpaceID: 100
-        )
-        SpacePreferences.setColors(colors, forSpace: 1, store: store)
+    // MARK: - Guards
 
-        // When: A 3rd space is added
-        updateStub(
-            spaces: [(100, false), (101, false), (102, false)],
-            activeSpaceID: 102
-        )
-        sut.forceSpaceUpdate()
-
-        // Then: Space 3 inherits colors from space 1
-        let inherited = SpacePreferences.colors(forSpace: 3, store: store)
-        XCTAssertNotNil(inherited, "New space should inherit colors")
-        XCTAssertEqual(inherited?.foreground, .red)
-        XCTAssertEqual(inherited?.background, .blue)
-    }
-
-    func testNewSpace_inheritsSymbolFromPreviousSpace() {
-        // Given: Space 1 active with a symbol
-        sut = makeAppState(
-            spaces: [(100, false)],
-            activeSpaceID: 100
-        )
-        SpacePreferences.setSymbol("star.fill", forSpace: 1, store: store)
-
-        // When: A 2nd space is added
-        updateStub(
-            spaces: [(100, false), (101, false)],
-            activeSpaceID: 101
-        )
-        sut.forceSpaceUpdate()
-
-        // Then: Space 2 inherits symbol
-        XCTAssertEqual(
-            SpacePreferences.symbol(forSpace: 2, store: store),
-            "star.fill",
-            "New space should inherit symbol from previous space"
-        )
-    }
-
-    func testNewSpace_doesNotInheritWhenTargetHasPreferences() {
-        // Given: 2 spaces, space 1 active with circle; space 3 pre-configured with hexagon
-        sut = makeAppState(
-            spaces: [(100, false), (101, false)],
-            activeSpaceID: 100
-        )
+    func testNewSpace_doesNotApplyDefaultWhenTargetHasPreferences() {
+        // Given: Default style saved, and space 3 pre-configured
         SpacePreferences.setIconStyle(.circle, forSpace: 1, store: store)
+        SpacePreferences.saveDefaultStyle(fromSpace: 1, store: store)
         SpacePreferences.setIconStyle(.hexagon, forSpace: 3, store: store)
+
+        sut = makeAppState(
+            spaces: [(100, false), (101, false)],
+            activeSpaceID: 100
+        )
 
         // When: A 3rd space is added
         updateStub(
@@ -138,13 +177,15 @@ final class SpaceInheritanceTests: XCTestCase {
         )
     }
 
-    func testNewSpace_doesNotInheritWhenSpaceCountDecreases() {
-        // Given: 3 spaces, space 2 active with custom style
+    func testNewSpace_doesNotApplyDefaultWhenSpaceCountDecreases() {
+        // Given: Default style saved, 3 spaces
+        SpacePreferences.setIconStyle(.circle, forSpace: 1, store: store)
+        SpacePreferences.saveDefaultStyle(fromSpace: 1, store: store)
+
         sut = makeAppState(
             spaces: [(100, false), (101, false), (102, false)],
             activeSpaceID: 101
         )
-        SpacePreferences.setIconStyle(.circle, forSpace: 2, store: store)
 
         // When: Space is removed (count decreases to 2)
         updateStub(
@@ -153,14 +194,14 @@ final class SpaceInheritanceTests: XCTestCase {
         )
         sut.forceSpaceUpdate()
 
-        // Then: No inheritance should happen (space 2 keeps its style, no new space)
-        XCTAssertEqual(SpacePreferences.iconStyle(forSpace: 2, store: store), .circle)
+        // Then: No default style applied
         XCTAssertNil(SpacePreferences.iconStyle(forSpace: 3, store: store))
     }
 
-    func testNewSpace_doesNotInheritOnInitialLaunch() {
-        // Given: First launch with 3 spaces, space 1 has custom style
+    func testNewSpace_doesNotApplyDefaultOnInitialLaunch() {
+        // Given: Default style saved
         SpacePreferences.setIconStyle(.circle, forSpace: 1, store: store)
+        SpacePreferences.saveDefaultStyle(fromSpace: 1, store: store)
 
         // When: AppState is created (initial launch)
         sut = makeAppState(
@@ -168,74 +209,30 @@ final class SpaceInheritanceTests: XCTestCase {
             activeSpaceID: 100
         )
 
-        // Then: Space 2 and 3 should NOT inherit (no previous space info)
+        // Then: Space 2 and 3 should NOT get default style on initial launch
         XCTAssertNil(
             SpacePreferences.iconStyle(forSpace: 2, store: store),
-            "Spaces should not inherit on initial launch"
+            "Spaces should not get default style on initial launch"
         )
         XCTAssertNil(
             SpacePreferences.iconStyle(forSpace: 3, store: store),
-            "Spaces should not inherit on initial launch"
+            "Spaces should not get default style on initial launch"
         )
     }
 
-    func testNewSpace_doesNotInheritWhenPreviousSpaceHasNoPreferences() {
-        // Given: 2 spaces, space 2 active with no custom preferences
-        sut = makeAppState(
-            spaces: [(100, false), (101, false)],
-            activeSpaceID: 101
-        )
+    // MARK: - Per-Display
 
-        // When: A 3rd space is added
-        updateStub(
-            spaces: [(100, false), (101, false), (102, false)],
-            activeSpaceID: 102
-        )
-        sut.forceSpaceUpdate()
-
-        // Then: Space 3 has no preferences (nothing to inherit)
-        XCTAssertFalse(
-            SpacePreferences.hasAnyPreference(forSpace: 3, store: store),
-            "New space should have no preferences when previous space had none"
-        )
-    }
-
-    func testNewSpace_inheritsMultiplePreferencesAtOnce() {
-        // Given: Space 1 active with multiple customizations
-        sut = makeAppState(
-            spaces: [(100, false)],
-            activeSpaceID: 100
-        )
-        SpacePreferences.setIconStyle(.circle, forSpace: 1, store: store)
-        SpacePreferences.setColors(SpaceColors(foreground: .red, background: .blue), forSpace: 1, store: store)
-        SpacePreferences.setSymbol("star", forSpace: 1, store: store)
-        SpacePreferences.setBadge(SpaceBadge(character: "A", position: .topRight), forSpace: 1, store: store)
-
-        // When: A 2nd space is added
-        updateStub(
-            spaces: [(100, false), (101, false)],
-            activeSpaceID: 101
-        )
-        sut.forceSpaceUpdate()
-
-        // Then: All preferences are inherited
-        XCTAssertEqual(SpacePreferences.iconStyle(forSpace: 2, store: store), .circle)
-        XCTAssertEqual(SpacePreferences.colors(forSpace: 2, store: store)?.foreground, .red)
-        XCTAssertEqual(SpacePreferences.symbol(forSpace: 2, store: store), "star")
-        XCTAssertEqual(SpacePreferences.badge(forSpace: 2, store: store)?.character, "A")
-    }
-
-    // MARK: - Per-Display Inheritance
-
-    func testNewSpace_inheritsPerDisplay_whenEnabled() {
+    func testNewSpace_appliesDefault_perDisplay() {
         store.uniqueIconsPerDisplay = true
 
-        // Given: Space 1 active on Main display with circle style
+        // Given: Default style saved from space 1 on Main display
+        SpacePreferences.setIconStyle(.circle, forSpace: 1, display: "Main", store: store)
+        SpacePreferences.saveDefaultStyle(fromSpace: 1, display: "Main", store: store)
+
         sut = makeAppState(
             spaces: [(100, false)],
             activeSpaceID: 100
         )
-        SpacePreferences.setIconStyle(.circle, forSpace: 1, display: "Main", store: store)
 
         // When: A 2nd space is added
         updateStub(
@@ -244,23 +241,25 @@ final class SpaceInheritanceTests: XCTestCase {
         )
         sut.forceSpaceUpdate()
 
-        // Then: Space 2 inherits on Main display
+        // Then: Space 2 gets the default style on its display
         XCTAssertEqual(
             SpacePreferences.iconStyle(forSpace: 2, display: "Main", store: store),
             .circle,
-            "New space should inherit per-display style"
+            "New space should get default style per-display"
         )
     }
 
     // MARK: - Switching Without New Space
 
-    func testSwitchingSpaces_doesNotTriggerInheritance() {
-        // Given: 3 spaces, space 1 active with circle style
+    func testSwitchingSpaces_doesNotApplyDefault() {
+        // Given: Default style saved, 3 spaces
+        SpacePreferences.setIconStyle(.circle, forSpace: 1, store: store)
+        SpacePreferences.saveDefaultStyle(fromSpace: 1, store: store)
+
         sut = makeAppState(
             spaces: [(100, false), (101, false), (102, false)],
             activeSpaceID: 100
         )
-        SpacePreferences.setIconStyle(.circle, forSpace: 1, store: store)
 
         // When: Switch to space 2 (no new space created)
         updateStub(
@@ -269,10 +268,10 @@ final class SpaceInheritanceTests: XCTestCase {
         )
         sut.forceSpaceUpdate()
 
-        // Then: Space 2 should not inherit from space 1
+        // Then: Space 2 should not get the default style
         XCTAssertNil(
             SpacePreferences.iconStyle(forSpace: 2, store: store),
-            "Switching spaces should not trigger inheritance"
+            "Switching spaces should not apply default style"
         )
     }
 }

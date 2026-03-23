@@ -57,10 +57,6 @@ final class ActionHandler: NSObject {
         store.dimInactiveSpaces.toggle()
     }
 
-    @objc func toggleInheritStyle() {
-        store.inheritStyle.toggle()
-    }
-
     @objc func toggleHideEmptySpaces() {
         store.hideEmptySpaces.toggle()
     }
@@ -330,6 +326,21 @@ final class ActionHandler: NSObject {
     }
 
     // MARK: - Copy / Reset All Actions
+
+    @objc func setDefaultStyle() {
+        withConfirmation(
+            message: Localization.confirmSetDefaultStyle,
+            detail: Localization.detailSetDefaultStyle,
+            confirmTitle: Localization.buttonOK,
+            isDestructive: false
+        ) {
+            SpacePreferences.saveDefaultStyle(
+                fromSpace: appState.currentSpace,
+                display: appState.currentDisplayID,
+                store: store
+            )
+        }
+    }
 
     // swiftlint:disable:next function_body_length
     @objc func copyToAllSpaces() {

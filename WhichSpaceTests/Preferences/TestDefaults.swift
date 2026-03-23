@@ -198,7 +198,6 @@ final class DefaultsIsolationGuardTests: IsolatedDefaultsTestCase {
             "displaySpaceLabelStyles",
             "displaySpaceSkinTones",
             "displaySpaceSymbols",
-            "inheritStyle",
             "hideEmptySpaces",
             "hideFullscreenApps",
             "hideSingleSpace",

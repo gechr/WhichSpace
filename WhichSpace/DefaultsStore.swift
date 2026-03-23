@@ -57,7 +57,6 @@ enum KeySpecs {
         defaultValue: [String: [Int: String]]()
     )
     static let paddingScale = TypedKeySpec(name: "paddingScale", defaultValue: Layout.defaultPaddingScale)
-    static let inheritStyle = TypedKeySpec(name: "inheritStyle", defaultValue: true)
     static let hideEmptySpaces = TypedKeySpec(name: "hideEmptySpaces", defaultValue: false)
     static let hideFullscreenApps = TypedKeySpec(name: "hideFullscreenApps", defaultValue: false)
     static let hideSingleSpace = TypedKeySpec(name: "hideSingleSpace", defaultValue: false)
@@ -89,7 +88,6 @@ enum KeySpecs {
         displaySpaceLabelStyles.name,
         displaySpaceSkinTones.name,
         displaySpaceSymbols.name,
-        inheritStyle.name,
         hideEmptySpaces.name,
         hideFullscreenApps.name,
         hideSingleSpace.name,
@@ -148,7 +146,6 @@ final class DefaultsStore {
     private(set) lazy var keyDisplaySpaceLabelStyles = KeySpecs.displaySpaceLabelStyles.key(suite: suite)
     private(set) lazy var keyDisplaySpaceSkinTones = KeySpecs.displaySpaceSkinTones.key(suite: suite)
     private(set) lazy var keyDisplaySpaceSymbols = KeySpecs.displaySpaceSymbols.key(suite: suite)
-    private(set) lazy var keyInheritNewSpaceStyles = KeySpecs.inheritStyle.key(suite: suite)
     private(set) lazy var keyHideEmptySpaces = KeySpecs.hideEmptySpaces.key(suite: suite)
     private(set) lazy var keyHideFullscreenApps = KeySpecs.hideFullscreenApps.key(suite: suite)
     private(set) lazy var keyHideSingleSpace = KeySpecs.hideSingleSpace.key(suite: suite)
@@ -223,11 +220,6 @@ final class DefaultsStore {
     var displaySpaceSymbols: [String: [Int: String]] {
         get { Defaults[keyDisplaySpaceSymbols] }
         set { Defaults[keyDisplaySpaceSymbols] = newValue }
-    }
-
-    var inheritStyle: Bool {
-        get { Defaults[keyInheritNewSpaceStyles] }
-        set { Defaults[keyInheritNewSpaceStyles] = newValue }
     }
 
     var hideEmptySpaces: Bool {
@@ -367,7 +359,6 @@ final class DefaultsStore {
             keyDisplaySpaceLabelStyles,
             keyDisplaySpaceSkinTones,
             keyDisplaySpaceSymbols,
-            keyInheritNewSpaceStyles,
             keyHideEmptySpaces,
             keyHideFullscreenApps,
             keyHideSingleSpace,

@@ -128,7 +128,6 @@ enum MenuTag: Int {
     case hideEmptySpaces
     case hideFullscreenApps
     case hideSingleSpace
-    case inheritStyle
     case invertColors
     case labelInput
     case labelMenuItem
@@ -169,6 +168,7 @@ enum Localization {
     static let actionResetLabelToDefault = String(localized: "action_reset_label_to_default")
     static let actionResetSpaceToDefault = String(localized: "action_reset_space_to_default")
     static let actionResetStyleToDefault = String(localized: "action_reset_style_to_default")
+    static let actionSetDefaultStyle = String(localized: "action_set_default_style")
     static let alertAccessibilityDetail = String(localized: "alert_accessibility_detail")
     static let alertAccessibilityRequired = String(localized: "alert_accessibility_required")
     static let alertExportFailed = String(localized: "alert_export_failed")
@@ -188,6 +188,7 @@ enum Localization {
     static let confirmCopyLabelToAll = String(localized: "confirm_copy_label_to_all")
     static let confirmCopyStyleToAll = String(localized: "confirm_copy_style_to_all")
     static let confirmCopyToAll = String(localized: "confirm_copy_to_all")
+    static let confirmSetDefaultStyle = String(localized: "confirm_set_default_style")
     static let confirmResetAllSpaces = String(localized: "confirm_reset_all_spaces")
     static let confirmResetBadge = String(localized: "confirm_reset_badge")
     static let confirmResetColor = String(localized: "confirm_reset_color")
@@ -200,6 +201,7 @@ enum Localization {
     static let detailCopyLabelToAll = String(localized: "detail_copy_label_to_all")
     static let detailCopyStyleToAll = String(localized: "detail_copy_style_to_all")
     static let detailCopyToAll = String(localized: "detail_copy_to_all")
+    static let detailSetDefaultStyle = String(localized: "detail_set_default_style")
     static let detailResetAllSpaces = String(localized: "detail_reset_all_spaces")
     static let detailResetBadge = String(localized: "detail_reset_badge")
     static let detailResetColor = String(localized: "detail_reset_color")
@@ -249,7 +251,6 @@ enum Localization {
     static let tipCheckForUpdates = String(localized: "tip_check_for_updates")
     static let tipClickToSwitchSpaces = String(localized: "tip_click_to_switch_spaces")
     static let tipDimInactiveSpaces = String(localized: "tip_dim_inactive_spaces")
-    static let tipInheritStyle = String(localized: "tip_inherit_style")
     static let tipExportSettings = String(localized: "tip_export_settings")
     static let tipFont = String(localized: "tip_font")
     static let tipHideEmptySpaces = String(localized: "tip_hide_empty_spaces")
@@ -268,12 +269,12 @@ enum Localization {
     static let tipResetLabelToDefault = String(localized: "tip_reset_label_to_default")
     static let tipResetSpaceToDefault = String(localized: "tip_reset_space_to_default")
     static let tipResetStyleToDefault = String(localized: "tip_reset_style_to_default")
+    static let tipSetDefaultStyle = String(localized: "tip_set_default_style")
     static let tipShowAllDisplays = String(localized: "tip_show_all_displays")
     static let tipShowAllSpaces = String(localized: "tip_show_all_spaces")
     static let tipUniqueIconsPerDisplay = String(localized: "tip_unique_icons_per_display")
     static let toggleClickToSwitchSpaces = String(localized: "toggle_click_to_switch_spaces")
     static let toggleDimInactiveSpaces = String(localized: "toggle_dim_inactive_spaces")
-    static let toggleInheritStyle = String(localized: "toggle_inherit_style")
     static let toggleHideEmptySpaces = String(localized: "toggle_hide_empty_spaces")
     static let toggleHideFullscreenApps = String(localized: "toggle_hide_fullscreen_apps")
     static let toggleHideSingleSpace = String(localized: "toggle_hide_single_space")

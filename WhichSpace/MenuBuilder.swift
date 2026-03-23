@@ -89,8 +89,6 @@ final class MenuBuilder {
         setCheckmark(.dimInactiveSpaces, store.dimInactiveSpaces)
         menu.item(withTag: MenuTag.dimInactiveSpaces.rawValue)?.isHidden = !showMultiSpaceOptions
 
-        setCheckmark(.inheritStyle, store.inheritStyle)
-
         // Update hide option menu items (checkmark, icon, visibility)
         let updateHideItem = { (tag: MenuTag, isEnabled: Bool) in
             guard let item = menu.item(withTag: tag.rawValue) else {
@@ -1073,13 +1071,6 @@ final class MenuBuilder {
             symbolName: "aqi.low",
             toolTip: Localization.tipDimInactiveSpaces
         )),
-        .item(OptionItem(
-            title: Localization.toggleInheritStyle,
-            action: #selector(ActionHandler.toggleInheritStyle),
-            tag: .inheritStyle,
-            symbolName: "sparkles.rectangle.stack",
-            toolTip: Localization.tipInheritStyle
-        )),
         .separator,
         .item(OptionItem(
             title: Localization.toggleShowAllDisplays,
@@ -1125,6 +1116,12 @@ final class MenuBuilder {
             toolTip: Localization.tipHideFullscreenApps
         )),
         .separator,
+        .item(OptionItem(
+            title: Localization.actionSetDefaultStyle,
+            action: #selector(ActionHandler.setDefaultStyle),
+            symbolName: "square.and.arrow.down.on.square",
+            toolTip: Localization.tipSetDefaultStyle
+        )),
         .item(OptionItem(
             title: Localization.actionCopyToAll,
             action: #selector(ActionHandler.copyToAllSpaces),

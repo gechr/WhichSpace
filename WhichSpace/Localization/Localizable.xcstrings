@@ -2960,7 +2960,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Réinitialiser les personnalisations de tous les Espaces…"
+            "value" : "Réinitialiser les personnalisations de tous les Espaces..."
           }
         },
         "he" : {
@@ -4713,6 +4713,268 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "重設樣式..."
+          }
+        }
+      }
+    },
+    "action_set_default_style" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تعيين التخصيصات الحالية كافتراضي..."
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Задай текущите настройки като подразбиране..."
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estableix les personalitzacions actuals com a predeterminades..."
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nastavit aktuální úpravy jako výchozí..."
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sæt nuværende tilpasninger som standard..."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktuelle Anpassungen als Standard festlegen..."
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ορισμός τρεχουσών προσαρμογών ως προεπιλογή..."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set current customizations as default..."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set current customisations as default..."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Establecer las personalizaciones actuales como predeterminadas..."
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تنظیم سفارشی‌سازی‌های فعلی به‌عنوان پیش‌فرض..."
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aseta nykyiset mukautukset oletukseksi..."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Définir les personnalisations actuelles par défaut..."
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הגדר התאמות נוכחיות כברירת מחדל..."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "वर्तमान अनुकूलन को डिफॉल्ट के रूप में सेट करें..."
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktuális testreszabások beállítása alapértelmezettként..."
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tetapkan kustomisasi saat ini sebagai bawaan..."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Imposta le personalizzazioni correnti come predefinite..."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "現在のカスタマイズをデフォルトに設定..."
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "현재 사용자 지정을 기본값으로 설정..."
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Постави ги тековните прилагодувања како стандардни..."
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tetapkan penyesuaian semasa sebagai lalai..."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sett gjeldende tilpasninger som standard..."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Huidige aanpassingen als standaard instellen..."
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sett gjeldande tilpassingar som standard..."
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "موجودہ کسٹمائزیشن نوں ڈیفالٹ وجوں سیٹ کرو..."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ustaw bieżące dostosowania jako domyślne..."
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "اوسنۍ سمونونه د تلواله په توګه وټاکئ..."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Definir as personalizações atuais como predefinição..."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Definir as personalizações atuais como padrão..."
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Setează personalizările curente ca implicite..."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Установить текущие настройки по умолчанию..."
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nastaviť aktuálne prispôsobenia ako predvolené..."
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Postavi trenutna prilagođavanja kao podrazumevano..."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ange aktuella anpassningar som standard..."
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ตั้งการปรับแต่งปัจจุบันเป็นค่าเริ่มต้น..."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geçerli özelleştirmeleri varsayılan olarak ayarla..."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Встановити поточні налаштування як типові..."
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "موجودہ تخصیصات کو طے شدہ کے طور پر سیٹ کریں..."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Đặt tùy chỉnh hiện tại làm mặc định..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将当前自定义设为默认..."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "將目前的自訂設為預設..."
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "將目前的自訂設為預設..."
           }
         }
       }
@@ -11791,6 +12053,268 @@
         }
       }
     },
+    "confirm_set_default_style" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تعيين النمط الافتراضي؟"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Задаване на стил по подразбиране?"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Establir l'estil predeterminat?"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nastavit výchozí styl?"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Indstil standardstil?"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standardstil festlegen?"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ορισμός προεπιλεγμένου στιλ;"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set default Style?"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set default Style?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Establecer el estilo predeterminado?"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "استایل پیش‌فرض تنظیم شود؟"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Asetetaanko oletustyyli?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Définir le style par défaut ?"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "להגדיר סגנון ברירת מחדל?"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "डिफ़ॉल्ट स्टाइल सेट करें?"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alapértelmezett stílus beállítása?"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atur gaya bawaan?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impostare lo stile predefinito?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "デフォルトスタイルを設定しますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기본 스타일을 설정할까요?"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Да се постави стандарден стил?"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tetapkan gaya lalai?"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Angi standardstil?"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standaardstijl instellen?"
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Setje standardstil?"
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "پہلے توں مقررہ سٹائل سیٹ کرو؟"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ustawić styl domyślny?"
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تلواليز سټایل وټاکل شي؟"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Definir o estilo predefinido?"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Definir o estilo padrão?"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Setați stilul implicit?"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Задать стиль по умолчанию?"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nastaviť predvolený štýl?"
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Postaviti podrazumevani stil?"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ange standardstil?"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ตั้งสไตล์เริ่มต้น?"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Varsayılan stil ayarlansın mı?"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Встановити стиль за замовчуванням?"
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "طے شدہ انداز مقرر کریں؟"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Đặt kiểu mặc định?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设置默认样式？"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定預設樣式？"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定預設樣式？"
+          }
+        }
+      }
+    },
     "detail_copy_badge_to_all" : {
       "localizations" : {
         "ar" : {
@@ -14931,6 +15455,268 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "這會僅移除目前空間的自訂樣式。"
+          }
+        }
+      }
+    },
+    "detail_set_default_style" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ستُستخدم تخصيصات المساحة الحالية كإعدادات افتراضية للمساحات الجديدة."
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Персонализациите за текущото пространство ще се използват по подразбиране за нови пространства."
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les personalitzacions de l'Espai actual s'utilitzaran com a predeterminades per als nous Espais."
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Přizpůsobení aktuálního Space budou použita jako výchozí pro nové Spaces."
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tilpasningerne for det aktuelle Space vil blive brugt som standard for nye Spaces."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Anpassungen des aktuellen Spaces werden als Standard für neue Spaces verwendet."
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Οι προσαρμογές του τρέχοντος Χώρου θα χρησιμοποιηθούν ως προεπιλογή για νέους Χώρους."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The customizations for the current Space will be used as the default for new Spaces."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The customisations for the current Space will be used as the default for new Spaces."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las personalizaciones del Espacio actual se usarán como predeterminadas para los nuevos Espacios."
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سفارشی‌سازی‌های فضای فعلی به عنوان پیش‌فرض برای فضاهای جدید استفاده خواهند شد."
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nykyisen Spacen mukautukset käytetään oletuksena uusille Spaceille."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les personnalisations de l'Espace actuel seront utilisées par défaut pour les nouveaux Espaces."
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ההתאמות האישיות של המרחב הנוכחי ישמשו כברירת מחדל למרחבים חדשים."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "मौजूदा स्पेस की कस्टमाइज़ेशन नए स्पेसेस के लिए डिफ़ॉल्ट के रूप में उपयोग की जाएँगी।"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Az aktuális Space testreszabásai lesznek az alapértelmezettek az új Space-ekhez."
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Penyesuaian untuk Space saat ini akan digunakan sebagai bawaan untuk Space baru."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le personalizzazioni dello Spazio corrente verranno utilizzate come predefinite per i nuovi Spazi."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "現在のスペースのカスタマイズが新しいスペースのデフォルトとして使用されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "현재 공간의 사용자 지정이 새 공간의 기본값으로 사용됩니다."
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Прилагодувањата за тековниот Простор ќе се користат како стандардни за нови Простори."
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Penyesuaian untuk Ruang semasa akan digunakan sebagai lalai untuk Ruang baharu."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tilpasningene for gjeldende Space vil bli brukt som standard for nye Spaces."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De aanpassingen van de huidige Space worden als standaard gebruikt voor nieuwe Spaces."
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tilpassingane for gjeldande Space vil bli brukte som standard for nye Spaces."
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "موجودہ سپیس دیاں تبدیلیاں نویں سپیسز لئی پہلے توں مقررہ وجوں ورتیاں جان گیاں۔"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dostosowania bieżącego Space zostaną użyte jako domyślne dla nowych Spaces."
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "د روان سپېس دودیزې به د نویو سپېسونو لپاره تلواليز په توګه وکارول شي."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As personalizações do Espaço atual serão usadas como predefinição para novos Espaços."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As personalizações do Espaço atual serão usadas como padrão para novos Espaços."
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personalizările spațiului curent vor fi utilizate ca implicite pentru spațiile noi."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Настройки текущего пространства будут использоваться по умолчанию для новых пространств."
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prispôsobenia aktuálneho priestoru sa použijú ako predvolené pre nové priestory."
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prilagođavanja tekućeg Prostora će se koristiti kao podrazumevana za nove Prostore."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anpassningarna för aktuellt Space kommer att användas som standard för nya Spaces."
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "การปรับแต่งของ Space ปัจจุบันจะถูกใช้เป็นค่าเริ่มต้นสำหรับ Space ใหม่"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geçerli Alanın özelleştirmeleri yeni Alanlar için varsayılan olarak kullanılacaktır."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Налаштування поточного простору будуть використовуватися як типові для нових просторів."
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "موجودہ اسپیس کی تخصیصات نئی اسپیسز کے لیے طے شدہ کے طور پر استعمال ہوں گی۔"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Các tùy chỉnh của Không gian hiện tại sẽ được sử dụng làm mặc định cho các Không gian mới."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前空间的自定义设置将用作新空间的默认值。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目前空間的自訂設定將用作新空間的預設值。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目前空間的自訂設定將用作新空間的預設值。"
           }
         }
       }
@@ -31441,264 +32227,264 @@
         }
       }
     },
-    "tip_inherit_style" : {
+    "tip_set_default_style" : {
       "localizations" : {
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ترث المساحات الجديدة تخصيصات المساحة الحالية"
+            "value" : "حفظ تخصيصات المساحة الحالية كإعدادات افتراضية للمساحات الجديدة"
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Новите пространства наследяват персонализациите на текущото пространство"
+            "value" : "Запази персонализациите на текущото пространство като стандартни за нови пространства"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Els nous Espais hereten les personalitzacions de l'Espai actual"
+            "value" : "Desa les personalitzacions de l'Espai actual com a predeterminades per als nous Espais"
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nové Spaces zdědí přizpůsobení aktuálního Space"
+            "value" : "Uložte přizpůsobení aktuálního Space jako výchozí pro nové Spaces"
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nye Spaces arver det aktuelle Spaces tilpasninger"
+            "value" : "Gem tilpasningerne for det aktuelle Space som standard for nye Spaces"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Neue Spaces übernehmen die Anpassungen des aktuellen Space"
+            "value" : "Anpassungen des aktuellen Spaces als Standard für neue Spaces speichern"
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Οι νέοι Χώροι κληρονομούν τις προσαρμογές του τρέχοντος Χώρου"
+            "value" : "Αποθήκευση των προσαρμογών του τρέχοντος Χώρου ως προεπιλογή για νέους Χώρους"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "New Spaces inherit the current Space's customizations"
+            "value" : "Save the current Space's customizations as the default for new Spaces"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "New Spaces inherit the current Space's customisations"
+            "value" : "Save the current Space's customisations as the default for new Spaces"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Los nuevos Espacios heredan las personalizaciones del Espacio actual"
+            "value" : "Guardar las personalizaciones del Espacio actual como predeterminadas para los nuevos Espacios"
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "فضاهای جدید سفارشی‌سازی‌های فضای فعلی را به ارث می‌برند"
+            "value" : "ذخیره سفارشی‌سازی‌های فضای فعلی به عنوان پیش‌فرض برای فضاهای جدید"
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Uudet Spacet perivät nykyisen Spacen mukautukset"
+            "value" : "Tallenna nykyisen Spacen mukautukset oletukseksi uusille Spaceille"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les nouveaux Espaces héritent des personnalisations de l'Espace actuel"
+            "value" : "Enregistrer les personnalisations de l'Espace actuel comme défaut pour les nouveaux Espaces"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "מרחבים חדשים יורשים את ההתאמות של המרחב הנוכחי"
+            "value" : "שמור את ההתאמות האישיות של המרחב הנוכחי כברירת מחדל למרחבים חדשים"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "नए स्पेस वर्तमान स्पेस के अनुकूलन को इनहेरिट करते हैं"
+            "value" : "मौजूदा स्पेस की कस्टमाइज़ेशन नए स्पेसेस के लिए डिफ़ॉल्ट के रूप में सहेजें"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Az új Space-ek öröklik az aktuális Space testreszabásait"
+            "value" : "Az aktuális Space testreszabásainak mentése alapértelmezettként az új Space-ekhez"
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Space baru mewarisi kustomisasi Space saat ini"
+            "value" : "Simpan penyesuaian Space saat ini sebagai bawaan untuk Space baru"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "I nuovi Spazi ereditano le personalizzazioni dello Spazio corrente"
+            "value" : "Salva le personalizzazioni dello Spazio corrente come predefinite per i nuovi Spazi"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "新しいスペースは現在のスペースのカスタマイズを継承します"
+            "value" : "現在のスペースのカスタマイズを新しいスペースのデフォルトとして保存"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "새 스페이스가 현재 스페이스의 사용자화를 상속합니다"
+            "value" : "현재 공간의 사용자 지정을 새 공간의 기본값으로 저장"
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Новите простори ги наследуваат приспособувањата на тековниот простор"
+            "value" : "Зачувај ги прилагодувањата на тековниот Простор како стандардни за нови Простори"
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Space baharu mewarisi penyesuaian Space semasa"
+            "value" : "Simpan penyesuaian Ruang semasa sebagai lalai untuk Ruang baharu"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nye Spaces arver tilpasningene til gjeldende Space"
+            "value" : "Lagre tilpasningene til gjeldende Space som standard for nye Spaces"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nieuwe Spaces nemen de aanpassingen van de huidige Space over"
+            "value" : "Aanpassingen van de huidige Space opslaan als standaard voor nieuwe Spaces"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nye Spaces arvar tilpassingane til gjeldande Space"
+            "value" : "Lagre tilpassingane til gjeldande Space som standard for nye Spaces"
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "نویں سپیسز موجودہ سپیس دیاں تخصیصات وراثت وچ لیندیاں نیں"
+            "value" : "موجودہ سپیس دیاں تبدیلیاں نویں سپیسز لئی پہلے توں مقررہ وجوں محفوظ کرو"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nowe Space dziedziczą dostosowania bieżącego Space"
+            "value" : "Zapisz dostosowania bieżącego Space jako domyślne dla nowych Spaces"
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "نوي سپیسونه د اوسني سپیس تخصیصات په میراث اخلي"
+            "value" : "د روان سپېس دودیزې د نویو سپېسونو لپاره تلواليز په توګه خوندي کړئ"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Os novos Espaços herdam as personalizações do Espaço atual"
+            "value" : "Guardar as personalizações do Espaço atual como predefinição para novos Espaços"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Novos Espaços herdam as personalizações do Espaço atual"
+            "value" : "Salvar as personalizações do Espaço atual como padrão para novos Espaços"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spațiile noi moștenesc personalizările Spațiului curent"
+            "value" : "Salvează personalizările spațiului curent ca implicite pentru spațiile noi"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Новые пространства наследуют настройки текущего пространства"
+            "value" : "Сохранить настройки текущего пространства как стандартные для новых пространств"
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nové Spaces zdedia prispôsobenia aktuálneho Space"
+            "value" : "Uložiť prispôsobenia aktuálneho priestoru ako predvolené pre nové priestory"
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Novi prostori nasleđuju prilagođavanja trenutnog prostora"
+            "value" : "Sačuvaj prilagođavanja tekućeg Prostora kao podrazumevana za nove Prostore"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nya Spaces ärver det aktuella Spacets anpassningar"
+            "value" : "Spara anpassningarna för aktuellt Space som standard för nya Spaces"
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Space ใหม่จะสืบทอดการปรับแต่งของ Space ปัจจุบัน"
+            "value" : "บันทึกการปรับแต่งของ Space ปัจจุบันเป็นค่าเริ่มต้นสำหรับ Space ใหม่"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Yeni Space'ler mevcut Space'in özelleştirmelerini devralır"
+            "value" : "Geçerli Alanın özelleştirmelerini yeni Alanlar için varsayılan olarak kaydet"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Нові простори успадковують налаштування поточного простору"
+            "value" : "Зберегти налаштування поточного простору як типові для нових просторів"
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "نئی سپیسز موجودہ سپیس کی تخصیصات وراثت میں لیتی ہیں"
+            "value" : "موجودہ اسپیس کی تخصیصات کو نئی اسپیسز کے لیے طے شدہ کے طور پر محفوظ کریں"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Các Space mới kế thừa tùy chỉnh của Space hiện tại"
+            "value" : "Lưu các tùy chỉnh của Không gian hiện tại làm mặc định cho các Không gian mới"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "新空间继承当前空间的自定义设置"
+            "value" : "将当前空间的自定义设置保存为新空间的默认值"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "新空間繼承目前空間的自訂設定"
+            "value" : "將目前空間的自訂設定儲存為新空間的預設值"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "新空間繼承目前空間嘅自訂設定"
+            "value" : "將目前空間的自訂設定儲存為新空間的預設值"
           }
         }
       }
@@ -36939,268 +37725,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "隱藏單一空間"
-          }
-        }
-      }
-    },
-    "toggle_inherit_style" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "وراثة التخصيصات للمساحات الجديدة"
-          }
-        },
-        "bg" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Наследяване на персонализациите за нови пространства"
-          }
-        },
-        "ca" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Heretar personalitzacions per als nous Espais"
-          }
-        },
-        "cs" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zdědit přizpůsobení pro nové Spaces"
-          }
-        },
-        "da" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Arv tilpasninger for nye Spaces"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Anpassungen für neue Spaces übernehmen"
-          }
-        },
-        "el" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Κληρονομιά προσαρμογών για νέους Χώρους"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inherit customizations for new Spaces"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inherit customisations for new Spaces"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Heredar personalizaciones para nuevos Espacios"
-          }
-        },
-        "fa" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "به ارث بردن سفارشی‌سازی‌ها برای فضاهای جدید"
-          }
-        },
-        "fi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Peri mukautukset uusille Spaceille"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hériter des personnalisations pour les nouveaux Espaces"
-          }
-        },
-        "he" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ירש התאמות למרחבים חדשים"
-          }
-        },
-        "hi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "नए स्पेस के लिए अनुकूलन इनहेरिट करें"
-          }
-        },
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Testreszabások öröklése új Space-ekhez"
-          }
-        },
-        "id" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Warisi kustomisasi untuk Space baru"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eredita personalizzazioni per i nuovi Spazi"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新しいスペースにカスタマイズを継承"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "새 스페이스에 사용자화 상속"
-          }
-        },
-        "mk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Наследување приспособувања за нови простори"
-          }
-        },
-        "ms" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Warisi penyesuaian untuk Space baharu"
-          }
-        },
-        "nb" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Arv tilpasninger for nye Spaces"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aanpassingen overnemen voor nieuwe Spaces"
-          }
-        },
-        "nn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Arv tilpassingar for nye Spaces"
-          }
-        },
-        "pa" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "نویں سپیسز لئی تخصیصات وراثت وچ لو"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dziedzicz dostosowania dla nowych Space"
-          }
-        },
-        "ps" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "د نویو سپیسونو لپاره تخصیصات په میراث واخلئ"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Herdar personalizações para novos Espaços"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Herdar personalizações para novos Espaços"
-          }
-        },
-        "ro" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Moștenește personalizările pentru Spațiile noi"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Наследовать настройки для новых пространств"
-          }
-        },
-        "sk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zdediť prispôsobenia pre nové Spaces"
-          }
-        },
-        "sr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nasledi prilagođavanja za nove prostore"
-          }
-        },
-        "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ärv anpassningar för nya Spaces"
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "สืบทอดการปรับแต่งสำหรับ Space ใหม่"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yeni Space'ler için özelleştirmeleri devral"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Успадковувати налаштування для нових просторів"
-          }
-        },
-        "ur" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "نئی سپیسز کے لیے تخصیصات وراثت میں لیں"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kế thừa tùy chỉnh cho các Space mới"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "为新空间继承自定义设置"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "為新空間繼承自訂設定"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "為新空間繼承自訂設定"
           }
         }
       }

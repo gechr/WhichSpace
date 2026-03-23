@@ -457,36 +457,103 @@ enum SpacePreferences {
 
     /// Copies all per-space preferences from one space to another.
     /// Only copies preferences that exist on the source; does not clear existing target preferences.
-    static func inheritPreferences(
+    static func copyPreferences(
         from source: Int,
         to target: Int,
         display: String? = nil,
         store: DefaultsStore = AppEnvironment.shared.store
     ) {
-        if let colors = colorsAccessor.get(forSpace: source, display: display, store: store) {
-            colorsAccessor.set(colors, forSpace: target, display: display, store: store)
+        copyPreferences(from: source, to: target, fromDisplay: display, toDisplay: display, store: store)
+    }
+
+    /// Copies all per-space preferences between spaces, allowing different source/target displays.
+    static func copyPreferences(
+        from source: Int,
+        to target: Int,
+        fromDisplay: String? = nil,
+        toDisplay: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) {
+        if let colors = colorsAccessor.get(forSpace: source, display: fromDisplay, store: store) {
+            colorsAccessor.set(colors, forSpace: target, display: toDisplay, store: store)
         }
-        if let style = iconStyles.get(forSpace: source, display: display, store: store) {
-            iconStyles.set(style, forSpace: target, display: display, store: store)
+        if let style = iconStyles.get(forSpace: source, display: fromDisplay, store: store) {
+            iconStyles.set(style, forSpace: target, display: toDisplay, store: store)
         }
-        if let font = fonts.get(forSpace: source, display: display, store: store) {
-            fonts.set(font, forSpace: target, display: display, store: store)
+        if let font = fonts.get(forSpace: source, display: fromDisplay, store: store) {
+            fonts.set(font, forSpace: target, display: toDisplay, store: store)
         }
-        if let symbol = symbols.get(forSpace: source, display: display, store: store) {
-            symbols.set(symbol, forSpace: target, display: display, store: store)
+        if let symbol = symbols.get(forSpace: source, display: fromDisplay, store: store) {
+            symbols.set(symbol, forSpace: target, display: toDisplay, store: store)
         }
-        if let badge = badges.get(forSpace: source, display: display, store: store) {
-            badges.set(badge, forSpace: target, display: display, store: store)
+        if let badge = badges.get(forSpace: source, display: fromDisplay, store: store) {
+            badges.set(badge, forSpace: target, display: toDisplay, store: store)
         }
-        if let label = labels.get(forSpace: source, display: display, store: store) {
-            labels.set(label, forSpace: target, display: display, store: store)
+        if let label = labels.get(forSpace: source, display: fromDisplay, store: store) {
+            labels.set(label, forSpace: target, display: toDisplay, store: store)
         }
-        if let labelStyle = labelStyles.get(forSpace: source, display: display, store: store) {
-            labelStyles.set(labelStyle, forSpace: target, display: display, store: store)
+        if let labelStyle = labelStyles.get(forSpace: source, display: fromDisplay, store: store) {
+            labelStyles.set(labelStyle, forSpace: target, display: toDisplay, store: store)
         }
-        if let tone = skinTones.get(forSpace: source, display: display, store: store) {
-            skinTones.set(tone, forSpace: target, display: display, store: store)
+        if let tone = skinTones.get(forSpace: source, display: fromDisplay, store: store) {
+            skinTones.set(tone, forSpace: target, display: toDisplay, store: store)
         }
+    }
+
+    /// Clears all preferences for a specific space.
+    static func clearPreferences(
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) {
+        colorsAccessor.set(nil, forSpace: spaceNumber, display: display, store: store)
+        iconStyles.set(nil, forSpace: spaceNumber, display: display, store: store)
+        fonts.set(nil, forSpace: spaceNumber, display: display, store: store)
+        symbols.set(nil, forSpace: spaceNumber, display: display, store: store)
+        badges.set(nil, forSpace: spaceNumber, display: display, store: store)
+        labels.set(nil, forSpace: spaceNumber, display: display, store: store)
+        labelStyles.set(nil, forSpace: spaceNumber, display: display, store: store)
+        skinTones.set(nil, forSpace: spaceNumber, display: display, store: store)
+    }
+
+    // MARK: - Default Style
+
+    /// The sentinel space number used to store the default style template.
+    static let defaultStyleSpace = 0
+
+    /// Saves all preferences from the given space as the default style for new spaces.
+    static func saveDefaultStyle(
+        fromSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) {
+        // Clear any existing default first
+        clearDefaultStyle(store: store)
+
+        // Copy each preference from the source space to the default template (space 0, no display)
+        copyPreferences(from: spaceNumber, to: defaultStyleSpace, fromDisplay: display, toDisplay: nil, store: store)
+    }
+
+    /// Applies the stored default style to a new space, if a default is set.
+    static func applyDefaultStyle(
+        toSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) {
+        guard hasAnyPreference(forSpace: defaultStyleSpace, store: store) else {
+            return
+        }
+        copyPreferences(from: defaultStyleSpace, to: spaceNumber, fromDisplay: nil, toDisplay: display, store: store)
+    }
+
+    /// Clears the stored default style template.
+    static func clearDefaultStyle(store: DefaultsStore = AppEnvironment.shared.store) {
+        clearPreferences(forSpace: defaultStyleSpace, display: nil, store: store)
+    }
+
+    /// Returns true if a default style has been saved.
+    static func hasDefaultStyle(store: DefaultsStore = AppEnvironment.shared.store) -> Bool {
+        hasAnyPreference(forSpace: defaultStyleSpace, store: store)
     }
 
     // MARK: - Clear All

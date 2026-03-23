@@ -66,7 +66,6 @@ struct BackupSettings: Codable {
     var hideEmptySpaces: Bool
     var hideFullscreenApps: Bool
     var hideSingleSpace: Bool
-    var inheritStyle: Bool
     var launchAtLogin: Bool
     var localSpaceNumbers: Bool
     var paddingScale: Double?
@@ -76,60 +75,6 @@ struct BackupSettings: Codable {
     var sizeScale: Double
     var soundName: String
     var uniqueIconsPerDisplay: Bool
-
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        clickToSwitchSpaces = try container.decode(Bool.self, forKey: .clickToSwitchSpaces)
-        dimInactiveSpaces = try container.decode(Bool.self, forKey: .dimInactiveSpaces)
-        hideEmptySpaces = try container.decode(Bool.self, forKey: .hideEmptySpaces)
-        hideFullscreenApps = try container.decode(Bool.self, forKey: .hideFullscreenApps)
-        hideSingleSpace = try container.decode(Bool.self, forKey: .hideSingleSpace)
-        inheritStyle = try container.decodeIfPresent(Bool.self, forKey: .inheritStyle) ?? true
-        launchAtLogin = try container.decode(Bool.self, forKey: .launchAtLogin)
-        localSpaceNumbers = try container.decode(Bool.self, forKey: .localSpaceNumbers)
-        paddingScale = try container.decodeIfPresent(Double.self, forKey: .paddingScale)
-        separatorColor = try container.decodeIfPresent(CodableColor.self, forKey: .separatorColor)
-        showAllDisplays = try container.decode(Bool.self, forKey: .showAllDisplays)
-        showAllSpaces = try container.decode(Bool.self, forKey: .showAllSpaces)
-        sizeScale = try container.decode(Double.self, forKey: .sizeScale)
-        soundName = try container.decode(String.self, forKey: .soundName)
-        uniqueIconsPerDisplay = try container.decode(Bool.self, forKey: .uniqueIconsPerDisplay)
-    }
-
-    // swiftlint:disable:next function_default_parameter_at_end
-    init(
-        clickToSwitchSpaces: Bool,
-        dimInactiveSpaces: Bool,
-        hideEmptySpaces: Bool,
-        hideFullscreenApps: Bool,
-        hideSingleSpace: Bool,
-        inheritStyle: Bool = true,
-        launchAtLogin: Bool,
-        localSpaceNumbers: Bool,
-        paddingScale: Double?,
-        separatorColor: CodableColor?,
-        showAllDisplays: Bool,
-        showAllSpaces: Bool,
-        sizeScale: Double,
-        soundName: String,
-        uniqueIconsPerDisplay: Bool
-    ) {
-        self.clickToSwitchSpaces = clickToSwitchSpaces
-        self.dimInactiveSpaces = dimInactiveSpaces
-        self.hideEmptySpaces = hideEmptySpaces
-        self.hideFullscreenApps = hideFullscreenApps
-        self.hideSingleSpace = hideSingleSpace
-        self.inheritStyle = inheritStyle
-        self.launchAtLogin = launchAtLogin
-        self.localSpaceNumbers = localSpaceNumbers
-        self.paddingScale = paddingScale
-        self.separatorColor = separatorColor
-        self.showAllDisplays = showAllDisplays
-        self.showAllSpaces = showAllSpaces
-        self.sizeScale = sizeScale
-        self.soundName = soundName
-        self.uniqueIconsPerDisplay = uniqueIconsPerDisplay
-    }
 }
 
 // MARK: - BackupSpacePreferences
@@ -386,7 +331,6 @@ enum BackupManager {
             hideEmptySpaces: store.hideEmptySpaces,
             hideFullscreenApps: store.hideFullscreenApps,
             hideSingleSpace: store.hideSingleSpace,
-            inheritStyle: store.inheritStyle,
             launchAtLogin: launchAtLogin.isEnabled,
             localSpaceNumbers: store.localSpaceNumbers,
             paddingScale: store.paddingScale,
@@ -497,7 +441,6 @@ enum BackupManager {
         store.dimInactiveSpaces = backup.settings.dimInactiveSpaces
         store.hideEmptySpaces = backup.settings.hideEmptySpaces
         store.hideFullscreenApps = backup.settings.hideFullscreenApps
-        store.inheritStyle = backup.settings.inheritStyle
         store.hideSingleSpace = backup.settings.hideSingleSpace
         var launchAtLogin = launchAtLogin
         launchAtLogin.isEnabled = backup.settings.launchAtLogin
