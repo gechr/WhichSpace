@@ -186,7 +186,7 @@
         "ro": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mutați în folderul Aplicații din folderul Acasă?"
+            "value": "Mutați în folderul Aplicații din folderul personal?"
           }
         },
         "ru": {
@@ -240,7 +240,7 @@
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Chuyển vào thư mục Ứng dụng trong thư mục Nhà của bạn?"
+            "value": "Chuyển vào thư mục Ứng dụng trong thư mục chính của bạn?"
           }
         },
         "zh-Hans": {
@@ -258,7 +258,7 @@
         "zh-HK": {
           "stringUnit": {
             "state": "translated",
-            "value": "要移至你家文件夾中的「應用程式」資料夾嗎？"
+            "value": "要移至主資料夾中的「應用程式」資料夾嗎？"
           }
         }
       }
@@ -734,13 +734,13 @@
         "sv": {
           "stringUnit": {
             "state": "translated",
-            "value": "Detta håller mappen Hämtade filer snygg."
+            "value": "Detta håller mappen Hämtade filer städad."
           }
         },
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "ซึ่งจะทำให้โฟลเดอร์ดาวน์โหลดของคุณเป็นระเบียบ"
+            "value": "การดำเนินการนี้จะช่วยให้โฟลเดอร์ดาวน์โหลดของคุณเป็นระเบียบ"
           }
         },
         "tr": {
@@ -990,7 +990,7 @@
         "sr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ne premesti"
+            "value": "Ne premeštaj"
           }
         },
         "sv": {
@@ -1060,7 +1060,7 @@
         "bg": {
           "stringUnit": {
             "state": "translated",
-            "value": "Неуспешно преместване в папката Приложения"
+            "value": "Неуспешно преместване в папката Приложения."
           }
         },
         "ca": {
@@ -1072,19 +1072,19 @@
         "cs": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nepodařilo se přesunout do složky Aplikace"
+            "value": "Nepodařilo se přesunout do složky Aplikace."
           }
         },
         "da": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kunne ikke flytte til mappen Programmer"
+            "value": "Kunne ikke flytte til mappen Programmer."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Konnte nicht in den Programme-Ordner verschieben"
+            "value": "Konnte nicht in den Programme-Ordner verschoben werden."
           }
         },
         "el": {
@@ -1120,7 +1120,7 @@
         "fi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Siirto Ohjelmat-kansioon epäonnistui"
+            "value": "Siirto Ohjelmat-kansioon epäonnistui."
           }
         },
         "fr": {
@@ -1186,19 +1186,19 @@
         "nb": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kunne ikke flytte til Programmer-mappen"
+            "value": "Kunne ikke flytte til Programmer-mappen."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kan niet naar de map Programma's verplaatsen"
+            "value": "Kon niet naar de map Programma's worden verplaatst."
           }
         },
         "nn": {
           "stringUnit": {
             "state": "translated",
-            "value": "Klarte ikkje å flytte til Programmer-mappa"
+            "value": "Klarte ikkje å flytte til Programmer-mappa."
           }
         },
         "pa": {
@@ -1210,7 +1210,7 @@
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nie można przenieść do folderu Aplikacje"
+            "value": "Nie można przenieść do folderu Aplikacje."
           }
         },
         "ps": {
@@ -1246,7 +1246,7 @@
         "sk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nepodarilo sa presunúť do priečinka Aplikácie"
+            "value": "Nepodarilo sa presunúť do priečinka Aplikácie."
           }
         },
         "sr": {
@@ -1258,7 +1258,7 @@
         "sv": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kunde inte flytta till mappen Program"
+            "value": "Kunde inte flytta till mappen Program."
           }
         },
         "th": {
@@ -1276,7 +1276,7 @@
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Не вдалося перемістити до папки «Програми»"
+            "value": "Не вдалося перемістити до папки «Програми»."
           }
         },
         "ur": {
@@ -1538,7 +1538,7 @@
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ може перемістити себе до папки «Програми»."
+            "value": "%@ може переміститися до папки «Програми»."
           }
         },
         "ur": {
@@ -2264,7 +2264,7 @@
         "ps": {
           "stringUnit": {
             "state": "translated",
-            "value": "بند او بدلول"
+            "value": "وتړئ او بدل یې کړئ"
           }
         },
         "pt": {

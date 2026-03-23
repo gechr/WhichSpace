@@ -66,7 +66,7 @@
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "بررسی به‌روزرسانی..."
+            "value" : "بررسی به‌روزرسانی‌ها..."
           }
         },
         "fi" : {
@@ -334,7 +334,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kopioi merkki kaikkiin Spaceseihin..."
+            "value" : "Kopioi merkki kaikkiin Spaceihin..."
           }
         },
         "fr" : {
@@ -596,7 +596,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kopioi väri kaikkiin Spaceseihin..."
+            "value" : "Kopioi väri kaikkiin Spaceihin..."
           }
         },
         "fr" : {
@@ -852,13 +852,13 @@
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "کپی برچسب به همه فضاها..."
+            "value" : "برچسب را به همه فضاها کپی کن..."
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kopioi tunniste kaikkiin Spaceseihin..."
+            "value" : "Kopioi tunniste kaikkiin Spaceihin..."
           }
         },
         "fr" : {
@@ -1120,7 +1120,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kopioi tyyli kaikkiin Spaceseihin..."
+            "value" : "Kopioi tyyli kaikkiin Spaceihin..."
           }
         },
         "fr" : {
@@ -1382,7 +1382,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kopioi nykyiset mukautukset kaikkiin Spaceseihin..."
+            "value" : "Kopioi nykyiset mukautukset kaikkiin Spaceihin..."
           }
         },
         "fr" : {
@@ -1824,13 +1824,13 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "輸出..."
+            "value" : "匯出..."
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "輸出..."
+            "value" : "匯出..."
           }
         }
       }
@@ -2348,13 +2348,13 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "輸入..."
+            "value" : "匯入..."
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "輸入..."
+            "value" : "匯入..."
           }
         }
       }
@@ -2948,13 +2948,13 @@
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "بازنشانی سفارشی‌سازی همه فضاها..."
+            "value" : "بازنشانی همه سفارشی‌سازی‌های فضاها به پیش‌فرض..."
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Palauta kaikkien Spacesejen mukautukset oletuksiin..."
+            "value" : "Palauta kaikkien Spacejen mukautukset oletuksiin..."
           }
         },
         "fr" : {
@@ -3080,7 +3080,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Obnoviť všetky priestory na predvolené..."
+            "value" : "Obnoviť prispôsobenia všetkých priestorov na predvolené..."
           }
         },
         "sr" : {
@@ -3246,7 +3246,7 @@
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Atur ulang lencana ke default..."
+            "value" : "Atur ulang lencana ke bawaan..."
           }
         },
         "it" : {
@@ -3318,19 +3318,19 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Repor o distintivo para predefinido..."
+            "value" : "Repor o distintivo predefinido..."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Redefinir o distintivo para padrão..."
+            "value" : "Redefinir o distintivo para o padrão..."
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Resetează insigna la implicit..."
+            "value" : "Resetează insigna la valoarea implicită..."
           }
         },
         "ru" : {
@@ -3580,13 +3580,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Repor a cor para as predefinições..."
+            "value" : "Repor a cor predefinida..."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Redefinir a cor para os padrões..."
+            "value" : "Redefinir a cor para o padrão..."
           }
         },
         "ro" : {
@@ -3842,13 +3842,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Repor o tipo de letra para as predefinições..."
+            "value" : "Repor o tipo de letra predefinido..."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Redefinir a fonte para os padrões..."
+            "value" : "Redefinir a fonte para o padrão..."
           }
         },
         "ro" : {
@@ -4032,7 +4032,7 @@
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Atur ulang label ke default..."
+            "value" : "Atur ulang label ke bawaan..."
           }
         },
         "it" : {
@@ -4104,19 +4104,19 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Repor a etiqueta para predefinido..."
+            "value" : "Repor a etiqueta predefinida..."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Redefinir a etiqueta para padrão..."
+            "value" : "Redefinir a etiqueta para o padrão..."
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Resetează eticheta la implicit..."
+            "value" : "Resetează eticheta la valoarea implicită..."
           }
         },
         "ru" : {
@@ -4204,7 +4204,7 @@
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Нулирай текущото пространство..."
+            "value" : "Нулирай персонализациите на текущото пространство..."
           }
         },
         "ca" : {
@@ -4258,7 +4258,7 @@
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "بازنشانی سفارشی‌سازی فضای فعلی..."
+            "value" : "بازنشانی سفارشی‌سازی‌های فضای فعلی به پیش‌فرض..."
           }
         },
         "fi" : {
@@ -4390,7 +4390,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Obnoviť aktuálny priestor na predvolený..."
+            "value" : "Obnoviť prispôsobenia aktuálneho priestoru na predvolené..."
           }
         },
         "sr" : {
@@ -4628,13 +4628,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Repor o estilo para as predefinições..."
+            "value" : "Repor o estilo predefinido..."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Redefinir o estilo para os padrões..."
+            "value" : "Redefinir o estilo para o padrão..."
           }
         },
         "ro" : {
@@ -4794,7 +4794,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Définir les personnalisations actuelles par défaut..."
+            "value" : "Définir les personnalisations actuelles comme réglages par défaut..."
           }
         },
         "he" : {
@@ -5044,7 +5044,7 @@
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "تغییر Spaces به مجوز دسترس‌پذیری برای شبیه‌سازی میانبرهای صفحه‌کلید نیاز دارد.\n\nپس از کلیک روی ادامه، macOS از شما مجوز می‌خواهد. روی «باز کردن تنظیمات سیستم» کلیک کنید، سپس WhichSpace را در لیست پیدا و فعال کنید."
+            "value" : "جابه‌جایی بین فضاها به مجوز دسترس‌پذیری برای شبیه‌سازی میانبرهای صفحه‌کلید نیاز دارد.\n\nپس از کلیک روی ادامه، macOS از شما مجوز می‌خواهد. روی «باز کردن تنظیمات سیستم» کلیک کنید، سپس WhichSpace را در فهرست پیدا و فعال کنید."
           }
         },
         "fi" : {
@@ -5062,13 +5062,13 @@
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "מעבר בין Spaces דורש הרשאת נגישות כדי לדמות קיצורי מקלדת.\n\nלאחר לחיצה על המשך, macOS יבקש ממך הרשאה. לחצו על \"פתח הגדרות מערכת\", מצאו את WhichSpace ברשימה והפעילו אותו."
+            "value" : "מעבר בין מרחבים דורש הרשאת נגישות כדי לדמות קיצורי מקלדת.\n\nלאחר הלחיצה על המשך, macOS יבקש ממך הרשאה. לחץ על \"פתח את הגדרות המערכת\", ואז מצא את WhichSpace ברשימה והפעל אותו."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spaces स्विच करने के लिए कीबोर्ड शॉर्टकट अनुकरण हेतु एक्सेसिबिलिटी अनुमति आवश्यक है।\n\nजारी रखें पर क्लिक करने के बाद, macOS आपसे अनुमति माँगेगा। \"सिस्टम सेटिंग्स खोलें\" पर क्लिक करें, फिर सूची में WhichSpace ढूँढें और इसे सक्षम करें।"
+            "value" : "स्पेसेस बदलने के लिए कीबोर्ड शॉर्टकट का अनुकरण करने हेतु एक्सेसिबिलिटी अनुमति आवश्यक है।\n\nजारी रखें पर क्लिक करने के बाद, macOS आपसे अनुमति माँगेगा। \"सिस्टम सेटिंग्स खोलें\" पर क्लिक करें, फिर सूची में WhichSpace ढूँढें और इसे सक्षम करें।"
           }
         },
         "hu" : {
@@ -5092,7 +5092,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "操作スペースの切り替えには、キーボードショートカットをシミュレートするためにアクセシビリティの許可が必要です。\n\n「続ける」をクリックすると、macOSが許可を求めます。「システム設定を開く」をクリックし、リストからWhichSpaceを見つけて有効にしてください。"
+            "value" : "スペースの切り替えには、キーボードショートカットをシミュレートするためにアクセシビリティの許可が必要です。\n\n「続ける」をクリックすると、macOSが許可を求めます。「システム設定を開く」をクリックし、リストからWhichSpaceを見つけて有効にしてください。"
           }
         },
         "ko" : {
@@ -5134,7 +5134,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spaces بدلن لئی کیبورڈ شارٹکٹ نقل کرن لئی ایکسیسبلٹی اجازت دی لوڑ ہے۔\n\nجاری رکھو تے کلک کرن مگروں، macOS اجازت منگے گا۔ \"سسٹم سیٹنگز کھولو\" تے کلک کرو، فیر لسٹ وچ WhichSpace لبھو تے اینوں چالو کرو۔"
+            "value" : "سپیسز بدلن لئی کی بورڈ شارٹ کٹس دی نقل کرن لئی ایکسیسبلٹی اجازت دی لوڑ ہے۔\n\n\"جاری رکھو\" تے کلک کرن مگروں، macOS اجازت منگے گا۔ \"سسٹم سیٹنگز کھولو\" تے کلک کرو، فیر لسٹ وچ WhichSpace لبھو تے اینوں چالو کرو۔"
           }
         },
         "pl" : {
@@ -5146,7 +5146,7 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "د Spaces بدلول د کيبورډ شارٹکٹ سمولیشن لپاره د لاسرسي اجازے ته اړتیا لري.\n\nد دوام ورکړئ کلیک کولو وروسته، macOS به اجازه وغواړي. \"د سیسٹم ترتیبات خلاصول\" کلیک وکړئ، بیا په لیست کې WhichSpace ومومئ او فعال یې کړئ."
+            "value" : "د سپېسونو بدلول د کيبورډ شارټکټونو د سمولو لپاره د لاسرسي اجازې ته اړتیا لري.\n\nد \"دوام ورکړئ\" تر کلیک وروسته، macOS به له تاسو اجازه وغواړي. \"د سیسټم ترتیبات پرانیزئ\" کلیک کړئ، بیا په لیست کې WhichSpace ومومئ او فعال یې کړئ."
           }
         },
         "pt" : {
@@ -5188,7 +5188,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Att byta Spaces kräver Tillgänglighetsbehörighet för att simulera tangentbordsgenvägar.\n\nEfter att du klickar Fortsätt kommer macOS att be om behörighet. Klicka på \"Öppna Systeminställningar\", hitta WhichSpace i listan och aktivera."
+            "value" : "Att byta Spaces kräver Tillgänglighetsbehörighet för att simulera tangentbordsgenvägar.\n\nEfter att du klickar Fortsätt kommer macOS att be om behörighet. Klicka på \"Öppna Systeminställningar\", hitta WhichSpace i listan och aktivera det."
           }
         },
         "th" : {
@@ -5212,7 +5212,7 @@
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spaces تبدیل کرنے کے لیے کیبورڈ شارٹکٹ کی نقل کے لیے ایکسیسبلٹی اجازت درکار ہے۔\n\nجاری رکھیں پر کلک کرنے کے بعد، macOS اجازت مانگے گا۔ \"سسٹم سیٹنگز کھولیں\" پر کلک کریں، فہرست میں WhichSpace تلاش کریں اور اسے فعال کریں۔"
+            "value" : "اسپیسز تبدیل کرنے کے لیے کی بورڈ شارٹ کٹس کی نقل کے لیے ایکسیسبلٹی اجازت درکار ہے۔\n\nجاری رکھیں پر کلک کرنے کے بعد، macOS اجازت مانگے گا۔ \"سسٹم سیٹنگز کھولیں\" پر کلک کریں، فہرست میں WhichSpace تلاش کریں اور اسے فعال کریں۔"
           }
         },
         "vi" : {
@@ -5236,7 +5236,7 @@
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "切換 Space 需要輔助使用權限嚟模擬鍵盤快捷鍵。\n\n撞「繼續」之後，macOS 會要求權限。撞「打開系統設定」，喺列表搞到 WhichSpace 然後啟用。"
+            "value" : "切換 Space 需要輔助使用權限來模擬鍵盤快捷鍵。\n\n按一下「繼續」後，macOS 會要求權限。按一下「打開系統設定」，然後在列表中找到 WhichSpace 並啟用。"
           }
         }
       }
@@ -5514,7 +5514,7 @@
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Експортирането на настройките неуспешно"
+            "value" : "Неуспешно експортиране на настройките"
           }
         },
         "ca" : {
@@ -5754,13 +5754,13 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "輸出設定失敗"
+            "value" : "匯出設定失敗"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "輸出設定失敗"
+            "value" : "匯出設定失敗"
           }
         }
       }
@@ -5776,7 +5776,7 @@
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Импортирането на настройките неуспешно"
+            "value" : "Неуспешно импортиране на настройките"
           }
         },
         "ca" : {
@@ -6016,13 +6016,13 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "輸入設定失敗"
+            "value" : "匯入設定失敗"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "輸入設定失敗"
+            "value" : "匯入設定失敗"
           }
         }
       }
@@ -6278,13 +6278,13 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "設定已成功輸入"
+            "value" : "設定已成功匯入"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "設定已成功輸入"
+            "value" : "設定已成功匯入"
           }
         }
       }
@@ -8552,7 +8552,7 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "بياتنظيم"
+            "value" : "بیا تنظیم"
           }
         },
         "pt" : {
@@ -8814,7 +8814,7 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ټول بياتنظيم کړئ"
+            "value" : "ټول بیا تنظیم کړئ"
           }
         },
         "pt" : {
@@ -8980,7 +8980,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Käytetäänkö tätä merkkiä kaikissa Spaceseissä?"
+            "value" : "Käytetäänkö tätä merkkiä kaikissa Spaceissa?"
           }
         },
         "fr" : {
@@ -9094,7 +9094,7 @@
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aplici această insignă la toate spațiile?"
+            "value" : "Aplicați această insignă la toate spațiile?"
           }
         },
         "ru" : {
@@ -9130,7 +9130,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bu rozeti tüm Alanlara uygulansın mı?"
+            "value" : "Bu rozet tüm Alanlara uygulansın mı?"
           }
         },
         "uk" : {
@@ -9242,7 +9242,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kopioidaanko väri kaikkiin Spaceseihin?"
+            "value" : "Kopioidaanko väri kaikkiin Spaceihin?"
           }
         },
         "fr" : {
@@ -9504,7 +9504,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Käytetäänkö tätä tunnistetta kaikissa Spaceseissä?"
+            "value" : "Käytetäänkö tätä tunnistetta kaikissa Spaceissa?"
           }
         },
         "fr" : {
@@ -9618,7 +9618,7 @@
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aplici această etichetă la toate spațiile?"
+            "value" : "Aplicați această etichetă la toate spațiile?"
           }
         },
         "ru" : {
@@ -9654,7 +9654,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bu etiketi tüm Alanlara uygulansın mı?"
+            "value" : "Bu etiket tüm Alanlara uygulansın mı?"
           }
         },
         "uk" : {
@@ -9766,7 +9766,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kopioidaanko tyyli kaikkiin Spaceseihin?"
+            "value" : "Kopioidaanko tyyli kaikkiin Spaceihin?"
           }
         },
         "fr" : {
@@ -10028,7 +10028,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kopioidaanko kaikkiin Spaceseihin?"
+            "value" : "Kopioidaanko nykyiset mukautukset kaikkiin Spaceihin?"
           }
         },
         "fr" : {
@@ -10386,7 +10386,7 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ټول سپېسونه بياتنظيم شي؟"
+            "value" : "ټول سپېسونه بیا تنظیم شي؟"
           }
         },
         "pt" : {
@@ -10582,7 +10582,7 @@
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Atur ulang lencana ke default?"
+            "value" : "Atur ulang lencana ke bawaan?"
           }
         },
         "it" : {
@@ -10654,19 +10654,19 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Repor o distintivo para predefinido?"
+            "value" : "Repor o distintivo predefinido?"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Redefinir o distintivo para padrão?"
+            "value" : "Redefinir o distintivo para o padrão?"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Resetezi insigna la implicit?"
+            "value" : "Resetați insigna la valoarea implicită?"
           }
         },
         "ru" : {
@@ -10910,7 +10910,7 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "رنګ بياتنظيم شي؟"
+            "value" : "رنګ بیا تنظیم شي؟"
           }
         },
         "pt" : {
@@ -11172,7 +11172,7 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "فانټ بياتنظيم شي؟"
+            "value" : "فانټ بیا تنظیم شي؟"
           }
         },
         "pt" : {
@@ -11452,7 +11452,7 @@
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Resetezi eticheta?"
+            "value" : "Resetați eticheta?"
           }
         },
         "ru" : {
@@ -11696,7 +11696,7 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "دا سپېس بياتنظيم شي؟"
+            "value" : "دا سپېس بیا تنظیم شي؟"
           }
         },
         "pt" : {
@@ -11958,7 +11958,7 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "سټایل بياتنظيم شي؟"
+            "value" : "سټایل بیا تنظیم شي؟"
           }
         },
         "pt" : {
@@ -12064,7 +12064,7 @@
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Задаване като стандарт за нови пространства?"
+            "value" : "Да се зададе ли като стандарт за нови пространства?"
           }
         },
         "ca" : {
@@ -12124,13 +12124,13 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Asetetaanko oletukseksi uusille Spaceille?"
+            "value" : "Asetetaanko uusien Spacejen oletukseksi?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Définir comme défaut pour les nouveaux Espaces ?"
+            "value" : "Définir comme réglages par défaut pour les nouveaux Espaces ?"
           }
         },
         "he" : {
@@ -12148,7 +12148,7 @@
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Beállítás alapértelmezettként az új Space-ekhez?"
+            "value" : "Legyen ez az alapértelmezett az új Space-ekhez?"
           }
         },
         "id" : {
@@ -12286,7 +12286,7 @@
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "نئی اسپیسز کے لیے طے شدہ مقرر کریں؟"
+            "value" : "نئی اسپیسز کے لیے طے شدہ کے طور پر مقرر کریں؟"
           }
         },
         "vi" : {
@@ -12386,7 +12386,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tämä käyttää nykyistä merkkiä kaikissa Spaceseissä tällä näytöllä."
+            "value" : "Tämä käyttää nykyistä merkkiä kaikissa Spaceissa tällä näytöllä."
           }
         },
         "fr" : {
@@ -12910,7 +12910,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tämä käyttää nykyistä tunnistetta ja sen tyyliä kaikissa Spaceseissä tällä näytöllä."
+            "value" : "Tämä käyttää nykyistä tunnistetta ja sen tyyliä kaikissa Spaceissa tällä näytöllä."
           }
         },
         "fr" : {
@@ -13476,7 +13476,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "このスペースの色、スタイル、シンボル、フォントに他のすべてのスペースを更新します。"
+            "value" : "他のすべてのスペースを、このスペースの色、スタイル、シンボル、フォントに合わせて更新します。"
           }
         },
         "ko" : {
@@ -14060,13 +14060,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Isto irá remover o distintivo para o Espaço atual."
+            "value" : "Isto irá remover o distintivo do Espaço atual."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Isso removerá o distintivo para o Espaço atual."
+            "value" : "Isso removerá o distintivo do Espaço atual."
           }
         },
         "ro" : {
@@ -14846,13 +14846,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Isto irá remover a etiqueta personalizada para o Espaço atual."
+            "value" : "Isto irá remover a etiqueta personalizada do Espaço atual."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Isso removerá a etiqueta personalizada para o Espaço atual."
+            "value" : "Isso removerá a etiqueta personalizada do Espaço atual."
           }
         },
         "ro" : {
@@ -15530,7 +15530,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tämän Spacen väri, tyyli, symboli ja fontti käytetään oletuksena uusille Spaceille."
+            "value" : "Tämän Spacen väriä, tyyliä, symbolia ja fonttia käytetään uusien Spacejen oletuksena."
           }
         },
         "fr" : {
@@ -15566,7 +15566,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Colore, stile, simbolo e font di questo Spazio verranno utilizzati come predefiniti per i nuovi Spazi."
+            "value" : "Il colore, lo stile, il simbolo e il font di questo Spazio verranno utilizzati come predefiniti per i nuovi Spazi."
           }
         },
         "ja" : {
@@ -16864,7 +16864,7 @@
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Érvénytelen biztonsági mentés adatok"
+            "value" : "Érvénytelen biztonsági mentési adatok"
           }
         },
         "id" : {
@@ -17026,7 +17026,7 @@
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "無效嘅備份資料"
+            "value" : "無效的備份資料"
           }
         }
       }
@@ -19336,7 +19336,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Piller"
+            "value" : "Pill"
           }
         },
         "th" : {
@@ -19598,7 +19598,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Piller (Kontur)"
+            "value" : "Pill (Kontur)"
           }
         },
         "th" : {
@@ -20734,7 +20734,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Symbol"
+            "value" : "Icon"
           }
         },
         "el" : {
@@ -23576,7 +23576,7 @@
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "沒有"
+            "value" : "無"
           }
         }
       }
@@ -25886,7 +25886,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Piller"
+            "value" : "Pill"
           }
         },
         "th" : {
@@ -26148,7 +26148,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Piller (Kontur)"
+            "value" : "Pill (Kontur)"
           }
         },
         "th" : {
@@ -27380,7 +27380,7 @@
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lukisan"
+            "value" : "Garis"
           }
         },
         "nb" : {
@@ -27404,7 +27404,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "لکیؔر"
+            "value" : "لکیر"
           }
         },
         "pl" : {
@@ -28554,7 +28554,7 @@
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "疊加在圖示上嘅單一字元"
+            "value" : "疊加在圖示上的單一字元"
           }
         }
       }
@@ -28630,7 +28630,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tarkista uudet versiot kohteesta %@"
+            "value" : "Tarkista %@:n uudet versiot"
           }
         },
         "fr" : {
@@ -28886,7 +28886,7 @@
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "برای جابه‌جایی چپ‌کلیک روی آیکون فضا کنید"
+            "value" : "برای جابه‌جایی، روی آیکون فضا با دکمهٔ چپ کلیک کن"
           }
         },
         "fi" : {
@@ -28904,7 +28904,7 @@
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "לחץ שמאלית על סמל המרחב כדי לעבור אליו"
+            "value" : "לחץ בלחצן השמאלי על סמל של מרחב כדי לעבור אליו"
           }
         },
         "hi" : {
@@ -29154,7 +29154,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Käytä nykyisen Spacen merkkiä kaikissa Spaceseissä"
+            "value" : "Käytä nykyisen Spacen merkkiä kaikissa Spaceissa"
           }
         },
         "fr" : {
@@ -29386,7 +29386,7 @@
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Αντιγραφή χρώματος αυτού του Χώρου σε όλους"
+            "value" : "Αντιγραφή χρώματος αυτού του Χώρου σε όλους τους Χώρους"
           }
         },
         "en" : {
@@ -29416,7 +29416,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kopioi tämän Spacen väri kaikkiin Spaceseihin"
+            "value" : "Kopioi tämän Spacen väri kaikkiin Spaceihin"
           }
         },
         "fr" : {
@@ -29678,7 +29678,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Käytä nykyisen Spacen tunnistetta kaikissa Spaceseissä"
+            "value" : "Käytä nykyisen Spacen tunnistetta kaikissa Spaceissa"
           }
         },
         "fr" : {
@@ -29910,7 +29910,7 @@
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Αντιγραφή στιλ αυτού του Χώρου σε όλους"
+            "value" : "Αντιγραφή στιλ αυτού του Χώρου σε όλους τους Χώρους"
           }
         },
         "en" : {
@@ -29940,7 +29940,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kopioi tämän Spacen tyyli kaikkiin Spaceseihin"
+            "value" : "Kopioi tämän Spacen tyyli kaikkiin Spaceihin"
           }
         },
         "fr" : {
@@ -30172,7 +30172,7 @@
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Αντιγραφή χρώματος, στιλ, συμβόλου και γραμματοσειράς αυτού του Χώρου σε όλους"
+            "value" : "Αντιγραφή χρώματος, στιλ, συμβόλου και γραμματοσειράς αυτού του Χώρου σε όλους τους Χώρους"
           }
         },
         "en" : {
@@ -30202,7 +30202,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kopioi tämän Spacen väri, tyyli, symboli ja fontti kaikkiin Spaceseihin"
+            "value" : "Kopioi tämän Spacen väri, tyyli, symboli ja fontti kaikkiin Spaceihin"
           }
         },
         "fr" : {
@@ -30458,7 +30458,7 @@
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "محو کردن شفافیت آیکون فضاهای غیرفعال"
+            "value" : "شفافیت آیکون فضاهای غیرفعال را کاهش بده"
           }
         },
         "fi" : {
@@ -30620,7 +30620,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Зменшити непрозорість неактивних іконок простору"
+            "value" : "Зменшити непрозорість неактивних іконок просторів"
           }
         },
         "ur" : {
@@ -30906,13 +30906,13 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "將設定輸出為 JSON 檔案"
+            "value" : "將設定匯出為 JSON 檔案"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "將設定輸出為 JSON 檔案"
+            "value" : "將設定匯出為 JSON 檔案"
           }
         }
       }
@@ -32132,7 +32132,7 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "له JSON فایل څخه تنظیمات واردول"
+            "value" : "له JSON فایل څخه تنظیمات وارد کړئ"
           }
         },
         "pt" : {
@@ -32216,13 +32216,13 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "從 JSON 檔案輸入設定"
+            "value" : "從 JSON 檔案匯入設定"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "從 JSON 檔案輸入設定"
+            "value" : "從 JSON 檔案匯入設定"
           }
         }
       }
@@ -32298,13 +32298,13 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tallenna tämän Spacen väri, tyyli, symboli ja fontti oletukseksi uusille Spaceille"
+            "value" : "Tallenna tämän Spacen väri, tyyli, symboli ja fontti uusien Spacejen oletukseksi"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enregistrer la couleur, le style, le symbole et la police de cet Espace comme défaut pour les nouveaux Espaces"
+            "value" : "Enregistrer la couleur, le style, le symbole et la police de cet Espace comme réglages par défaut pour les nouveaux Espaces"
           }
         },
         "he" : {
@@ -32322,7 +32322,7 @@
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ennek a Space-nek a színe, stílusa, szimbóluma és betűtípusa mentése alapértelmezettként az új Space-ekhez"
+            "value" : "Mentse ennek a Space-nek a színét, stílusát, szimbólumát és betűtípusát alapértelmezettként az új Space-ekhez"
           }
         },
         "id" : {
@@ -32334,7 +32334,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Salva colore, stile, simbolo e font di questo Spazio come predefiniti per i nuovi Spazi"
+            "value" : "Salva il colore, lo stile, il simbolo e il font di questo Spazio come predefiniti per i nuovi Spazi"
           }
         },
         "ja" : {
@@ -32650,7 +32650,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zamień kolory pierwszego i tła"
+            "value" : "Zamień kolory pierwszego planu i tła"
           }
         },
         "ps" : {
@@ -32756,7 +32756,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "نص مخصص، حتى 10 أحرف. استخدم {number} لرقم الفضاء"
+            "value" : "نص مخصص، حتى 10 أحرف. استخدم {number} لرقم المساحة"
           }
         },
         "bg" : {
@@ -32792,7 +32792,7 @@
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Προσαρμοσμένο κείμενο, έως 10 χαρακτήρες. Χρησιμοποιήστε {number} για τον αριθμό Space"
+            "value" : "Προσαρμοσμένο κείμενο, έως 10 χαρακτήρες. Χρησιμοποιήστε το {number} για τον αριθμό του Χώρου"
           }
         },
         "en" : {
@@ -32822,7 +32822,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mukautettu teksti, enintään 10 merkkiä. Käytä {number} tilan numeroon"
+            "value" : "Mukautettu teksti, enintään 10 merkkiä. Käytä {number}-merkintää Spacen numerolle"
           }
         },
         "fr" : {
@@ -32834,19 +32834,19 @@
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "טקסט מותאם אישית, עד 10 תווים. השתמש ב-{number} למספר ה-Space"
+            "value" : "טקסט מותאם אישית, עד 10 תווים. השתמש ב-{number} עבור מספר המרחב"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "कस्टम टेक्स्ट, अधिकतम 10 वर्ण। Space नंबर के लिए {number} उपयोग करें"
+            "value" : "कस्टम टेक्स्ट, अधिकतम 10 वर्ण। स्पेस नंबर के लिए {number} उपयोग करें"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Egyéni szöveg, legfeljebb 10 karakter. Használj {number} karaktert a tér számához"
+            "value" : "Egyéni szöveg, legfeljebb 10 karakter. Használja a {number} helyőrzőt a Space számához"
           }
         },
         "id" : {
@@ -32906,7 +32906,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "کسٹم ٹیکسٹ، زیادہ سے زیادہ 10 حروف۔ Space نمبر لئی {number} ورتو"
+            "value" : "کسٹم ٹیکسٹ، زیادہ سے زیادہ 10 حروف۔ سپیس نمبر لئی {number} ورتو"
           }
         },
         "pl" : {
@@ -32918,7 +32918,7 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "دودیز متن، تر ۱۰ توري. د Space شمیرې لپاره {number} وکاروئ"
+            "value" : "دودیز متن، تر ۱۰ تورو پورې. د سپېس شمېرې لپاره {number} وکاروئ"
           }
         },
         "pt" : {
@@ -32942,7 +32942,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Произвольный текст, до 10 символов. Используйте {number} для номера Space"
+            "value" : "Произвольный текст, до 10 символов. Используйте {number} для номера пространства"
           }
         },
         "sk" : {
@@ -32978,13 +32978,13 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Довільний текст, до 10 символів. Використовуйте {number} для номера Space"
+            "value" : "Довільний текст, до 10 символів. Використовуйте {number} для номера простору"
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "کسٹم متن، زیادہ سے زیادہ 10 حروف۔ Space نمبر کے لیے {number} استعمال کریں"
+            "value" : "کسٹم متن، زیادہ سے زیادہ 10 حروف۔ اسپیس نمبر کے لیے {number} استعمال کریں"
           }
         },
         "vi" : {
@@ -33472,7 +33472,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zobrazovať čísla Spaces pre každý displej namiesto globálnych čísel"
+            "value" : "Zobrazovať čísla priestorov pre každý displej namiesto globálnych čísel"
           }
         },
         "sr" : {
@@ -33602,7 +33602,7 @@
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "خروج %@"
+            "value" : "از %@ خارج شو"
           }
         },
         "fi" : {
@@ -34234,13 +34234,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Remover o distintivo para o Espaço atual"
+            "value" : "Remover o distintivo do Espaço atual"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Remover o distintivo para o Espaço atual"
+            "value" : "Remover o distintivo do Espaço atual"
           }
         },
         "ro" : {
@@ -35020,13 +35020,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Remover a etiqueta personalizada para o Espaço atual"
+            "value" : "Remover a etiqueta personalizada do Espaço atual"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Remover a etiqueta personalizada para o Espaço atual"
+            "value" : "Remover a etiqueta personalizada do Espaço atual"
           }
         },
         "ro" : {
@@ -36122,7 +36122,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Показувати іконку для кожного простору в меню"
+            "value" : "Показувати іконку для кожного простору у смузі меню"
           }
         },
         "ur" : {
@@ -36384,7 +36384,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Налаштовувати іконки простору окремо для кожного дисплея"
+            "value" : "Налаштовувати іконки просторів окремо для кожного дисплея"
           }
         },
         "ur" : {
@@ -36574,7 +36574,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "سپیسز بدلڻ لئی کلک کرو"
+            "value" : "سپیسز بدلن لئی کلک کرو"
           }
         },
         "pl" : {
@@ -37574,7 +37574,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nascondi Spazio singolo"
+            "value" : "Nascondi l'unico Spazio"
           }
         },
         "ja" : {
@@ -38188,7 +38188,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Používať lokálne čísla Spaces"
+            "value" : "Používať lokálne čísla priestorov"
           }
         },
         "sr" : {
@@ -38938,7 +38938,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oddzielne ikony na ekran"
+            "value" : "Oddzielne ikony dla każdego ekranu"
           }
         },
         "ps" : {
@@ -38962,7 +38962,7 @@
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pictograme separate per ecran"
+            "value" : "Pictograme separate pentru fiecare ecran"
           }
         },
         "ru" : {
