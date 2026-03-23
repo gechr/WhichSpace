@@ -11,46 +11,46 @@ import Cocoa
 // MARK: - IconStyle Shape Metadata
 
 enum ShapeType {
-    case square
-    case rounded
-    case slim
     case circle
-    case triangle
+    case pill
     case polygon(sides: Int)
+    case slim
+    case square
     case stroke
     case transparent
+    case triangle
 }
 
 extension IconStyle {
     var shapeType: ShapeType {
         switch self {
-        case .square, .squareOutline:
-            .square
-        case .rounded, .roundedOutline:
-            .rounded
-        case .slim, .slimOutline:
-            .slim
         case .circle, .circleOutline:
             .circle
-        case .triangle, .triangleOutline:
-            .triangle
-        case .pentagon, .pentagonOutline:
-            .polygon(sides: 5)
         case .hexagon, .hexagonOutline:
             .polygon(sides: 6)
+        case .pentagon, .pentagonOutline:
+            .polygon(sides: 5)
+        case .pill, .pillOutline:
+            .pill
+        case .slim, .slimOutline:
+            .slim
+        case .square, .squareOutline:
+            .square
         case .stroke:
             .stroke
         case .transparent:
             .transparent
+        case .triangle, .triangleOutline:
+            .triangle
         }
     }
 
     var isFilled: Bool {
         switch self {
-        case .square, .rounded, .slim, .circle, .triangle, .pentagon, .hexagon:
+        case .circle, .hexagon, .pentagon, .pill, .slim, .square, .triangle:
             true
-        case .squareOutline, .roundedOutline, .slimOutline, .circleOutline, .triangleOutline,
-             .pentagonOutline, .hexagonOutline, .stroke, .transparent:
+        case .circleOutline, .hexagonOutline, .pentagonOutline, .pillOutline, .slimOutline,
+             .squareOutline, .stroke, .transparent, .triangleOutline:
             false
         }
     }
@@ -125,7 +125,7 @@ enum SpaceIconGenerator {
         switch style.shapeType {
         case .square, .circle:
             return min(Layout.baseSquareSize * scale, Layout.statusItemHeight - 1)
-        case .rounded:
+        case .pill:
             let textWidth = measuredTextSize(
                 for: spaceNumber,
                 badge: badge,
@@ -224,7 +224,7 @@ enum SpaceIconGenerator {
                 return shapeRect
             }
 
-        case .rounded:
+        case .pill:
             return generateShapedIcon(
                 for: spaceNumber,
                 darkMode: darkMode,

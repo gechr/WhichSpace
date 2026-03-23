@@ -19127,526 +19127,526 @@
         }
       }
     },
-    "label_style_rounded" : {
+    "label_style_pill" : {
       "localizations" : {
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "مستدير"
+            "value" : "كبسولة"
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Закръглен"
+            "value" : "Капсула"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arrodonit"
+            "value" : "Càpsula"
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zaoblený"
+            "value" : "Pilulka"
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Afrundet"
+            "value" : "Pille"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abgerundet"
+            "value" : "Pille"
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Στρογγυλεμένο"
+            "value" : "Χάπι"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rounded"
+            "value" : "Pill"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rounded"
+            "value" : "Pill"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Redondeado"
+            "value" : "Cápsula"
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "گرد"
+            "value" : "کپسول"
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pyöristetty"
+            "value" : "Pilleri"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arrondi"
+            "value" : "Pilule"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "מעוגל"
+            "value" : "גלולה"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "गोलाकार"
+            "value" : "कैप्सूल"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lekerekített"
+            "value" : "Kapszula"
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Membulat"
+            "value" : "Kapsul"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arrotondato"
+            "value" : "Pillola"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "角丸"
+            "value" : "ピル"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "둥근"
+            "value" : "알약"
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Заоблен"
+            "value" : "Капсула"
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bulat"
+            "value" : "Kapsul"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avrundet"
+            "value" : "Pille"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Afgerond"
+            "value" : "Pil"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avrunda"
+            "value" : "Pille"
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "گول"
+            "value" : "کیپسول"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zaokrąglony"
+            "value" : "Pigułka"
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ګردی"
+            "value" : "کپسول"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arredondado"
+            "value" : "Cápsula"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arredondado"
+            "value" : "Cápsula"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rotunjit"
+            "value" : "Capsulă"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Закруглённый"
+            "value" : "Капсула"
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zaoblený"
+            "value" : "Pilulka"
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zaobljen"
+            "value" : "Kapsula"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rundad"
+            "value" : "Piller"
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "มน"
+            "value" : "แคปซูล"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Yuvarlak"
+            "value" : "Kapsül"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Заокруглений"
+            "value" : "Капсула"
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "گول"
+            "value" : "کیپسول"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bo tròn"
+            "value" : "Viên nang"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "圆角"
+            "value" : "胶囊"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "圓角"
+            "value" : "膠囊"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "圓角"
+            "value" : "膠囊"
           }
         }
       }
     },
-    "label_style_rounded_outline" : {
+    "label_style_pill_outline" : {
       "localizations" : {
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "مستدير (حد خارجي)"
+            "value" : "كبسولة (حد خارجي)"
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Закръглен (Контур)"
+            "value" : "Капсула (Контур)"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arrodonit (contorn)"
+            "value" : "Càpsula (contorn)"
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zaoblený (Obrys)"
+            "value" : "Pilulka (Obrys)"
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Afrundet (Omrids)"
+            "value" : "Pille (Omrids)"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abgerundet (Umriss)"
+            "value" : "Pille (Umriss)"
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Στρογγυλεμένο (Περίγραμμα)"
+            "value" : "Χάπι (Περίγραμμα)"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rounded (Outline)"
+            "value" : "Pill (Outline)"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rounded (Outline)"
+            "value" : "Pill (Outline)"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Redondeado (Contorno)"
+            "value" : "Cápsula (Contorno)"
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "گرد (حاشیه)"
+            "value" : "کپسول (حاشیه)"
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pyöristetty (Ääriviiva)"
+            "value" : "Pilleri (Ääriviiva)"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arrondi (Contour)"
+            "value" : "Pilule (Contour)"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "מעוגל (קו מתאר)"
+            "value" : "גלולה (קו מתאר)"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "गोलाकार (आउटलाइन)"
+            "value" : "कैप्सूल (आउटलाइन)"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lekerekített (Körvonal)"
+            "value" : "Kapszula (Körvonal)"
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Membulat (Outline)"
+            "value" : "Kapsul (Outline)"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arrotondato (Contorno)"
+            "value" : "Pillola (Contorno)"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "角丸（アウトライン）"
+            "value" : "ピル（アウトライン）"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "둥근 (윤곽)"
+            "value" : "알약 (윤곽)"
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Заоблен (контура)"
+            "value" : "Капсула (контура)"
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bulat (Garis luar)"
+            "value" : "Kapsul (Garis luar)"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avrundet (Omriss)"
+            "value" : "Pille (Omriss)"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Afgerond (Contour)"
+            "value" : "Pil (Contour)"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avrunda (Kontur)"
+            "value" : "Pille (Kontur)"
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "گول (آؤٹ لائن)"
+            "value" : "کیپسول (آؤٹ لائن)"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zaokrąglony (Obrys)"
+            "value" : "Pigułka (Obrys)"
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ګردی (بڼکه)"
+            "value" : "کپسول (بڼکه)"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arredondado (Contorno)"
+            "value" : "Cápsula (Contorno)"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arredondado (Contorno)"
+            "value" : "Cápsula (Contorno)"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rotunjit (Contur)"
+            "value" : "Capsulă (Contur)"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Закруглённый (контур)"
+            "value" : "Капсула (контур)"
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zaoblený (obrys)"
+            "value" : "Pilulka (obrys)"
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zaobljen (kontura)"
+            "value" : "Kapsula (kontura)"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rundad (Kontur)"
+            "value" : "Piller (Kontur)"
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "มน (เส้นขอบ)"
+            "value" : "แคปซูล (เส้นขอบ)"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Yuvarlak (Çerçeve)"
+            "value" : "Kapsül (Çerçeve)"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Заокруглений (контур)"
+            "value" : "Капсула (контур)"
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "گول (خاکہ)"
+            "value" : "کیپسول (خاکہ)"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bo tròn (Viền)"
+            "value" : "Viên nang (Viền)"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "圆角 (描边)"
+            "value" : "胶囊 (描边)"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "圓角 (描邊)"
+            "value" : "膠囊 (描邊)"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "圓角 (外框)"
+            "value" : "膠囊 (外框)"
           }
         }
       }
@@ -25677,526 +25677,526 @@
         }
       }
     },
-    "style_rounded" : {
+    "style_pill" : {
       "localizations" : {
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "مستدير"
+            "value" : "كبسولة"
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Закръглен"
+            "value" : "Капсула"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arrodonit"
+            "value" : "Càpsula"
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zaoblený"
+            "value" : "Pilulka"
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Afrundet"
+            "value" : "Pille"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abgerundet"
+            "value" : "Pille"
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Στρογγυλεμένο"
+            "value" : "Χάπι"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rounded"
+            "value" : "Pill"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rounded"
+            "value" : "Pill"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Redondeado"
+            "value" : "Cápsula"
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "گرد"
+            "value" : "کپسول"
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pyöristetty"
+            "value" : "Pilleri"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arrondi"
+            "value" : "Pilule"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "מעוגל"
+            "value" : "גלולה"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "गोलाकार"
+            "value" : "कैप्सूल"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lekerekített"
+            "value" : "Kapszula"
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Membulat"
+            "value" : "Kapsul"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arrotondato"
+            "value" : "Pillola"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "角丸"
+            "value" : "ピル"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "둥근"
+            "value" : "알약"
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Заоблен"
+            "value" : "Капсула"
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bulat"
+            "value" : "Kapsul"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avrundet"
+            "value" : "Pille"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Afgerond"
+            "value" : "Pil"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avrunda"
+            "value" : "Pille"
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "گول"
+            "value" : "کیپسول"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zaokrąglony"
+            "value" : "Pigułka"
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ګردی"
+            "value" : "کپسول"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arredondado"
+            "value" : "Cápsula"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arredondado"
+            "value" : "Cápsula"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rotunjit"
+            "value" : "Capsulă"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Закруглённый"
+            "value" : "Капсула"
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zaoblený"
+            "value" : "Pilulka"
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zaobljen"
+            "value" : "Kapsula"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rundad"
+            "value" : "Piller"
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "มน"
+            "value" : "แคปซูล"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Yuvarlak"
+            "value" : "Kapsül"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Заокруглений"
+            "value" : "Капсула"
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "گول"
+            "value" : "کیپسول"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bo tròn"
+            "value" : "Viên nang"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "圆角"
+            "value" : "胶囊"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "圓角"
+            "value" : "膠囊"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "圓角"
+            "value" : "膠囊"
           }
         }
       }
     },
-    "style_roundedOutline" : {
+    "style_pillOutline" : {
       "localizations" : {
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "مستدير (حد خارجي)"
+            "value" : "كبسولة (حد خارجي)"
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Закръглен (Контур)"
+            "value" : "Капсула (Контур)"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arrodonit (contorn)"
+            "value" : "Càpsula (contorn)"
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zaoblený (Obrys)"
+            "value" : "Pilulka (Obrys)"
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Afrundet (Omrids)"
+            "value" : "Pille (Omrids)"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abgerundet (Umriss)"
+            "value" : "Pille (Umriss)"
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Στρογγυλεμένο (Περίγραμμα)"
+            "value" : "Χάπι (Περίγραμμα)"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rounded (Outline)"
+            "value" : "Pill (Outline)"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rounded (Outline)"
+            "value" : "Pill (Outline)"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Redondeado (Contorno)"
+            "value" : "Cápsula (Contorno)"
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "گرد (حاشیه)"
+            "value" : "کپسول (حاشیه)"
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pyöristetty (Ääriviiva)"
+            "value" : "Pilleri (Ääriviiva)"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arrondi (Contour)"
+            "value" : "Pilule (Contour)"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "מעוגל (קו מתאר)"
+            "value" : "גלולה (קו מתאר)"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "गोलाकार (आउटलाइन)"
+            "value" : "कैप्सूल (आउटलाइन)"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lekerekített (Körvonal)"
+            "value" : "Kapszula (Körvonal)"
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Membulat (Outline)"
+            "value" : "Kapsul (Outline)"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arrotondato (Contorno)"
+            "value" : "Pillola (Contorno)"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "角丸（アウトライン）"
+            "value" : "ピル（アウトライン）"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "둥근 (윤곽)"
+            "value" : "알약 (윤곽)"
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Заоблен (контура)"
+            "value" : "Капсула (контура)"
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bulat (Garis luar)"
+            "value" : "Kapsul (Garis luar)"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avrundet (Omriss)"
+            "value" : "Pille (Omriss)"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Afgerond (Contour)"
+            "value" : "Pil (Contour)"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avrunda (Kontur)"
+            "value" : "Pille (Kontur)"
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "گول (آؤٹ لائن)"
+            "value" : "کیپسول (آؤٹ لائن)"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zaokrąglony (Obrys)"
+            "value" : "Pigułka (Obrys)"
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ګردی (بڼکه)"
+            "value" : "کپسول (بڼکه)"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arredondado (Contorno)"
+            "value" : "Cápsula (Contorno)"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arredondado (Contorno)"
+            "value" : "Cápsula (Contorno)"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rotunjit (Contur)"
+            "value" : "Capsulă (Contur)"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Закруглённый (контур)"
+            "value" : "Капсула (контур)"
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zaoblený (obrys)"
+            "value" : "Pilulka (obrys)"
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zaobljen (kontura)"
+            "value" : "Kapsula (kontura)"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rundad (Kontur)"
+            "value" : "Piller (Kontur)"
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "มน (เส้นขอบ)"
+            "value" : "แคปซูล (เส้นขอบ)"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Yuvarlak (Çerçeve)"
+            "value" : "Kapsül (Çerçeve)"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Заокруглений (контур)"
+            "value" : "Капсула (контур)"
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "گول (خاکہ)"
+            "value" : "کیپسول (خاکہ)"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bo tròn (Viền)"
+            "value" : "Viên nang (Viền)"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "圆角 (描边)"
+            "value" : "胶囊 (描边)"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "圓角 (描邊)"
+            "value" : "膠囊 (描邊)"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "圓角 (外框)"
+            "value" : "膠囊 (外框)"
           }
         }
       }

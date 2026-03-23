@@ -4,22 +4,22 @@ import Defaults
 // MARK: - IconStyle
 
 enum IconStyle: String, CaseIterable, Defaults.Serializable {
-    case square
-    case squareOutline
-    case rounded
-    case roundedOutline
-    case slim
-    case slimOutline
     case circle
     case circleOutline
-    case triangle
-    case triangleOutline
-    case pentagon
-    case pentagonOutline
     case hexagon
     case hexagonOutline
+    case pentagon
+    case pentagonOutline
+    case pill
+    case pillOutline
+    case slim
+    case slimOutline
+    case square
+    case squareOutline
     case stroke
     case transparent
+    case triangle
+    case triangleOutline
 
     var localizedTitle: String {
         NSLocalizedString("style_\(rawValue)", comment: "")

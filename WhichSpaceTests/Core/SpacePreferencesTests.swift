@@ -400,7 +400,7 @@ struct SpacePreferencesTests {
         SpacePreferences.setSymbol("star", forSpace: 1, store: store)
         SpacePreferences.setBadge(SpaceBadge(character: "A", position: .topRight), forSpace: 1, store: store)
         SpacePreferences.setLabel("Work", forSpace: 1, store: store)
-        SpacePreferences.setLabelStyle(.rounded, forSpace: 1, store: store)
+        SpacePreferences.setLabelStyle(.pill, forSpace: 1, store: store)
 
         SpacePreferences.copyPreferences(from: 1, to: 2, store: store)
 
@@ -409,7 +409,7 @@ struct SpacePreferencesTests {
         #expect(SpacePreferences.symbol(forSpace: 2, store: store) == "star")
         #expect(SpacePreferences.badge(forSpace: 2, store: store)?.character == "A")
         #expect(SpacePreferences.label(forSpace: 2, store: store) == "Work")
-        #expect(SpacePreferences.labelStyle(forSpace: 2, store: store) == .rounded)
+        #expect(SpacePreferences.labelStyle(forSpace: 2, store: store) == .pill)
     }
 
     @Test("copyPreferences only copies preferences that exist on source")
