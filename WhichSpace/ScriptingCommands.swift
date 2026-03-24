@@ -27,18 +27,28 @@ final class CurrentSpaceNumberCommand: NSScriptCommand {
 /// Returns the custom label if one is set, otherwise the default space label.
 final class CurrentSpaceLabelCommand: NSScriptCommand {
     override func performDefaultImplementation() -> Any? {
-        runScriptQueryOnMain { () -> String in
-            let appState = AppEnvironment.shared.appState
-            let store = AppEnvironment.shared.store
-            if let customLabel = SpacePreferences.label(
-                forSpace: appState.currentSpace,
-                display: appState.currentDisplayID,
-                store: store
-            ), !customLabel.isEmpty {
-                return LabelTemplate.resolve(customLabel, space: appState.currentSpace)
-            }
-            return appState.currentSpaceLabel
+        runScriptQueryOnMain {
+            ScriptingHelpers.resolveCurrentLabel(
+                appState: AppEnvironment.shared.appState,
+                store: AppEnvironment.shared.store
+            )
         }
+    }
+}
+
+// MARK: - Scripting Helpers
+
+@MainActor
+enum ScriptingHelpers {
+    static func resolveCurrentLabel(appState: AppState, store: DefaultsStore) -> String {
+        if let customLabel = SpacePreferences.label(
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        ), !customLabel.isEmpty {
+            return LabelTemplate.resolve(customLabel, space: appState.currentSpace)
+        }
+        return appState.currentSpaceLabel
     }
 }
 
@@ -53,15 +63,9 @@ extension NSApplication {
     /// Returns the current space label (custom label if set, otherwise "1", "2", "F" for fullscreen).
     /// Usage: `tell application "WhichSpace" to get current space label`
     @MainActor @objc var currentSpaceLabel: String {
-        let appState = AppEnvironment.shared.appState
-        let store = AppEnvironment.shared.store
-        if let customLabel = SpacePreferences.label(
-            forSpace: appState.currentSpace,
-            display: appState.currentDisplayID,
-            store: store
-        ), !customLabel.isEmpty {
-            return customLabel
-        }
-        return appState.currentSpaceLabel
+        ScriptingHelpers.resolveCurrentLabel(
+            appState: AppEnvironment.shared.appState,
+            store: AppEnvironment.shared.store
+        )
     }
 }

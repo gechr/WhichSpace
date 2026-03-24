@@ -141,6 +141,26 @@ struct ScriptingCommandsTests {
 
     // MARK: - Number vs Label Difference
 
+    @Test("currentSpaceLabel resolves template tokens in custom labels")
+    func currentSpaceLabel_resolvesTemplateTokens() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [
+                    (id: 100, isFullscreen: false),
+                    (id: 101, isFullscreen: false),
+                ],
+                activeSpaceID: 101
+            ),
+        ]
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        SpacePreferences.setLabel("Work {number}", forSpace: 2, store: store)
+
+        let label = ScriptingHelpers.resolveCurrentLabel(appState: appState, store: store)
+        #expect(label == "Work 2")
+    }
+
     @Test("fullscreen: number is index, label is F")
     func currentSpaceNumberAndLabel_fullscreen() {
         stub.activeDisplayIdentifier = "Main"
