@@ -8,14 +8,14 @@ final class SpaceDefaultStyleTests: XCTestCase {
     private var store: DefaultsStore!
     private var testSuite: TestSuite!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         testSuite = TestSuiteFactory.createSuite()
         store = DefaultsStore(suite: testSuite.suite)
         stub = CGSStub()
     }
 
-    override func tearDown() {
+    override func tearDown() async throws {
         sut = nil
         stub = nil
         if let store, let testSuite {
@@ -24,7 +24,7 @@ final class SpaceDefaultStyleTests: XCTestCase {
         }
         store = nil
         testSuite = nil
-        super.tearDown()
+        try await super.tearDown()
     }
 
     // MARK: - Helpers

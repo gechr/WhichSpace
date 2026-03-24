@@ -40,8 +40,8 @@ final class AppDelegateActionsTests: XCTestCase {
     private var launchAtLoginStub: StubLaunchAtLoginProvider!
     private var sut: AppDelegate!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
 
         // Create per-test isolated store
         testSuite = TestSuiteFactory.createSuite()
@@ -72,7 +72,7 @@ final class AppDelegateActionsTests: XCTestCase {
         )
     }
 
-    override func tearDown() {
+    override func tearDown() async throws {
         sut.stopObservingAppState()
         sut = nil
         launchAtLoginStub = nil
@@ -85,7 +85,7 @@ final class AppDelegateActionsTests: XCTestCase {
         }
         store = nil
         testSuite = nil
-        super.tearDown()
+        try await super.tearDown()
     }
 
     // MARK: - Helper Methods

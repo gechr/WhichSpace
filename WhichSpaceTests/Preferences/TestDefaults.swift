@@ -122,29 +122,21 @@ class IsolatedDefaultsTestCase: XCTestCase {
     private var testSuite: TestSuite!
     // swiftlint:enable test_case_accessibility
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
 
-        // Create per-test isolated suite
         testSuite = TestSuiteFactory.createSuite()
         store = DefaultsStore(suite: testSuite.suite)
-
-        // Register cleanup that runs even if test crashes
-        addTeardownBlock { [store, testSuite] in
-            MainActor.assumeIsolated {
-                guard let store, let testSuite else {
-                    return
-                }
-                store.resetAll()
-                TestSuiteFactory.destroySuite(testSuite)
-            }
-        }
     }
 
-    override func tearDown() {
+    override func tearDown() async throws {
+        if let store, let testSuite {
+            store.resetAll()
+            TestSuiteFactory.destroySuite(testSuite)
+        }
         store = nil
         testSuite = nil
-        super.tearDown()
+        try await super.tearDown()
     }
 }
 

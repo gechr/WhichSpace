@@ -292,9 +292,6 @@ struct StylePickerTests {
         for style in IconStyle.allCases {
             let stylePicker = StylePicker(style: style)
 
-            // View should be created successfully
-            #expect(stylePicker != nil, "Should create view for style \(style.rawValue)")
-
             // Should have valid intrinsic size
             let size = stylePicker.intrinsicContentSize
             #expect(size.width > 0, "Width should be positive for style \(style.rawValue)")
