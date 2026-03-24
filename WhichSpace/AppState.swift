@@ -396,9 +396,9 @@ final class AppState {
         renderer.invalidateSpacesWithWindowsCache()
 
         // Save previous values for space change detection
+        let oldDisplaysSpaceInfo = allDisplaysSpaceInfo
         let oldSpaceID = currentSpaceID
         let oldDisplayID = currentDisplayID
-        let oldRegularSpaceCount = previousRegularSpaceCount
 
         // Apply snapshot to state
         allDisplaysSpaceInfo = snapshot.allDisplaysSpaceInfo
@@ -411,7 +411,7 @@ final class AppState {
         lastUpdateTime = Date()
 
         // Apply default style to newly created spaces
-        applyDefaultStyleToNewSpaces(oldRegularSpaceCount: oldRegularSpaceCount)
+        applyDefaultStyleToNewSpaces(previousDisplays: oldDisplaysSpaceInfo)
 
         // Track state for next snapshot
         previousRegularSpaceCount = regularSpaceCount
@@ -420,28 +420,34 @@ final class AppState {
         postSpaceChangeNotificationIfNeeded(oldSpaceID: oldSpaceID, oldDisplayID: oldDisplayID)
     }
 
-    /// When a new space is created (space count increases by one), apply the stored default style
-    /// to the new space if it doesn't already have preferences set.
-    private func applyDefaultStyleToNewSpaces(oldRegularSpaceCount: Int) {
-        // Skip on initial launch or if no default style is saved
-        guard oldRegularSpaceCount > 0, SpacePreferences.hasDefaultStyle(store: store) else {
+    /// When an existing display gains new regular spaces, apply the stored default style to each
+    /// new local space index if it doesn't already have preferences set.
+    private func applyDefaultStyleToNewSpaces(previousDisplays: [DisplaySpaceInfo]) {
+        // Skip on initial launch or if no default style is saved.
+        guard !previousDisplays.isEmpty, SpacePreferences.hasDefaultStyle(store: store) else {
             return
         }
 
-        let newCount = regularSpaceCount
-        guard newCount > oldRegularSpaceCount else {
-            return
+        let previousCounts = Dictionary(
+            uniqueKeysWithValues: previousDisplays.map { ($0.displayID, $0.regularSpaceCount) }
+        )
+
+        for displayInfo in allDisplaysSpaceInfo {
+            guard let oldCount = previousCounts[displayInfo.displayID],
+                  displayInfo.regularSpaceCount > oldCount
+            else {
+                continue
+            }
+
+            let display = store.uniqueIconsPerDisplay ? displayInfo.displayID : nil
+            for newSpace in (oldCount + 1) ... displayInfo.regularSpaceCount {
+                guard !SpacePreferences.hasAnyPreference(forSpace: newSpace, display: display, store: store) else {
+                    continue
+                }
+
+                SpacePreferences.applyDefaultStyle(toSpace: newSpace, display: display, store: store)
+            }
         }
-
-        // macOS adds one space at a time, at the end
-        let newSpace = newCount
-        let display = store.uniqueIconsPerDisplay ? currentDisplayID : nil
-
-        guard !SpacePreferences.hasAnyPreference(forSpace: newSpace, display: display, store: store) else {
-            return
-        }
-
-        SpacePreferences.applyDefaultStyle(toSpace: newSpace, display: display, store: store)
     }
 
     /// Posts spaceDidChange notification if the space changed on the same display
