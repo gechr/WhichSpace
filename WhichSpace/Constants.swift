@@ -283,8 +283,6 @@ enum Localization {
     static let toggleShowAllDisplays = String(localized: "toggle_show_all_displays")
     static let toggleShowAllSpaces = String(localized: "toggle_show_all_spaces")
     static let toggleUniqueIconsPerDisplay = String(localized: "toggle_unique_icons_per_display")
-    static let yabaiRequiredDetail = String(localized: "yabai_required_detail")
-    static let yabaiRequiredTitle = String(localized: "yabai_required_title")
 }
 
 // MARK: - Skin Tone
@@ -359,18 +357,29 @@ enum SkinTone: Int, CaseIterable, Codable, Defaults.Serializable {
             return emoji
         }
 
-        // For ZWJ sequences, insert modifier after first modifier-base character
+        // For ZWJ sequences, insert modifier after first modifier-base character,
+        // but only if the result actually renders as a single emoji glyph.
         if stripped.unicodeScalars.contains(zwj) {
-            return insertModifierAfterFirstBase(in: stripped, modifier: modifier)
+            let result = insertModifierAfterFirstBase(in: stripped, modifier: modifier)
+            return renderEmoji(result) ? result : emoji
         }
 
         // Simple emoji - just append
         return stripped + modifier
     }
 
-    /// Strips skin tone modifiers and variation selectors from emoji
+    /// Strips skin tone modifiers and variation selectors from emoji.
+    /// VS16 is only stripped before the first ZWJ to preserve gender indicators.
     private static func stripModifiers(from emoji: String) -> String {
-        String(emoji.unicodeScalars.filter { !modifierScalars.contains($0) && $0 != vs16 })
+        let scalars = Array(emoji.unicodeScalars)
+        let firstZWJ = scalars.firstIndex(of: zwj)
+        var result: [Unicode.Scalar] = []
+        for (offset, scalar) in scalars.enumerated() {
+            if modifierScalars.contains(scalar) { continue }
+            if scalar == vs16, firstZWJ == nil || offset < firstZWJ! { continue }
+            result.append(scalar)
+        }
+        return String(String.UnicodeScalarView(result))
     }
 
     /// Inserts skin tone modifier after the first modifier-base character in a ZWJ sequence
@@ -388,6 +397,16 @@ enum SkinTone: Int, CaseIterable, Codable, Defaults.Serializable {
         }
 
         return result
+    }
+
+    /// Checks if an emoji string renders as a single glyph by comparing its width
+    /// to a reference emoji. Broken ZWJ sequences render wider than a single emoji.
+    private static func renderEmoji(_ string: String) -> Bool {
+        let bounds = CGSize(width: CGFloat.greatestFiniteMagnitude, height: .greatestFiniteMagnitude)
+        let options: NSString.DrawingOptions = .usesLineFragmentOrigin
+        let size = (string as NSString).boundingRect(with: bounds, options: options, context: nil).size
+        let refSize = ("👍" as NSString).boundingRect(with: bounds, options: options, context: nil).size
+        return size.width <= refSize.width * 1.1
     }
 
     /// Uses EmojiKit's size-based detection to determine if an emoji supports skin tones.

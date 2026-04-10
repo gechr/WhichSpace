@@ -43,7 +43,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     private let confirmAction: ConfirmAction
     private let appState: AppState
     private let missionControlNotificationSender: (CFString) -> Void
-    private let spaceSwitcher: SpaceSwitcher
     private(set) var actionHandler: ActionHandler!
     private var menuBuilder: MenuBuilder!
     private var statusBarItem: NSStatusItem!
@@ -76,7 +75,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         missionControlNotificationSender = { notification in
             _ = CoreDockSendNotification(notification)
         }
-        spaceSwitcher = SpaceSwitcher()
         super.init()
         configureActionHandler()
     }
@@ -88,14 +86,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         launchAtLogin: LaunchAtLoginProvider = DefaultLaunchAtLoginProvider(),
         missionControlNotificationSender: @escaping (CFString) -> Void = { notification in
             _ = CoreDockSendNotification(notification)
-        },
-        spaceSwitcher: SpaceSwitcher = SpaceSwitcher()
+        }
     ) {
         self.appState = appState
         self.confirmAction = confirmAction
         self.launchAtLogin = launchAtLogin
         self.missionControlNotificationSender = missionControlNotificationSender
-        self.spaceSwitcher = spaceSwitcher
         super.init()
         configureActionHandler()
     }
@@ -373,23 +369,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             return
         }
 
-        let targetSpace = slot.targetSpace!
-
-        // For spaces > 16, need yabai (macOS only has hotkeys for 1-16)
-        Task {
-            if targetSpace > 16 {
-                guard await SpaceSwitcher.isYabaiAvailable() else {
-                    showYabaiRequiredAlert()
-                    return
-                }
-
-                if await !SpaceSwitcher.switchToSpaceViaYabai(targetSpace) {
-                    showYabaiRequiredAlert()
-                }
-            } else {
-                await spaceSwitcher.switchToSpace(targetSpace)
-            }
-        }
+        SpaceSwitcher.switchToSpace(id: slot.spaceID)
     }
 
     // MARK: - Status Bar
@@ -549,23 +529,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
     @objc func changeFont(_ sender: Any?) {
         actionHandler.changeFont(sender)
-    }
-
-    // MARK: - Alert Helpers
-
-    private func showYabaiRequiredAlert() {
-        let alert = InfoAlert(
-            message: Localization.yabaiRequiredTitle,
-            detail: Localization.yabaiRequiredDetail,
-            primaryButtonTitle: Localization.buttonLearnMore,
-            icon: NSImage(named: "yabai")
-        )
-
-        if alert.runModal() {
-            if let url = URL(string: "https://github.com/asmvik/yabai/wiki/Installing-yabai-(latest-release)") {
-                NSWorkspace.shared.open(url)
-            }
-        }
     }
 }
 

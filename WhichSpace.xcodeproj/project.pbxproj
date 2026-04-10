@@ -73,7 +73,6 @@
 		67C5C0748C96D7026E8642AF /* ActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B1BC45410352F4BF33C9FD3 /* ActionHandler.swift */; };
 		727C42504F3244CEA372E9AD /* AppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D63520F7B9493EB2D5A9FF /* AppEnvironment.swift */; };
 		D77B6B08D64F4BE0BB06BDD7 /* SettingsConstraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2C8D45EF1C45EFB663FEF5 /* SettingsConstraints.swift */; };
-		39DD386F824B4FF48BDB6DE1 /* MockHotKeyProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF401C1F09AA421A9A916A37 /* MockHotKeyProvider.swift */; };
 		B491BAAAB4BA49218E7D8277 /* SpaceSwitcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B641D3815414D78B2AE9BBC /* SpaceSwitcherTests.swift */; };
 		AD93590D96DD4E9E8595DB68 /* SettingsConstraintsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B4006916D744B3EB1FCF611 /* SettingsConstraintsTests.swift */; };
 		1050F7FD2AAB431293F440FD /* SpaceSnapshotServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2846E68501F241D1B6B97942 /* SpaceSnapshotServiceTests.swift */; };
@@ -169,7 +168,6 @@
 		4082BFCDC5A54825AF80AF6F /* IntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegrationTests.swift; sourceTree = "<group>"; };
 		08E5FE968EBE447E9C29ECB3 /* PerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceTests.swift; sourceTree = "<group>"; };
 		1B2C8D45EF1C45EFB663FEF5 /* SettingsConstraints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsConstraints.swift; sourceTree = "<group>"; };
-		CF401C1F09AA421A9A916A37 /* MockHotKeyProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockHotKeyProvider.swift; sourceTree = "<group>"; };
 		2B641D3815414D78B2AE9BBC /* SpaceSwitcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceSwitcherTests.swift; sourceTree = "<group>"; };
 		6B4006916D744B3EB1FCF611 /* SettingsConstraintsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsConstraintsTests.swift; sourceTree = "<group>"; };
 		2846E68501F241D1B6B97942 /* SpaceSnapshotServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceSnapshotServiceTests.swift; sourceTree = "<group>"; };
@@ -267,7 +265,6 @@
 				DFB446EE552B31E1415C66B7 /* DynamicDisplayTests.swift */,
 				4ECDD602992244C2A87B9753 /* ScriptingCommandsTests.swift */,
 				5EB458392EEDE9690021C6BD /* CGSStub.swift */,
-				CF401C1F09AA421A9A916A37 /* MockHotKeyProvider.swift */,
 				2846E68501F241D1B6B97942 /* SpaceSnapshotServiceTests.swift */,
 				362B58BC4F194B83889B0E5C /* SpaceDefaultStyleTests.swift */,
 			);
@@ -581,7 +578,6 @@
 				BBCA46A039B8465CBA84EE0B /* ScriptingCommandsTests.swift in Sources */,
 				60A10359545448879C213924 /* IntegrationTests.swift in Sources */,
 				C9D290A3F9CA484EAFABF2E8 /* PerformanceTests.swift in Sources */,
-				39DD386F824B4FF48BDB6DE1 /* MockHotKeyProvider.swift in Sources */,
 				B491BAAAB4BA49218E7D8277 /* SpaceSwitcherTests.swift in Sources */,
 				AD93590D96DD4E9E8595DB68 /* SettingsConstraintsTests.swift in Sources */,
 				1050F7FD2AAB431293F440FD /* SpaceSnapshotServiceTests.swift in Sources */,

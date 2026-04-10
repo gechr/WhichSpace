@@ -1,57 +1,56 @@
 import AppKit
 
-// MARK: - HotKeyProvider
+// MARK: - Space Switching via Synthetic Dock-Swipe Gestures
 
-/// Abstracts CGS symbolic hot key APIs for testability.
-protocol HotKeyProvider: Sendable {
-    func getHotKeyValue(for hotKey: CGSSymbolicHotKey) -> (keyChar: UniChar, keyCode: CGKeyCode, flags: UInt64)?
-    func isHotKeyEnabled(_ hotKey: CGSSymbolicHotKey) -> Bool
-    func setHotKeyEnabled(_ hotKey: CGSSymbolicHotKey, enabled: Bool)
-}
+/// Switches spaces instantly by posting synthetic trackpad dock-swipe gesture events.
+///
+/// This avoids the sliding animation and works for any number of spaces without
+/// external dependencies. The technique simulates what macOS does when a fast
+/// three-finger swipe is detected on the trackpad.
+enum SpaceSwitcher {
+    // MARK: - Private CGEvent Field Constants
 
-// MARK: - CGSHotKeyProvider
-
-/// Default implementation that calls the private CGS APIs.
-struct CGSHotKeyProvider: HotKeyProvider {
-    /// Returns true if the CGS symbolic hot key APIs are available at runtime.
-    static var isAvailable: Bool {
-        guard let handle = dlopen(nil, RTLD_LAZY) else {
-            return false
-        }
-        defer { dlclose(handle) }
-        return dlsym(handle, "CGSGetSymbolicHotKeyValue") != nil
+    /// Undocumented CGEventField values used by the macOS gesture subsystem.
+    private enum Field {
+        static let eventType = CGEventField(rawValue: 55)!
+        static let gestureHIDType = CGEventField(rawValue: 110)!
+        static let gestureScrollY = CGEventField(rawValue: 119)!
+        static let gestureSwipeMotion = CGEventField(rawValue: 123)!
+        static let gestureSwipeProgress = CGEventField(rawValue: 124)!
+        static let gestureSwipeVelocityX = CGEventField(rawValue: 129)!
+        static let gestureSwipeVelocityY = CGEventField(rawValue: 130)!
+        static let gesturePhase = CGEventField(rawValue: 132)!
+        static let scrollGestureFlagBits = CGEventField(rawValue: 135)!
+        static let gestureZoomDeltaX = CGEventField(rawValue: 139)!
     }
 
-    func getHotKeyValue(for hotKey: CGSSymbolicHotKey) -> (keyChar: UniChar, keyCode: CGKeyCode, flags: UInt64)? {
-        var keyCode: CGKeyCode = 0
-        var flags: CGSModifierFlags = 0
-
-        let error = CGSGetSymbolicHotKeyValue(hotKey, nil, &keyCode, &flags)
-        guard error == .success else {
-            return nil
-        }
-        return (0, keyCode, flags)
+    /// CGS event type constants.
+    private enum EventType {
+        static let gesture: Int64 = 29
+        static let dockControl: Int64 = 30
     }
 
-    func isHotKeyEnabled(_ hotKey: CGSSymbolicHotKey) -> Bool {
-        CGSIsSymbolicHotKeyEnabled(hotKey)
+    /// IOHIDEventType for dock swipe gestures.
+    private static let hidTypeDockSwipe: Int64 = 23
+
+    /// Gesture phase constants.
+    private enum Phase {
+        static let began: Int64 = 1
+        static let ended: Int64 = 4
     }
 
-    func setHotKeyEnabled(_ hotKey: CGSSymbolicHotKey, enabled: Bool) {
-        _ = CGSSetSymbolicHotKeyEnabled(hotKey, enabled)
-    }
-}
+    /// Horizontal motion constant.
+    private static let horizontalMotion: Int64 = 1
 
-// MARK: - Space Switching
+    /// Swipe velocity - high enough for instant switching.
+    private static let swipeVelocity = 400.0
 
-struct SpaceSwitcher: @unchecked Sendable {
-    private static let firstHotKey: UInt16 = 118
-    private static let maxSupportedSpace = 16
-    private static let yabaiExecutableName = "yabai"
+    /// Swipe progress - distance value for a complete space switch.
+    private static let swipeProgress = 2.0
+
     private static let accessibilityPromptOptionKey = "AXTrustedCheckOptionPrompt"
 
     private actor SharedState {
-        private var binYabai: URL?
         private var hasPromptedForAccessibility = false
 
         func claimAccessibilityPrompt() -> Bool {
@@ -61,23 +60,129 @@ struct SpaceSwitcher: @unchecked Sendable {
             hasPromptedForAccessibility = true
             return true
         }
-
-        func cachedYabaiURL() -> URL? {
-            binYabai
-        }
-
-        func cacheYabaiURL(_ url: URL) {
-            binYabai = url
-        }
     }
 
     private static let sharedState = SharedState()
 
-    let hotKeyProvider: any HotKeyProvider
+    // MARK: - Public API
 
-    init(hotKeyProvider: any HotKeyProvider = CGSHotKeyProvider()) {
-        self.hotKeyProvider = hotKeyProvider
+    /// Switches to the space with the given CGS space ID on the menu bar display.
+    /// Posts synthetic dock-swipe gestures to move from the current space to the target.
+    static func switchToSpace(id targetSpaceID: Int) {
+        let conn = _CGSDefaultConnection()
+
+        guard let displayID = CGSCopyActiveMenuBarDisplayIdentifier(conn) as? String else {
+            NSLog("SpaceSwitcher: failed to get active menu bar display")
+            return
+        }
+
+        guard let displays = CGSCopyManagedDisplaySpaces(conn) as? [[String: Any]] else {
+            NSLog("SpaceSwitcher: failed to get managed display spaces")
+            return
+        }
+
+        guard let displayDict = displays.first(where: {
+            ($0["Display Identifier"] as? String) == displayID
+        }) ?? displays.first else {
+            NSLog("SpaceSwitcher: no display found")
+            return
+        }
+
+        guard let spaces = displayDict["Spaces"] as? [[String: Any]] else {
+            NSLog("SpaceSwitcher: no spaces array in display")
+            return
+        }
+
+        // Use the per-display "Current Space" dict for accurate multi-display support
+        guard let currentSpaceDict = displayDict["Current Space"] as? [String: Any],
+              let activeSpaceID = currentSpaceDict["ManagedSpaceID"] as? Int
+        else {
+            NSLog("SpaceSwitcher: failed to get current space for display")
+            return
+        }
+
+        // Find 0-based indices of current and target spaces
+        var currentIndex: Int?
+        var targetIndex: Int?
+
+        for (index, space) in spaces.enumerated() {
+            guard let spaceID = space["ManagedSpaceID"] as? Int else {
+                continue
+            }
+            if spaceID == activeSpaceID { currentIndex = index }
+            if spaceID == targetSpaceID { targetIndex = index }
+        }
+
+        guard let current = currentIndex, let target = targetIndex else {
+            NSLog(
+                "SpaceSwitcher: could not find current (%d) or target (%d) space in display",
+                activeSpaceID,
+                targetSpaceID
+            )
+            return
+        }
+
+        guard current != target else {
+            return // Already on target space
+        }
+
+        let steps = abs(target - current)
+        let goRight = target > current
+
+        for _ in 0 ..< steps {
+            postSwipeGesture(goRight: goRight)
+        }
     }
+
+    // MARK: - Gesture Posting
+
+    /// Posts a single synthetic dock-swipe gesture that moves one space left or right.
+    private static func postSwipeGesture(goRight: Bool) {
+        let flagDirection: Int64 = goRight ? 1 : 0
+        let progress = goRight ? swipeProgress : -swipeProgress
+        let velocity = goRight ? swipeVelocity : -swipeVelocity
+
+        // Begin gesture
+        guard let gestureA = CGEvent(source: nil),
+              let controlA = CGEvent(source: nil)
+        else { return }
+
+        gestureA.setIntegerValueField(Field.eventType, value: EventType.gesture)
+
+        controlA.setIntegerValueField(Field.eventType, value: EventType.dockControl)
+        controlA.setIntegerValueField(Field.gestureHIDType, value: hidTypeDockSwipe)
+        controlA.setIntegerValueField(Field.gesturePhase, value: Phase.began)
+        controlA.setIntegerValueField(Field.scrollGestureFlagBits, value: flagDirection)
+        controlA.setIntegerValueField(Field.gestureSwipeMotion, value: horizontalMotion)
+        controlA.setDoubleValueField(Field.gestureScrollY, value: 0)
+        controlA.setDoubleValueField(Field.gestureZoomDeltaX, value: Double(Float.leastNonzeroMagnitude))
+
+        controlA.post(tap: .cgSessionEventTap)
+        gestureA.post(tap: .cgSessionEventTap)
+
+        // End gesture
+        guard let gestureB = CGEvent(source: nil),
+              let controlB = CGEvent(source: nil)
+        else { return }
+
+        gestureB.setIntegerValueField(Field.eventType, value: EventType.gesture)
+
+        controlB.setIntegerValueField(Field.eventType, value: EventType.dockControl)
+        controlB.setIntegerValueField(Field.gestureHIDType, value: hidTypeDockSwipe)
+        controlB.setIntegerValueField(Field.gesturePhase, value: Phase.ended)
+        controlB.setDoubleValueField(Field.gestureSwipeProgress, value: progress)
+        controlB.setIntegerValueField(Field.scrollGestureFlagBits, value: flagDirection)
+        controlB.setIntegerValueField(Field.gestureSwipeMotion, value: horizontalMotion)
+        controlB.setDoubleValueField(Field.gestureScrollY, value: 0)
+        controlB.setDoubleValueField(Field.gestureSwipeVelocityX, value: velocity)
+        controlB.setDoubleValueField(Field.gestureSwipeVelocityY, value: 0)
+        controlB.setDoubleValueField(Field.gestureZoomDeltaX, value: Double(Float.leastNonzeroMagnitude))
+
+        controlB.post(tap: .cgSessionEventTap)
+        gestureB.post(tap: .cgSessionEventTap)
+    }
+
+    // MARK: - Accessibility
 
     /// Resets WhichSpace Accessibility permission to clear stale TCC entries.
     static func resetAccessibilityPermission() {
@@ -100,25 +205,7 @@ struct SpaceSwitcher: @unchecked Sendable {
         }
     }
 
-    func switchToSpace(_ space: Int) async {
-        guard CGSHotKeyProvider.isAvailable else {
-            NSLog("SpaceSwitcher: CGS hot key APIs unavailable; cannot switch spaces via keyboard shortcut")
-            return
-        }
-
-        guard await Self.ensureAccessibilityPermission() else {
-            NSLog("SpaceSwitcher: accessibility permission not granted; cannot switch")
-            return
-        }
-
-        guard let event = eventForSwitching(to: space) else {
-            NSLog("SpaceSwitcher: no event produced for space %d; aborting switch", space)
-            return
-        }
-        Self.postSwitchEvents(with: event)
-    }
-
-    private static func ensureAccessibilityPermission() async -> Bool {
+    static func ensureAccessibilityPermission() async -> Bool {
         if AXIsProcessTrusted() {
             return true
         }
@@ -133,147 +220,7 @@ struct SpaceSwitcher: @unchecked Sendable {
         return false
     }
 
-    func eventForSwitching(to space: Int) -> CGEvent? {
-        guard (1 ... Self.maxSupportedSpace).contains(space) else {
-            NSLog("SpaceSwitcher: space %d out of range (1-%d)", space, Self.maxSupportedSpace)
-            return nil
-        }
-
-        let hotKey = CGSSymbolicHotKey(Self.firstHotKey + UInt16(space) - 1)
-
-        guard let value = hotKeyProvider.getHotKeyValue(for: hotKey) else {
-            NSLog("SpaceSwitcher: failed to get hot key value for space %d", space)
-            return nil
-        }
-
-        if !hotKeyProvider.isHotKeyEnabled(hotKey) {
-            hotKeyProvider.setHotKeyEnabled(hotKey, enabled: true)
-        }
-
-        guard let keyDownEvent = CGEvent(keyboardEventSource: nil, virtualKey: value.keyCode, keyDown: true) else {
-            NSLog("SpaceSwitcher: failed to create CGEvent for space %d", space)
-            return nil
-        }
-
-        keyDownEvent.flags = CGEventFlags(rawValue: value.flags)
-        return keyDownEvent
-    }
-
-    private static func postSwitchEvents(with keyDownEvent: CGEvent) {
-        let keyCodeValue = CGKeyCode(keyDownEvent.getIntegerValueField(.keyboardEventKeycode))
-        guard let keyUpEvent = CGEvent(keyboardEventSource: nil, virtualKey: keyCodeValue, keyDown: false) else {
-            return
-        }
-
-        // Send the shortcut command to get Mission Control to switch spaces
-        keyDownEvent.post(tap: .cghidEventTap)
-        keyUpEvent.flags = []
-        keyUpEvent.post(tap: .cghidEventTap)
-    }
-
-    /// Returns true if the yabai CLI is available and responding
-    static func isYabaiAvailable() async -> Bool {
-        await runYabai(arguments: ["-m", "query", "--spaces"], logPrefix: "yabai preflight")
-    }
-
-    /// Switches to space using yabai CLI. Returns true on success.
-    static func switchToSpaceViaYabai(_ space: Int) async -> Bool {
-        await runYabai(arguments: ["-m", "space", "--focus", "\(space)"], logPrefix: "yabai command")
-    }
-
-    /// Runs the yabai CLI with the given arguments. Returns true on success.
-    private static func runYabai(arguments: [String], logPrefix: String) async -> Bool {
-        guard let yabaiURL = await resolveYabaiExecutable() else {
-            return false
-        }
-
-        let process = Process()
-        process.executableURL = yabaiURL
-        process.arguments = arguments
-
-        let stderrPipe = Pipe()
-        process.standardError = stderrPipe
-
-        do {
-            try process.run()
-
-            guard let status = await runWithTimeout(process) else {
-                NSLog("SpaceSwitcher: %@ timed out", logPrefix)
-                return false
-            }
-
-            if status != 0 {
-                let stderrData = stderrPipe.fileHandleForReading.readDataToEndOfFile()
-                if let stderr = String(data: stderrData, encoding: .utf8), !stderr.isEmpty {
-                    NSLog("SpaceSwitcher: %@ stderr: %@", logPrefix, stderr)
-                }
-                return false
-            }
-            return true
-        } catch {
-            NSLog("SpaceSwitcher: %@ failed: \(error)", logPrefix)
-            return false
-        }
-    }
-
-    /// Runs a process with a timeout to avoid blocking the main thread indefinitely.
-    /// Returns the termination status, or nil if the process timed out.
-    private static func runWithTimeout(_ process: Process, timeout: Duration = .seconds(3)) async -> Int32? {
-        await withTaskGroup(of: Int32?.self) { group in
-            group.addTask {
-                await withCheckedContinuation { continuation in
-                    DispatchQueue.global(qos: .utility).async {
-                        process.waitUntilExit()
-                        continuation.resume(returning: process.terminationStatus)
-                    }
-                }
-            }
-
-            group.addTask {
-                try? await Task.sleep(for: timeout)
-                return nil
-            }
-
-            let result = await group.next()!
-            group.cancelAll()
-
-            if result == nil {
-                process.terminate()
-            }
-
-            return result
-        }
-    }
-
-    /// Resolve the absolute path to the yabai executable once to avoid PATH issues when launched from Finder/Login
-    /// Items
-    private static func resolveYabaiExecutable() async -> URL? {
-        if let cached = await sharedState.cachedYabaiURL() {
-            return cached
-        }
-
-        let pathEnv = ProcessInfo.processInfo.environment["PATH"] ?? ""
-        var searchPaths = ["/opt/homebrew/bin", "/usr/local/bin"]
-        searchPaths.append(contentsOf: pathEnv.split(separator: ":").map(String.init))
-
-        var seen = Set<String>()
-        for path in searchPaths where !path.isEmpty {
-            if seen.contains(path) {
-                continue
-            }
-            seen.insert(path)
-
-            let candidate = URL(fileURLWithPath: path, isDirectory: true)
-                .appendingPathComponent(yabaiExecutableName)
-            if FileManager.default.isExecutableFile(atPath: candidate.path) {
-                await sharedState.cacheYabaiURL(candidate)
-                return candidate
-            }
-        }
-
-        NSLog("SpaceSwitcher: yabai not found; searched PATH (\(pathEnv)) and common locations")
-        return nil
-    }
+    // MARK: - Fullscreen Space Switching
 
     /// Activates an app that has a window on the given space ID (used for fullscreen spaces).
     /// macOS will automatically switch to the fullscreen space when the app is activated.

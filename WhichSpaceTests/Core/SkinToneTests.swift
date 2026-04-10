@@ -78,15 +78,20 @@ struct SkinToneTests {
         #expect(SkinTone.apply(to: "🏳️‍🌈") == "🏳️‍🌈")
     }
 
-    @Test("apply does not modify emojis without skin tone support")
-    func applyDoesNotModifyEmojisWithoutSkinToneSupport() {
+    @Test("apply adds tone to multi-person base emojis")
+    func applyAddsToneToMultiPersonBaseEmojis() {
         Defaults[.emojiPickerSkinTone] = .medium
-        #expect(SkinTone.apply(to: "👯") == "👯")
-        #expect(SkinTone.apply(to: "👯‍♀️") == "👯‍♀️")
-        #expect(SkinTone.apply(to: "👯‍♂️") == "👯‍♂️")
-        #expect(SkinTone.apply(to: "🤼") == "🤼")
-        #expect(SkinTone.apply(to: "🤼‍♀️") == "🤼‍♀️")
-        #expect(SkinTone.apply(to: "🤼‍♂️") == "🤼‍♂️")
+        #expect(SkinTone.apply(to: "👯") == "👯🏽")
+        #expect(SkinTone.apply(to: "🤼") == "🤼🏽")
+    }
+
+    @Test("apply adds tone to multi-person ZWJ gender variants")
+    func applyAddsToneToMultiPersonZWJGenderVariants() {
+        Defaults[.emojiPickerSkinTone] = .medium
+        #expect(SkinTone.apply(to: "👯‍♀️") == "👯🏽‍♀️")
+        #expect(SkinTone.apply(to: "👯‍♂️") == "👯🏽‍♂️")
+        #expect(SkinTone.apply(to: "🤼‍♀️") == "🤼🏽‍♀️")
+        #expect(SkinTone.apply(to: "🤼‍♂️") == "🤼🏽‍♂️")
     }
 
     @Test("apply with explicit tone parameter")
