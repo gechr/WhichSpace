@@ -10,6 +10,10 @@
             <cocoa class="WhichSpace.CurrentSpaceLabelCommand"/>
             <result type="text" description="The current Space label."/>
         </command>
+        <command name="switch to space number" code="WSpcswsp" description="Switch to a Space by number on the current display.">
+            <cocoa class="WhichSpace.SwitchToSpaceCommand"/>
+            <direct-parameter type="integer" description="The Space number to switch to (1-based)."/>
+        </command>
         <class name="application" code="capp" description="The WhichSpace application.">
             <cocoa class="NSApplication"/>
             <property name="current space number" code="cusn" type="integer" access="r" description="The current Space number.">

@@ -36,10 +36,68 @@ final class CurrentSpaceLabelCommand: NSScriptCommand {
     }
 }
 
+/// Command handler for AppleScript "switch to space number" command.
+/// Usage: `tell application "WhichSpace" to switch to space number 3`
+final class SwitchToSpaceCommand: NSScriptCommand {
+    override func performDefaultImplementation() -> Any? {
+        guard let spaceNumber = directParameter as? Int else {
+            scriptErrorNumber = errOSACantAssign
+            scriptErrorString = "Expected a space number."
+            return nil
+        }
+
+        let result = runScriptQueryOnMain {
+            ScriptingHelpers.switchToSpace(
+                number: spaceNumber,
+                appState: AppEnvironment.shared.appState
+            )
+        }
+
+        switch result {
+        case .success:
+            return nil
+        case let .failure(message):
+            scriptErrorNumber = errOSACantAssign
+            scriptErrorString = message
+            return nil
+        }
+    }
+}
+
 // MARK: - Scripting Helpers
 
 @MainActor
 enum ScriptingHelpers {
+    enum SwitchResult {
+        case success
+        case failure(String)
+    }
+
+    static func switchToSpace(number: Int, appState: AppState) -> SwitchResult {
+        guard AXIsProcessTrusted() else {
+            return .failure(
+                "Accessibility permission required. Grant it in System Settings → Privacy & Security → Accessibility."
+            )
+        }
+        let entries = appState.allSpaceEntries
+        guard !entries.isEmpty else {
+            return .failure("No spaces available.")
+        }
+        guard number >= 1, number <= entries.count else {
+            return .failure("Space \(number) does not exist (1-\(entries.count)).")
+        }
+        guard number != appState.currentSpace else {
+            return .success
+        }
+        let entry = entries[number - 1]
+        if entry.regularIndex != nil {
+            SpaceSwitcher.switchToSpace(id: entry.id)
+        } else {
+            _ = SpaceSwitcher.activateAppOnSpace(entry.id)
+        }
+        return .success
+    }
+
     static func resolveCurrentLabel(appState: AppState, store: DefaultsStore) -> String {
         if let customLabel = SpacePreferences.label(
             forSpace: appState.currentSpace,

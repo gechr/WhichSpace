@@ -144,4 +144,7 @@ osascript -e 'tell application "WhichSpace" to get current space number'
 
 # Get the current space label (as shown in the menu bar, e.g. "1", "2", "F" for fullscreen)
 osascript -e 'tell application "WhichSpace" to get current space label'
+
+# Switch to a specific space on the current display
+osascript -e 'tell application "WhichSpace" to switch to space number 3'
 ```
