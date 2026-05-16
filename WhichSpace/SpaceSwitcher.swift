@@ -71,67 +71,80 @@ enum SpaceSwitcher {
     static func switchToSpace(id targetSpaceID: Int) {
         let conn = _CGSDefaultConnection()
 
-        guard let displayID = CGSCopyActiveMenuBarDisplayIdentifier(conn) as? String else {
+        guard let activeDisplayID = CGSCopyActiveMenuBarDisplayIdentifier(conn) as? String else {
             NSLog("SpaceSwitcher: failed to get active menu bar display")
             return
         }
 
-        guard let displays = CGSCopyManagedDisplaySpaces(conn) as? [[String: Any]] else {
-            NSLog("SpaceSwitcher: failed to get managed display spaces")
-            return
-        }
-
-        guard let displayDict = displays.first(where: {
-            ($0["Display Identifier"] as? String) == displayID
-        }) ?? displays.first else {
+        let displays = managedDisplays(connection: conn)
+        guard let display = displays.first(where: { $0.identifier == activeDisplayID }) ?? displays.first else {
             NSLog("SpaceSwitcher: no display found")
             return
         }
 
-        guard let spaces = displayDict["Spaces"] as? [[String: Any]] else {
-            NSLog("SpaceSwitcher: no spaces array in display")
-            return
-        }
-
-        // Use the per-display "Current Space" dict for accurate multi-display support
-        guard let currentSpaceDict = displayDict["Current Space"] as? [String: Any],
-              let activeSpaceID = currentSpaceDict["ManagedSpaceID"] as? Int
+        guard let currentIndex = display.spaces.firstIndex(where: { $0.id == display.currentSpaceID }),
+              let targetIndex = display.spaces.firstIndex(where: { $0.id == targetSpaceID })
         else {
-            NSLog("SpaceSwitcher: failed to get current space for display")
-            return
-        }
-
-        // Find 0-based indices of current and target spaces
-        var currentIndex: Int?
-        var targetIndex: Int?
-
-        for (index, space) in spaces.enumerated() {
-            guard let spaceID = space["ManagedSpaceID"] as? Int else {
-                continue
-            }
-            if spaceID == activeSpaceID { currentIndex = index }
-            if spaceID == targetSpaceID { targetIndex = index }
-        }
-
-        guard let current = currentIndex, let target = targetIndex else {
             NSLog(
-                "SpaceSwitcher: could not find current (%d) or target (%d) space in display",
-                activeSpaceID,
+                "SpaceSwitcher: could not find current (%d) or target (%d) space",
+                display.currentSpaceID,
                 targetSpaceID
             )
             return
         }
 
-        guard current != target else {
-            return // Already on target space
+        guard currentIndex != targetIndex else {
+            return
         }
 
-        let steps = abs(target - current)
-        let goRight = target > current
+        let steps = abs(targetIndex - currentIndex)
+        let goRight = targetIndex > currentIndex
 
         for _ in 0 ..< steps {
             postSwipeGesture(goRight: goRight)
         }
+    }
+
+    // MARK: - CGS Dictionary Decoding
+
+    /// Typed view of a single space returned by `CGSCopyManagedDisplaySpaces`.
+    private struct ManagedSpace {
+        let id: Int
+
+        init?(dict: [String: Any]) {
+            guard let id = dict["ManagedSpaceID"] as? Int else {
+                return nil
+            }
+            self.id = id
+        }
+    }
+
+    /// Typed view of a single display returned by `CGSCopyManagedDisplaySpaces`.
+    private struct ManagedDisplay {
+        let identifier: String
+        let spaces: [ManagedSpace]
+        let currentSpaceID: Int
+
+        init?(dict: [String: Any]) {
+            guard let identifier = dict["Display Identifier"] as? String,
+                  let spacesRaw = dict["Spaces"] as? [[String: Any]],
+                  let currentDict = dict["Current Space"] as? [String: Any],
+                  let currentSpaceID = currentDict["ManagedSpaceID"] as? Int
+            else {
+                return nil
+            }
+            self.identifier = identifier
+            self.spaces = spacesRaw.compactMap(ManagedSpace.init(dict:))
+            self.currentSpaceID = currentSpaceID
+        }
+    }
+
+    private static func managedDisplays(connection: Int32) -> [ManagedDisplay] {
+        guard let raw = CGSCopyManagedDisplaySpaces(connection) as? [[String: Any]] else {
+            NSLog("SpaceSwitcher: failed to get managed display spaces")
+            return []
+        }
+        return raw.compactMap(ManagedDisplay.init(dict:))
     }
 
     // MARK: - Gesture Posting
