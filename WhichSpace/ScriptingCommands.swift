@@ -1,22 +1,10 @@
 import Cocoa
 
-/// Runs a synchronous script query on the main thread.
-/// AppleScript command handlers are synchronous, so we bridge explicitly.
-private func runScriptQueryOnMain<T: Sendable>(_ query: @MainActor () -> T) -> T {
-    if Thread.isMainThread {
-        return MainActor.assumeIsolated(query)
-    }
-
-    return DispatchQueue.main.sync {
-        MainActor.assumeIsolated(query)
-    }
-}
-
 /// Command handler for AppleScript "current space number" command.
 /// Usage: `tell application "WhichSpace" to get current space number`
 final class CurrentSpaceNumberCommand: NSScriptCommand {
     override func performDefaultImplementation() -> Any? {
-        runScriptQueryOnMain {
+        MainActor.assumeIsolated {
             AppEnvironment.shared.appState.currentSpace
         }
     }
@@ -27,7 +15,7 @@ final class CurrentSpaceNumberCommand: NSScriptCommand {
 /// Returns the custom label if one is set, otherwise the default space label.
 final class CurrentSpaceLabelCommand: NSScriptCommand {
     override func performDefaultImplementation() -> Any? {
-        runScriptQueryOnMain {
+        MainActor.assumeIsolated {
             ScriptingHelpers.resolveCurrentLabel(
                 appState: AppEnvironment.shared.appState,
                 store: AppEnvironment.shared.store
@@ -46,48 +34,57 @@ final class SwitchToSpaceCommand: NSScriptCommand {
             return nil
         }
 
-        let result = runScriptQueryOnMain {
-            ScriptingHelpers.switchToSpace(
-                number: spaceNumber,
-                appState: AppEnvironment.shared.appState
-            )
-        }
-
-        switch result {
-        case .success:
-            return nil
-        case let .failure(message):
+        do {
+            try MainActor.assumeIsolated {
+                try ScriptingHelpers.switchToSpace(
+                    number: spaceNumber,
+                    appState: AppEnvironment.shared.appState
+                )
+            }
+        } catch {
             scriptErrorNumber = errOSACantAssign
-            scriptErrorString = message
-            return nil
+            scriptErrorString = error.localizedDescription
         }
+        return nil
     }
 }
 
 // MARK: - Scripting Helpers
 
+/// Errors thrown by `ScriptingHelpers.switchToSpace`.
+/// Surfaces to AppleScript callers via `NSScriptCommand.scriptErrorString`.
+enum SwitchError: LocalizedError {
+    case accessibilityNotTrusted
+    case noSpacesAvailable
+    case spaceOutOfRange(requested: Int, max: Int)
+
+    var errorDescription: String? {
+        switch self {
+        case .accessibilityNotTrusted:
+            "Accessibility permission required. Grant it in System Settings → Privacy & Security → Accessibility."
+        case .noSpacesAvailable:
+            "No spaces available."
+        case let .spaceOutOfRange(requested, max):
+            "Space \(requested) does not exist (1-\(max))."
+        }
+    }
+}
+
 @MainActor
 enum ScriptingHelpers {
-    enum SwitchResult {
-        case success
-        case failure(String)
-    }
-
-    static func switchToSpace(number: Int, appState: AppState) -> SwitchResult {
+    static func switchToSpace(number: Int, appState: AppState) throws(SwitchError) {
         guard AXIsProcessTrusted() else {
-            return .failure(
-                "Accessibility permission required. Grant it in System Settings → Privacy & Security → Accessibility."
-            )
+            throw .accessibilityNotTrusted
         }
         let entries = appState.allSpaceEntries
         guard !entries.isEmpty else {
-            return .failure("No spaces available.")
+            throw .noSpacesAvailable
         }
         guard number >= 1, number <= entries.count else {
-            return .failure("Space \(number) does not exist (1-\(entries.count)).")
+            throw .spaceOutOfRange(requested: number, max: entries.count)
         }
         guard number != appState.currentSpace else {
-            return .success
+            return
         }
         let entry = entries[number - 1]
         if entry.regularIndex != nil {
@@ -95,7 +92,6 @@ enum ScriptingHelpers {
         } else {
             _ = SpaceSwitcher.activateAppOnSpace(entry.id)
         }
-        return .success
     }
 
     static func resolveCurrentLabel(appState: AppState, store: DefaultsStore) -> String {
