@@ -1,37 +1,25 @@
-import XCTest
+import AppKit
+import Testing
 @testable import WhichSpace
 
 // MARK: - Dynamic Display Tests
 
 @MainActor
-final class DynamicDisplayTests: XCTestCase {
-    private var stub: CGSStub!
-    private var sut: AppState!
-    private var store: DefaultsStore!
-    private var testSuite: TestSuite!
+struct DynamicDisplayTests {
+    private let stub: CGSStub
+    private let store: DefaultsStore
+    private let testSuite: TestSuite
 
-    override func setUp() async throws {
-        try await super.setUp()
+    init() {
         testSuite = TestSuiteFactory.createSuite()
         store = DefaultsStore(suite: testSuite.suite)
         stub = CGSStub()
     }
 
-    override func tearDown() async throws {
-        sut = nil
-        stub = nil
-        if let store, let testSuite {
-            store.resetAll()
-            TestSuiteFactory.destroySuite(testSuite)
-        }
-        store = nil
-        testSuite = nil
-        try await super.tearDown()
-    }
-
     // MARK: - Multiple Display Configurations
 
-    func testTwoDisplaysWithMainActive() {
+    @Test("two displays: main display active")
+    func twoDisplaysWithMainActive() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -50,14 +38,14 @@ final class DynamicDisplayTests: XCTestCase {
             ),
         ]
 
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // Should use main display's spaces
-        XCTAssertEqual(sut.currentSpace, 1)
-        XCTAssertEqual(sut.allSpaceLabels, ["1", "2"])
+        #expect(sut.currentSpace == 1)
+        #expect(sut.allSpaceLabels == ["1", "2"])
     }
 
-    func testTwoDisplaysWithExternalActive() {
+    @Test("two displays: external display active")
+    func twoDisplaysWithExternalActive() {
         stub.activeDisplayIdentifier = "External"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -72,14 +60,14 @@ final class DynamicDisplayTests: XCTestCase {
             ),
         ]
 
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // Should use external display's spaces
-        XCTAssertEqual(sut.currentSpace, 2)
-        XCTAssertEqual(sut.allSpaceLabels, ["1", "2"])
+        #expect(sut.currentSpace == 2)
+        #expect(sut.allSpaceLabels == ["1", "2"])
     }
 
-    func testSingleDisplayConfiguration() {
+    @Test("single display configuration")
+    func singleDisplayConfiguration() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -89,14 +77,15 @@ final class DynamicDisplayTests: XCTestCase {
             ),
         ]
 
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
-        XCTAssertEqual(sut.currentSpace, 2)
-        XCTAssertEqual(sut.allSpaceLabels, ["1", "2"])
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        #expect(sut.currentSpace == 2)
+        #expect(sut.allSpaceLabels == ["1", "2"])
     }
 
     // MARK: - Display with Zero Spaces
 
-    func testDisplayWithZeroSpaces() {
+    @Test("display with zero spaces handled gracefully")
+    func displayWithZeroSpaces() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -106,14 +95,14 @@ final class DynamicDisplayTests: XCTestCase {
             ),
         ]
 
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // Should handle gracefully
-        XCTAssertEqual(sut.allSpaceLabels, [])
-        XCTAssertEqual(sut.currentSpace, 0)
+        #expect(sut.allSpaceLabels == [])
+        #expect(sut.currentSpace == 0)
     }
 
-    func testMixedDisplaysWithEmptyDisplay() {
+    @Test("mix of populated and empty displays")
+    func mixedDisplaysWithEmptyDisplay() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -128,16 +117,16 @@ final class DynamicDisplayTests: XCTestCase {
             ),
         ]
 
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // Should work with just the non-empty display
-        XCTAssertEqual(sut.allSpaceLabels, ["1"])
-        XCTAssertEqual(sut.currentSpace, 1)
+        #expect(sut.allSpaceLabels == ["1"])
+        #expect(sut.currentSpace == 1)
     }
 
     // MARK: - Space Count Configurations
 
-    func testDisplayWithFourSpaces() {
+    @Test("display with four spaces")
+    func displayWithFourSpaces() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -152,12 +141,13 @@ final class DynamicDisplayTests: XCTestCase {
             ),
         ]
 
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
-        XCTAssertEqual(sut.allSpaceLabels.count, 4)
-        XCTAssertEqual(sut.allSpaceLabels, ["1", "2", "3", "4"])
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        #expect(sut.allSpaceLabels.count == 4)
+        #expect(sut.allSpaceLabels == ["1", "2", "3", "4"])
     }
 
-    func testDisplayWithActiveSpaceAtEnd() {
+    @Test("active space at end of list")
+    func displayWithActiveSpaceAtEnd() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -171,12 +161,13 @@ final class DynamicDisplayTests: XCTestCase {
             ),
         ]
 
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
-        XCTAssertEqual(sut.currentSpace, 3)
-        XCTAssertEqual(sut.allSpaceLabels, ["1", "2", "3"])
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        #expect(sut.currentSpace == 3)
+        #expect(sut.allSpaceLabels == ["1", "2", "3"])
     }
 
-    func testDisplayWithTwoSpacesActiveSecond() {
+    @Test("two spaces: second active")
+    func displayWithTwoSpacesActiveSecond() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -186,14 +177,15 @@ final class DynamicDisplayTests: XCTestCase {
             ),
         ]
 
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
-        XCTAssertEqual(sut.currentSpace, 2)
-        XCTAssertEqual(sut.allSpaceLabels, ["1", "2"])
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        #expect(sut.currentSpace == 2)
+        #expect(sut.allSpaceLabels == ["1", "2"])
     }
 
     // MARK: - Different Space Counts Per Display
 
-    func testShowAllDisplaysWithDifferentSpaceCounts() {
+    @Test("showAllDisplays renders displays with different space counts")
+    func showAllDisplaysWithDifferentSpaceCounts() {
         store.showAllDisplays = true
         stub.activeDisplayIdentifier = "DisplayA"
         stub.displays = [
@@ -214,16 +206,16 @@ final class DynamicDisplayTests: XCTestCase {
             ),
         ]
 
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // Should show all displays' spaces
         let icon = sut.statusBarIcon
-        XCTAssertGreaterThan(icon.size.width, Layout.statusItemWidth)
+        #expect(icon.size.width > Layout.statusItemWidth)
     }
 
     // MARK: - Active Display ID Not Found
 
-    func testActiveDisplayIDNotInList() {
+    @Test("active display ID not in list falls back gracefully")
+    func activeDisplayIDNotInList() {
         stub.activeDisplayIdentifier = "NonExistent"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -233,63 +225,49 @@ final class DynamicDisplayTests: XCTestCase {
             ),
         ]
 
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // Should fall back to first/main display
-        XCTAssertEqual(sut.currentSpace, 1)
+        #expect(sut.currentSpace == 1)
     }
 
-    func testNoDisplaysAtAll() {
+    @Test("no displays at all")
+    func noDisplaysAtAll() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = []
 
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // Should handle gracefully
-        XCTAssertEqual(sut.currentSpace, 0)
-        XCTAssertTrue(sut.allSpaceLabels.isEmpty)
+        #expect(sut.currentSpace == 0)
+        #expect(sut.allSpaceLabels.isEmpty)
     }
 
-    func testNilDisplaySpacesReturned() {
+    @Test("nil display spaces returned")
+    func nilDisplaySpacesReturned() {
         stub.activeDisplayIdentifier = nil
         stub.displays = []
 
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // Should handle nil gracefully
-        XCTAssertEqual(sut.currentSpace, 0)
+        #expect(sut.currentSpace == 0)
     }
 }
 
 // MARK: - Regular Space Count Tests (for hideSingleSpace feature)
 
 @MainActor
-final class RegularSpaceCountTests: XCTestCase {
-    private var stub: CGSStub!
-    private var sut: AppState!
-    private var store: DefaultsStore!
-    private var testSuite: TestSuite!
+struct RegularSpaceCountTests {
+    private let stub: CGSStub
+    private let store: DefaultsStore
+    private let testSuite: TestSuite
 
-    override func setUp() async throws {
-        try await super.setUp()
+    init() {
         testSuite = TestSuiteFactory.createSuite()
         store = DefaultsStore(suite: testSuite.suite)
         stub = CGSStub()
     }
 
-    override func tearDown() async throws {
-        sut = nil
-        stub = nil
-        if let store, let testSuite {
-            store.resetAll()
-            TestSuiteFactory.destroySuite(testSuite)
-        }
-        store = nil
-        testSuite = nil
-        try await super.tearDown()
-    }
-
-    func testRegularSpaceCount_singleRegularSpace() {
+    @Test("single regular space")
+    func regularSpaceCount_singleRegularSpace() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -299,12 +277,13 @@ final class RegularSpaceCountTests: XCTestCase {
             ),
         ]
 
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        XCTAssertEqual(sut.regularSpaceCount, 1, "Should count 1 regular space")
+        #expect(sut.regularSpaceCount == 1)
     }
 
-    func testRegularSpaceCount_multipleRegularSpaces() {
+    @Test("multiple regular spaces")
+    func regularSpaceCount_multipleRegularSpaces() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -318,12 +297,13 @@ final class RegularSpaceCountTests: XCTestCase {
             ),
         ]
 
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        XCTAssertEqual(sut.regularSpaceCount, 3, "Should count 3 regular spaces")
+        #expect(sut.regularSpaceCount == 3)
     }
 
-    func testRegularSpaceCount_excludesFullscreenSpaces() {
+    @Test("fullscreen spaces excluded from regular count")
+    func regularSpaceCount_excludesFullscreenSpaces() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -338,12 +318,13 @@ final class RegularSpaceCountTests: XCTestCase {
             ),
         ]
 
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        XCTAssertEqual(sut.regularSpaceCount, 2, "Should count only 2 regular spaces, excluding fullscreen")
+        #expect(sut.regularSpaceCount == 2)
     }
 
-    func testRegularSpaceCount_allFullscreenSpaces() {
+    @Test("all spaces fullscreen yields zero regular count")
+    func regularSpaceCount_allFullscreenSpaces() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -356,12 +337,13 @@ final class RegularSpaceCountTests: XCTestCase {
             ),
         ]
 
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        XCTAssertEqual(sut.regularSpaceCount, 0, "Should count 0 regular spaces when all are fullscreen")
+        #expect(sut.regularSpaceCount == 0)
     }
 
-    func testRegularSpaceCount_multipleDisplays() {
+    @Test("regular space count sums across multiple displays")
+    func regularSpaceCount_multipleDisplays() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -382,13 +364,13 @@ final class RegularSpaceCountTests: XCTestCase {
             ),
         ]
 
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // 2 regular on Main + 1 regular on External = 3 total
-        XCTAssertEqual(sut.regularSpaceCount, 3, "Should count regular spaces across all displays")
+        #expect(sut.regularSpaceCount == 3)
     }
 
-    func testRegularSpaceCount_noSpaces() {
+    @Test("no spaces yields zero regular count")
+    func regularSpaceCount_noSpaces() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -398,23 +380,21 @@ final class RegularSpaceCountTests: XCTestCase {
             ),
         ]
 
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        XCTAssertEqual(sut.regularSpaceCount, 0, "Should count 0 when no spaces")
+        #expect(sut.regularSpaceCount == 0)
     }
 }
 
 // MARK: - Dark Mode Transition Tests
 
 @MainActor
-final class DarkModeTransitionTests: XCTestCase {
-    private var stub: CGSStub!
-    private var sut: AppState!
-    private var store: DefaultsStore!
-    private var testSuite: TestSuite!
+struct DarkModeTransitionTests {
+    private let stub: CGSStub
+    private let store: DefaultsStore
+    private let testSuite: TestSuite
 
-    override func setUp() async throws {
-        try await super.setUp()
+    init() {
         testSuite = TestSuiteFactory.createSuite()
         store = DefaultsStore(suite: testSuite.suite)
         stub = CGSStub()
@@ -428,25 +408,13 @@ final class DarkModeTransitionTests: XCTestCase {
         ]
     }
 
-    override func tearDown() async throws {
-        sut = nil
-        stub = nil
-        if let store, let testSuite {
-            store.resetAll()
-            TestSuiteFactory.destroySuite(testSuite)
-        }
-        store = nil
-        testSuite = nil
-        try await super.tearDown()
-    }
-
     // MARK: - Rapid Dark Mode Toggle
 
-    func testRapidDarkModeToggling() {
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+    @Test("rapid dark mode toggling")
+    func rapidDarkModeToggling() {
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
         let previousAppearance = NSApp.appearance
 
-        // Rapidly toggle many times
         for _ in 0 ..< 50 {
             NSApp.appearance = NSAppearance(named: .darkAqua)
             sut.updateDarkModeStatus()
@@ -455,95 +423,85 @@ final class DarkModeTransitionTests: XCTestCase {
             sut.updateDarkModeStatus()
         }
 
-        // Final state should be consistent
         NSApp.appearance = NSAppearance(named: .darkAqua)
         sut.updateDarkModeStatus()
-        XCTAssertTrue(sut.darkModeEnabled)
+        #expect(sut.darkModeEnabled)
 
         NSApp.appearance = previousAppearance
     }
 
-    func testIconGenerationDuringDarkModeTransition() {
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+    @Test("icon generation during dark mode transition")
+    func iconGenerationDuringDarkModeTransition() {
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
         let previousAppearance = NSApp.appearance
 
-        // Set to dark mode
         NSApp.appearance = NSAppearance(named: .darkAqua)
         sut.updateDarkModeStatus()
 
-        // Generate icon in dark mode
         let darkIcon = sut.statusBarIcon
 
-        // Transition to light mode
         NSApp.appearance = NSAppearance(named: .aqua)
         sut.updateDarkModeStatus()
 
-        // Generate icon in light mode
         let lightIcon = sut.statusBarIcon
 
-        // Both should be valid images
-        XCTAssertGreaterThan(darkIcon.size.width, 0)
-        XCTAssertGreaterThan(lightIcon.size.width, 0)
+        #expect(darkIcon.size.width > 0)
+        #expect(lightIcon.size.width > 0)
 
         NSApp.appearance = previousAppearance
     }
 
-    func testDarkModeWithCustomColors() {
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+    @Test("dark mode does not override custom colors")
+    func darkModeWithCustomColors() {
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
         let previousAppearance = NSApp.appearance
 
-        // Set custom colors for space 1
         let customColors = SpaceColors(foreground: .red, background: .blue)
         SpacePreferences.setColors(customColors, forSpace: 1, store: store)
 
-        // Dark mode shouldn't override custom colors
         NSApp.appearance = NSAppearance(named: .darkAqua)
         sut.updateDarkModeStatus()
 
         let icon = sut.statusBarIcon
-        XCTAssertNotNil(icon)
+        #expect(icon as NSImage? != nil)
 
-        // Light mode shouldn't override custom colors either
         NSApp.appearance = NSAppearance(named: .aqua)
         sut.updateDarkModeStatus()
 
         let lightIcon = sut.statusBarIcon
-        XCTAssertNotNil(lightIcon)
+        #expect(lightIcon as NSImage? != nil)
 
         NSApp.appearance = previousAppearance
     }
 
     // MARK: - Dark Mode State Consistency
 
-    func testDarkModeStateAfterUpdate() {
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+    @Test("dark mode state preserved after space update")
+    func darkModeStateAfterUpdate() {
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
         let previousAppearance = NSApp.appearance
 
-        // Set dark mode
         NSApp.appearance = NSAppearance(named: .darkAqua)
         sut.updateDarkModeStatus()
         let darkState = sut.darkModeEnabled
 
-        // Update space info (simulating space change)
         sut.updateActiveSpaceNumber()
 
-        // Dark mode state should be preserved
-        XCTAssertEqual(sut.darkModeEnabled, darkState)
+        #expect(sut.darkModeEnabled == darkState)
 
         NSApp.appearance = previousAppearance
     }
 
-    func testMultipleAppearanceUpdatesWithoutChange() {
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+    @Test("multiple appearance updates without change remain stable")
+    func multipleAppearanceUpdatesWithoutChange() {
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
         let previousAppearance = NSApp.appearance
 
-        // Set to dark mode
         NSApp.appearance = NSAppearance(named: .darkAqua)
 
-        // Call update multiple times
         for _ in 0 ..< 10 {
             sut.updateDarkModeStatus()
-            XCTAssertTrue(sut.darkModeEnabled, "Dark mode should remain enabled")
+            #expect(sut.darkModeEnabled)
         }
 
         NSApp.appearance = previousAppearance
@@ -553,13 +511,12 @@ final class DarkModeTransitionTests: XCTestCase {
 // MARK: - Observer Lifecycle Tests
 
 @MainActor
-final class ObserverLifecycleTests: XCTestCase {
-    private var stub: CGSStub!
-    private var store: DefaultsStore!
-    private var testSuite: TestSuite!
+struct ObserverLifecycleTests {
+    private let stub: CGSStub
+    private let store: DefaultsStore
+    private let testSuite: TestSuite
 
-    override func setUp() async throws {
-        try await super.setUp()
+    init() {
         testSuite = TestSuiteFactory.createSuite()
         store = DefaultsStore(suite: testSuite.suite)
         stub = CGSStub()
@@ -573,30 +530,17 @@ final class ObserverLifecycleTests: XCTestCase {
         ]
     }
 
-    override func tearDown() async throws {
-        stub = nil
-        if let store, let testSuite {
-            store.resetAll()
-            TestSuiteFactory.destroySuite(testSuite)
-        }
-        store = nil
-        testSuite = nil
-        try await super.tearDown()
-    }
-
     // MARK: - AppState Lifecycle
 
-    func testAppStateCreationWithSkipObservers() {
-        // Creating with skipObservers should not start observer task
+    @Test("AppState creation with skipObservers")
+    func appStateCreationWithSkipObservers() {
         let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
-        XCTAssertNotNil(appState)
 
-        // Should still have valid state
-        XCTAssertEqual(appState.currentSpace, 1)
+        #expect(appState.currentSpace == 1)
     }
 
-    func testMultipleAppStateInstances() {
-        // Create multiple instances (simulating recreation)
+    @Test("multiple AppState instances")
+    func multipleAppStateInstances() {
         var instances: [AppState] = []
 
         for _ in 0 ..< 5 {
@@ -604,47 +548,42 @@ final class ObserverLifecycleTests: XCTestCase {
             instances.append(appState)
         }
 
-        // All instances should be valid
         for instance in instances {
-            XCTAssertEqual(instance.currentSpace, 1)
+            #expect(instance.currentSpace == 1)
         }
     }
 
-    func testAppStateDeallocation() {
+    @Test("AppState deallocation has no retain cycles")
+    func appStateDeallocation() {
         weak var weakRef: AppState?
 
         autoreleasepool {
             let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
             weakRef = appState
-            XCTAssertNotNil(weakRef)
+            #expect(weakRef != nil)
         }
-
-        // After autoreleasepool, should be deallocated (if no retain cycles)
-        // Note: This test verifies no obvious retain cycles exist
     }
 
     // MARK: - State Updates After Deallocation
 
-    func testStateUpdateAfterStoreReset() {
+    @Test("state update after store reset")
+    func stateUpdateAfterStoreReset() {
         let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // Set some preferences
         SpacePreferences.setIconStyle(.circle, forSpace: 1, store: store)
 
-        // Reset store
         store.resetAll()
 
-        // AppState should still function
         appState.updateActiveSpaceNumber()
-        XCTAssertEqual(appState.currentSpace, 1)
+        #expect(appState.currentSpace == 1)
 
-        // Preference should be gone
-        XCTAssertNil(SpacePreferences.iconStyle(forSpace: 1, store: store))
+        #expect(SpacePreferences.iconStyle(forSpace: 1, store: store) == nil)
     }
 
     // MARK: - Callback Edge Cases
 
-    func testSetSpaceStateWithValidData() {
+    @Test("setSpaceState with valid data")
+    func setSpaceStateWithValidData() {
         let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
         appState.setSpaceState(
@@ -654,12 +593,13 @@ final class ObserverLifecycleTests: XCTestCase {
             displayID: "TestDisplay"
         )
 
-        XCTAssertEqual(appState.allSpaceLabels, ["1", "2", "3"])
-        XCTAssertEqual(appState.currentSpace, 2)
-        XCTAssertEqual(appState.currentSpaceLabel, "2")
+        #expect(appState.allSpaceLabels == ["1", "2", "3"])
+        #expect(appState.currentSpace == 2)
+        #expect(appState.currentSpaceLabel == "2")
     }
 
-    func testSetSpaceStateWithEmptyLabels() {
+    @Test("setSpaceState with empty labels")
+    func setSpaceStateWithEmptyLabels() {
         let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
         appState.setSpaceState(
@@ -669,29 +609,28 @@ final class ObserverLifecycleTests: XCTestCase {
             displayID: "TestDisplay"
         )
 
-        XCTAssertEqual(appState.allSpaceLabels, [])
-        XCTAssertEqual(appState.currentSpace, 0)
+        #expect(appState.allSpaceLabels == [])
+        #expect(appState.currentSpace == 0)
     }
 
-    func testSetSpaceStateWithMismatchedIndex() {
+    @Test("setSpaceState with mismatched index")
+    func setSpaceStateWithMismatchedIndex() {
         let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // Set state where currentSpace index doesn't match labels array
         appState.setSpaceState(
             labels: ["1", "2"],
-            currentSpace: 10, // Out of bounds
+            currentSpace: 10,
             currentLabel: "?",
             displayID: "TestDisplay"
         )
 
-        // Should store the values even if they seem inconsistent
-        // (validation happens elsewhere)
-        XCTAssertEqual(appState.currentSpace, 10)
+        #expect(appState.currentSpace == 10)
     }
 
     // MARK: - State Configuration Tests
 
-    func testManySpacesConfiguration() {
+    @Test("many spaces configuration (16)")
+    func manySpacesConfiguration() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -703,12 +642,12 @@ final class ObserverLifecycleTests: XCTestCase {
 
         let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // Should handle many spaces correctly
-        XCTAssertEqual(appState.currentSpace, 16)
-        XCTAssertEqual(appState.allSpaceLabels.count, 16)
+        #expect(appState.currentSpace == 16)
+        #expect(appState.allSpaceLabels.count == 16)
     }
 
-    func testMaxTypicalSpaces() {
+    @Test("max typical spaces configuration (32)")
+    func maxTypicalSpaces() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -720,12 +659,12 @@ final class ObserverLifecycleTests: XCTestCase {
 
         let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // Should handle maximum typical space count
-        XCTAssertEqual(appState.currentSpace, 32)
-        XCTAssertEqual(appState.allSpaceLabels.count, 32)
+        #expect(appState.currentSpace == 32)
+        #expect(appState.allSpaceLabels.count == 32)
     }
 
-    func testAlternatingShowAllModesRapidly() {
+    @Test("alternating show-all modes rapidly stays consistent")
+    func alternatingShowAllModesRapidly() {
         let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
         stub.displays = [
@@ -755,40 +694,26 @@ final class ObserverLifecycleTests: XCTestCase {
             _ = appState.statusBarIcon
         }
 
-        // Should not crash and be in consistent state
-        XCTAssertNotNil(appState.statusBarIcon)
+        #expect(appState.statusBarIcon as NSImage? != nil)
     }
 }
 
 // MARK: - Fullscreen Space Edge Cases
 
 @MainActor
-final class FullscreenSpaceEdgeCaseTests: XCTestCase {
-    private var stub: CGSStub!
-    private var sut: AppState!
-    private var store: DefaultsStore!
-    private var testSuite: TestSuite!
+struct FullscreenSpaceEdgeCaseTests {
+    private let stub: CGSStub
+    private let store: DefaultsStore
+    private let testSuite: TestSuite
 
-    override func setUp() async throws {
-        try await super.setUp()
+    init() {
         testSuite = TestSuiteFactory.createSuite()
         store = DefaultsStore(suite: testSuite.suite)
         stub = CGSStub()
     }
 
-    override func tearDown() async throws {
-        sut = nil
-        stub = nil
-        if let store, let testSuite {
-            store.resetAll()
-            TestSuiteFactory.destroySuite(testSuite)
-        }
-        store = nil
-        testSuite = nil
-        try await super.tearDown()
-    }
-
-    func testAllFullscreenSpaces() {
+    @Test("all spaces fullscreen")
+    func allFullscreenSpaces() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -802,14 +727,14 @@ final class FullscreenSpaceEdgeCaseTests: XCTestCase {
             ),
         ]
 
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // All spaces should be labeled as fullscreen
-        XCTAssertEqual(sut.allSpaceLabels, [Labels.fullscreen, Labels.fullscreen, Labels.fullscreen])
-        XCTAssertEqual(sut.currentSpaceLabel, Labels.fullscreen)
+        #expect(sut.allSpaceLabels == [Labels.fullscreen, Labels.fullscreen, Labels.fullscreen])
+        #expect(sut.currentSpaceLabel == Labels.fullscreen)
     }
 
-    func testAlternatingFullscreenAndRegular() {
+    @Test("alternating fullscreen and regular spaces")
+    func alternatingFullscreenAndRegular() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -824,13 +749,14 @@ final class FullscreenSpaceEdgeCaseTests: XCTestCase {
             ),
         ]
 
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        XCTAssertEqual(sut.allSpaceLabels, [Labels.fullscreen, "1", Labels.fullscreen, "2"])
-        XCTAssertEqual(sut.currentSpaceLabel, "2")
+        #expect(sut.allSpaceLabels == [Labels.fullscreen, "1", Labels.fullscreen, "2"])
+        #expect(sut.currentSpaceLabel == "2")
     }
 
-    func testHideFullscreenWithAllFullscreen() {
+    @Test("hide fullscreen when all spaces fullscreen still produces icon")
+    func hideFullscreenWithAllFullscreen() {
         store.hideFullscreenApps = true
         store.showAllSpaces = true
         stub.activeDisplayIdentifier = "Main"
@@ -845,14 +771,14 @@ final class FullscreenSpaceEdgeCaseTests: XCTestCase {
             ),
         ]
 
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // When hiding fullscreen and all are fullscreen, current space should still show
         let icon = sut.statusBarIcon
-        XCTAssertNotNil(icon)
+        #expect(icon as NSImage? != nil)
     }
 
-    func testHideFullscreenWithMixed() {
+    @Test("hide fullscreen with mixed spaces")
+    func hideFullscreenWithMixed() {
         store.hideFullscreenApps = true
         store.showAllSpaces = true
         stub.activeDisplayIdentifier = "Main"
@@ -868,44 +794,30 @@ final class FullscreenSpaceEdgeCaseTests: XCTestCase {
             ),
         ]
 
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // Icon should only show non-fullscreen spaces (2 of them)
         let icon = sut.statusBarIcon
         let expectedWidth = 2 * Layout.statusItemWidth
-        XCTAssertEqual(icon.size.width, expectedWidth, accuracy: 0.1)
+        #expect(abs(icon.size.width - expectedWidth) < 0.1)
     }
 }
 
 // MARK: - Show All Displays Edge Cases
 
 @MainActor
-final class ShowAllDisplaysEdgeCaseTests: XCTestCase {
-    private var stub: CGSStub!
-    private var sut: AppState!
-    private var store: DefaultsStore!
-    private var testSuite: TestSuite!
+struct ShowAllDisplaysEdgeCaseTests {
+    private let stub: CGSStub
+    private let store: DefaultsStore
+    private let testSuite: TestSuite
 
-    override func setUp() async throws {
-        try await super.setUp()
+    init() {
         testSuite = TestSuiteFactory.createSuite()
         store = DefaultsStore(suite: testSuite.suite)
         stub = CGSStub()
     }
 
-    override func tearDown() async throws {
-        sut = nil
-        stub = nil
-        if let store, let testSuite {
-            store.resetAll()
-            TestSuiteFactory.destroySuite(testSuite)
-        }
-        store = nil
-        testSuite = nil
-        try await super.tearDown()
-    }
-
-    func testShowAllDisplaysWithSingleDisplay() {
+    @Test("show all displays with a single display")
+    func showAllDisplaysWithSingleDisplay() {
         store.showAllDisplays = true
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
@@ -916,13 +828,13 @@ final class ShowAllDisplaysEdgeCaseTests: XCTestCase {
             ),
         ]
 
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // With single display, should behave like showAllSpaces
-        XCTAssertEqual(sut.allSpaceLabels.count, 2)
+        #expect(sut.allSpaceLabels.count == 2)
     }
 
-    func testShowAllDisplaysWithManyDisplays() {
+    @Test("show all displays with many displays")
+    func showAllDisplaysWithManyDisplays() {
         store.showAllDisplays = true
         stub.activeDisplayIdentifier = "Display1"
         stub.displays = [
@@ -948,16 +860,15 @@ final class ShowAllDisplaysEdgeCaseTests: XCTestCase {
             ),
         ]
 
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // Should handle many displays
         let icon = sut.statusBarIcon
-        XCTAssertNotNil(icon)
-        // Icon should include separators between displays
-        XCTAssertGreaterThan(icon.size.width, 4 * Layout.statusItemWidth)
+        #expect(icon as NSImage? != nil)
+        #expect(icon.size.width > 4 * Layout.statusItemWidth)
     }
 
-    func testShowAllDisplaysWithAllFullscreenOnOneDisplay() {
+    @Test("show all displays where one has only fullscreen spaces")
+    func showAllDisplaysWithAllFullscreenOnOneDisplay() {
         store.showAllDisplays = true
         store.hideFullscreenApps = true
         stub.activeDisplayIdentifier = "DisplayA"
@@ -977,22 +888,21 @@ final class ShowAllDisplaysEdgeCaseTests: XCTestCase {
             ),
         ]
 
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // DisplayB with all fullscreen should still show something (active space at minimum)
         let icon = sut.statusBarIcon
-        XCTAssertNotNil(icon)
+        #expect(icon as NSImage? != nil)
     }
 
     /// Regression test: Fullscreen spaces were incorrectly shown as active on Space 1.
     /// The bug: fullscreen spaces got globalIndex=1 due to nil regularIndex defaulting to 0,
     /// which matched currentGlobalSpaceIndex when user was on Space 1.
-    func testHideFullscreenDoesNotShowFullscreenOnSpace1() {
+    @Test("hide fullscreen does not mark fullscreen as active on Space 1")
+    func hideFullscreenDoesNotShowFullscreenOnSpace1() {
         store.showAllDisplays = true
         store.hideFullscreenApps = true
         stub.activeDisplayIdentifier = "Display1"
         stub.displays = [
-            // User is on Space 1 (regular space)
             CGSStub.makeDisplay(
                 displayID: "Display1",
                 spaces: [
@@ -1002,33 +912,23 @@ final class ShowAllDisplaysEdgeCaseTests: XCTestCase {
                 ],
                 activeSpaceID: 100
             ),
-            // Other display has a fullscreen space that should be hidden
             CGSStub.makeDisplay(
                 displayID: "Display2",
                 spaces: [
-                    (id: 200, isFullscreen: true), // fullscreen - should be hidden
+                    (id: 200, isFullscreen: true),
                     (id: 201, isFullscreen: false),
                 ],
                 activeSpaceID: 201
             ),
         ]
 
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // With hideFullscreenApps enabled:
-        // Display1: 3 regular spaces (all shown)
-        // Display2: 1 fullscreen (hidden) + 1 regular (shown) = 1 shown
-        // Total: 3 + 1 = 4 spaces, plus 1 separator between displays
         let expectedSpaces = 4
         let expectedSeparators = 1
         let expectedWidth = Double(expectedSpaces) * Layout.statusItemWidth +
             Double(expectedSeparators) * Layout.displaySeparatorWidth
         let icon = sut.statusBarIcon
-        XCTAssertEqual(
-            icon.size.width,
-            expectedWidth,
-            accuracy: 0.1,
-            "Fullscreen space should be hidden, not incorrectly shown as active on Space 1"
-        )
+        #expect(abs(icon.size.width - expectedWidth) < 0.1)
     }
 }
