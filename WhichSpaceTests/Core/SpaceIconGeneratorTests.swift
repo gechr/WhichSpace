@@ -358,7 +358,10 @@ struct SpaceIconGeneratorTests {
                 badge: badge
             )
             if !dynamicWidthStyles.contains(style) {
-                #expect(icon.size == Layout.statusItemSize, "Badge with style \(style.rawValue) should produce correct size")
+                #expect(
+                    icon.size == Layout.statusItemSize,
+                    "Badge with style \(style.rawValue) should produce correct size"
+                )
             }
             #expect(icon.tiffRepresentation != nil, "Badge with style \(style.rawValue) should produce valid image")
         }

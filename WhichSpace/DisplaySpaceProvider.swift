@@ -74,4 +74,3 @@ struct CGSDisplaySpaceProvider: DisplaySpaceProvider {
         return Set(spaces).intersection(spaceIDSet)
     }
 }
-

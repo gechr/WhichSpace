@@ -134,7 +134,7 @@ enum SpaceSwitcher {
                 return nil
             }
             self.identifier = identifier
-            self.spaces = spacesRaw.compactMap(ManagedSpace.init(dict:))
+            spaces = spacesRaw.compactMap(ManagedSpace.init(dict:))
             self.currentSpaceID = currentSpaceID
         }
     }

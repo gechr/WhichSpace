@@ -1,5 +1,6 @@
 import Defaults
 import Foundation
+import Testing
 import XCTest
 @testable import WhichSpace
 
@@ -143,42 +144,45 @@ class IsolatedDefaultsTestCase: XCTestCase {
 // MARK: - Defaults Isolation Guard Tests
 
 /// Tests that verify the test isolation infrastructure itself works correctly.
-final class DefaultsIsolationGuardTests: IsolatedDefaultsTestCase {
+@MainActor
+struct DefaultsIsolationGuardTests {
+    private let store: DefaultsStore
+    private let testSuite: TestSuite
+
+    init() {
+        testSuite = TestSuiteFactory.createSuite()
+        store = DefaultsStore(suite: testSuite.suite)
+    }
+
     /// Verifies that per-test suite isolation works.
-    func testStoreHasIsolatedSuite() {
-        // Each test should get its own suite, not .standard
-        XCTAssertNotEqual(
-            store.suite,
-            UserDefaults.standard,
-            "Test store should use an isolated suite, not .standard"
-        )
+    @Test("store uses an isolated suite, not the standard one")
+    func storeHasIsolatedSuite() {
+        #expect(store.suite != UserDefaults.standard)
     }
 
     /// Verifies store operations work correctly.
-    func testStoreOperations() {
-        // Default values
-        XCTAssertFalse(store.showAllSpaces)
-        XCTAssertEqual(store.sizeScale, Layout.defaultSizeScale)
-        XCTAssertTrue(store.spaceColors.isEmpty)
+    @Test("store operations round-trip")
+    func storeOperations() {
+        #expect(!store.showAllSpaces)
+        #expect(store.sizeScale == Layout.defaultSizeScale)
+        #expect(store.spaceColors.isEmpty)
 
-        // Set values
         store.showAllSpaces = true
         store.sizeScale = 80.0
         store.spaceColors = [1: SpaceColors(foreground: .red, background: .blue)]
 
-        // Verify values
-        XCTAssertTrue(store.showAllSpaces)
-        XCTAssertEqual(store.sizeScale, 80.0)
-        XCTAssertEqual(store.spaceColors.count, 1)
+        #expect(store.showAllSpaces)
+        #expect(store.sizeScale == 80.0)
+        #expect(store.spaceColors.count == 1)
 
-        // Reset
         store.resetAll()
-        XCTAssertFalse(store.showAllSpaces)
-        XCTAssertEqual(store.sizeScale, Layout.defaultSizeScale)
+        #expect(!store.showAllSpaces)
+        #expect(store.sizeScale == Layout.defaultSizeScale)
     }
 
     /// Verifies that KeySpecs matches Defaults.Keys definitions.
-    func testKeySpecsMatchDefaultsKeys() {
+    @Test("KeySpecs.allKeyNames matches Defaults.Keys")
+    func keySpecsMatchDefaultsKeys() {
         let expectedKeyNames: Set = [
             "clickToSwitchSpaces",
             "dimInactiveSpaces",
@@ -211,21 +215,17 @@ final class DefaultsIsolationGuardTests: IsolatedDefaultsTestCase {
             "uniqueIconsPerDisplay",
         ]
 
-        XCTAssertEqual(
-            KeySpecs.allKeyNames,
-            expectedKeyNames,
-            "KeySpecs.allKeyNames must match all keys defined in Defaults.Keys"
-        )
+        #expect(KeySpecs.allKeyNames == expectedKeyNames)
     }
 
     /// Verifies that two tests get different suites.
-    func testSuiteIsolationFirstTest() {
+    @Test("suite isolation A: setting a value should not affect other tests")
+    func suiteIsolationFirstTest() {
         store.showAllSpaces = true
-        // This value should not affect other tests
     }
 
-    func testSuiteIsolationSecondTest() {
-        // Should start with default value, not affected by other test
-        XCTAssertFalse(store.showAllSpaces)
+    @Test("suite isolation B: starts with default value")
+    func suiteIsolationSecondTest() {
+        #expect(!store.showAllSpaces)
     }
 }
