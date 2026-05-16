@@ -75,22 +75,3 @@ struct CGSDisplaySpaceProvider: DisplaySpaceProvider {
     }
 }
 
-// MARK: - NullDisplaySpaceProvider
-
-/// A no-op provider used when the app launches as a test host.
-/// Returns nil/empty results without calling any private CGS/SLS APIs
-/// that would block on headless CI runners.
-struct NullDisplaySpaceProvider: DisplaySpaceProvider {
-    // swiftlint:disable:next discouraged_optional_collection
-    func copyManagedDisplaySpaces() -> [NSDictionary]? {
-        []
-    }
-
-    func copyActiveMenuBarDisplayIdentifier() -> String? {
-        nil
-    }
-
-    func spacesWithWindows(forSpaceIDs _: [Int]) -> Set<Int> {
-        []
-    }
-}
