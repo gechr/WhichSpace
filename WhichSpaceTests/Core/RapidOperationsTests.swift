@@ -1,16 +1,24 @@
 import Cocoa
 import Defaults
-import XCTest
+import Testing
 @testable import WhichSpace
 
 // MARK: - Rapid Operations Tests
 
 @MainActor
-final class RapidOperationsTests: IsolatedDefaultsTestCase {
+struct RapidOperationsTests {
+    private let store: DefaultsStore
+    private let testSuite: TestSuite
+
+    init() {
+        testSuite = TestSuiteFactory.createSuite()
+        store = DefaultsStore(suite: testSuite.suite)
+    }
+
     // MARK: - Rapid Preference Changes
 
-    func testRapidColorChanges() {
-        // Rapidly change colors many times
+    @Test("rapid color changes settle on final value")
+    func rapidColorChanges() {
         for idx in 0 ..< 100 {
             let colors = SpaceColors(
                 foreground: NSColor(calibratedHue: Double(idx) / 100.0, saturation: 1, brightness: 1, alpha: 1),
@@ -19,24 +27,23 @@ final class RapidOperationsTests: IsolatedDefaultsTestCase {
             SpacePreferences.setColors(colors, forSpace: 1, store: store)
         }
 
-        // Final state should be last set value
         let final = SpacePreferences.colors(forSpace: 1, store: store)
-        XCTAssertNotNil(final)
+        #expect(final != nil)
     }
 
-    func testRapidStyleChanges() {
-        // Rapidly cycle through all styles
+    @Test("rapid style changes settle on last style")
+    func rapidStyleChanges() {
         for _ in 0 ..< 50 {
             for style in IconStyle.allCases {
                 SpacePreferences.setIconStyle(style, forSpace: 1, store: store)
             }
         }
 
-        // Should end on last style
-        XCTAssertEqual(SpacePreferences.iconStyle(forSpace: 1, store: store), IconStyle.allCases.last)
+        #expect(SpacePreferences.iconStyle(forSpace: 1, store: store) == IconStyle.allCases.last)
     }
 
-    func testRapidSymbolChanges() {
+    @Test("rapid symbol changes settle on valid value")
+    func rapidSymbolChanges() {
         let symbols = ItemData.symbols
         for _ in 0 ..< 20 {
             for symbol in symbols.prefix(50) {
@@ -44,13 +51,13 @@ final class RapidOperationsTests: IsolatedDefaultsTestCase {
             }
         }
 
-        // Should not crash and have valid state
-        XCTAssertNotNil(SpacePreferences.symbol(forSpace: 1, store: store))
+        #expect(SpacePreferences.symbol(forSpace: 1, store: store) != nil)
     }
 
     // MARK: - Rapid Toggle Operations
 
-    func testRapidUniqueIconsPerDisplayToggle() {
+    @Test("rapid uniqueIconsPerDisplay toggle persists both storage paths")
+    func rapidUniqueIconsPerDisplayToggle() {
         for _ in 0 ..< 100 {
             store.uniqueIconsPerDisplay = true
             SpacePreferences.setIconStyle(.circle, forSpace: 1, display: "Display1", store: store)
@@ -59,18 +66,17 @@ final class RapidOperationsTests: IsolatedDefaultsTestCase {
             SpacePreferences.setIconStyle(.square, forSpace: 1, store: store)
         }
 
-        // Both storage locations should have values
         store.uniqueIconsPerDisplay = true
-        XCTAssertEqual(SpacePreferences.iconStyle(forSpace: 1, display: "Display1", store: store), .circle)
+        #expect(SpacePreferences.iconStyle(forSpace: 1, display: "Display1", store: store) == .circle)
 
         store.uniqueIconsPerDisplay = false
-        XCTAssertEqual(SpacePreferences.iconStyle(forSpace: 1, store: store), .square)
+        #expect(SpacePreferences.iconStyle(forSpace: 1, store: store) == .square)
     }
 
     // MARK: - Concurrent-Like Access Patterns
 
-    func testManySpacesSimultaneously() {
-        // Set preferences for many spaces at once
+    @Test("setting preferences for many spaces at once")
+    func manySpacesSimultaneously() {
         for space in 1 ... 100 {
             SpacePreferences.setIconStyle(.circle, forSpace: space, store: store)
             SpacePreferences.setSymbol("star.fill", forSpace: space, store: store)
@@ -81,18 +87,17 @@ final class RapidOperationsTests: IsolatedDefaultsTestCase {
             )
         }
 
-        // Verify all were set
         for space in 1 ... 100 {
-            XCTAssertEqual(SpacePreferences.iconStyle(forSpace: space, store: store), .circle)
-            XCTAssertEqual(SpacePreferences.symbol(forSpace: space, store: store), "star.fill")
-            XCTAssertNotNil(SpacePreferences.colors(forSpace: space, store: store))
+            #expect(SpacePreferences.iconStyle(forSpace: space, store: store) == .circle)
+            #expect(SpacePreferences.symbol(forSpace: space, store: store) == "star.fill")
+            #expect(SpacePreferences.colors(forSpace: space, store: store) != nil)
         }
     }
 
-    func testManyDisplaysSimultaneously() {
+    @Test("setting preferences for many displays at once")
+    func manyDisplaysSimultaneously() {
         store.uniqueIconsPerDisplay = true
 
-        // Set preferences for many displays
         for displayNum in 1 ... 20 {
             let displayID = "Display\(displayNum)"
             for space in 1 ... 10 {
@@ -100,22 +105,18 @@ final class RapidOperationsTests: IsolatedDefaultsTestCase {
             }
         }
 
-        // Verify all were set
         for displayNum in 1 ... 20 {
             let displayID = "Display\(displayNum)"
             for space in 1 ... 10 {
-                XCTAssertEqual(
-                    SpacePreferences.iconStyle(forSpace: space, display: displayID, store: store),
-                    .hexagon
-                )
+                #expect(SpacePreferences.iconStyle(forSpace: space, display: displayID, store: store) == .hexagon)
             }
         }
     }
 
     // MARK: - Clear All Under Load
 
-    func testClearAllWithManyPreferences() {
-        // Set up many preferences
+    @Test("clearAll removes all preferences under load")
+    func clearAllWithManyPreferences() {
         for space in 1 ... 50 {
             SpacePreferences.setIconStyle(.circle, forSpace: space, store: store)
             SpacePreferences.setSymbol("star", forSpace: space, store: store)
@@ -134,28 +135,26 @@ final class RapidOperationsTests: IsolatedDefaultsTestCase {
             }
         }
 
-        // Clear all at once
         SpacePreferences.clearAll(store: store)
 
-        // Verify everything is cleared
         for space in 1 ... 50 {
-            XCTAssertNil(SpacePreferences.iconStyle(forSpace: space, store: store))
-            XCTAssertNil(SpacePreferences.symbol(forSpace: space, store: store))
-            XCTAssertNil(SpacePreferences.colors(forSpace: space, store: store))
+            #expect(SpacePreferences.iconStyle(forSpace: space, store: store) == nil)
+            #expect(SpacePreferences.symbol(forSpace: space, store: store) == nil)
+            #expect(SpacePreferences.colors(forSpace: space, store: store) == nil)
         }
 
         for displayNum in 1 ... 5 {
             let displayID = "Display\(displayNum)"
             for space in 1 ... 10 {
-                XCTAssertNil(SpacePreferences.iconStyle(forSpace: space, display: displayID, store: store))
+                #expect(SpacePreferences.iconStyle(forSpace: space, display: displayID, store: store) == nil)
             }
         }
     }
 
     // MARK: - Icon Generation Under Load
 
-    func testRapidIconGeneration() {
-        // Generate many icons rapidly
+    @Test("rapid icon generation across all styles")
+    func rapidIconGeneration() {
         for _ in 0 ..< 100 {
             for style in IconStyle.allCases {
                 let image = SpaceIconGenerator.generateIcon(
@@ -165,12 +164,13 @@ final class RapidOperationsTests: IsolatedDefaultsTestCase {
                     customFont: nil,
                     style: style
                 )
-                XCTAssertNotNil(image)
+                #expect(image as NSImage? != nil)
             }
         }
     }
 
-    func testRapidSymbolIconGeneration() {
+    @Test("rapid symbol icon generation")
+    func rapidSymbolIconGeneration() {
         let symbols = ["star.fill", "heart.fill", "circle.fill", "square.fill", "triangle.fill"]
 
         for _ in 0 ..< 50 {
@@ -181,12 +181,13 @@ final class RapidOperationsTests: IsolatedDefaultsTestCase {
                     customColors: nil,
                     skinTone: nil
                 )
-                XCTAssertNotNil(image)
+                #expect(image as NSImage? != nil)
             }
         }
     }
 
-    func testRapidEmojiIconGeneration() {
+    @Test("rapid emoji icon generation across skin tones")
+    func rapidEmojiIconGeneration() {
         let emojis = ["😀", "👋", "🎉", "❤️", "🌟"]
 
         for _ in 0 ..< 50 {
@@ -198,7 +199,7 @@ final class RapidOperationsTests: IsolatedDefaultsTestCase {
                         customColors: nil,
                         skinTone: tone
                     )
-                    XCTAssertNotNil(image)
+                    #expect(image as NSImage? != nil)
                 }
             }
         }
