@@ -393,42 +393,7 @@ final class ActionHandler: NSObject {
             confirmTitle: Localization.buttonReset,
             isDestructive: true
         ) {
-            SpacePreferences.clearBadge(
-                forSpace: appState.currentSpace,
-                display: appState.currentDisplayID,
-                store: store
-            )
-            SpacePreferences.clearColors(
-                forSpace: appState.currentSpace,
-                display: appState.currentDisplayID,
-                store: store
-            )
-            SpacePreferences.clearIconStyle(
-                forSpace: appState.currentSpace,
-                display: appState.currentDisplayID,
-                store: store
-            )
-            SpacePreferences.clearFont(
-                forSpace: appState.currentSpace,
-                display: appState.currentDisplayID,
-                store: store
-            )
-            SpacePreferences.clearLabel(
-                forSpace: appState.currentSpace,
-                display: appState.currentDisplayID,
-                store: store
-            )
-            SpacePreferences.clearLabelStyle(
-                forSpace: appState.currentSpace,
-                display: appState.currentDisplayID,
-                store: store
-            )
-            SpacePreferences.clearSymbol(
-                forSpace: appState.currentSpace,
-                display: appState.currentDisplayID,
-                store: store
-            )
-            SpacePreferences.clearSkinTone(
+            SpacePreferences.clearPreferences(
                 forSpace: appState.currentSpace,
                 display: appState.currentDisplayID,
                 store: store
