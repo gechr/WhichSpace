@@ -1,36 +1,44 @@
+import AppKit
 import Defaults
-import XCTest
+import Testing
 @testable import WhichSpace
 
-final class SpaceIconGeneratorTests: IsolatedDefaultsTestCase {
-    // MARK: - Image Size Tests
+@MainActor
+struct SpaceIconGeneratorTests {
+    private let store: DefaultsStore
+    private let testSuite: TestSuite
 
-    func testGeneratedIconHasExpectedSize() {
-        let icon = SpaceIconGenerator.generateIcon(for: "1", darkMode: true)
-        XCTAssertEqual(icon.size, Layout.statusItemSize)
+    init() {
+        testSuite = TestSuiteFactory.createSuite()
+        store = DefaultsStore(suite: testSuite.suite)
     }
 
-    func testAllStylesGenerateCorrectSize() {
-        // Pill styles have dynamic width (capsule shape), so skip fixed-size check
+    // MARK: - Image Size Tests
+
+    @Test("generated icon has expected size")
+    func generatedIconHasExpectedSize() {
+        let icon = SpaceIconGenerator.generateIcon(for: "1", darkMode: true)
+        #expect(icon.size == Layout.statusItemSize)
+    }
+
+    @Test("all styles generate correct size (except dynamic-width pill styles)")
+    func allStylesGenerateCorrectSize() {
         let dynamicWidthStyles: Set<IconStyle> = [.pill, .pillOutline]
         for style in IconStyle.allCases where !dynamicWidthStyles.contains(style) {
             let icon = SpaceIconGenerator.generateIcon(for: "1", darkMode: true, style: style)
-            XCTAssertEqual(
-                icon.size,
-                Layout.statusItemSize,
-                "Style \(style.rawValue) should produce correct size"
-            )
+            #expect(icon.size == Layout.statusItemSize, "Style \(style.rawValue) should produce correct size")
         }
     }
 
-    func testMultiDigitNumbersGenerateCorrectSize() {
+    @Test("multi-digit numbers generate correct size")
+    func multiDigitNumbersGenerateCorrectSize() {
         let singleDigit = SpaceIconGenerator.generateIcon(for: "1", darkMode: true)
         let doubleDigit = SpaceIconGenerator.generateIcon(for: "12", darkMode: true)
         let tripleDigit = SpaceIconGenerator.generateIcon(for: "123", darkMode: true)
 
-        XCTAssertEqual(singleDigit.size, Layout.statusItemSize)
-        XCTAssertEqual(doubleDigit.size, Layout.statusItemSize)
-        XCTAssertEqual(tripleDigit.size, Layout.statusItemSize)
+        #expect(singleDigit.size == Layout.statusItemSize)
+        #expect(doubleDigit.size == Layout.statusItemSize)
+        #expect(tripleDigit.size == Layout.statusItemSize)
     }
 
     // MARK: - Scale Tests
@@ -38,50 +46,54 @@ final class SpaceIconGeneratorTests: IsolatedDefaultsTestCase {
     // Note: These tests verify the container size is constant. The scale affects
     // drawn content only, not the image dimensions.
 
-    func testIconSizeUnchangedAtDefaultScale() {
-        // Default scale - image size should be statusItemSize
+    @Test("icon size unchanged at default scale")
+    func iconSizeUnchangedAtDefaultScale() {
         let icon = SpaceIconGenerator.generateIcon(for: "1", darkMode: true)
-        XCTAssertEqual(icon.size, Layout.statusItemSize)
+        #expect(icon.size == Layout.statusItemSize)
     }
 
-    func testSizeScaleRangeIsValid() {
-        // Verify the range is sensible
-        XCTAssertLessThan(Layout.sizeScaleRange.lowerBound, Layout.defaultSizeScale)
-        XCTAssertGreaterThan(Layout.sizeScaleRange.upperBound, Layout.defaultSizeScale)
-        XCTAssertEqual(Layout.defaultSizeScale, 100.0)
+    @Test("size scale range is valid")
+    func sizeScaleRangeIsValid() {
+        #expect(Layout.sizeScaleRange.lowerBound < Layout.defaultSizeScale)
+        #expect(Layout.sizeScaleRange.upperBound > Layout.defaultSizeScale)
+        #expect(Layout.defaultSizeScale == 100.0)
     }
 
     // MARK: - Dark/Light Mode Tests
 
-    func testDarkModeProducesValidImage() {
+    @Test("dark mode produces valid image")
+    func darkModeProducesValidImage() {
         let icon = SpaceIconGenerator.generateIcon(for: "1", darkMode: true)
-        XCTAssertFalse(icon.size.width <= 0)
-        XCTAssertFalse(icon.size.height <= 0)
-        XCTAssertNotNil(icon.cgImage(forProposedRect: nil, context: nil, hints: nil))
+        #expect(!(icon.size.width <= 0))
+        #expect(!(icon.size.height <= 0))
+        #expect(icon.cgImage(forProposedRect: nil, context: nil, hints: nil) != nil)
     }
 
-    func testLightModeProducesValidImage() {
+    @Test("light mode produces valid image")
+    func lightModeProducesValidImage() {
         let icon = SpaceIconGenerator.generateIcon(for: "1", darkMode: false)
-        XCTAssertFalse(icon.size.width <= 0)
-        XCTAssertFalse(icon.size.height <= 0)
-        XCTAssertNotNil(icon.cgImage(forProposedRect: nil, context: nil, hints: nil))
+        #expect(!(icon.size.width <= 0))
+        #expect(!(icon.size.height <= 0))
+        #expect(icon.cgImage(forProposedRect: nil, context: nil, hints: nil) != nil)
     }
 
-    func testDarkAndLightModeProduceDifferentImages() {
+    @Test("dark and light mode produce different images")
+    func darkAndLightModeProduceDifferentImages() {
         let darkIcon = SpaceIconGenerator.generateIcon(for: "1", darkMode: true)
         let lightIcon = SpaceIconGenerator.generateIcon(for: "1", darkMode: false)
 
         let darkData = darkIcon.tiffRepresentation
         let lightData = lightIcon.tiffRepresentation
 
-        XCTAssertNotNil(darkData)
-        XCTAssertNotNil(lightData)
-        XCTAssertNotEqual(darkData, lightData, "Dark and light mode icons should differ")
+        #expect(darkData != nil)
+        #expect(lightData != nil)
+        #expect(darkData != lightData)
     }
 
     // MARK: - Custom Colors Tests
 
-    func testCustomColorsApplied() {
+    @Test("custom colors are applied")
+    func customColorsApplied() {
         let customColors = SpaceColors(foreground: .systemRed, background: .systemBlue)
         let icon = SpaceIconGenerator.generateIcon(
             for: "1",
@@ -89,11 +101,12 @@ final class SpaceIconGeneratorTests: IsolatedDefaultsTestCase {
             customColors: customColors
         )
 
-        XCTAssertEqual(icon.size, Layout.statusItemSize)
-        XCTAssertNotNil(icon.tiffRepresentation)
+        #expect(icon.size == Layout.statusItemSize)
+        #expect(icon.tiffRepresentation != nil)
     }
 
-    func testCustomColorsDifferFromDefault() {
+    @Test("custom colors produce different image from default")
+    func customColorsDifferFromDefault() {
         let customColors = SpaceColors(foreground: .systemRed, background: .systemBlue)
 
         let defaultIcon = SpaceIconGenerator.generateIcon(for: "1", darkMode: true)
@@ -106,12 +119,13 @@ final class SpaceIconGeneratorTests: IsolatedDefaultsTestCase {
         let defaultData = defaultIcon.tiffRepresentation
         let customData = customIcon.tiffRepresentation
 
-        XCTAssertNotNil(defaultData)
-        XCTAssertNotNil(customData)
-        XCTAssertNotEqual(defaultData, customData, "Custom colors should produce different image")
+        #expect(defaultData != nil)
+        #expect(customData != nil)
+        #expect(defaultData != customData)
     }
 
-    func testCustomColorsContainExpectedPixels() {
+    @Test("custom colors contain expected pixels at the center")
+    func customColorsContainExpectedPixels() {
         let foreground = NSColor.red
         let background = NSColor.blue
         let customColors = SpaceColors(foreground: foreground, background: background)
@@ -123,24 +137,22 @@ final class SpaceIconGeneratorTests: IsolatedDefaultsTestCase {
             style: .square
         )
 
-        // Sample the center pixel (should be within the background shape)
         let centerX = Int(icon.size.width / 2)
         let centerY = Int(icon.size.height / 2)
         let centerColor = samplePixelColor(from: icon, at: CGPoint(x: centerX, y: centerY))
 
-        XCTAssertNotNil(centerColor, "Should be able to sample center pixel")
+        #expect(centerColor != nil)
 
-        // The center should have some non-transparent content
         if let color = centerColor {
-            XCTAssertGreaterThan(color.alphaComponent, 0.5, "Center should have visible content")
+            #expect(color.alphaComponent > 0.5)
         }
     }
 
-    func testBackgroundColorAppearsInImage() {
-        // Use a distinctive background color
+    @Test("background color appears in image")
+    func backgroundColorAppearsInImage() {
         let customColors = SpaceColors(
             foreground: .black,
-            background: NSColor(red: 1.0, green: 0, blue: 0, alpha: 1.0) // Pure red
+            background: NSColor(red: 1.0, green: 0, blue: 0, alpha: 1.0)
         )
 
         let icon = SpaceIconGenerator.generateIcon(
@@ -150,15 +162,14 @@ final class SpaceIconGeneratorTests: IsolatedDefaultsTestCase {
             style: .square
         )
 
-        // Check that the image contains red pixels
         let hasRedPixels = imageContainsColor(icon, targetRed: 1.0, targetGreen: 0, targetBlue: 0, tolerance: 0.1)
-        XCTAssertTrue(hasRedPixels, "Background color should appear in the generated icon")
+        #expect(hasRedPixels)
     }
 
-    func testForegroundColorAppearsInImage() {
-        // Use a distinctive foreground color on contrasting background
+    @Test("foreground color appears in image")
+    func foregroundColorAppearsInImage() {
         let customColors = SpaceColors(
-            foreground: NSColor(red: 0, green: 1.0, blue: 0, alpha: 1.0), // Pure green
+            foreground: NSColor(red: 0, green: 1.0, blue: 0, alpha: 1.0),
             background: .black
         )
 
@@ -169,19 +180,20 @@ final class SpaceIconGeneratorTests: IsolatedDefaultsTestCase {
             style: .square
         )
 
-        // Check that the image contains green pixels (the text)
         let hasGreenPixels = imageContainsColor(icon, targetRed: 0, targetGreen: 1.0, targetBlue: 0, tolerance: 0.1)
-        XCTAssertTrue(hasGreenPixels, "Foreground color should appear in the generated icon")
+        #expect(hasGreenPixels)
     }
 
     // MARK: - Symbol Tests
 
-    func testSymbolIconHasExpectedSize() {
+    @Test("symbol icon has expected size")
+    func symbolIconHasExpectedSize() {
         let icon = SpaceIconGenerator.generateSymbolIcon(symbolName: "star.fill", darkMode: true)
-        XCTAssertEqual(icon.size, Layout.statusItemSize)
+        #expect(icon.size == Layout.statusItemSize)
     }
 
-    func testSymbolWithCustomColors() {
+    @Test("symbol with custom colors produces valid image")
+    func symbolWithCustomColors() {
         let customColors = SpaceColors(foreground: .systemGreen, background: .clear)
         let icon = SpaceIconGenerator.generateSymbolIcon(
             symbolName: "star.fill",
@@ -189,64 +201,71 @@ final class SpaceIconGeneratorTests: IsolatedDefaultsTestCase {
             customColors: customColors
         )
 
-        XCTAssertEqual(icon.size, Layout.statusItemSize)
-        XCTAssertNotNil(icon.tiffRepresentation)
+        #expect(icon.size == Layout.statusItemSize)
+        #expect(icon.tiffRepresentation != nil)
     }
 
-    func testInvalidSymbolFallsBackToQuestionMark() {
+    @Test("invalid symbol falls back to question mark")
+    func invalidSymbolFallsBackToQuestionMark() {
         let icon = SpaceIconGenerator.generateSymbolIcon(
             symbolName: "this.symbol.definitely.does.not.exist",
             darkMode: true
         )
 
-        XCTAssertEqual(icon.size, Layout.statusItemSize)
-        XCTAssertNotNil(icon.tiffRepresentation)
+        #expect(icon.size == Layout.statusItemSize)
+        #expect(icon.tiffRepresentation != nil)
     }
 
     // MARK: - Emoji Tests
 
-    func testEmojiIconHasExpectedSize() {
+    @Test("emoji icon has expected size")
+    func emojiIconHasExpectedSize() {
         let icon = SpaceIconGenerator.generateSymbolIcon(symbolName: "😀", darkMode: true)
-        XCTAssertEqual(icon.size, Layout.statusItemSize)
+        #expect(icon.size == Layout.statusItemSize)
     }
 
-    func testEmojiIconProducesValidImage() {
+    @Test("emoji icon produces valid image")
+    func emojiIconProducesValidImage() {
         let icon = SpaceIconGenerator.generateSymbolIcon(symbolName: "👋", darkMode: true)
-        XCTAssertNotNil(icon.tiffRepresentation)
-        XCTAssertNotNil(icon.cgImage(forProposedRect: nil, context: nil, hints: nil))
+        #expect(icon.tiffRepresentation != nil)
+        #expect(icon.cgImage(forProposedRect: nil, context: nil, hints: nil) != nil)
     }
 
-    func testEmojiWithSkinToneProducesValidImage() {
+    @Test("emoji with skin tone produces valid image")
+    func emojiWithSkinToneProducesValidImage() {
         Defaults[.emojiPickerSkinTone] = .medium
         let icon = SpaceIconGenerator.generateSymbolIcon(symbolName: "👋", darkMode: true)
-        XCTAssertEqual(icon.size, Layout.statusItemSize)
-        XCTAssertNotNil(icon.tiffRepresentation)
+        #expect(icon.size == Layout.statusItemSize)
+        #expect(icon.tiffRepresentation != nil)
     }
 
-    func testVariousEmojisProduceValidImages() {
+    @Test("various emojis produce valid images")
+    func variousEmojisProduceValidImages() {
         let emojis = ["😀", "🎉", "⭐", "🔥", "💡", "🖐️", "👍"]
         for emoji in emojis {
             let icon = SpaceIconGenerator.generateSymbolIcon(symbolName: emoji, darkMode: true)
-            XCTAssertEqual(icon.size, Layout.statusItemSize, "\(emoji) should have correct size")
-            XCTAssertNotNil(icon.tiffRepresentation, "\(emoji) should produce valid image")
+            #expect(icon.size == Layout.statusItemSize, "\(emoji) should have correct size")
+            #expect(icon.tiffRepresentation != nil, "\(emoji) should produce valid image")
         }
     }
 
-    func testEmojiDifferentFromSFSymbol() {
+    @Test("emoji differs from SF Symbol")
+    func emojiDifferentFromSFSymbol() {
         let emojiIcon = SpaceIconGenerator.generateSymbolIcon(symbolName: "⭐", darkMode: true)
         let symbolIcon = SpaceIconGenerator.generateSymbolIcon(symbolName: "star.fill", darkMode: true)
 
         let emojiData = emojiIcon.tiffRepresentation
         let symbolData = symbolIcon.tiffRepresentation
 
-        XCTAssertNotNil(emojiData)
-        XCTAssertNotNil(symbolData)
-        XCTAssertNotEqual(emojiData, symbolData, "Emoji and SF Symbol should produce different images")
+        #expect(emojiData != nil)
+        #expect(symbolData != nil)
+        #expect(emojiData != symbolData)
     }
 
     // MARK: - Style-Specific Tests
 
-    func testOutlineStyleProducesValidImage() {
+    @Test("outline styles produce valid images")
+    func outlineStyleProducesValidImage() {
         let outlineStyles: [IconStyle] = [
             .squareOutline,
             .pillOutline,
@@ -260,83 +279,76 @@ final class SpaceIconGeneratorTests: IsolatedDefaultsTestCase {
         for style in outlineStyles {
             let icon = SpaceIconGenerator.generateIcon(for: "1", darkMode: true, style: style)
             if style != .pillOutline {
-                XCTAssertEqual(icon.size, Layout.statusItemSize, "\(style) should have correct size")
+                #expect(icon.size == Layout.statusItemSize, "\(style) should have correct size")
             }
-            XCTAssertNotNil(icon.tiffRepresentation, "\(style) should produce valid image")
+            #expect(icon.tiffRepresentation != nil, "\(style) should produce valid image")
         }
     }
 
-    func testFilledStyleProducesValidImage() {
+    @Test("filled styles produce valid images")
+    func filledStyleProducesValidImage() {
         let filledStyles: [IconStyle] = [.square, .pill, .slim, .circle, .triangle, .pentagon, .hexagon]
 
         for style in filledStyles {
             let icon = SpaceIconGenerator.generateIcon(for: "1", darkMode: true, style: style)
             if style != .pill {
-                XCTAssertEqual(icon.size, Layout.statusItemSize, "\(style) should have correct size")
+                #expect(icon.size == Layout.statusItemSize, "\(style) should have correct size")
             }
-            XCTAssertNotNil(icon.tiffRepresentation, "\(style) should produce valid image")
+            #expect(icon.tiffRepresentation != nil, "\(style) should produce valid image")
         }
     }
 
-    func testSlimStyleProducesDifferentImagesForDifferentDigitCounts() {
-        // Slim style has dynamic width based on text, so different digit counts
-        // should produce visually different icons
+    @Test("slim style differs by digit count (dynamic width)")
+    func slimStyleProducesDifferentImagesForDifferentDigitCounts() {
         let singleDigit = SpaceIconGenerator.generateIcon(for: "1", darkMode: true, style: .slim)
         let doubleDigit = SpaceIconGenerator.generateIcon(for: "12", darkMode: true, style: .slim)
 
         let singleData = singleDigit.tiffRepresentation
         let doubleData = doubleDigit.tiffRepresentation
 
-        XCTAssertNotNil(singleData)
-        XCTAssertNotNil(doubleData)
-        XCTAssertNotEqual(singleData, doubleData, "Slim icons should differ for different digit counts")
+        #expect(singleData != nil)
+        #expect(doubleData != nil)
+        #expect(singleData != doubleData)
     }
 
     // MARK: - Badge Tests
 
-    func testBadgeDoesNotChangeIconSize() {
+    @Test("badge does not change icon size")
+    func badgeDoesNotChangeIconSize() {
         let badge = SpaceBadge(character: "A", position: .topRight)
         let badgedIcon = SpaceIconGenerator.generateIcon(for: "1", darkMode: true, badge: badge)
-        XCTAssertEqual(badgedIcon.size, Layout.statusItemSize)
+        #expect(badgedIcon.size == Layout.statusItemSize)
     }
 
-    func testBadgeProducesDifferentImage() {
+    @Test("badge produces different image")
+    func badgeProducesDifferentImage() {
         let baseIcon = SpaceIconGenerator.generateIcon(for: "1", darkMode: true)
         let badge = SpaceBadge(character: "X", position: .topRight)
         let badgedIcon = SpaceIconGenerator.generateIcon(for: "1", darkMode: true, badge: badge)
-        XCTAssertNotEqual(
-            baseIcon.tiffRepresentation,
-            badgedIcon.tiffRepresentation,
-            "Badge should change the icon"
-        )
+        #expect(baseIcon.tiffRepresentation != badgedIcon.tiffRepresentation)
     }
 
-    func testEmojiBadgeProducesValidImage() {
+    @Test("emoji badge produces valid image")
+    func emojiBadgeProducesValidImage() {
         let badge = SpaceBadge(character: "🔴", position: .bottomLeft)
         let badgedIcon = SpaceIconGenerator.generateIcon(for: "1", darkMode: true, badge: badge)
-        XCTAssertEqual(badgedIcon.size, Layout.statusItemSize)
-        XCTAssertNotNil(badgedIcon.tiffRepresentation)
+        #expect(badgedIcon.size == Layout.statusItemSize)
+        #expect(badgedIcon.tiffRepresentation != nil)
     }
 
-    func testBadgeAllPositionsProduceValidImages() {
+    @Test("badge in all positions produces valid images")
+    func badgeAllPositionsProduceValidImages() {
         for position in BadgePosition.allCases {
             let badge = SpaceBadge(character: "B", position: position)
             let badgedIcon = SpaceIconGenerator.generateIcon(for: "1", darkMode: true, badge: badge)
-            XCTAssertEqual(
-                badgedIcon.size,
-                Layout.statusItemSize,
-                "\(position) should produce correct size"
-            )
-            XCTAssertNotNil(
-                badgedIcon.tiffRepresentation,
-                "\(position) should produce valid image"
-            )
+            #expect(badgedIcon.size == Layout.statusItemSize, "\(position) should produce correct size")
+            #expect(badgedIcon.tiffRepresentation != nil, "\(position) should produce valid image")
         }
     }
 
-    func testBadgeWithAllStylesProducesValidImages() {
+    @Test("badge with all styles produces valid images")
+    func badgeWithAllStylesProducesValidImages() {
         let badge = SpaceBadge(character: "A", position: .topRight)
-        // Pill styles have dynamic width (capsule shape), so skip fixed-size check
         let dynamicWidthStyles: Set<IconStyle> = [.pill, .pillOutline]
         for style in IconStyle.allCases {
             let icon = SpaceIconGenerator.generateIcon(
@@ -346,76 +358,68 @@ final class SpaceIconGeneratorTests: IsolatedDefaultsTestCase {
                 badge: badge
             )
             if !dynamicWidthStyles.contains(style) {
-                XCTAssertEqual(
-                    icon.size,
-                    Layout.statusItemSize,
-                    "Badge with style \(style.rawValue) should produce correct size"
-                )
+                #expect(icon.size == Layout.statusItemSize, "Badge with style \(style.rawValue) should produce correct size")
             }
-            XCTAssertNotNil(
-                icon.tiffRepresentation,
-                "Badge with style \(style.rawValue) should produce valid image"
-            )
+            #expect(icon.tiffRepresentation != nil, "Badge with style \(style.rawValue) should produce valid image")
         }
     }
 
-    func testBadgeWithMultiDigitNumber() {
+    @Test("badge with multi-digit number")
+    func badgeWithMultiDigitNumber() {
         let badge = SpaceBadge(character: "X", position: .topLeft)
         let icon = SpaceIconGenerator.generateIcon(for: "12", darkMode: true, badge: badge)
-        XCTAssertEqual(icon.size, Layout.statusItemSize)
-        XCTAssertNotNil(icon.tiffRepresentation)
+        #expect(icon.size == Layout.statusItemSize)
+        #expect(icon.tiffRepresentation != nil)
     }
 
-    func testEmptyBadgeCharacterMatchesNoBadge() {
+    @Test("empty badge character matches no-badge")
+    func emptyBadgeCharacterMatchesNoBadge() {
         let emptyBadge = SpaceBadge(character: "", position: .topRight)
         let withEmpty = SpaceIconGenerator.generateIcon(for: "1", darkMode: true, badge: emptyBadge)
         let withNil = SpaceIconGenerator.generateIcon(for: "1", darkMode: true)
-        XCTAssertEqual(
-            withEmpty.tiffRepresentation,
-            withNil.tiffRepresentation,
-            "Empty badge character should produce same image as no badge"
-        )
+        #expect(withEmpty.tiffRepresentation == withNil.tiffRepresentation)
     }
 
-    func testDifferentPositionsProduceDifferentImages() {
+    @Test("different badge positions produce different images")
+    func differentPositionsProduceDifferentImages() {
         let badgeLeft = SpaceBadge(character: "A", position: .topLeft)
         let badgeRight = SpaceBadge(character: "A", position: .topRight)
         let iconLeft = SpaceIconGenerator.generateIcon(for: "1", darkMode: true, badge: badgeLeft)
         let iconRight = SpaceIconGenerator.generateIcon(for: "1", darkMode: true, badge: badgeRight)
-        XCTAssertNotEqual(
-            iconLeft.tiffRepresentation,
-            iconRight.tiffRepresentation,
-            "Different badge positions should produce different images"
-        )
+        #expect(iconLeft.tiffRepresentation != iconRight.tiffRepresentation)
     }
 
     // MARK: - Padding Scale Tests
 
-    func testPaddingScaleDefaultProducesStandardWidth() {
+    @Test("default padding scale produces standard width")
+    func paddingScaleDefaultProducesStandardWidth() {
         let icon = SpaceIconGenerator.generateIcon(
             for: "1", darkMode: true, paddingScale: Layout.defaultPaddingScale
         )
-        XCTAssertEqual(icon.size.width, Layout.statusItemWidth, accuracy: 0.1)
-        XCTAssertEqual(icon.size.height, Layout.statusItemHeight)
+        #expect(abs(icon.size.width - Layout.statusItemWidth) < 0.1)
+        #expect(abs(icon.size.height - Layout.statusItemHeight) < 0.001)
     }
 
-    func testPaddingScaleZeroProducesTighterIcon() {
+    @Test("zero padding scale produces tighter icon")
+    func paddingScaleZeroProducesTighterIcon() {
         let icon = SpaceIconGenerator.generateIcon(for: "1", darkMode: true, paddingScale: 0)
-        XCTAssertLessThan(icon.size.width, Layout.statusItemWidth)
-        XCTAssertEqual(icon.size.height, Layout.statusItemHeight)
+        #expect(icon.size.width < Layout.statusItemWidth)
+        #expect(abs(icon.size.height - Layout.statusItemHeight) < 0.001)
     }
 
-    func testTransparentStyleZeroPaddingUsesTextTightWidth() {
+    @Test("transparent style with zero padding uses text-tight width")
+    func transparentStyleZeroPaddingUsesTextTightWidth() {
         let icon = SpaceIconGenerator.generateIcon(
             for: "1",
             darkMode: true,
             style: .transparent,
             paddingScale: 0
         )
-        XCTAssertLessThan(icon.size.width, Layout.baseSquareSize)
+        #expect(icon.size.width < Layout.baseSquareSize)
     }
 
-    func testSlimWithClearBackgroundCollapsesToVisibleTextWidth() {
+    @Test("slim with clear background collapses to visible text width")
+    func slimWithClearBackgroundCollapsesToVisibleTextWidth() {
         let opaqueSlim = SpaceIconGenerator.generateIcon(
             for: "1",
             darkMode: true,
@@ -430,10 +434,11 @@ final class SpaceIconGeneratorTests: IsolatedDefaultsTestCase {
             paddingScale: 0
         )
 
-        XCTAssertLessThan(clearSlim.size.width, opaqueSlim.size.width)
+        #expect(clearSlim.size.width < opaqueSlim.size.width)
     }
 
-    func testSlimPaddingDoesNotChangeVisibleShape() {
+    @Test("slim padding does not change visible shape")
+    func slimPaddingDoesNotChangeVisibleShape() throws {
         let colors = SpaceColors(foreground: .black, background: .white)
         let tight = SpaceIconGenerator.generateIcon(
             for: "1",
@@ -450,26 +455,24 @@ final class SpaceIconGeneratorTests: IsolatedDefaultsTestCase {
             paddingScale: Layout.defaultPaddingScale
         )
 
-        let tightBounds = nonTransparentBounds(of: tight)
-        let standardBounds = nonTransparentBounds(of: standard)
+        let tightBounds = try #require(nonTransparentBounds(of: tight))
+        let standardBounds = try #require(nonTransparentBounds(of: standard))
 
-        guard let tightBounds, let standardBounds else {
-            XCTFail("Expected visible slim bounds for both padding settings")
-            return
-        }
-        XCTAssertEqual(tightBounds.width, standardBounds.width, accuracy: 2.0)
-        XCTAssertEqual(tightBounds.height, standardBounds.height, accuracy: 2.0)
+        #expect(abs(tightBounds.width - standardBounds.width) <= 2.0)
+        #expect(abs(tightBounds.height - standardBounds.height) <= 2.0)
     }
 
-    func testPaddingScaleMaxProducesWiderIcon() {
+    @Test("max padding scale produces wider icon")
+    func paddingScaleMaxProducesWiderIcon() {
         let icon = SpaceIconGenerator.generateIcon(
             for: "1", darkMode: true, paddingScale: Layout.paddingScaleRange.upperBound
         )
-        XCTAssertGreaterThan(icon.size.width, Layout.statusItemWidth)
-        XCTAssertEqual(icon.size.height, Layout.statusItemHeight)
+        #expect(icon.size.width > Layout.statusItemWidth)
+        #expect(abs(icon.size.height - Layout.statusItemHeight) < 0.001)
     }
 
-    func testPillStylePaddingAffectsOverflowingWidth() {
+    @Test("pill style padding affects overflowing width")
+    func pillStylePaddingAffectsOverflowingWidth() {
         let tight = SpaceIconGenerator.generateIcon(
             for: "1",
             darkMode: true,
@@ -483,48 +486,53 @@ final class SpaceIconGeneratorTests: IsolatedDefaultsTestCase {
             paddingScale: Layout.defaultPaddingScale
         )
 
-        XCTAssertLessThan(tight.size.width, standard.size.width)
+        #expect(tight.size.width < standard.size.width)
     }
 
-    func testPaddingScaleAffectsSymbolIconWidth() {
+    @Test("padding scale affects symbol icon width")
+    func paddingScaleAffectsSymbolIconWidth() {
         let tight = SpaceIconGenerator.generateSymbolIcon(
             symbolName: "star.fill", darkMode: true, paddingScale: 0
         )
         let wide = SpaceIconGenerator.generateSymbolIcon(
             symbolName: "star.fill", darkMode: true, paddingScale: 120
         )
-        XCTAssertLessThan(tight.size.width, wide.size.width)
+        #expect(tight.size.width < wide.size.width)
     }
 
-    func testPaddingScaleAffectsEmojiIconWidth() {
+    @Test("padding scale affects emoji icon width")
+    func paddingScaleAffectsEmojiIconWidth() {
         let tight = SpaceIconGenerator.generateSymbolIcon(
             symbolName: "😀", darkMode: true, paddingScale: 0
         )
         let wide = SpaceIconGenerator.generateSymbolIcon(
             symbolName: "😀", darkMode: true, paddingScale: 120
         )
-        XCTAssertLessThan(tight.size.width, wide.size.width)
+        #expect(tight.size.width < wide.size.width)
     }
 
-    func testAllStylesProduceValidImagesWithCustomPadding() {
+    @Test("all styles produce valid images with custom padding")
+    func allStylesProduceValidImagesWithCustomPadding() {
         for style in IconStyle.allCases {
             let icon = SpaceIconGenerator.generateIcon(
                 for: "1", darkMode: true, style: style, paddingScale: 50
             )
-            XCTAssertGreaterThan(icon.size.width, 0, "\(style) should have non-zero width at padding 50%")
-            XCTAssertEqual(icon.size.height, Layout.statusItemHeight, "\(style) height should be unchanged")
-            XCTAssertNotNil(icon.tiffRepresentation, "\(style) should produce valid image at padding 50%")
+            #expect(icon.size.width > 0, "\(style) should have non-zero width at padding 50%")
+            #expect(abs(icon.size.height - Layout.statusItemHeight) < 0.001, "\(style) height should be unchanged")
+            #expect(icon.tiffRepresentation != nil, "\(style) should produce valid image at padding 50%")
         }
     }
 
-    func testPaddingScaleRangeIsValid() {
-        XCTAssertEqual(Layout.paddingScaleRange.lowerBound, 0.0)
-        XCTAssertLessThan(Layout.defaultPaddingScale, Layout.paddingScaleRange.upperBound)
-        XCTAssertEqual(Layout.defaultPaddingScale, 100.0)
+    @Test("padding scale range is valid")
+    func paddingScaleRangeIsValid() {
+        #expect(Layout.paddingScaleRange.lowerBound == 0.0)
+        #expect(Layout.defaultPaddingScale < Layout.paddingScaleRange.upperBound)
+        #expect(Layout.defaultPaddingScale == 100.0)
     }
 
-    func testDefaultHorizontalPadding() {
-        XCTAssertEqual(Layout.defaultHorizontalPadding, Layout.statusItemWidth - Layout.baseSquareSize)
+    @Test("default horizontal padding equals status width minus base square")
+    func defaultHorizontalPadding() {
+        #expect(Layout.defaultHorizontalPadding == Layout.statusItemWidth - Layout.baseSquareSize)
     }
 
     // MARK: - Helpers
@@ -616,10 +624,8 @@ final class SpaceIconGeneratorTests: IsolatedDefaultsTestCase {
                 let blue = Double(pointer[offset + 2]) / 255.0
                 let alpha = Double(pointer[offset + 3]) / 255.0
 
-                // Skip transparent pixels
                 if alpha < 0.5 { continue }
 
-                // Check if this pixel matches the target color
                 if abs(red - targetRed) <= tolerance,
                    abs(green - targetGreen) <= tolerance,
                    abs(blue - targetBlue) <= tolerance
