@@ -217,33 +217,33 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         stopObservingPreferences()
 
         let iconKeys: [Defaults._AnyKey] = [
-            store.keyShowAllSpaces,
-            store.keyShowAllDisplays,
-            store.keyDimInactiveSpaces,
-            store.keyHideEmptySpaces,
-            store.keyHideFullscreenApps,
-            store.keyHideSingleSpace,
-            store.keyUniqueIconsPerDisplay,
-            store.keyLocalSpaceNumbers,
-            store.keySizeScale,
-            store.keyPaddingScale,
-            store.keySeparatorColor,
-            store.keySpaceBadges,
-            store.keySpaceColors,
-            store.keySpaceIconStyles,
-            store.keySpaceSymbols,
-            store.keySpaceFonts,
-            store.keySpaceLabels,
-            store.keySpaceLabelStyles,
-            store.keySpaceSkinTones,
-            store.keyDisplaySpaceBadges,
-            store.keyDisplaySpaceColors,
-            store.keyDisplaySpaceIconStyles,
-            store.keyDisplaySpaceSymbols,
-            store.keyDisplaySpaceFonts,
-            store.keyDisplaySpaceLabels,
-            store.keyDisplaySpaceLabelStyles,
-            store.keyDisplaySpaceSkinTones,
+            store.keyFor(KeySpecs.showAllSpaces),
+            store.keyFor(KeySpecs.showAllDisplays),
+            store.keyFor(KeySpecs.dimInactiveSpaces),
+            store.keyFor(KeySpecs.hideEmptySpaces),
+            store.keyFor(KeySpecs.hideFullscreenApps),
+            store.keyFor(KeySpecs.hideSingleSpace),
+            store.keyFor(KeySpecs.uniqueIconsPerDisplay),
+            store.keyFor(KeySpecs.localSpaceNumbers),
+            store.keyFor(KeySpecs.sizeScale),
+            store.keyFor(KeySpecs.paddingScale),
+            store.keyFor(KeySpecs.separatorColor),
+            store.keyFor(KeySpecs.spaceBadges),
+            store.keyFor(KeySpecs.spaceColors),
+            store.keyFor(KeySpecs.spaceIconStyles),
+            store.keyFor(KeySpecs.spaceSymbols),
+            store.keyFor(KeySpecs.spaceFonts),
+            store.keyFor(KeySpecs.spaceLabels),
+            store.keyFor(KeySpecs.spaceLabelStyles),
+            store.keyFor(KeySpecs.spaceSkinTones),
+            store.keyFor(KeySpecs.displaySpaceBadges),
+            store.keyFor(KeySpecs.displaySpaceColors),
+            store.keyFor(KeySpecs.displaySpaceIconStyles),
+            store.keyFor(KeySpecs.displaySpaceSymbols),
+            store.keyFor(KeySpecs.displaySpaceFonts),
+            store.keyFor(KeySpecs.displaySpaceLabels),
+            store.keyFor(KeySpecs.displaySpaceLabelStyles),
+            store.keyFor(KeySpecs.displaySpaceSkinTones),
         ]
 
         preferenceObservationTasks.append(Task { [weak self] in
@@ -256,7 +256,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             }
         })
 
-        let localSpaceNumbersKey = store.keyLocalSpaceNumbers
+        let localSpaceNumbersKey = store.keyFor(KeySpecs.localSpaceNumbers)
         preferenceObservationTasks.append(Task { [weak self] in
             for await _ in Defaults.updates(localSpaceNumbersKey, initial: false) {
                 guard !Task.isCancelled

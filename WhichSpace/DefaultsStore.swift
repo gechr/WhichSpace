@@ -135,121 +135,105 @@ enum KeySpecs {
 final class DefaultsStore {
     let suite: UserDefaults
 
-    // Lazily-created keys bound to this store's suite
-    private(set) lazy var keyClickToSwitchSpaces = KeySpecs.clickToSwitchSpaces.key(suite: suite)
-    private(set) lazy var keyDimInactiveSpaces = KeySpecs.dimInactiveSpaces.key(suite: suite)
-    private(set) lazy var keyDisplaySpaceBadges = KeySpecs.displaySpaceBadges.key(suite: suite)
-    private(set) lazy var keyDisplaySpaceColors = KeySpecs.displaySpaceColors.key(suite: suite)
-    private(set) lazy var keyDisplaySpaceFonts = KeySpecs.displaySpaceFonts.key(suite: suite)
-    private(set) lazy var keyDisplaySpaceIconStyles = KeySpecs.displaySpaceIconStyles.key(suite: suite)
-    private(set) lazy var keyDisplaySpaceLabels = KeySpecs.displaySpaceLabels.key(suite: suite)
-    private(set) lazy var keyDisplaySpaceLabelStyles = KeySpecs.displaySpaceLabelStyles.key(suite: suite)
-    private(set) lazy var keyDisplaySpaceSkinTones = KeySpecs.displaySpaceSkinTones.key(suite: suite)
-    private(set) lazy var keyDisplaySpaceSymbols = KeySpecs.displaySpaceSymbols.key(suite: suite)
-    private(set) lazy var keyHideEmptySpaces = KeySpecs.hideEmptySpaces.key(suite: suite)
-    private(set) lazy var keyHideFullscreenApps = KeySpecs.hideFullscreenApps.key(suite: suite)
-    private(set) lazy var keyHideSingleSpace = KeySpecs.hideSingleSpace.key(suite: suite)
-    private(set) lazy var keyLocalSpaceNumbers = KeySpecs.localSpaceNumbers.key(suite: suite)
-    private(set) lazy var keyPaddingScale = KeySpecs.paddingScale.key(suite: suite)
-    private(set) lazy var keySeparatorColor = KeySpecs.separatorColor.key(suite: suite)
-    private(set) lazy var keyShowAllDisplays = KeySpecs.showAllDisplays.key(suite: suite)
-    private(set) lazy var keyShowAllSpaces = KeySpecs.showAllSpaces.key(suite: suite)
-    private(set) lazy var keySizeScale = KeySpecs.sizeScale.key(suite: suite)
-    private(set) lazy var keySoundName = KeySpecs.soundName.key(suite: suite)
-    private(set) lazy var keySpaceBadges = KeySpecs.spaceBadges.key(suite: suite)
-    private(set) lazy var keySpaceColors = KeySpecs.spaceColors.key(suite: suite)
-    private(set) lazy var keySpaceFonts = KeySpecs.spaceFonts.key(suite: suite)
-    private(set) lazy var keySpaceIconStyles = KeySpecs.spaceIconStyles.key(suite: suite)
-    private(set) lazy var keySpaceLabels = KeySpecs.spaceLabels.key(suite: suite)
-    private(set) lazy var keySpaceLabelStyles = KeySpecs.spaceLabelStyles.key(suite: suite)
-    private(set) lazy var keySpaceSkinTones = KeySpecs.spaceSkinTones.key(suite: suite)
-    private(set) lazy var keySpaceSymbols = KeySpecs.spaceSymbols.key(suite: suite)
-    private(set) lazy var keyUniqueIconsPerDisplay = KeySpecs.uniqueIconsPerDisplay.key(suite: suite)
-
     init(suite: UserDefaults) {
         self.suite = suite
+    }
+
+    /// Read/write a defaults value via its `TypedKeySpec`. Constructs a
+    /// suite-bound `Defaults.Key` per call; the underlying `Defaults` library
+    /// caches resolved values, so this is cheap.
+    private subscript<V>(spec: TypedKeySpec<V>) -> V {
+        get { Defaults[spec.key(suite: suite)] }
+        set { Defaults[spec.key(suite: suite)] = newValue }
+    }
+
+    /// Returns a suite-bound `Defaults.Key` for the given spec. Used by callers
+    /// that need a typed key for observation (e.g. `Defaults.updates(_:)`)
+    /// rather than a value.
+    func keyFor<V>(_ spec: TypedKeySpec<V>) -> Defaults.Key<V> {
+        spec.key(suite: suite)
     }
 
     // MARK: - Property Accessors
 
     var clickToSwitchSpaces: Bool {
-        get { Defaults[keyClickToSwitchSpaces] }
-        set { Defaults[keyClickToSwitchSpaces] = newValue }
+        get { self[KeySpecs.clickToSwitchSpaces] }
+        set { self[KeySpecs.clickToSwitchSpaces] = newValue }
     }
 
     var dimInactiveSpaces: Bool {
-        get { Defaults[keyDimInactiveSpaces] }
-        set { Defaults[keyDimInactiveSpaces] = newValue }
+        get { self[KeySpecs.dimInactiveSpaces] }
+        set { self[KeySpecs.dimInactiveSpaces] = newValue }
     }
 
     var displaySpaceBadges: [String: [Int: SpaceBadge]] {
-        get { Defaults[keyDisplaySpaceBadges] }
-        set { Defaults[keyDisplaySpaceBadges] = newValue }
+        get { self[KeySpecs.displaySpaceBadges] }
+        set { self[KeySpecs.displaySpaceBadges] = newValue }
     }
 
     var displaySpaceColors: [String: [Int: SpaceColors]] {
-        get { Defaults[keyDisplaySpaceColors] }
-        set { Defaults[keyDisplaySpaceColors] = newValue }
+        get { self[KeySpecs.displaySpaceColors] }
+        set { self[KeySpecs.displaySpaceColors] = newValue }
     }
 
     var displaySpaceFonts: [String: [Int: SpaceFont]] {
-        get { Defaults[keyDisplaySpaceFonts] }
-        set { Defaults[keyDisplaySpaceFonts] = newValue }
+        get { self[KeySpecs.displaySpaceFonts] }
+        set { self[KeySpecs.displaySpaceFonts] = newValue }
     }
 
     var displaySpaceIconStyles: [String: [Int: IconStyle]] {
-        get { Defaults[keyDisplaySpaceIconStyles] }
-        set { Defaults[keyDisplaySpaceIconStyles] = newValue }
+        get { self[KeySpecs.displaySpaceIconStyles] }
+        set { self[KeySpecs.displaySpaceIconStyles] = newValue }
     }
 
     var displaySpaceLabels: [String: [Int: String]] {
-        get { Defaults[keyDisplaySpaceLabels] }
-        set { Defaults[keyDisplaySpaceLabels] = newValue }
+        get { self[KeySpecs.displaySpaceLabels] }
+        set { self[KeySpecs.displaySpaceLabels] = newValue }
     }
 
     var displaySpaceLabelStyles: [String: [Int: IconStyle]] {
-        get { Defaults[keyDisplaySpaceLabelStyles] }
-        set { Defaults[keyDisplaySpaceLabelStyles] = newValue }
+        get { self[KeySpecs.displaySpaceLabelStyles] }
+        set { self[KeySpecs.displaySpaceLabelStyles] = newValue }
     }
 
     var displaySpaceSkinTones: [String: [Int: SkinTone]] {
-        get { Defaults[keyDisplaySpaceSkinTones] }
-        set { Defaults[keyDisplaySpaceSkinTones] = newValue }
+        get { self[KeySpecs.displaySpaceSkinTones] }
+        set { self[KeySpecs.displaySpaceSkinTones] = newValue }
     }
 
     var displaySpaceSymbols: [String: [Int: String]] {
-        get { Defaults[keyDisplaySpaceSymbols] }
-        set { Defaults[keyDisplaySpaceSymbols] = newValue }
+        get { self[KeySpecs.displaySpaceSymbols] }
+        set { self[KeySpecs.displaySpaceSymbols] = newValue }
     }
 
     var hideEmptySpaces: Bool {
-        get { Defaults[keyHideEmptySpaces] }
-        set { Defaults[keyHideEmptySpaces] = newValue }
+        get { self[KeySpecs.hideEmptySpaces] }
+        set { self[KeySpecs.hideEmptySpaces] = newValue }
     }
 
     var hideFullscreenApps: Bool {
-        get { Defaults[keyHideFullscreenApps] }
-        set { Defaults[keyHideFullscreenApps] = newValue }
+        get { self[KeySpecs.hideFullscreenApps] }
+        set { self[KeySpecs.hideFullscreenApps] = newValue }
     }
 
     var hideSingleSpace: Bool {
-        get { Defaults[keyHideSingleSpace] }
-        set { Defaults[keyHideSingleSpace] = newValue }
+        get { self[KeySpecs.hideSingleSpace] }
+        set { self[KeySpecs.hideSingleSpace] = newValue }
     }
 
     var localSpaceNumbers: Bool {
-        get { Defaults[keyLocalSpaceNumbers] }
-        set { Defaults[keyLocalSpaceNumbers] = newValue }
+        get { self[KeySpecs.localSpaceNumbers] }
+        set { self[KeySpecs.localSpaceNumbers] = newValue }
     }
 
     var paddingScale: Double {
-        get { Defaults[keyPaddingScale] }
-        set { Defaults[keyPaddingScale] = newValue }
+        get { self[KeySpecs.paddingScale] }
+        set { self[KeySpecs.paddingScale] = newValue }
     }
 
     var separatorColor: NSColor? {
         get {
-            guard let data = Defaults[keySeparatorColor]
+            guard let data = self[KeySpecs.separatorColor]
             else { return nil }
             do {
                 return try NSKeyedUnarchiver.unarchivedObject(ofClass: NSColor.self, from: data)
@@ -261,7 +245,7 @@ final class DefaultsStore {
         set {
             if let color = newValue {
                 do {
-                    Defaults[keySeparatorColor] = try NSKeyedArchiver.archivedData(
+                    self[KeySpecs.separatorColor] = try NSKeyedArchiver.archivedData(
                         withRootObject: color,
                         requiringSecureCoding: true
                     )
@@ -269,79 +253,79 @@ final class DefaultsStore {
                     NSLog("DefaultsStore: failed to archive separatorColor: %@", error.localizedDescription)
                 }
             } else {
-                Defaults[keySeparatorColor] = nil
+                self[KeySpecs.separatorColor] = nil
             }
         }
     }
 
     /// Raw separator color data for use as an equatable cache key
     var separatorColorData: Data? {
-        Defaults[keySeparatorColor]
+        self[KeySpecs.separatorColor]
     }
 
     var showAllDisplays: Bool {
-        get { Defaults[keyShowAllDisplays] }
-        set { Defaults[keyShowAllDisplays] = newValue }
+        get { self[KeySpecs.showAllDisplays] }
+        set { self[KeySpecs.showAllDisplays] = newValue }
     }
 
     var showAllSpaces: Bool {
-        get { Defaults[keyShowAllSpaces] }
-        set { Defaults[keyShowAllSpaces] = newValue }
+        get { self[KeySpecs.showAllSpaces] }
+        set { self[KeySpecs.showAllSpaces] = newValue }
     }
 
     var sizeScale: Double {
-        get { Defaults[keySizeScale] }
-        set { Defaults[keySizeScale] = newValue }
+        get { self[KeySpecs.sizeScale] }
+        set { self[KeySpecs.sizeScale] = newValue }
     }
 
     var soundName: String {
-        get { Defaults[keySoundName] }
-        set { Defaults[keySoundName] = newValue }
+        get { self[KeySpecs.soundName] }
+        set { self[KeySpecs.soundName] = newValue }
     }
 
     var spaceBadges: [Int: SpaceBadge] {
-        get { Defaults[keySpaceBadges] }
-        set { Defaults[keySpaceBadges] = newValue }
+        get { self[KeySpecs.spaceBadges] }
+        set { self[KeySpecs.spaceBadges] = newValue }
     }
 
     var spaceColors: [Int: SpaceColors] {
-        get { Defaults[keySpaceColors] }
-        set { Defaults[keySpaceColors] = newValue }
+        get { self[KeySpecs.spaceColors] }
+        set { self[KeySpecs.spaceColors] = newValue }
     }
 
     var spaceFonts: [Int: SpaceFont] {
-        get { Defaults[keySpaceFonts] }
-        set { Defaults[keySpaceFonts] = newValue }
+        get { self[KeySpecs.spaceFonts] }
+        set { self[KeySpecs.spaceFonts] = newValue }
     }
 
     var spaceIconStyles: [Int: IconStyle] {
-        get { Defaults[keySpaceIconStyles] }
-        set { Defaults[keySpaceIconStyles] = newValue }
+        get { self[KeySpecs.spaceIconStyles] }
+        set { self[KeySpecs.spaceIconStyles] = newValue }
     }
 
     var spaceLabels: [Int: String] {
-        get { Defaults[keySpaceLabels] }
-        set { Defaults[keySpaceLabels] = newValue }
+        get { self[KeySpecs.spaceLabels] }
+        set { self[KeySpecs.spaceLabels] = newValue }
     }
 
     var spaceLabelStyles: [Int: IconStyle] {
-        get { Defaults[keySpaceLabelStyles] }
-        set { Defaults[keySpaceLabelStyles] = newValue }
+        get { self[KeySpecs.spaceLabelStyles] }
+        set { self[KeySpecs.spaceLabelStyles] = newValue }
     }
 
     var spaceSkinTones: [Int: SkinTone] {
-        get { Defaults[keySpaceSkinTones] }
-        set { Defaults[keySpaceSkinTones] = newValue }
+        get { self[KeySpecs.spaceSkinTones] }
+        set { self[KeySpecs.spaceSkinTones] = newValue }
     }
 
     var spaceSymbols: [Int: String] {
-        get { Defaults[keySpaceSymbols] }
-        set { Defaults[keySpaceSymbols] = newValue }
+        get { self[KeySpecs.spaceSymbols] }
+        set { self[KeySpecs.spaceSymbols] = newValue }
     }
 
     var uniqueIconsPerDisplay: Bool {
-        get { Defaults[keyUniqueIconsPerDisplay] }
-        set { Defaults[keyUniqueIconsPerDisplay] = newValue }
+        get { self[KeySpecs.uniqueIconsPerDisplay] }
+        set { self[KeySpecs.uniqueIconsPerDisplay] = newValue }
     }
 
     // MARK: - Utilities
@@ -349,35 +333,35 @@ final class DefaultsStore {
     /// Resets all keys to their default values.
     func resetAll() {
         Defaults.reset(
-            keyClickToSwitchSpaces,
-            keyDimInactiveSpaces,
-            keyDisplaySpaceBadges,
-            keyDisplaySpaceColors,
-            keyDisplaySpaceFonts,
-            keyDisplaySpaceIconStyles,
-            keyDisplaySpaceLabels,
-            keyDisplaySpaceLabelStyles,
-            keyDisplaySpaceSkinTones,
-            keyDisplaySpaceSymbols,
-            keyHideEmptySpaces,
-            keyHideFullscreenApps,
-            keyHideSingleSpace,
-            keyLocalSpaceNumbers,
-            keyPaddingScale,
-            keySeparatorColor,
-            keyShowAllDisplays,
-            keyShowAllSpaces,
-            keySizeScale,
-            keySoundName,
-            keySpaceBadges,
-            keySpaceColors,
-            keySpaceFonts,
-            keySpaceIconStyles,
-            keySpaceLabels,
-            keySpaceLabelStyles,
-            keySpaceSkinTones,
-            keySpaceSymbols,
-            keyUniqueIconsPerDisplay
+            KeySpecs.clickToSwitchSpaces.key(suite: suite),
+            KeySpecs.dimInactiveSpaces.key(suite: suite),
+            KeySpecs.displaySpaceBadges.key(suite: suite),
+            KeySpecs.displaySpaceColors.key(suite: suite),
+            KeySpecs.displaySpaceFonts.key(suite: suite),
+            KeySpecs.displaySpaceIconStyles.key(suite: suite),
+            KeySpecs.displaySpaceLabels.key(suite: suite),
+            KeySpecs.displaySpaceLabelStyles.key(suite: suite),
+            KeySpecs.displaySpaceSkinTones.key(suite: suite),
+            KeySpecs.displaySpaceSymbols.key(suite: suite),
+            KeySpecs.hideEmptySpaces.key(suite: suite),
+            KeySpecs.hideFullscreenApps.key(suite: suite),
+            KeySpecs.hideSingleSpace.key(suite: suite),
+            KeySpecs.localSpaceNumbers.key(suite: suite),
+            KeySpecs.paddingScale.key(suite: suite),
+            KeySpecs.separatorColor.key(suite: suite),
+            KeySpecs.showAllDisplays.key(suite: suite),
+            KeySpecs.showAllSpaces.key(suite: suite),
+            KeySpecs.sizeScale.key(suite: suite),
+            KeySpecs.soundName.key(suite: suite),
+            KeySpecs.spaceBadges.key(suite: suite),
+            KeySpecs.spaceColors.key(suite: suite),
+            KeySpecs.spaceFonts.key(suite: suite),
+            KeySpecs.spaceIconStyles.key(suite: suite),
+            KeySpecs.spaceLabels.key(suite: suite),
+            KeySpecs.spaceLabelStyles.key(suite: suite),
+            KeySpecs.spaceSkinTones.key(suite: suite),
+            KeySpecs.spaceSymbols.key(suite: suite),
+            KeySpecs.uniqueIconsPerDisplay.key(suite: suite)
         )
     }
 }
