@@ -1,36 +1,23 @@
-import XCTest
+import AppKit
+import Testing
 @testable import WhichSpace
 
 @MainActor
-final class AppStateTests: XCTestCase {
-    private var stub: CGSStub!
-    private var sut: AppState!
-    private var store: DefaultsStore!
-    private var testSuite: TestSuite!
+struct AppStateTests {
+    private let stub: CGSStub
+    private let store: DefaultsStore
+    private let testSuite: TestSuite
 
-    override func setUp() async throws {
-        try await super.setUp()
+    init() {
         testSuite = TestSuiteFactory.createSuite()
         store = DefaultsStore(suite: testSuite.suite)
         stub = CGSStub()
     }
 
-    override func tearDown() async throws {
-        sut = nil
-        stub = nil
-        if let store, let testSuite {
-            store.resetAll()
-            TestSuiteFactory.destroySuite(testSuite)
-        }
-        store = nil
-        testSuite = nil
-        try await super.tearDown()
-    }
-
     // MARK: - Space Detection Tests
 
-    func testSingleDisplayWithThreeRegularSpaces_activeIndexCorrect() {
-        // Given: Single display with 3 regular spaces, space 2 active
+    @Test("single display with three regular spaces: active index correct")
+    func singleDisplayWithThreeRegularSpaces_activeIndexCorrect() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -44,16 +31,14 @@ final class AppStateTests: XCTestCase {
             ),
         ]
 
-        // When
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // Then
-        XCTAssertEqual(sut.currentSpace, 2, "Active space should be index 2 (1-based)")
-        XCTAssertEqual(sut.currentSpaceLabel, "2", "Label should be '2'")
+        #expect(sut.currentSpace == 2)
+        #expect(sut.currentSpaceLabel == "2")
     }
 
-    func testSingleDisplayWithThreeRegularSpaces_labelsIncrementAsExpected() {
-        // Given: Single display with 3 regular spaces
+    @Test("single display with three regular spaces: labels increment 1, 2, 3")
+    func singleDisplayWithThreeRegularSpaces_labelsIncrementAsExpected() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -67,15 +52,13 @@ final class AppStateTests: XCTestCase {
             ),
         ]
 
-        // When
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // Then
-        XCTAssertEqual(sut.allSpaceLabels, ["1", "2", "3"], "Labels should increment 1, 2, 3")
+        #expect(sut.allSpaceLabels == ["1", "2", "3"])
     }
 
-    func testFullscreenSpaceLabeling() {
-        // Given: Display with regular, fullscreen, regular spaces
+    @Test("fullscreen space gets fullscreen label")
+    func fullscreenSpaceLabeling() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -89,20 +72,14 @@ final class AppStateTests: XCTestCase {
             ),
         ]
 
-        // When
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // Then
-        XCTAssertEqual(
-            sut.allSpaceLabels,
-            ["1", Labels.fullscreen, "2"],
-            "Fullscreen should be 'F', numbering resumes after"
-        )
-        XCTAssertEqual(sut.currentSpaceLabel, Labels.fullscreen, "Active fullscreen space label should be 'F'")
+        #expect(sut.allSpaceLabels == ["1", Labels.fullscreen, "2"])
+        #expect(sut.currentSpaceLabel == Labels.fullscreen)
     }
 
-    func testFullscreenSpace_numberingResumesAfterward() {
-        // Given: Display with regular, fullscreen, regular, fullscreen, regular spaces
+    @Test("fullscreen space: numbering resumes afterward")
+    func fullscreenSpace_numberingResumesAfterward() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -118,17 +95,15 @@ final class AppStateTests: XCTestCase {
             ),
         ]
 
-        // When
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // Then
-        XCTAssertEqual(sut.allSpaceLabels, ["1", Labels.fullscreen, "2", Labels.fullscreen, "3"])
-        XCTAssertEqual(sut.currentSpace, 5, "Active space index should be 5")
-        XCTAssertEqual(sut.currentSpaceLabel, "3", "Label should be '3' (3rd regular space)")
+        #expect(sut.allSpaceLabels == ["1", Labels.fullscreen, "2", Labels.fullscreen, "3"])
+        #expect(sut.currentSpace == 5)
+        #expect(sut.currentSpaceLabel == "3")
     }
 
-    func testInactiveDisplayIgnored() {
-        // Given: Two displays, only one is active menu bar display
+    @Test("inactive display ignored")
+    func inactiveDisplayIgnored() {
         stub.activeDisplayIdentifier = "DisplayA"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -150,16 +125,14 @@ final class AppStateTests: XCTestCase {
             ),
         ]
 
-        // When
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // Then: Should use DisplayA (active), not DisplayB
-        XCTAssertEqual(sut.allSpaceLabels, ["1", "2"], "Should show spaces from active display only")
-        XCTAssertEqual(sut.currentSpace, 1, "Should show space 1 from active display")
+        #expect(sut.allSpaceLabels == ["1", "2"])
+        #expect(sut.currentSpace == 1)
     }
 
-    func testMainDisplayFallback() {
-        // Given: Display with "Main" identifier should be used
+    @Test("falls back to Main display when active display not in list")
+    func mainDisplayFallback() {
         stub.activeDisplayIdentifier = "SomeOther"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -172,18 +145,16 @@ final class AppStateTests: XCTestCase {
             ),
         ]
 
-        // When
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // Then
-        XCTAssertEqual(sut.currentSpace, 2)
-        XCTAssertEqual(sut.allSpaceLabels, ["1", "2"])
+        #expect(sut.currentSpace == 2)
+        #expect(sut.allSpaceLabels == ["1", "2"])
     }
 
     // MARK: - showAllSpaces Rendering Tests
 
-    func testShowAllSpaces_iconWidthEqualsCountTimesStatusItemWidth() {
-        // Given
+    @Test("showAllSpaces: icon width equals count times status item width")
+    func showAllSpaces_iconWidthEqualsCountTimesStatusItemWidth() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -198,18 +169,16 @@ final class AppStateTests: XCTestCase {
         ]
         store.showAllSpaces = true
 
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // When
         let icon = sut.statusBarIcon
 
-        // Then
         let expectedWidth = Double(sut.allSpaceLabels.count) * Layout.statusItemWidth
-        XCTAssertEqual(icon.size.width, expectedWidth, accuracy: 0.1)
+        #expect(abs(icon.size.width - expectedWidth) < 0.1)
     }
 
-    func testShowAllSpaces_fiveSpaces_correctWidth() {
-        // Given: 5 spaces
+    @Test("showAllSpaces: five spaces produces correct width")
+    func showAllSpaces_fiveSpaces_correctWidth() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -226,18 +195,16 @@ final class AppStateTests: XCTestCase {
         ]
         store.showAllSpaces = true
 
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // When
         let icon = sut.statusBarIcon
 
-        // Then
         let expectedWidth = 5.0 * Layout.statusItemWidth
-        XCTAssertEqual(icon.size.width, expectedWidth, accuracy: 0.1)
+        #expect(abs(icon.size.width - expectedWidth) < 0.1)
     }
 
-    func testShowAllSpaces_inactiveSpacesHaveReducedAlpha() {
-        // Given: 3 spaces, space 2 is active
+    @Test("showAllSpaces: inactive spaces have reduced alpha")
+    func showAllSpaces_inactiveSpacesHaveReducedAlpha() throws {
         store.showAllSpaces = true
 
         stub.activeDisplayIdentifier = "Main"
@@ -253,23 +220,16 @@ final class AppStateTests: XCTestCase {
             ),
         ]
 
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // When
         let icon = sut.statusBarIcon
 
-        // Then: Sample alpha values from each segment
-        guard let bitmap = icon.bitmapRepresentation() else {
-            XCTFail("Could not create bitmap representation")
-            return
-        }
+        let bitmap = try #require(icon.bitmapRepresentation())
 
-        // Account for Retina scaling: bitmap pixels may be 2x the point size
         let scale = Double(bitmap.pixelsWide) / icon.size.width
         let segmentWidth = Int(Layout.statusItemWidth * scale)
         let sampleY = bitmap.pixelsHigh / 2
 
-        // Space 1 (inactive) - sample from center of first segment
         let inactiveX1 = segmentWidth / 2
         let alphaInactive1 = bitmap.sampleMaxAlpha(inRect: CGRect(
             x: inactiveX1 - 2,
@@ -278,11 +238,9 @@ final class AppStateTests: XCTestCase {
             height: 4
         ))
 
-        // Space 2 (active) - sample from center of second segment
         let activeX = segmentWidth + segmentWidth / 2
         let alphaActive = bitmap.sampleMaxAlpha(inRect: CGRect(x: activeX - 2, y: sampleY - 2, width: 4, height: 4))
 
-        // Space 3 (inactive) - sample from center of third segment
         let inactiveX3 = 2 * segmentWidth + segmentWidth / 2
         let alphaInactive3 = bitmap.sampleMaxAlpha(inRect: CGRect(
             x: inactiveX3 - 2,
@@ -291,16 +249,13 @@ final class AppStateTests: XCTestCase {
             height: 4
         ))
 
-        // Active space should have higher alpha than inactive spaces
-        XCTAssertGreaterThan(alphaActive, alphaInactive1, "Active space should have higher alpha than inactive space 1")
-        XCTAssertGreaterThan(alphaActive, alphaInactive3, "Active space should have higher alpha than inactive space 3")
-
-        // Inactive spaces should have similar (reduced) alpha
-        XCTAssertEqual(alphaInactive1, alphaInactive3, accuracy: 0.1, "Inactive spaces should have similar alpha")
+        #expect(alphaActive > alphaInactive1)
+        #expect(alphaActive > alphaInactive3)
+        #expect(abs(alphaInactive1 - alphaInactive3) < 0.1)
     }
 
-    func testShowAllSpaces_activeVsInactiveAlphaRatio() {
-        // Given: 2 spaces, space 1 is active
+    @Test("showAllSpaces: active-to-inactive alpha ratio between 20% and 50%")
+    func showAllSpaces_activeVsInactiveAlphaRatio() throws {
         store.showAllSpaces = true
 
         stub.activeDisplayIdentifier = "Main"
@@ -315,41 +270,31 @@ final class AppStateTests: XCTestCase {
             ),
         ]
 
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // When
         let icon = sut.statusBarIcon
 
-        guard let bitmap = icon.bitmapRepresentation() else {
-            XCTFail("Could not create bitmap representation")
-            return
-        }
+        let bitmap = try #require(icon.bitmapRepresentation())
 
-        // Account for Retina scaling: bitmap pixels may be 2x the point size
         let scale = Double(bitmap.pixelsWide) / icon.size.width
         let segmentWidth = Int(Layout.statusItemWidth * scale)
         let sampleY = bitmap.pixelsHigh / 2
 
-        // Space 1 (active)
         let activeX = segmentWidth / 2
         let alphaActive = bitmap.sampleMaxAlpha(inRect: CGRect(x: activeX - 3, y: sampleY - 3, width: 6, height: 6))
 
-        // Space 2 (inactive)
         let inactiveX = segmentWidth + segmentWidth / 2
         let alphaInactive = bitmap.sampleMaxAlpha(inRect: CGRect(x: inactiveX - 3, y: sampleY - 3, width: 6, height: 6))
 
-        // The inactive alpha should be roughly 0.35 of active (as per generateCombinedIcon)
-        // Active alpha: 1.0, Inactive alpha: 0.35
-        // So inactive should be significantly less than active
         if alphaActive > 0 {
             let ratio = alphaInactive / alphaActive
-            XCTAssertLessThan(ratio, 0.5, "Inactive alpha should be less than 50% of active alpha")
-            XCTAssertGreaterThan(ratio, 0.2, "Inactive alpha should be at least 20% of active alpha")
+            #expect(ratio < 0.5)
+            #expect(ratio > 0.2)
         }
     }
 
-    func testShowAllSpaces_dimInactiveDisabled_allSpacesSameAlpha() {
-        // Given: 2 spaces, space 1 is active, dimming disabled
+    @Test("showAllSpaces with dimInactive disabled: all spaces equal alpha")
+    func showAllSpaces_dimInactiveDisabled_allSpacesSameAlpha() throws {
         store.showAllSpaces = true
         store.dimInactiveSpaces = false
 
@@ -365,40 +310,27 @@ final class AppStateTests: XCTestCase {
             ),
         ]
 
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // When
         let icon = sut.statusBarIcon
 
-        guard let bitmap = icon.bitmapRepresentation() else {
-            XCTFail("Could not create bitmap representation")
-            return
-        }
+        let bitmap = try #require(icon.bitmapRepresentation())
 
-        // Account for Retina scaling: bitmap pixels may be 2x the point size
         let scale = Double(bitmap.pixelsWide) / icon.size.width
         let segmentWidth = Int(Layout.statusItemWidth * scale)
         let sampleY = bitmap.pixelsHigh / 2
 
-        // Space 1 (active)
         let activeX = segmentWidth / 2
         let alphaActive = bitmap.sampleMaxAlpha(inRect: CGRect(x: activeX - 3, y: sampleY - 3, width: 6, height: 6))
 
-        // Space 2 (inactive but dimming disabled)
         let inactiveX = segmentWidth + segmentWidth / 2
         let alphaInactive = bitmap.sampleMaxAlpha(inRect: CGRect(x: inactiveX - 3, y: sampleY - 3, width: 6, height: 6))
 
-        // Both should have similar alpha when dimming is disabled
-        XCTAssertEqual(
-            alphaActive,
-            alphaInactive,
-            accuracy: 0.1,
-            "Active and inactive spaces should have same alpha when dimming is disabled"
-        )
+        #expect(abs(alphaActive - alphaInactive) < 0.1)
     }
 
-    func testShowAllSpaces_hideEmptySpaces_hidesEmptySpaces() {
-        // Given: 3 spaces, space 2 is active, space 1 has windows, space 3 is empty
+    @Test("hideEmptySpaces hides empty spaces in the rendered icon")
+    func showAllSpaces_hideEmptySpaces_hidesEmptySpaces() {
         store.showAllSpaces = true
         store.hideEmptySpaces = true
 
@@ -414,27 +346,18 @@ final class AppStateTests: XCTestCase {
                 activeSpaceID: 101
             ),
         ]
-        // Space 100 has windows, space 101 is active, space 102 is empty
         stub.spacesWithWindowsSet = [100]
 
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // When
         let icon = sut.statusBarIcon
 
-        // Then: Should only show 2 spaces (100 with windows, 101 active), not 102 (empty)
-        // Width should be 2 * statusItemWidth instead of 3
         let expectedWidth = 2 * Layout.statusItemWidth
-        XCTAssertEqual(
-            icon.size.width,
-            expectedWidth,
-            accuracy: 0.1,
-            "Icon should only show 2 spaces (one with windows, one active)"
-        )
+        #expect(abs(icon.size.width - expectedWidth) < 0.1)
     }
 
-    func testShowAllSpaces_hideEmptySpaces_alwaysShowsActiveSpace() {
-        // Given: 2 spaces, space 2 is active but empty
+    @Test("hideEmptySpaces always shows active space even if empty")
+    func showAllSpaces_hideEmptySpaces_alwaysShowsActiveSpace() {
         store.showAllSpaces = true
         store.hideEmptySpaces = true
 
@@ -449,26 +372,18 @@ final class AppStateTests: XCTestCase {
                 activeSpaceID: 101
             ),
         ]
-        // Only space 100 has windows, but 101 is active
         stub.spacesWithWindowsSet = [100]
 
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // When
         let icon = sut.statusBarIcon
 
-        // Then: Should show both spaces (100 with windows, 101 active even though empty)
         let expectedWidth = 2 * Layout.statusItemWidth
-        XCTAssertEqual(
-            icon.size.width,
-            expectedWidth,
-            accuracy: 0.1,
-            "Active space should always be shown even if empty"
-        )
+        #expect(abs(icon.size.width - expectedWidth) < 0.1)
     }
 
-    func testShowAllSpaces_hideEmptySpacesDisabled_showsAllSpaces() {
-        // Given: 3 spaces, hideEmptySpaces is disabled
+    @Test("hideEmptySpaces disabled: shows all spaces")
+    func showAllSpaces_hideEmptySpacesDisabled_showsAllSpaces() {
         store.showAllSpaces = true
         store.hideEmptySpaces = false
 
@@ -484,50 +399,40 @@ final class AppStateTests: XCTestCase {
                 activeSpaceID: 101
             ),
         ]
-        // Only space 100 has windows
         stub.spacesWithWindowsSet = [100]
 
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // When
         let icon = sut.statusBarIcon
 
-        // Then: Should show all 3 spaces since hideEmptySpaces is disabled
         let expectedWidth = 3 * Layout.statusItemWidth
-        XCTAssertEqual(
-            icon.size.width,
-            expectedWidth,
-            accuracy: 0.1,
-            "All spaces should be shown when hideEmptySpaces is disabled"
-        )
+        #expect(abs(icon.size.width - expectedWidth) < 0.1)
     }
 
     // MARK: - Dark Mode Tests
 
-    func testUpdateDarkModeStatus_darkAppearance() {
-        // Given
+    @Test("dark appearance enables darkModeEnabled")
+    func updateDarkModeStatus_darkAppearance() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(displayID: "Main", spaces: [(id: 100, isFullscreen: false)], activeSpaceID: 100),
         ]
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // When: Force dark appearance
         let previousAppearance = NSApp.appearance
         NSApp.appearance = NSAppearance(named: .darkAqua)
         sut.updateDarkModeStatus()
 
-        // Then
-        XCTAssertTrue(sut.darkModeEnabled, "darkModeEnabled should be true for dark appearance")
+        #expect(sut.darkModeEnabled)
 
-        // Cleanup
         NSApp.appearance = previousAppearance
     }
 
     // MARK: - Visible Icon Slots
 
-    func testStatusBarLayout_showAllSpacesUsesLabelsAndOffsets() {
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+    @Test("statusBarLayout showAllSpaces uses labels and offsets")
+    func statusBarLayout_showAllSpacesUsesLabelsAndOffsets() {
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
         sut.setSpaceState(
             labels: ["1", "2", "3"],
             currentSpace: 2,
@@ -539,12 +444,13 @@ final class AppStateTests: XCTestCase {
         let layout = sut.statusBarLayout()
         let slots = layout.slots
 
-        XCTAssertEqual(slots.map(\.targetSpace), [1, 2, 3])
-        XCTAssertEqual(slots.map(\.startX), [0, Layout.statusItemWidth, Layout.statusItemWidth * 2])
+        #expect(slots.map(\.targetSpace) == [1, 2, 3])
+        #expect(slots.map(\.startX) == [0, Layout.statusItemWidth, Layout.statusItemWidth * 2])
     }
 
-    func testStatusBarLayout_showAllSpaces_usesRenderedWidthsForTransparentIcons() {
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+    @Test("statusBarLayout showAllSpaces uses rendered widths for transparent icons")
+    func statusBarLayout_showAllSpaces_usesRenderedWidthsForTransparentIcons() {
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
         sut.setSpaceState(
             labels: ["1", "2", "3"],
             currentSpace: 2,
@@ -574,14 +480,15 @@ final class AppStateTests: XCTestCase {
         }
         let expectedStartX: [Double] = [0, expectedWidths[0], expectedWidths[0] + expectedWidths[1]]
 
-        XCTAssertEqual(slots.count, expectedWidths.count)
-        XCTAssertEqual(slots.map(\.width), expectedWidths)
-        XCTAssertEqual(slots.map(\.startX), expectedStartX)
-        XCTAssertLessThan(layout.totalWidth, Layout.statusItemWidth * 3)
+        #expect(slots.count == expectedWidths.count)
+        #expect(slots.map(\.width) == expectedWidths)
+        #expect(slots.map(\.startX) == expectedStartX)
+        #expect(layout.totalWidth < Layout.statusItemWidth * 3)
     }
 
-    func testStatusBarLayout_crossDisplayIncludesSeparatorAndSkipsFullscreenTargets() {
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+    @Test("statusBarLayout cross-display includes separator and skips fullscreen targets")
+    func statusBarLayout_crossDisplayIncludesSeparatorAndSkipsFullscreenTargets() {
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
         let displayA = DisplaySpaceInfo(
             displayID: "DisplayA",
             labels: ["1", Labels.fullscreen],
@@ -608,21 +515,18 @@ final class AppStateTests: XCTestCase {
 
         let slots = sut.statusBarLayout().slots
 
-        XCTAssertEqual(slots.map(\.targetSpace), [1, nil, 3, 4])
-        XCTAssertEqual(
-            slots.map(\.startX),
-            [
-                0,
-                Layout.statusItemWidth,
-                Layout.statusItemWidth * 2 + Layout.displaySeparatorWidth,
-                Layout.statusItemWidth * 3 + Layout.displaySeparatorWidth,
-            ]
-        )
+        #expect(slots.map(\.targetSpace) == [1, nil, 3, 4])
+        #expect(slots.map(\.startX) == [
+            0,
+            Layout.statusItemWidth,
+            Layout.statusItemWidth * 2 + Layout.displaySeparatorWidth,
+            Layout.statusItemWidth * 3 + Layout.displaySeparatorWidth,
+        ])
     }
 
-    func testStatusBarLayout_showAllSpaces_hideEmptySpaces_usesActualSpaceNumber() {
-        // Given: 5 spaces, only spaces 1 and 5 have windows, space 1 active
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+    @Test("statusBarLayout showAllSpaces hideEmptySpaces uses actual space number")
+    func statusBarLayout_showAllSpaces_hideEmptySpaces_usesActualSpaceNumber() {
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
         sut.setSpaceState(
             labels: ["1", "2", "3", "4", "5"],
             currentSpace: 1,
@@ -633,16 +537,14 @@ final class AppStateTests: XCTestCase {
         store.hideEmptySpaces = true
         stub.spacesWithWindowsSet = [100, 104]
 
-        // When
         let slots = sut.statusBarLayout().slots
 
-        // Then: Should show spaces 1 and 5, with targetSpace matching actual space numbers
-        XCTAssertEqual(slots.map(\.targetSpace), [1, 5])
+        #expect(slots.map(\.targetSpace) == [1, 5])
     }
 
-    func testStatusBarLayout_showAllDisplays_hideEmptySpaces_usesActualSpaceNumber() {
-        // Given: Display with 5 spaces, only spaces 1 and 5 have windows, space 1 active
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+    @Test("statusBarLayout showAllDisplays hideEmptySpaces uses actual space number")
+    func statusBarLayout_showAllDisplays_hideEmptySpaces_usesActualSpaceNumber() {
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
         let display = DisplaySpaceInfo(
             displayID: "Main",
             labels: ["1", "2", "3", "4", "5"],
@@ -662,56 +564,49 @@ final class AppStateTests: XCTestCase {
         store.hideEmptySpaces = true
         stub.spacesWithWindowsSet = [100, 104]
 
-        // When
         let slots = sut.statusBarLayout().slots
 
-        // Then: Should show spaces 1 and 5, with targetSpace matching actual space numbers
-        XCTAssertEqual(slots.map(\.targetSpace), [1, 5])
+        #expect(slots.map(\.targetSpace) == [1, 5])
     }
 
-    func testUpdateDarkModeStatus_lightAppearance() {
-        // Given
+    @Test("light appearance sets darkModeEnabled false")
+    func updateDarkModeStatus_lightAppearance() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(displayID: "Main", spaces: [(id: 100, isFullscreen: false)], activeSpaceID: 100),
         ]
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        // When: Force light appearance
         let previousAppearance = NSApp.appearance
         NSApp.appearance = NSAppearance(named: .aqua)
         sut.updateDarkModeStatus()
 
-        // Then
-        XCTAssertFalse(sut.darkModeEnabled, "darkModeEnabled should be false for light appearance")
+        #expect(!sut.darkModeEnabled)
 
-        // Cleanup
         NSApp.appearance = previousAppearance
     }
 
-    func testUpdateDarkModeStatus_flipsCorrectly() {
-        // Given
+    @Test("dark mode toggles flip correctly")
+    func updateDarkModeStatus_flipsCorrectly() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(displayID: "Main", spaces: [(id: 100, isFullscreen: false)], activeSpaceID: 100),
         ]
-        sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
         let previousAppearance = NSApp.appearance
 
-        // When/Then: Toggle dark -> light -> dark
         NSApp.appearance = NSAppearance(named: .darkAqua)
         sut.updateDarkModeStatus()
-        XCTAssertTrue(sut.darkModeEnabled)
+        #expect(sut.darkModeEnabled)
 
         NSApp.appearance = NSAppearance(named: .aqua)
         sut.updateDarkModeStatus()
-        XCTAssertFalse(sut.darkModeEnabled)
+        #expect(!sut.darkModeEnabled)
 
         NSApp.appearance = NSAppearance(named: .darkAqua)
         sut.updateDarkModeStatus()
-        XCTAssertTrue(sut.darkModeEnabled)
+        #expect(sut.darkModeEnabled)
 
-        // Cleanup
         NSApp.appearance = previousAppearance
     }
 }
