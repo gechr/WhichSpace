@@ -97,7 +97,7 @@ struct DynamicDisplayTests {
 
         let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        #expect(sut.allSpaceLabels == [])
+        #expect(sut.allSpaceLabels.isEmpty)
         #expect(sut.currentSpace == 0)
     }
 
@@ -609,7 +609,7 @@ struct ObserverLifecycleTests {
             displayID: "TestDisplay"
         )
 
-        #expect(appState.allSpaceLabels == [])
+        #expect(appState.allSpaceLabels.isEmpty)
         #expect(appState.currentSpace == 0)
     }
 
