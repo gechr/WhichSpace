@@ -47,7 +47,7 @@ run:
 	@pkill -x WhichSpace || :
 	@rm -rf ~/Library/Developer/Xcode/DerivedData/WhichSpace-*/Build/Products/Debug/WhichSpace.app
 	@xcodebuild -scheme WhichSpace -configuration Debug build
-	@open ~/Library/Developer/Xcode/DerivedData/WhichSpace-*/Build/Products/Debug/WhichSpace.app
+	@open ~/Library/Developer/Xcode/DerivedData/WhichSpace-*/Build/Products/Debug/WhichSpace.app $(if $(LANGUAGE),--args -AppleLanguages "($(LANGUAGE))")
 
 .PHONY: test
 test:
