@@ -328,16 +328,16 @@ enum SkinTone: Int, CaseIterable, Codable, Defaults.Serializable {
     // MARK: - Emoji Modification
 
     static let modifierScalars: Set<Unicode.Scalar> = [
-        Unicode.Scalar(0x1F3FB)!,
-        Unicode.Scalar(0x1F3FC)!,
-        Unicode.Scalar(0x1F3FD)!,
-        Unicode.Scalar(0x1F3FE)!,
-        Unicode.Scalar(0x1F3FF)!,
+        "\u{1F3FB}",
+        "\u{1F3FC}",
+        "\u{1F3FD}",
+        "\u{1F3FE}",
+        "\u{1F3FF}",
     ]
     /// Variation Selector 16 - used to request emoji presentation
-    private static let vs16 = Unicode.Scalar(0xFE0F)!
+    private static let vs16: Unicode.Scalar = "\u{FE0F}"
     /// Zero Width Joiner - used in complex emoji sequences
-    private static let zwj = Unicode.Scalar(0x200D)!
+    private static let zwj: Unicode.Scalar = "\u{200D}"
 
     /// Applies a skin tone modifier to an emoji.
     /// - Parameters:
