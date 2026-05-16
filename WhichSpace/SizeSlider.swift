@@ -148,12 +148,19 @@ final class SizeSlider: NSView {
         true
     }
 
+    private enum KeyCode {
+        static let leftArrow: UInt16 = 0x7B
+        static let rightArrow: UInt16 = 0x7C
+        static let downArrow: UInt16 = 0x7D
+        static let upArrow: UInt16 = 0x7E
+    }
+
     override func keyDown(with event: NSEvent) {
         switch event.keyCode {
-        case 123, 125: // Left arrow, Down arrow
+        case KeyCode.leftArrow, KeyCode.downArrow:
             stepper.doubleValue = max(stepper.minValue, stepper.doubleValue - stepper.increment)
             stepperChanged()
-        case 124, 126: // Right arrow, Up arrow
+        case KeyCode.rightArrow, KeyCode.upArrow:
             stepper.doubleValue = min(stepper.maxValue, stepper.doubleValue + stepper.increment)
             stepperChanged()
         default:
