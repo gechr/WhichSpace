@@ -1,30 +1,16 @@
-import XCTest
+import Testing
 @testable import WhichSpace
 
 @MainActor
-final class SpaceDefaultStyleTests: XCTestCase {
-    private var stub: CGSStub!
-    private var sut: AppState!
-    private var store: DefaultsStore!
-    private var testSuite: TestSuite!
+struct SpaceDefaultStyleTests {
+    private let stub: CGSStub
+    private let store: DefaultsStore
+    private let testSuite: TestSuite
 
-    override func setUp() async throws {
-        try await super.setUp()
+    init() {
         testSuite = TestSuiteFactory.createSuite()
         store = DefaultsStore(suite: testSuite.suite)
         stub = CGSStub()
-    }
-
-    override func tearDown() async throws {
-        sut = nil
-        stub = nil
-        if let store, let testSuite {
-            store.resetAll()
-            TestSuiteFactory.destroySuite(testSuite)
-        }
-        store = nil
-        testSuite = nil
-        try await super.tearDown()
     }
 
     // MARK: - Helpers
@@ -72,91 +58,81 @@ final class SpaceDefaultStyleTests: XCTestCase {
 
     // MARK: - Default Style Applied to New Spaces
 
-    func testNewSpace_appliesDefaultStyle() {
-        // Given: A default style is saved with circle icon style
+    @Test("new space inherits default icon style")
+    func newSpace_appliesDefaultStyle() {
         SpacePreferences.setIconStyle(.circle, forSpace: 1, store: store)
         SpacePreferences.saveDefaultStyle(fromSpace: 1, store: store)
 
-        sut = makeAppState(
+        let sut = makeAppState(
             spaces: [(100, false), (101, false)],
             activeSpaceID: 101
         )
 
-        // When: A 3rd space is added
         updateStub(
             spaces: [(100, false), (101, false), (102, false)],
             activeSpaceID: 102
         )
         sut.forceSpaceUpdate()
 
-        // Then: Space 3 gets the default style
-        XCTAssertEqual(
-            SpacePreferences.iconStyle(forSpace: 3, store: store),
-            .circle,
-            "New space should get the default style"
-        )
+        #expect(SpacePreferences.iconStyle(forSpace: 3, store: store) == .circle)
     }
 
-    func testNewSpace_appliesDefaultColorsAndSymbol() {
-        // Given: Default style with colors and symbol
+    @Test("new space inherits default colors and symbol")
+    func newSpace_appliesDefaultColorsAndSymbol() {
         let colors = SpaceColors(foreground: .red, background: .blue)
         SpacePreferences.setColors(colors, forSpace: 1, store: store)
         SpacePreferences.setSymbol("star.fill", forSpace: 1, store: store)
         SpacePreferences.saveDefaultStyle(fromSpace: 1, store: store)
 
-        sut = makeAppState(
+        let sut = makeAppState(
             spaces: [(100, false)],
             activeSpaceID: 100
         )
 
-        // When: A 2nd space is added
         updateStub(
             spaces: [(100, false), (101, false)],
             activeSpaceID: 101
         )
         sut.forceSpaceUpdate()
 
-        // Then: Space 2 gets the default colors and symbol
         let inherited = SpacePreferences.colors(forSpace: 2, store: store)
-        XCTAssertNotNil(inherited, "New space should get default colors")
-        XCTAssertEqual(inherited?.foreground, .red)
-        XCTAssertEqual(inherited?.background, .blue)
-        XCTAssertEqual(SpacePreferences.symbol(forSpace: 2, store: store), "star.fill")
+        #expect(inherited != nil)
+        #expect(inherited?.foreground == .red)
+        #expect(inherited?.background == .blue)
+        #expect(SpacePreferences.symbol(forSpace: 2, store: store) == "star.fill")
     }
 
-    func testNewSpace_appliesMultipleDefaultPreferences() {
-        // Given: Default style with multiple customizations
+    @Test("new space inherits multiple default preferences")
+    func newSpace_appliesMultipleDefaultPreferences() {
         SpacePreferences.setIconStyle(.circle, forSpace: 1, store: store)
         SpacePreferences.setColors(SpaceColors(foreground: .red, background: .blue), forSpace: 1, store: store)
         SpacePreferences.setSymbol("star", forSpace: 1, store: store)
         SpacePreferences.setBadge(SpaceBadge(character: "A", position: .topRight), forSpace: 1, store: store)
         SpacePreferences.saveDefaultStyle(fromSpace: 1, store: store)
 
-        sut = makeAppState(
+        let sut = makeAppState(
             spaces: [(100, false)],
             activeSpaceID: 100
         )
 
-        // When: A 2nd space is added
         updateStub(
             spaces: [(100, false), (101, false)],
             activeSpaceID: 101
         )
         sut.forceSpaceUpdate()
 
-        // Then: All default preferences are applied
-        XCTAssertEqual(SpacePreferences.iconStyle(forSpace: 2, store: store), .circle)
-        XCTAssertEqual(SpacePreferences.colors(forSpace: 2, store: store)?.foreground, .red)
-        XCTAssertEqual(SpacePreferences.symbol(forSpace: 2, store: store), "star")
-        XCTAssertEqual(SpacePreferences.badge(forSpace: 2, store: store)?.character, "A")
+        #expect(SpacePreferences.iconStyle(forSpace: 2, store: store) == .circle)
+        #expect(SpacePreferences.colors(forSpace: 2, store: store)?.foreground == .red)
+        #expect(SpacePreferences.symbol(forSpace: 2, store: store) == "star")
+        #expect(SpacePreferences.badge(forSpace: 2, store: store)?.character == "A")
     }
 
-    func testNewSpace_onSecondaryDisplay_appliesDefaultToLocalSharedSpaceNumber() {
-        // Given: Shared preferences across displays and a saved default style
+    @Test("new space on secondary display uses local shared space number")
+    func newSpace_onSecondaryDisplay_appliesDefaultToLocalSharedSpaceNumber() {
         SpacePreferences.setIconStyle(.circle, forSpace: 1, store: store)
         SpacePreferences.saveDefaultStyle(fromSpace: 1, store: store)
 
-        sut = makeAppState(
+        let sut = makeAppState(
             displays: [
                 (displayID: "Main", spaces: [(100, false), (101, false)], activeSpaceID: 100),
                 (displayID: "Secondary", spaces: [(200, false), (201, false)], activeSpaceID: 201),
@@ -164,7 +140,6 @@ final class SpaceDefaultStyleTests: XCTestCase {
             activeDisplayID: "Secondary"
         )
 
-        // When: Secondary display gets a new 3rd space
         updateStub(
             displays: [
                 (displayID: "Main", spaces: [(100, false), (101, false)], activeSpaceID: 100),
@@ -173,18 +148,17 @@ final class SpaceDefaultStyleTests: XCTestCase {
         )
         sut.forceSpaceUpdate()
 
-        // Then: The local space number 3 inherits the default style, not the global total (5)
-        XCTAssertEqual(SpacePreferences.iconStyle(forSpace: 3, store: store), .circle)
-        XCTAssertNil(SpacePreferences.iconStyle(forSpace: 5, store: store))
+        #expect(SpacePreferences.iconStyle(forSpace: 3, store: store) == .circle)
+        #expect(SpacePreferences.iconStyle(forSpace: 5, store: store) == nil)
     }
 
-    func testNewSpace_onSecondaryDisplay_appliesDefaultToLocalPerDisplaySpaceNumber() {
-        // Given: Per-display preferences and a saved default style
+    @Test("new space on secondary display uses local per-display space number")
+    func newSpace_onSecondaryDisplay_appliesDefaultToLocalPerDisplaySpaceNumber() {
         store.uniqueIconsPerDisplay = true
         SpacePreferences.setIconStyle(.circle, forSpace: 1, display: "Main", store: store)
         SpacePreferences.saveDefaultStyle(fromSpace: 1, display: "Main", store: store)
 
-        sut = makeAppState(
+        let sut = makeAppState(
             displays: [
                 (displayID: "Main", spaces: [(100, false), (101, false)], activeSpaceID: 100),
                 (displayID: "Secondary", spaces: [(200, false), (201, false)], activeSpaceID: 201),
@@ -192,7 +166,6 @@ final class SpaceDefaultStyleTests: XCTestCase {
             activeDisplayID: "Secondary"
         )
 
-        // When: Secondary display gets a new 3rd space
         updateStub(
             displays: [
                 (displayID: "Main", spaces: [(100, false), (101, false)], activeSpaceID: 100),
@@ -201,163 +174,126 @@ final class SpaceDefaultStyleTests: XCTestCase {
         )
         sut.forceSpaceUpdate()
 
-        // Then: The per-display local space number 3 inherits the default style
-        XCTAssertEqual(
-            SpacePreferences.iconStyle(forSpace: 3, display: "Secondary", store: store),
-            .circle
-        )
-        XCTAssertNil(SpacePreferences.iconStyle(forSpace: 5, display: "Secondary", store: store))
-        XCTAssertNil(SpacePreferences.iconStyle(forSpace: 3, display: "Main", store: store))
+        #expect(SpacePreferences.iconStyle(forSpace: 3, display: "Secondary", store: store) == .circle)
+        #expect(SpacePreferences.iconStyle(forSpace: 5, display: "Secondary", store: store) == nil)
+        #expect(SpacePreferences.iconStyle(forSpace: 3, display: "Main", store: store) == nil)
     }
 
     // MARK: - No Default Style
 
-    func testNewSpace_noDefaultStyle_getsNoCustomization() {
-        // Given: No default style is saved
-        sut = makeAppState(
+    @Test("new space without default style stays unconfigured")
+    func newSpace_noDefaultStyle_getsNoCustomization() {
+        let sut = makeAppState(
             spaces: [(100, false), (101, false)],
             activeSpaceID: 101
         )
-        // Even though space 2 has a style, no default is saved
         SpacePreferences.setIconStyle(.circle, forSpace: 2, store: store)
 
-        // When: A 3rd space is added
         updateStub(
             spaces: [(100, false), (101, false), (102, false)],
             activeSpaceID: 102
         )
         sut.forceSpaceUpdate()
 
-        // Then: Space 3 has no preferences (app defaults)
-        XCTAssertFalse(
-            SpacePreferences.hasAnyPreference(forSpace: 3, store: store),
-            "New space should have no preferences when no default style is set"
-        )
+        #expect(!SpacePreferences.hasAnyPreference(forSpace: 3, store: store))
     }
 
     // MARK: - Guards
 
-    func testNewSpace_doesNotApplyDefaultWhenTargetHasPreferences() {
-        // Given: Default style saved, and space 3 pre-configured
+    @Test("does not overwrite preferences already set on the new space")
+    func newSpace_doesNotApplyDefaultWhenTargetHasPreferences() {
         SpacePreferences.setIconStyle(.circle, forSpace: 1, store: store)
         SpacePreferences.saveDefaultStyle(fromSpace: 1, store: store)
         SpacePreferences.setIconStyle(.hexagon, forSpace: 3, store: store)
 
-        sut = makeAppState(
+        let sut = makeAppState(
             spaces: [(100, false), (101, false)],
             activeSpaceID: 100
         )
 
-        // When: A 3rd space is added
         updateStub(
             spaces: [(100, false), (101, false), (102, false)],
             activeSpaceID: 102
         )
         sut.forceSpaceUpdate()
 
-        // Then: Space 3 keeps its existing hexagon style
-        XCTAssertEqual(
-            SpacePreferences.iconStyle(forSpace: 3, store: store),
-            .hexagon,
-            "New space with existing preferences should not be overwritten"
-        )
+        #expect(SpacePreferences.iconStyle(forSpace: 3, store: store) == .hexagon)
     }
 
-    func testNewSpace_doesNotApplyDefaultWhenSpaceCountDecreases() {
-        // Given: Default style saved, 3 spaces
+    @Test("does not apply default when space count decreases")
+    func newSpace_doesNotApplyDefaultWhenSpaceCountDecreases() {
         SpacePreferences.setIconStyle(.circle, forSpace: 1, store: store)
         SpacePreferences.saveDefaultStyle(fromSpace: 1, store: store)
 
-        sut = makeAppState(
+        let sut = makeAppState(
             spaces: [(100, false), (101, false), (102, false)],
             activeSpaceID: 101
         )
 
-        // When: Space is removed (count decreases to 2)
         updateStub(
             spaces: [(100, false), (101, false)],
             activeSpaceID: 101
         )
         sut.forceSpaceUpdate()
 
-        // Then: No default style applied
-        XCTAssertNil(SpacePreferences.iconStyle(forSpace: 3, store: store))
+        #expect(SpacePreferences.iconStyle(forSpace: 3, store: store) == nil)
     }
 
-    func testNewSpace_doesNotApplyDefaultOnInitialLaunch() {
-        // Given: Default style saved
+    @Test("does not apply default on initial launch")
+    func newSpace_doesNotApplyDefaultOnInitialLaunch() {
         SpacePreferences.setIconStyle(.circle, forSpace: 1, store: store)
         SpacePreferences.saveDefaultStyle(fromSpace: 1, store: store)
 
-        // When: AppState is created (initial launch)
-        sut = makeAppState(
+        _ = makeAppState(
             spaces: [(100, false), (101, false), (102, false)],
             activeSpaceID: 100
         )
 
-        // Then: Space 2 and 3 should NOT get default style on initial launch
-        XCTAssertNil(
-            SpacePreferences.iconStyle(forSpace: 2, store: store),
-            "Spaces should not get default style on initial launch"
-        )
-        XCTAssertNil(
-            SpacePreferences.iconStyle(forSpace: 3, store: store),
-            "Spaces should not get default style on initial launch"
-        )
+        #expect(SpacePreferences.iconStyle(forSpace: 2, store: store) == nil)
+        #expect(SpacePreferences.iconStyle(forSpace: 3, store: store) == nil)
     }
 
     // MARK: - Per-Display
 
-    func testNewSpace_appliesDefault_perDisplay() {
+    @Test("per-display default applies to new space on its display")
+    func newSpace_appliesDefault_perDisplay() {
         store.uniqueIconsPerDisplay = true
 
-        // Given: Default style saved from space 1 on Main display
         SpacePreferences.setIconStyle(.circle, forSpace: 1, display: "Main", store: store)
         SpacePreferences.saveDefaultStyle(fromSpace: 1, display: "Main", store: store)
 
-        sut = makeAppState(
+        let sut = makeAppState(
             spaces: [(100, false)],
             activeSpaceID: 100
         )
 
-        // When: A 2nd space is added
         updateStub(
             spaces: [(100, false), (101, false)],
             activeSpaceID: 101
         )
         sut.forceSpaceUpdate()
 
-        // Then: Space 2 gets the default style on its display
-        XCTAssertEqual(
-            SpacePreferences.iconStyle(forSpace: 2, display: "Main", store: store),
-            .circle,
-            "New space should get default style per-display"
-        )
+        #expect(SpacePreferences.iconStyle(forSpace: 2, display: "Main", store: store) == .circle)
     }
 
     // MARK: - Switching Without New Space
 
-    func testSwitchingSpaces_doesNotApplyDefault() {
-        // Given: Default style saved, 3 spaces
+    @Test("switching active space does not apply default")
+    func switchingSpaces_doesNotApplyDefault() {
         SpacePreferences.setIconStyle(.circle, forSpace: 1, store: store)
         SpacePreferences.saveDefaultStyle(fromSpace: 1, store: store)
 
-        sut = makeAppState(
+        let sut = makeAppState(
             spaces: [(100, false), (101, false), (102, false)],
             activeSpaceID: 100
         )
 
-        // When: Switch to space 2 (no new space created)
         updateStub(
             spaces: [(100, false), (101, false), (102, false)],
             activeSpaceID: 101
         )
         sut.forceSpaceUpdate()
 
-        // Then: Space 2 should not get the default style
-        XCTAssertNil(
-            SpacePreferences.iconStyle(forSpace: 2, store: store),
-            "Switching spaces should not apply default style"
-        )
+        #expect(SpacePreferences.iconStyle(forSpace: 2, store: store) == nil)
     }
 }
