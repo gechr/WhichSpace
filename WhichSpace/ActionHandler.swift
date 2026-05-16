@@ -180,16 +180,8 @@ final class ActionHandler: NSObject {
             )
             let display = appState.currentDisplayID
             for space in appState.getAllSpaceIndices() {
-                if let colors {
-                    SpacePreferences.setColors(colors, forSpace: space, display: display, store: store)
-                } else {
-                    SpacePreferences.clearColors(forSpace: space, display: display, store: store)
-                }
-                if let skinTone {
-                    SpacePreferences.setSkinTone(skinTone, forSpace: space, display: display, store: store)
-                } else {
-                    SpacePreferences.clearSkinTone(forSpace: space, display: display, store: store)
-                }
+                SpacePreferences.setColors(colors, forSpace: space, display: display, store: store)
+                SpacePreferences.setSkinTone(skinTone, forSpace: space, display: display, store: store)
             }
         }
     }
@@ -230,11 +222,7 @@ final class ActionHandler: NSObject {
             let display = appState.currentDisplayID
             for space in appState.getAllSpaceIndices() {
                 SpacePreferences.setIconStyle(style, forSpace: space, display: display, store: store)
-                if let symbol {
-                    SpacePreferences.setSymbol(symbol, forSpace: space, display: display, store: store)
-                } else {
-                    SpacePreferences.clearSymbol(forSpace: space, display: display, store: store)
-                }
+                SpacePreferences.setSymbol(symbol, forSpace: space, display: display, store: store)
             }
         }
     }
@@ -275,11 +263,7 @@ final class ActionHandler: NSObject {
             )
             let display = appState.currentDisplayID
             for space in appState.getAllSpaceIndices() {
-                if let badge {
-                    SpacePreferences.setBadge(badge, forSpace: space, display: display, store: store)
-                } else {
-                    SpacePreferences.clearBadge(forSpace: space, display: display, store: store)
-                }
+                SpacePreferences.setBadge(badge, forSpace: space, display: display, store: store)
             }
         }
     }
@@ -342,7 +326,6 @@ final class ActionHandler: NSObject {
         }
     }
 
-    // swiftlint:disable:next function_body_length
     @objc func copyToAllSpaces() {
         withConfirmation(
             message: Localization.confirmCopyToAll,
@@ -353,7 +336,7 @@ final class ActionHandler: NSObject {
             let style = appState.currentIconStyle
             let colors = appState.currentColors
             let symbol = appState.currentSymbol
-            let font = appState.currentFont
+            let font = appState.currentFont.map(SpaceFont.init(font:))
             let skinTone = SpacePreferences.skinTone(
                 forSpace: appState.currentSpace,
                 display: appState.currentDisplayID,
@@ -362,26 +345,10 @@ final class ActionHandler: NSObject {
             let display = appState.currentDisplayID
             for space in appState.getAllSpaceIndices() {
                 SpacePreferences.setIconStyle(style, forSpace: space, display: display, store: store)
-                if let symbol {
-                    SpacePreferences.setSymbol(symbol, forSpace: space, display: display, store: store)
-                } else {
-                    SpacePreferences.clearSymbol(forSpace: space, display: display, store: store)
-                }
-                if let colors {
-                    SpacePreferences.setColors(colors, forSpace: space, display: display, store: store)
-                } else {
-                    SpacePreferences.clearColors(forSpace: space, display: display, store: store)
-                }
-                if let font {
-                    SpacePreferences.setFont(SpaceFont(font: font), forSpace: space, display: display, store: store)
-                } else {
-                    SpacePreferences.clearFont(forSpace: space, display: display, store: store)
-                }
-                if let skinTone {
-                    SpacePreferences.setSkinTone(skinTone, forSpace: space, display: display, store: store)
-                } else {
-                    SpacePreferences.clearSkinTone(forSpace: space, display: display, store: store)
-                }
+                SpacePreferences.setSymbol(symbol, forSpace: space, display: display, store: store)
+                SpacePreferences.setColors(colors, forSpace: space, display: display, store: store)
+                SpacePreferences.setFont(font, forSpace: space, display: display, store: store)
+                SpacePreferences.setSkinTone(skinTone, forSpace: space, display: display, store: store)
             }
         }
     }
