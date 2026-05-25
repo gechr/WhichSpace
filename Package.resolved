@@ -1,5 +1,5 @@
 {
-  "originHash" : "7afe6efa3114779d37f272c408349a4b0385b304a6b4b73ee1109b8a912a895f",
+  "originHash" : "d440b64376efa9a680ed33b39fcc0716d33c19df66022e27224fa2cb19817534",
   "pins" : [
     {
       "identity" : "defaults",
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/danielsaidi/EmojiKit",
       "state" : {
-        "revision" : "b5a8b50609a8142e5297778e373cc13ac9d03c2e",
-        "version" : "2.4.0"
+        "revision" : "e615f635e0b45f852c37b3f7a42e17a2ce1857a9",
+        "version" : "2.5.0"
       }
     },
     {
@@ -33,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/sparkle-project/Sparkle",
       "state" : {
-        "revision" : "066e75a8b3e99962685d6a90cdd5293ebffd9261",
-        "version" : "2.9.1"
+        "revision" : "6276ba2b404829d139c45ff98427cf90e2efc59b",
+        "version" : "2.9.2"
       }
     },
     {
