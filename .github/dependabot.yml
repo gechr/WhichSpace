@@ -22,3 +22,7 @@ updates:
       swift-packages:
         patterns:
           - "*"
+    ignore:
+      # EmojiKit 3.x requires macOS 15; stay on 2.x until we drop macOS 14 support.
+      - dependency-name: "github.com/danielsaidi/EmojiKit"
+        update-types: ["version-update:semver-major"]
