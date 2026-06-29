@@ -148,3 +148,9 @@ osascript -e 'tell application "WhichSpace" to get current space label'
 # Switch to a specific space on the current display
 osascript -e 'tell application "WhichSpace" to switch to space number 3'
 ```
+
+### Caveat
+
+#### Incompatibility
+
+WhichSpace is not compatible with "John's Background Switcher" (avaiable from the App Store). WhichSpace and BackgroundSwitcher compete for the menu bar. When WitchSpace is showing the spaces in the topmost bar, the icon for the background switcher disappears. When BackgroundSwitcher is activated again, the WhichSpace space icons disappear. I managed once to have both of them coexisting for a while, but sooner or later the Background Switcher's icon disappears again. It could be that the problem is evident only if there are many spaces defined (11 in my case).
