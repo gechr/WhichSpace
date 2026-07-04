@@ -22,11 +22,17 @@ struct CGSDisplaySpaceProvider: DisplaySpaceProvider {
 
     // swiftlint:disable:next discouraged_optional_collection
     func copyManagedDisplaySpaces() -> [NSDictionary]? {
-        CGSCopyManagedDisplaySpaces(conn) as? [NSDictionary]
+        guard let result = CGSCopyManagedDisplaySpaces(conn) else {
+            return nil
+        }
+        return result.takeRetainedValue() as? [NSDictionary]
     }
 
     func copyActiveMenuBarDisplayIdentifier() -> String? {
-        CGSCopyActiveMenuBarDisplayIdentifier(conn) as? String
+        guard let result = CGSCopyActiveMenuBarDisplayIdentifier(conn) else {
+            return nil
+        }
+        return result.takeRetainedValue() as String
     }
 
     func spacesWithWindows(forSpaceIDs spaceIDs: [Int]) -> Set<Int> {

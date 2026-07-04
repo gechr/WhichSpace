@@ -71,10 +71,11 @@ enum SpaceSwitcher {
     static func switchToSpace(id targetSpaceID: Int) {
         let conn = _CGSDefaultConnection()
 
-        guard let activeDisplayID = CGSCopyActiveMenuBarDisplayIdentifier(conn) as? String else {
+        guard let activeDisplayRef = CGSCopyActiveMenuBarDisplayIdentifier(conn) else {
             NSLog("SpaceSwitcher: failed to get active menu bar display")
             return
         }
+        let activeDisplayID = activeDisplayRef.takeRetainedValue() as String
 
         let displays = managedDisplays(connection: conn)
         guard let display = displays.first(where: { $0.identifier == activeDisplayID }) ?? displays.first else {
@@ -140,7 +141,9 @@ enum SpaceSwitcher {
     }
 
     private static func managedDisplays(connection: Int32) -> [ManagedDisplay] {
-        guard let raw = CGSCopyManagedDisplaySpaces(connection) as? [[String: Any]] else {
+        guard let rawRef = CGSCopyManagedDisplaySpaces(connection),
+              let raw = rawRef.takeRetainedValue() as? [[String: Any]]
+        else {
             NSLog("SpaceSwitcher: failed to get managed display spaces")
             return []
         }
