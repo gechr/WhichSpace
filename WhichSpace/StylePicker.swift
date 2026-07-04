@@ -1,9 +1,19 @@
 import Cocoa
 
 final class StylePicker: NSView {
+    /// Inputs that determine the generated icon, used to invalidate the cache
+    private struct IconKey: Equatable {
+        let previewNumber: String
+        let darkMode: Bool
+        let customColors: SpaceColors?
+        let sizeScale: Double
+    }
+
     private let iconSize = Layout.defaultIconSize
     private let style: IconStyle
 
+    private var cachedIcon: NSImage?
+    private var cachedIconKey: IconKey?
     private var isHighlighted = false
 
     var customColors: SpaceColors?
@@ -51,14 +61,27 @@ final class StylePicker: NSView {
             "✓".draw(at: CGPoint(x: 9, y: 3), withAttributes: checkAttrs)
         }
 
-        // Icon
-        let icon = SpaceIconGenerator.generateIcon(
-            for: previewNumber,
+        // Icon (cached so hover highlight redraws don't regenerate it)
+        let iconKey = IconKey(
+            previewNumber: previewNumber,
             darkMode: darkMode,
             customColors: customColors,
-            style: style,
             sizeScale: sizeScale
         )
+        let icon: NSImage
+        if let cachedIcon, cachedIconKey == iconKey {
+            icon = cachedIcon
+        } else {
+            icon = SpaceIconGenerator.generateIcon(
+                for: previewNumber,
+                darkMode: darkMode,
+                customColors: customColors,
+                style: style,
+                sizeScale: sizeScale
+            )
+            cachedIcon = icon
+            cachedIconKey = iconKey
+        }
         let iconRect = CGRect(x: 24, y: (bounds.height - iconSize) / 2, width: iconSize, height: iconSize)
         icon.draw(in: iconRect)
 
