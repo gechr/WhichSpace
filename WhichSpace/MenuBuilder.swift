@@ -157,6 +157,18 @@ final class MenuBuilder {
             }
         }
 
+        let badgePositionTags: [MenuTag: BadgePosition] = [
+            .badgePositionTopLeft: .topLeft,
+            .badgePositionTopRight: .topRight,
+            .badgePositionBottomLeft: .bottomLeft,
+            .badgePositionBottomRight: .bottomRight,
+        ]
+        let currentBadge = SpacePreferences.badge(
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
+
         for item in menu.items {
             // Update icon style views - only show checkmark when not in symbol mode
             if let view = item.view as? StylePicker {
@@ -239,27 +251,11 @@ final class MenuBuilder {
 
             // Update badge character input
             if item.tag == MenuTag.badgeCharacterField.rawValue, let badgeInput = item.view as? BadgeInput {
-                let currentBadge = SpacePreferences.badge(
-                    forSpace: appState.currentSpace,
-                    display: appState.currentDisplayID,
-                    store: store
-                )
                 badgeInput.currentCharacter = currentBadge?.character
             }
 
             // Update badge position checkmarks
-            let badgePositionTags: [MenuTag: BadgePosition] = [
-                .badgePositionTopLeft: .topLeft,
-                .badgePositionTopRight: .topRight,
-                .badgePositionBottomLeft: .bottomLeft,
-                .badgePositionBottomRight: .bottomRight,
-            ]
-            if let position = badgePositionTags.first(where: { $0.key.rawValue == item.tag })?.value {
-                let currentBadge = SpacePreferences.badge(
-                    forSpace: appState.currentSpace,
-                    display: appState.currentDisplayID,
-                    store: store
-                )
+            if let position = MenuTag(rawValue: item.tag).flatMap({ badgePositionTags[$0] }) {
                 let activePosition = currentBadge?.position ?? .topLeft
                 item.state = activePosition == position ? .on : .off
             }
