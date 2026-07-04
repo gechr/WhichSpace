@@ -296,7 +296,8 @@ struct CodableColor: Codable {
     }
 
     func toNSColor() -> NSColor {
-        NSColor(red: red, green: green, blue: blue, alpha: alpha)
+        // Match the sRGB space used during serialization for an exact round-trip
+        NSColor(srgbRed: red, green: green, blue: blue, alpha: alpha)
     }
 }
 
