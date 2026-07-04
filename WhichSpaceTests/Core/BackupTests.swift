@@ -346,6 +346,30 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         XCTAssertEqual(backup.settings.soundName, "Pop")
     }
 
+    func testDecodeOldBackupMissingNewerSettingsKeys() throws {
+        // Backups exported by older app versions lack newer settings keys;
+        // decoding must still succeed with defaults for the missing values.
+        let json = """
+        {
+            "bundleId": "com.test.app",
+            "version": "0.1.0",
+            "settings": {
+                "clickToSwitchSpaces": true,
+                "sizeScale": 80.0
+            }
+        }
+        """
+
+        let backup = try BackupManager.decode(jsonString: json)
+
+        XCTAssertTrue(backup.settings.clickToSwitchSpaces)
+        XCTAssertEqual(backup.settings.sizeScale, 80.0)
+        XCTAssertTrue(backup.settings.dimInactiveSpaces)
+        XCTAssertFalse(backup.settings.hideEmptySpaces)
+        XCTAssertFalse(backup.settings.uniqueIconsPerDisplay)
+        XCTAssertEqual(backup.settings.soundName, "")
+    }
+
     func testDecodeInvalidJSONThrows() {
         let invalidJSON = "{ invalid json }"
         XCTAssertThrowsError(try BackupManager.decode(jsonString: invalidJSON)) { error in

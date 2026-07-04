@@ -75,6 +75,63 @@ struct BackupSettings: Codable {
     var sizeScale: Double
     var soundName: String
     var uniqueIconsPerDisplay: Bool
+
+    private enum CodingKeys: String, CodingKey {
+        case clickToSwitchSpaces, dimInactiveSpaces, hideEmptySpaces, hideFullscreenApps, hideSingleSpace
+        case launchAtLogin, localSpaceNumbers, paddingScale, separatorColor, showAllDisplays, showAllSpaces
+        case sizeScale, soundName, uniqueIconsPerDisplay
+    }
+
+    /// Tolerates missing keys so backups exported by older app versions still import.
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        clickToSwitchSpaces = try container.decodeIfPresent(Bool.self, forKey: .clickToSwitchSpaces) ?? false
+        dimInactiveSpaces = try container.decodeIfPresent(Bool.self, forKey: .dimInactiveSpaces) ?? true
+        hideEmptySpaces = try container.decodeIfPresent(Bool.self, forKey: .hideEmptySpaces) ?? false
+        hideFullscreenApps = try container.decodeIfPresent(Bool.self, forKey: .hideFullscreenApps) ?? false
+        hideSingleSpace = try container.decodeIfPresent(Bool.self, forKey: .hideSingleSpace) ?? false
+        launchAtLogin = try container.decodeIfPresent(Bool.self, forKey: .launchAtLogin) ?? false
+        localSpaceNumbers = try container.decodeIfPresent(Bool.self, forKey: .localSpaceNumbers) ?? false
+        paddingScale = try container.decodeIfPresent(Double.self, forKey: .paddingScale)
+        separatorColor = try container.decodeIfPresent(CodableColor.self, forKey: .separatorColor)
+        showAllDisplays = try container.decodeIfPresent(Bool.self, forKey: .showAllDisplays) ?? false
+        showAllSpaces = try container.decodeIfPresent(Bool.self, forKey: .showAllSpaces) ?? false
+        sizeScale = try container.decodeIfPresent(Double.self, forKey: .sizeScale) ?? Layout.defaultSizeScale
+        soundName = try container.decodeIfPresent(String.self, forKey: .soundName) ?? ""
+        uniqueIconsPerDisplay = try container.decodeIfPresent(Bool.self, forKey: .uniqueIconsPerDisplay) ?? false
+    }
+
+    init(
+        clickToSwitchSpaces: Bool,
+        dimInactiveSpaces: Bool,
+        hideEmptySpaces: Bool,
+        hideFullscreenApps: Bool,
+        hideSingleSpace: Bool,
+        launchAtLogin: Bool,
+        localSpaceNumbers: Bool,
+        paddingScale: Double?,
+        separatorColor: CodableColor?,
+        showAllDisplays: Bool,
+        showAllSpaces: Bool,
+        sizeScale: Double,
+        soundName: String,
+        uniqueIconsPerDisplay: Bool
+    ) {
+        self.clickToSwitchSpaces = clickToSwitchSpaces
+        self.dimInactiveSpaces = dimInactiveSpaces
+        self.hideEmptySpaces = hideEmptySpaces
+        self.hideFullscreenApps = hideFullscreenApps
+        self.hideSingleSpace = hideSingleSpace
+        self.launchAtLogin = launchAtLogin
+        self.localSpaceNumbers = localSpaceNumbers
+        self.paddingScale = paddingScale
+        self.separatorColor = separatorColor
+        self.showAllDisplays = showAllDisplays
+        self.showAllSpaces = showAllSpaces
+        self.sizeScale = sizeScale
+        self.soundName = soundName
+        self.uniqueIconsPerDisplay = uniqueIconsPerDisplay
+    }
 }
 
 // MARK: - BackupSpacePreferences
