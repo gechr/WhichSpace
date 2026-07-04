@@ -267,6 +267,13 @@ final class AppState {
     private func configureObservers() {
         let workspace = NSWorkspace.shared
 
+        // WindowServer push notifications - the lowest-latency space-change
+        // signal (NSWorkspace's notification derives from the same events
+        // but arrives later; the plist file watch waits on cfprefsd)
+        SpaceChangeNotifier.start { [weak self] in
+            self?.updateActiveSpaceNumber()
+        }
+
         // Workspace notifications via async sequences.
         // Weak captures keep these long-lived tasks from retaining AppState,
         // so deinit (which cancels them) stays reachable.

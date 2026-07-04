@@ -72,6 +72,7 @@
 		178A29C9ED824543943550A2 /* SpaceSnapshotService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 692124D6E332492E93C5FE4C /* SpaceSnapshotService.swift */; };
 		67C5C0748C96D7026E8642AF /* ActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B1BC45410352F4BF33C9FD3 /* ActionHandler.swift */; };
 		DC7F94B898D44CB18017A20B /* Accessibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8A1BFF1531410487C22D45 /* Accessibility.swift */; };
+		DA63A6AB4954477DBD56C0E3 /* SpaceChangeNotifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33F5216D5566486C8F0B2A59 /* SpaceChangeNotifier.swift */; };
 		727C42504F3244CEA372E9AD /* AppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D63520F7B9493EB2D5A9FF /* AppEnvironment.swift */; };
 		D77B6B08D64F4BE0BB06BDD7 /* SettingsConstraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2C8D45EF1C45EFB663FEF5 /* SettingsConstraints.swift */; };
 		B491BAAAB4BA49218E7D8277 /* SpaceSwitcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B641D3815414D78B2AE9BBC /* SpaceSwitcherTests.swift */; };
@@ -166,6 +167,7 @@
 		692124D6E332492E93C5FE4C /* SpaceSnapshotService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceSnapshotService.swift; sourceTree = "<group>"; };
 		8B1BC45410352F4BF33C9FD3 /* ActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionHandler.swift; sourceTree = "<group>"; };
 		5F8A1BFF1531410487C22D45 /* Accessibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Accessibility.swift; sourceTree = "<group>"; };
+		33F5216D5566486C8F0B2A59 /* SpaceChangeNotifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceChangeNotifier.swift; sourceTree = "<group>"; };
 		40D63520F7B9493EB2D5A9FF /* AppEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEnvironment.swift; sourceTree = "<group>"; };
 		4082BFCDC5A54825AF80AF6F /* IntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegrationTests.swift; sourceTree = "<group>"; };
 		08E5FE968EBE447E9C29ECB3 /* PerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceTests.swift; sourceTree = "<group>"; };
@@ -232,6 +234,7 @@
 				5EB457C82EEDE8C00021C6BD /* AppState.swift */,
 				24AF849C10194983B7CE0EC3 /* StatusBarRenderer.swift */,
 				692124D6E332492E93C5FE4C /* SpaceSnapshotService.swift */,
+				33F5216D5566486C8F0B2A59 /* SpaceChangeNotifier.swift */,
 				5EB457F22EEDE8C00021C6BD /* SpaceMonitor.swift */,
 				5EB457C92EEDE8C00021C6BD /* ColorSwatch.swift */,
 				BEA6BF7DB8700734BA5B03AD /* Swatch.swift */,
@@ -546,6 +549,7 @@
 				178A29C9ED824543943550A2 /* SpaceSnapshotService.swift in Sources */,
 				67C5C0748C96D7026E8642AF /* ActionHandler.swift in Sources */,
 				DC7F94B898D44CB18017A20B /* Accessibility.swift in Sources */,
+				DA63A6AB4954477DBD56C0E3 /* SpaceChangeNotifier.swift in Sources */,
 				727C42504F3244CEA372E9AD /* AppEnvironment.swift in Sources */,
 				D77B6B08D64F4BE0BB06BDD7 /* SettingsConstraints.swift in Sources */,
 			);
