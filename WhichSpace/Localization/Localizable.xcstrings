@@ -6028,6 +6028,7 @@
       }
     },
     "alert_import_success" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -24106,6 +24107,7 @@
       }
     },
     "style_circle" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -24368,6 +24370,7 @@
       }
     },
     "style_circleOutline" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -24630,6 +24633,7 @@
       }
     },
     "style_hexagon" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -24892,6 +24896,7 @@
       }
     },
     "style_hexagonOutline" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -25154,6 +25159,7 @@
       }
     },
     "style_pentagon" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -25416,6 +25422,7 @@
       }
     },
     "style_pentagonOutline" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -25678,6 +25685,7 @@
       }
     },
     "style_pill" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -25940,6 +25948,7 @@
       }
     },
     "style_pillOutline" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -26202,6 +26211,7 @@
       }
     },
     "style_slim" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -26464,6 +26474,7 @@
       }
     },
     "style_slimOutline" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -26726,6 +26737,7 @@
       }
     },
     "style_square" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -26988,6 +27000,7 @@
       }
     },
     "style_squareOutline" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -27250,6 +27263,7 @@
       }
     },
     "style_stroke" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -27512,6 +27526,7 @@
       }
     },
     "style_transparent" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -27774,6 +27789,7 @@
       }
     },
     "style_triangle" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -28036,6 +28052,7 @@
       }
     },
     "style_triangleOutline" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -32227,268 +32244,6 @@
         }
       }
     },
-    "tip_set_default_style" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "حفظ لون هذه المساحة ونمطها ورمزها وخطها كإعدادات افتراضية للمساحات الجديدة"
-          }
-        },
-        "bg" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Запази цвета, стила, символа и шрифта на това пространство като стандартни за нови пространства"
-          }
-        },
-        "ca" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Desa el color, l'estil, el símbol i la lletra d'aquest Espai com a predeterminats per als nous Espais"
-          }
-        },
-        "cs" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Uložte barvu, styl, symbol a písmo tohoto Space jako výchozí pro nové Spaces"
-          }
-        },
-        "da" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gem farve, stil, symbol og skrifttype fra dette Space som standard for nye Spaces"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Farbe, Stil, Symbol und Schriftart dieses Spaces als Standard für neue Spaces speichern"
-          }
-        },
-        "el" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Αποθήκευση χρώματος, στιλ, συμβόλου και γραμματοσειράς αυτού του Χώρου ως προεπιλογή για νέους Χώρους"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Save this Space's color, style, symbol, and font as the default for new Spaces"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Save this Space's colour, style, symbol, and font as the default for new Spaces"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Guardar el color, estilo, símbolo y fuente de este Espacio como predeterminados para los nuevos Espacios"
-          }
-        },
-        "fa" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "رنگ، استایل، نماد و فونت این فضا را به عنوان پیش‌فرض برای فضاهای جدید ذخیره کن"
-          }
-        },
-        "fi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tallenna tämän Spacen väri, tyyli, symboli ja fontti uusien Spacejen oletukseksi"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enregistrer la couleur, le style, le symbole et la police de cet Espace comme réglages par défaut pour les nouveaux Espaces"
-          }
-        },
-        "he" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "שמור את הצבע, הסגנון, הסמל והגופן של המרחב הזה כברירת מחדל למרחבים חדשים"
-          }
-        },
-        "hi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "इस स्पेस का रंग, स्टाइल, प्रतीक और फ़ॉन्ट नए स्पेसेस के लिए डिफ़ॉल्ट के रूप में सहेजें"
-          }
-        },
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mentse ennek a Space-nek a színét, stílusát, szimbólumát és betűtípusát alapértelmezettként az új Space-ekhez"
-          }
-        },
-        "id" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Simpan warna, gaya, simbol, dan font Space ini sebagai bawaan untuk Space baru"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Salva il colore, lo stile, il simbolo e il font di questo Spazio come predefiniti per i nuovi Spazi"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このスペースの色、スタイル、シンボル、フォントを新しいスペースのデフォルトとして保存"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이 공간의 색상, 스타일, 심볼, 글꼴을 새 공간의 기본값으로 저장"
-          }
-        },
-        "mk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Зачувај ги бојата, стилот, симболот и фонтот на овој Простор како стандардни за нови Простори"
-          }
-        },
-        "ms" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Simpan warna, gaya, simbol dan fon Ruang ini sebagai lalai untuk Ruang baharu"
-          }
-        },
-        "nb" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lagre farge, stil, symbol og skrifttype fra dette Space som standard for nye Spaces"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kleur, stijl, symbool en lettertype van deze Space opslaan als standaard voor nieuwe Spaces"
-          }
-        },
-        "nn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lagre farge, stil, symbol og skrifttype frå dette Space som standard for nye Spaces"
-          }
-        },
-        "pa" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "اس سپیس دا رنگ، سٹائل، نشان تے فونٹ نویں سپیسز لئی پہلے توں مقررہ وجوں محفوظ کرو"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zapisz kolor, styl, symbol i czcionkę tego Space jako domyślne dla nowych Spaces"
-          }
-        },
-        "ps" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "د دې سپېس رنګ، سټایل، سمبول او فانټ د نویو سپېسونو لپاره تلواليز په توګه خوندي کړئ"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Guardar a cor, o estilo, o símbolo e o tipo de letra deste Espaço como predefinição para novos Espaços"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Salvar a cor, o estilo, o símbolo e a fonte deste Espaço como padrão para novos Espaços"
-          }
-        },
-        "ro" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Salvează culoarea, stilul, simbolul și fontul acestui spațiu ca implicite pentru spațiile noi"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Сохранить цвет, стиль, символ и шрифт этого пространства как стандартные для новых пространств"
-          }
-        },
-        "sk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Uložiť farbu, štýl, symbol a písmo tohto priestoru ako predvolené pre nové priestory"
-          }
-        },
-        "sr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sačuvaj boju, stil, simbol i font ovog Prostora kao podrazumevane za nove Prostore"
-          }
-        },
-        "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Spara färg, stil, symbol och teckensnitt från det här Space som standard för nya Spaces"
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "บันทึกสี สไตล์ สัญลักษณ์ และฟอนต์ของ Space นี้เป็นค่าเริ่มต้นสำหรับ Space ใหม่"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu Alanın renk, stil, sembol ve yazı tipini yeni Alanlar için varsayılan olarak kaydet"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Зберегти колір, стиль, символ і шрифт цього простору як типові для нових просторів"
-          }
-        },
-        "ur" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "اس اسپیس کا رنگ، انداز، علامت اور فونٹ نئی اسپیسز کے لیے طے شدہ کے طور پر محفوظ کریں"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lưu màu, kiểu, ký hiệu và phông chữ của Không gian này làm mặc định cho các Không gian mới"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "将此空间的颜色、样式、符号和字体保存为新空间的默认值"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "將此空間的顏色、樣式、符號和字體儲存為新空間的預設值"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "將此空間的顏色、樣式、符號與字體儲存為新空間的預設值"
-          }
-        }
-      }
-    },
     "tip_invert_colors" : {
       "localizations" : {
         "ar" : {
@@ -35629,6 +35384,268 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "僅移除目前空間的自訂樣式"
+          }
+        }
+      }
+    },
+    "tip_set_default_style" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "حفظ لون هذه المساحة ونمطها ورمزها وخطها كإعدادات افتراضية للمساحات الجديدة"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Запази цвета, стила, символа и шрифта на това пространство като стандартни за нови пространства"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desa el color, l'estil, el símbol i la lletra d'aquest Espai com a predeterminats per als nous Espais"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uložte barvu, styl, symbol a písmo tohoto Space jako výchozí pro nové Spaces"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gem farve, stil, symbol og skrifttype fra dette Space som standard for nye Spaces"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Farbe, Stil, Symbol und Schriftart dieses Spaces als Standard für neue Spaces speichern"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Αποθήκευση χρώματος, στιλ, συμβόλου και γραμματοσειράς αυτού του Χώρου ως προεπιλογή για νέους Χώρους"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save this Space's color, style, symbol, and font as the default for new Spaces"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save this Space's colour, style, symbol, and font as the default for new Spaces"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardar el color, estilo, símbolo y fuente de este Espacio como predeterminados para los nuevos Espacios"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "رنگ، استایل، نماد و فونت این فضا را به عنوان پیش‌فرض برای فضاهای جدید ذخیره کن"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tallenna tämän Spacen väri, tyyli, symboli ja fontti uusien Spacejen oletukseksi"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrer la couleur, le style, le symbole et la police de cet Espace comme réglages par défaut pour les nouveaux Espaces"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "שמור את הצבע, הסגנון, הסמל והגופן של המרחב הזה כברירת מחדל למרחבים חדשים"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इस स्पेस का रंग, स्टाइल, प्रतीक और फ़ॉन्ट नए स्पेसेस के लिए डिफ़ॉल्ट के रूप में सहेजें"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mentse ennek a Space-nek a színét, stílusát, szimbólumát és betűtípusát alapértelmezettként az új Space-ekhez"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simpan warna, gaya, simbol, dan font Space ini sebagai bawaan untuk Space baru"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salva il colore, lo stile, il simbolo e il font di questo Spazio come predefiniti per i nuovi Spazi"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このスペースの色、スタイル、シンボル、フォントを新しいスペースのデフォルトとして保存"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 공간의 색상, 스타일, 심볼, 글꼴을 새 공간의 기본값으로 저장"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Зачувај ги бојата, стилот, симболот и фонтот на овој Простор како стандардни за нови Простори"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simpan warna, gaya, simbol dan fon Ruang ini sebagai lalai untuk Ruang baharu"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lagre farge, stil, symbol og skrifttype fra dette Space som standard for nye Spaces"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kleur, stijl, symbool en lettertype van deze Space opslaan als standaard voor nieuwe Spaces"
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lagre farge, stil, symbol og skrifttype frå dette Space som standard for nye Spaces"
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "اس سپیس دا رنگ، سٹائل، نشان تے فونٹ نویں سپیسز لئی پہلے توں مقررہ وجوں محفوظ کرو"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zapisz kolor, styl, symbol i czcionkę tego Space jako domyślne dla nowych Spaces"
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "د دې سپېس رنګ، سټایل، سمبول او فانټ د نویو سپېسونو لپاره تلواليز په توګه خوندي کړئ"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardar a cor, o estilo, o símbolo e o tipo de letra deste Espaço como predefinição para novos Espaços"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salvar a cor, o estilo, o símbolo e a fonte deste Espaço como padrão para novos Espaços"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salvează culoarea, stilul, simbolul și fontul acestui spațiu ca implicite pentru spațiile noi"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сохранить цвет, стиль, символ и шрифт этого пространства как стандартные для новых пространств"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uložiť farbu, štýl, symbol a písmo tohto priestoru ako predvolené pre nové priestory"
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sačuvaj boju, stil, simbol i font ovog Prostora kao podrazumevane za nove Prostore"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spara färg, stil, symbol och teckensnitt från det här Space som standard för nya Spaces"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "บันทึกสี สไตล์ สัญลักษณ์ และฟอนต์ของ Space นี้เป็นค่าเริ่มต้นสำหรับ Space ใหม่"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu Alanın renk, stil, sembol ve yazı tipini yeni Alanlar için varsayılan olarak kaydet"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Зберегти колір, стиль, символ і шрифт цього простору як типові для нових просторів"
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "اس اسپیس کا رنگ، انداز، علامت اور فونٹ نئی اسپیسز کے لیے طے شدہ کے طور پر محفوظ کریں"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lưu màu, kiểu, ký hiệu và phông chữ của Không gian này làm mặc định cho các Không gian mới"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将此空间的颜色、样式、符号和字体保存为新空间的默认值"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "將此空間的顏色、樣式、符號和字體儲存為新空間的預設值"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "將此空間的顏色、樣式、符號與字體儲存為新空間的預設值"
           }
         }
       }
