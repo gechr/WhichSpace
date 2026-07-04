@@ -746,10 +746,12 @@ final class ActionHandler: NSObject {
         let response = alert.runModal()
 
         if response == .alertFirstButtonReturn {
-            SpaceSwitcher.resetAccessibilityPermission()
-            let options = [AccessibilityKeys.trustedCheckOptionPrompt: true] as CFDictionary
-            _ = AXIsProcessTrustedWithOptions(options)
-            pollForAccessibilityPermission()
+            Task {
+                await SpaceSwitcher.resetAccessibilityPermission()
+                let options = [AccessibilityKeys.trustedCheckOptionPrompt: true] as CFDictionary
+                _ = AXIsProcessTrustedWithOptions(options)
+                pollForAccessibilityPermission()
+            }
         }
     }
 

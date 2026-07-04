@@ -201,7 +201,8 @@ enum SpaceSwitcher {
     // MARK: - Accessibility
 
     /// Resets WhichSpace Accessibility permission to clear stale TCC entries.
-    static func resetAccessibilityPermission() {
+    /// Waits for `tccutil` without blocking the calling thread.
+    static func resetAccessibilityPermission() async {
         let tccutil = "/usr/bin/tccutil"
         guard FileManager.default.fileExists(atPath: tccutil),
               let bundleID = Bundle.main.bundleIdentifier
@@ -213,11 +214,17 @@ enum SpaceSwitcher {
         process.arguments = ["reset", "Accessibility", bundleID]
         process.standardOutput = FileHandle.nullDevice
         process.standardError = FileHandle.nullDevice
-        do {
-            try process.run()
-            process.waitUntilExit()
-        } catch {
-            NSLog("SpaceSwitcher: failed to reset accessibility permission: \(error)")
+        await withCheckedContinuation { continuation in
+            process.terminationHandler = { _ in
+                continuation.resume()
+            }
+            do {
+                try process.run()
+            } catch {
+                process.terminationHandler = nil
+                NSLog("SpaceSwitcher: failed to reset accessibility permission: \(error)")
+                continuation.resume()
+            }
         }
     }
 
@@ -228,7 +235,7 @@ enum SpaceSwitcher {
 
         // Request permission once so the user sees the System Settings prompt
         if await sharedState.claimAccessibilityPrompt() {
-            resetAccessibilityPermission()
+            await resetAccessibilityPermission()
             let options = [accessibilityPromptOptionKey: true] as CFDictionary
             _ = AXIsProcessTrustedWithOptions(options)
         }
