@@ -179,6 +179,28 @@ struct SpaceDefaultStyleTests {
         #expect(SpacePreferences.iconStyle(forSpace: 3, display: "Main", store: store) == nil)
     }
 
+    @Test("new space after a fullscreen space uses its array-index key")
+    func newSpace_afterFullscreenSpace_usesArrayIndexKey() {
+        SpacePreferences.setIconStyle(.circle, forSpace: 1, store: store)
+        SpacePreferences.saveDefaultStyle(fromSpace: 1, store: store)
+
+        let sut = makeAppState(
+            spaces: [(100, false), (200, true)],
+            activeSpaceID: 100
+        )
+
+        updateStub(
+            spaces: [(100, false), (200, true), (101, false)],
+            activeSpaceID: 101
+        )
+        sut.forceSpaceUpdate()
+
+        // Preferences are keyed by array index + 1, so the new regular space
+        // (after the fullscreen entry) is space 3, not space 2
+        #expect(SpacePreferences.iconStyle(forSpace: 3, store: store) == .circle)
+        #expect(SpacePreferences.iconStyle(forSpace: 2, store: store) == nil)
+    }
+
     // MARK: - No Default Style
 
     @Test("new space without default style stays unconfigured")

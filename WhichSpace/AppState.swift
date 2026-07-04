@@ -432,7 +432,13 @@ final class AppState {
             }
 
             let display = store.uniqueIconsPerDisplay ? displayInfo.displayID : nil
-            for newSpace in (oldCount + 1) ... displayInfo.regularSpaceCount {
+            // Preferences are keyed by array index + 1 (fullscreen-inclusive), so derive
+            // each new regular space's key from its position in the entries array
+            for (arrayIndex, entry) in displayInfo.entries.enumerated() {
+                guard let regularIndex = entry.regularIndex, regularIndex > oldCount else {
+                    continue
+                }
+                let newSpace = arrayIndex + 1
                 guard !SpacePreferences.hasAnyPreference(forSpace: newSpace, display: display, store: store) else {
                     continue
                 }
