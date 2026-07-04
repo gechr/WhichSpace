@@ -170,16 +170,35 @@ final class SizeSlider: NSView {
 
     // MARK: - Scroll Events
 
+    /// Accumulated precise scroll delta; a step fires each time it crosses the threshold
+    private static let scrollStepThreshold = 10.0
+    private var scrollAccumulator = 0.0
+
     override func scrollWheel(with event: NSEvent) {
+        // Ignore momentum-phase events so a trackpad flick doesn't slam min-to-max
+        guard event.momentumPhase.isEmpty else {
+            return
+        }
+
         // Positive deltaY = scroll up = increase value
         // Negative deltaY = scroll down = decrease value
-        if event.deltaY > 0 {
-            stepper.doubleValue = min(stepper.maxValue, stepper.doubleValue + stepper.increment)
-            stepperChanged()
-        } else if event.deltaY < 0 {
-            stepper.doubleValue = max(stepper.minValue, stepper.doubleValue - stepper.increment)
-            stepperChanged()
+        let steps: Double
+        if event.hasPreciseScrollingDeltas {
+            // Trackpads emit many small deltas per gesture; accumulate to a threshold
+            scrollAccumulator += event.scrollingDeltaY
+            steps = (scrollAccumulator / Self.scrollStepThreshold).rounded(.towardZero)
+            scrollAccumulator -= steps * Self.scrollStepThreshold
+        } else {
+            // Mouse wheels emit one event per notch; step directly
+            steps = event.deltaY > 0 ? 1 : (event.deltaY < 0 ? -1 : 0)
         }
+        guard steps != 0 else {
+            return
+        }
+
+        let newValue = stepper.doubleValue + steps * stepper.increment
+        stepper.doubleValue = newValue.clamped(to: stepper.minValue ... stepper.maxValue)
+        stepperChanged()
     }
 
     // MARK: - Actions
