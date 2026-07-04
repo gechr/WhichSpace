@@ -135,6 +135,9 @@ enum KeySpecs {
 final class DefaultsStore {
     let suite: UserDefaults
 
+    /// Incremented on every write; a cheap change token for caches keyed on preferences
+    private(set) var mutationCount = 0
+
     init(suite: UserDefaults) {
         self.suite = suite
     }
@@ -144,7 +147,10 @@ final class DefaultsStore {
     /// caches resolved values, so this is cheap.
     private subscript<V>(spec: TypedKeySpec<V>) -> V {
         get { Defaults[spec.key(suite: suite)] }
-        set { Defaults[spec.key(suite: suite)] = newValue }
+        set {
+            Defaults[spec.key(suite: suite)] = newValue
+            mutationCount += 1
+        }
     }
 
     /// Returns a suite-bound `Defaults.Key` for the given spec. Used by callers
@@ -256,11 +262,6 @@ final class DefaultsStore {
                 self[KeySpecs.separatorColor] = nil
             }
         }
-    }
-
-    /// Raw separator color data for use as an equatable cache key
-    var separatorColorData: Data? {
-        self[KeySpecs.separatorColor]
     }
 
     var showAllDisplays: Bool {

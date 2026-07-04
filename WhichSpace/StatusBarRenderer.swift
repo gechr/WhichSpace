@@ -24,40 +24,21 @@ final class StatusBarRenderer {
     }
 
     /// Captures all state that affects icon rendering so we can detect changes and serve a cached image.
+    ///
+    /// Preferences are represented by `storeMutationCount` - a token bumped on every
+    /// `DefaultsStore` write - instead of the decoded values, so a cache hit doesn't
+    /// pay for deserializing and comparing ~30 preference dictionaries. External
+    /// (non-store) defaults changes are handled by AppDelegate's Defaults observer,
+    /// which calls `invalidateIconCache()`.
     private struct IconCacheKey: Equatable {
         let allDisplaysSpaceInfo: [DisplaySpaceInfo]
         let allSpaceEntries: [SpaceEntry]
         let currentDisplayID: String?
         let currentSpace: Int
         let currentSpaceID: Int
-        let dimInactiveSpaces: Bool
-        let displaySpaceBadges: [String: [Int: SpaceBadge]]
-        let displaySpaceColors: [String: [Int: SpaceColors]]
-        let displaySpaceFonts: [String: [Int: SpaceFont]]
-        let displaySpaceIconStyles: [String: [Int: IconStyle]]
-        let displaySpaceLabels: [String: [Int: String]]
-        let displaySpaceLabelStyles: [String: [Int: IconStyle]]
-        let displaySpaceSkinTones: [String: [Int: SkinTone]]
-        let displaySpaceSymbols: [String: [Int: String]]
-        let hideEmptySpaces: Bool
-        let hideFullscreenApps: Bool
         let isDarkMode: Bool
-        let localSpaceNumbers: Bool
-        let paddingScale: Double
-        let separatorColorData: Data?
-        let showAllDisplays: Bool
-        let showAllSpaces: Bool
-        let sizeScale: Double
-        let spaceBadges: [Int: SpaceBadge]
-        let spaceColors: [Int: SpaceColors]
-        let spaceFonts: [Int: SpaceFont]
-        let spaceIconStyles: [Int: IconStyle]
-        let spaceLabels: [Int: String]
-        let spaceLabelStyles: [Int: IconStyle]
-        let spaceSkinTones: [Int: SkinTone]
-        let spaceSymbols: [Int: String]
         let spacesWithWindows: Set<Int>
-        let uniqueIconsPerDisplay: Bool
+        let storeMutationCount: Int
     }
 
     private unowned let appState: AppState
@@ -241,42 +222,15 @@ final class StatusBarRenderer {
     // MARK: - Icon Cache Helpers
 
     private func buildIconCacheKey() -> IconCacheKey {
-        let isDark = appState.darkModeEnabled
-
-        return IconCacheKey(
+        IconCacheKey(
             allDisplaysSpaceInfo: appState.allDisplaysSpaceInfo,
             allSpaceEntries: appState.allSpaceEntries,
             currentDisplayID: appState.currentDisplayID,
             currentSpace: appState.currentSpace,
             currentSpaceID: appState.currentSpaceID,
-            dimInactiveSpaces: store.dimInactiveSpaces,
-            displaySpaceBadges: store.displaySpaceBadges,
-            displaySpaceColors: store.displaySpaceColors,
-            displaySpaceFonts: store.displaySpaceFonts,
-            displaySpaceIconStyles: store.displaySpaceIconStyles,
-            displaySpaceLabels: store.displaySpaceLabels,
-            displaySpaceLabelStyles: store.displaySpaceLabelStyles,
-            displaySpaceSkinTones: store.displaySpaceSkinTones,
-            displaySpaceSymbols: store.displaySpaceSymbols,
-            hideEmptySpaces: store.hideEmptySpaces,
-            hideFullscreenApps: store.hideFullscreenApps,
-            isDarkMode: isDark,
-            localSpaceNumbers: store.localSpaceNumbers,
-            paddingScale: store.paddingScale,
-            separatorColorData: store.separatorColorData,
-            showAllDisplays: store.showAllDisplays,
-            showAllSpaces: store.showAllSpaces,
-            sizeScale: store.sizeScale,
-            spaceBadges: store.spaceBadges,
-            spaceColors: store.spaceColors,
-            spaceFonts: store.spaceFonts,
-            spaceIconStyles: store.spaceIconStyles,
-            spaceLabels: store.spaceLabels,
-            spaceLabelStyles: store.spaceLabelStyles,
-            spaceSkinTones: store.spaceSkinTones,
-            spaceSymbols: store.spaceSymbols,
+            isDarkMode: appState.darkModeEnabled,
             spacesWithWindows: cachedSpacesWithWindows,
-            uniqueIconsPerDisplay: store.uniqueIconsPerDisplay
+            storeMutationCount: store.mutationCount
         )
     }
 

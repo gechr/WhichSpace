@@ -253,6 +253,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
                 try? await Task.sleep(for: .milliseconds(16))
                 guard !Task.isCancelled
                 else { return }
+                // Covers defaults changes that bypass DefaultsStore (and its mutation
+                // counter), e.g. external `defaults write`
+                self?.appState.renderer.invalidateIconCache()
                 self?.updateStatusBarIcon()
             }
         })
