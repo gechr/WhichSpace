@@ -30,8 +30,6 @@ Have you ever forgotten _which space_ is currently active on macOS and wanted a 
 brew install --cask whichspace
 ```
 
----
-
 ### GitHub
 
 - Download [`WhichSpace.zip`](https://github.com/gechr/WhichSpace/releases/latest/download/WhichSpace.zip)
