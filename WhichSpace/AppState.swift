@@ -176,6 +176,7 @@ final class AppState {
     private var previousRegularSpaceCount = 0
     private var mouseEventMonitor: Any?
     private var notificationTasks: [Task<Void, Never>] = []
+    private var pendingClickUpdateTask: Task<Void, Never>?
     private var pendingUpdateTask: Task<Void, Never>?
     private var spaceMonitor: SpaceMonitor?
     private var spaceMonitorTask: Task<Void, Never>?
@@ -205,6 +206,7 @@ final class AppState {
         // Use assumeIsolated since AppState is MainActor-isolated and cleanup requires access
         MainActor.assumeIsolated {
             spaceMonitorTask?.cancel()
+            pendingClickUpdateTask?.cancel()
             pendingUpdateTask?.cancel()
             for task in notificationTasks {
                 task.cancel()
@@ -318,11 +320,18 @@ final class AppState {
 
         mouseEventMonitor = NSEvent.addGlobalMonitorForEvents(matching: .leftMouseDown) { [weak self] _ in
             Task { @MainActor in
-                try? await Task.sleep(for: .seconds(1))
-                guard !Task.isCancelled, let self, Date().timeIntervalSince(self.lastUpdateTime) > 0.5 else {
+                guard let self else {
                     return
                 }
-                self.updateActiveSpaceNumber()
+                // Replace any pending click-triggered refresh so rapid clicks debounce
+                self.pendingClickUpdateTask?.cancel()
+                self.pendingClickUpdateTask = Task { @MainActor in
+                    try? await Task.sleep(for: .seconds(1))
+                    guard !Task.isCancelled, Date().timeIntervalSince(self.lastUpdateTime) > 0.5 else {
+                        return
+                    }
+                    self.updateActiveSpaceNumber()
+                }
             }
         }
     }
