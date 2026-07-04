@@ -142,6 +142,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         if store.clickToSwitchSpaces, !AXIsProcessTrusted() {
             SettingsConstraints.setClickToSwitchSpaces(false, store: store)
         }
+
+        // Warm the symbol/emoji catalogs off-main so the first menu open doesn't
+        // pay for instantiating ~600 NSImages on the main thread
+        Task.detached(priority: .utility) {
+            _ = ItemData.symbols.count
+            _ = ItemData.emojis.count
+        }
     }
 
     func applicationShouldHandleReopen(_: NSApplication, hasVisibleWindows _: Bool) -> Bool {
