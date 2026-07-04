@@ -165,7 +165,10 @@ enum AppMover {
     private static func isInDownloadsFolder(_ url: URL) -> Bool {
         let path = url.standardizedFileURL.path
         let downloadDirs = FileManager.default.urls(for: .downloadsDirectory, in: .allDomainsMask)
-        return downloadDirs.contains { path.hasPrefix($0.standardizedFileURL.path) }
+        return downloadDirs.contains { downloadDir in
+            let downloadPath = downloadDir.standardizedFileURL.path
+            return path == downloadPath || path.hasPrefix(downloadPath + "/")
+        }
     }
 
     private static func isApplicationNested(_ url: URL) -> Bool {
