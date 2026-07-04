@@ -194,16 +194,19 @@ final class ActionHandler: NSObject {
             confirmTitle: Localization.buttonReset,
             isDestructive: true
         ) {
-            SpacePreferences.clearColors(
-                forSpace: appState.currentSpace,
-                display: appState.currentDisplayID,
-                store: store
-            )
-            SpacePreferences.clearSkinTone(
-                forSpace: appState.currentSpace,
-                display: appState.currentDisplayID,
-                store: store
-            )
+            // Guard the per-space clears: space 0 is the default-style template sentinel
+            if appState.currentSpace > 0 {
+                SpacePreferences.clearColors(
+                    forSpace: appState.currentSpace,
+                    display: appState.currentDisplayID,
+                    store: store
+                )
+                SpacePreferences.clearSkinTone(
+                    forSpace: appState.currentSpace,
+                    display: appState.currentDisplayID,
+                    store: store
+                )
+            }
             store.separatorColor = nil
         }
     }
