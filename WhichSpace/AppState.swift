@@ -290,14 +290,6 @@ final class AppState {
         })
 
         notificationTasks.append(Task {
-            for await _ in NotificationCenter.default
-                .notifications(named: NSApplication.didUpdateNotification)
-            {
-                updateActiveSpaceNumber()
-            }
-        })
-
-        notificationTasks.append(Task {
             for await _ in workspace.notificationCenter
                 .notifications(named: NSNotification.Name("NSWorkspaceActiveDisplayDidChangeNotification"))
             {
