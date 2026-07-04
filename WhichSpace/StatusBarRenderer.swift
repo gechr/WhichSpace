@@ -219,6 +219,16 @@ final class StatusBarRenderer {
         cachedIconKey = nil
     }
 
+    /// Refreshes window data in the background without dropping the current
+    /// cache. Used when a trigger fired but the space state is unchanged -
+    /// the window layout may still have moved between spaces.
+    func refreshSpacesWithWindows() {
+        guard store.hideEmptySpaces, cachedSpacesWithWindowsPopulated else {
+            return
+        }
+        scheduleBackgroundWindowScan(forSpaceIDs: cachedSpacesWithWindowsSpaceIDs)
+    }
+
     // MARK: - Icon Cache Helpers
 
     private func buildIconCacheKey() -> IconCacheKey {
@@ -625,12 +635,15 @@ final class StatusBarRenderer {
             guard !Task.isCancelled
             else { return }
 
+            let changed = result != cachedSpacesWithWindows
             cachedSpacesWithWindows = result
             cachedSpacesWithWindowsTime = Date()
             cachedSpacesWithWindowsSpaceIDs = spaceIDs
             cachedSpacesWithWindowsPopulated = true
-            invalidateIconCache()
-            onIconNeedsUpdate?()
+            if changed {
+                invalidateIconCache()
+                onIconNeedsUpdate?()
+            }
         }
     }
 

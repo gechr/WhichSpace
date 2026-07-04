@@ -172,6 +172,7 @@ final class AppState {
         store: store
     )
 
+    private var lastAppliedSnapshot: SpaceSnapshot?
     private var lastUpdateTime: Date = .distantPast
     private var previousRegularSpaceCount = 0
     private var mouseEventMonitor: Any?
@@ -374,7 +375,14 @@ final class AppState {
     // MARK: - Space Detection
 
     func updateActiveSpaceNumber() {
-        // Cancel any pending update and schedule a new one
+        // Leading edge: apply immediately so a space change renders without
+        // the debounce delay (applySnapshot skips no-op snapshots, so bursts
+        // stay cheap)
+        if pendingUpdateTask == nil {
+            applySnapshot(buildSnapshot())
+        }
+        // Trailing edge: coalesce the notification burst and catch triggers
+        // that fire before the system state has settled
         pendingUpdateTask?.cancel()
         pendingUpdateTask = Task {
             try? await Task.sleep(for: Self.debounceInterval)
@@ -382,6 +390,7 @@ final class AppState {
                 return
             }
             applySnapshot(buildSnapshot())
+            pendingUpdateTask = nil
         }
     }
 
@@ -395,6 +404,16 @@ final class AppState {
 
     /// Applies a space snapshot to update AppState properties
     private func applySnapshot(_ snapshot: SpaceSnapshot) {
+        // Skip no-op applies so notification bursts (e.g. every app
+        // activation) don't invalidate caches or re-render the icon. Window
+        // layout may still have changed, so refresh that data in the
+        // background (affects hideEmptySpaces)
+        guard snapshot != lastAppliedSnapshot else {
+            lastUpdateTime = Date()
+            renderer.refreshSpacesWithWindows()
+            return
+        }
+        lastAppliedSnapshot = snapshot
         // Invalidate window cache on space change to get fresh window data
         renderer.invalidateSpacesWithWindowsCache()
 
