@@ -11,6 +11,9 @@ final class StatusBarRenderer {
         let displayID: String
         let localIndex: Int
         let globalIndex: Int
+        /// The user-visible space number (regular index in local mode,
+        /// global index otherwise) used for label templates and badges
+        let displayNumber: Int
         let displayLabel: String
         let spaceID: Int
         let isActive: Bool
@@ -255,21 +258,35 @@ final class StatusBarRenderer {
             return generateCombinedIcon(darkMode: isDark)
         }
 
-        let labels = fetchLabels(displayID: appState.currentDisplayID ?? "")
-        let defaultLabel = appState.currentSpaceLabel
-        let rawLabel = labels[appState.currentSpace].flatMap { $0.isEmpty ? nil : $0 }
-        let label = rawLabel.map { LabelTemplate.resolve($0, space: appState.currentSpace) } ?? defaultLabel
-        return generateSingleIcon(for: appState.currentSpace, label: label, labels: labels, darkMode: isDark)
+        return generateCurrentSpaceIcon(darkMode: isDark)
     }
 
     // MARK: - Icon Generation
 
+    /// Renders the single icon for the current space, resolving any custom
+    /// label template with the user-visible space number
+    private func generateCurrentSpaceIcon(darkMode: Bool) -> NSImage {
+        let labels = fetchLabels(displayID: appState.currentDisplayID ?? "")
+        let displayNumber = appState.currentSpaceDisplayNumber
+        let rawLabel = labels[appState.currentSpace].flatMap { $0.isEmpty ? nil : $0 }
+        let label = rawLabel.map { LabelTemplate.resolve($0, space: displayNumber) }
+            ?? appState.currentSpaceLabel
+        return generateSingleIcon(
+            for: appState.currentSpace,
+            displayNumber: displayNumber,
+            label: label,
+            labels: labels,
+            darkMode: darkMode
+        )
+    }
+
     private func generateSingleIcon(
-        for space: Int, label: String, labels: [Int: String], darkMode: Bool
+        for space: Int, displayNumber: Int, label: String, labels: [Int: String], darkMode: Bool
     ) -> NSImage {
         let isCurrentSpace = space == appState.currentSpace
         return generateIcon(
             forSpace: space,
+            displayNumber: displayNumber,
             label: label,
             labels: labels,
             displayID: appState.currentDisplayID,
@@ -284,7 +301,11 @@ final class StatusBarRenderer {
             RenderedSlotIcon(
                 slot: slot,
                 icon: generateSingleIcon(
-                    for: slot.localIndex, label: slot.displayLabel, labels: labels, darkMode: darkMode
+                    for: slot.localIndex,
+                    displayNumber: slot.displayNumber,
+                    label: slot.displayLabel,
+                    labels: labels,
+                    darkMode: darkMode
                 )
             )
         }
@@ -301,6 +322,7 @@ final class StatusBarRenderer {
                         labels: labels,
                         displayID: slot.displayID,
                         localIndex: slot.localIndex,
+                        displayNumber: slot.displayNumber,
                         darkMode: darkMode
                     )
                 )
@@ -313,13 +335,7 @@ final class StatusBarRenderer {
 
         // If no spaces to show, show just the current space
         guard !renderedIcons.isEmpty else {
-            let labels = fetchLabels(displayID: appState.currentDisplayID ?? "")
-            let rawLabel = labels[appState.currentSpace].flatMap { $0.isEmpty ? nil : $0 }
-            let label = rawLabel.map { LabelTemplate.resolve($0, space: appState.currentSpace) }
-                ?? appState.currentSpaceLabel
-            return generateSingleIcon(
-                for: appState.currentSpace, label: label, labels: labels, darkMode: darkMode
-            )
+            return generateCurrentSpaceIcon(darkMode: darkMode)
         }
 
         let totalWidth = renderedIcons.reduce(0) { $0 + $1.icon.size.width }
@@ -351,13 +367,7 @@ final class StatusBarRenderer {
 
         // If no spaces to show at all, return single icon
         guard !renderedDisplays.isEmpty else {
-            let labels = fetchLabels(displayID: appState.currentDisplayID ?? "")
-            let rawLabel = labels[appState.currentSpace].flatMap { $0.isEmpty ? nil : $0 }
-            let label = rawLabel.map { LabelTemplate.resolve($0, space: appState.currentSpace) }
-                ?? appState.currentSpaceLabel
-            return generateSingleIcon(
-                for: appState.currentSpace, label: label, labels: labels, darkMode: darkMode
-            )
+            return generateCurrentSpaceIcon(darkMode: darkMode)
         }
 
         // Calculate total width: spaces + separators between displays
@@ -405,6 +415,7 @@ final class StatusBarRenderer {
         labels: [Int: String],
         displayID: String,
         localIndex: Int,
+        displayNumber: Int,
         darkMode: Bool
     ) -> NSImage {
         // When uniqueIconsPerDisplay is OFF, preview should apply to all spaces with same local index
@@ -414,6 +425,7 @@ final class StatusBarRenderer {
 
         return generateIcon(
             forSpace: localIndex,
+            displayNumber: displayNumber,
             label: label,
             labels: labels,
             displayID: displayID,
@@ -425,6 +437,7 @@ final class StatusBarRenderer {
     /// Shared icon generation: resolves preferences, applies preview overrides, dispatches to SpaceIconGenerator
     private func generateIcon(
         forSpace space: Int,
+        displayNumber: Int,
         label: String,
         labels: [Int: String],
         displayID: String?,
@@ -444,7 +457,7 @@ final class StatusBarRenderer {
         } else if isLabelStylePreview {
             colors = SpacePreferences.colors(forSpace: space, display: displayID, store: store)
             let resolvedLabel = labels[space].flatMap { $0.isEmpty ? nil : $0 }
-                .map { LabelTemplate.resolve($0, space: space) }
+                .map { LabelTemplate.resolve($0, space: displayNumber) }
             style = Self.renderStyle(for: preview!.labelStyle!, labelLength: resolvedLabel?.count ?? 1)
             let userFont = SpacePreferences.font(forSpace: space, display: displayID, store: store)?.font
             font = (resolvedLabel?.count ?? 0) > 1 && userFont == nil
@@ -453,7 +466,7 @@ final class StatusBarRenderer {
         } else {
             colors = SpacePreferences.colors(forSpace: space, display: displayID, store: store)
             let resolvedLabel = labels[space].flatMap { $0.isEmpty ? nil : $0 }
-                .map { LabelTemplate.resolve($0, space: space) }
+                .map { LabelTemplate.resolve($0, space: displayNumber) }
             if let resolvedLabel {
                 let labelStyle = SpacePreferences.labelStyle(
                     forSpace: space, display: displayID, store: store
@@ -522,7 +535,7 @@ final class StatusBarRenderer {
             ? nil
             : ((applyPreview ? preview?.badge : nil)
                 ?? SpacePreferences.badge(forSpace: space, display: displayID, store: store))
-        let badge = rawBadge.map { Self.resolveBadge($0, space: space) }
+        let badge = rawBadge.map { Self.resolveBadge($0, space: displayNumber) }
 
         if let symbol {
             let skinTone = SpacePreferences
@@ -687,9 +700,10 @@ final class StatusBarRenderer {
             }
 
             let globalIndex = Self.globalIndex(entry: entry, globalStartIndex: globalStartIndex)
+            let displayNumber = store.localSpaceNumbers ? (entry.regularIndex ?? localIndex) : globalIndex
             let displayLabel = displayLabel(
                 entry: entry,
-                globalIndex: globalIndex,
+                displayNumber: displayNumber,
                 localIndex: localIndex,
                 labels: labels,
                 isFullscreen: isFullscreen
@@ -699,6 +713,7 @@ final class StatusBarRenderer {
                 displayID: displayID,
                 localIndex: localIndex,
                 globalIndex: globalIndex,
+                displayNumber: displayNumber,
                 displayLabel: displayLabel,
                 spaceID: entry.id,
                 isActive: isActive,
@@ -737,9 +752,10 @@ final class StatusBarRenderer {
                     continue
                 }
 
+                let displayNumber = store.localSpaceNumbers ? (entry.regularIndex ?? localIndex) : globalIndex
                 let displayLabel = displayLabel(
                     entry: entry,
-                    globalIndex: globalIndex,
+                    displayNumber: displayNumber,
                     localIndex: localIndex,
                     labels: labels,
                     isFullscreen: isFullscreen
@@ -749,6 +765,7 @@ final class StatusBarRenderer {
                     displayID: displayInfo.displayID,
                     localIndex: localIndex,
                     globalIndex: globalIndex,
+                    displayNumber: displayNumber,
                     displayLabel: displayLabel,
                     spaceID: entry.id,
                     isActive: isActive,
@@ -809,7 +826,7 @@ final class StatusBarRenderer {
 
     private func displayLabel(
         entry: SpaceEntry,
-        globalIndex: Int,
+        displayNumber: Int,
         localIndex: Int,
         labels: [Int: String],
         isFullscreen: Bool
@@ -818,9 +835,8 @@ final class StatusBarRenderer {
             return entry.label
         }
         if let label = labels[localIndex], !label.isEmpty {
-            let spaceNumber = store.localSpaceNumbers ? localIndex : globalIndex
-            return LabelTemplate.resolve(label, space: spaceNumber)
+            return LabelTemplate.resolve(label, space: displayNumber)
         }
-        return store.localSpaceNumbers ? entry.label : String(globalIndex)
+        return store.localSpaceNumbers ? entry.label : String(displayNumber)
     }
 }

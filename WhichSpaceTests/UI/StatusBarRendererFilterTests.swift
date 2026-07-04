@@ -13,6 +13,32 @@ struct StatusBarRendererFilterTests {
         stub = CGSStub()
     }
 
+    @Test("label template resolves displayed number past a fullscreen space")
+    func labelTemplate_usesDisplayedNumber() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [
+                    (id: 100, isFullscreen: false),
+                    (id: 101, isFullscreen: true),
+                    (id: 102, isFullscreen: false),
+                ],
+                activeSpaceID: 100
+            ),
+        ]
+        store.showAllSpaces = true
+        store.localSpaceNumbers = true
+        // Labels are keyed by fullscreen-inclusive position (3), but the
+        // displayed number for that space is its regular index (2)
+        SpacePreferences.setLabel("S{number}", forSpace: 3, store: store)
+
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let layout = appState.statusBarLayout()
+
+        #expect(layout.slots.map(\.label) == ["1", "F", "S2"])
+    }
+
     // MARK: - hideEmptySpaces
 
     @Test("hideEmptySpaces hides non-active empty spaces")

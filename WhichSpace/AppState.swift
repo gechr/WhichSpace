@@ -528,6 +528,20 @@ final class AppState {
         SpacePreferences.font(forSpace: currentSpace, display: currentDisplayID, store: store)?.font
     }
 
+    /// The user-visible number for the current space (regular index in local
+    /// mode, global index otherwise). Distinct from `currentSpace`, which is
+    /// a fullscreen-inclusive array position used for preference keying.
+    var currentSpaceDisplayNumber: Int {
+        let index = currentSpace - 1
+        let regularIndex = allSpaceEntries.indices.contains(index)
+            ? allSpaceEntries[index].regularIndex
+            : nil
+        if store.localSpaceNumbers {
+            return regularIndex ?? currentSpace
+        }
+        return currentGlobalSpaceIndex > 0 ? currentGlobalSpaceIndex : currentSpace
+    }
+
     func getAllSpaceIndices() -> [Int] {
         guard !allSpaceEntries.isEmpty else {
             return []

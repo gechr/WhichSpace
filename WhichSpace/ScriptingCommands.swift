@@ -100,7 +100,7 @@ enum ScriptingHelpers {
             display: appState.currentDisplayID,
             store: store
         ), !customLabel.isEmpty {
-            return LabelTemplate.resolve(customLabel, space: appState.currentSpace)
+            return LabelTemplate.resolve(customLabel, space: appState.currentSpaceDisplayNumber)
         }
         return appState.currentSpaceLabel
     }

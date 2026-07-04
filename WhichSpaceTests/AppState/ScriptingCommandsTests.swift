@@ -13,6 +13,30 @@ struct ScriptingCommandsTests {
         stub = CGSStub()
     }
 
+    @Test("current space label resolves template with displayed number")
+    func currentSpaceLabel_templateUsesDisplayedNumber() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [
+                    (id: 100, isFullscreen: true),
+                    (id: 101, isFullscreen: false),
+                ],
+                activeSpaceID: 101
+            ),
+        ]
+        store.localSpaceNumbers = true
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        // Labels are keyed by fullscreen-inclusive position (2), but the
+        // displayed number for this space is its regular index (1)
+        SpacePreferences.setLabel("S{number}", forSpace: appState.currentSpace, store: store)
+
+        let label = ScriptingHelpers.resolveCurrentLabel(appState: appState, store: store)
+
+        #expect(label == "S1", "{number} should resolve to the displayed number, not the array position")
+    }
+
     // MARK: - currentSpaceNumber Tests
 
     @Test("currentSpaceNumber returns correct number")
