@@ -411,6 +411,15 @@ final class AppState {
 
     /// Applies a space snapshot to update AppState properties
     private func applySnapshot(_ snapshot: SpaceSnapshot) {
+        // A snapshot without a current space, taken while spaces are known,
+        // is a transient artifact of display reconfiguration (the CGS reads
+        // race the change) - keep the previous state rather than flashing
+        // "?" and poisoning space-change detection
+        if snapshot.currentSpaceID == 0,
+           let lastAppliedSnapshot, !lastAppliedSnapshot.allSpaceEntries.isEmpty
+        {
+            return
+        }
         // Skip no-op applies so notification bursts (e.g. every app
         // activation) don't invalidate caches or re-render the icon. Window
         // layout may still have changed, so refresh that data in the

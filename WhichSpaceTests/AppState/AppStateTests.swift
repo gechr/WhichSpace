@@ -16,6 +16,40 @@ struct AppStateTests {
 
     // MARK: - Space Detection Tests
 
+    @Test("transient snapshot without current space keeps prior state")
+    func transientSnapshotWithoutCurrentSpace_keepsPriorState() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [
+                    (id: 100, isFullscreen: false),
+                    (id: 101, isFullscreen: false),
+                ],
+                activeSpaceID: 101
+            ),
+        ]
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        #expect(appState.currentSpace == 2)
+
+        // During display reconfiguration the reported current space can be
+        // missing from the space list - the update should be dropped
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [
+                    (id: 100, isFullscreen: false),
+                    (id: 101, isFullscreen: false),
+                ],
+                activeSpaceID: 999
+            ),
+        ]
+        appState.forceSpaceUpdate()
+
+        #expect(appState.currentSpace == 2, "transient zero-space snapshot should not clobber state")
+        #expect(appState.currentSpaceLabel == "2")
+    }
+
     @Test("single display with three regular spaces: active index correct")
     func singleDisplayWithThreeRegularSpaces_activeIndexCorrect() {
         stub.activeDisplayIdentifier = "Main"
