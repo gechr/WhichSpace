@@ -266,43 +266,45 @@ final class AppState {
     private func configureObservers() {
         let workspace = NSWorkspace.shared
 
-        // Workspace notifications via async sequences
-        notificationTasks.append(Task {
+        // Workspace notifications via async sequences.
+        // Weak captures keep these long-lived tasks from retaining AppState,
+        // so deinit (which cancels them) stays reachable.
+        notificationTasks.append(Task { [weak self] in
             for await _ in workspace.notificationCenter
                 .notifications(named: NSWorkspace.activeSpaceDidChangeNotification)
             {
-                updateActiveSpaceNumber()
+                self?.updateActiveSpaceNumber()
             }
         })
 
-        notificationTasks.append(Task {
+        notificationTasks.append(Task { [weak self] in
             for await _ in workspace.notificationCenter
                 .notifications(named: NSWorkspace.didActivateApplicationNotification)
             {
-                updateActiveSpaceNumber()
+                self?.updateActiveSpaceNumber()
             }
         })
 
-        notificationTasks.append(Task {
+        notificationTasks.append(Task { [weak self] in
             for await _ in NotificationCenter.default
                 .notifications(named: NSApplication.didChangeScreenParametersNotification)
             {
-                updateActiveSpaceNumber()
+                self?.updateActiveSpaceNumber()
             }
         })
 
-        notificationTasks.append(Task {
+        notificationTasks.append(Task { [weak self] in
             for await _ in workspace.notificationCenter
                 .notifications(named: NSNotification.Name("NSWorkspaceActiveDisplayDidChangeNotification"))
             {
-                updateActiveSpaceNumber()
+                self?.updateActiveSpaceNumber()
             }
         })
 
         // Distributed notifications via AsyncStream (no native async API)
-        notificationTasks.append(Task {
+        notificationTasks.append(Task { [weak self] in
             for await _ in Self.distributedNotifications(named: "AppleInterfaceThemeChangedNotification") {
-                updateDarkModeStatus()
+                self?.updateDarkModeStatus()
             }
         })
 
@@ -311,9 +313,9 @@ final class AppState {
             "com.apple.exposeworkspacesdidchange",
         ]
         for name in dismissalNames {
-            notificationTasks.append(Task {
+            notificationTasks.append(Task { [weak self] in
                 for await _ in Self.distributedNotifications(named: name) {
-                    updateActiveSpaceNumber()
+                    self?.updateActiveSpaceNumber()
                 }
             })
         }
@@ -361,10 +363,10 @@ final class AppState {
         guard let spaceMonitor else {
             return
         }
-        spaceMonitorTask = Task {
+        spaceMonitorTask = Task { [weak self] in
             let snapshots = await spaceMonitor.snapshots()
             for await snapshot in snapshots {
-                applySnapshot(snapshot)
+                self?.applySnapshot(snapshot)
             }
         }
     }
