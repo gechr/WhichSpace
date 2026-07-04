@@ -12,11 +12,15 @@ import os.log
 /// empirically and are stable across recent macOS releases.
 @MainActor
 enum SpaceChangeNotifier {
-    /// WindowServer connection notification ids for space transitions
-    private enum Event: UInt32, CaseIterable {
-        case currentSpaceChanged = 1329
-        case activeSpaceChanged = 1401
-    }
+    /// WindowServer connection notification ids, established empirically:
+    /// - 1329/1401 fire the instant the current/active space changes
+    /// - 818/828/1322 fire on space creation and deletion
+    /// - 1325-1328 fire when windows are added to / removed from a space
+    /// All feed the same debounced snapshot rebuild; redundant deliveries
+    /// are cheap because no-op snapshots are skipped.
+    private nonisolated static let events: [UInt32] = [
+        818, 828, 1322, 1325, 1326, 1327, 1328, 1329, 1401,
+    ]
 
     private nonisolated static let logger = Logger(
         subsystem: "io.gechr.WhichSpace", category: "SpaceChangeNotifier"
@@ -37,10 +41,10 @@ enum SpaceChangeNotifier {
         started = true
         onChange = handler
         let conn = _CGSDefaultConnection()
-        for event in Event.allCases {
-            let error = SLSRegisterConnectionNotifyProc(conn, notifyProc, event.rawValue, nil)
+        for event in events {
+            let error = SLSRegisterConnectionNotifyProc(conn, notifyProc, event, nil)
             if error != .success {
-                logger.error("failed to register for WindowServer event \(event.rawValue): \(error.rawValue)")
+                logger.error("failed to register for WindowServer event \(event): \(error.rawValue)")
             }
         }
     }
