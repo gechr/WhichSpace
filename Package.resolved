@@ -1,13 +1,13 @@
 {
-  "originHash" : "a64be194f16fc01ae868d3a68fb5b75fc2caafe3a78a6165f04e51892f7a6934",
+  "originHash" : "88a186b2a1524dd359590eeafc28092ad1b9a7bfe13f4e615fc539d847b86e5d",
   "pins" : [
     {
       "identity" : "defaults",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/sindresorhus/Defaults",
       "state" : {
-        "revision" : "5bfac4928f000fabdbef7e4ed0251399bb0841c9",
-        "version" : "9.0.8"
+        "revision" : "00a7465a0668a87fa159e779b9d80f1f9652357e",
+        "version" : "9.0.9"
       }
     },
     {
@@ -33,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/sparkle-project/Sparkle",
       "state" : {
-        "revision" : "d46d456107feacc80711b21847b82b07bd9fb46e",
-        "version" : "2.9.3"
+        "revision" : "b6496a74a087257ef5e6da1c5b29a447a60f5bd7",
+        "version" : "2.9.4"
       }
     },
     {
