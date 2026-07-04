@@ -138,19 +138,42 @@ final class DefaultsStore {
     /// Incremented on every write; a cheap change token for caches keyed on preferences
     private(set) var mutationCount = 0
 
+    /// Memoized decoded values, keyed by spec name. The `Defaults` library
+    /// does NOT cache reads - every get re-deserializes the entire stored
+    /// value (an `NSKeyedUnarchiver` round-trip per entry for colors and
+    /// fonts), which makes per-space reads O(n) and a full render pass
+    /// O(n^2) in customized spaces. Populated on first read, refreshed on
+    /// write, dropped via `invalidateCachedValues()` for external changes.
+    private var cachedValues: [String: Any] = [:]
+    private var cachedSeparatorColor: NSColor??
+
     init(suite: UserDefaults) {
         self.suite = suite
     }
 
-    /// Read/write a defaults value via its `TypedKeySpec`. Constructs a
-    /// suite-bound `Defaults.Key` per call; the underlying `Defaults` library
-    /// caches resolved values, so this is cheap.
+    /// Read/write a defaults value via its `TypedKeySpec`, memoizing decoded
+    /// values so repeated reads don't re-deserialize the whole value.
     private subscript<V>(spec: TypedKeySpec<V>) -> V {
-        get { Defaults[spec.key(suite: suite)] }
+        get {
+            if let cached = cachedValues[spec.name] as? V {
+                return cached
+            }
+            let value = Defaults[spec.key(suite: suite)]
+            cachedValues[spec.name] = value
+            return value
+        }
         set {
             Defaults[spec.key(suite: suite)] = newValue
+            cachedValues[spec.name] = newValue
             mutationCount += 1
         }
+    }
+
+    /// Drops memoized decoded values. Call when the underlying suite changes
+    /// outside this store (e.g. an external `defaults write`).
+    func invalidateCachedValues() {
+        cachedValues.removeAll()
+        cachedSeparatorColor = nil
     }
 
     /// Returns a suite-bound `Defaults.Key` for the given spec. Used by callers
@@ -239,16 +262,25 @@ final class DefaultsStore {
 
     var separatorColor: NSColor? {
         get {
+            if let cached = cachedSeparatorColor {
+                return cached
+            }
             guard let data = self[KeySpecs.separatorColor]
-            else { return nil }
+            else {
+                cachedSeparatorColor = .some(nil)
+                return nil
+            }
             do {
-                return try NSKeyedUnarchiver.unarchivedObject(ofClass: NSColor.self, from: data)
+                let color = try NSKeyedUnarchiver.unarchivedObject(ofClass: NSColor.self, from: data)
+                cachedSeparatorColor = .some(color)
+                return color
             } catch {
                 NSLog("DefaultsStore: failed to unarchive separatorColor: %@", error.localizedDescription)
                 return nil
             }
         }
         set {
+            cachedSeparatorColor = .some(newValue)
             if let color = newValue {
                 do {
                     self[KeySpecs.separatorColor] = try NSKeyedArchiver.archivedData(
@@ -333,6 +365,8 @@ final class DefaultsStore {
 
     /// Resets all keys to their default values.
     func resetAll() {
+        invalidateCachedValues()
+        mutationCount += 1
         Defaults.reset(
             KeySpecs.clickToSwitchSpaces.key(suite: suite),
             KeySpecs.dimInactiveSpaces.key(suite: suite),

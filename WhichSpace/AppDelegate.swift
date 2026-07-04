@@ -262,6 +262,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
                 else { return }
                 // Covers defaults changes that bypass DefaultsStore (and its mutation
                 // counter), e.g. external `defaults write`
+                self?.store.invalidateCachedValues()
                 self?.appState.renderer.invalidateIconCache()
                 self?.updateStatusBarIcon()
             }

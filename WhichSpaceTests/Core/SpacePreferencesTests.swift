@@ -12,6 +12,21 @@ struct SpacePreferencesTests {
         store = DefaultsStore(suite: testSuite.suite)
     }
 
+    // MARK: - Decoded Value Cache
+
+    @Test("cached reads reflect writes and external invalidation")
+    func cachedValues_reflectWritesAndInvalidation() {
+        SpacePreferences.setLabel("A", forSpace: 1, store: store)
+        #expect(SpacePreferences.label(forSpace: 1, store: store) == "A")
+        // Second read is served from the cache
+        #expect(SpacePreferences.label(forSpace: 1, store: store) == "A")
+
+        // A write bypassing the store is picked up after invalidation
+        Defaults[KeySpecs.spaceLabels.key(suite: store.suite)] = [1: "B"]
+        store.invalidateCachedValues()
+        #expect(SpacePreferences.label(forSpace: 1, store: store) == "B")
+    }
+
     // MARK: - Colors Tests
 
     @Test("colors get returns nil when not set")
