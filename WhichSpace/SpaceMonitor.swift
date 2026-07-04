@@ -37,9 +37,14 @@ actor SpaceMonitor {
 
         continuation.onTermination = { @Sendable _ in
             Task {
-                await self.stopMonitoring()
+                await self.handleTermination()
             }
         }
+    }
+
+    private func handleTermination() {
+        continuation = nil
+        stopMonitoring()
     }
 
     private func restartMonitoring() {
@@ -47,7 +52,7 @@ actor SpaceMonitor {
         startMonitoring()
     }
 
-    private func startMonitoring() {
+    private func startMonitoring(retriesRemaining: Int = 5) {
         let path = Self.spacesMonitorFile
         let fullPath = (path as NSString).expandingTildeInPath
         guard let cPath = fullPath.cString(using: .utf8) else {
@@ -57,7 +62,17 @@ actor SpaceMonitor {
 
         let fildes = open(cPath, O_EVTONLY)
         if fildes == -1 {
-            Self.logger.error("Failed to open file: \(path)")
+            // The plist is atomically replaced (delete + recreate), so a reopen
+            // can race the recreate; retry instead of giving up permanently.
+            guard retriesRemaining > 0 else {
+                Self.logger.error("Failed to open file after retries: \(path)")
+                return
+            }
+            Self.logger.warning("Failed to open file, retrying: \(path)")
+            Task {
+                try? await Task.sleep(for: .milliseconds(100))
+                await self.retryMonitoring(retriesRemaining: retriesRemaining - 1)
+            }
             return
         }
 
@@ -88,6 +103,14 @@ actor SpaceMonitor {
 
         source.resume()
         fileMonitor = source
+    }
+
+    private func retryMonitoring(retriesRemaining: Int) {
+        // The stream may have terminated while the retry was pending
+        guard continuation != nil, fileMonitor == nil else {
+            return
+        }
+        startMonitoring(retriesRemaining: retriesRemaining)
     }
 
     private func stopMonitoring() {
