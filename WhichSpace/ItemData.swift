@@ -249,10 +249,11 @@ enum ItemData {
         ]
         // swiftformat:enable all
 
-        // Filter to only symbols that exist on this system, then shuffle with fixed seed
+        // Drop duplicates, filter to only symbols that exist on this system, then shuffle with fixed seed
         var rng = SeededRandomNumberGenerator(seed: 42)
+        var seen = Set<String>()
         let available = allSymbols.filter {
-            NSImage(systemSymbolName: $0, accessibilityDescription: nil) != nil
+            seen.insert($0).inserted && NSImage(systemSymbolName: $0, accessibilityDescription: nil) != nil
         }
         return available.shuffled(using: &rng)
     }()
