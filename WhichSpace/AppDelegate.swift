@@ -398,6 +398,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             return
         }
         let icon = appState.statusBarIcon
+        // Skip the assignment and forced redraw when the cached icon is
+        // already installed (e.g. every submenu open triggers an update)
+        guard statusBarItem.button?.image !== icon else {
+            updateStatusBarVisibility()
+            return
+        }
         statusBarItem.length = icon.size.width
         statusBarItem.button?.image = icon
         // Force immediate redraw - during menu tracking AppKit defers display

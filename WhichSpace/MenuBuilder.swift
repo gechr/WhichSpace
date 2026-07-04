@@ -42,9 +42,20 @@ final class MenuBuilder {
     private let appState: AppState
     private let store: DefaultsStore
     private var userSounds: [String] = []
+    private weak var labelInput: LabelInput?
     private weak var labelMenu: NSMenu?
     private weak var soundMenu: NSMenu?
     private weak var soundMenuTarget: AnyObject?
+
+    private static let foregroundTags: Set<Int> = [
+        MenuTag.foregroundLabel.rawValue,
+        MenuTag.foregroundSwatch.rawValue,
+    ]
+    private static let backgroundTags: Set<Int> = [
+        MenuTag.colorSeparator.rawValue,
+        MenuTag.backgroundLabel.rawValue,
+        MenuTag.backgroundSwatch.rawValue,
+    ]
 
     init(appState: AppState, store: DefaultsStore) {
         self.appState = appState
@@ -114,20 +125,12 @@ final class MenuBuilder {
         menu.item(withTag: MenuTag.badgeMenuItem.rawValue)?.isHidden = symbolIsActive
 
         // Update label input value and label style pickers
-        if let labelItem = Self.findMenuItem(withTag: MenuTag.labelInput.rawValue, in: menu),
-           let labelInput = labelItem.view as? LabelInput
-        {
-            labelInput.currentLabel = SpacePreferences.label(
-                forSpace: appState.currentSpace,
-                display: appState.currentDisplayID,
-                store: store
-            )
-        }
         let currentLabel = SpacePreferences.label(
             forSpace: appState.currentSpace,
             display: appState.currentDisplayID,
             store: store
         )
+        labelInput?.currentLabel = currentLabel
         let hasLabel = currentLabel.map { !$0.isEmpty } ?? false
         let currentLabelStyle = SpacePreferences.labelStyle(
             forSpace: appState.currentSpace,
@@ -225,16 +228,10 @@ final class MenuBuilder {
 
             // Hide foreground/background labels and swatches when any symbol is active (SF Symbol or emoji)
             // Also hide background items when style is transparent (no background to color)
-            let foregroundTags = [MenuTag.foregroundLabel.rawValue, MenuTag.foregroundSwatch.rawValue]
-            let backgroundTags = [
-                MenuTag.colorSeparator.rawValue,
-                MenuTag.backgroundLabel.rawValue,
-                MenuTag.backgroundSwatch.rawValue,
-            ]
-            if foregroundTags.contains(item.tag) {
+            if Self.foregroundTags.contains(item.tag) {
                 item.isHidden = symbolIsActive
             }
-            if backgroundTags.contains(item.tag) {
+            if Self.backgroundTags.contains(item.tag) {
                 item.isHidden = symbolIsActive || currentStyle == .transparent
             }
 
@@ -862,6 +859,7 @@ final class MenuBuilder {
         inputItem.view = labelInput
         inputItem.tag = MenuTag.labelInput.rawValue
         labelMenu.addItem(inputItem)
+        self.labelInput = labelInput
 
         labelMenu.addItem(.separator())
 
