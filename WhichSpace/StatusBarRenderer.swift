@@ -340,7 +340,8 @@ final class StatusBarRenderer {
 
         let totalWidth = renderedIcons.reduce(0) { $0 + $1.icon.size.width }
         let imageSize = NSSize(width: totalWidth, height: Layout.statusItemHeight)
-        return Self.drawImmediate(size: imageSize) {
+        let dimInactive = store.dimInactiveSpaces
+        return Self.drawDeferred(size: imageSize) {
             var xOffset: Double = 0
             for rendered in renderedIcons {
                 let drawRect = NSRect(
@@ -350,7 +351,7 @@ final class StatusBarRenderer {
                     height: Layout.statusItemHeight
                 )
 
-                let alpha = rendered.slot.isActive || !store.dimInactiveSpaces ? 1.0 : 0.35
+                let alpha = rendered.slot.isActive || !dimInactive ? 1.0 : 0.35
                 rendered.icon.draw(
                     in: drawRect,
                     from: NSRect(origin: .zero, size: rendered.icon.size),
@@ -378,12 +379,16 @@ final class StatusBarRenderer {
         let totalWidth = totalSpacesWidth + Double(separatorCount) * Layout.displaySeparatorWidth
 
         let imageSize = NSSize(width: totalWidth, height: Layout.statusItemHeight)
-        return Self.drawImmediate(size: imageSize) {
+        let dimInactive = store.dimInactiveSpaces
+        let separatorColor = preview?.separatorColor ?? store.separatorColor ?? (darkMode
+            ? NSColor(calibratedWhite: 0.5, alpha: 0.6)
+            : NSColor(calibratedWhite: 0.4, alpha: 0.6))
+        return Self.drawDeferred(size: imageSize) {
             var xOffset: Double = 0
 
             for (displayIndex, displayIcons) in renderedDisplays.enumerated() {
                 if displayIndex > 0 {
-                    drawDisplaySeparator(at: xOffset, darkMode: darkMode)
+                    Self.drawDisplaySeparator(at: xOffset, color: separatorColor)
                     xOffset += Layout.displaySeparatorWidth
                 }
 
@@ -395,7 +400,7 @@ final class StatusBarRenderer {
                         height: Layout.statusItemHeight
                     )
 
-                    let alpha = rendered.slot.isActive || !store.dimInactiveSpaces ? 1.0 : 0.35
+                    let alpha = rendered.slot.isActive || !dimInactive ? 1.0 : 0.35
                     rendered.icon.draw(
                         in: drawRect,
                         from: NSRect(origin: .zero, size: rendered.icon.size),
@@ -564,41 +569,23 @@ final class StatusBarRenderer {
         )
     }
 
-    /// Creates an NSImage by drawing immediately into a bitmap context.
+    /// Creates an NSImage whose drawing block runs at display time, so the
+    /// composite renders at the destination's backing scale and colorspace
+    /// (matching the single-icon path - a fixed-scale bitmap would blur on
+    /// 1x displays and color-shift on wide-gamut ones).
     ///
-    /// Unlike `NSImage(size:flipped:drawingHandler:)` which defers drawing, this executes
-    /// the drawing block synchronously so it captures the current state (including preview overrides).
-    private static func drawImmediate(size: CGSize, draw: () -> Void) -> NSImage {
-        let image = NSImage(size: size)
-        guard let rep = NSBitmapImageRep(
-            bitmapDataPlanes: nil,
-            pixelsWide: Int(size.width * 2),
-            pixelsHigh: Int(size.height * 2),
-            bitsPerSample: 8,
-            samplesPerPixel: 4,
-            hasAlpha: true,
-            isPlanar: false,
-            colorSpaceName: .calibratedRGB,
-            bytesPerRow: 0,
-            bitsPerPixel: 0
-        ) else {
-            return image
+    /// The block runs after preview state has been cleared, so callers must
+    /// resolve all rendering inputs eagerly and capture only values.
+    private static func drawDeferred(size: CGSize, draw: @escaping () -> Void) -> NSImage {
+        NSImage(size: size, flipped: false) { _ in
+            draw()
+            return true
         }
-        rep.size = size
-        NSGraphicsContext.saveGraphicsState()
-        NSGraphicsContext.current = NSGraphicsContext(bitmapImageRep: rep)
-        draw()
-        NSGraphicsContext.restoreGraphicsState()
-        image.addRepresentation(rep)
-        return image
     }
 
     /// Draws a vertical separator line between displays
-    private func drawDisplaySeparator(at xOffset: Double, darkMode: Bool) {
-        let separatorColor = preview?.separatorColor ?? store.separatorColor ?? (darkMode
-            ? NSColor(calibratedWhite: 0.5, alpha: 0.6)
-            : NSColor(calibratedWhite: 0.4, alpha: 0.6))
-        separatorColor.setStroke()
+    private static func drawDisplaySeparator(at xOffset: Double, color: NSColor) {
+        color.setStroke()
 
         let centerX = xOffset + Layout.displaySeparatorWidth / 2
         let path = NSBezierPath()
