@@ -27,11 +27,8 @@ Have you ever forgotten _which space_ is currently active on macOS and wanted a 
 ### Homebrew _(recommended)_
 
 ```text
-brew install --cask gechr/tap/whichspace
+brew install --cask whichspace
 ```
-
-> [!IMPORTANT]
-> If you previously installed via `brew install --cask whichspace`, uninstall it first with `brew uninstall --cask whichspace`
 
 ---
 
@@ -40,19 +37,6 @@ brew install --cask gechr/tap/whichspace
 - Download [`WhichSpace.zip`](https://github.com/gechr/WhichSpace/releases/latest/download/WhichSpace.zip)
 - Extract `WhichSpace.zip` and run `WhichSpace.app`
 - Future updates will be handled automatically
-
-> [!IMPORTANT]
-> Since `WhichSpace.app` is not [notarized](https://developer.apple.com/documentation/security/notarizing-macos-software-before-distribution), macOS may show a warning along the lines of:
->
-> > **Apple could not verify "WhichSpace.app" is free of malware that may harm your Mac or compromise your privacy.**
->
-> To bypass this, run the following command in [Terminal](https://support.apple.com/en-gb/guide/terminal/welcome/mac):
->
-> ```text
-> xattr -r -d com.apple.quarantine /path/to/WhichSpace.app
-> ```
->
-> Or right-click the app and select "Open" to add an exception.
 
 ## Features
 
