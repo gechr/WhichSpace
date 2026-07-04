@@ -42,6 +42,7 @@ final class MenuBuilder {
     private let appState: AppState
     private let store: DefaultsStore
     private var userSounds: [String] = []
+    private weak var labelMenu: NSMenu?
     private weak var soundMenu: NSMenu?
     private weak var soundMenuTarget: AnyObject?
 
@@ -133,9 +134,14 @@ final class MenuBuilder {
             display: appState.currentDisplayID,
             store: store
         ) ?? .square
-        if let labelMenu = menu.item(withTag: MenuTag.labelMenuItem.rawValue)?.submenu {
+        // Resolve the label submenu whether the opened menu contains it (style
+        // menu) or IS it (menuWillOpen fires per-submenu with that submenu)
+        let resolvedLabelMenu = menu === labelMenu
+            ? menu
+            : menu.item(withTag: MenuTag.labelMenuItem.rawValue)?.submenu
+        if let resolvedLabelMenu {
             var pastInput = false
-            for item in labelMenu.items {
+            for item in resolvedLabelMenu.items {
                 if item.tag == MenuTag.labelInput.rawValue {
                     pastInput = true
                     continue
@@ -170,8 +176,10 @@ final class MenuBuilder {
         )
 
         for item in menu.items {
-            // Update icon style views - only show checkmark when not in symbol mode
-            if let view = item.view as? StylePicker {
+            // Update icon style views - only show checkmark when not in symbol
+            // mode. Label pickers are handled above with the LABEL style; this
+            // loop must not overwrite them with the icon style
+            if let view = item.view as? StylePicker, menu !== labelMenu {
                 view.isChecked = !symbolIsActive && item.representedObject as? IconStyle == currentStyle
                 view.customColors = customColors
                 view.darkMode = appState.darkModeEnabled
@@ -706,6 +714,7 @@ final class MenuBuilder {
 
         // Label submenu (custom text labels)
         let labelMenu = createLabelMenu(target: target, delegate: delegate, actionDelegate: actionDelegate)
+        self.labelMenu = labelMenu
         let labelMenuItem = NSMenuItem(title: Localization.menuLabel, action: nil, keyEquivalent: "")
         labelMenuItem.image = NSImage(systemSymbolName: "character.textbox", accessibilityDescription: nil)
         labelMenuItem.submenu = labelMenu

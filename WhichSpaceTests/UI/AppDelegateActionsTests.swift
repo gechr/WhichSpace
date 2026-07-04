@@ -1444,6 +1444,32 @@ final class AppDelegateActionsTests: XCTestCase {
         XCTAssertEqual(showAllSpacesItem?.state, .off, "Show All Spaces should be unchecked when disabled")
     }
 
+    func testMenuWillOpen_labelSubmenu_keepsLabelStyleCheckmark() throws {
+        sut.configureMenuBarIcon()
+        let space = appState.currentSpace
+        SpacePreferences.setLabel("Work", forSpace: space, store: store)
+        SpacePreferences.setLabelStyle(.pill, forSpace: space, store: store)
+        SpacePreferences.setIconStyle(.square, forSpace: space, store: store)
+
+        // AppKit fires menuWillOpen per-submenu with that submenu as argument
+        let labelMenu = try XCTUnwrap(
+            MenuBuilder.findMenuItem(withTag: MenuTag.labelMenuItem.rawValue, in: sut.statusMenu)?.submenu
+        )
+        sut.menuWillOpen(labelMenu)
+
+        let pickerItems = labelMenu.items.filter { $0.view is StylePicker }
+        XCTAssertFalse(pickerItems.isEmpty, "label submenu should contain style pickers")
+        for item in pickerItems {
+            let picker = try XCTUnwrap(item.view as? StylePicker)
+            let style = try XCTUnwrap(item.representedObject as? IconStyle)
+            XCTAssertEqual(
+                picker.isChecked,
+                style == .pill,
+                "label picker \(style) should reflect the label style, not the icon style"
+            )
+        }
+    }
+
     func testMenuWillOpen_setsDimInactiveSpacesCheckmark_whenEnabled() {
         sut.configureMenuBarIcon()
         store.dimInactiveSpaces = true
