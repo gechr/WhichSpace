@@ -251,25 +251,34 @@ enum SpaceSwitcher {
             return false
         }
 
-        // Find windows on the target space
+        // Group regular windows (layer 0) by owning app so each app needs one batched space query
+        var windowsByPID: [Int32: [Int]] = [:]
+        var orderedPIDs: [Int32] = []
         for window in windowList {
-            // Filter to regular windows (layer 0)
             guard let layer = window[kCGWindowLayer as String] as? Int, layer == 0,
                   let windowNumber = window[kCGWindowNumber as String] as? Int,
                   let ownerPID = window[kCGWindowOwnerPID as String] as? Int32
             else {
                 continue
             }
+            if windowsByPID[ownerPID] == nil {
+                orderedPIDs.append(ownerPID)
+            }
+            windowsByPID[ownerPID, default: []].append(windowNumber)
+        }
 
-            // Check if this window is on the target space
-            guard let spacesRef = SLSCopySpacesForWindows(conn, 0x7, [windowNumber] as CFArray) else {
+        // Check each app's windows (front-to-back order) against the target space
+        for pid in orderedPIDs {
+            guard let windowNumbers = windowsByPID[pid],
+                  let spacesRef = SLSCopySpacesForWindows(conn, 0x7, windowNumbers as CFArray)
+            else {
                 continue
             }
             let spaces = spacesRef.takeRetainedValue() as? [Int] ?? []
 
             if spaces.contains(spaceID) {
-                // Found a window on the target space - activate its app
-                if let app = NSRunningApplication(processIdentifier: ownerPID) {
+                // Found an app with a window on the target space - activate it
+                if let app = NSRunningApplication(processIdentifier: pid) {
                     let activated = app.activate(options: [])
                     if activated {
                         NSLog("SpaceSwitcher: activated \(app.localizedName ?? "app") for fullscreen space \(spaceID)")
