@@ -48,8 +48,6 @@ enum SpaceSwitcher {
     /// Swipe progress - distance value for a complete space switch.
     private static let swipeProgress = 2.0
 
-    private static let accessibilityPromptOptionKey = "AXTrustedCheckOptionPrompt"
-
     private actor SharedState {
         private var hasPromptedForAccessibility = false
 
@@ -200,34 +198,6 @@ enum SpaceSwitcher {
 
     // MARK: - Accessibility
 
-    /// Resets WhichSpace Accessibility permission to clear stale TCC entries.
-    /// Waits for `tccutil` without blocking the calling thread.
-    static func resetAccessibilityPermission() async {
-        let tccutil = "/usr/bin/tccutil"
-        guard FileManager.default.fileExists(atPath: tccutil),
-              let bundleID = Bundle.main.bundleIdentifier
-        else {
-            return
-        }
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: tccutil)
-        process.arguments = ["reset", "Accessibility", bundleID]
-        process.standardOutput = FileHandle.nullDevice
-        process.standardError = FileHandle.nullDevice
-        await withCheckedContinuation { continuation in
-            process.terminationHandler = { _ in
-                continuation.resume()
-            }
-            do {
-                try process.run()
-            } catch {
-                process.terminationHandler = nil
-                NSLog("SpaceSwitcher: failed to reset accessibility permission: \(error)")
-                continuation.resume()
-            }
-        }
-    }
-
     static func ensureAccessibilityPermission() async -> Bool {
         if AXIsProcessTrusted() {
             return true
@@ -235,9 +205,7 @@ enum SpaceSwitcher {
 
         // Request permission once so the user sees the System Settings prompt
         if await sharedState.claimAccessibilityPrompt() {
-            await resetAccessibilityPermission()
-            let options = [accessibilityPromptOptionKey: true] as CFDictionary
-            _ = AXIsProcessTrustedWithOptions(options)
+            _ = await Accessibility.resetAndPrompt()
         }
 
         return false

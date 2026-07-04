@@ -14,10 +14,6 @@ final class ActionHandler: NSObject {
     private var launchAtLogin: LaunchAtLoginProvider
     private let confirmAction: ConfirmAction
 
-    private enum AccessibilityKeys {
-        static let trustedCheckOptionPrompt = "AXTrustedCheckOptionPrompt"
-    }
-
     /// Callback invoked whenever an action needs the status-bar icon refreshed.
     let onStatusBarIconNeedsUpdate: (() -> Void)?
 
@@ -746,29 +742,8 @@ final class ActionHandler: NSObject {
         let response = alert.runModal()
 
         if response == .alertFirstButtonReturn {
-            Task {
-                await SpaceSwitcher.resetAccessibilityPermission()
-                let options = [AccessibilityKeys.trustedCheckOptionPrompt: true] as CFDictionary
-                _ = AXIsProcessTrustedWithOptions(options)
-                pollForAccessibilityPermission()
-            }
-        }
-    }
-
-    private func pollForAccessibilityPermission(remaining: Int = 60) {
-        guard remaining > 0 else {
-            NSLog("ActionHandler: accessibility permission polling timed out")
-            return
-        }
-        Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { [weak self] _ in
-            if AXIsProcessTrusted() {
-                Task { @MainActor [weak self] in
-                    self?.store.clickToSwitchSpaces = true
-                }
-            } else {
-                Task { @MainActor [weak self] in
-                    self?.pollForAccessibilityPermission(remaining: remaining - 1)
-                }
+            Accessibility.requestPermission { [weak self] in
+                self?.store.clickToSwitchSpaces = true
             }
         }
     }
