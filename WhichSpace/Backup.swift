@@ -435,7 +435,7 @@ enum BackupManager {
         }
 
         let backup = Backup(
-            bundleId: Bundle.main.bundleIdentifier ?? "com.georgechu.WhichSpace",
+            bundleId: Bundle.main.bundleIdentifier ?? "io.gechr.WhichSpace",
             version: version,
             settings: settings,
             spacePreferences: spacePreferences,
@@ -502,11 +502,13 @@ enum BackupManager {
         var launchAtLogin = launchAtLogin
         launchAtLogin.isEnabled = backup.settings.launchAtLogin
         store.localSpaceNumbers = backup.settings.localSpaceNumbers
-        store.paddingScale = backup.settings.paddingScale ?? Layout.defaultPaddingScale
+        store.paddingScale = (backup.settings.paddingScale ?? Layout.defaultPaddingScale)
+            .clamped(to: Layout.paddingScaleRange)
         store.separatorColor = backup.settings.separatorColor?.toNSColor()
-        store.showAllDisplays = backup.settings.showAllDisplays
-        store.showAllSpaces = backup.settings.showAllSpaces
-        store.sizeScale = backup.settings.sizeScale
+        // Route through SettingsConstraints so a hand-edited backup can't enable both
+        SettingsConstraints.setShowAllDisplays(backup.settings.showAllDisplays, store: store)
+        SettingsConstraints.setShowAllSpaces(backup.settings.showAllSpaces, store: store)
+        store.sizeScale = backup.settings.sizeScale.clamped(to: Layout.sizeScaleRange)
         store.soundName = backup.settings.soundName
         store.uniqueIconsPerDisplay = backup.settings.uniqueIconsPerDisplay
 

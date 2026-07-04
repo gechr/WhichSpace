@@ -424,11 +424,32 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         XCTAssertTrue(store.hideFullscreenApps)
         XCTAssertTrue(store.hideSingleSpace)
         XCTAssertTrue(store.localSpaceNumbers)
-        XCTAssertTrue(store.showAllDisplays)
+        // showAllDisplays and showAllSpaces are mutually exclusive; the constraint
+        // resolves the conflicting backup in favor of showAllSpaces (applied last)
+        XCTAssertFalse(store.showAllDisplays)
         XCTAssertTrue(store.showAllSpaces)
         XCTAssertEqual(store.sizeScale, 75.0)
         XCTAssertEqual(store.soundName, "Blow")
         XCTAssertTrue(store.uniqueIconsPerDisplay)
+    }
+
+    func testApplyClampsOutOfRangeScales() throws {
+        let json = """
+        {
+            "bundleId": "com.test.app",
+            "version": "1.0.0",
+            "settings": {
+                "sizeScale": 99999.0,
+                "paddingScale": -50.0
+            }
+        }
+        """
+
+        let backup = try BackupManager.decode(jsonString: json)
+        BackupManager.apply(backup, to: store)
+
+        XCTAssertEqual(store.sizeScale, Layout.sizeScaleRange.upperBound)
+        XCTAssertEqual(store.paddingScale, Layout.paddingScaleRange.lowerBound)
     }
 
     func testApplyUpdatesSpacePreferences() throws {

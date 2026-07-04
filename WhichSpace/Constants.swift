@@ -85,6 +85,13 @@ enum Layout {
     }
 }
 
+extension Comparable {
+    /// Returns the value limited to the given closed range.
+    func clamped(to range: ClosedRange<Self>) -> Self {
+        min(max(self, range.lowerBound), range.upperBound)
+    }
+}
+
 // MARK: - Icon Colors
 
 enum IconColors {
