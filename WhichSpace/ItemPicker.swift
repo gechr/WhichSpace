@@ -324,7 +324,13 @@ private final class ItemGridView: NSView {
     var onItemHoverStart: ((String) -> Void)?
     var onItemSelected: ((String) -> Void)?
     var selectedItem: String?
-    var skinToneModifier: String?
+    var skinToneModifier: String? {
+        didSet {
+            if skinToneModifier != oldValue {
+                emojiRenderCache.removeAll()
+            }
+        }
+    }
 
     // MARK: - Private Properties
 
@@ -336,6 +342,8 @@ private final class ItemGridView: NSView {
 
     private var hoveredIndex: Int?
     private var imageCache: [String: NSImage] = [:]
+    /// Skin-tone-resolved emoji and measured size, keyed by base emoji
+    private var emojiRenderCache: [String: (display: String, size: CGSize)] = [:]
 
     // MARK: - Computed Properties
 
@@ -463,14 +471,19 @@ private final class ItemGridView: NSView {
     }
 
     private func drawEmoji(_ emoji: String, in rect: CGRect) {
-        var displayEmoji = emoji
-        if skinToneModifier != nil {
-            displayEmoji = SkinTone.apply(to: emoji)
-        }
-
         let font = NSFont.systemFont(ofSize: itemSize * 0.7)
         let attributes: [NSAttributedString.Key: Any] = [.font: font]
-        let emojiTextSize = displayEmoji.size(withAttributes: attributes)
+
+        // Skin-tone resolution and text measurement are the expensive parts; cache them
+        let displayEmoji: String
+        let emojiTextSize: CGSize
+        if let cached = emojiRenderCache[emoji] {
+            (displayEmoji, emojiTextSize) = cached
+        } else {
+            displayEmoji = skinToneModifier != nil ? SkinTone.apply(to: emoji) : emoji
+            emojiTextSize = displayEmoji.size(withAttributes: attributes)
+            emojiRenderCache[emoji] = (displayEmoji, emojiTextSize)
+        }
 
         let xStart = rect.origin.x + (rect.width - emojiTextSize.width) / 2
         let yStart = rect.origin.y + (rect.height - emojiTextSize.height) / 2
