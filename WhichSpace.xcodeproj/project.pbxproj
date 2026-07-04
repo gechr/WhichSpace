@@ -740,7 +740,6 @@
 				);
 				OTHER_SWIFT_FLAGS = (
 					"$(inherited)",
-					"-warn-concurrency",
 					"-enable-actor-data-race-checks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.gechr.WhichSpace;
@@ -776,11 +775,6 @@
 					"-framework",
 					SkyLight,
 				);
-				OTHER_SWIFT_FLAGS = (
-					"$(inherited)",
-					"-warn-concurrency",
-					"-enable-actor-data-race-checks",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.gechr.WhichSpace;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "WhichSpace/Classes/WhichSpace-Bridging-Header.h";
@@ -804,11 +798,6 @@
 					"@loader_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				OTHER_SWIFT_FLAGS = (
-					"$(inherited)",
-					"-warn-concurrency",
-					"-enable-actor-data-race-checks",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.gechr.WhichSpaceTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_STRICT_CONCURRENCY = complete;
@@ -833,7 +822,6 @@
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				OTHER_SWIFT_FLAGS = (
 					"$(inherited)",
-					"-warn-concurrency",
 					"-enable-actor-data-race-checks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.gechr.WhichSpaceTests;
