@@ -25,10 +25,16 @@ enum SettingsConstraints {
     /// Attempts to set `clickToSwitchSpaces`.
     ///
     /// When enabling, returns `false` if accessibility permission is not granted
-    /// (the caller is responsible for showing any UI prompt). Disabling always succeeds.
+    /// (the caller is responsible for showing any UI prompt). Disabling always
+    /// succeeds. The trust check is injectable so tests don't depend on the
+    /// host process's actual TCC state.
     @discardableResult
-    static func setClickToSwitchSpaces(_ value: Bool, store: DefaultsStore) -> Bool {
-        if value, !AXIsProcessTrusted() {
+    static func setClickToSwitchSpaces(
+        _ value: Bool,
+        store: DefaultsStore,
+        isProcessTrusted: () -> Bool = { Accessibility.isTrusted }
+    ) -> Bool {
+        if value, !isProcessTrusted() {
             return false
         }
         store.clickToSwitchSpaces = value

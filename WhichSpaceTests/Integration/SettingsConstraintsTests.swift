@@ -70,8 +70,9 @@ struct SettingsConstraintsTests {
 
     @Test("clickToSwitchSpaces fails without accessibility")
     func clickToSwitchSpaces_failsWithoutAccessibility() {
-        // AXIsProcessTrusted() returns false in test/CI environments
-        let result = SettingsConstraints.setClickToSwitchSpaces(true, store: store)
+        let result = SettingsConstraints.setClickToSwitchSpaces(
+            true, store: store
+        ) { false }
 
         #expect(!result, "Should fail when accessibility is not granted")
         #expect(!store.clickToSwitchSpaces, "Setting should remain false")
@@ -102,7 +103,9 @@ struct SettingsConstraintsTests {
         // Reproduces the binding setter logic from SettingsView.clickToSwitchSpacesBinding
         var showingAccessibilityAlert = false
 
-        let result = SettingsConstraints.setClickToSwitchSpaces(true, store: store)
+        let result = SettingsConstraints.setClickToSwitchSpaces(
+            true, store: store
+        ) { false }
         if !result {
             showingAccessibilityAlert = true
         }
