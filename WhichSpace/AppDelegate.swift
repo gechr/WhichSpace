@@ -45,6 +45,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     private let missionControlNotificationSender: (CFString) -> Void
     private(set) var actionHandler: ActionHandler!
     private var menuBuilder: MenuBuilder!
+    private var middleClickMonitor: Any?
     private var statusBarItem: NSStatusItem!
 
     private var isPickingForeground = true
@@ -299,7 +300,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         statusBarItem?.button?.target = self
         statusBarItem?.button?.action = #selector(statusBarButtonClicked(_:))
         statusBarItem?.button?.sendAction(on: [.leftMouseUp, .rightMouseUp])
-        NSEvent.addLocalMonitorForEvents(matching: .otherMouseUp) { [weak self] event in
+        // Remove any previous monitor: this is re-invoked by tests
+        if let middleClickMonitor {
+            NSEvent.removeMonitor(middleClickMonitor)
+        }
+        middleClickMonitor = NSEvent.addLocalMonitorForEvents(matching: .otherMouseUp) { [weak self] event in
             self?.handleMiddleClickEvent(event, in: self?.statusBarItem?.button) ?? event
         }
         updateStatusBarIcon()
