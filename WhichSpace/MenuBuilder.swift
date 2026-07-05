@@ -1185,9 +1185,6 @@ final class MenuBuilder {
     // MARK: - Update
 
     private func configureUpdateMenuItem(in menu: NSMenu, target: AnyObject) {
-        guard !AppInfo.isHomebrewInstall else {
-            return
-        }
         addMenuItem(
             to: menu,
             title: Localization.actionCheckForUpdates,

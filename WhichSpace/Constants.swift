@@ -39,14 +39,6 @@ enum AppInfo {
     static var appName: String {
         Bundle.main.infoDictionary?["CFBundleName"] as? String ?? "WhichSpace"
     }
-
-    static var isHomebrewInstall: Bool {
-        let caskroomPaths = [
-            "/opt/homebrew/Caskroom/whichspace",
-            "/usr/local/Caskroom/whichspace",
-        ]
-        return caskroomPaths.contains { FileManager.default.fileExists(atPath: $0) }
-    }
 }
 
 // MARK: - Layout

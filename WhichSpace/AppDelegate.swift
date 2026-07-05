@@ -126,7 +126,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         NSApp.setActivationPolicy(.accessory)
         statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         updaterController = SPUStandardUpdaterController(
-            startingUpdater: !AppInfo.isHomebrewInstall,
+            startingUpdater: true,
             updaterDelegate: nil,
             userDriverDelegate: self
         )
