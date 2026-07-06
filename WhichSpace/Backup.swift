@@ -158,14 +158,30 @@ struct BackupSpacePreferences: Codable {
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        if !badges.isEmpty { try container.encode(badges, forKey: .badges) }
-        if !colors.isEmpty { try container.encode(colors, forKey: .colors) }
-        if !fonts.isEmpty { try container.encode(fonts, forKey: .fonts) }
-        if !iconStyles.isEmpty { try container.encode(iconStyles, forKey: .iconStyles) }
-        if !labels.isEmpty { try container.encode(labels, forKey: .labels) }
-        if !labelStyles.isEmpty { try container.encode(labelStyles, forKey: .labelStyles) }
-        if !skinTones.isEmpty { try container.encode(skinTones, forKey: .skinTones) }
-        if !symbols.isEmpty { try container.encode(symbols, forKey: .symbols) }
+        if !badges.isEmpty {
+            try container.encode(badges, forKey: .badges)
+        }
+        if !colors.isEmpty {
+            try container.encode(colors, forKey: .colors)
+        }
+        if !fonts.isEmpty {
+            try container.encode(fonts, forKey: .fonts)
+        }
+        if !iconStyles.isEmpty {
+            try container.encode(iconStyles, forKey: .iconStyles)
+        }
+        if !labels.isEmpty {
+            try container.encode(labels, forKey: .labels)
+        }
+        if !labelStyles.isEmpty {
+            try container.encode(labelStyles, forKey: .labelStyles)
+        }
+        if !skinTones.isEmpty {
+            try container.encode(skinTones, forKey: .skinTones)
+        }
+        if !symbols.isEmpty {
+            try container.encode(symbols, forKey: .symbols)
+        }
     }
 
     init(from decoder: Decoder) throws {

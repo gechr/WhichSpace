@@ -374,8 +374,12 @@ enum SkinTone: Int, CaseIterable, Codable, Defaults.Serializable {
         let firstZWJ = scalars.firstIndex(of: zwj)
         var result: [Unicode.Scalar] = []
         for (offset, scalar) in scalars.enumerated() {
-            if modifierScalars.contains(scalar) { continue }
-            if scalar == vs16, firstZWJ == nil || offset < firstZWJ! { continue }
+            if modifierScalars.contains(scalar) {
+                continue
+            }
+            if scalar == vs16, firstZWJ == nil || offset < firstZWJ! {
+                continue
+            }
             result.append(scalar)
         }
         return String(String.UnicodeScalarView(result))

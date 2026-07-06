@@ -627,7 +627,9 @@ struct SpaceIconGeneratorTests {
                 let blue = Double(pointer[offset + 2]) / 255.0
                 let alpha = Double(pointer[offset + 3]) / 255.0
 
-                if alpha < 0.5 { continue }
+                if alpha < 0.5 {
+                    continue
+                }
 
                 if abs(red - targetRed) <= tolerance,
                    abs(green - targetGreen) <= tolerance,
