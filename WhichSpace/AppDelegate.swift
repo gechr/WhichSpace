@@ -35,6 +35,39 @@ typealias ConfirmAction = (
     _ message: String, _ detail: String, _ confirmTitle: String, _ isDestructive: Bool
 ) -> Bool
 
+// MARK: - Hidden Icon Warning State
+
+struct HiddenIconWarningState {
+    private var hiddenSince: Date?
+    private var warnedForCurrentHide = false
+
+    mutating func shouldWarn(
+        hiddenNow: Bool,
+        suppressed: Bool,
+        now: Date,
+        warningDelay: TimeInterval
+    ) -> Bool {
+        guard hiddenNow else {
+            hiddenSince = nil
+            warnedForCurrentHide = false
+            return false
+        }
+
+        if hiddenSince == nil {
+            hiddenSince = now
+        }
+        guard !warnedForCurrentHide, !suppressed, let hiddenSince else {
+            return false
+        }
+        guard now.timeIntervalSince(hiddenSince) >= warningDelay else {
+            return false
+        }
+
+        warnedForCurrentHide = true
+        return true
+    }
+}
+
 // MARK: - App Delegate
 
 @MainActor
@@ -48,6 +81,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     private var menuBuilder: MenuBuilder!
     private var middleClickMonitor: Any?
     private var statusBarItem: NSStatusItem!
+
+    /// Observers/state for detecting when our menu bar icon is active but not
+    /// actually on screen (truncated when the menu bar is full, or hidden by
+    /// the notch). See `startObservingIconOcclusion()`.
+    private var occlusionPollTimer: Timer?
+    private var occlusionObserver: NSObjectProtocol?
+    private weak var observedOcclusionWindow: NSWindow?
+    private var screenParamsObserver: NSObjectProtocol?
+    private var hiddenIconWarningState = HiddenIconWarningState()
 
     private var isPickingForeground = true
     private var isPreviewingIcon = false
@@ -71,6 +113,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     private var store: DefaultsStore {
         appState.store
     }
+
+    private static let hiddenIconPollInterval: TimeInterval = 3.0
+    private static let hiddenIconWarningDelay: TimeInterval = 2.0
 
     // MARK: - Initialization
 
@@ -146,6 +191,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         startObservingAppState()
         startObservingSpaceChanges()
         startObservingPreferences()
+        updateIconOcclusionMonitoring()
 
         // Disable click-to-switch if accessibility permission was revoked
         if store.clickToSwitchSpaces, !AXIsProcessTrusted() {
@@ -283,6 +329,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
                 guard !Task.isCancelled
                 else { return }
                 self?.appState.forceSpaceUpdate()
+            }
+        })
+
+        // Start/stop occlusion monitoring when the opt-out preference changes
+        // (e.g. a settings reset re-enables it) without needing a relaunch.
+        let suppressHiddenIconKey = store.keyFor(KeySpecs.suppressHiddenIconWarning)
+        preferenceObservationTasks.append(Task { [weak self] in
+            for await _ in Defaults.updates(suppressHiddenIconKey, initial: false) {
+                guard !Task.isCancelled
+                else { return }
+                self?.store.invalidateCachedValues()
+                self?.updateIconOcclusionMonitoring()
             }
         })
     }
@@ -439,6 +497,162 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
         // Hide if there's only one regular (non-fullscreen) space across all displays
         statusBarItem.isVisible = appState.regularSpaceCount > 1
+    }
+
+    // MARK: - Hidden Icon Detection
+
+    /// Detects when our status item is active but not actually visible on screen
+    /// (macOS truncates icons when the menu bar is full, and the notch can swallow
+    /// them) and warns the user, who otherwise assumes the app failed to launch.
+    ///
+    /// `NSStatusItem.isVisible` reflects intent, not reality, so it can't answer
+    /// this. Instead the status button lives in its own window whose
+    /// `occlusionState` drops `.visible` when the item is clipped or notch-hidden.
+    /// This is the same signal Tailscale and VirtualBuddy use. Occlusion events
+    /// are used as hints, with polling as the source of truth because the visible
+    /// direction is not consistently delivered.
+    /// Starts or stops occlusion monitoring based on the opt-out preference.
+    /// When the user has ticked "Don't show this again" there is nothing left to
+    /// warn about, so we tear the poll and observers down entirely - WhichSpace is
+    /// meant to be near-zero when idle. Idempotent; safe to call on any change.
+    private func updateIconOcclusionMonitoring() {
+        if store.suppressHiddenIconWarning {
+            stopObservingIconOcclusion()
+        } else {
+            startObservingIconOcclusion()
+        }
+    }
+
+    private func startObservingIconOcclusion() {
+        guard occlusionPollTimer == nil else {
+            return
+        }
+        let timer = Timer(timeInterval: Self.hiddenIconPollInterval, repeats: true) { [weak self] _ in
+            MainActor.assumeIsolated {
+                self?.checkIconOcclusion()
+            }
+        }
+        // A generous tolerance lets macOS coalesce this low-frequency wakeup with
+        // other timers rather than scheduling a dedicated one - a large energy win
+        // for a poll that only needs to be roughly periodic.
+        timer.tolerance = Self.hiddenIconPollInterval * 0.5
+        // .common so it keeps firing during menu tracking / event loops.
+        RunLoop.main.add(timer, forMode: .common)
+        occlusionPollTimer = timer
+        screenParamsObserver = NotificationCenter.default.addObserver(
+            forName: NSApplication.didChangeScreenParametersNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated {
+                self?.checkIconOcclusion()
+            }
+        }
+        // Catch launch-into-hidden without waiting for the first timer tick.
+        checkIconOcclusion()
+    }
+
+    private func stopObservingIconOcclusion() {
+        occlusionPollTimer?.invalidate()
+        occlusionPollTimer = nil
+        if let screenParamsObserver {
+            NotificationCenter.default.removeObserver(screenParamsObserver)
+            self.screenParamsObserver = nil
+        }
+        if let occlusionObserver {
+            NotificationCenter.default.removeObserver(occlusionObserver)
+            self.occlusionObserver = nil
+        }
+        observedOcclusionWindow = nil
+        // Reset so a later re-enable starts from a clean visible->hidden edge.
+        hiddenIconWarningState = HiddenIconWarningState()
+    }
+
+    private func checkIconOcclusion(now: Date = Date()) {
+        guard let statusBarItem, let button = statusBarItem.button, let window = button.window else {
+            return
+        }
+        observeOcclusionChanges(for: window)
+
+        // Hidden = we intend to show the icon (`isVisible`, which WhichSpace turns
+        // off deliberately on a single Space) but its window is fully occluded.
+        // `.contains(.visible)` is the documented bitfield check.
+        let hiddenByOcclusion = !window.occlusionState.contains(.visible)
+        let hiddenByNotch = statusButtonIntersectsNotchGap(button, in: window)
+        let hiddenNow = statusBarItem.isVisible && (hiddenByOcclusion || hiddenByNotch)
+
+        guard hiddenIconWarningState.shouldWarn(
+            hiddenNow: hiddenNow,
+            suppressed: store.suppressHiddenIconWarning,
+            now: now,
+            warningDelay: Self.hiddenIconWarningDelay
+        ) else {
+            return
+        }
+        showHiddenIconWarning()
+    }
+
+    private func observeOcclusionChanges(for window: NSWindow) {
+        guard observedOcclusionWindow !== window else {
+            return
+        }
+        if let occlusionObserver {
+            NotificationCenter.default.removeObserver(occlusionObserver)
+        }
+        observedOcclusionWindow = window
+        occlusionObserver = NotificationCenter.default.addObserver(
+            forName: NSWindow.didChangeOcclusionStateNotification,
+            object: window,
+            queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated {
+                self?.checkIconOcclusion()
+            }
+        }
+    }
+
+    private func statusButtonIntersectsNotchGap(_ button: NSStatusBarButton, in window: NSWindow) -> Bool {
+        guard let screen = window.screen,
+              screen.safeAreaInsets.top > 0,
+              let topLeftArea = screen.auxiliaryTopLeftArea,
+              let topRightArea = screen.auxiliaryTopRightArea,
+              topLeftArea.maxX < topRightArea.minX
+        else {
+            return false
+        }
+
+        let buttonFrame = window.convertToScreen(button.convert(button.bounds, to: nil))
+        let notchGap = NSRect(
+            x: topLeftArea.maxX,
+            y: min(topLeftArea.minY, topRightArea.minY),
+            width: topRightArea.minX - topLeftArea.maxX,
+            height: max(topLeftArea.maxY, topRightArea.maxY) - min(topLeftArea.minY, topRightArea.minY)
+        )
+        return buttonFrame.intersects(notchGap)
+    }
+
+    private func showHiddenIconWarning() {
+        NSApp.activate(ignoringOtherApps: true)
+
+        let alert = NSAlert()
+        alert.messageText = Localization.alertHiddenIcon
+        alert.informativeText = Localization.alertHiddenIconDetail
+        alert.alertStyle = .informational
+        alert.useSmallAppIcon()
+        alert.addButton(withTitle: Localization.buttonLearnMore)
+        alert.addButton(withTitle: Localization.buttonOK)
+        alert.showsSuppressionButton = true
+        alert.suppressionButton?.title = Localization.buttonDontShowAgain
+
+        let response = alert.runModal()
+        if alert.suppressionButton?.state == .on {
+            store.suppressHiddenIconWarning = true
+            // Opted out permanently: stop polling entirely (nothing left to warn about).
+            stopObservingIconOcclusion()
+        }
+        if response == .alertFirstButtonReturn {
+            NSWorkspace.shared.open(AppInfo.menuBarHelpURL)
+        }
     }
 
     /// Updates the sizeScale on all StylePicker views in the icon menu

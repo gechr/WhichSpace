@@ -212,6 +212,7 @@ struct DefaultsIsolationGuardTests {
             "spaceLabelStyles",
             "spaceSkinTones",
             "spaceSymbols",
+            "suppressHiddenIconWarning",
             "uniqueIconsPerDisplay",
         ]
 
