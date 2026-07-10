@@ -50,6 +50,8 @@ brew install --cask whichspace
 
 > [!NOTE]
 > Inactive Spaces are dimmed by default.
+>
+> Empty Spaces can be hidden entirely.
 
 ### Displays
 
