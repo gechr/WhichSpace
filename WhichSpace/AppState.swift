@@ -136,16 +136,38 @@ struct StatusBarLayout: Equatable {
 @MainActor
 @Observable
 final class AppState {
-    /// Space info for all displays (used when showAllDisplays is enabled)
-    private(set) var allDisplaysSpaceInfo: [DisplaySpaceInfo] = []
-    private(set) var allSpaceEntries: [SpaceEntry] = []
-    private(set) var currentDisplayID: String?
-    /// The global space index of the current space across all displays (1-based)
-    private(set) var currentGlobalSpaceIndex = 0
-    private(set) var currentSpace = 0
-    private(set) var currentSpaceID = 0
-    private(set) var currentSpaceLabel = "?"
+    private var snapshot: SpaceSnapshot = .empty
     private(set) var darkModeEnabled = false
+
+    /// Space info for all displays (used when showAllDisplays is enabled)
+    var allDisplaysSpaceInfo: [DisplaySpaceInfo] {
+        snapshot.allDisplaysSpaceInfo
+    }
+
+    var allSpaceEntries: [SpaceEntry] {
+        snapshot.allSpaceEntries
+    }
+
+    var currentDisplayID: String? {
+        snapshot.currentDisplayID
+    }
+
+    /// The global space index of the current space across all displays (1-based)
+    var currentGlobalSpaceIndex: Int {
+        snapshot.currentGlobalSpaceIndex
+    }
+
+    var currentSpace: Int {
+        snapshot.currentSpace
+    }
+
+    var currentSpaceID: Int {
+        snapshot.currentSpaceID
+    }
+
+    var currentSpaceLabel: String {
+        snapshot.currentSpaceLabel
+    }
 
     var allSpaceLabels: [String] {
         allSpaceEntries.map(\.label)
@@ -171,9 +193,7 @@ final class AppState {
         store: store
     )
 
-    private var lastAppliedSnapshot: SpaceSnapshot?
     private var lastUpdateTime: Date = .distantPast
-    private var previousRegularSpaceCount = 0
     private var mouseEventMonitor: Any?
     private var notificationTasks: [Task<Void, Never>] = []
     private var pendingClickUpdateTask: Task<Void, Never>?
@@ -241,24 +261,36 @@ final class AppState {
             globalSpaceIndex: Int? = nil
         ) {
             let resolvedIDs = spaceIDs ?? Array(100 ..< 100 + labels.count)
-            self.currentSpace = currentSpace
-            currentSpaceLabel = currentLabel
-            currentDisplayID = displayID
+            let resolvedDisplays: [DisplaySpaceInfo]
             if let allDisplays {
-                allDisplaysSpaceInfo = allDisplays
+                resolvedDisplays = allDisplays
             } else if let displayID {
                 let info = DisplaySpaceInfo(displayID: displayID, labels: labels, spaceIDs: resolvedIDs)
-                allDisplaysSpaceInfo = [info]
+                resolvedDisplays = [info]
             } else {
-                allDisplaysSpaceInfo = []
+                resolvedDisplays = []
             }
             // Derive entries from DisplaySpaceInfo when available so regularIndex is computed correctly
-            if let currentDisplayInfo = allDisplaysSpaceInfo.first(where: { $0.displayID == displayID }) {
-                allSpaceEntries = currentDisplayInfo.entries
+            let resolvedEntries: [SpaceEntry] = if let currentDisplayInfo = resolvedDisplays
+                .first(where: { $0.displayID == displayID })
+            {
+                currentDisplayInfo.entries
             } else {
-                allSpaceEntries = zip(resolvedIDs, labels).map { SpaceEntry(id: $0, label: $1, regularIndex: nil) }
+                zip(resolvedIDs, labels).map { SpaceEntry(id: $0, label: $1, regularIndex: nil) }
             }
-            currentGlobalSpaceIndex = globalSpaceIndex ?? currentSpace
+            let currentEntryIndex = currentSpace - 1
+            let currentSpaceID = resolvedEntries.indices.contains(currentEntryIndex)
+                ? resolvedEntries[currentEntryIndex].id
+                : 0
+            snapshot = SpaceSnapshot(
+                allDisplaysSpaceInfo: resolvedDisplays,
+                allSpaceEntries: resolvedEntries,
+                currentDisplayID: displayID,
+                currentGlobalSpaceIndex: globalSpaceIndex ?? currentSpace,
+                currentSpace: currentSpace,
+                currentSpaceID: currentSpaceID,
+                currentSpaceLabel: currentLabel
+            )
         }
     #endif
 
@@ -412,48 +444,35 @@ final class AppState {
     }
 
     /// Applies a space snapshot to update AppState properties
-    private func applySnapshot(_ snapshot: SpaceSnapshot) {
+    private func applySnapshot(_ newSnapshot: SpaceSnapshot) {
         // A snapshot without a current space, taken while spaces are known,
         // is a transient artifact of display reconfiguration (the CGS reads
         // race the change) - keep the previous state rather than flashing
         // "?" and poisoning space-change detection
-        if snapshot.currentSpaceID == 0,
-           let lastAppliedSnapshot, !lastAppliedSnapshot.allSpaceEntries.isEmpty
-        {
+        if newSnapshot.currentSpaceID == 0, !snapshot.allSpaceEntries.isEmpty {
             return
         }
         // Skip no-op applies so notification bursts (e.g. every app
         // activation) don't invalidate caches or re-render the icon. Window
         // layout may still have changed, so refresh that data in the
         // background (affects hideEmptySpaces)
-        guard snapshot != lastAppliedSnapshot else {
+        guard newSnapshot != snapshot else {
             lastUpdateTime = Date()
             renderer.refreshSpacesWithWindows()
             return
         }
-        lastAppliedSnapshot = snapshot
 
         // Save previous values for space change detection
-        let oldDisplaysSpaceInfo = allDisplaysSpaceInfo
-        let oldSpaceID = currentSpaceID
-        let oldDisplayID = currentDisplayID
+        let oldDisplaysSpaceInfo = snapshot.allDisplaysSpaceInfo
+        let oldSpaceID = snapshot.currentSpaceID
+        let oldDisplayID = snapshot.currentDisplayID
 
-        // Apply snapshot to state
-        allDisplaysSpaceInfo = snapshot.allDisplaysSpaceInfo
-        allSpaceEntries = snapshot.allSpaceEntries
-        currentDisplayID = snapshot.currentDisplayID
-        currentGlobalSpaceIndex = snapshot.currentGlobalSpaceIndex
-        currentSpace = snapshot.currentSpace
-        currentSpaceID = snapshot.currentSpaceID
-        currentSpaceLabel = snapshot.currentSpaceLabel
+        snapshot = newSnapshot
         lastUpdateTime = Date()
         renderer.spaceSnapshotDidChange()
 
         // Apply default style to newly created spaces
         applyDefaultStyleToNewSpaces(previousDisplays: oldDisplaysSpaceInfo)
-
-        // Track state for next snapshot
-        previousRegularSpaceCount = regularSpaceCount
 
         // Post notification if space changed on the same display
         postCurrentDisplaySpaceChangeIfNeeded(oldSpaceID: oldSpaceID, oldDisplayID: oldDisplayID)
