@@ -6,6 +6,7 @@ final class CGSStub: DisplaySpaceProvider, @unchecked Sendable {
     private let lock = NSLock()
     private var mainThreadSpacesWithWindowsCalls = 0
     private var spacesWithWindowsCalls = 0
+    private var spacesWithWindowsSemaphore: DispatchSemaphore?
     private var spacesWithWindowsValue: Set<Int> = []
 
     var displays: [NSDictionary] = []
@@ -18,6 +19,11 @@ final class CGSStub: DisplaySpaceProvider, @unchecked Sendable {
 
     var spacesWithWindowsCallCount: Int {
         withLock { spacesWithWindowsCalls }
+    }
+
+    var spacesWithWindowsBlocker: DispatchSemaphore? {
+        get { withLock { spacesWithWindowsSemaphore } }
+        set { withLock { spacesWithWindowsSemaphore = newValue } }
     }
 
     var mainThreadSpacesWithWindowsCallCount: Int {
@@ -34,13 +40,15 @@ final class CGSStub: DisplaySpaceProvider, @unchecked Sendable {
     }
 
     func spacesWithWindows(forSpaceIDs spaceIDs: [Int]) -> Set<Int> {
-        withLock {
+        let (spaces, blocker) = withLock {
             spacesWithWindowsCalls += 1
             if Thread.isMainThread {
                 mainThreadSpacesWithWindowsCalls += 1
             }
-            return spacesWithWindowsValue.intersection(spaceIDs)
+            return (spacesWithWindowsValue.intersection(spaceIDs), spacesWithWindowsSemaphore)
         }
+        blocker?.wait()
+        return spaces
     }
 
     private func withLock<Result>(_ operation: () -> Result) -> Result {

@@ -26,6 +26,10 @@ final class StatusBarRenderer {
         let icon: NSImage
     }
 
+    private struct WindowScanRequest {
+        let spaceIDs: [Int]
+    }
+
     /// Captures all state that affects icon rendering so we can detect changes and serve a cached image.
     ///
     /// Preferences are represented by `storeMutationCount` - a token bumped on every
@@ -54,6 +58,7 @@ final class StatusBarRenderer {
     private static let spacesWithWindowsCacheTTL: TimeInterval = 0.2
 
     private var backgroundScanTask: Task<Void, Never>?
+    private var pendingBackgroundScan: WindowScanRequest?
     private var cachedSpacesWithWindows: Set<Int> = []
     private var cachedSpacesWithWindowsPopulated = false
     private var cachedSpacesWithWindowsSpaceIDs: [Int] = []
@@ -211,8 +216,6 @@ final class StatusBarRenderer {
     /// while refreshing in the background. Clearing it here would make every Space
     /// transition repeat the synchronous first-load window scan on the main actor.
     func spaceSnapshotDidChange() {
-        backgroundScanTask?.cancel()
-        backgroundScanTask = nil
         cachedSpacesWithWindowsTime = .distantPast
         invalidateIconCache()
     }
@@ -626,16 +629,33 @@ final class StatusBarRenderer {
 
     /// Runs `spacesWithWindows` on a background thread and updates the cache on completion.
     private func scheduleBackgroundWindowScan(forSpaceIDs spaceIDs: [Int]) {
-        backgroundScanTask?.cancel()
+        guard backgroundScanTask == nil else {
+            pendingBackgroundScan = WindowScanRequest(spaceIDs: spaceIDs)
+            return
+        }
+
         let provider = displaySpaceProvider
-        backgroundScanTask = Task {
+        backgroundScanTask = Task { [weak self] in
             let result = await Task.detached {
                 provider.spacesWithWindows(forSpaceIDs: spaceIDs)
             }.value
 
-            guard !Task.isCancelled
-            else { return }
+            guard !Task.isCancelled, let self else {
+                return
+            }
 
+            finishBackgroundWindowScan(result, forSpaceIDs: spaceIDs)
+        }
+    }
+
+    private func finishBackgroundWindowScan(_ result: Set<Int>, forSpaceIDs spaceIDs: [Int]) {
+        backgroundScanTask = nil
+        let pendingRequest = pendingBackgroundScan
+        pendingBackgroundScan = nil
+
+        // A topology change made this result obsolete. Keep the existing stale
+        // cache visible until the one queued follow-up produces current data.
+        if pendingRequest == nil || pendingRequest?.spaceIDs == spaceIDs {
             let changed = result != cachedSpacesWithWindows
             cachedSpacesWithWindows = result
             cachedSpacesWithWindowsTime = Date()
@@ -645,6 +665,10 @@ final class StatusBarRenderer {
                 invalidateIconCache()
                 onIconNeedsUpdate?()
             }
+        }
+
+        if let pendingRequest {
+            scheduleBackgroundWindowScan(forSpaceIDs: pendingRequest.spaceIDs)
         }
     }
 

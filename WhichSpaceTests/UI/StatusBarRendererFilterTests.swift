@@ -107,6 +107,60 @@ struct StatusBarRendererFilterTests {
         #expect(stub.mainThreadSpacesWithWindowsCallCount == 1)
     }
 
+    @Test("window refreshes run one scan at a time")
+    func windowRefreshes_runSingleFlight() async {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = makeDisplays(activeSpaceID: 100)
+        stub.spacesWithWindowsSet = [100, 101]
+        store.showAllSpaces = true
+        store.hideEmptySpaces = true
+
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        _ = appState.statusBarLayout()
+        #expect(stub.spacesWithWindowsCallCount == 1)
+
+        let blocker = DispatchSemaphore(value: 0)
+        stub.spacesWithWindowsBlocker = blocker
+        defer {
+            blocker.signal()
+            blocker.signal()
+        }
+
+        stub.displays = makeDisplays(activeSpaceID: 101)
+        appState.forceSpaceUpdate()
+        _ = appState.statusBarLayout()
+        await waitForWindowScanCount(2)
+
+        stub.displays = makeDisplays(activeSpaceID: 100)
+        appState.forceSpaceUpdate()
+        _ = appState.statusBarLayout()
+        try? await Task.sleep(for: .milliseconds(50))
+        #expect(stub.spacesWithWindowsCallCount == 2)
+
+        blocker.signal()
+        await waitForWindowScanCount(3)
+    }
+
+    private func makeDisplays(activeSpaceID: Int) -> [NSDictionary] {
+        [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [
+                    (id: 100, isFullscreen: false),
+                    (id: 101, isFullscreen: false),
+                ],
+                activeSpaceID: activeSpaceID
+            ),
+        ]
+    }
+
+    private func waitForWindowScanCount(_ expectedCount: Int) async {
+        for _ in 0 ..< 100 where stub.spacesWithWindowsCallCount < expectedCount {
+            try? await Task.sleep(for: .milliseconds(10))
+        }
+        #expect(stub.spacesWithWindowsCallCount == expectedCount)
+    }
+
     // MARK: - hideFullscreenApps
 
     @Test("hideFullscreenApps removes fullscreen spaces")
