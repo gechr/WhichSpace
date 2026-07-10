@@ -16,6 +16,7 @@ actor SpaceMonitor {
 
     private var fileMonitor: DispatchSourceFileSystemObject?
     private var continuation: AsyncStream<SpaceSnapshot>.Continuation?
+    private var retryTask: Task<Void, Never>?
     private let snapshotBuilder: @Sendable () async -> SpaceSnapshot
 
     /// Creates a SpaceMonitor with a snapshot builder closure
@@ -26,7 +27,10 @@ actor SpaceMonitor {
 
     /// Creates an async stream of space snapshots
     func snapshots() -> AsyncStream<SpaceSnapshot> {
-        let (stream, continuation) = AsyncStream.makeStream(of: SpaceSnapshot.self)
+        let (stream, continuation) = AsyncStream.makeStream(
+            of: SpaceSnapshot.self,
+            bufferingPolicy: .bufferingNewest(1)
+        )
         setContinuation(continuation)
         return stream
     }
@@ -49,10 +53,10 @@ actor SpaceMonitor {
 
     private func restartMonitoring() {
         stopMonitoring()
-        startMonitoring()
+        startMonitoring(emitAfterOpening: true)
     }
 
-    private func startMonitoring(retriesRemaining: Int = 5) {
+    private func startMonitoring(retryAttempt: Int = 0, emitAfterOpening: Bool = false) {
         let path = Self.spacesMonitorFile
         let fullPath = (path as NSString).expandingTildeInPath
         guard let cPath = fullPath.cString(using: .utf8) else {
@@ -63,17 +67,32 @@ actor SpaceMonitor {
         let fildes = open(cPath, O_EVTONLY)
         if fildes == -1 {
             // The plist is atomically replaced (delete + recreate), so a reopen
-            // can race the recreate; retry instead of giving up permanently.
-            guard retriesRemaining > 0 else {
-                Self.logger.error("Failed to open file after retries: \(path)")
+            // can race the recreate. Keep retrying at a capped rate while the
+            // snapshot stream is alive.
+            guard continuation != nil else {
                 return
             }
-            Self.logger.warning("Failed to open file, retrying: \(path)")
-            Task {
-                try? await Task.sleep(for: .milliseconds(100))
-                await self.retryMonitoring(retriesRemaining: retriesRemaining - 1)
+            let retryDelay = Self.retryDelay(forAttempt: retryAttempt)
+            if retryAttempt == 0 {
+                Self.logger.warning("Failed to open file, retrying: \(path)")
+            } else {
+                Self.logger.debug("File still unavailable, retrying: \(path)")
+            }
+            retryTask = Task { [weak self] in
+                try? await Task.sleep(for: retryDelay)
+                guard !Task.isCancelled else {
+                    return
+                }
+                await self?.retryMonitoring(
+                    retryAttempt: min(retryAttempt + 1, 5),
+                    emitAfterOpening: emitAfterOpening
+                )
             }
             return
+        }
+        retryTask = nil
+        if retryAttempt > 0 {
+            Self.logger.info("Resumed monitoring: \(path)")
         }
 
         let queue = DispatchQueue.global(qos: .default)
@@ -92,7 +111,6 @@ actor SpaceMonitor {
             }
 
             Task { [self] in
-                await emitSnapshot()
                 await restartMonitoring()
             }
         }
@@ -103,19 +121,32 @@ actor SpaceMonitor {
 
         source.resume()
         fileMonitor = source
+        if emitAfterOpening {
+            Task { [weak self] in
+                await self?.emitSnapshot()
+            }
+        }
     }
 
-    private func retryMonitoring(retriesRemaining: Int) {
+    private func retryMonitoring(retryAttempt: Int, emitAfterOpening: Bool) {
         // The stream may have terminated while the retry was pending
         guard continuation != nil, fileMonitor == nil else {
             return
         }
-        startMonitoring(retriesRemaining: retriesRemaining)
+        retryTask = nil
+        startMonitoring(retryAttempt: retryAttempt, emitAfterOpening: emitAfterOpening)
     }
 
     private func stopMonitoring() {
+        retryTask?.cancel()
+        retryTask = nil
         fileMonitor?.cancel()
         fileMonitor = nil
+    }
+
+    nonisolated static func retryDelay(forAttempt attempt: Int) -> Duration {
+        let multiplier = 1 << min(max(attempt, 0), 5)
+        return .milliseconds(min(100 * multiplier, 2000))
     }
 
     private func emitSnapshot() async {
@@ -124,6 +155,7 @@ actor SpaceMonitor {
     }
 
     deinit {
+        retryTask?.cancel()
         fileMonitor?.cancel()
     }
 }

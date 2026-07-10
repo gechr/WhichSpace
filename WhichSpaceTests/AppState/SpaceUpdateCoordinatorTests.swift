@@ -72,3 +72,15 @@ struct SpaceUpdateCoordinatorTests {
         #expect(SpaceChangeNotifier.reason(forEvent: 0) == nil)
     }
 }
+
+struct SpaceMonitorTests {
+    @Test("file reopen backoff remains capped")
+    func fileReopenBackoff_remainsCapped() {
+        #expect(SpaceMonitor.retryDelay(forAttempt: -1) == .milliseconds(100))
+        #expect(SpaceMonitor.retryDelay(forAttempt: 0) == .milliseconds(100))
+        #expect(SpaceMonitor.retryDelay(forAttempt: 1) == .milliseconds(200))
+        #expect(SpaceMonitor.retryDelay(forAttempt: 4) == .milliseconds(1600))
+        #expect(SpaceMonitor.retryDelay(forAttempt: 5) == .seconds(2))
+        #expect(SpaceMonitor.retryDelay(forAttempt: 100) == .seconds(2))
+    }
+}
