@@ -14,6 +14,10 @@ final class SpaceUpdateCoordinator {
     private let debounceInterval: Duration
     private let onSnapshotUpdate: @MainActor () -> Void
     private let onWindowOccupancyUpdate: @MainActor () -> Void
+    /// Whether the pending debounce already applied a leading snapshot. A
+    /// topology event schedules a trailing task without applying, so the task
+    /// alone can't tell an active Space event that its leading edge is due.
+    private var pendingSnapshotAppliedLeadingEdge = false
     private var pendingSnapshotTask: Task<Void, Never>?
 
     init(
@@ -40,11 +44,13 @@ final class SpaceUpdateCoordinator {
     func cancel() {
         pendingSnapshotTask?.cancel()
         pendingSnapshotTask = nil
+        pendingSnapshotAppliedLeadingEdge = false
     }
 
     private func scheduleSnapshotUpdate(applyLeadingEdge: Bool) {
-        if applyLeadingEdge, pendingSnapshotTask == nil {
+        if applyLeadingEdge, !pendingSnapshotAppliedLeadingEdge {
             onSnapshotUpdate()
+            pendingSnapshotAppliedLeadingEdge = true
         }
 
         pendingSnapshotTask?.cancel()
@@ -53,8 +59,11 @@ final class SpaceUpdateCoordinator {
             guard !Task.isCancelled, let self else {
                 return
             }
-            onSnapshotUpdate()
+            // Clear before applying so a re-entrant handle() schedules a fresh
+            // debounce instead of having its task reference clobbered here
             pendingSnapshotTask = nil
+            pendingSnapshotAppliedLeadingEdge = false
+            onSnapshotUpdate()
         }
     }
 }

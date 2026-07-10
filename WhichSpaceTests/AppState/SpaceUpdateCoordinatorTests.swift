@@ -40,6 +40,24 @@ struct SpaceUpdateCoordinatorTests {
         #expect(snapshotUpdates == 1)
     }
 
+    @Test("pending topology debounce keeps the active Space leading edge")
+    func topologyThenActiveSpace_appliesLeadingSnapshot() async {
+        var snapshotUpdates = 0
+        let coordinator = SpaceUpdateCoordinator(
+            debounceInterval: .milliseconds(20),
+            onSnapshotUpdate: { snapshotUpdates += 1 },
+            onWindowOccupancyUpdate: {}
+        )
+        defer { coordinator.cancel() }
+
+        coordinator.handle(.topology)
+        coordinator.handle(.activeSpace)
+
+        #expect(snapshotUpdates == 1)
+        try? await Task.sleep(for: .milliseconds(60))
+        #expect(snapshotUpdates == 2)
+    }
+
     @Test("window membership bypasses snapshot rebuilding")
     func windowMembership_refreshesOnlyOccupancy() async {
         var occupancyUpdates = 0
