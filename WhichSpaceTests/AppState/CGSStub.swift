@@ -3,9 +3,26 @@ import Foundation
 
 /// Stub implementation of DisplaySpaceProvider for testing
 final class CGSStub: DisplaySpaceProvider, @unchecked Sendable {
+    private let lock = NSLock()
+    private var mainThreadSpacesWithWindowsCalls = 0
+    private var spacesWithWindowsCalls = 0
+    private var spacesWithWindowsValue: Set<Int> = []
+
     var displays: [NSDictionary] = []
     var activeDisplayIdentifier: String?
-    var spacesWithWindowsSet: Set<Int> = []
+
+    var spacesWithWindowsSet: Set<Int> {
+        get { withLock { spacesWithWindowsValue } }
+        set { withLock { spacesWithWindowsValue = newValue } }
+    }
+
+    var spacesWithWindowsCallCount: Int {
+        withLock { spacesWithWindowsCalls }
+    }
+
+    var mainThreadSpacesWithWindowsCallCount: Int {
+        withLock { mainThreadSpacesWithWindowsCalls }
+    }
 
     // swiftlint:disable:next discouraged_optional_collection
     func copyManagedDisplaySpaces() -> [NSDictionary]? {
@@ -17,7 +34,19 @@ final class CGSStub: DisplaySpaceProvider, @unchecked Sendable {
     }
 
     func spacesWithWindows(forSpaceIDs spaceIDs: [Int]) -> Set<Int> {
-        spacesWithWindowsSet.intersection(spaceIDs)
+        withLock {
+            spacesWithWindowsCalls += 1
+            if Thread.isMainThread {
+                mainThreadSpacesWithWindowsCalls += 1
+            }
+            return spacesWithWindowsValue.intersection(spaceIDs)
+        }
+    }
+
+    private func withLock<Result>(_ operation: () -> Result) -> Result {
+        lock.lock()
+        defer { lock.unlock() }
+        return operation()
     }
 
     // MARK: - Builder Helpers

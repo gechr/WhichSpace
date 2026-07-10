@@ -70,6 +70,43 @@ struct StatusBarRendererFilterTests {
         #expect(layout.slots.map(\.label) == ["2", "3"])
     }
 
+    @Test("Space changes refresh populated window data off the main thread")
+    func spaceChange_refreshesPopulatedWindowDataInBackground() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [
+                    (id: 100, isFullscreen: false),
+                    (id: 101, isFullscreen: false),
+                ],
+                activeSpaceID: 100
+            ),
+        ]
+        stub.spacesWithWindowsSet = [100, 101]
+        store.showAllSpaces = true
+        store.hideEmptySpaces = true
+
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        _ = appState.statusBarLayout()
+        #expect(stub.mainThreadSpacesWithWindowsCallCount == 1)
+
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [
+                    (id: 100, isFullscreen: false),
+                    (id: 101, isFullscreen: false),
+                ],
+                activeSpaceID: 101
+            ),
+        ]
+        appState.forceSpaceUpdate()
+        _ = appState.statusBarLayout()
+
+        #expect(stub.mainThreadSpacesWithWindowsCallCount == 1)
+    }
+
     // MARK: - hideFullscreenApps
 
     @Test("hideFullscreenApps removes fullscreen spaces")

@@ -430,8 +430,6 @@ final class AppState {
             return
         }
         lastAppliedSnapshot = snapshot
-        // Invalidate window cache on space change to get fresh window data
-        renderer.invalidateSpacesWithWindowsCache()
 
         // Save previous values for space change detection
         let oldDisplaysSpaceInfo = allDisplaysSpaceInfo
@@ -447,6 +445,7 @@ final class AppState {
         currentSpaceID = snapshot.currentSpaceID
         currentSpaceLabel = snapshot.currentSpaceLabel
         lastUpdateTime = Date()
+        renderer.spaceSnapshotDidChange()
 
         // Apply default style to newly created spaces
         applyDefaultStyleToNewSpaces(previousDisplays: oldDisplaysSpaceInfo)

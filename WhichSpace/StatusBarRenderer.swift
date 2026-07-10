@@ -205,14 +205,15 @@ final class StatusBarRenderer {
         return .empty
     }
 
-    /// Invalidates both the spacesWithWindows cache and the icon cache (call on space change)
-    func invalidateSpacesWithWindowsCache() {
+    /// Marks window occupancy stale after a Space snapshot changes.
+    ///
+    /// Keep populated data available so the next render can return it immediately
+    /// while refreshing in the background. Clearing it here would make every Space
+    /// transition repeat the synchronous first-load window scan on the main actor.
+    func spaceSnapshotDidChange() {
         backgroundScanTask?.cancel()
         backgroundScanTask = nil
         cachedSpacesWithWindowsTime = .distantPast
-        cachedSpacesWithWindowsSpaceIDs = []
-        cachedSpacesWithWindowsPopulated = false
-        cachedSpacesWithWindows = []
         invalidateIconCache()
     }
 
