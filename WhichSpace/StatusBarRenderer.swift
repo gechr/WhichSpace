@@ -640,22 +640,26 @@ final class StatusBarRenderer {
                 provider.spacesWithWindows(forSpaceIDs: spaceIDs)
             }.value
 
-            guard !Task.isCancelled, let self else {
+            guard let self else {
                 return
             }
 
-            finishBackgroundWindowScan(result, forSpaceIDs: spaceIDs)
+            // Drop a cancelled scan's result but still run the bookkeeping -
+            // returning here would leave `backgroundScanTask` set and wedge
+            // the single-flight queue permanently
+            finishBackgroundWindowScan(result, forSpaceIDs: spaceIDs, cancelled: Task.isCancelled)
         }
     }
 
-    private func finishBackgroundWindowScan(_ result: Set<Int>, forSpaceIDs spaceIDs: [Int]) {
+    private func finishBackgroundWindowScan(_ result: Set<Int>, forSpaceIDs spaceIDs: [Int], cancelled: Bool) {
         backgroundScanTask = nil
         let pendingRequest = pendingBackgroundScan
         pendingBackgroundScan = nil
 
-        // A topology change made this result obsolete. Keep the existing stale
-        // cache visible until the one queued follow-up produces current data.
-        if pendingRequest == nil || pendingRequest?.spaceIDs == spaceIDs {
+        // A cancelled scan or a topology change made this result obsolete. Keep
+        // the existing stale cache visible until the queued follow-up produces
+        // current data.
+        if !cancelled, pendingRequest == nil || pendingRequest?.spaceIDs == spaceIDs {
             let changed = result != cachedSpacesWithWindows
             cachedSpacesWithWindows = result
             cachedSpacesWithWindowsTime = Date()
