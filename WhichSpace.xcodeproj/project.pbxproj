@@ -16,6 +16,7 @@
 		5E51B7851E7EE7BF009395E6 /* (null) in CopyFiles */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5EB457D42EEDE8C00021C6BD /* SpaceIconGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB457CD2EEDE8C00021C6BD /* SpaceIconGenerator.swift */; };
 		5EB457D62EEDE8C00021C6BD /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB457C82EEDE8C00021C6BD /* AppState.swift */; };
+		C94204F22B0647EEA70C0CAB /* SpaceUpdateCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0621BB91706643C2B80B3FB2 /* SpaceUpdateCoordinator.swift */; };
 		5EB457D72EEDE8C00021C6BD /* DefaultsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB457CC2EEDE8C00021C6BD /* DefaultsStore.swift */; };
 		5EB457D82EEDE8C00021C6BD /* ItemData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB457CE2EEDE8C00021C6BD /* ItemData.swift */; };
 		5EB457D92EEDE8C00021C6BD /* Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB457CA2EEDE8C00021C6BD /* Alerts.swift */; };
@@ -36,6 +37,7 @@
 		5EB4584C2EEDE9690021C6BD /* CGSStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB458392EEDE9690021C6BD /* CGSStub.swift */; };
 		5EB4584D2EEDE9690021C6BD /* SizeSliderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB458442EEDE9690021C6BD /* SizeSliderTests.swift */; };
 		5EB4584E2EEDE9690021C6BD /* AppStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB458382EEDE9690021C6BD /* AppStateTests.swift */; };
+		2755272464F04E77A333AC3E /* SpaceUpdateCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBBD91E2AF7486EB7F69842 /* SpaceUpdateCoordinatorTests.swift */; };
 		8A27559715C6420AA4812FEF /* SpaceDefaultStyleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362B58BC4F194B83889B0E5C /* SpaceDefaultStyleTests.swift */; };
 		5EB4584F2EEDE9690021C6BD /* SpaceIconGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB4583D2EEDE9690021C6BD /* SpaceIconGeneratorTests.swift */; };
 		5EB458502EEDE9690021C6BD /* AppDelegateActionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB458422EEDE9690021C6BD /* AppDelegateActionsTests.swift */; };
@@ -114,6 +116,7 @@
 		5E13C8911BE03A6F00FF4305 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5EB457C72EEDE8C00021C6BD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5EB457C82EEDE8C00021C6BD /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		0621BB91706643C2B80B3FB2 /* SpaceUpdateCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceUpdateCoordinator.swift; sourceTree = "<group>"; };
 		5EB457C92EEDE8C00021C6BD /* ColorSwatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorSwatch.swift; sourceTree = "<group>"; };
 		5EB457CA2EEDE8C00021C6BD /* Alerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alerts.swift; sourceTree = "<group>"; };
 		E1583461EC9248878918878E /* Backup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backup.swift; sourceTree = "<group>"; };
@@ -130,6 +133,7 @@
 		5EB457F02EEDE8C00021C6BD /* SkinToneSwatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkinToneSwatch.swift; sourceTree = "<group>"; };
 		5EB457F22EEDE8C00021C6BD /* SpaceMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceMonitor.swift; sourceTree = "<group>"; };
 		5EB458382EEDE9690021C6BD /* AppStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStateTests.swift; sourceTree = "<group>"; };
+		ECBBD91E2AF7486EB7F69842 /* SpaceUpdateCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceUpdateCoordinatorTests.swift; sourceTree = "<group>"; };
 		362B58BC4F194B83889B0E5C /* SpaceDefaultStyleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceDefaultStyleTests.swift; sourceTree = "<group>"; };
 		5EB458392EEDE9690021C6BD /* CGSStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGSStub.swift; sourceTree = "<group>"; };
 		5EB4583B2EEDE9690021C6BD /* IconColorsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconColorsTests.swift; sourceTree = "<group>"; };
@@ -232,6 +236,7 @@
 				E88EED3D389F4FBFB2F7B8EC /* AppMover.swift */,
 				ACE10FC5B04340818E50E9C5 /* SpaceSwitcher.swift */,
 				5EB457C82EEDE8C00021C6BD /* AppState.swift */,
+				0621BB91706643C2B80B3FB2 /* SpaceUpdateCoordinator.swift */,
 				24AF849C10194983B7CE0EC3 /* StatusBarRenderer.swift */,
 				692124D6E332492E93C5FE4C /* SpaceSnapshotService.swift */,
 				33F5216D5566486C8F0B2A59 /* SpaceChangeNotifier.swift */,
@@ -268,6 +273,7 @@
 			isa = PBXGroup;
 			children = (
 				5EB458382EEDE9690021C6BD /* AppStateTests.swift */,
+				ECBBD91E2AF7486EB7F69842 /* SpaceUpdateCoordinatorTests.swift */,
 				DFB446EE552B31E1415C66B7 /* DynamicDisplayTests.swift */,
 				4ECDD602992244C2A87B9753 /* ScriptingCommandsTests.swift */,
 				5EB458392EEDE9690021C6BD /* CGSStub.swift */,
@@ -523,6 +529,7 @@
 			files = (
 				5EB457D42EEDE8C00021C6BD /* SpaceIconGenerator.swift in Sources */,
 				5EB457D62EEDE8C00021C6BD /* AppState.swift in Sources */,
+				C94204F22B0647EEA70C0CAB /* SpaceUpdateCoordinator.swift in Sources */,
 				5EB457F32EEDE8C00021C6BD /* SpaceMonitor.swift in Sources */,
 				5EB457D72EEDE8C00021C6BD /* DefaultsStore.swift in Sources */,
 				BA5B89440132B31951EAF51B /* DisplaySpaceProvider.swift in Sources */,
@@ -566,6 +573,7 @@
 				5EB4584C2EEDE9690021C6BD /* CGSStub.swift in Sources */,
 				5EB4584D2EEDE9690021C6BD /* SizeSliderTests.swift in Sources */,
 				5EB4584E2EEDE9690021C6BD /* AppStateTests.swift in Sources */,
+				2755272464F04E77A333AC3E /* SpaceUpdateCoordinatorTests.swift in Sources */,
 				8A27559715C6420AA4812FEF /* SpaceDefaultStyleTests.swift in Sources */,
 				5EB4584F2EEDE9690021C6BD /* SpaceIconGeneratorTests.swift in Sources */,
 				5EB458502EEDE9690021C6BD /* AppDelegateActionsTests.swift in Sources */,

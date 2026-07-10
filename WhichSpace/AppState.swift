@@ -135,8 +135,6 @@ struct StatusBarLayout: Equatable {
 @MainActor
 @Observable
 final class AppState {
-    private static let debounceInterval: Duration = .milliseconds(50)
-
     /// Space info for all displays (used when showAllDisplays is enabled)
     private(set) var allDisplaysSpaceInfo: [DisplaySpaceInfo] = []
     private(set) var allSpaceEntries: [SpaceEntry] = []
@@ -178,13 +176,14 @@ final class AppState {
     private var mouseEventMonitor: Any?
     private var notificationTasks: [Task<Void, Never>] = []
     private var pendingClickUpdateTask: Task<Void, Never>?
-    private var pendingUpdateTask: Task<Void, Never>?
     private var spaceMonitor: SpaceMonitor?
     private var spaceMonitorTask: Task<Void, Never>?
+    private var spaceUpdateCoordinator: SpaceUpdateCoordinator?
 
     init(store: DefaultsStore) {
         displaySpaceProvider = CGSDisplaySpaceProvider()
         self.store = store
+        configureSpaceUpdateCoordinator()
         updateDarkModeStatus()
         configureObservers()
         startSpaceMonitor()
@@ -195,6 +194,7 @@ final class AppState {
     init(displaySpaceProvider: DisplaySpaceProvider, skipObservers: Bool = false, store: DefaultsStore) {
         self.displaySpaceProvider = displaySpaceProvider
         self.store = store
+        configureSpaceUpdateCoordinator()
         updateDarkModeStatus()
         if !skipObservers {
             configureObservers()
@@ -208,7 +208,7 @@ final class AppState {
         MainActor.assumeIsolated {
             spaceMonitorTask?.cancel()
             pendingClickUpdateTask?.cancel()
-            pendingUpdateTask?.cancel()
+            spaceUpdateCoordinator?.cancel()
             for task in notificationTasks {
                 task.cancel()
             }
@@ -222,8 +222,7 @@ final class AppState {
 
     /// Forces an immediate space update without debounce
     func forceSpaceUpdate() {
-        pendingUpdateTask?.cancel()
-        pendingUpdateTask = nil
+        spaceUpdateCoordinator?.cancel()
         applySnapshot(buildSnapshot())
     }
 
@@ -270,8 +269,8 @@ final class AppState {
         // WindowServer push notifications - the lowest-latency space-change
         // signal (NSWorkspace's notification derives from the same events
         // but arrives later; the plist file watch waits on cfprefsd)
-        SpaceChangeNotifier.start { [weak self] in
-            self?.updateActiveSpaceNumber()
+        SpaceChangeNotifier.start { [weak self] reason in
+            self?.handleSpaceUpdate(reason)
         }
 
         // Workspace notifications via async sequences.
@@ -281,7 +280,7 @@ final class AppState {
             for await _ in workspace.notificationCenter
                 .notifications(named: NSWorkspace.activeSpaceDidChangeNotification)
             {
-                self?.updateActiveSpaceNumber()
+                self?.handleSpaceUpdate(.activeSpace)
             }
         })
 
@@ -289,7 +288,7 @@ final class AppState {
             for await _ in workspace.notificationCenter
                 .notifications(named: NSWorkspace.didActivateApplicationNotification)
             {
-                self?.updateActiveSpaceNumber()
+                self?.handleSpaceUpdate(.fallback)
             }
         })
 
@@ -297,7 +296,7 @@ final class AppState {
             for await _ in NotificationCenter.default
                 .notifications(named: NSApplication.didChangeScreenParametersNotification)
             {
-                self?.updateActiveSpaceNumber()
+                self?.handleSpaceUpdate(.topology)
             }
         })
 
@@ -305,7 +304,7 @@ final class AppState {
             for await _ in workspace.notificationCenter
                 .notifications(named: NSNotification.Name("NSWorkspaceActiveDisplayDidChangeNotification"))
             {
-                self?.updateActiveSpaceNumber()
+                self?.handleSpaceUpdate(.fallback)
             }
         })
 
@@ -323,7 +322,7 @@ final class AppState {
         for name in dismissalNames {
             notificationTasks.append(Task { [weak self] in
                 for await _ in Self.distributedNotifications(named: name) {
-                    self?.updateActiveSpaceNumber()
+                    self?.handleSpaceUpdate(.fallback)
                 }
             })
         }
@@ -340,7 +339,7 @@ final class AppState {
                     guard !Task.isCancelled, Date().timeIntervalSince(self.lastUpdateTime) > 0.5 else {
                         return
                     }
-                    self.updateActiveSpaceNumber()
+                    self.handleSpaceUpdate(.fallback)
                 }
             }
         }
@@ -382,23 +381,25 @@ final class AppState {
     // MARK: - Space Detection
 
     func updateActiveSpaceNumber() {
-        // Leading edge: apply immediately so a space change renders without
-        // the debounce delay (applySnapshot skips no-op snapshots, so bursts
-        // stay cheap)
-        if pendingUpdateTask == nil {
-            applySnapshot(buildSnapshot())
-        }
-        // Trailing edge: coalesce the notification burst and catch triggers
-        // that fire before the system state has settled
-        pendingUpdateTask?.cancel()
-        pendingUpdateTask = Task {
-            try? await Task.sleep(for: Self.debounceInterval)
-            guard !Task.isCancelled else {
-                return
+        handleSpaceUpdate(.activeSpace)
+    }
+
+    func handleSpaceUpdate(_ reason: SpaceUpdateReason) {
+        spaceUpdateCoordinator?.handle(reason)
+    }
+
+    private func configureSpaceUpdateCoordinator() {
+        spaceUpdateCoordinator = SpaceUpdateCoordinator(
+            onSnapshotUpdate: { [weak self] in
+                guard let self else {
+                    return
+                }
+                applySnapshot(buildSnapshot())
+            },
+            onWindowOccupancyUpdate: { [weak self] in
+                self?.renderer.refreshSpacesWithWindows()
             }
-            applySnapshot(buildSnapshot())
-            pendingUpdateTask = nil
-        }
+        )
     }
 
     /// Builds an immutable snapshot of the current space state from system data
