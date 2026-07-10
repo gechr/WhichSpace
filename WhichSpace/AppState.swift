@@ -471,6 +471,13 @@ final class AppState {
         lastUpdateTime = Date()
         renderer.spaceSnapshotDidChange()
 
+        // Real CGS state for the active space has landed - stale switch
+        // predictions are now wrong. Topology-only snapshot changes keep
+        // predictions so mid-burst switches don't overshoot
+        if newSnapshot.currentSpaceID != oldSpaceID {
+            SpaceSwitcher.resetPredictions()
+        }
+
         // Apply default style to newly created spaces
         applyDefaultStyleToNewSpaces(previousDisplays: oldDisplaysSpaceInfo)
 

@@ -14,19 +14,15 @@ enum SpaceSwitcher {
     private enum Field {
         static let eventType = CGEventField(rawValue: 55)!
         static let gestureHIDType = CGEventField(rawValue: 110)!
-        static let gestureScrollY = CGEventField(rawValue: 119)!
         static let gestureSwipeMotion = CGEventField(rawValue: 123)!
         static let gestureSwipeProgress = CGEventField(rawValue: 124)!
         static let gestureSwipeVelocityX = CGEventField(rawValue: 129)!
         static let gestureSwipeVelocityY = CGEventField(rawValue: 130)!
         static let gesturePhase = CGEventField(rawValue: 132)!
-        static let scrollGestureFlagBits = CGEventField(rawValue: 135)!
-        static let gestureZoomDeltaX = CGEventField(rawValue: 139)!
     }
 
     /// CGS event type constants.
     private enum EventType {
-        static let gesture: Int64 = 29
         static let dockControl: Int64 = 30
     }
 
@@ -36,17 +32,19 @@ enum SpaceSwitcher {
     /// Gesture phase constants.
     private enum Phase {
         static let began: Int64 = 1
+        static let changed: Int64 = 2
         static let ended: Int64 = 4
     }
 
     /// Horizontal motion constant.
     private static let horizontalMotion: Int64 = 1
 
-    /// Swipe velocity - high enough for instant switching.
-    private static let swipeVelocity = 400.0
+    /// Base swipe velocity, scaled by step count so multi-Space jumps stay instant.
+    private static let swipeVelocity = 2000.0
 
-    /// Swipe progress - distance value for a complete space switch.
-    private static let swipeProgress = 2.0
+    /// Smallest non-zero progress still commits the switch but leaves the
+    /// animation nothing to animate, making it instant.
+    private static let swipeProgress = Double(Float.leastNonzeroMagnitude)
 
     private actor SharedState {
         private var hasPromptedForAccessibility = false
@@ -62,11 +60,21 @@ enum SpaceSwitcher {
 
     private static let sharedState = SharedState()
 
+    /// Predicted space index per display for switches whose CGS state hasn't
+    /// caught up yet. During rapid successive switches CGS still reports the
+    /// pre-switch space, which would make step counts wrong.
+    @MainActor private static var predictedIndex: [String: Int] = [:]
+
+    /// Clears switch predictions once a real space snapshot lands.
+    @MainActor static func resetPredictions() {
+        predictedIndex.removeAll()
+    }
+
     // MARK: - Public API
 
     /// Switches to the space with the given CGS space ID on the menu bar display.
     /// Posts synthetic dock-swipe gestures to move from the current space to the target.
-    static func switchToSpace(id targetSpaceID: Int) {
+    @MainActor static func switchToSpace(id targetSpaceID: Int) {
         let conn = _CGSDefaultConnection()
 
         guard let activeDisplayRef = CGSCopyActiveMenuBarDisplayIdentifier(conn) else {
@@ -81,7 +89,7 @@ enum SpaceSwitcher {
             return
         }
 
-        guard let currentIndex = display.spaces.firstIndex(where: { $0.id == display.currentSpaceID }),
+        guard let cgsCurrentIndex = display.spaces.firstIndex(where: { $0.id == display.currentSpaceID }),
               let targetIndex = display.spaces.firstIndex(where: { $0.id == targetSpaceID })
         else {
             NSLog(
@@ -92,16 +100,23 @@ enum SpaceSwitcher {
             return
         }
 
+        let currentIndex = predictedIndex[display.identifier] ?? cgsCurrentIndex
+
         guard currentIndex != targetIndex else {
             return
         }
 
         let steps = abs(targetIndex - currentIndex)
         let goRight = targetIndex > currentIndex
+        let velocity = swipeVelocity * Double(steps)
 
         for _ in 0 ..< steps {
-            postSwipeGesture(goRight: goRight)
+            guard postSwipeGesture(goRight: goRight, velocity: velocity) else {
+                return
+            }
         }
+
+        predictedIndex[display.identifier] = targetIndex
     }
 
     // MARK: - CGS Dictionary Decoding
@@ -151,49 +166,32 @@ enum SpaceSwitcher {
     // MARK: - Gesture Posting
 
     /// Posts a single synthetic dock-swipe gesture that moves one space left or right.
-    private static func postSwipeGesture(goRight: Bool) {
-        let flagDirection: Int64 = goRight ? 1 : 0
+    /// All three phases (began, changed, ended) are required - with only two,
+    /// switching does not work while Mission Control is open.
+    private static func postSwipeGesture(goRight: Bool, velocity: Double) -> Bool {
+        postDockSwipe(phase: Phase.began, goRight: goRight, velocity: velocity)
+            && postDockSwipe(phase: Phase.changed, goRight: goRight, velocity: velocity)
+            && postDockSwipe(phase: Phase.ended, goRight: goRight, velocity: velocity)
+    }
+
+    private static func postDockSwipe(phase: Int64, goRight: Bool, velocity: Double) -> Bool {
+        guard let event = CGEvent(source: nil) else {
+            return false
+        }
+
         let progress = goRight ? swipeProgress : -swipeProgress
-        let velocity = goRight ? swipeVelocity : -swipeVelocity
+        let signedVelocity = goRight ? velocity : -velocity
 
-        // Begin gesture
-        guard let gestureA = CGEvent(source: nil),
-              let controlA = CGEvent(source: nil)
-        else { return }
+        event.setIntegerValueField(Field.eventType, value: EventType.dockControl)
+        event.setIntegerValueField(Field.gestureHIDType, value: hidTypeDockSwipe)
+        event.setIntegerValueField(Field.gesturePhase, value: phase)
+        event.setDoubleValueField(Field.gestureSwipeProgress, value: progress)
+        event.setIntegerValueField(Field.gestureSwipeMotion, value: horizontalMotion)
+        event.setDoubleValueField(Field.gestureSwipeVelocityX, value: signedVelocity)
+        event.setDoubleValueField(Field.gestureSwipeVelocityY, value: signedVelocity)
 
-        gestureA.setIntegerValueField(Field.eventType, value: EventType.gesture)
-
-        controlA.setIntegerValueField(Field.eventType, value: EventType.dockControl)
-        controlA.setIntegerValueField(Field.gestureHIDType, value: hidTypeDockSwipe)
-        controlA.setIntegerValueField(Field.gesturePhase, value: Phase.began)
-        controlA.setIntegerValueField(Field.scrollGestureFlagBits, value: flagDirection)
-        controlA.setIntegerValueField(Field.gestureSwipeMotion, value: horizontalMotion)
-        controlA.setDoubleValueField(Field.gestureScrollY, value: 0)
-        controlA.setDoubleValueField(Field.gestureZoomDeltaX, value: Double(Float.leastNonzeroMagnitude))
-
-        controlA.post(tap: .cgSessionEventTap)
-        gestureA.post(tap: .cgSessionEventTap)
-
-        // End gesture
-        guard let gestureB = CGEvent(source: nil),
-              let controlB = CGEvent(source: nil)
-        else { return }
-
-        gestureB.setIntegerValueField(Field.eventType, value: EventType.gesture)
-
-        controlB.setIntegerValueField(Field.eventType, value: EventType.dockControl)
-        controlB.setIntegerValueField(Field.gestureHIDType, value: hidTypeDockSwipe)
-        controlB.setIntegerValueField(Field.gesturePhase, value: Phase.ended)
-        controlB.setDoubleValueField(Field.gestureSwipeProgress, value: progress)
-        controlB.setIntegerValueField(Field.scrollGestureFlagBits, value: flagDirection)
-        controlB.setIntegerValueField(Field.gestureSwipeMotion, value: horizontalMotion)
-        controlB.setDoubleValueField(Field.gestureScrollY, value: 0)
-        controlB.setDoubleValueField(Field.gestureSwipeVelocityX, value: velocity)
-        controlB.setDoubleValueField(Field.gestureSwipeVelocityY, value: 0)
-        controlB.setDoubleValueField(Field.gestureZoomDeltaX, value: Double(Float.leastNonzeroMagnitude))
-
-        controlB.post(tap: .cgSessionEventTap)
-        gestureB.post(tap: .cgSessionEventTap)
+        event.post(tap: .cgSessionEventTap)
+        return true
     }
 
     // MARK: - Accessibility
