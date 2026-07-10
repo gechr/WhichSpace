@@ -90,8 +90,9 @@ struct SpaceSnapshot: Equatable {
 // MARK: - Space Change Notification
 
 extension Notification.Name {
-    /// Posted when the active space changes. The notification object is the AppState instance.
-    static let spaceDidChange = Notification.Name("io.gechr.WhichSpace.spaceDidChange")
+    /// Posted when the Space changes without the active display changing.
+    /// The notification object is the AppState instance.
+    static let currentDisplaySpaceDidChange = Notification.Name("io.gechr.WhichSpace.currentDisplaySpaceDidChange")
 }
 
 /// Geometry for rendered status bar icons (used for hit testing)
@@ -455,7 +456,7 @@ final class AppState {
         previousRegularSpaceCount = regularSpaceCount
 
         // Post notification if space changed on the same display
-        postSpaceChangeNotificationIfNeeded(oldSpaceID: oldSpaceID, oldDisplayID: oldDisplayID)
+        postCurrentDisplaySpaceChangeIfNeeded(oldSpaceID: oldSpaceID, oldDisplayID: oldDisplayID)
     }
 
     /// When an existing display gains new regular spaces, apply the stored default style to each
@@ -494,8 +495,8 @@ final class AppState {
         }
     }
 
-    /// Posts spaceDidChange notification if the space changed on the same display
-    private func postSpaceChangeNotificationIfNeeded(oldSpaceID: Int, oldDisplayID: String?) {
+    /// Posts currentDisplaySpaceDidChange when the space changes on the same display
+    private func postCurrentDisplaySpaceChangeIfNeeded(oldSpaceID: Int, oldDisplayID: String?) {
         // Only notify if space changed on the same display (not when switching displays)
         let spaceChanged = currentSpaceID != oldSpaceID
         let sameDisplay = currentDisplayID == oldDisplayID
@@ -505,7 +506,7 @@ final class AppState {
             return
         }
 
-        NotificationCenter.default.post(name: .spaceDidChange, object: self)
+        NotificationCenter.default.post(name: .currentDisplaySpaceDidChange, object: self)
     }
 
     func updateDarkModeStatus() {

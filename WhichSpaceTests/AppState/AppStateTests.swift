@@ -2,6 +2,29 @@ import AppKit
 import Testing
 @testable import WhichSpace
 
+private final class NotificationRecorder: @unchecked Sendable {
+    private let lock = NSLock()
+    private var recordedCount = 0
+
+    var count: Int {
+        lock.lock()
+        defer { lock.unlock() }
+        return recordedCount
+    }
+
+    var hasNotifications: Bool {
+        lock.lock()
+        defer { lock.unlock() }
+        return recordedCount != 0
+    }
+
+    func record() {
+        lock.lock()
+        recordedCount += 1
+        lock.unlock()
+    }
+}
+
 @MainActor
 struct AppStateTests {
     private let stub: CGSStub
@@ -48,6 +71,77 @@ struct AppStateTests {
 
         #expect(appState.currentSpace == 2, "transient zero-space snapshot should not clobber state")
         #expect(appState.currentSpaceLabel == "2")
+    }
+
+    @Test("same-display Space changes post one focused notification")
+    func sameDisplaySpaceChange_postsFocusedNotification() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [
+                    (id: 100, isFullscreen: false),
+                    (id: 101, isFullscreen: false),
+                ],
+                activeSpaceID: 100
+            ),
+        ]
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let recorder = NotificationRecorder()
+        let observer = NotificationCenter.default.addObserver(
+            forName: .currentDisplaySpaceDidChange,
+            object: appState,
+            queue: .main
+        ) { _ in
+            recorder.record()
+        }
+        defer { NotificationCenter.default.removeObserver(observer) }
+
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [
+                    (id: 100, isFullscreen: false),
+                    (id: 101, isFullscreen: false),
+                ],
+                activeSpaceID: 101
+            ),
+        ]
+        appState.forceSpaceUpdate()
+
+        #expect(recorder.count == 1)
+    }
+
+    @Test("active display changes do not post Space notifications")
+    func activeDisplayChange_doesNotPostSpaceNotification() {
+        stub.activeDisplayIdentifier = "DisplayA"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "DisplayA",
+                spaces: [(id: 100, isFullscreen: false)],
+                activeSpaceID: 100
+            ),
+            CGSStub.makeDisplay(
+                displayID: "DisplayB",
+                spaces: [(id: 200, isFullscreen: false)],
+                activeSpaceID: 200
+            ),
+        ]
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let recorder = NotificationRecorder()
+        let observer = NotificationCenter.default.addObserver(
+            forName: .currentDisplaySpaceDidChange,
+            object: appState,
+            queue: .main
+        ) { _ in
+            recorder.record()
+        }
+        defer { NotificationCenter.default.removeObserver(observer) }
+
+        stub.activeDisplayIdentifier = "DisplayB"
+        appState.forceSpaceUpdate()
+
+        #expect(!recorder.hasNotifications)
     }
 
     @Test("single display with three regular spaces: active index correct")

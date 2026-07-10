@@ -211,8 +211,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(handleSpaceDidChange),
-            name: .spaceDidChange,
-            object: nil
+            name: .currentDisplaySpaceDidChange,
+            object: appState
         )
     }
 
