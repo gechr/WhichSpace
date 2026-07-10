@@ -74,7 +74,6 @@ enum KeySpecs {
     static let spaceLabelStyles = TypedKeySpec(name: "spaceLabelStyles", defaultValue: [Int: IconStyle]())
     static let spaceSkinTones = TypedKeySpec(name: "spaceSkinTones", defaultValue: [Int: SkinTone]())
     static let spaceSymbols = TypedKeySpec(name: "spaceSymbols", defaultValue: [Int: String]())
-    static let suppressHiddenIconWarning = TypedKeySpec(name: "suppressHiddenIconWarning", defaultValue: false)
     static let uniqueIconsPerDisplay = TypedKeySpec(name: "uniqueIconsPerDisplay", defaultValue: false)
 
     /// All key names for enumeration (e.g. in tests).
@@ -107,7 +106,6 @@ enum KeySpecs {
         spaceLabelStyles.name,
         spaceSkinTones.name,
         spaceSymbols.name,
-        suppressHiddenIconWarning.name,
         uniqueIconsPerDisplay.name,
     ]
 }
@@ -358,13 +356,6 @@ final class DefaultsStore {
         set { self[KeySpecs.spaceSymbols] = newValue }
     }
 
-    /// Set once the user ticks "Don't show this again" on the hidden-icon
-    /// warning; suppresses that warning permanently across launches.
-    var suppressHiddenIconWarning: Bool {
-        get { self[KeySpecs.suppressHiddenIconWarning] }
-        set { self[KeySpecs.suppressHiddenIconWarning] = newValue }
-    }
-
     var uniqueIconsPerDisplay: Bool {
         get { self[KeySpecs.uniqueIconsPerDisplay] }
         set { self[KeySpecs.uniqueIconsPerDisplay] = newValue }
@@ -405,7 +396,6 @@ final class DefaultsStore {
             KeySpecs.spaceLabelStyles.key(suite: suite),
             KeySpecs.spaceSkinTones.key(suite: suite),
             KeySpecs.spaceSymbols.key(suite: suite),
-            KeySpecs.suppressHiddenIconWarning.key(suite: suite),
             KeySpecs.uniqueIconsPerDisplay.key(suite: suite)
         )
     }

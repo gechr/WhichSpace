@@ -39,11 +39,6 @@ enum AppInfo {
     static var appName: String {
         Bundle.main.infoDictionary?["CFBundleName"] as? String ?? "WhichSpace"
     }
-
-    /// Apple's official "What's in the menu bar on Mac?" help article, linked
-    /// from the hidden-icon warning. The locale-less `mchlp1446` form redirects
-    /// to the reader's localized version, so it needs no per-language handling.
-    static let menuBarHelpURL = URL(string: "https://support.apple.com/guide/mac-help/mchlp1446/mac")!
 }
 
 // MARK: - Layout
@@ -176,8 +171,6 @@ enum Localization {
     static let alertAccessibilityDetail = String(localized: "alert_accessibility_detail")
     static let alertAccessibilityRequired = String(localized: "alert_accessibility_required")
     static let alertExportFailed = String(localized: "alert_export_failed")
-    static let alertHiddenIcon = String(localized: "alert_hidden_icon")
-    static let alertHiddenIconDetail = String(localized: "alert_hidden_icon_detail")
     static let alertImportFailed = String(localized: "alert_import_failed")
     static let badgePositionBottomLeft = String(localized: "badge_position_bottom_left")
     static let badgePositionBottomRight = String(localized: "badge_position_bottom_right")
@@ -185,7 +178,6 @@ enum Localization {
     static let badgePositionTopRight = String(localized: "badge_position_top_right")
     static let buttonCancel = String(localized: "button_cancel")
     static let buttonContinue = String(localized: "button_continue")
-    static let buttonDontShowAgain = String(localized: "button_dont_show_again")
     static let buttonLearnMore = String(localized: "button_learn_more")
     static let buttonOK = String(localized: "button_ok")
     static let buttonReset = String(localized: "button_reset")
