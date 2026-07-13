@@ -15,6 +15,7 @@ build:
 		-scheme WhichSpace \
 		-configuration $(BUILD_CONFIGURATION) \
 		-destination 'platform=macOS' \
+		CODE_SIGNING_ALLOWED=NO \
 		MACOSX_DEPLOYMENT_TARGET=$(MACOSX_DEPLOYMENT_TARGET)
 
 .PHONY: clean
