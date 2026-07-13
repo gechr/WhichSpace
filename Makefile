@@ -35,6 +35,7 @@ fix: fmt
 
 .PHONY: fmt
 fmt:
+	@clover format
 	@rumdl fmt --quiet
 	@swiftformat .
 
@@ -59,4 +60,5 @@ test:
 
 .PHONY: update
 update:
+	@clover run
 	@swift package update
