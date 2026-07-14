@@ -1,26 +1,27 @@
 import Cocoa
 
-/// Command handler for AppleScript "current space number" command.
-/// Usage: `tell application "WhichSpace" to get current space number`
-final class CurrentSpaceNumberCommand: NSScriptCommand {
+/// Command handler for AppleScript "reset all space labels" command.
+/// Usage: `tell application "WhichSpace" to reset all space labels`
+final class ResetAllSpaceLabelsCommand: NSScriptCommand {
     override func performDefaultImplementation() -> Any? {
         MainActor.assumeIsolated {
-            AppEnvironment.shared.appState.currentSpace
+            SpacePreferences.clearAllLabels(store: AppEnvironment.shared.store)
         }
+        return nil
     }
 }
 
-/// Command handler for AppleScript "current space label" command.
-/// Usage: `tell application "WhichSpace" to get current space label`
-/// Returns the custom label if one is set, otherwise the default space label.
-final class CurrentSpaceLabelCommand: NSScriptCommand {
+/// Command handler for AppleScript "reset current space label" command.
+/// Usage: `tell application "WhichSpace" to reset current space label`
+final class ResetCurrentSpaceLabelCommand: NSScriptCommand {
     override func performDefaultImplementation() -> Any? {
         MainActor.assumeIsolated {
-            ScriptingHelpers.resolveCurrentLabel(
+            ScriptingHelpers.resetCurrentLabel(
                 appState: AppEnvironment.shared.appState,
                 store: AppEnvironment.shared.store
             )
         }
+        return nil
     }
 }
 
@@ -104,6 +105,44 @@ enum ScriptingHelpers {
         }
         return appState.currentSpaceLabel
     }
+
+    /// Applies a custom label to the current Space, mirroring the menu-driven
+    /// path in `ActionHandler.setLabel`. Empty strings are ignored; use
+    /// `resetCurrentLabel` to remove a custom label. The status bar icon
+    /// re-renders automatically via the `displaySpaceLabels` defaults observer.
+    static func setCurrentLabel(_ label: String, appState: AppState, store: DefaultsStore) {
+        guard appState.currentSpace > 0, !label.isEmpty else {
+            return
+        }
+        // Enforce the same content-length limit as the menu input field.
+        // Over-long labels are truncated with an ellipsis so the marker is
+        // visible in the menu bar.
+        SpacePreferences.setLabel(
+            LabelTemplate.truncate(label, ellipsis: true),
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
+        // Clear the symbol so the label takes effect immediately, matching the menu path.
+        SpacePreferences.clearSymbol(
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
+    }
+
+    /// Removes the custom label from the current Space so it reverts to its
+    /// default (the Space number, or "F" for fullscreen).
+    static func resetCurrentLabel(appState: AppState, store: DefaultsStore) {
+        guard appState.currentSpace > 0 else {
+            return
+        }
+        SpacePreferences.clearLabel(
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
+    }
 }
 
 /// Extension to make the application scriptable for property access.
@@ -114,12 +153,26 @@ extension NSApplication {
         AppEnvironment.shared.appState.currentSpace
     }
 
-    /// Returns the current space label (custom label if set, otherwise "1", "2", "F" for fullscreen).
+    /// Gets or sets the current space label.
+    /// Reading returns the custom label if set, otherwise "1", "2", "F" for fullscreen.
+    /// Assigning a non-empty string applies a custom label; assigning "" is a no-op
+    /// (use the `reset current space label` command to clear deliberately).
+    /// Over-long labels are truncated with a trailing ellipsis.
     /// Usage: `tell application "WhichSpace" to get current space label`
+    /// Usage: `tell application "WhichSpace" to set current space label to "Label"`
     @MainActor @objc var currentSpaceLabel: String {
-        ScriptingHelpers.resolveCurrentLabel(
-            appState: AppEnvironment.shared.appState,
-            store: AppEnvironment.shared.store
-        )
+        get {
+            ScriptingHelpers.resolveCurrentLabel(
+                appState: AppEnvironment.shared.appState,
+                store: AppEnvironment.shared.store
+            )
+        }
+        set {
+            ScriptingHelpers.setCurrentLabel(
+                newValue,
+                appState: AppEnvironment.shared.appState,
+                store: AppEnvironment.shared.store
+            )
+        }
     }
 }

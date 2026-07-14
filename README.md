@@ -129,6 +129,15 @@ osascript -e 'tell application "WhichSpace" to get current space number'
 # Get the current space label (as shown in the menu bar, e.g. "1", "2", "F" for fullscreen)
 osascript -e 'tell application "WhichSpace" to get current space label'
 
+# Set a custom label for the current space
+osascript -e 'tell application "WhichSpace" to set current space label to "Work"'
+
+# Reset the current space label to its default (e.g. the space number)
+osascript -e 'tell application "WhichSpace" to reset current space label'
+
+# Reset the labels of all spaces to their defaults
+osascript -e 'tell application "WhichSpace" to reset all space labels'
+
 # Switch to a specific space on the current display
 osascript -e 'tell application "WhichSpace" to switch to space number 3'
 ```

@@ -26,10 +26,30 @@ enum LabelTemplate {
         label.replacingOccurrences(of: spaceToken, with: String(space))
     }
 
+    /// Maximum label content length, excluding template tokens.
+    /// Shared by the menu input field and the AppleScript setter.
+    static let maxContentLength = 10
+
     /// Returns the content length of a label, excluding template tokens.
     /// Used for character limit validation in the input field.
     static func contentLength(_ label: String) -> Int {
         label.replacingOccurrences(of: spaceToken, with: "").count
+    }
+
+    /// Truncates a label so its content length fits `maxContentLength`,
+    /// trimming from the end while preserving complete `{number}` tokens.
+    /// When `ellipsis` is true and trimming occurred, appends "…" so the
+    /// truncation is visible; the ellipsis counts toward the limit.
+    static func truncate(_ label: String, ellipsis: Bool = false) -> String {
+        guard contentLength(label) > maxContentLength else {
+            return label
+        }
+        let limit = ellipsis ? maxContentLength - 1 : maxContentLength
+        var text = label
+        while contentLength(text) > limit {
+            text = String(text.dropLast())
+        }
+        return ellipsis ? text + "…" : text
     }
 }
 

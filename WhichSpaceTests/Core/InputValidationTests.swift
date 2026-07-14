@@ -264,6 +264,29 @@ struct InputValidationTests {
         #expect(LabelTemplate.contentLength("{number}{number}") == 0)
     }
 
+    @Test("LabelTemplate truncate trims content to the limit")
+    func labelTemplateTruncate() {
+        #expect(LabelTemplate.truncate("ABCDEFGHIJKLMNOP") == "ABCDEFGHIJ")
+        #expect(LabelTemplate.truncate("ABCDEFGHIJ") == "ABCDEFGHIJ")
+        #expect(LabelTemplate.truncate("").isEmpty)
+    }
+
+    @Test("LabelTemplate truncate appends ellipsis only when trimming")
+    func labelTemplateTruncateWithEllipsis() {
+        #expect(LabelTemplate.truncate("ABCDEFGHIJKLMNOP", ellipsis: true) == "ABCDEFGHI…")
+        #expect(LabelTemplate.truncate("ABCDEFGHIJ", ellipsis: true) == "ABCDEFGHIJ")
+        #expect(LabelTemplate.truncate("", ellipsis: true).isEmpty)
+    }
+
+    @Test("LabelTemplate truncate preserves complete {number} tokens")
+    func labelTemplateTruncatePreservesTokens() {
+        // Trimming into a token turns "{number" into content, so the loop
+        // keeps trimming until the partial token is gone
+        #expect(LabelTemplate.truncate("{number} - ABCDEFGHIJK") == "{number} - ABCDEFG")
+        #expect(LabelTemplate.truncate("{number} - ABCDEFGHIJK", ellipsis: true) == "{number} - ABCDEF…")
+        #expect(LabelTemplate.truncate("{number}") == "{number}")
+    }
+
     @Test("LabelTemplate handles large space numbers")
     func labelTemplateHandlesLargeSpaceNumbers() {
         #expect(LabelTemplate.resolve("{number}", space: 99) == "99")

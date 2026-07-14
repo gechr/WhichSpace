@@ -302,6 +302,12 @@ enum SpacePreferences {
         labels.set(nil, forSpace: spaceNumber, display: display, store: store)
     }
 
+    /// Clears the labels of all Spaces, for all displays and shared settings.
+    static func clearAllLabels(store: DefaultsStore = AppEnvironment.shared.store) {
+        store.spaceLabels = [:]
+        store.displaySpaceLabels = [:]
+    }
+
     // MARK: - Label Style
 
     static func labelStyle(

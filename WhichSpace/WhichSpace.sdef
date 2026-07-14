@@ -2,13 +2,11 @@
 <!DOCTYPE dictionary SYSTEM "file://localhost/System/Library/DTDs/sdef.dtd">
 <dictionary title="WhichSpace Terminology">
     <suite name="WhichSpace Suite" code="WSpc" description="WhichSpace specific classes and commands.">
-        <command name="current space number" code="WSpccusn" description="Get the current Space number.">
-            <cocoa class="WhichSpace.CurrentSpaceNumberCommand"/>
-            <result type="integer" description="The current Space number."/>
+        <command name="reset all space labels" code="WSpcrsal" description="Reset the labels of all Spaces to their defaults.">
+            <cocoa class="WhichSpace.ResetAllSpaceLabelsCommand"/>
         </command>
-        <command name="current space label" code="WSpccusl" description="Get the current Space label.">
-            <cocoa class="WhichSpace.CurrentSpaceLabelCommand"/>
-            <result type="text" description="The current Space label."/>
+        <command name="reset current space label" code="WSpcrslb" description="Reset the current Space label to its default.">
+            <cocoa class="WhichSpace.ResetCurrentSpaceLabelCommand"/>
         </command>
         <command name="switch to space number" code="WSpcswsp" description="Switch to a Space by number on the current display.">
             <cocoa class="WhichSpace.SwitchToSpaceCommand"/>
@@ -19,7 +17,7 @@
             <property name="current space number" code="cusn" type="integer" access="r" description="The current Space number.">
                 <cocoa key="currentSpaceNumber"/>
             </property>
-            <property name="current space label" code="cusl" type="text" access="r" description="The current Space label.">
+            <property name="current space label" code="cusl" type="text" access="rw" description="The current Space label. Set to a non-empty string to apply a custom label to the current Space; use `reset current space label` to clear it.">
                 <cocoa key="currentSpaceLabel"/>
             </property>
         </class>

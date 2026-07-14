@@ -9,7 +9,6 @@ final class LabelInput: NSView {
     private let fieldWidth = 180.0
     private let fieldHeight = 22.0
 
-    let maxLength = 10
     var onLabelChanged: ((String?) -> Void)?
 
     var currentLabel: String? {
@@ -83,11 +82,8 @@ extension LabelInput: NSTextFieldDelegate {
         }
 
         var text = field.stringValue
-        if LabelTemplate.contentLength(text) > maxLength {
-            // Trim from the end, but preserve complete {number} tokens
-            while LabelTemplate.contentLength(text) > maxLength {
-                text = String(text.dropLast())
-            }
+        if LabelTemplate.contentLength(text) > LabelTemplate.maxContentLength {
+            text = LabelTemplate.truncate(text)
             field.stringValue = text
         }
 
