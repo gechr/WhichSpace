@@ -557,6 +557,7 @@ final class ActionHandler: NSObject {
         guard appState.currentSpace > 0 else {
             return
         }
+        let character = character?.trimmingCharacters(in: .whitespacesAndNewlines)
         let currentBadge = SpacePreferences.badge(
             forSpace: appState.currentSpace,
             display: appState.currentDisplayID,
@@ -580,6 +581,9 @@ final class ActionHandler: NSObject {
         guard appState.currentSpace > 0 else {
             return
         }
+        // Ignore leading/trailing whitespace; a whitespace-only label clears
+        let trimmed = label?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let label = trimmed?.isEmpty == true ? nil : trimmed
         SpacePreferences.setLabel(
             label,
             forSpace: appState.currentSpace,

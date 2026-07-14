@@ -212,17 +212,18 @@ struct ScriptingCommandsTests {
         #expect(ScriptingHelpers.resolveCurrentLabel(appState: appState, store: store) == "Work")
     }
 
-    @Test("setCurrentLabel with empty string is a no-op")
-    func setCurrentLabel_emptyStringIsNoOp() {
+    @Test("setCurrentLabel with empty string resets the label")
+    func setCurrentLabel_emptyStringResetsLabel() {
         let appState = makeAppState()
         SpacePreferences.setLabel("Work", forSpace: 2, display: appState.currentDisplayID, store: store)
 
         ScriptingHelpers.setCurrentLabel("", appState: appState, store: store)
 
         #expect(
-            SpacePreferences.label(forSpace: 2, display: appState.currentDisplayID, store: store) == "Work",
-            "Clearing must be deliberate via resetCurrentLabel, not an empty set"
+            SpacePreferences.label(forSpace: 2, display: appState.currentDisplayID, store: store) == nil,
+            "An empty set is a synonym for resetCurrentLabel"
         )
+        #expect(ScriptingHelpers.resolveCurrentLabel(appState: appState, store: store) == "2")
     }
 
     @Test("resetCurrentLabel removes the custom label")
@@ -301,6 +302,28 @@ struct ScriptingCommandsTests {
         )
     }
 
+    @Test("setCurrentLabel trims leading and trailing whitespace")
+    func setCurrentLabel_trimsWhitespace() {
+        let appState = makeAppState()
+
+        ScriptingHelpers.setCurrentLabel("  Work Space  ", appState: appState, store: store)
+
+        #expect(
+            SpacePreferences.label(forSpace: 2, display: appState.currentDisplayID, store: store) == "Work Space",
+            "Only the surrounding whitespace is stripped; internal spaces are kept"
+        )
+    }
+
+    @Test("setCurrentLabel with whitespace-only string resets the label")
+    func setCurrentLabel_whitespaceOnlyResetsLabel() {
+        let appState = makeAppState()
+        SpacePreferences.setLabel("Work", forSpace: 2, display: appState.currentDisplayID, store: store)
+
+        ScriptingHelpers.setCurrentLabel("   ", appState: appState, store: store)
+
+        #expect(SpacePreferences.label(forSpace: 2, display: appState.currentDisplayID, store: store) == nil)
+    }
+
     @Test("setCurrentLabel is a no-op when no current space")
     func setCurrentLabel_noCurrentSpace_isNoOp() {
         stub.activeDisplayIdentifier = "Main"
@@ -355,8 +378,8 @@ struct ScriptingCommandsTests {
         )
     }
 
-    @Test("setCurrentBadge with empty string is a no-op")
-    func setCurrentBadge_emptyStringIsNoOp() throws {
+    @Test("setCurrentBadge with empty string resets the badge")
+    func setCurrentBadge_emptyStringResetsBadge() throws {
         let appState = makeAppState()
         SpacePreferences.setBadge(
             SpaceBadge(character: "A", position: .topRight),
@@ -368,9 +391,33 @@ struct ScriptingCommandsTests {
         try ScriptingHelpers.setCurrentBadge("", appState: appState, store: store)
 
         #expect(
-            SpacePreferences.badge(forSpace: 2, display: appState.currentDisplayID, store: store)?.character == "A",
-            "Clearing must be deliberate via resetCurrentBadge, not an empty set"
+            SpacePreferences.badge(forSpace: 2, display: appState.currentDisplayID, store: store) == nil,
+            "An empty set is a synonym for resetCurrentBadge"
         )
+    }
+
+    @Test("setCurrentBadge trims leading and trailing whitespace")
+    func setCurrentBadge_trimsWhitespace() throws {
+        let appState = makeAppState()
+
+        try ScriptingHelpers.setCurrentBadge("  A  ", appState: appState, store: store)
+
+        #expect(SpacePreferences.badge(forSpace: 2, display: appState.currentDisplayID, store: store)?.character == "A")
+    }
+
+    @Test("setCurrentBadge with whitespace-only string resets the badge")
+    func setCurrentBadge_whitespaceOnlyResetsBadge() throws {
+        let appState = makeAppState()
+        SpacePreferences.setBadge(
+            SpaceBadge(character: "A", position: .topLeft),
+            forSpace: 2,
+            display: appState.currentDisplayID,
+            store: store
+        )
+
+        try ScriptingHelpers.setCurrentBadge("   ", appState: appState, store: store)
+
+        #expect(SpacePreferences.badge(forSpace: 2, display: appState.currentDisplayID, store: store) == nil)
     }
 
     @Test("setCurrentBadge preserves the existing badge position")

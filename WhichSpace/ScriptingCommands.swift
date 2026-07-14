@@ -145,11 +145,17 @@ enum ScriptingHelpers {
     }
 
     /// Applies a custom label to the current Space, mirroring the menu-driven
-    /// path in `ActionHandler.setLabel`. Empty strings are ignored; use
-    /// `resetCurrentLabel` to remove a custom label. The status bar icon
-    /// re-renders automatically via the `displaySpaceLabels` defaults observer.
+    /// path in `ActionHandler.setLabel`. Leading/trailing whitespace is
+    /// ignored, and an empty string resets the label, as a synonym for
+    /// `resetCurrentLabel`. The status bar icon re-renders automatically via
+    /// the `displaySpaceLabels` defaults observer.
     static func setCurrentLabel(_ label: String, appState: AppState, store: DefaultsStore) {
-        guard appState.currentSpace > 0, !label.isEmpty else {
+        guard appState.currentSpace > 0 else {
+            return
+        }
+        let label = label.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !label.isEmpty else {
+            resetCurrentLabel(appState: appState, store: store)
             return
         }
         // Enforce the same content-length limit as the menu input field.
@@ -200,10 +206,16 @@ enum ScriptingHelpers {
     }
 
     /// Applies a badge character to the current Space, mirroring the
-    /// menu-driven path in `ActionHandler.setBadgeCharacter`. Empty strings
-    /// are ignored; use `resetCurrentBadge` to remove a badge.
+    /// menu-driven path in `ActionHandler.setBadgeCharacter`. Leading/trailing
+    /// whitespace is ignored, and an empty string resets the badge, as a
+    /// synonym for `resetCurrentBadge`.
     static func setCurrentBadge(_ character: String, appState: AppState, store: DefaultsStore) throws(BadgeError) {
-        guard appState.currentSpace > 0, !character.isEmpty else {
+        guard appState.currentSpace > 0 else {
+            return
+        }
+        let character = character.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !character.isEmpty else {
+            resetCurrentBadge(appState: appState, store: store)
             return
         }
         // A badge is a single character (including multi-scalar emoji),
@@ -248,8 +260,8 @@ extension NSApplication {
 
     /// Gets or sets the current space label.
     /// Reading returns the custom label if set, otherwise "1", "2", "F" for fullscreen.
-    /// Assigning a non-empty string applies a custom label; assigning "" is a no-op
-    /// (use the `reset current space label` command to clear deliberately).
+    /// Assigning a non-empty string applies a custom label; assigning "" resets it,
+    /// as a synonym for the `reset current space label` command.
     /// Over-long labels are truncated with a trailing ellipsis.
     /// Usage: `tell application "WhichSpace" to get current space label`
     /// Usage: `tell application "WhichSpace" to set current space label to "Label"`
@@ -272,7 +284,7 @@ extension NSApplication {
     /// Gets or sets the current space badge character.
     /// Reading returns the badge character ("#" resolved to the Space number), or "" when unset.
     /// Assigning a single character applies the badge; more than one character is an error and
-    /// "" is a no-op (use the `reset current space badge` command to clear deliberately).
+    /// "" resets it, as a synonym for the `reset current space badge` command.
     /// Usage: `tell application "WhichSpace" to get current space badge`
     /// Usage: `tell application "WhichSpace" to set current space badge to "A"`
     @MainActor @objc var currentSpaceBadge: String {
