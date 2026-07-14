@@ -240,6 +240,11 @@ enum Localization {
     static let errorBackupFileReadFailed = String(localized: "error_backup_file_read_failed")
     static let errorBackupFileWriteFailed = String(localized: "error_backup_file_write_failed")
     static let errorBackupInvalidData = String(localized: "error_backup_invalid_data")
+    static let errorScriptingAccessibilityRequired = String(localized: "error_scripting_accessibility_required")
+    static let errorScriptingBadgeSingleCharacter = String(localized: "error_scripting_badge_single_character")
+    static let errorScriptingExpectedSpaceNumber = String(localized: "error_scripting_expected_space_number")
+    static let errorScriptingNoSpaces = String(localized: "error_scripting_no_spaces")
+    static let errorScriptingSpaceOutOfRange = String(localized: "error_scripting_space_out_of_range")
 
     static let labelBadgePosition = String(localized: "label_badge_position")
     static let labelNumber = String(localized: "label_number")

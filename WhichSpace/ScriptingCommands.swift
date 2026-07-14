@@ -56,7 +56,7 @@ final class SwitchToSpaceCommand: NSScriptCommand {
     override func performDefaultImplementation() -> Any? {
         guard let spaceNumber = directParameter as? Int else {
             scriptErrorNumber = errOSACantAssign
-            scriptErrorString = "Expected a space number."
+            scriptErrorString = Localization.errorScriptingExpectedSpaceNumber
             return nil
         }
 
@@ -85,7 +85,7 @@ enum BadgeError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .notASingleCharacter:
-            "Badge must be a single character."
+            Localization.errorScriptingBadgeSingleCharacter
         }
     }
 }
@@ -100,11 +100,11 @@ enum SwitchError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .accessibilityNotTrusted:
-            "Accessibility permission required. Grant it in System Settings → Privacy & Security → Accessibility."
+            Localization.errorScriptingAccessibilityRequired
         case .noSpacesAvailable:
-            "No spaces available."
+            Localization.errorScriptingNoSpaces
         case let .spaceOutOfRange(requested, max):
-            "Space \(requested) does not exist (1-\(max))."
+            String(format: Localization.errorScriptingSpaceOutOfRange, requested, max)
         }
     }
 }
