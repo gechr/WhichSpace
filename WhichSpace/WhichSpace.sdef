@@ -17,6 +17,12 @@
         <command name="switch to space number" code="WSpcswsp" description="Switch to a Space by number on the current display.">
             <cocoa class="WhichSpace.SwitchToSpaceCommand"/>
             <direct-parameter type="integer" description="The Space number to switch to (1-based)."/>
+            <parameter name="label" code="swlb" type="text" optional="yes" description="A custom label to apply to the Space.">
+                <cocoa key="label"/>
+            </parameter>
+            <parameter name="badge" code="swbd" type="text" optional="yes" description="A badge character to apply to the Space (# shows the Space number).">
+                <cocoa key="badge"/>
+            </parameter>
         </command>
         <class name="application" code="capp" description="The WhichSpace application.">
             <cocoa class="NSApplication"/>

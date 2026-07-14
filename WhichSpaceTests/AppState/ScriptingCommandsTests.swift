@@ -324,6 +324,28 @@ struct ScriptingCommandsTests {
         #expect(SpacePreferences.label(forSpace: 2, display: appState.currentDisplayID, store: store) == nil)
     }
 
+    @Test("setLabel targets a space that is not current")
+    func setLabel_targetsNonCurrentSpace() {
+        let appState = makeAppState(activeSpaceID: 100)
+
+        ScriptingHelpers.setLabel("Work", forSpace: 2, appState: appState, store: store)
+
+        #expect(appState.currentSpace == 1, "Space 1 stays current; only Space 2's label changes")
+        #expect(SpacePreferences.label(forSpace: 2, display: appState.currentDisplayID, store: store) == "Work")
+        #expect(SpacePreferences.label(forSpace: 1, display: appState.currentDisplayID, store: store) == nil)
+    }
+
+    @Test("setBadge targets a space that is not current")
+    func setBadge_targetsNonCurrentSpace() throws {
+        let appState = makeAppState(activeSpaceID: 100)
+
+        try ScriptingHelpers.setBadge("A", forSpace: 2, appState: appState, store: store)
+
+        #expect(appState.currentSpace == 1, "Space 1 stays current; only Space 2's badge changes")
+        #expect(SpacePreferences.badge(forSpace: 2, display: appState.currentDisplayID, store: store)?.character == "A")
+        #expect(SpacePreferences.badge(forSpace: 1, display: appState.currentDisplayID, store: store) == nil)
+    }
+
     @Test("setCurrentLabel is a no-op when no current space")
     func setCurrentLabel_noCurrentSpace_isNoOp() {
         stub.activeDisplayIdentifier = "Main"

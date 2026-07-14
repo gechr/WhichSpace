@@ -52,6 +52,8 @@ final class ResetCurrentSpaceLabelCommand: NSScriptCommand {
 
 /// Command handler for AppleScript "switch to space number" command.
 /// Usage: `tell application "WhichSpace" to switch to space number 3`
+/// Usage: `tell application "WhichSpace" to switch to space number 3 label "Work"`
+/// Usage: `tell application "WhichSpace" to switch to space number 3 badge "A"`
 final class SwitchToSpaceCommand: NSScriptCommand {
     override func performDefaultImplementation() -> Any? {
         guard let spaceNumber = directParameter as? Int else {
@@ -59,6 +61,8 @@ final class SwitchToSpaceCommand: NSScriptCommand {
             scriptErrorString = Localization.errorScriptingExpectedSpaceNumber
             return nil
         }
+        let label = evaluatedArguments?["label"] as? String
+        let badge = evaluatedArguments?["badge"] as? String
 
         do {
             try MainActor.assumeIsolated {
@@ -66,6 +70,24 @@ final class SwitchToSpaceCommand: NSScriptCommand {
                     number: spaceNumber,
                     appState: AppEnvironment.shared.appState
                 )
+                // Keyed by the target Space number, so these cannot race the
+                // asynchronous switch animation
+                if let label {
+                    ScriptingHelpers.setLabel(
+                        label,
+                        forSpace: spaceNumber,
+                        appState: AppEnvironment.shared.appState,
+                        store: AppEnvironment.shared.store
+                    )
+                }
+                if let badge {
+                    try ScriptingHelpers.setBadge(
+                        badge,
+                        forSpace: spaceNumber,
+                        appState: AppEnvironment.shared.appState,
+                        store: AppEnvironment.shared.store
+                    )
+                }
             }
         } catch {
             scriptErrorNumber = errOSACantAssign
@@ -144,18 +166,22 @@ enum ScriptingHelpers {
         return appState.currentSpaceLabel
     }
 
-    /// Applies a custom label to the current Space, mirroring the menu-driven
-    /// path in `ActionHandler.setLabel`. Leading/trailing whitespace is
-    /// ignored, and an empty string resets the label, as a synonym for
-    /// `resetCurrentLabel`. The status bar icon re-renders automatically via
-    /// the `displaySpaceLabels` defaults observer.
-    static func setCurrentLabel(_ label: String, appState: AppState, store: DefaultsStore) {
-        guard appState.currentSpace > 0 else {
+    /// Applies a custom label to the given Space on the current display,
+    /// mirroring the menu-driven path in `ActionHandler.setLabel`.
+    /// Leading/trailing whitespace is ignored, and an empty string resets
+    /// the label. The status bar icon re-renders automatically via the
+    /// `displaySpaceLabels` defaults observer.
+    static func setLabel(_ label: String, forSpace number: Int, appState: AppState, store: DefaultsStore) {
+        guard number > 0 else {
             return
         }
         let label = label.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !label.isEmpty else {
-            resetCurrentLabel(appState: appState, store: store)
+            SpacePreferences.clearLabel(
+                forSpace: number,
+                display: appState.currentDisplayID,
+                store: store
+            )
             return
         }
         // Enforce the same content-length limit as the menu input field.
@@ -163,16 +189,21 @@ enum ScriptingHelpers {
         // visible in the menu bar.
         SpacePreferences.setLabel(
             LabelTemplate.truncate(label, ellipsis: true),
-            forSpace: appState.currentSpace,
+            forSpace: number,
             display: appState.currentDisplayID,
             store: store
         )
         // Clear the symbol so the label takes effect immediately, matching the menu path.
         SpacePreferences.clearSymbol(
-            forSpace: appState.currentSpace,
+            forSpace: number,
             display: appState.currentDisplayID,
             store: store
         )
+    }
+
+    /// Applies a custom label to the current Space; see `setLabel(_:forSpace:)`.
+    static func setCurrentLabel(_ label: String, appState: AppState, store: DefaultsStore) {
+        setLabel(label, forSpace: appState.currentSpace, appState: appState, store: store)
     }
 
     /// Removes the custom label from the current Space so it reverts to its
@@ -205,17 +236,26 @@ enum ScriptingHelpers {
         return String(appState.currentSpaceDisplayNumber)
     }
 
-    /// Applies a badge character to the current Space, mirroring the
-    /// menu-driven path in `ActionHandler.setBadgeCharacter`. Leading/trailing
-    /// whitespace is ignored, and an empty string resets the badge, as a
-    /// synonym for `resetCurrentBadge`.
-    static func setCurrentBadge(_ character: String, appState: AppState, store: DefaultsStore) throws(BadgeError) {
-        guard appState.currentSpace > 0 else {
+    /// Applies a badge character to the given Space on the current display,
+    /// mirroring the menu-driven path in `ActionHandler.setBadgeCharacter`.
+    /// Leading/trailing whitespace is ignored, and an empty string resets
+    /// the badge.
+    static func setBadge(
+        _ character: String,
+        forSpace number: Int,
+        appState: AppState,
+        store: DefaultsStore
+    ) throws(BadgeError) {
+        guard number > 0 else {
             return
         }
         let character = character.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !character.isEmpty else {
-            resetCurrentBadge(appState: appState, store: store)
+            SpacePreferences.clearBadge(
+                forSpace: number,
+                display: appState.currentDisplayID,
+                store: store
+            )
             return
         }
         // A badge is a single character (including multi-scalar emoji),
@@ -224,17 +264,22 @@ enum ScriptingHelpers {
             throw .notASingleCharacter
         }
         let currentBadge = SpacePreferences.badge(
-            forSpace: appState.currentSpace,
+            forSpace: number,
             display: appState.currentDisplayID,
             store: store
         )
         // Preserve the existing position, matching the menu input field.
         SpacePreferences.setBadge(
             SpaceBadge(character: character, position: currentBadge?.position ?? .topLeft),
-            forSpace: appState.currentSpace,
+            forSpace: number,
             display: appState.currentDisplayID,
             store: store
         )
+    }
+
+    /// Applies a badge character to the current Space; see `setBadge(_:forSpace:)`.
+    static func setCurrentBadge(_ character: String, appState: AppState, store: DefaultsStore) throws(BadgeError) {
+        try setBadge(character, forSpace: appState.currentSpace, appState: appState, store: store)
     }
 
     /// Removes the badge from the current Space.

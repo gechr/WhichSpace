@@ -120,36 +120,56 @@ To add a custom sound:
 
 ### Scripting
 
-#### Use AppleScript for automation
+#### Automate WhichSpace with AppleScript
+
+##### Switching
 
 ```bash
-# Switch to a specific space on the current display
+# Switch to a specific Space on the current display
 osascript -e 'tell application "WhichSpace" to switch to space number 3'
 
-# Get the current space number (1-based numeric index)
-osascript -e 'tell application "WhichSpace" to get current space number'
+# Switch to a Space and apply a label in one step
+osascript -e 'tell application "WhichSpace" to switch to space number 3 label "Work"'
 
-# Get the current space label (as shown in the menu bar, e.g. "1", "2", "F" for fullscreen)
+# Switch to a Space and apply a badge in one step
+osascript -e 'tell application "WhichSpace" to switch to space number 3 badge "A"'
+```
+
+##### Spaces
+
+```bash
+# Get the current Space number (1-based numeric index)
+osascript -e 'tell application "WhichSpace" to get current space number'
+```
+
+##### Labels
+
+```bash
+# Get the current Space label (as shown in the menu bar, e.g. "1", "2", "F" for fullscreen)
 osascript -e 'tell application "WhichSpace" to get current space label'
 
-# Set a custom label for the current space
+# Set a custom label for the current Space
 osascript -e 'tell application "WhichSpace" to set current space label to "Work"'
 
-# Reset the current space label to its default (e.g. the space number)
+# Reset the current Space label to its default (e.g. the Space number)
 osascript -e 'tell application "WhichSpace" to reset current space label'
 
-# Reset the labels of all spaces to their defaults
+# Reset the labels of all Spaces to their defaults
 osascript -e 'tell application "WhichSpace" to reset all space labels'
+```
 
-# Get the current space badge character
+##### Badges
+
+```bash
+# Get the current Space badge character
 osascript -e 'tell application "WhichSpace" to get current space badge'
 
-# Set a single-character badge for the current space ("#" shows the space number)
+# Set a single-character badge for the current Space ("#" shows the Space number)
 osascript -e 'tell application "WhichSpace" to set current space badge to "A"'
 
-# Reset the current space badge to its default
+# Reset the current Space badge to its default
 osascript -e 'tell application "WhichSpace" to reset current space badge'
 
-# Reset the badges of all spaces to their defaults
+# Reset the badges of all Spaces to their defaults
 osascript -e 'tell application "WhichSpace" to reset all space badges'
 ```
