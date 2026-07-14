@@ -321,6 +321,124 @@ struct ScriptingCommandsTests {
         #expect(ScriptingHelpers.resolveCurrentLabel(appState: appState, store: store) == "S2")
     }
 
+    // MARK: - Badge Tests
+
+    @Test("setCurrentBadge persists badge for the current space")
+    func setCurrentBadge_persistsBadge() throws {
+        let appState = makeAppState()
+
+        try ScriptingHelpers.setCurrentBadge("A", appState: appState, store: store)
+
+        #expect(SpacePreferences.badge(forSpace: 2, display: appState.currentDisplayID, store: store)?.character == "A")
+        #expect(ScriptingHelpers.resolveCurrentBadge(appState: appState, store: store) == "A")
+    }
+
+    @Test("setCurrentBadge accepts multi-scalar emoji as one character")
+    func setCurrentBadge_acceptsMultiScalarEmoji() throws {
+        let appState = makeAppState()
+
+        try ScriptingHelpers.setCurrentBadge("👍🏽", appState: appState, store: store)
+
+        #expect(ScriptingHelpers.resolveCurrentBadge(appState: appState, store: store) == "👍🏽")
+    }
+
+    @Test("setCurrentBadge throws for more than one character")
+    func setCurrentBadge_multipleCharactersThrows() {
+        let appState = makeAppState()
+
+        #expect(throws: BadgeError.self) {
+            try ScriptingHelpers.setCurrentBadge("AB", appState: appState, store: store)
+        }
+        #expect(
+            SpacePreferences.badge(forSpace: 2, display: appState.currentDisplayID, store: store) == nil,
+            "A rejected badge must not be stored"
+        )
+    }
+
+    @Test("setCurrentBadge with empty string is a no-op")
+    func setCurrentBadge_emptyStringIsNoOp() throws {
+        let appState = makeAppState()
+        SpacePreferences.setBadge(
+            SpaceBadge(character: "A", position: .topRight),
+            forSpace: 2,
+            display: appState.currentDisplayID,
+            store: store
+        )
+
+        try ScriptingHelpers.setCurrentBadge("", appState: appState, store: store)
+
+        #expect(
+            SpacePreferences.badge(forSpace: 2, display: appState.currentDisplayID, store: store)?.character == "A",
+            "Clearing must be deliberate via resetCurrentBadge, not an empty set"
+        )
+    }
+
+    @Test("setCurrentBadge preserves the existing badge position")
+    func setCurrentBadge_preservesPosition() throws {
+        let appState = makeAppState()
+        SpacePreferences.setBadge(
+            SpaceBadge(character: "A", position: .bottomRight),
+            forSpace: 2,
+            display: appState.currentDisplayID,
+            store: store
+        )
+
+        try ScriptingHelpers.setCurrentBadge("B", appState: appState, store: store)
+
+        let badge = SpacePreferences.badge(forSpace: 2, display: appState.currentDisplayID, store: store)
+        #expect(badge?.character == "B")
+        #expect(badge?.position == .bottomRight)
+    }
+
+    @Test("resolveCurrentBadge resolves the space number token")
+    func resolveCurrentBadge_resolvesSpaceToken() throws {
+        let appState = makeAppState()
+
+        try ScriptingHelpers.setCurrentBadge(BadgeTemplate.spaceToken, appState: appState, store: store)
+
+        #expect(
+            SpacePreferences.badge(forSpace: 2, display: appState.currentDisplayID, store: store)?.character
+                == BadgeTemplate.spaceToken,
+            "The raw token is stored so the badge tracks the Space number"
+        )
+        #expect(ScriptingHelpers.resolveCurrentBadge(appState: appState, store: store) == "2")
+    }
+
+    @Test("resolveCurrentBadge returns empty string when unset")
+    func resolveCurrentBadge_unsetReturnsEmpty() {
+        let appState = makeAppState()
+
+        #expect(ScriptingHelpers.resolveCurrentBadge(appState: appState, store: store).isEmpty)
+    }
+
+    @Test("resetCurrentBadge removes the badge")
+    func resetCurrentBadge_removesBadge() throws {
+        let appState = makeAppState()
+        try ScriptingHelpers.setCurrentBadge("A", appState: appState, store: store)
+
+        ScriptingHelpers.resetCurrentBadge(appState: appState, store: store)
+
+        #expect(SpacePreferences.badge(forSpace: 2, display: appState.currentDisplayID, store: store) == nil)
+    }
+
+    @Test("clearAllBadges removes shared and per-display badges")
+    func clearAllBadges_removesSharedAndPerDisplayBadges() {
+        let appState = makeAppState()
+        SpacePreferences.setBadge(SpaceBadge(character: "A", position: .topLeft), forSpace: 1, store: store)
+        store.uniqueIconsPerDisplay = true
+        SpacePreferences.setBadge(
+            SpaceBadge(character: "B", position: .topRight),
+            forSpace: 2,
+            display: appState.currentDisplayID,
+            store: store
+        )
+
+        SpacePreferences.clearAllBadges(store: store)
+
+        #expect(SpacePreferences.badge(forSpace: 1, store: store) == nil)
+        #expect(SpacePreferences.badge(forSpace: 2, display: appState.currentDisplayID, store: store) == nil)
+    }
+
     @Test("fullscreen: number is index, label is F")
     func currentSpaceNumberAndLabel_fullscreen() {
         stub.activeDisplayIdentifier = "Main"

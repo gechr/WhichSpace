@@ -1,11 +1,36 @@
 import Cocoa
 
+/// Command handler for AppleScript "reset all space badges" command.
+/// Usage: `tell application "WhichSpace" to reset all space badges`
+final class ResetAllSpaceBadgesCommand: NSScriptCommand {
+    override func performDefaultImplementation() -> Any? {
+        MainActor.assumeIsolated {
+            SpacePreferences.clearAllBadges(store: AppEnvironment.shared.store)
+        }
+        return nil
+    }
+}
+
 /// Command handler for AppleScript "reset all space labels" command.
 /// Usage: `tell application "WhichSpace" to reset all space labels`
 final class ResetAllSpaceLabelsCommand: NSScriptCommand {
     override func performDefaultImplementation() -> Any? {
         MainActor.assumeIsolated {
             SpacePreferences.clearAllLabels(store: AppEnvironment.shared.store)
+        }
+        return nil
+    }
+}
+
+/// Command handler for AppleScript "reset current space badge" command.
+/// Usage: `tell application "WhichSpace" to reset current space badge`
+final class ResetCurrentSpaceBadgeCommand: NSScriptCommand {
+    override func performDefaultImplementation() -> Any? {
+        MainActor.assumeIsolated {
+            ScriptingHelpers.resetCurrentBadge(
+                appState: AppEnvironment.shared.appState,
+                store: AppEnvironment.shared.store
+            )
         }
         return nil
     }
@@ -51,6 +76,19 @@ final class SwitchToSpaceCommand: NSScriptCommand {
 }
 
 // MARK: - Scripting Helpers
+
+/// Errors thrown by `ScriptingHelpers.setCurrentBadge`.
+/// Surfaces to AppleScript callers via `NSScriptCommand.scriptErrorString`.
+enum BadgeError: LocalizedError {
+    case notASingleCharacter
+
+    var errorDescription: String? {
+        switch self {
+        case .notASingleCharacter:
+            "Badge must be a single character."
+        }
+    }
+}
 
 /// Errors thrown by `ScriptingHelpers.switchToSpace`.
 /// Surfaces to AppleScript callers via `NSScriptCommand.scriptErrorString`.
@@ -143,6 +181,61 @@ enum ScriptingHelpers {
             store: store
         )
     }
+
+    /// Returns the current Space badge character, or "" when no badge is set.
+    /// The special `#` character resolves to the displayed Space number,
+    /// matching the menu bar rendering.
+    static func resolveCurrentBadge(appState: AppState, store: DefaultsStore) -> String {
+        guard let badge = SpacePreferences.badge(
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        ) else {
+            return ""
+        }
+        guard badge.character == BadgeTemplate.spaceToken else {
+            return badge.character
+        }
+        return String(appState.currentSpaceDisplayNumber)
+    }
+
+    /// Applies a badge character to the current Space, mirroring the
+    /// menu-driven path in `ActionHandler.setBadgeCharacter`. Empty strings
+    /// are ignored; use `resetCurrentBadge` to remove a badge.
+    static func setCurrentBadge(_ character: String, appState: AppState, store: DefaultsStore) throws(BadgeError) {
+        guard appState.currentSpace > 0, !character.isEmpty else {
+            return
+        }
+        // A badge is a single character (including multi-scalar emoji),
+        // matching the menu input field.
+        guard character.count == 1 else {
+            throw .notASingleCharacter
+        }
+        let currentBadge = SpacePreferences.badge(
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
+        // Preserve the existing position, matching the menu input field.
+        SpacePreferences.setBadge(
+            SpaceBadge(character: character, position: currentBadge?.position ?? .topLeft),
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
+    }
+
+    /// Removes the badge from the current Space.
+    static func resetCurrentBadge(appState: AppState, store: DefaultsStore) {
+        guard appState.currentSpace > 0 else {
+            return
+        }
+        SpacePreferences.clearBadge(
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
+    }
 }
 
 /// Extension to make the application scriptable for property access.
@@ -173,6 +266,35 @@ extension NSApplication {
                 appState: AppEnvironment.shared.appState,
                 store: AppEnvironment.shared.store
             )
+        }
+    }
+
+    /// Gets or sets the current space badge character.
+    /// Reading returns the badge character ("#" resolved to the Space number), or "" when unset.
+    /// Assigning a single character applies the badge; more than one character is an error and
+    /// "" is a no-op (use the `reset current space badge` command to clear deliberately).
+    /// Usage: `tell application "WhichSpace" to get current space badge`
+    /// Usage: `tell application "WhichSpace" to set current space badge to "A"`
+    @MainActor @objc var currentSpaceBadge: String {
+        get {
+            ScriptingHelpers.resolveCurrentBadge(
+                appState: AppEnvironment.shared.appState,
+                store: AppEnvironment.shared.store
+            )
+        }
+        set {
+            do {
+                try ScriptingHelpers.setCurrentBadge(
+                    newValue,
+                    appState: AppEnvironment.shared.appState,
+                    store: AppEnvironment.shared.store
+                )
+            } catch {
+                // KVC setters can't throw; report through the in-flight command
+                let command = NSScriptCommand.current()
+                command?.scriptErrorNumber = errOSACantAssign
+                command?.scriptErrorString = error.localizedDescription
+            }
         }
     }
 }

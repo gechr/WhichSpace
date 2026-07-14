@@ -814,7 +814,7 @@ final class StatusBarRenderer {
 
     /// Resolves the `#` badge token to the current space number.
     private static func resolveBadge(_ badge: SpaceBadge, space: Int) -> SpaceBadge {
-        guard badge.character == "#" else {
+        guard badge.character == BadgeTemplate.spaceToken else {
             return badge
         }
         return SpaceBadge(character: String(space), position: badge.position)

@@ -123,6 +123,9 @@ To add a custom sound:
 #### Use AppleScript for automation
 
 ```bash
+# Switch to a specific space on the current display
+osascript -e 'tell application "WhichSpace" to switch to space number 3'
+
 # Get the current space number (1-based numeric index)
 osascript -e 'tell application "WhichSpace" to get current space number'
 
@@ -138,6 +141,15 @@ osascript -e 'tell application "WhichSpace" to reset current space label'
 # Reset the labels of all spaces to their defaults
 osascript -e 'tell application "WhichSpace" to reset all space labels'
 
-# Switch to a specific space on the current display
-osascript -e 'tell application "WhichSpace" to switch to space number 3'
+# Get the current space badge character
+osascript -e 'tell application "WhichSpace" to get current space badge'
+
+# Set a single-character badge for the current space ("#" shows the space number)
+osascript -e 'tell application "WhichSpace" to set current space badge to "A"'
+
+# Reset the current space badge to its default
+osascript -e 'tell application "WhichSpace" to reset current space badge'
+
+# Reset the badges of all spaces to their defaults
+osascript -e 'tell application "WhichSpace" to reset all space badges'
 ```

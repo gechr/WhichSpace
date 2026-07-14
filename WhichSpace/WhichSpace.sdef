@@ -2,8 +2,14 @@
 <!DOCTYPE dictionary SYSTEM "file://localhost/System/Library/DTDs/sdef.dtd">
 <dictionary title="WhichSpace Terminology">
     <suite name="WhichSpace Suite" code="WSpc" description="WhichSpace specific classes and commands.">
+        <command name="reset all space badges" code="WSpcrsab" description="Reset the badges of all Spaces to their defaults.">
+            <cocoa class="WhichSpace.ResetAllSpaceBadgesCommand"/>
+        </command>
         <command name="reset all space labels" code="WSpcrsal" description="Reset the labels of all Spaces to their defaults.">
             <cocoa class="WhichSpace.ResetAllSpaceLabelsCommand"/>
+        </command>
+        <command name="reset current space badge" code="WSpcrsbd" description="Reset the current Space badge to its default.">
+            <cocoa class="WhichSpace.ResetCurrentSpaceBadgeCommand"/>
         </command>
         <command name="reset current space label" code="WSpcrslb" description="Reset the current Space label to its default.">
             <cocoa class="WhichSpace.ResetCurrentSpaceLabelCommand"/>
@@ -19,6 +25,9 @@
             </property>
             <property name="current space label" code="cusl" type="text" access="rw" description="The current Space label. Set to a non-empty string to apply a custom label to the current Space; use `reset current space label` to clear it.">
                 <cocoa key="currentSpaceLabel"/>
+            </property>
+            <property name="current space badge" code="cusb" type="text" access="rw" description="The current Space badge character. Set to a single character to apply a badge to the current Space (# shows the Space number); use `reset current space badge` to clear it.">
+                <cocoa key="currentSpaceBadge"/>
             </property>
         </class>
     </suite>

@@ -53,6 +53,13 @@ enum LabelTemplate {
     }
 }
 
+// MARK: - Badge Templates
+
+enum BadgeTemplate {
+    /// Badge character that renders as the current Space number.
+    static let spaceToken = "#"
+}
+
 // MARK: - App Info
 
 enum AppInfo {

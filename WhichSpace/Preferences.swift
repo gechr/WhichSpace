@@ -416,6 +416,12 @@ enum SpacePreferences {
         badges.set(nil, forSpace: spaceNumber, display: display, store: store)
     }
 
+    /// Clears the badges of all Spaces, for all displays and shared settings.
+    static func clearAllBadges(store: DefaultsStore = AppEnvironment.shared.store) {
+        store.spaceBadges = [:]
+        store.displaySpaceBadges = [:]
+    }
+
     // MARK: - Skin Tone
 
     static func skinTone(
