@@ -1,6 +1,10 @@
 BUILD_CONFIGURATION      ?= Debug
 MACOSX_DEPLOYMENT_TARGET ?= 14.0
 
+ifdef WHICHSPACE_CODE_SIGN_IDENTITY
+SIGNING_FLAGS := WHICHSPACE_CODE_SIGN_IDENTITY='$(WHICHSPACE_CODE_SIGN_IDENTITY)'
+endif
+
 ifdef RELEASE
 BUILD_CONFIGURATION := Release
 endif
@@ -15,7 +19,7 @@ build:
 		-scheme WhichSpace \
 		-configuration $(BUILD_CONFIGURATION) \
 		-destination 'platform=macOS' \
-		CODE_SIGNING_ALLOWED=NO \
+		$(SIGNING_FLAGS) \
 		MACOSX_DEPLOYMENT_TARGET=$(MACOSX_DEPLOYMENT_TARGET)
 
 .PHONY: clean
@@ -48,7 +52,7 @@ lint:
 run:
 	@pkill -x WhichSpace || :
 	@rm -rf ~/Library/Developer/Xcode/DerivedData/WhichSpace-*/Build/Products/Debug/WhichSpace.app
-	@xcodebuild -scheme WhichSpace -configuration Debug build
+	@xcodebuild -scheme WhichSpace -configuration Debug build $(SIGNING_FLAGS)
 	@open ~/Library/Developer/Xcode/DerivedData/WhichSpace-*/Build/Products/Debug/WhichSpace.app $(if $(LANGUAGE),--args -AppleLanguages "($(LANGUAGE))")
 
 .PHONY: test
@@ -57,6 +61,7 @@ test:
 		-project WhichSpace.xcodeproj \
 		-scheme WhichSpace \
 		-destination 'platform=macOS' \
+		$(SIGNING_FLAGS) \
 		MACOSX_DEPLOYMENT_TARGET=$(MACOSX_DEPLOYMENT_TARGET)
 
 .PHONY: update
