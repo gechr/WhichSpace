@@ -50,15 +50,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     private var statusBarItem: NSStatusItem!
 
     private var isPickingForeground = true
-    private var isPreviewingIcon = false
-    /// Defers hover-end restores so sweeping across preview rows doesn't
-    /// commit a base-icon frame between consecutive previews (the restore
-    /// would win the vsync and the intermediate previews would never show)
-    private var restoreTimer: Timer?
-    /// Latest preview request waiting for the next throttle slot
-    private var pendingPreviewApply: (() -> Void)?
-    /// Non-nil while inside a one-frame preview coalescing window
-    private var previewThrottleTimer: Timer?
+    /// Owns hover-preview coalescing and restore timing for the status icon
+    private lazy var previewCoordinator = IconPreviewCoordinator(
+        applyPreview: { [weak self] request in
+            self?.applyPreviewIcon(request) ?? false
+        },
+        restoreBaseIcon: { [weak self] in
+            self?.updateStatusBarIcon()
+        }
+    )
     private var launchAtLogin: LaunchAtLoginProvider
     private var preferenceObservationTasks: [Task<Void, Never>] = []
     private var updaterController: SPUStandardUpdaterController!
@@ -400,7 +400,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     // MARK: - Status Bar
 
     func updateStatusBarIcon() {
-        guard !isPreviewingIcon else {
+        guard !previewCoordinator.isPreviewing else {
             return
         }
         statusBarIconUpdateCount += 1
@@ -464,14 +464,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
     // MARK: - Preview
 
-    /// Records a preview request; applies immediately when idle, otherwise
-    /// coalesces to ~60Hz with latest-wins semantics.
-    ///
-    /// Rendering synchronously in every tracking-event handler makes the
-    /// handler slower than the mouse-event arrival rate, so the main thread
-    /// falls behind the sweep and previews replay late in a burst. Keeping
-    /// the handler near-zero cost and applying at most one preview per
-    /// display frame keeps the preview locked to the cursor.
+    /// Forwards a preview request to the coordinator, which applies it
+    /// immediately when idle and otherwise coalesces to ~60Hz with
+    /// latest-wins semantics.
     private func showPreviewIcon(
         style: IconStyle? = nil,
         labelStyle: IconStyle? = nil,
@@ -486,86 +481,35 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         guard statusBarItem != nil else {
             return
         }
-        // A new hover arrived - cancel any pending restore from the row we
-        // just left so the base icon never flashes between two previews
-        restoreTimer?.invalidate()
-        restoreTimer = nil
-        pendingPreviewApply = { [weak self] in
-            self?.applyPreviewIcon(
-                style: style,
-                labelStyle: labelStyle,
-                symbol: symbol,
-                foreground: foreground,
-                background: background,
-                separatorColor: separatorColor,
-                clearSymbol: clearSymbol,
-                skinTone: skinTone,
-                badgePosition: badgePosition
-            )
-        }
-        // Idle: apply on the spot so the first hover feels instant, then
-        // open a one-frame coalescing window for any follow-up hovers
-        if previewThrottleTimer == nil {
-            flushPendingPreview()
-            armPreviewThrottle()
-        }
-    }
-
-    private func flushPendingPreview() {
-        let apply = pendingPreviewApply
-        pendingPreviewApply = nil
-        apply?()
-    }
-
-    private func armPreviewThrottle() {
-        // Fixed 60Hz regardless of display refresh rate: each apply costs
-        // several ms (icon render + forced display + CATransaction.flush),
-        // which fits a 16ms slot comfortably but could saturate the main
-        // thread at 120Hz - and a status bar preview gains nothing visible
-        // beyond 60 updates/sec
-        let timer = Timer(timeInterval: 1.0 / 60.0, repeats: false) { [weak self] _ in
-            MainActor.assumeIsolated {
-                guard let self else {
-                    return
-                }
-                self.previewThrottleTimer = nil
-                if self.pendingPreviewApply != nil {
-                    self.flushPendingPreview()
-                    self.armPreviewThrottle()
-                }
-            }
-        }
-        // .common includes the menu-tracking mode; a default-mode timer
-        // would not fire until the menu closes
-        RunLoop.main.add(timer, forMode: .common)
-        previewThrottleTimer = timer
-    }
-
-    private func applyPreviewIcon(
-        style: IconStyle?,
-        labelStyle: IconStyle?,
-        symbol: String?,
-        foreground: NSColor?,
-        background: NSColor?,
-        separatorColor: NSColor?,
-        clearSymbol: Bool,
-        skinTone: SkinTone?,
-        badgePosition: BadgePosition?
-    ) {
-        guard let statusBarItem else {
-            return
-        }
-        isPreviewingIcon = true
-        let previewIcon = appState.generatePreviewIcon(
-            overrideStyle: style,
-            overrideLabelStyle: labelStyle,
-            overrideSymbol: symbol,
-            overrideForeground: foreground,
-            overrideBackground: background,
-            overrideSeparatorColor: separatorColor,
+        previewCoordinator.show(IconPreviewRequest(
+            style: style,
+            labelStyle: labelStyle,
+            symbol: symbol,
+            foreground: foreground,
+            background: background,
+            separatorColor: separatorColor,
             clearSymbol: clearSymbol,
             skinTone: skinTone,
-            overrideBadgePosition: badgePosition
+            badgePosition: badgePosition
+        ))
+    }
+
+    /// Renders and installs a preview icon. Returns false when the status
+    /// bar item doesn't exist yet, so preview mode is not entered.
+    private func applyPreviewIcon(_ request: IconPreviewRequest) -> Bool {
+        guard let statusBarItem else {
+            return false
+        }
+        let previewIcon = appState.generatePreviewIcon(
+            overrideStyle: request.style,
+            overrideLabelStyle: request.labelStyle,
+            overrideSymbol: request.symbol,
+            overrideForeground: request.foreground,
+            overrideBackground: request.background,
+            overrideSeparatorColor: request.separatorColor,
+            clearSymbol: request.clearSymbol,
+            skinTone: request.skinTone,
+            overrideBadgePosition: request.badgePosition
         )
         statusBarItem.length = previewIcon.size.width
         statusBarItem.button?.image = previewIcon
@@ -576,55 +520,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         // run loop never idles, so the beforeWaiting commit observer is
         // starved and drawn frames reach the WindowServer late.
         CATransaction.flush()
-    }
-
-    private func restoreIcon() {
-        guard isPreviewingIcon else {
-            return
-        }
-        // The pointer has left preview content - a preview still waiting for
-        // a throttle slot is stale and must not apply after this point
-        pendingPreviewApply = nil
-        // Already scheduled: don't push the restore out again, or sweeping
-        // across plain menu items (willHighlight calls this for each one)
-        // would defer the restore indefinitely
-        guard restoreTimer == nil else {
-            return
-        }
-        // Defer the restore: mouseExited fires before the next row's
-        // mouseEntered, and an immediate restore would commit a base-icon
-        // frame between consecutive previews. The timer is cancelled by
-        // showPreviewIcon when hovering continues to another preview row.
-        let timer = Timer(timeInterval: 0.08, repeats: false) { [weak self] _ in
-            MainActor.assumeIsolated {
-                self?.performRestore()
-            }
-        }
-        // .common includes the menu-tracking mode; a default-mode timer
-        // would not fire until the menu closes
-        RunLoop.main.add(timer, forMode: .common)
-        restoreTimer = timer
-    }
-
-    /// Cancels all in-flight preview work: a scheduled restore, a preview
-    /// waiting for a throttle slot, and the throttle window itself. Must run
-    /// when preview mode ends, otherwise a stale preview can apply after the
-    /// menu has closed and stick until the next icon update.
-    private func cancelPendingPreviewWork() {
-        restoreTimer?.invalidate()
-        restoreTimer = nil
-        pendingPreviewApply = nil
-        previewThrottleTimer?.invalidate()
-        previewThrottleTimer = nil
-    }
-
-    private func performRestore() {
-        cancelPendingPreviewWork()
-        guard isPreviewingIcon else {
-            return
-        }
-        isPreviewingIcon = false
-        updateStatusBarIcon()
+        return true
     }
 
     private func showInvertedColorPreview() {
@@ -756,9 +652,9 @@ extension AppDelegate: MenuActionDelegate {
 
     func labelChanged(_ label: String?) {
         // End preview mode fully - a preview left queued here would reapply
-        // after the label update and mask the new icon
-        cancelPendingPreviewWork()
-        isPreviewingIcon = false
+        // after the label update and mask the new icon. Skip the restore:
+        // setLabel triggers its own icon update with the new label
+        previewCoordinator.endWithoutRestore()
         actionHandler.setLabel(label)
         updateLabelMenuVisibility(hasLabel: label != nil && !label!.isEmpty)
     }
@@ -841,7 +737,7 @@ extension AppDelegate: MenuActionDelegate {
     }
 
     func hoverEnded() {
-        restoreIcon()
+        previewCoordinator.scheduleRestore()
     }
 }
 
@@ -860,17 +756,13 @@ extension AppDelegate: NSMenuDelegate {
     }
 
     func menuDidClose(_: NSMenu) {
-        cancelPendingPreviewWork()
-        // Reset preview state in case menu closed while hovering (onHoverEnd may not fire)
-        if isPreviewingIcon {
-            isPreviewingIcon = false
-            updateStatusBarIcon()
-        }
+        // End preview in case the menu closed while hovering (onHoverEnd may not fire)
+        previewCoordinator.end()
     }
 
     func menu(_: NSMenu, willHighlight item: NSMenuItem?) {
         guard let item else {
-            restoreIcon()
+            previewCoordinator.scheduleRestore()
             return
         }
 
@@ -895,7 +787,7 @@ extension AppDelegate: NSMenuDelegate {
                 let sound = NSSound(named: NSSound.Name(soundName))?.copy() as? NSSound
                 sound?.play()
             }
-            restoreIcon()
+            previewCoordinator.scheduleRestore()
         }
     }
 }
