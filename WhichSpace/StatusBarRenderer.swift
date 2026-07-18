@@ -443,7 +443,21 @@ final class StatusBarRenderer {
         )
     }
 
-    /// Shared icon generation: resolves preferences, applies preview overrides, dispatches to SpaceIconGenerator
+    /// Fully resolved inputs for one space icon, computed from preferences
+    /// and any active preview overrides before any drawing happens.
+    private struct IconSpec {
+        let text: String
+        let colors: SpaceColors?
+        let font: NSFont?
+        let style: IconStyle
+        let symbol: String?
+        let skinTone: SkinTone
+        let badge: SpaceBadge?
+        let darkMode: Bool
+    }
+
+    /// Shared icon generation: resolves preferences and preview overrides
+    /// into an IconSpec, then draws it.
     private func generateIcon(
         forSpace space: Int,
         displayNumber: Int,
@@ -453,18 +467,39 @@ final class StatusBarRenderer {
         applyPreview: Bool,
         darkMode: Bool
     ) -> NSImage {
+        render(resolveIconSpec(
+            forSpace: space,
+            displayNumber: displayNumber,
+            label: label,
+            labels: labels,
+            displayID: displayID,
+            applyPreview: applyPreview,
+            darkMode: darkMode
+        ))
+    }
+
+    /// Resolves preferences and preview overrides into final rendering
+    /// inputs, so drawing needs no further preference reads.
+    private func resolveIconSpec(
+        forSpace space: Int,
+        displayNumber: Int,
+        label: String,
+        labels: [Int: String],
+        displayID: String?,
+        applyPreview: Bool,
+        darkMode: Bool
+    ) -> IconSpec {
         // During style preview, skip all preference reads for speed
         let isStylePreview = applyPreview && preview?.style != nil
         let isLabelStylePreview = applyPreview && preview?.labelStyle != nil
-        var colors: SpaceColors?
-        var style: IconStyle
+
+        var colors = SpacePreferences.colors(forSpace: space, display: displayID, store: store)
+        let style: IconStyle
         let font: NSFont?
         if isStylePreview {
-            colors = SpacePreferences.colors(forSpace: space, display: displayID, store: store)
             style = preview!.style!
             font = SpacePreferences.font(forSpace: space, display: displayID, store: store)?.font
         } else if isLabelStylePreview {
-            colors = SpacePreferences.colors(forSpace: space, display: displayID, store: store)
             let resolvedLabel = labels[space].flatMap { $0.isEmpty ? nil : $0 }
                 .map { LabelTemplate.resolve($0, space: displayNumber) }
             style = Self.renderStyle(for: preview!.labelStyle!, labelLength: resolvedLabel?.count ?? 1)
@@ -473,7 +508,6 @@ final class StatusBarRenderer {
                 ? NSFont.boldSystemFont(ofSize: Layout.baseFontSizeSmall)
                 : userFont
         } else {
-            colors = SpacePreferences.colors(forSpace: space, display: displayID, store: store)
             let resolvedLabel = labels[space].flatMap { $0.isEmpty ? nil : $0 }
                 .map { LabelTemplate.resolve($0, space: displayNumber) }
             if let resolvedLabel {
@@ -504,31 +538,35 @@ final class StatusBarRenderer {
             }
         }
 
-        // Fullscreen spaces just show "F" with the same colors
+        // Fullscreen spaces just show "F" with the same colors, never a
+        // symbol or badge
         if label == Labels.fullscreen {
-            return SpaceIconGenerator.generateIcon(
-                for: Labels.fullscreen,
-                darkMode: darkMode,
-                customColors: colors,
-                customFont: font,
+            return IconSpec(
+                text: Labels.fullscreen,
+                colors: colors,
+                font: font,
                 style: style,
-                sizeScale: store.sizeScale,
-                paddingScale: store.paddingScale
+                symbol: nil,
+                skinTone: .default,
+                badge: nil,
+                darkMode: darkMode
             )
         }
 
-        // Check for preview symbol override first
+        // A preview symbol override takes precedence over stored preferences
         if applyPreview, let previewSymbol = preview?.symbol {
             let skinTone = preview?.skinTone
                 ?? SpacePreferences.skinTone(forSpace: space, display: displayID, store: store)
                 ?? .default
-            return SpaceIconGenerator.generateSymbolIcon(
-                symbolName: previewSymbol,
-                darkMode: darkMode,
-                customColors: colors,
+            return IconSpec(
+                text: label,
+                colors: colors,
+                font: font,
+                style: style,
+                symbol: previewSymbol,
                 skinTone: skinTone,
-                sizeScale: store.sizeScale,
-                paddingScale: store.paddingScale
+                badge: nil,
+                darkMode: darkMode
             )
         }
 
@@ -546,30 +584,45 @@ final class StatusBarRenderer {
                 ?? SpacePreferences.badge(forSpace: space, display: displayID, store: store))
         let badge = rawBadge.map { Self.resolveBadge($0, space: displayNumber) }
 
-        if let symbol {
-            let skinTone = SpacePreferences
-                .skinTone(forSpace: space, display: displayID, store: store) ?? .default
+        let skinTone = symbol == nil
+            ? SkinTone.default
+            : SpacePreferences.skinTone(forSpace: space, display: displayID, store: store) ?? .default
+
+        // During number style preview, show the space number instead of a
+        // custom label
+        return IconSpec(
+            text: isStylePreview ? String(space) : label,
+            colors: colors,
+            font: font,
+            style: style,
+            symbol: symbol,
+            skinTone: skinTone,
+            badge: badge,
+            darkMode: darkMode
+        )
+    }
+
+    /// Draws a fully resolved spec, dispatching to SpaceIconGenerator.
+    private func render(_ spec: IconSpec) -> NSImage {
+        if let symbol = spec.symbol {
             return SpaceIconGenerator.generateSymbolIcon(
                 symbolName: symbol,
-                darkMode: darkMode,
-                customColors: colors,
-                skinTone: skinTone,
+                darkMode: spec.darkMode,
+                customColors: spec.colors,
+                skinTone: spec.skinTone,
                 sizeScale: store.sizeScale,
                 paddingScale: store.paddingScale
             )
         }
-
-        // During number style preview, show space number instead of custom label
-        let displayText = isStylePreview ? String(space) : label
         return SpaceIconGenerator.generateIcon(
-            for: displayText,
-            darkMode: darkMode,
-            customColors: colors,
-            customFont: font,
-            style: style,
+            for: spec.text,
+            darkMode: spec.darkMode,
+            customColors: spec.colors,
+            customFont: spec.font,
+            style: spec.style,
             sizeScale: store.sizeScale,
             paddingScale: store.paddingScale,
-            badge: badge
+            badge: spec.badge
         )
     }
 
