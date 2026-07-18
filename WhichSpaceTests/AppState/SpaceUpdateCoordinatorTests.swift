@@ -3,6 +3,15 @@ import Testing
 
 @MainActor
 struct SpaceUpdateCoordinatorTests {
+    /// Polls until the update count reaches the target or a generous deadline
+    /// passes. A fixed sleep flakes when parallel suites starve the main
+    /// actor and the trailing debounce task can't get scheduled in time.
+    private func waitForUpdates(_ current: () -> Int, toReach target: Int) async {
+        for _ in 0 ..< 200 where current() < target {
+            try? await Task.sleep(for: .milliseconds(10))
+        }
+    }
+
     @Test("active Space bursts apply leading and trailing snapshots")
     func activeSpaceBurst_appliesLeadingAndTrailingSnapshots() async {
         var snapshotUpdates = 0
@@ -18,7 +27,9 @@ struct SpaceUpdateCoordinatorTests {
         coordinator.handle(.activeSpace)
 
         #expect(snapshotUpdates == 1)
-        try? await Task.sleep(for: .milliseconds(60))
+        await waitForUpdates({ snapshotUpdates }, toReach: 2)
+        // Settle briefly to catch spurious extra trailing updates
+        try? await Task.sleep(for: .milliseconds(40))
         #expect(snapshotUpdates == 2)
     }
 
@@ -36,7 +47,9 @@ struct SpaceUpdateCoordinatorTests {
         coordinator.handle(.topology)
 
         #expect(snapshotUpdates == 0)
-        try? await Task.sleep(for: .milliseconds(60))
+        await waitForUpdates({ snapshotUpdates }, toReach: 1)
+        // Settle briefly to catch spurious extra trailing updates
+        try? await Task.sleep(for: .milliseconds(40))
         #expect(snapshotUpdates == 1)
     }
 
@@ -54,7 +67,9 @@ struct SpaceUpdateCoordinatorTests {
         coordinator.handle(.activeSpace)
 
         #expect(snapshotUpdates == 1)
-        try? await Task.sleep(for: .milliseconds(60))
+        await waitForUpdates({ snapshotUpdates }, toReach: 2)
+        // Settle briefly to catch spurious extra trailing updates
+        try? await Task.sleep(for: .milliseconds(40))
         #expect(snapshotUpdates == 2)
     }
 
