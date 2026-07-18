@@ -10,6 +10,18 @@ struct TypedKeySpec<Value: Defaults.Serializable>: @unchecked Sendable {
     }
 }
 
+/// Type-erased view of a `TypedKeySpec`, for heterogeneous registries.
+protocol AnyKeySpec: Sendable {
+    var name: String { get }
+    func anyKey(suite: UserDefaults) -> Defaults._AnyKey
+}
+
+extension TypedKeySpec: AnyKeySpec {
+    func anyKey(suite: UserDefaults) -> Defaults._AnyKey {
+        key(suite: suite)
+    }
+}
+
 // MARK: - KeySpecs
 
 /// Central definitions of all app Defaults keys.
@@ -76,38 +88,53 @@ enum KeySpecs {
     static let spaceSymbols = TypedKeySpec(name: "spaceSymbols", defaultValue: [Int: String]())
     static let uniqueIconsPerDisplay = TypedKeySpec(name: "uniqueIconsPerDisplay", defaultValue: false)
 
-    /// All key names for enumeration (e.g. in tests).
-    static let allKeyNames: Set<String> = [
-        clickToSwitchSpaces.name,
-        dimInactiveSpaces.name,
-        displaySpaceBadges.name,
-        displaySpaceColors.name,
-        displaySpaceFonts.name,
-        displaySpaceIconStyles.name,
-        displaySpaceLabels.name,
-        displaySpaceLabelStyles.name,
-        displaySpaceSkinTones.name,
-        displaySpaceSymbols.name,
-        hideEmptySpaces.name,
-        hideFullscreenApps.name,
-        hideSingleSpace.name,
-        localSpaceNumbers.name,
-        paddingScale.name,
-        separatorColor.name,
-        showAllDisplays.name,
-        showAllSpaces.name,
-        sizeScale.name,
-        soundName.name,
-        spaceBadges.name,
-        spaceColors.name,
-        spaceFonts.name,
-        spaceIconStyles.name,
-        spaceLabels.name,
-        spaceLabelStyles.name,
-        spaceSkinTones.name,
-        spaceSymbols.name,
-        uniqueIconsPerDisplay.name,
+    /// The single key registry: reset, test enumeration, and icon-change
+    /// observation all derive from it, so a new key only needs an entry
+    /// here and a `DefaultsStore` accessor.
+    static let allSpecs: [any AnyKeySpec] = [
+        clickToSwitchSpaces,
+        dimInactiveSpaces,
+        displaySpaceBadges,
+        displaySpaceColors,
+        displaySpaceFonts,
+        displaySpaceIconStyles,
+        displaySpaceLabels,
+        displaySpaceLabelStyles,
+        displaySpaceSkinTones,
+        displaySpaceSymbols,
+        hideEmptySpaces,
+        hideFullscreenApps,
+        hideSingleSpace,
+        localSpaceNumbers,
+        paddingScale,
+        separatorColor,
+        showAllDisplays,
+        showAllSpaces,
+        sizeScale,
+        soundName,
+        spaceBadges,
+        spaceColors,
+        spaceFonts,
+        spaceIconStyles,
+        spaceLabels,
+        spaceLabelStyles,
+        spaceSkinTones,
+        spaceSymbols,
+        uniqueIconsPerDisplay,
     ]
+
+    /// Keys that never affect status bar icon rendering. Everything else is
+    /// observed for external defaults writes, so a newly added key is
+    /// icon-affecting by default - the safe direction for cache invalidation.
+    static let nonIconKeyNames: Set<String> = [
+        clickToSwitchSpaces.name,
+        soundName.name,
+    ]
+
+    /// All key names for enumeration (e.g. in tests).
+    static var allKeyNames: Set<String> {
+        Set(allSpecs.map(\.name))
+    }
 }
 
 // MARK: - DefaultsStore
@@ -181,6 +208,19 @@ final class DefaultsStore {
     /// rather than a value.
     func keyFor<V>(_ spec: TypedKeySpec<V>) -> Defaults.Key<V> {
         spec.key(suite: suite)
+    }
+
+    /// All suite-bound keys, derived from the `KeySpecs` registry.
+    var allKeys: [Defaults._AnyKey] {
+        KeySpecs.allSpecs.map { $0.anyKey(suite: suite) }
+    }
+
+    /// Suite-bound keys for every preference that can affect status bar
+    /// icon rendering, for observing external defaults writes.
+    var iconAffectingKeys: [Defaults._AnyKey] {
+        KeySpecs.allSpecs
+            .filter { !KeySpecs.nonIconKeyNames.contains($0.name) }
+            .map { $0.anyKey(suite: suite) }
     }
 
     // MARK: - Property Accessors
@@ -367,36 +407,6 @@ final class DefaultsStore {
     func resetAll() {
         invalidateCachedValues()
         mutationCount += 1
-        Defaults.reset(
-            KeySpecs.clickToSwitchSpaces.key(suite: suite),
-            KeySpecs.dimInactiveSpaces.key(suite: suite),
-            KeySpecs.displaySpaceBadges.key(suite: suite),
-            KeySpecs.displaySpaceColors.key(suite: suite),
-            KeySpecs.displaySpaceFonts.key(suite: suite),
-            KeySpecs.displaySpaceIconStyles.key(suite: suite),
-            KeySpecs.displaySpaceLabels.key(suite: suite),
-            KeySpecs.displaySpaceLabelStyles.key(suite: suite),
-            KeySpecs.displaySpaceSkinTones.key(suite: suite),
-            KeySpecs.displaySpaceSymbols.key(suite: suite),
-            KeySpecs.hideEmptySpaces.key(suite: suite),
-            KeySpecs.hideFullscreenApps.key(suite: suite),
-            KeySpecs.hideSingleSpace.key(suite: suite),
-            KeySpecs.localSpaceNumbers.key(suite: suite),
-            KeySpecs.paddingScale.key(suite: suite),
-            KeySpecs.separatorColor.key(suite: suite),
-            KeySpecs.showAllDisplays.key(suite: suite),
-            KeySpecs.showAllSpaces.key(suite: suite),
-            KeySpecs.sizeScale.key(suite: suite),
-            KeySpecs.soundName.key(suite: suite),
-            KeySpecs.spaceBadges.key(suite: suite),
-            KeySpecs.spaceColors.key(suite: suite),
-            KeySpecs.spaceFonts.key(suite: suite),
-            KeySpecs.spaceIconStyles.key(suite: suite),
-            KeySpecs.spaceLabels.key(suite: suite),
-            KeySpecs.spaceLabelStyles.key(suite: suite),
-            KeySpecs.spaceSkinTones.key(suite: suite),
-            KeySpecs.spaceSymbols.key(suite: suite),
-            KeySpecs.uniqueIconsPerDisplay.key(suite: suite)
-        )
+        Defaults.reset(allKeys)
     }
 }

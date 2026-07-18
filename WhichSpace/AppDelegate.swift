@@ -233,35 +233,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     private func startObservingPreferences() {
         stopObservingPreferences()
 
-        let iconKeys: [Defaults._AnyKey] = [
-            store.keyFor(KeySpecs.showAllSpaces),
-            store.keyFor(KeySpecs.showAllDisplays),
-            store.keyFor(KeySpecs.dimInactiveSpaces),
-            store.keyFor(KeySpecs.hideEmptySpaces),
-            store.keyFor(KeySpecs.hideFullscreenApps),
-            store.keyFor(KeySpecs.hideSingleSpace),
-            store.keyFor(KeySpecs.uniqueIconsPerDisplay),
-            store.keyFor(KeySpecs.localSpaceNumbers),
-            store.keyFor(KeySpecs.sizeScale),
-            store.keyFor(KeySpecs.paddingScale),
-            store.keyFor(KeySpecs.separatorColor),
-            store.keyFor(KeySpecs.spaceBadges),
-            store.keyFor(KeySpecs.spaceColors),
-            store.keyFor(KeySpecs.spaceIconStyles),
-            store.keyFor(KeySpecs.spaceSymbols),
-            store.keyFor(KeySpecs.spaceFonts),
-            store.keyFor(KeySpecs.spaceLabels),
-            store.keyFor(KeySpecs.spaceLabelStyles),
-            store.keyFor(KeySpecs.spaceSkinTones),
-            store.keyFor(KeySpecs.displaySpaceBadges),
-            store.keyFor(KeySpecs.displaySpaceColors),
-            store.keyFor(KeySpecs.displaySpaceIconStyles),
-            store.keyFor(KeySpecs.displaySpaceSymbols),
-            store.keyFor(KeySpecs.displaySpaceFonts),
-            store.keyFor(KeySpecs.displaySpaceLabels),
-            store.keyFor(KeySpecs.displaySpaceLabelStyles),
-            store.keyFor(KeySpecs.displaySpaceSkinTones),
-        ]
+        // Derived from the KeySpecs registry so newly added preferences are
+        // observed automatically
+        let iconKeys = store.iconAffectingKeys
 
         preferenceObservationTasks.append(Task { [weak self] in
             for await _ in Defaults.updates(iconKeys, initial: false) {
@@ -399,6 +373,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
     // MARK: - Status Bar
 
+    /// The single funnel for base-icon refreshes, reached via three routes:
+    /// the observation task (snapshot and dark-mode changes), the renderer's
+    /// `onIconNeedsUpdate` callback (background occupancy scans), and direct
+    /// calls from menu actions (preference writes, which observation can't
+    /// see because `DefaultsStore` isn't observable).
     func updateStatusBarIcon() {
         guard !previewCoordinator.isPreviewing else {
             return
