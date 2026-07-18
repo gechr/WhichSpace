@@ -83,6 +83,7 @@
 		1050F7FD2AAB431293F440FD /* SpaceSnapshotServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2846E68501F241D1B6B97942 /* SpaceSnapshotServiceTests.swift */; };
 		41DC2A0FCDED45448BCD2E59 /* StatusBarRendererFilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0917E79DA5904B93A193473B /* StatusBarRendererFilterTests.swift */; };
 		4CF936909E624CE2B01D8E4B /* StatusBarLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F94D70B39D634FE3BDC1FE70 /* StatusBarLayoutTests.swift */; };
+		CDADF3016B184A1F9B63B62F /* IconPreviewCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C8D99666664457EAC572ECD /* IconPreviewCoordinatorTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -183,6 +184,7 @@
 		2846E68501F241D1B6B97942 /* SpaceSnapshotServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceSnapshotServiceTests.swift; sourceTree = "<group>"; };
 		0917E79DA5904B93A193473B /* StatusBarRendererFilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarRendererFilterTests.swift; sourceTree = "<group>"; };
 		F94D70B39D634FE3BDC1FE70 /* StatusBarLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarLayoutTests.swift; sourceTree = "<group>"; };
+		0C8D99666664457EAC572ECD /* IconPreviewCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconPreviewCoordinatorTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -324,6 +326,7 @@
 				5EB458462EEDE9690021C6BD /* SymbolPickerTests.swift */,
 				0917E79DA5904B93A193473B /* StatusBarRendererFilterTests.swift */,
 				F94D70B39D634FE3BDC1FE70 /* StatusBarLayoutTests.swift */,
+				0C8D99666664457EAC572ECD /* IconPreviewCoordinatorTests.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -603,6 +606,7 @@
 				1050F7FD2AAB431293F440FD /* SpaceSnapshotServiceTests.swift in Sources */,
 				41DC2A0FCDED45448BCD2E59 /* StatusBarRendererFilterTests.swift in Sources */,
 				4CF936909E624CE2B01D8E4B /* StatusBarLayoutTests.swift in Sources */,
+				CDADF3016B184A1F9B63B62F /* IconPreviewCoordinatorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
