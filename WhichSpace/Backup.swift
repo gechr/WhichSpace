@@ -63,6 +63,7 @@ struct Backup: Codable {
 struct BackupSettings: Codable {
     var clickToSwitchSpaces: Bool
     var dimInactiveSpaces: Bool
+    var fullscreenIconStyle: String?
     var hideEmptySpaces: Bool
     var hideFullscreenApps: Bool
     var hideSingleSpace: Bool
@@ -77,7 +78,8 @@ struct BackupSettings: Codable {
     var uniqueIconsPerDisplay: Bool
 
     private enum CodingKeys: String, CodingKey {
-        case clickToSwitchSpaces, dimInactiveSpaces, hideEmptySpaces, hideFullscreenApps, hideSingleSpace
+        case clickToSwitchSpaces, dimInactiveSpaces, fullscreenIconStyle, hideEmptySpaces
+        case hideFullscreenApps, hideSingleSpace
         case launchAtLogin, localSpaceNumbers, paddingScale, separatorColor, showAllDisplays, showAllSpaces
         case sizeScale, soundName, uniqueIconsPerDisplay
     }
@@ -87,6 +89,7 @@ struct BackupSettings: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         clickToSwitchSpaces = try container.decodeIfPresent(Bool.self, forKey: .clickToSwitchSpaces) ?? false
         dimInactiveSpaces = try container.decodeIfPresent(Bool.self, forKey: .dimInactiveSpaces) ?? true
+        fullscreenIconStyle = try container.decodeIfPresent(String.self, forKey: .fullscreenIconStyle)
         hideEmptySpaces = try container.decodeIfPresent(Bool.self, forKey: .hideEmptySpaces) ?? false
         hideFullscreenApps = try container.decodeIfPresent(Bool.self, forKey: .hideFullscreenApps) ?? false
         hideSingleSpace = try container.decodeIfPresent(Bool.self, forKey: .hideSingleSpace) ?? false
@@ -104,6 +107,7 @@ struct BackupSettings: Codable {
     init(
         clickToSwitchSpaces: Bool,
         dimInactiveSpaces: Bool,
+        fullscreenIconStyle: String?,
         hideEmptySpaces: Bool,
         hideFullscreenApps: Bool,
         hideSingleSpace: Bool,
@@ -119,6 +123,7 @@ struct BackupSettings: Codable {
     ) {
         self.clickToSwitchSpaces = clickToSwitchSpaces
         self.dimInactiveSpaces = dimInactiveSpaces
+        self.fullscreenIconStyle = fullscreenIconStyle
         self.hideEmptySpaces = hideEmptySpaces
         self.hideFullscreenApps = hideFullscreenApps
         self.hideSingleSpace = hideSingleSpace
@@ -402,6 +407,7 @@ enum BackupManager {
         let settings = BackupSettings(
             clickToSwitchSpaces: store.clickToSwitchSpaces,
             dimInactiveSpaces: store.dimInactiveSpaces,
+            fullscreenIconStyle: store.fullscreenIconStyle.rawValue,
             hideEmptySpaces: store.hideEmptySpaces,
             hideFullscreenApps: store.hideFullscreenApps,
             hideSingleSpace: store.hideSingleSpace,
@@ -513,6 +519,9 @@ enum BackupManager {
         // Apply global settings
         store.clickToSwitchSpaces = backup.settings.clickToSwitchSpaces
         store.dimInactiveSpaces = backup.settings.dimInactiveSpaces
+        // Unrecognized values (from a newer app version or hand edit) keep the default
+        store.fullscreenIconStyle = backup.settings.fullscreenIconStyle
+            .flatMap { FullscreenIconStyle(rawValue: $0) } ?? .appIcon
         store.hideEmptySpaces = backup.settings.hideEmptySpaces
         store.hideFullscreenApps = backup.settings.hideFullscreenApps
         store.hideSingleSpace = backup.settings.hideSingleSpace

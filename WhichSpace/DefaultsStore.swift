@@ -68,6 +68,10 @@ enum KeySpecs {
         name: "displaySpaceSymbols",
         defaultValue: [String: [Int: String]]()
     )
+    static let fullscreenIconStyle = TypedKeySpec(
+        name: "fullscreenIconStyle",
+        defaultValue: FullscreenIconStyle.appIcon
+    )
     static let paddingScale = TypedKeySpec(name: "paddingScale", defaultValue: Layout.defaultPaddingScale)
     static let hideEmptySpaces = TypedKeySpec(name: "hideEmptySpaces", defaultValue: false)
     static let hideFullscreenApps = TypedKeySpec(name: "hideFullscreenApps", defaultValue: false)
@@ -102,6 +106,7 @@ enum KeySpecs {
         displaySpaceLabelStyles,
         displaySpaceSkinTones,
         displaySpaceSymbols,
+        fullscreenIconStyle,
         hideEmptySpaces,
         hideFullscreenApps,
         hideSingleSpace,
@@ -273,6 +278,11 @@ final class DefaultsStore {
     var displaySpaceSymbols: [String: [Int: String]] {
         get { self[KeySpecs.displaySpaceSymbols] }
         set { self[KeySpecs.displaySpaceSymbols] = newValue }
+    }
+
+    var fullscreenIconStyle: FullscreenIconStyle {
+        get { self[KeySpecs.fullscreenIconStyle] }
+        set { self[KeySpecs.fullscreenIconStyle] = newValue }
     }
 
     var hideEmptySpaces: Bool {

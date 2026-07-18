@@ -94,6 +94,10 @@ final class ActionHandler: NSObject {
         store.uniqueIconsPerDisplay.toggle()
     }
 
+    @objc func toggleUseFForFullscreenApps() {
+        store.fullscreenIconStyle = store.fullscreenIconStyle == .letter ? .appIcon : .letter
+    }
+
     // MARK: - Update Action
 
     @objc func checkForUpdates() {

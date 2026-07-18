@@ -116,6 +116,9 @@ final class MenuBuilder {
         updateHideItem(.hideEmptySpaces, store.hideEmptySpaces)
         updateHideItem(.hideSingleSpace, store.hideSingleSpace)
         updateHideItem(.hideFullscreenApps, store.hideFullscreenApps)
+        // Irrelevant while fullscreen spaces are hidden altogether
+        setCheckmark(.fullscreenIconStyle, store.fullscreenIconStyle == .letter)
+        menu.item(withTag: MenuTag.fullscreenIconStyle.rawValue)?.isHidden = store.hideFullscreenApps
 
         // Determine if current symbol is an emoji vs SF Symbol
         let currentSymbolIsEmoji = currentSymbol?.containsEmoji ?? false
@@ -1117,6 +1120,13 @@ final class MenuBuilder {
             tag: .hideFullscreenApps,
             symbolName: "eye.slash.fill",
             toolTip: Localization.tipHideFullscreenApps
+        )),
+        .item(OptionItem(
+            title: Localization.toggleUseFForFullscreenApps,
+            action: #selector(ActionHandler.toggleUseFForFullscreenApps),
+            tag: .fullscreenIconStyle,
+            symbolName: "f.square",
+            toolTip: Localization.tipUseFForFullscreenApps
         )),
         .separator,
         .item(OptionItem(

@@ -151,6 +151,7 @@ enum MenuTag: Int {
     case fontMenuItem
     case foregroundLabel
     case foregroundSwatch
+    case fullscreenIconStyle
     case hideEmptySpaces
     case hideFullscreenApps
     case hideSingleSpace
@@ -304,6 +305,7 @@ enum Localization {
     static let tipShowAllDisplays = String(localized: "tip_show_all_displays")
     static let tipShowAllSpaces = String(localized: "tip_show_all_spaces")
     static let tipUniqueIconsPerDisplay = String(localized: "tip_unique_icons_per_display")
+    static let tipUseFForFullscreenApps = String(localized: "tip_use_f_for_fullscreen_apps")
     static let toggleClickToSwitchSpaces = String(localized: "toggle_click_to_switch_spaces")
     static let toggleDimInactiveSpaces = String(localized: "toggle_dim_inactive_spaces")
     static let toggleHideEmptySpaces = String(localized: "toggle_hide_empty_spaces")
@@ -314,6 +316,7 @@ enum Localization {
     static let toggleShowAllDisplays = String(localized: "toggle_show_all_displays")
     static let toggleShowAllSpaces = String(localized: "toggle_show_all_spaces")
     static let toggleUniqueIconsPerDisplay = String(localized: "toggle_unique_icons_per_display")
+    static let toggleUseFForFullscreenApps = String(localized: "toggle_use_f_for_fullscreen_apps")
 }
 
 // MARK: - Skin Tone

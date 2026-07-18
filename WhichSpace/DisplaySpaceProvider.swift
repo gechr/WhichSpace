@@ -7,6 +7,7 @@ protocol DisplaySpaceProvider: Sendable {
     // swiftlint:disable:next discouraged_optional_collection
     func copyManagedDisplaySpaces() -> [NSDictionary]?
     func copyActiveMenuBarDisplayIdentifier() -> String?
+    func fullscreenOwnerPIDs(forSpaceIDs spaceIDs: [Int]) -> [Int: pid_t]
     func spacesWithWindows(forSpaceIDs spaceIDs: [Int]) -> Set<Int>
 }
 
@@ -78,5 +79,52 @@ struct CGSDisplaySpaceProvider: DisplaySpaceProvider {
 
         let spaceIDSet = Set(spaceIDs)
         return Set(spaces).intersection(spaceIDSet)
+    }
+
+    /// Maps each fullscreen space ID to the PID of the app whose window lives on it.
+    /// Windows are grouped by owning app (front-to-back) so each app needs one
+    /// batched space query, and the walk stops once every space is resolved.
+    func fullscreenOwnerPIDs(forSpaceIDs spaceIDs: [Int]) -> [Int: pid_t] {
+        guard !spaceIDs.isEmpty else {
+            return [:]
+        }
+        let options: CGWindowListOption = [.optionAll, .excludeDesktopElements]
+        guard let windowList = CGWindowListCopyWindowInfo(options, kCGNullWindowID) as? [[String: Any]] else {
+            return [:]
+        }
+
+        var windowsByPID: [pid_t: [Int]] = [:]
+        var orderedPIDs: [pid_t] = []
+        for window in windowList {
+            guard let layer = window[kCGWindowLayer as String] as? Int, layer == 0,
+                  let windowNumber = window[kCGWindowNumber as String] as? Int,
+                  let ownerPID = window[kCGWindowOwnerPID as String] as? pid_t
+            else {
+                continue
+            }
+            if windowsByPID[ownerPID] == nil {
+                orderedPIDs.append(ownerPID)
+            }
+            windowsByPID[ownerPID, default: []].append(windowNumber)
+        }
+
+        var unresolved = Set(spaceIDs)
+        var owners: [Int: pid_t] = [:]
+        for pid in orderedPIDs {
+            guard !unresolved.isEmpty else {
+                break
+            }
+            guard let windowNumbers = windowsByPID[pid],
+                  let result = SLSCopySpacesForWindows(conn, 0x7, windowNumbers as CFArray)
+            else {
+                continue
+            }
+            let spaces = result.takeRetainedValue() as? [Int] ?? []
+            for spaceID in spaces where unresolved.contains(spaceID) {
+                owners[spaceID] = pid
+                unresolved.remove(spaceID)
+            }
+        }
+        return owners
     }
 }

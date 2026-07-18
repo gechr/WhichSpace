@@ -26,6 +26,18 @@ enum IconStyle: String, CaseIterable, Defaults.Serializable {
     }
 }
 
+// MARK: - FullscreenIconStyle
+
+/// How Spaces occupied by a full-screen application are rendered in the
+/// status bar. String-backed so future styles (e.g. app name) can be added
+/// without a key migration; an absent key resolves to `.appIcon`.
+enum FullscreenIconStyle: String, CaseIterable, Defaults.Serializable {
+    /// The owning application's icon
+    case appIcon
+    /// The classic "F" glyph
+    case letter
+}
+
 // MARK: - SpaceFont
 
 struct SpaceFont: Equatable, Defaults.Serializable {

@@ -43,6 +43,7 @@ final class StatusBarRenderer {
         let currentDisplayID: String?
         let currentSpace: Int
         let currentSpaceID: Int
+        let fullscreenOwners: [Int: pid_t]
         let isDarkMode: Bool
         let spacesWithWindows: Set<Int>
         let storeMutationCount: Int
@@ -59,6 +60,8 @@ final class StatusBarRenderer {
 
     private var backgroundScanTask: Task<Void, Never>?
     private var pendingBackgroundScan: WindowScanRequest?
+    private var cachedFullscreenOwners: [Int: pid_t] = [:]
+    private var cachedFullscreenOwnersPopulated = false
     private var cachedSpacesWithWindows: Set<Int> = []
     private var cachedSpacesWithWindowsPopulated = false
     private var cachedSpacesWithWindowsSpaceIDs: [Int] = []
@@ -217,6 +220,8 @@ final class StatusBarRenderer {
     /// transition repeat the synchronous first-load window scan on the main actor.
     func spaceSnapshotDidChange() {
         cachedSpacesWithWindowsTime = .distantPast
+        cachedFullscreenOwners = [:]
+        cachedFullscreenOwnersPopulated = false
         invalidateIconCache()
     }
 
@@ -245,10 +250,45 @@ final class StatusBarRenderer {
             currentDisplayID: appState.currentDisplayID,
             currentSpace: appState.currentSpace,
             currentSpaceID: appState.currentSpaceID,
+            fullscreenOwners: fullscreenOwners(),
             isDarkMode: appState.darkModeEnabled,
             spacesWithWindows: cachedSpacesWithWindows,
             storeMutationCount: store.mutationCount
         )
+    }
+
+    /// Returns the owning app PID for each fullscreen space, scanning at most
+    /// once per snapshot: fullscreen membership only changes with topology,
+    /// which routes through `spaceSnapshotDidChange()`.
+    private func fullscreenOwners() -> [Int: pid_t] {
+        guard store.fullscreenIconStyle == .appIcon else {
+            return [:]
+        }
+        if !cachedFullscreenOwnersPopulated {
+            var fullscreenSpaceIDs = appState.allDisplaysSpaceInfo
+                .flatMap(\.entries)
+                .filter { $0.label == Labels.fullscreen }
+                .map(\.id)
+            if fullscreenSpaceIDs.isEmpty {
+                fullscreenSpaceIDs = appState.allSpaceEntries
+                    .filter { $0.label == Labels.fullscreen }
+                    .map(\.id)
+            }
+            cachedFullscreenOwners = fullscreenSpaceIDs.isEmpty
+                ? [:]
+                : displaySpaceProvider.fullscreenOwnerPIDs(forSpaceIDs: fullscreenSpaceIDs)
+            cachedFullscreenOwnersPopulated = true
+        }
+        return cachedFullscreenOwners
+    }
+
+    /// The icon of the app occupying a fullscreen space, or nil to fall back
+    /// to the "F" glyph.
+    private func fullscreenAppIcon(forSpaceID spaceID: Int) -> NSImage? {
+        guard let pid = fullscreenOwners()[spaceID] else {
+            return nil
+        }
+        return NSRunningApplication(processIdentifier: pid)?.icon
     }
 
     private func generateStatusBarIcon(isDark: Bool) -> NSImage {
@@ -277,6 +317,7 @@ final class StatusBarRenderer {
             ?? appState.currentSpaceLabel
         return generateSingleIcon(
             for: appState.currentSpace,
+            spaceID: appState.currentSpaceID,
             displayNumber: displayNumber,
             label: label,
             labels: labels,
@@ -285,11 +326,12 @@ final class StatusBarRenderer {
     }
 
     private func generateSingleIcon(
-        for space: Int, displayNumber: Int, label: String, labels: [Int: String], darkMode: Bool
+        for space: Int, spaceID: Int, displayNumber: Int, label: String, labels: [Int: String], darkMode: Bool
     ) -> NSImage {
         let isCurrentSpace = space == appState.currentSpace
         return generateIcon(
             forSpace: space,
+            spaceID: spaceID,
             displayNumber: displayNumber,
             label: label,
             labels: labels,
@@ -306,6 +348,7 @@ final class StatusBarRenderer {
                 slot: slot,
                 icon: generateSingleIcon(
                     for: slot.localIndex,
+                    spaceID: slot.spaceID,
                     displayNumber: slot.displayNumber,
                     label: slot.displayLabel,
                     labels: labels,
@@ -326,6 +369,7 @@ final class StatusBarRenderer {
                         labels: labels,
                         displayID: slot.displayID,
                         localIndex: slot.localIndex,
+                        spaceID: slot.spaceID,
                         displayNumber: slot.displayNumber,
                         darkMode: darkMode
                     )
@@ -424,6 +468,7 @@ final class StatusBarRenderer {
         labels: [Int: String],
         displayID: String,
         localIndex: Int,
+        spaceID: Int,
         displayNumber: Int,
         darkMode: Bool
     ) -> NSImage {
@@ -434,6 +479,7 @@ final class StatusBarRenderer {
 
         return generateIcon(
             forSpace: localIndex,
+            spaceID: spaceID,
             displayNumber: displayNumber,
             label: label,
             labels: labels,
@@ -453,6 +499,8 @@ final class StatusBarRenderer {
         let symbol: String?
         let skinTone: SkinTone
         let badge: SpaceBadge?
+        /// App icon drawn for fullscreen spaces; takes precedence over text/symbol
+        let appIcon: NSImage?
         let darkMode: Bool
     }
 
@@ -460,6 +508,7 @@ final class StatusBarRenderer {
     /// into an IconSpec, then draws it.
     private func generateIcon(
         forSpace space: Int,
+        spaceID: Int,
         displayNumber: Int,
         label: String,
         labels: [Int: String],
@@ -469,6 +518,7 @@ final class StatusBarRenderer {
     ) -> NSImage {
         render(resolveIconSpec(
             forSpace: space,
+            spaceID: spaceID,
             displayNumber: displayNumber,
             label: label,
             labels: labels,
@@ -482,6 +532,7 @@ final class StatusBarRenderer {
     /// inputs, so drawing needs no further preference reads.
     private func resolveIconSpec(
         forSpace space: Int,
+        spaceID: Int,
         displayNumber: Int,
         label: String,
         labels: [Int: String],
@@ -538,8 +589,9 @@ final class StatusBarRenderer {
             }
         }
 
-        // Fullscreen spaces just show "F" with the same colors, never a
-        // symbol or badge
+        // Fullscreen spaces show the owning app's icon (or "F" when the
+        // letter style is chosen or the owner is unknown), never a symbol
+        // or badge
         if label == Labels.fullscreen {
             return IconSpec(
                 text: Labels.fullscreen,
@@ -549,6 +601,7 @@ final class StatusBarRenderer {
                 symbol: nil,
                 skinTone: .default,
                 badge: nil,
+                appIcon: fullscreenAppIcon(forSpaceID: spaceID),
                 darkMode: darkMode
             )
         }
@@ -566,6 +619,7 @@ final class StatusBarRenderer {
                 symbol: previewSymbol,
                 skinTone: skinTone,
                 badge: nil,
+                appIcon: nil,
                 darkMode: darkMode
             )
         }
@@ -598,12 +652,20 @@ final class StatusBarRenderer {
             symbol: symbol,
             skinTone: skinTone,
             badge: badge,
+            appIcon: nil,
             darkMode: darkMode
         )
     }
 
     /// Draws a fully resolved spec, dispatching to SpaceIconGenerator.
     private func render(_ spec: IconSpec) -> NSImage {
+        if let appIcon = spec.appIcon {
+            return SpaceIconGenerator.generateAppIcon(
+                appIcon,
+                sizeScale: store.sizeScale,
+                paddingScale: store.paddingScale
+            )
+        }
         if let symbol = spec.symbol {
             return SpaceIconGenerator.generateSymbolIcon(
                 symbolName: symbol,

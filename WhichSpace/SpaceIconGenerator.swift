@@ -465,6 +465,34 @@ enum SpaceIconGenerator {
         }
     }
 
+    /// Generates a status bar icon showing a fullscreen app's icon
+    static func generateAppIcon(
+        _ appIcon: NSImage,
+        sizeScale: Double = Layout.defaultSizeScale,
+        paddingScale: Double = Layout.defaultPaddingScale
+    ) -> NSImage {
+        let scale = sizeScale / 100.0
+        let defaultContentWidth = min(Layout.baseSquareSize * scale, Layout.statusItemHeight - 1)
+        let canvasSize = effectiveStatusItemSize(
+            contentWidth: defaultContentWidth,
+            sizeScale: scale,
+            paddingScale: paddingScale
+        )
+        // App icons carry built-in transparent margins, so draw slightly
+        // larger than the square style to match its visual weight
+        let side = min((Layout.baseSquareSize + 3) * scale, maxIconSize)
+        return NSImage(size: canvasSize, flipped: false) { rect in
+            let iconRect = centeredRect(size: CGSize(width: side, height: side), in: rect)
+            appIcon.draw(
+                in: iconRect,
+                from: NSRect(origin: .zero, size: appIcon.size),
+                operation: .sourceOver,
+                fraction: 1
+            )
+            return true
+        }
+    }
+
     /// Generates an icon for an emoji character
     private static func generateEmojiIcon(
         emoji: String,

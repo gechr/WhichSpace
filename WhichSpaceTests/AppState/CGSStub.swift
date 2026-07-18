@@ -4,6 +4,8 @@ import Foundation
 /// Stub implementation of DisplaySpaceProvider for testing
 final class CGSStub: DisplaySpaceProvider, @unchecked Sendable {
     private let lock = NSLock()
+    private var fullscreenOwnerPIDsCalls = 0
+    private var fullscreenOwnerPIDsValue: [Int: pid_t] = [:]
     private var mainThreadSpacesWithWindowsCalls = 0
     private var spacesWithWindowsCalls = 0
     private var spacesWithWindowsSemaphore: DispatchSemaphore?
@@ -37,6 +39,22 @@ final class CGSStub: DisplaySpaceProvider, @unchecked Sendable {
 
     func copyActiveMenuBarDisplayIdentifier() -> String? {
         activeDisplayIdentifier
+    }
+
+    var fullscreenOwnerPIDsMap: [Int: pid_t] {
+        get { withLock { fullscreenOwnerPIDsValue } }
+        set { withLock { fullscreenOwnerPIDsValue = newValue } }
+    }
+
+    var fullscreenOwnerPIDsCallCount: Int {
+        withLock { fullscreenOwnerPIDsCalls }
+    }
+
+    func fullscreenOwnerPIDs(forSpaceIDs spaceIDs: [Int]) -> [Int: pid_t] {
+        withLock {
+            fullscreenOwnerPIDsCalls += 1
+            return fullscreenOwnerPIDsValue.filter { spaceIDs.contains($0.key) }
+        }
     }
 
     func spacesWithWindows(forSpaceIDs spaceIDs: [Int]) -> Set<Int> {
