@@ -63,7 +63,7 @@ brew install --cask whichspace
 > [!NOTE]
 > A vertical separator is shown between Displays.
 >
-> Full-screen apps are shown as **F** and can be hidden entirely.
+> Full-screen apps are shown as their app icon (or **F**) and can be hidden entirely.
 
 ### Colors
 
