@@ -17,6 +17,7 @@ Have you ever forgotten _which space_ is currently active on macOS and wanted a 
 - **Badges** - Add a small character of your choice next to the Space number
 - **Size** - Scale icons to your preference
 - **Sound** - Play a sound when switching Spaces
+- **Shortcuts** - Native actions for the Shortcuts app
 - **AppleScript** - Automate with scripting support
 - **Launch at Login** - Start automatically with macOS
 - **Auto-Updates** - Stay up-to-date with automatic updates
@@ -117,6 +118,20 @@ To add a custom sound:
 1. Create the `~/Library/Sounds` directory (if it doesn't already exist)
 2. Copy your sound file into the directory
 3. The sound will appear under the **User** section in the Sound menu
+
+### Shortcuts
+
+#### Automate WhichSpace with Shortcuts
+
+WhichSpace provides native actions in the [Shortcuts](https://support.apple.com/guide/shortcuts-mac/apdf22b0444c/mac) app - open Shortcuts, create a shortcut, and search for "WhichSpace":
+
+- **Switch Space** - switch to a Space by number, optionally applying a label and badge in one step
+- **Get Current Space Number** / **Label** / **Badge** - read the current Space state into a shortcut
+- **Set Current Space Label** / **Badge** - apply a custom label or badge
+- **Reset Current Space Label** / **Badge** - revert the current Space to its default
+- **Reset All Space Labels** / **Badges** - revert every Space at once
+
+"Switch Space" and "Get Current Space Number" are also available directly from Spotlight and Siri.
 
 ### Scripting
 
