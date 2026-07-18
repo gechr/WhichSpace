@@ -66,7 +66,7 @@ struct DisplaySpaceInfo: Equatable {
 
 // MARK: - Space Snapshot
 
-/// Immutable snapshot of the current system space state, emitted by SpaceMonitor
+/// Immutable snapshot of the current system space state
 struct SpaceSnapshot: Equatable {
     let allDisplaysSpaceInfo: [DisplaySpaceInfo]
     let allSpaceEntries: [SpaceEntry]
@@ -397,16 +397,14 @@ final class AppState {
 
     private func startSpaceMonitor() {
         spaceMonitorTask?.cancel()
-        spaceMonitor = SpaceMonitor { [weak self] in
-            await self?.buildSnapshot() ?? .empty
-        }
-        guard let spaceMonitor else {
-            return
-        }
+        let monitor = SpaceMonitor()
+        spaceMonitor = monitor
         spaceMonitorTask = Task { [weak self] in
-            let snapshots = await spaceMonitor.snapshots()
-            for await snapshot in snapshots {
-                self?.applySnapshot(snapshot)
+            let changes = await monitor.changes()
+            for await _ in changes {
+                // Route the plist watcher through the coordinator so its
+                // ticks coalesce with every other space-change signal
+                self?.handleSpaceUpdate(.fallback)
             }
         }
     }

@@ -9,33 +9,29 @@
 import Foundation
 import os.log
 
-/// Actor that monitors system space changes and emits SpaceSnapshot values
+/// Actor that watches the system spaces plist and emits a tick whenever
+/// cfprefsd replaces it. Consumers route ticks through
+/// SpaceUpdateCoordinator so this fallback path shares the same debounce
+/// and snapshot rebuild as every other space-change signal.
 actor SpaceMonitor {
     private static let logger = Logger(subsystem: "io.gechr.WhichSpace", category: "SpaceMonitor")
     private static let spacesMonitorFile = "~/Library/Preferences/com.apple.spaces.plist"
 
     private var fileMonitor: DispatchSourceFileSystemObject?
-    private var continuation: AsyncStream<SpaceSnapshot>.Continuation?
+    private var continuation: AsyncStream<Void>.Continuation?
     private var retryTask: Task<Void, Never>?
-    private let snapshotBuilder: @Sendable () async -> SpaceSnapshot
 
-    /// Creates a SpaceMonitor with a snapshot builder closure
-    /// - Parameter snapshotBuilder: Called on file change to create the current SpaceSnapshot
-    init(snapshotBuilder: @escaping @Sendable () async -> SpaceSnapshot) {
-        self.snapshotBuilder = snapshotBuilder
-    }
-
-    /// Creates an async stream of space snapshots
-    func snapshots() -> AsyncStream<SpaceSnapshot> {
+    /// Creates an async stream that ticks on every spaces plist replacement
+    func changes() -> AsyncStream<Void> {
         let (stream, continuation) = AsyncStream.makeStream(
-            of: SpaceSnapshot.self,
+            of: Void.self,
             bufferingPolicy: .bufferingNewest(1)
         )
         setContinuation(continuation)
         return stream
     }
 
-    private func setContinuation(_ continuation: AsyncStream<SpaceSnapshot>.Continuation) {
+    private func setContinuation(_ continuation: AsyncStream<Void>.Continuation) {
         self.continuation = continuation
         startMonitoring()
 
@@ -68,7 +64,7 @@ actor SpaceMonitor {
         if fildes == -1 {
             // The plist is atomically replaced (delete + recreate), so a reopen
             // can race the recreate. Keep retrying at a capped rate while the
-            // snapshot stream is alive.
+            // change stream is alive.
             guard continuation != nil else {
                 return
             }
@@ -122,9 +118,7 @@ actor SpaceMonitor {
         source.resume()
         fileMonitor = source
         if emitAfterOpening {
-            Task { [weak self] in
-                await self?.emitSnapshot()
-            }
+            continuation?.yield()
         }
     }
 
@@ -147,11 +141,6 @@ actor SpaceMonitor {
     nonisolated static func retryDelay(forAttempt attempt: Int) -> Duration {
         let multiplier = 1 << min(max(attempt, 0), 5)
         return .milliseconds(min(100 * multiplier, 2000))
-    }
-
-    private func emitSnapshot() async {
-        let snapshot = await snapshotBuilder()
-        continuation?.yield(snapshot)
     }
 
     deinit {
