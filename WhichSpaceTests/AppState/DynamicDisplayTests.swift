@@ -485,7 +485,7 @@ struct DarkModeTransitionTests {
         sut.updateDarkModeStatus()
         let darkState = sut.darkModeEnabled
 
-        sut.updateActiveSpaceNumber()
+        sut.handleSpaceUpdate(.activeSpace)
 
         #expect(sut.darkModeEnabled == darkState)
 
@@ -574,7 +574,7 @@ struct ObserverLifecycleTests {
 
         store.resetAll()
 
-        appState.updateActiveSpaceNumber()
+        appState.handleSpaceUpdate(.activeSpace)
         #expect(appState.currentSpace == 1)
 
         #expect(SpacePreferences.iconStyle(forSpace: 1, store: store) == nil)

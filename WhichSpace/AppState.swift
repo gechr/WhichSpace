@@ -411,10 +411,6 @@ final class AppState {
 
     // MARK: - Space Detection
 
-    func updateActiveSpaceNumber() {
-        handleSpaceUpdate(.activeSpace)
-    }
-
     func handleSpaceUpdate(_ reason: SpaceUpdateReason) {
         spaceUpdateCoordinator?.handle(reason)
     }
