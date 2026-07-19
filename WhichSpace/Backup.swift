@@ -67,21 +67,28 @@ struct BackupSettings: Codable {
     var hideEmptySpaces: Bool
     var hideFullscreenApps: Bool
     var hideSingleSpace: Bool
+    var horizontalScrollEnabled: Bool
+    var invertHorizontalScroll: Bool
+    var invertVerticalScroll: Bool
     var launchAtLogin: Bool
     var localSpaceNumbers: Bool
     var paddingScale: Double?
+    var scrollSensitivity: Double
     var separatorColor: CodableColor?
     var showAllDisplays: Bool
     var showAllSpaces: Bool
     var sizeScale: Double
     var soundName: String
     var uniqueIconsPerDisplay: Bool
+    var verticalScrollEnabled: Bool
 
     private enum CodingKeys: String, CodingKey {
         case clickToSwitchSpaces, dimInactiveSpaces, fullscreenIconStyle, hideEmptySpaces
-        case hideFullscreenApps, hideSingleSpace
-        case launchAtLogin, localSpaceNumbers, paddingScale, separatorColor, showAllDisplays, showAllSpaces
+        case hideFullscreenApps, hideSingleSpace, horizontalScrollEnabled
+        case invertHorizontalScroll, invertVerticalScroll, launchAtLogin, localSpaceNumbers, paddingScale
+        case scrollSensitivity, separatorColor, showAllDisplays, showAllSpaces
         case sizeScale, soundName, uniqueIconsPerDisplay
+        case verticalScrollEnabled
     }
 
     /// Tolerates missing keys so backups exported by older app versions still import.
@@ -93,15 +100,21 @@ struct BackupSettings: Codable {
         hideEmptySpaces = try container.decodeIfPresent(Bool.self, forKey: .hideEmptySpaces) ?? false
         hideFullscreenApps = try container.decodeIfPresent(Bool.self, forKey: .hideFullscreenApps) ?? false
         hideSingleSpace = try container.decodeIfPresent(Bool.self, forKey: .hideSingleSpace) ?? false
+        horizontalScrollEnabled = try container.decodeIfPresent(Bool.self, forKey: .horizontalScrollEnabled) ?? false
+        invertHorizontalScroll = try container.decodeIfPresent(Bool.self, forKey: .invertHorizontalScroll) ?? false
+        invertVerticalScroll = try container.decodeIfPresent(Bool.self, forKey: .invertVerticalScroll) ?? false
         launchAtLogin = try container.decodeIfPresent(Bool.self, forKey: .launchAtLogin) ?? false
         localSpaceNumbers = try container.decodeIfPresent(Bool.self, forKey: .localSpaceNumbers) ?? false
         paddingScale = try container.decodeIfPresent(Double.self, forKey: .paddingScale)
+        scrollSensitivity = try container.decodeIfPresent(Double.self, forKey: .scrollSensitivity)
+            ?? Layout.defaultScrollSensitivity
         separatorColor = try container.decodeIfPresent(CodableColor.self, forKey: .separatorColor)
         showAllDisplays = try container.decodeIfPresent(Bool.self, forKey: .showAllDisplays) ?? false
         showAllSpaces = try container.decodeIfPresent(Bool.self, forKey: .showAllSpaces) ?? false
         sizeScale = try container.decodeIfPresent(Double.self, forKey: .sizeScale) ?? Layout.defaultSizeScale
         soundName = try container.decodeIfPresent(String.self, forKey: .soundName) ?? ""
         uniqueIconsPerDisplay = try container.decodeIfPresent(Bool.self, forKey: .uniqueIconsPerDisplay) ?? false
+        verticalScrollEnabled = try container.decodeIfPresent(Bool.self, forKey: .verticalScrollEnabled) ?? false
     }
 
     init(
@@ -111,15 +124,20 @@ struct BackupSettings: Codable {
         hideEmptySpaces: Bool,
         hideFullscreenApps: Bool,
         hideSingleSpace: Bool,
+        horizontalScrollEnabled: Bool,
+        invertHorizontalScroll: Bool,
+        invertVerticalScroll: Bool,
         launchAtLogin: Bool,
         localSpaceNumbers: Bool,
         paddingScale: Double?,
+        scrollSensitivity: Double,
         separatorColor: CodableColor?,
         showAllDisplays: Bool,
         showAllSpaces: Bool,
         sizeScale: Double,
         soundName: String,
-        uniqueIconsPerDisplay: Bool
+        uniqueIconsPerDisplay: Bool,
+        verticalScrollEnabled: Bool
     ) {
         self.clickToSwitchSpaces = clickToSwitchSpaces
         self.dimInactiveSpaces = dimInactiveSpaces
@@ -127,15 +145,20 @@ struct BackupSettings: Codable {
         self.hideEmptySpaces = hideEmptySpaces
         self.hideFullscreenApps = hideFullscreenApps
         self.hideSingleSpace = hideSingleSpace
+        self.horizontalScrollEnabled = horizontalScrollEnabled
+        self.invertHorizontalScroll = invertHorizontalScroll
+        self.invertVerticalScroll = invertVerticalScroll
         self.launchAtLogin = launchAtLogin
         self.localSpaceNumbers = localSpaceNumbers
         self.paddingScale = paddingScale
+        self.scrollSensitivity = scrollSensitivity
         self.separatorColor = separatorColor
         self.showAllDisplays = showAllDisplays
         self.showAllSpaces = showAllSpaces
         self.sizeScale = sizeScale
         self.soundName = soundName
         self.uniqueIconsPerDisplay = uniqueIconsPerDisplay
+        self.verticalScrollEnabled = verticalScrollEnabled
     }
 }
 
@@ -411,15 +434,20 @@ enum BackupManager {
             hideEmptySpaces: store.hideEmptySpaces,
             hideFullscreenApps: store.hideFullscreenApps,
             hideSingleSpace: store.hideSingleSpace,
+            horizontalScrollEnabled: store.horizontalScrollEnabled,
+            invertHorizontalScroll: store.invertHorizontalScroll,
+            invertVerticalScroll: store.invertVerticalScroll,
             launchAtLogin: launchAtLogin.isEnabled,
             localSpaceNumbers: store.localSpaceNumbers,
             paddingScale: store.paddingScale,
+            scrollSensitivity: store.scrollSensitivity,
             separatorColor: store.separatorColor.map { CodableColor(from: $0) },
             showAllDisplays: store.showAllDisplays,
             showAllSpaces: store.showAllSpaces,
             sizeScale: store.sizeScale,
             soundName: store.soundName,
-            uniqueIconsPerDisplay: store.uniqueIconsPerDisplay
+            uniqueIconsPerDisplay: store.uniqueIconsPerDisplay,
+            verticalScrollEnabled: store.verticalScrollEnabled
         )
 
         let spacePreferences = BackupSpacePreferences(
@@ -525,11 +553,15 @@ enum BackupManager {
         store.hideEmptySpaces = backup.settings.hideEmptySpaces
         store.hideFullscreenApps = backup.settings.hideFullscreenApps
         store.hideSingleSpace = backup.settings.hideSingleSpace
+        store.horizontalScrollEnabled = backup.settings.horizontalScrollEnabled
+        store.invertHorizontalScroll = backup.settings.invertHorizontalScroll
+        store.invertVerticalScroll = backup.settings.invertVerticalScroll
         var launchAtLogin = launchAtLogin
         launchAtLogin.isEnabled = backup.settings.launchAtLogin
         store.localSpaceNumbers = backup.settings.localSpaceNumbers
         store.paddingScale = (backup.settings.paddingScale ?? Layout.defaultPaddingScale)
             .clamped(to: Layout.paddingScaleRange)
+        store.scrollSensitivity = backup.settings.scrollSensitivity.clamped(to: Layout.scrollSensitivityRange)
         store.separatorColor = backup.settings.separatorColor?.toNSColor()
         // Route through SettingsConstraints so a hand-edited backup can't enable both
         SettingsConstraints.setShowAllDisplays(backup.settings.showAllDisplays, store: store)
@@ -537,6 +569,7 @@ enum BackupManager {
         store.sizeScale = backup.settings.sizeScale.clamped(to: Layout.sizeScaleRange)
         store.soundName = backup.settings.soundName
         store.uniqueIconsPerDisplay = backup.settings.uniqueIconsPerDisplay
+        store.verticalScrollEnabled = backup.settings.verticalScrollEnabled
 
         // Apply shared space preferences
         store.spaceBadges = backup.spacePreferences.toBadges()

@@ -96,6 +96,40 @@ struct SettingsConstraintsTests {
         #expect(!store.clickToSwitchSpaces)
     }
 
+    // MARK: - Scroll Switching Accessibility Guard
+
+    @Test("scroll switching defaults to disabled")
+    func scrollSwitching_defaultsToDisabled() {
+        #expect(!store.horizontalScrollEnabled)
+        #expect(!store.verticalScrollEnabled)
+    }
+
+    @Test("scroll switching fails without accessibility")
+    func scrollSwitching_failsWithoutAccessibility() {
+        let result = SettingsConstraints.setScrollSwitching(
+            true,
+            axis: \.verticalScrollEnabled,
+            store: store
+        ) { false }
+
+        #expect(!result)
+        #expect(!store.verticalScrollEnabled)
+    }
+
+    @Test("scroll switching can always be disabled")
+    func scrollSwitching_canAlwaysBeDisabled() {
+        store.horizontalScrollEnabled = true
+
+        let result = SettingsConstraints.setScrollSwitching(
+            false,
+            axis: \.horizontalScrollEnabled,
+            store: store
+        ) { false }
+
+        #expect(result)
+        #expect(!store.horizontalScrollEnabled)
+    }
+
     // MARK: - Accessibility Alert Flow (SettingsView binding logic)
 
     @Test("accessibility alert triggered when enabling without permission")

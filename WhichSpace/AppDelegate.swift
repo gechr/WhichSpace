@@ -47,7 +47,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     private(set) var actionHandler: ActionHandler!
     private var menuBuilder: MenuBuilder!
     private var middleClickMonitor: Any?
+    private var scrollMonitor: Any?
     private var statusBarItem: NSStatusItem!
+
+    /// Switches one Space left or right; injectable so scroll tests don't move real Spaces
+    private let relativeSpaceSwitchAction: (_ goRight: Bool) -> Void
+    /// Accumulated precise scroll delta at 100% sensitivity; a switch fires on crossing
+    private static let scrollSpaceBaseThreshold = 50.0
+    /// Minimum interval between scroll-triggered switches, so a flick lands one Space over
+    private static let scrollSwitchCooldown: TimeInterval = 0.3
+    private var scrollAccumulator = 0.0
+    private var lastScrollSwitchTimestamp: TimeInterval = -.infinity
 
     private var isPickingForeground = true
     /// Owns hover-preview coalescing and restore timing for the status icon
@@ -85,6 +95,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         missionControlNotificationSender = { notification in
             _ = CoreDockSendNotification(notification)
         }
+        relativeSpaceSwitchAction = { goRight in
+            guard AXIsProcessTrusted() else {
+                return
+            }
+            SpaceSwitcher.switchRelative(goRight: goRight)
+        }
         super.init()
         configureActionHandler()
     }
@@ -96,12 +112,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         launchAtLogin: LaunchAtLoginProvider = DefaultLaunchAtLoginProvider(),
         missionControlNotificationSender: @escaping (CFString) -> Void = { notification in
             _ = CoreDockSendNotification(notification)
+        },
+        relativeSpaceSwitchAction: @escaping (_ goRight: Bool) -> Void = { goRight in
+            guard AXIsProcessTrusted() else {
+                return
+            }
+            SpaceSwitcher.switchRelative(goRight: goRight)
         }
     ) {
         self.appState = appState
         self.confirmAction = confirmAction
         self.launchAtLogin = launchAtLogin
         self.missionControlNotificationSender = missionControlNotificationSender
+        self.relativeSpaceSwitchAction = relativeSpaceSwitchAction
         super.init()
         configureActionHandler()
     }
@@ -147,9 +170,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         startObservingSpaceChanges()
         startObservingPreferences()
 
-        // Disable click-to-switch if accessibility permission was revoked
-        if store.clickToSwitchSpaces, !AXIsProcessTrusted() {
-            SettingsConstraints.setClickToSwitchSpaces(false, store: store)
+        // Disable switching gestures if accessibility permission was revoked
+        if !AXIsProcessTrusted() {
+            if store.clickToSwitchSpaces {
+                SettingsConstraints.setClickToSwitchSpaces(false, store: store)
+            }
+            if store.horizontalScrollEnabled {
+                SettingsConstraints.setScrollSwitching(false, axis: \.horizontalScrollEnabled, store: store)
+            }
+            if store.verticalScrollEnabled {
+                SettingsConstraints.setScrollSwitching(false, axis: \.verticalScrollEnabled, store: store)
+            }
         }
 
         // Warm the symbol/emoji catalogs off-main so the first menu open doesn't
@@ -294,12 +325,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         statusBarItem?.button?.target = self
         statusBarItem?.button?.action = #selector(statusBarButtonClicked(_:))
         statusBarItem?.button?.sendAction(on: [.leftMouseUp, .rightMouseUp])
-        // Remove any previous monitor: this is re-invoked by tests
+        // Remove any previous monitors: this is re-invoked by tests
         if let middleClickMonitor {
             NSEvent.removeMonitor(middleClickMonitor)
         }
         middleClickMonitor = NSEvent.addLocalMonitorForEvents(matching: .otherMouseUp) { [weak self] event in
             self?.handleMiddleClickEvent(event, in: self?.statusBarItem?.button) ?? event
+        }
+        if let scrollMonitor {
+            NSEvent.removeMonitor(scrollMonitor)
+        }
+        scrollMonitor = NSEvent.addLocalMonitorForEvents(matching: .scrollWheel) { [weak self] event in
+            self?.handleScrollEvent(event, in: self?.statusBarItem?.button) ?? event
         }
         updateStatusBarIcon()
     }
@@ -314,6 +351,83 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             return event
         }
         missionControlNotificationSender("com.apple.expose.awake" as CFString)
+        return nil
+    }
+
+    /// Handles scroll over the status bar item and switches at most one Space per
+    /// event: scroll up goes to the next Space, scroll down to the previous.
+    /// Horizontal scrolls follow the Mission Control swipe convention - fingers
+    /// left = next, fingers right = previous - and the dominant enabled axis of
+    /// each event wins. A cooldown between switches keeps flicks to a single hop.
+    /// Returns nil when the event is consumed; otherwise returns the original event.
+    func handleScrollEvent(_ event: NSEvent, in button: NSView?) -> NSEvent? {
+        guard let button,
+              button.isMousePoint(button.convert(event.locationInWindow, from: nil), in: button.bounds)
+        else {
+            return event
+        }
+        let verticalEnabled = store.verticalScrollEnabled
+        let horizontalEnabled = store.horizontalScrollEnabled
+        guard verticalEnabled || horizontalEnabled else {
+            return event
+        }
+        // Ignore momentum-phase events so a trackpad flick doesn't skip several Spaces
+        guard event.momentumPhase.isEmpty else {
+            return nil
+        }
+        // Each gesture starts from a clean slate so leftovers don't carry over
+        if event.phase == .began {
+            scrollAccumulator = 0
+        }
+        // Swallow the tail of a gesture right after a switch
+        guard event.timestamp - lastScrollSwitchTimestamp >= Self.scrollSwitchCooldown else {
+            scrollAccumulator = 0
+            return nil
+        }
+
+        // Normalize the dominant enabled axis into "positive = next Space":
+        // scroll up = next, and a leftward scroll (negative deltaX) pushes the
+        // Space strip left to reveal the next Space, matching the system swipe
+        let precise = event.hasPreciseScrollingDeltas
+        let rawVertical = (precise ? event.scrollingDeltaY : event.deltaY) * (verticalEnabled ? 1 : 0)
+        let rawHorizontal = (precise ? event.scrollingDeltaX : event.deltaX) * (horizontalEnabled ? 1 : 0)
+        var delta: Double
+        if abs(rawHorizontal) > abs(rawVertical) {
+            delta = -rawHorizontal
+            if store.invertHorizontalScroll {
+                delta.negate()
+            }
+        } else {
+            delta = rawVertical
+            if store.invertVerticalScroll {
+                delta.negate()
+            }
+        }
+        guard delta != 0 else {
+            return nil
+        }
+
+        let shouldSwitch: Bool
+        let goRight: Bool
+        if precise {
+            // Trackpads emit many small deltas per gesture; accumulate to a
+            // threshold scaled by the sensitivity preference
+            scrollAccumulator += delta
+            let threshold = Self.scrollSpaceBaseThreshold * 100.0 / store.scrollSensitivity
+            shouldSwitch = abs(scrollAccumulator) >= threshold
+            goRight = scrollAccumulator > 0
+            if shouldSwitch {
+                scrollAccumulator = 0
+            }
+        } else {
+            // Mouse wheels emit one event per notch; step directly
+            shouldSwitch = true
+            goRight = delta > 0
+        }
+        if shouldSwitch {
+            lastScrollSwitchTimestamp = event.timestamp
+            relativeSpaceSwitchAction(goRight)
+        }
         return nil
     }
 
@@ -574,6 +688,10 @@ extension AppDelegate: MenuActionDelegate {
     func paddingChanged(to scale: Double) {
         store.paddingScale = scale
         updateStatusBarIcon()
+    }
+
+    func scrollSensitivityChanged(to scale: Double) {
+        store.scrollSensitivity = scale
     }
 
     func skinToneSelected(_ tone: SkinTone) {

@@ -78,6 +78,10 @@ enum Layout {
     // Padding scale (percentage)
     static let defaultPaddingScale = 100.0
     static let paddingScaleRange = 0.0 ... 200.0
+
+    // Scroll-to-switch sensitivity (percentage)
+    static let defaultScrollSensitivity = 100.0
+    static let scrollSensitivityRange = 25.0 ... 200.0
     static let defaultHorizontalPadding = statusItemWidth - baseSquareSize // 4.0pt
 
     // Base sizes (at 100% scale)
@@ -155,12 +159,17 @@ enum MenuTag: Int {
     case hideEmptySpaces
     case hideFullscreenApps
     case hideSingleSpace
+    case horizontalScrollEnabled
     case invertColors
+    case invertHorizontalScroll
+    case invertVerticalScroll
     case labelInput
     case labelMenuItem
     case launchAtLogin
     case localSpaceNumbers
     case paddingRow
+    case scrollMenuItem
+    case scrollSensitivityRow
     case separatorColorDivider
     case separatorLabel
     case separatorSwatch
@@ -172,6 +181,7 @@ enum MenuTag: Int {
     case symbolColorSwatch
     case symbolLabel
     case uniqueIconsPerDisplay
+    case verticalScrollEnabled
 }
 
 // MARK: - Localization
@@ -248,9 +258,11 @@ enum Localization {
     static let errorScriptingSpaceOutOfRange = String(localized: "error_scripting_space_out_of_range")
 
     static let labelBadgePosition = String(localized: "label_badge_position")
+    static let labelHorizontal = String(localized: "label_horizontal")
     static let labelNumber = String(localized: "label_number")
     static let labelNumberBackground = String(localized: "label_number_background")
     static let labelNumberForeground = String(localized: "label_number_foreground")
+    static let labelSensitivity = String(localized: "label_sensitivity")
     static let labelSeparator = String(localized: "label_separator")
     static let labelSkinTone = String(localized: "label_skin_tone")
     static let labelSymbol = String(localized: "label_symbol")
@@ -258,6 +270,7 @@ enum Localization {
     static let labelStyleBoxOutline = String(localized: "label_style_box_outline")
     static let labelStylePill = String(localized: "label_style_pill")
     static let labelStylePillOutline = String(localized: "label_style_pill_outline")
+    static let labelVertical = String(localized: "label_vertical")
     static let menuBadge = String(localized: "menu_badge")
     static let menuColor = String(localized: "menu_color")
     static let menuEmoji = String(localized: "menu_emoji")
@@ -265,6 +278,7 @@ enum Localization {
     static let menuLabel = String(localized: "menu_label")
     static let menuNumber = String(localized: "menu_number")
     static let menuPadding = String(localized: "menu_padding")
+    static let menuScroll = String(localized: "menu_scroll")
     static let menuSettings = String(localized: "menu_settings")
     static let menuSize = String(localized: "menu_size")
     static let menuSound = String(localized: "menu_sound")
@@ -301,6 +315,8 @@ enum Localization {
     static let tipResetLabelToDefault = String(localized: "tip_reset_label_to_default")
     static let tipResetSpaceToDefault = String(localized: "tip_reset_space_to_default")
     static let tipResetStyleToDefault = String(localized: "tip_reset_style_to_default")
+    static let tipScrollEnabled = String(localized: "tip_scroll_enabled")
+    static let tipScrollInverted = String(localized: "tip_scroll_inverted")
     static let tipSetDefaultStyle = String(localized: "tip_set_default_style")
     static let tipShowAllDisplays = String(localized: "tip_show_all_displays")
     static let tipShowAllSpaces = String(localized: "tip_show_all_spaces")
@@ -313,6 +329,8 @@ enum Localization {
     static let toggleHideSingleSpace = String(localized: "toggle_hide_single_space")
     static let toggleLaunchAtLogin = String(localized: "toggle_launch_at_login")
     static let toggleLocalSpaceNumbers = String(localized: "toggle_local_space_numbers")
+    static let toggleScrollEnabled = String(localized: "toggle_scroll_enabled")
+    static let toggleScrollInverted = String(localized: "toggle_scroll_inverted")
     static let toggleShowAllDisplays = String(localized: "toggle_show_all_displays")
     static let toggleShowAllSpaces = String(localized: "toggle_show_all_spaces")
     static let toggleUniqueIconsPerDisplay = String(localized: "toggle_unique_icons_per_display")

@@ -119,6 +119,42 @@ enum SpaceSwitcher {
         predictedIndex[display.identifier] = targetIndex
     }
 
+    /// Switches one Space left or right on the menu bar display, clamped at the edges.
+    /// Posts a single synthetic dock-swipe gesture, so fullscreen Spaces are
+    /// traversed the same way a real three-finger swipe would.
+    @MainActor static func switchRelative(goRight: Bool) {
+        let conn = _CGSDefaultConnection()
+
+        guard let activeDisplayRef = CGSCopyActiveMenuBarDisplayIdentifier(conn) else {
+            NSLog("SpaceSwitcher: failed to get active menu bar display")
+            return
+        }
+        let activeDisplayID = activeDisplayRef.takeRetainedValue() as String
+
+        let displays = managedDisplays(connection: conn)
+        guard let display = displays.first(where: { $0.identifier == activeDisplayID }) ?? displays.first else {
+            NSLog("SpaceSwitcher: no display found")
+            return
+        }
+
+        guard let cgsCurrentIndex = display.spaces.firstIndex(where: { $0.id == display.currentSpaceID }) else {
+            NSLog("SpaceSwitcher: could not find current space (%d)", display.currentSpaceID)
+            return
+        }
+
+        let currentIndex = predictedIndex[display.identifier] ?? cgsCurrentIndex
+        let targetIndex = currentIndex + (goRight ? 1 : -1)
+        guard display.spaces.indices.contains(targetIndex) else {
+            return
+        }
+
+        guard postSwipeGesture(goRight: goRight, velocity: swipeVelocity) else {
+            return
+        }
+
+        predictedIndex[display.identifier] = targetIndex
+    }
+
     // MARK: - CGS Dictionary Decoding
 
     /// Typed view of a single space returned by `CGSCopyManagedDisplaySpaces`.

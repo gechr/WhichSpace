@@ -366,7 +366,12 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         XCTAssertEqual(backup.settings.sizeScale, 80.0)
         XCTAssertTrue(backup.settings.dimInactiveSpaces)
         XCTAssertFalse(backup.settings.hideEmptySpaces)
+        XCTAssertFalse(backup.settings.horizontalScrollEnabled)
+        XCTAssertFalse(backup.settings.invertHorizontalScroll)
+        XCTAssertFalse(backup.settings.invertVerticalScroll)
+        XCTAssertEqual(backup.settings.scrollSensitivity, Layout.defaultScrollSensitivity)
         XCTAssertFalse(backup.settings.uniqueIconsPerDisplay)
+        XCTAssertFalse(backup.settings.verticalScrollEnabled)
         XCTAssertEqual(backup.settings.soundName, "")
     }
 
@@ -396,13 +401,18 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
                 "hideEmptySpaces": true,
                 "hideFullscreenApps": true,
                 "hideSingleSpace": true,
+                "horizontalScrollEnabled": true,
+                "invertHorizontalScroll": true,
+                "invertVerticalScroll": true,
                 "launchAtLogin": true,
                 "localSpaceNumbers": true,
+                "scrollSensitivity": 175.0,
                 "showAllDisplays": true,
                 "showAllSpaces": true,
                 "sizeScale": 75.0,
                 "soundName": "Blow",
-                "uniqueIconsPerDisplay": true
+                "uniqueIconsPerDisplay": true,
+                "verticalScrollEnabled": true
             },
             "spacePreferences": {
                 "colors": {},
@@ -423,14 +433,19 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         XCTAssertTrue(store.hideEmptySpaces)
         XCTAssertTrue(store.hideFullscreenApps)
         XCTAssertTrue(store.hideSingleSpace)
+        XCTAssertTrue(store.horizontalScrollEnabled)
+        XCTAssertTrue(store.invertHorizontalScroll)
+        XCTAssertTrue(store.invertVerticalScroll)
         XCTAssertTrue(store.localSpaceNumbers)
         // showAllDisplays and showAllSpaces are mutually exclusive; the constraint
         // resolves the conflicting backup in favor of showAllSpaces (applied last)
         XCTAssertFalse(store.showAllDisplays)
         XCTAssertTrue(store.showAllSpaces)
         XCTAssertEqual(store.sizeScale, 75.0)
+        XCTAssertEqual(store.scrollSensitivity, 175.0)
         XCTAssertEqual(store.soundName, "Blow")
         XCTAssertTrue(store.uniqueIconsPerDisplay)
+        XCTAssertTrue(store.verticalScrollEnabled)
     }
 
     func testApplyClampsOutOfRangeScales() throws {
@@ -440,7 +455,8 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
             "version": "1.0.0",
             "settings": {
                 "sizeScale": 99999.0,
-                "paddingScale": -50.0
+                "paddingScale": -50.0,
+                "scrollSensitivity": 99999.0
             }
         }
         """
@@ -450,6 +466,7 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
 
         XCTAssertEqual(store.sizeScale, Layout.sizeScaleRange.upperBound)
         XCTAssertEqual(store.paddingScale, Layout.paddingScaleRange.lowerBound)
+        XCTAssertEqual(store.scrollSensitivity, Layout.scrollSensitivityRange.upperBound)
     }
 
     func testApplyUpdatesSpacePreferences() throws {
@@ -633,7 +650,12 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         // Set up some settings
         store.showAllSpaces = true
         store.sizeScale = 85.0
+        store.horizontalScrollEnabled = true
+        store.invertHorizontalScroll = true
+        store.invertVerticalScroll = true
+        store.scrollSensitivity = 150.0
         store.soundName = "TestSound"
+        store.verticalScrollEnabled = true
         store.spaceColors = [1: SpaceColors(foreground: .red, background: .blue)]
         store.spaceIconStyles = [1: .circle, 2: .hexagon]
         store.spaceSymbols = [1: "star.fill"]
@@ -661,7 +683,12 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         // Verify settings restored
         XCTAssertTrue(store.showAllSpaces)
         XCTAssertEqual(store.sizeScale, 85.0)
+        XCTAssertTrue(store.horizontalScrollEnabled)
+        XCTAssertTrue(store.invertHorizontalScroll)
+        XCTAssertTrue(store.invertVerticalScroll)
+        XCTAssertEqual(store.scrollSensitivity, 150.0)
         XCTAssertEqual(store.soundName, "TestSound")
+        XCTAssertTrue(store.verticalScrollEnabled)
         XCTAssertEqual(store.spaceIconStyles[1], .circle)
         XCTAssertEqual(store.spaceIconStyles[2], .hexagon)
         XCTAssertEqual(store.spaceSymbols[1], "star.fill")

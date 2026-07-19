@@ -40,4 +40,21 @@ enum SettingsConstraints {
         store.clickToSwitchSpaces = value
         return true
     }
+
+    /// Attempts to set a scroll-to-switch axis (`horizontalScrollEnabled` or
+    /// `verticalScrollEnabled`). Same contract as `setClickToSwitchSpaces`:
+    /// enabling requires accessibility permission, disabling always succeeds.
+    @discardableResult
+    static func setScrollSwitching(
+        _ value: Bool,
+        axis: ReferenceWritableKeyPath<DefaultsStore, Bool>,
+        store: DefaultsStore,
+        isProcessTrusted: () -> Bool = { Accessibility.isTrusted }
+    ) -> Bool {
+        if value, !isProcessTrusted() {
+            return false
+        }
+        store[keyPath: axis] = value
+        return true
+    }
 }

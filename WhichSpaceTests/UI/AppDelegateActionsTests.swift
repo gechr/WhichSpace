@@ -46,6 +46,10 @@ final class AppDelegateActionsTests: XCTestCase {
         // Create per-test isolated store
         testSuite = TestSuiteFactory.createSuite()
         store = DefaultsStore(suite: testSuite.suite)
+        store.horizontalScrollEnabled = true
+        store.invertHorizontalScroll = false
+        store.invertVerticalScroll = false
+        store.verticalScrollEnabled = true
 
         stub = CGSStub()
         stub.activeDisplayIdentifier = "Main"
@@ -232,6 +236,213 @@ final class AppDelegateActionsTests: XCTestCase {
 
         XCTAssertNotNil(result)
         XCTAssertEqual(notificationCount, 0)
+    }
+
+    // MARK: - Scroll Event Tests
+
+    private func makeScrollEvent(
+        deltaY: Int32,
+        deltaX: Int32 = 0,
+        precise: Bool,
+        momentum: Bool = false,
+        timestamp: TimeInterval = 0
+    ) throws -> NSEvent {
+        let cgEvent = try XCTUnwrap(CGEvent(
+            scrollWheelEvent2Source: nil,
+            units: precise ? .pixel : .line,
+            wheelCount: 2,
+            wheel1: deltaY,
+            wheel2: deltaX,
+            wheel3: 0
+        ))
+        cgEvent.location = CGPoint(x: 12, y: 12)
+        cgEvent.timestamp = CGEventTimestamp(timestamp * 1_000_000_000)
+        if momentum {
+            cgEvent.setIntegerValueField(.scrollWheelEventMomentumPhase, value: 1)
+        }
+        return try XCTUnwrap(NSEvent(cgEvent: cgEvent))
+    }
+
+    private func buttonContaining(_ event: NSEvent) -> NSView {
+        NSView(frame: NSRect(
+            x: event.locationInWindow.x - 5,
+            y: event.locationInWindow.y - 5,
+            width: 10,
+            height: 10
+        ))
+    }
+
+    private func makeScrollSut(recording switches: @escaping (Bool) -> Void) -> AppDelegate {
+        AppDelegate(
+            appState: appState,
+            confirmAction: confirmStub.callAsFunction,
+            launchAtLogin: launchAtLoginStub,
+            relativeSpaceSwitchAction: switches
+        )
+    }
+
+    func testHandleScrollEvent_ignoresScrollOutsideButton() throws {
+        var switches: [Bool] = []
+        let localSut = makeScrollSut { switches.append($0) }
+        let event = try makeScrollEvent(deltaY: -1, precise: false)
+        let button = NSView(frame: NSRect(
+            x: event.locationInWindow.x + 100,
+            y: event.locationInWindow.y + 100,
+            width: 10,
+            height: 10
+        ))
+
+        let result = localSut.handleScrollEvent(event, in: button)
+
+        XCTAssertNotNil(result)
+        XCTAssertEqual(switches, [])
+    }
+
+    func testHandleScrollEvent_ignoredWhenBothAxesDisabled() throws {
+        store.verticalScrollEnabled = false
+        store.horizontalScrollEnabled = false
+        var switches: [Bool] = []
+        let localSut = makeScrollSut { switches.append($0) }
+        let event = try makeScrollEvent(deltaY: -1, precise: false)
+
+        let result = localSut.handleScrollEvent(event, in: buttonContaining(event))
+
+        XCTAssertNotNil(result)
+        XCTAssertEqual(switches, [])
+    }
+
+    func testHandleScrollEvent_wheelNotchDownSwitchesToPreviousSpace() throws {
+        var switches: [Bool] = []
+        let localSut = makeScrollSut { switches.append($0) }
+        let event = try makeScrollEvent(deltaY: -1, precise: false)
+
+        let result = localSut.handleScrollEvent(event, in: buttonContaining(event))
+
+        XCTAssertNil(result)
+        XCTAssertEqual(switches, [false])
+    }
+
+    func testHandleScrollEvent_wheelNotchUpSwitchesToNextSpace() throws {
+        var switches: [Bool] = []
+        let localSut = makeScrollSut { switches.append($0) }
+        let event = try makeScrollEvent(deltaY: 1, precise: false)
+
+        let result = localSut.handleScrollEvent(event, in: buttonContaining(event))
+
+        XCTAssertNil(result)
+        XCTAssertEqual(switches, [true])
+    }
+
+    func testHandleScrollEvent_preciseDeltasAccumulateToThreshold() throws {
+        var switches: [Bool] = []
+        let localSut = makeScrollSut { switches.append($0) }
+
+        // Two 20-point deltas stay below the 50-point threshold; the third crosses it
+        for _ in 0 ..< 2 {
+            let event = try makeScrollEvent(deltaY: -20, precise: true)
+            XCTAssertNil(localSut.handleScrollEvent(event, in: buttonContaining(event)))
+            XCTAssertEqual(switches, [])
+        }
+        let event = try makeScrollEvent(deltaY: -20, precise: true)
+        XCTAssertNil(localSut.handleScrollEvent(event, in: buttonContaining(event)))
+
+        XCTAssertEqual(switches, [false])
+    }
+
+    func testHandleScrollEvent_sensitivityScalesThreshold() throws {
+        store.scrollSensitivity = 200.0
+        var switches: [Bool] = []
+        let localSut = makeScrollSut { switches.append($0) }
+        // At 200% sensitivity the threshold halves to 25 points, so 30 crosses it
+        let event = try makeScrollEvent(deltaY: 30, precise: true)
+
+        let result = localSut.handleScrollEvent(event, in: buttonContaining(event))
+
+        XCTAssertNil(result)
+        XCTAssertEqual(switches, [true])
+    }
+
+    func testHandleScrollEvent_horizontalScrollLeftSwitchesToNextSpace() throws {
+        var switches: [Bool] = []
+        let localSut = makeScrollSut { switches.append($0) }
+        // Fingers left = negative deltaX = next Space, matching the system swipe
+        let event = try makeScrollEvent(deltaY: 0, deltaX: -60, precise: true)
+
+        let result = localSut.handleScrollEvent(event, in: buttonContaining(event))
+
+        XCTAssertNil(result)
+        XCTAssertEqual(switches, [true])
+    }
+
+    func testHandleScrollEvent_horizontalDominatesWhenLargerThanVertical() throws {
+        var switches: [Bool] = []
+        let localSut = makeScrollSut { switches.append($0) }
+        let event = try makeScrollEvent(deltaY: -10, deltaX: 60, precise: true)
+
+        let result = localSut.handleScrollEvent(event, in: buttonContaining(event))
+
+        XCTAssertNil(result)
+        XCTAssertEqual(switches, [false])
+    }
+
+    func testHandleScrollEvent_horizontalIgnoredWhenDisabled() throws {
+        store.horizontalScrollEnabled = false
+        var switches: [Bool] = []
+        let localSut = makeScrollSut { switches.append($0) }
+        let event = try makeScrollEvent(deltaY: 0, deltaX: -60, precise: true)
+
+        let result = localSut.handleScrollEvent(event, in: buttonContaining(event))
+
+        XCTAssertNil(result)
+        XCTAssertEqual(switches, [])
+    }
+
+    func testHandleScrollEvent_invertVerticalScrollFlipsMapping() throws {
+        store.invertVerticalScroll = true
+        var switches: [Bool] = []
+        let localSut = makeScrollSut { switches.append($0) }
+        let event = try makeScrollEvent(deltaY: 1, precise: false)
+
+        let result = localSut.handleScrollEvent(event, in: buttonContaining(event))
+
+        XCTAssertNil(result)
+        XCTAssertEqual(switches, [false])
+    }
+
+    func testHandleScrollEvent_invertHorizontalScrollFlipsMapping() throws {
+        store.invertHorizontalScroll = true
+        var switches: [Bool] = []
+        let localSut = makeScrollSut { switches.append($0) }
+        let event = try makeScrollEvent(deltaY: 0, deltaX: -60, precise: true)
+
+        let result = localSut.handleScrollEvent(event, in: buttonContaining(event))
+
+        XCTAssertNil(result)
+        XCTAssertEqual(switches, [false])
+    }
+
+    func testHandleScrollEvent_cooldownLimitsSwitchRate() throws {
+        var switches: [Bool] = []
+        let localSut = makeScrollSut { switches.append($0) }
+
+        // Second notch arrives within the cooldown and is swallowed;
+        // a third, well after it, switches again
+        for (timestamp, expected) in [(0.0, [true]), (0.1, [true]), (10.0, [true, true])] {
+            let event = try makeScrollEvent(deltaY: 1, precise: false, timestamp: timestamp)
+            XCTAssertNil(localSut.handleScrollEvent(event, in: buttonContaining(event)))
+            XCTAssertEqual(switches, expected)
+        }
+    }
+
+    func testHandleScrollEvent_momentumEventsConsumedWithoutSwitching() throws {
+        var switches: [Bool] = []
+        let localSut = makeScrollSut { switches.append($0) }
+        let event = try makeScrollEvent(deltaY: -100, precise: true, momentum: true)
+
+        let result = localSut.handleScrollEvent(event, in: buttonContaining(event))
+
+        XCTAssertNil(result)
+        XCTAssertEqual(switches, [])
     }
 
     // MARK: - toggleShowAllSpaces Tests

@@ -72,11 +72,19 @@ enum KeySpecs {
         name: "fullscreenIconStyle",
         defaultValue: FullscreenIconStyle.appIcon
     )
+    static let horizontalScrollEnabled = TypedKeySpec(name: "horizontalScrollEnabled", defaultValue: false)
+    static let invertHorizontalScroll = TypedKeySpec(name: "invertHorizontalScroll", defaultValue: false)
+    static let invertVerticalScroll = TypedKeySpec(name: "invertVerticalScroll", defaultValue: false)
     static let paddingScale = TypedKeySpec(name: "paddingScale", defaultValue: Layout.defaultPaddingScale)
     static let hideEmptySpaces = TypedKeySpec(name: "hideEmptySpaces", defaultValue: false)
     static let hideFullscreenApps = TypedKeySpec(name: "hideFullscreenApps", defaultValue: false)
     static let hideSingleSpace = TypedKeySpec(name: "hideSingleSpace", defaultValue: false)
     static let localSpaceNumbers = TypedKeySpec(name: "localSpaceNumbers", defaultValue: false)
+    static let scrollSensitivity = TypedKeySpec(
+        name: "scrollSensitivity",
+        defaultValue: Layout.defaultScrollSensitivity
+    )
+    static let verticalScrollEnabled = TypedKeySpec(name: "verticalScrollEnabled", defaultValue: false)
     static let separatorColor = TypedKeySpec(name: "separatorColor", defaultValue: Data?.none)
     static let showAllDisplays = TypedKeySpec(name: "showAllDisplays", defaultValue: false)
     static let showAllSpaces = TypedKeySpec(name: "showAllSpaces", defaultValue: false)
@@ -110,8 +118,12 @@ enum KeySpecs {
         hideEmptySpaces,
         hideFullscreenApps,
         hideSingleSpace,
+        horizontalScrollEnabled,
+        invertHorizontalScroll,
+        invertVerticalScroll,
         localSpaceNumbers,
         paddingScale,
+        scrollSensitivity,
         separatorColor,
         showAllDisplays,
         showAllSpaces,
@@ -126,6 +138,7 @@ enum KeySpecs {
         spaceSkinTones,
         spaceSymbols,
         uniqueIconsPerDisplay,
+        verticalScrollEnabled,
     ]
 
     /// Keys that never affect status bar icon rendering. Everything else is
@@ -133,7 +146,12 @@ enum KeySpecs {
     /// icon-affecting by default - the safe direction for cache invalidation.
     static let nonIconKeyNames: Set<String> = [
         clickToSwitchSpaces.name,
+        horizontalScrollEnabled.name,
+        invertHorizontalScroll.name,
+        invertVerticalScroll.name,
+        scrollSensitivity.name,
         soundName.name,
+        verticalScrollEnabled.name,
     ]
 
     /// All key names for enumeration (e.g. in tests).
@@ -300,6 +318,21 @@ final class DefaultsStore {
         set { self[KeySpecs.hideSingleSpace] = newValue }
     }
 
+    var horizontalScrollEnabled: Bool {
+        get { self[KeySpecs.horizontalScrollEnabled] }
+        set { self[KeySpecs.horizontalScrollEnabled] = newValue }
+    }
+
+    var invertHorizontalScroll: Bool {
+        get { self[KeySpecs.invertHorizontalScroll] }
+        set { self[KeySpecs.invertHorizontalScroll] = newValue }
+    }
+
+    var invertVerticalScroll: Bool {
+        get { self[KeySpecs.invertVerticalScroll] }
+        set { self[KeySpecs.invertVerticalScroll] = newValue }
+    }
+
     var localSpaceNumbers: Bool {
         get { self[KeySpecs.localSpaceNumbers] }
         set { self[KeySpecs.localSpaceNumbers] = newValue }
@@ -308,6 +341,11 @@ final class DefaultsStore {
     var paddingScale: Double {
         get { self[KeySpecs.paddingScale] }
         set { self[KeySpecs.paddingScale] = newValue }
+    }
+
+    var scrollSensitivity: Double {
+        get { self[KeySpecs.scrollSensitivity] }
+        set { self[KeySpecs.scrollSensitivity] = newValue }
     }
 
     var separatorColor: NSColor? {
@@ -409,6 +447,11 @@ final class DefaultsStore {
     var uniqueIconsPerDisplay: Bool {
         get { self[KeySpecs.uniqueIconsPerDisplay] }
         set { self[KeySpecs.uniqueIconsPerDisplay] = newValue }
+    }
+
+    var verticalScrollEnabled: Bool {
+        get { self[KeySpecs.verticalScrollEnabled] }
+        set { self[KeySpecs.verticalScrollEnabled] = newValue }
     }
 
     // MARK: - Utilities

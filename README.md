@@ -9,6 +9,7 @@ Have you ever forgotten _which space_ is currently active on macOS and wanted a 
 - **Multiple Spaces** - Show current Space only, or all Spaces at once
 - **Multiple Displays** - Show Spaces across multiple monitors
 - **Click-to-Switch** - Jump to any Space directly from the menu bar
+- **Scroll-to-Switch** - Cycle through Spaces by scrolling over the menu bar icon
 - **Colors** - Set foreground and background colors per Space
 - **Icons** - Choose from multiple icon styles (square, circle, triangle, and more)
 - **Labels** - Replace Space numbers with custom text labels

@@ -9,6 +9,7 @@ import Defaults
 protocol MenuActionDelegate: AnyObject {
     func sizeChanged(to scale: Double)
     func paddingChanged(to scale: Double)
+    func scrollSensitivityChanged(to scale: Double)
     func skinToneSelected(_ tone: SkinTone)
     func foregroundColorSelected(_ color: NSColor)
     func backgroundColorSelected(_ color: NSColor)
@@ -90,13 +91,27 @@ final class MenuBuilder {
         // Dim/Hide options are visible when either showAllSpaces or showAllDisplays is enabled
         let showMultiSpaceOptions = store.showAllSpaces || store.showAllDisplays
 
-        // Update Click to Switch Spaces checkmark and visibility (only shown when multi-space is enabled)
-        // Deselect if permission has been revoked
-        if store.clickToSwitchSpaces, !AXIsProcessTrusted() {
-            SettingsConstraints.setClickToSwitchSpaces(false, store: store)
+        // Deselect accessibility-dependent actions if permission has been revoked
+        if !AXIsProcessTrusted() {
+            if store.clickToSwitchSpaces {
+                SettingsConstraints.setClickToSwitchSpaces(false, store: store)
+            }
+            if store.horizontalScrollEnabled {
+                SettingsConstraints.setScrollSwitching(false, axis: \.horizontalScrollEnabled, store: store)
+            }
+            if store.verticalScrollEnabled {
+                SettingsConstraints.setScrollSwitching(false, axis: \.verticalScrollEnabled, store: store)
+            }
         }
+
+        // Update Click to Switch Spaces checkmark and visibility (only shown when multi-space is enabled)
         setCheckmark(.clickToSwitchSpaces, store.clickToSwitchSpaces)
         menu.item(withTag: MenuTag.clickToSwitchSpaces.rawValue)?.isHidden = !showMultiSpaceOptions
+
+        setCheckmark(.verticalScrollEnabled, store.verticalScrollEnabled)
+        setCheckmark(.horizontalScrollEnabled, store.horizontalScrollEnabled)
+        setCheckmark(.invertVerticalScroll, store.invertVerticalScroll)
+        setCheckmark(.invertHorizontalScroll, store.invertHorizontalScroll)
 
         setCheckmark(.dimInactiveSpaces, store.dimInactiveSpaces)
         menu.item(withTag: MenuTag.dimInactiveSpaces.rawValue)?.isHidden = !showMultiSpaceOptions
@@ -257,6 +272,10 @@ final class MenuBuilder {
                 view.currentSize = store.paddingScale
             }
 
+            if item.tag == MenuTag.scrollSensitivityRow.rawValue, let view = item.view as? SizeSlider {
+                view.currentSize = store.scrollSensitivity
+            }
+
             // Update badge character input
             if item.tag == MenuTag.badgeCharacterField.rawValue, let badgeInput = item.view as? BadgeInput {
                 badgeInput.currentCharacter = currentBadge?.character
@@ -395,6 +414,7 @@ final class MenuBuilder {
         configureColorMenuItem(in: menu, target: target, delegate: menuDelegate, actionDelegate: actionDelegate)
         configureStyleMenuItem(in: menu, target: target, delegate: menuDelegate, actionDelegate: actionDelegate)
         configureBadgeMenuItem(in: menu, target: target, delegate: menuDelegate, actionDelegate: actionDelegate)
+        configureScrollMenuItem(in: menu, target: target, delegate: menuDelegate, actionDelegate: actionDelegate)
         configureSoundMenuItem(in: menu, target: target, delegate: menuDelegate)
         configureSizeMenuItem(in: menu, delegate: menuDelegate, actionDelegate: actionDelegate)
         configureOptionsMenuItems(in: menu, target: target)
@@ -694,6 +714,86 @@ final class MenuBuilder {
         badgeMenuItem.image = NSImage(systemSymbolName: "tag", accessibilityDescription: nil)
         badgeMenuItem.submenu = badgeMenu
         menu.addItem(badgeMenuItem)
+    }
+
+    // MARK: - Scroll Menu
+
+    private func configureScrollMenuItem(
+        in menu: NSMenu, target: AnyObject, delegate: NSMenuDelegate?, actionDelegate: MenuActionDelegate
+    ) {
+        let scrollMenu = NSMenu(title: Localization.menuScroll)
+        scrollMenu.delegate = delegate
+
+        let verticalLabel = NSMenuItem(title: Localization.labelVertical, action: nil, keyEquivalent: "")
+        verticalLabel.isEnabled = false
+        scrollMenu.addItem(verticalLabel)
+        addMenuItem(
+            to: scrollMenu,
+            title: Localization.toggleScrollEnabled,
+            action: #selector(ActionHandler.toggleVerticalScroll),
+            target: target,
+            tag: .verticalScrollEnabled,
+            symbolName: "arrow.up.arrow.down",
+            toolTip: Localization.tipScrollEnabled
+        )
+        addMenuItem(
+            to: scrollMenu,
+            title: Localization.toggleScrollInverted,
+            action: #selector(ActionHandler.toggleInvertVerticalScroll),
+            target: target,
+            tag: .invertVerticalScroll,
+            symbolName: "arrow.uturn.up",
+            toolTip: Localization.tipScrollInverted
+        )
+
+        scrollMenu.addItem(.separator())
+
+        let horizontalLabel = NSMenuItem(title: Localization.labelHorizontal, action: nil, keyEquivalent: "")
+        horizontalLabel.isEnabled = false
+        scrollMenu.addItem(horizontalLabel)
+        addMenuItem(
+            to: scrollMenu,
+            title: Localization.toggleScrollEnabled,
+            action: #selector(ActionHandler.toggleHorizontalScroll),
+            target: target,
+            tag: .horizontalScrollEnabled,
+            symbolName: "arrow.left.arrow.right",
+            toolTip: Localization.tipScrollEnabled
+        )
+        addMenuItem(
+            to: scrollMenu,
+            title: Localization.toggleScrollInverted,
+            action: #selector(ActionHandler.toggleInvertHorizontalScroll),
+            target: target,
+            tag: .invertHorizontalScroll,
+            symbolName: "arrow.uturn.backward",
+            toolTip: Localization.tipScrollInverted
+        )
+
+        scrollMenu.addItem(.separator())
+
+        let sensitivityLabel = NSMenuItem(title: Localization.labelSensitivity, action: nil, keyEquivalent: "")
+        sensitivityLabel.isEnabled = false
+        scrollMenu.addItem(sensitivityLabel)
+
+        let sensitivityItem = NSMenuItem()
+        sensitivityItem.tag = MenuTag.scrollSensitivityRow.rawValue
+        let sensitivitySlider = SizeSlider(
+            initialSize: store.scrollSensitivity,
+            range: Layout.scrollSensitivityRange
+        )
+        sensitivitySlider.frame = NSRect(origin: .zero, size: sensitivitySlider.intrinsicContentSize)
+        sensitivitySlider.onSizeChanged = { [weak actionDelegate] scale in
+            actionDelegate?.scrollSensitivityChanged(to: scale)
+        }
+        sensitivityItem.view = sensitivitySlider
+        scrollMenu.addItem(sensitivityItem)
+
+        let scrollMenuItem = NSMenuItem(title: Localization.menuScroll, action: nil, keyEquivalent: "")
+        scrollMenuItem.tag = MenuTag.scrollMenuItem.rawValue
+        scrollMenuItem.image = NSImage(systemSymbolName: "computermouse", accessibilityDescription: nil)
+        scrollMenuItem.submenu = scrollMenu
+        menu.addItem(scrollMenuItem)
     }
 
     // MARK: - Style Menu

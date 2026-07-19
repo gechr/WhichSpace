@@ -198,8 +198,12 @@ struct DefaultsIsolationGuardTests {
             "hideEmptySpaces",
             "hideFullscreenApps",
             "hideSingleSpace",
+            "horizontalScrollEnabled",
+            "invertHorizontalScroll",
+            "invertVerticalScroll",
             "localSpaceNumbers",
             "paddingScale",
+            "scrollSensitivity",
             "separatorColor",
             "showAllDisplays",
             "showAllSpaces",
@@ -214,6 +218,7 @@ struct DefaultsIsolationGuardTests {
             "spaceSkinTones",
             "spaceSymbols",
             "uniqueIconsPerDisplay",
+            "verticalScrollEnabled",
         ]
 
         #expect(KeySpecs.allKeyNames == expectedKeyNames)

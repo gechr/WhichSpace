@@ -86,8 +86,32 @@ final class ActionHandler: NSObject {
         }
     }
 
+    @objc func toggleHorizontalScroll() {
+        let newValue = !store.horizontalScrollEnabled
+        if !SettingsConstraints.setScrollSwitching(newValue, axis: \.horizontalScrollEnabled, store: store) {
+            NSLog("ActionHandler: accessibility permission denied for horizontalScrollEnabled")
+            showAccessibilityPermissionAlert { $0.horizontalScrollEnabled = true }
+        }
+    }
+
+    @objc func toggleInvertHorizontalScroll() {
+        store.invertHorizontalScroll.toggle()
+    }
+
+    @objc func toggleInvertVerticalScroll() {
+        store.invertVerticalScroll.toggle()
+    }
+
     @objc func toggleLocalSpaceNumbers() {
         store.localSpaceNumbers.toggle()
+    }
+
+    @objc func toggleVerticalScroll() {
+        let newValue = !store.verticalScrollEnabled
+        if !SettingsConstraints.setScrollSwitching(newValue, axis: \.verticalScrollEnabled, store: store) {
+            NSLog("ActionHandler: accessibility permission denied for verticalScrollEnabled")
+            showAccessibilityPermissionAlert { $0.verticalScrollEnabled = true }
+        }
     }
 
     @objc func toggleUniqueIconsPerDisplay() {
@@ -738,7 +762,11 @@ final class ActionHandler: NSObject {
         showAccessibilityPermissionAlert()
     }
 
-    private func showAccessibilityPermissionAlert() {
+    /// Shows the accessibility permission alert; `onGranted` applies the
+    /// setting that triggered the request once permission comes through.
+    private func showAccessibilityPermissionAlert(
+        onGranted: @escaping (DefaultsStore) -> Void = { $0.clickToSwitchSpaces = true }
+    ) {
         let alert = NSAlert()
         alert.messageText = Localization.alertAccessibilityRequired
         alert.informativeText = Localization.alertAccessibilityDetail
@@ -751,7 +779,10 @@ final class ActionHandler: NSObject {
 
         if response == .alertFirstButtonReturn {
             Accessibility.requestPermission { [weak self] in
-                self?.store.clickToSwitchSpaces = true
+                guard let self else {
+                    return
+                }
+                onGranted(store)
             }
         }
     }
