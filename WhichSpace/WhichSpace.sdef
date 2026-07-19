@@ -14,6 +14,12 @@
         <command name="reset current space label" code="WSpcrslb" description="Reset the current Space label to its default.">
             <cocoa class="WhichSpace.ResetCurrentSpaceLabelCommand"/>
         </command>
+        <command name="switch to next space" code="WSpcswnx" description="Switch to the next Space on the current display.">
+            <cocoa class="WhichSpace.SwitchToNextSpaceCommand"/>
+        </command>
+        <command name="switch to previous space" code="WSpcswpv" description="Switch to the previous Space on the current display.">
+            <cocoa class="WhichSpace.SwitchToPreviousSpaceCommand"/>
+        </command>
         <command name="switch to space number" code="WSpcswsp" description="Switch to a Space by number on the current display.">
             <cocoa class="WhichSpace.SwitchToSpaceCommand"/>
             <direct-parameter type="integer" description="The Space number to switch to (1-based)."/>

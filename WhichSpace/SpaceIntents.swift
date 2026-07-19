@@ -68,6 +68,44 @@ struct SwitchSpaceIntent: AppIntent {
     }
 }
 
+/// Switches to the next Space on the current display.
+/// Mirrors the AppleScript `switch to next space` command.
+struct SwitchToNextSpaceIntent: AppIntent {
+    static let title: LocalizedStringResource = "Switch to Next Space"
+    static let description = IntentDescription(
+        "Switches to the next Space on the current display."
+    )
+
+    @MainActor
+    func perform() async throws -> some IntentResult {
+        do {
+            try ScriptingHelpers.switchRelative(goRight: true)
+        } catch {
+            throw IntentError(message: error.localizedDescription)
+        }
+        return .result()
+    }
+}
+
+/// Switches to the previous Space on the current display.
+/// Mirrors the AppleScript `switch to previous space` command.
+struct SwitchToPreviousSpaceIntent: AppIntent {
+    static let title: LocalizedStringResource = "Switch to Previous Space"
+    static let description = IntentDescription(
+        "Switches to the previous Space on the current display."
+    )
+
+    @MainActor
+    func perform() async throws -> some IntentResult {
+        do {
+            try ScriptingHelpers.switchRelative(goRight: false)
+        } catch {
+            throw IntentError(message: error.localizedDescription)
+        }
+        return .result()
+    }
+}
+
 // MARK: - Spaces
 
 /// Returns the current Space number (1-based numeric index).

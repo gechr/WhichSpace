@@ -50,6 +50,38 @@ final class ResetCurrentSpaceLabelCommand: NSScriptCommand {
     }
 }
 
+/// Command handler for AppleScript "switch to next space" command.
+/// Usage: `tell application "WhichSpace" to switch to next space`
+final class SwitchToNextSpaceCommand: NSScriptCommand {
+    override func performDefaultImplementation() -> Any? {
+        do {
+            try MainActor.assumeIsolated {
+                try ScriptingHelpers.switchRelative(goRight: true)
+            }
+        } catch {
+            scriptErrorNumber = errOSACantAssign
+            scriptErrorString = error.localizedDescription
+        }
+        return nil
+    }
+}
+
+/// Command handler for AppleScript "switch to previous space" command.
+/// Usage: `tell application "WhichSpace" to switch to previous space`
+final class SwitchToPreviousSpaceCommand: NSScriptCommand {
+    override func performDefaultImplementation() -> Any? {
+        do {
+            try MainActor.assumeIsolated {
+                try ScriptingHelpers.switchRelative(goRight: false)
+            }
+        } catch {
+            scriptErrorNumber = errOSACantAssign
+            scriptErrorString = error.localizedDescription
+        }
+        return nil
+    }
+}
+
 /// Command handler for AppleScript "switch to space number" command.
 /// Usage: `tell application "WhichSpace" to switch to space number 3`
 /// Usage: `tell application "WhichSpace" to switch to space number 3 label "Work"`
@@ -153,6 +185,15 @@ enum ScriptingHelpers {
         } else {
             _ = SpaceSwitcher.activateAppOnSpace(entry.id)
         }
+    }
+
+    /// Switches one Space left or right on the current display, clamped at the
+    /// edges. Mirrors a single scroll or swipe step.
+    static func switchRelative(goRight: Bool) throws(SwitchError) {
+        guard AXIsProcessTrusted() else {
+            throw .accessibilityNotTrusted
+        }
+        SpaceSwitcher.switchRelative(goRight: goRight)
     }
 
     static func resolveCurrentLabel(appState: AppState, store: DefaultsStore) -> String {

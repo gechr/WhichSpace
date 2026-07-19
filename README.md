@@ -127,6 +127,7 @@ To add a custom sound:
 WhichSpace provides native actions in the [Shortcuts](https://support.apple.com/guide/shortcuts-mac/apdf22b0444c/mac) app - open Shortcuts, create a shortcut, and search for "WhichSpace":
 
 - **Switch Space** - switch to a Space by number, optionally applying a label and badge in one step
+- **Switch to Next Space** / **Previous Space** - move one Space left or right
 - **Get Current Space Number** / **Label** / **Badge** - read the current Space state into a shortcut
 - **Set Current Space Label** / **Badge** - apply a custom label or badge
 - **Reset Current Space Label** / **Badge** - revert the current Space to its default
@@ -149,6 +150,10 @@ osascript -e 'tell application "WhichSpace" to switch to space number 3 label "W
 
 # Switch to a Space and apply a badge in one step
 osascript -e 'tell application "WhichSpace" to switch to space number 3 badge "A"'
+
+# Switch to the next or previous Space on the current display
+osascript -e 'tell application "WhichSpace" to switch to next space'
+osascript -e 'tell application "WhichSpace" to switch to previous space'
 ```
 
 ##### Spaces
