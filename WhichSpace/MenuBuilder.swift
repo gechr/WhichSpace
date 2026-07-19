@@ -426,6 +426,28 @@ final class MenuBuilder {
         return menu
     }
 
+    // MARK: - Space Picker Menu
+
+    /// Builds the transient menu shown on left-click in single-icon mode: one
+    /// item per Space, rendered exactly like its status bar icon, with a
+    /// checkmark on the active Space.
+    static func buildSpacePickerMenu(entries: [SpacePickerEntry], target: AnyObject) -> NSMenu {
+        let menu = NSMenu()
+        for entry in entries {
+            let item = NSMenuItem(
+                title: "",
+                action: #selector(ActionHandler.switchToPickedSpace(_:)),
+                keyEquivalent: ""
+            )
+            item.target = target
+            item.image = entry.icon
+            item.state = entry.isActive ? .on : .off
+            item.representedObject = entry
+            menu.addItem(item)
+        }
+        return menu
+    }
+
     // MARK: - Version Header
 
     private func configureVersionHeader(in menu: NSMenu) {

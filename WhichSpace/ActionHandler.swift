@@ -762,6 +762,25 @@ final class ActionHandler: NSObject {
         showAccessibilityPermissionAlert()
     }
 
+    // MARK: - Space Picker
+
+    /// Switches to the Space chosen from the left-click picker menu.
+    @objc func switchToPickedSpace(_ sender: NSMenuItem) {
+        guard let entry = sender.representedObject as? SpacePickerEntry else {
+            return
+        }
+        guard AXIsProcessTrusted() else {
+            showAccessibilityPermissionAlert()
+            return
+        }
+        // Fullscreen spaces don't have a targetSpace - activate the app instead
+        if entry.targetSpace == nil {
+            _ = SpaceSwitcher.activateAppOnSpace(entry.spaceID)
+        } else {
+            SpaceSwitcher.switchToSpace(id: entry.spaceID)
+        }
+    }
+
     /// Shows the accessibility permission alert; `onGranted` applies the
     /// setting that triggered the request once permission comes through.
     private func showAccessibilityPermissionAlert(

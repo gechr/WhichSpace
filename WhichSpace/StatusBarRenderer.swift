@@ -1,5 +1,16 @@
 import Cocoa
 
+/// One entry in the left-click Space picker menu, carrying the icon rendered
+/// exactly as it would appear in the status bar.
+struct SpacePickerEntry {
+    let icon: NSImage
+    let isActive: Bool
+    /// The numeric space to activate (nil for fullscreen apps - use spaceID instead)
+    let targetSpace: Int?
+    /// The CGS space ID (used to find apps on fullscreen spaces)
+    let spaceID: Int
+}
+
 /// Renders status bar icons for the current space state.
 ///
 /// Extracted from AppState to separate icon rendering concerns from space detection.
@@ -213,6 +224,22 @@ final class StatusBarRenderer {
         return .empty
     }
 
+    /// Returns one entry per Space on the current display for the left-click
+    /// picker menu shown in single-icon mode. Icons render exactly as they
+    /// would in the status bar. Hide filters don't apply: their menu options
+    /// are only offered in multi-space modes, and the picker exists to reach
+    /// Spaces the bar isn't showing.
+    func spacePickerEntries() -> [SpacePickerEntry] {
+        renderedCurrentDisplayIcons(darkMode: appState.darkModeEnabled, includeHidden: true).map { rendered in
+            SpacePickerEntry(
+                icon: rendered.icon,
+                isActive: rendered.slot.isActive,
+                targetSpace: rendered.slot.isFullscreen ? nil : rendered.slot.globalIndex,
+                spaceID: rendered.slot.spaceID
+            )
+        }
+    }
+
     /// Marks window occupancy stale after a Space snapshot changes.
     ///
     /// Keep populated data available so the next render can return it immediately
@@ -341,9 +368,9 @@ final class StatusBarRenderer {
         )
     }
 
-    private func renderedCurrentDisplayIcons(darkMode: Bool) -> [RenderedSlotIcon] {
+    private func renderedCurrentDisplayIcons(darkMode: Bool, includeHidden: Bool = false) -> [RenderedSlotIcon] {
         let labels = fetchLabels(displayID: appState.currentDisplayID ?? "")
-        return resolveCurrentDisplaySlots().map { slot in
+        return resolveCurrentDisplaySlots(includeHidden: includeHidden).map { slot in
             RenderedSlotIcon(
                 slot: slot,
                 icon: generateSingleIcon(
@@ -805,12 +832,12 @@ final class StatusBarRenderer {
     }
 
     /// Resolves visible spaces for the current display into fully computed slots.
-    private func resolveCurrentDisplaySlots() -> [ResolvedSlot] {
+    private func resolveCurrentDisplaySlots(includeHidden: Bool = false) -> [ResolvedSlot] {
         let globalStartIndex = appState.allDisplaysSpaceInfo
             .first { $0.displayID == appState.currentDisplayID }?.globalStartIndex ?? 1
         let displayID = appState.currentDisplayID ?? ""
 
-        let nonEmptySpaceIDs: Set<Int> = if store.hideEmptySpaces {
+        let nonEmptySpaceIDs: Set<Int> = if !includeHidden, store.hideEmptySpaces {
             getCachedSpacesWithWindows(forSpaceIDs: appState.allSpaceIDs)
         } else {
             []
@@ -824,7 +851,7 @@ final class StatusBarRenderer {
             let isActive = localIndex == appState.currentSpace
             let isFullscreen = entry.label == Labels.fullscreen
 
-            if !isActive,
+            if !includeHidden, !isActive,
                !shouldShowSpace(label: entry.label, spaceID: entry.id, nonEmptySpaceIDs: nonEmptySpaceIDs)
             {
                 continue

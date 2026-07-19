@@ -499,7 +499,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
 
         let layout = appState.statusBarLayout()
+        // Single-icon mode has no per-Space slots: offer a picker menu so a
+        // left click can still switch Spaces
         guard !layout.slots.isEmpty else {
+            showSpacePickerMenu(from: button)
             return
         }
 
@@ -518,6 +521,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
 
         SpaceSwitcher.switchToSpace(id: slot.spaceID)
+    }
+
+    /// Pops up a menu listing every Space on the current display, each item
+    /// rendered exactly like its status bar icon, with the active Space checked.
+    private func showSpacePickerMenu(from button: NSStatusBarButton) {
+        let menu = MenuBuilder.buildSpacePickerMenu(
+            entries: appState.spacePickerEntries(),
+            target: actionHandler
+        )
+        guard !menu.items.isEmpty else {
+            return
+        }
+        let position = NSPoint(x: 0, y: button.bounds.height + 5)
+        menu.popUp(positioning: nil, at: position, in: button)
     }
 
     // MARK: - Status Bar

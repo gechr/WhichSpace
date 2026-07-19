@@ -614,4 +614,9 @@ final class AppState {
     func statusBarLayout() -> StatusBarLayout {
         renderer.statusBarLayout()
     }
+
+    /// Returns one entry per Space for the left-click picker menu (single-icon mode)
+    func spacePickerEntries() -> [SpacePickerEntry] {
+        renderer.spacePickerEntries()
+    }
 }

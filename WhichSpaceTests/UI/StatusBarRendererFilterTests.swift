@@ -289,3 +289,106 @@ struct StatusBarRendererFilterTests {
         #expect(layout.slots.first?.label == "1")
     }
 }
+
+// MARK: - Space Picker Menu
+
+@MainActor
+struct SpacePickerTests {
+    private let store: DefaultsStore
+    private let testSuite: TestSuite
+    private let stub: CGSStub
+
+    init() {
+        testSuite = TestSuiteFactory.createSuite()
+        store = DefaultsStore(suite: testSuite.suite)
+        stub = CGSStub()
+    }
+
+    private func makeAppState(
+        spaces: [(id: Int, isFullscreen: Bool)], activeSpaceID: Int
+    ) -> AppState {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [
+            CGSStub.makeDisplay(displayID: "Main", spaces: spaces, activeSpaceID: activeSpaceID),
+        ]
+        return AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+    }
+
+    @Test("picker lists every space with the active one marked")
+    func entriesListAllSpaces() {
+        let appState = makeAppState(
+            spaces: [
+                (id: 100, isFullscreen: false),
+                (id: 101, isFullscreen: false),
+                (id: 102, isFullscreen: false),
+            ],
+            activeSpaceID: 101
+        )
+
+        let entries = appState.spacePickerEntries()
+
+        #expect(entries.map(\.isActive) == [false, true, false])
+        #expect(entries.map(\.targetSpace) == [1, 2, 3])
+        #expect(entries.map(\.spaceID) == [100, 101, 102])
+    }
+
+    @Test("picker ignores hide filters so hidden spaces stay reachable")
+    func entriesIgnoreHideFilters() {
+        store.hideEmptySpaces = true
+        store.hideFullscreenApps = true
+        stub.spacesWithWindowsSet = [100]
+        let appState = makeAppState(
+            spaces: [
+                (id: 100, isFullscreen: false),
+                (id: 101, isFullscreen: true),
+                (id: 102, isFullscreen: false),
+            ],
+            activeSpaceID: 100
+        )
+
+        let entries = appState.spacePickerEntries()
+
+        #expect(entries.count == 3)
+        #expect(entries.map(\.spaceID) == [100, 101, 102])
+    }
+
+    @Test("fullscreen spaces have no target space")
+    func fullscreenEntryHasNoTargetSpace() {
+        let appState = makeAppState(
+            spaces: [
+                (id: 100, isFullscreen: false),
+                (id: 101, isFullscreen: true),
+            ],
+            activeSpaceID: 100
+        )
+
+        let entries = appState.spacePickerEntries()
+
+        #expect(entries.count == 2)
+        #expect(entries[1].targetSpace == nil)
+    }
+
+    @Test("built menu carries icons, checkmark, and entries for the action")
+    func builtMenuMatchesEntries() {
+        let appState = makeAppState(
+            spaces: [
+                (id: 100, isFullscreen: false),
+                (id: 101, isFullscreen: false),
+            ],
+            activeSpaceID: 101
+        )
+        let entries = appState.spacePickerEntries()
+        let target = NSObject()
+
+        let menu = MenuBuilder.buildSpacePickerMenu(entries: entries, target: target)
+
+        #expect(menu.items.count == 2)
+        #expect(menu.items.map(\.state) == [.off, .on])
+        #expect(menu.items.allSatisfy { $0.image != nil })
+        #expect(menu.items.allSatisfy { $0.target === target })
+        #expect(menu.items.allSatisfy {
+            $0.action == #selector(ActionHandler.switchToPickedSpace(_:))
+        })
+        #expect(menu.items.compactMap { ($0.representedObject as? SpacePickerEntry)?.spaceID } == [100, 101])
+    }
+}
