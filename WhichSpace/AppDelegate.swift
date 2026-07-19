@@ -42,8 +42,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     // MARK: - Properties
 
     private let confirmAction: ConfirmAction
+    private let accessibilityTrusted: () -> Bool
+    private let activateFullscreenSpace: (Int) -> Bool
     private let appState: AppState
     private let missionControlNotificationSender: (CFString) -> Void
+    private let switchSpace: @MainActor (Int) -> Void
     private(set) var actionHandler: ActionHandler!
     private var menuBuilder: MenuBuilder!
     private var middleClickMonitor: Any?
@@ -65,6 +68,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
     private(set) var observationTask: Task<Void, Never>?
     private(set) var statusBarIconUpdateCount = 0
+    private(set) var spaceSelectorMenu: NSMenu?
     private(set) var statusMenu: NSMenu!
 
     /// Convenience accessor for the store via appState
@@ -78,6 +82,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     override init() {
         let env = AppEnvironment.shared
         appState = env.appState
+        accessibilityTrusted = AXIsProcessTrusted
+        activateFullscreenSpace = SpaceSwitcher.activateAppOnSpace
+        switchSpace = { SpaceSwitcher.switchToSpace(id: $0) }
         confirmAction = {
             ConfirmationAlert(message: $0, detail: $1, confirmTitle: $2, isDestructive: $3).runModal()
         }
@@ -96,12 +103,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         launchAtLogin: LaunchAtLoginProvider = DefaultLaunchAtLoginProvider(),
         missionControlNotificationSender: @escaping (CFString) -> Void = { notification in
             _ = CoreDockSendNotification(notification)
-        }
+        },
+        accessibilityTrusted: @escaping () -> Bool = AXIsProcessTrusted,
+        activateFullscreenSpace: @escaping (Int) -> Bool = SpaceSwitcher.activateAppOnSpace,
+        switchSpace: @escaping @MainActor (Int) -> Void = { SpaceSwitcher.switchToSpace(id: $0) }
     ) {
         self.appState = appState
         self.confirmAction = confirmAction
         self.launchAtLogin = launchAtLogin
         self.missionControlNotificationSender = missionControlNotificationSender
+        self.accessibilityTrusted = accessibilityTrusted
+        self.activateFullscreenSpace = activateFullscreenSpace
+        self.switchSpace = switchSpace
         super.init()
         configureActionHandler()
     }
@@ -148,7 +161,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         startObservingPreferences()
 
         // Disable click-to-switch if accessibility permission was revoked
-        if store.clickToSwitchSpaces, !AXIsProcessTrusted() {
+        if store.clickToSwitchSpaces, !accessibilityTrusted() {
             SettingsConstraints.setClickToSwitchSpaces(false, store: store)
         }
 
@@ -322,53 +335,75 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             return
         }
 
-        if event.isRightClick {
-            guard let button = statusBarItem?.button else {
-                return
-            }
-            let position = NSPoint(x: 0, y: button.bounds.height + 5)
-            statusMenu.popUp(positioning: nil, at: position, in: button)
-        } else {
-            handleLeftClick(event, button: button)
+        guard let menu = menuForStatusBarClick(isRightClick: event.isRightClick), !menu.items.isEmpty else {
+            return
         }
+        popUpMenu(menu, from: button)
     }
 
-    private func handleLeftClick(_ event: NSEvent, button: NSStatusBarButton) {
-        // Auto-enable click-to-switch on first left click
-        if !store.clickToSwitchSpaces {
-            if !SettingsConstraints.setClickToSwitchSpaces(true, store: store) {
-                // Accessibility permission not granted - trigger the permission flow
-                actionHandler.requestAccessibilityForClickToSwitch()
-                return
-            }
+    /// Returns settings for right-click, selector for enabled left-click,
+    /// and nil for disabled left-click.
+    func menuForStatusBarClick(isRightClick: Bool) -> NSMenu? {
+        if isRightClick {
+            return statusMenu
+        }
+        guard store.leftClickSpaceSelector else {
+            return nil
+        }
+        let menu = menuBuilder.buildSpaceSelectorMenu(
+            target: self,
+            action: #selector(selectSpaceFromMenu(_:))
+        )
+        spaceSelectorMenu = menu
+        return menu
+    }
+
+    private func popUpMenu(_ menu: NSMenu, from button: NSStatusBarButton) {
+        let position = NSPoint(x: 0, y: button.bounds.height + 5)
+        menu.popUp(positioning: nil, at: position, in: button)
+    }
+
+    @objc func selectSpaceFromMenu(_ sender: NSMenuItem) {
+        let spaceID: Int
+        if let value = sender.representedObject as? Int {
+            spaceID = value
+        } else if let value = sender.representedObject as? NSNumber {
+            spaceID = value.intValue
+        } else {
+            return
         }
 
-        // If user denied accessibility permission, disable the setting
-        guard AXIsProcessTrusted() else {
+        guard spaceID != appState.currentSpaceID else {
+            return
+        }
+
+        // Auto-enable switching on first selection and start the existing
+        // Accessibility permission flow if needed.
+        if !store.clickToSwitchSpaces,
+           !SettingsConstraints.setClickToSwitchSpaces(true, store: store)
+        {
+            actionHandler.requestAccessibilityForClickToSwitch()
+            return
+        }
+
+        guard accessibilityTrusted() else {
             SettingsConstraints.setClickToSwitchSpaces(false, store: store)
             return
         }
 
-        let layout = appState.statusBarLayout()
-        guard !layout.slots.isEmpty else {
+        guard let entry = appState.allDisplaysSpaceInfo
+            .lazy
+            .flatMap(\.entries)
+            .first(where: { $0.id == spaceID })
+        else {
             return
         }
 
-        let location = button.convert(event.locationInWindow, from: nil)
-        let clickX = Double(location.x)
-
-        // Use StatusBarLayout hit testing
-        guard let slot = layout.slot(at: clickX) else {
-            return
+        if entry.regularIndex == nil {
+            _ = activateFullscreenSpace(spaceID)
+        } else {
+            switchSpace(spaceID)
         }
-
-        // Fullscreen spaces don't have a targetSpace - activate the app instead
-        if slot.targetSpace == nil {
-            _ = SpaceSwitcher.activateAppOnSpace(slot.spaceID)
-            return
-        }
-
-        SpaceSwitcher.switchToSpace(id: slot.spaceID)
     }
 
     // MARK: - Status Bar

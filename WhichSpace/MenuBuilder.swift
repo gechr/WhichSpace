@@ -82,6 +82,7 @@ final class MenuBuilder {
         }
 
         setCheckmark(.launchAtLogin, launchAtLoginEnabled)
+        setCheckmark(.leftClickSpaceSelector, store.leftClickSpaceSelector)
         setCheckmark(.localSpaceNumbers, store.localSpaceNumbers)
         setCheckmark(.uniqueIconsPerDisplay, store.uniqueIconsPerDisplay)
         setCheckmark(.showAllSpaces, store.showAllSpaces)
@@ -387,7 +388,55 @@ final class MenuBuilder {
 
     // MARK: - Public Build Methods
 
-    /// Builds the complete status menu, setting `target` for all @objc action items.
+    /// Builds the Space selector shown on left-click.
+    ///
+    /// The current display is shown by default. When "Show all Displays" is
+    /// enabled, Spaces are grouped in display order with separators, matching
+    /// the status bar's cross-display layout.
+    func buildSpaceSelectorMenu(target: AnyObject, action: Selector) -> NSMenu {
+        let menu = NSMenu()
+        let displays: [DisplaySpaceInfo] = if store.showAllDisplays {
+            appState.allDisplaysSpaceInfo
+        } else if let currentDisplayID = appState.currentDisplayID,
+                  let currentDisplay = appState.allDisplaysSpaceInfo.first(where: { $0.displayID == currentDisplayID })
+        {
+            [currentDisplay]
+        } else {
+            appState.allDisplaysSpaceInfo.first.map { [$0] } ?? []
+        }
+
+        for (displayIndex, display) in displays.enumerated() {
+            if displayIndex > 0 {
+                menu.addItem(.separator())
+            }
+            for entry in display.entries {
+                let title: String
+                if let regularIndex = entry.regularIndex {
+                    let number = store.localSpaceNumbers
+                        ? regularIndex
+                        : display.globalStartIndex + regularIndex - 1
+                    title = String(number)
+                } else {
+                    title = entry.label
+                }
+
+                let item = NSMenuItem(
+                    title: title,
+                    action: action,
+                    keyEquivalent: ""
+                )
+                item.target = target
+                item.representedObject = entry.id
+                item.image = appState.renderer.spaceSelectorIcon(forSpaceID: entry.id)
+                item.state = entry.id == appState.currentSpaceID ? .on : .off
+                menu.addItem(item)
+            }
+        }
+
+        return menu
+    }
+
+    /// Builds the complete settings menu, setting `target` for all @objc action items.
     func buildMenu(target: AnyObject, menuDelegate: NSMenuDelegate?, actionDelegate: MenuActionDelegate) -> NSMenu {
         let menu = NSMenu()
 
@@ -1098,6 +1147,13 @@ final class MenuBuilder {
             tag: .clickToSwitchSpaces,
             symbolName: "hand.tap.fill",
             toolTip: Localization.tipClickToSwitchSpaces
+        )),
+        .item(OptionItem(
+            title: Localization.toggleLeftClickSpaceSelector,
+            action: #selector(ActionHandler.toggleLeftClickSpaceSelector),
+            tag: .leftClickSpaceSelector,
+            symbolName: "cursorarrow.click.2",
+            toolTip: Localization.tipLeftClickSpaceSelector
         )),
         .separator,
         .item(OptionItem(

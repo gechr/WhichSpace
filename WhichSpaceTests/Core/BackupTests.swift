@@ -318,6 +318,7 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
                 "hideFullscreenApps": false,
                 "hideSingleSpace": true,
                 "launchAtLogin": false,
+                "leftClickSpaceSelector": true,
                 "localSpaceNumbers": false,
                 "showAllDisplays": true,
                 "showAllSpaces": false,
@@ -342,6 +343,7 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         XCTAssertEqual(backup.version, "1.0.0")
         XCTAssertTrue(backup.settings.clickToSwitchSpaces)
         XCTAssertFalse(backup.settings.dimInactiveSpaces)
+        XCTAssertTrue(backup.settings.leftClickSpaceSelector)
         XCTAssertEqual(backup.settings.sizeScale, 80.0)
         XCTAssertEqual(backup.settings.soundName, "Pop")
     }
@@ -366,6 +368,7 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         XCTAssertEqual(backup.settings.sizeScale, 80.0)
         XCTAssertTrue(backup.settings.dimInactiveSpaces)
         XCTAssertFalse(backup.settings.hideEmptySpaces)
+        XCTAssertFalse(backup.settings.leftClickSpaceSelector)
         XCTAssertFalse(backup.settings.uniqueIconsPerDisplay)
         XCTAssertEqual(backup.settings.soundName, "")
     }
@@ -397,6 +400,7 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
                 "hideFullscreenApps": true,
                 "hideSingleSpace": true,
                 "launchAtLogin": true,
+                "leftClickSpaceSelector": true,
                 "localSpaceNumbers": true,
                 "showAllDisplays": true,
                 "showAllSpaces": true,
@@ -423,6 +427,7 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         XCTAssertTrue(store.hideEmptySpaces)
         XCTAssertTrue(store.hideFullscreenApps)
         XCTAssertTrue(store.hideSingleSpace)
+        XCTAssertTrue(store.leftClickSpaceSelector)
         XCTAssertTrue(store.localSpaceNumbers)
         // showAllDisplays and showAllSpaces are mutually exclusive; the constraint
         // resolves the conflicting backup in favor of showAllSpaces (applied last)

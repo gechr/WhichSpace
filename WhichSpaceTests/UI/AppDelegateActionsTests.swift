@@ -187,6 +187,151 @@ final class AppDelegateActionsTests: XCTestCase {
         XCTAssertFalse(event?.isRightClick ?? true)
     }
 
+    func testSpaceSelectorMenu_listsEverySpaceOnCurrentDisplay() {
+        let builder = MenuBuilder(appState: appState, store: store)
+
+        let menu = builder.buildSpaceSelectorMenu(
+            target: sut,
+            action: #selector(AppDelegate.selectSpaceFromMenu(_:))
+        )
+
+        XCTAssertEqual(menu.items.map(\.title), ["1", "2", "3", "4"])
+        XCTAssertEqual(menu.items.compactMap { $0.representedObject as? Int }, [100, 101, 102, 103])
+        XCTAssertEqual(menu.items.map(\.state), [.off, .on, .off, .off])
+        XCTAssertTrue(menu.items.allSatisfy { $0.image != nil })
+    }
+
+    func testLeftClickSpaceSelector_defaultsOffAndTogglesOn() {
+        XCTAssertFalse(store.leftClickSpaceSelector)
+
+        sut.actionHandler.toggleLeftClickSpaceSelector()
+
+        XCTAssertTrue(store.leftClickSpaceSelector)
+    }
+
+    func testMenuForStatusBarClick_doesNothingUnlessSelectorEnabled() throws {
+        sut.configureMenuBarIcon()
+
+        XCTAssertNil(sut.menuForStatusBarClick(isRightClick: false))
+        XCTAssertIdentical(sut.menuForStatusBarClick(isRightClick: true), sut.statusMenu)
+
+        store.leftClickSpaceSelector = true
+        let selector = try XCTUnwrap(sut.menuForStatusBarClick(isRightClick: false))
+
+        XCTAssertIdentical(selector, sut.spaceSelectorMenu)
+        XCTAssertNotIdentical(selector, sut.statusMenu)
+        XCTAssertEqual(selector.items.compactMap { $0.representedObject as? Int }, [100, 101, 102, 103])
+        XCTAssertIdentical(sut.menuForStatusBarClick(isRightClick: true), sut.statusMenu)
+    }
+
+    func testSpaceSelectorMenu_groupsAllDisplaysWhenEnabled() {
+        stub.activeDisplayIdentifier = "DisplayA"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "DisplayA",
+                spaces: [(id: 100, isFullscreen: false), (id: 101, isFullscreen: true)],
+                activeSpaceID: 100
+            ),
+            CGSStub.makeDisplay(
+                displayID: "DisplayB",
+                spaces: [(id: 200, isFullscreen: false), (id: 201, isFullscreen: false)],
+                activeSpaceID: 200
+            ),
+        ]
+        store.showAllDisplays = true
+        appState.forceSpaceUpdate()
+        let builder = MenuBuilder(appState: appState, store: store)
+
+        let menu = builder.buildSpaceSelectorMenu(
+            target: sut,
+            action: #selector(AppDelegate.selectSpaceFromMenu(_:))
+        )
+
+        XCTAssertEqual(menu.items.map(\.title), ["1", "F", "", "2", "3"])
+        XCTAssertTrue(menu.items[2].isSeparatorItem)
+        XCTAssertEqual(menu.items.filter { $0.state == .on }.map(\.title), ["1"])
+    }
+
+    func testSpaceSelectorMenu_usesLocalNumbersAcrossDisplays() {
+        stub.activeDisplayIdentifier = "DisplayA"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "DisplayA",
+                spaces: [(id: 100, isFullscreen: false), (id: 101, isFullscreen: false)],
+                activeSpaceID: 100
+            ),
+            CGSStub.makeDisplay(
+                displayID: "DisplayB",
+                spaces: [(id: 200, isFullscreen: false), (id: 201, isFullscreen: false)],
+                activeSpaceID: 200
+            ),
+        ]
+        store.showAllDisplays = true
+        store.localSpaceNumbers = true
+        appState.forceSpaceUpdate()
+        let builder = MenuBuilder(appState: appState, store: store)
+
+        let menu = builder.buildSpaceSelectorMenu(
+            target: sut,
+            action: #selector(AppDelegate.selectSpaceFromMenu(_:))
+        )
+
+        XCTAssertEqual(menu.items.map(\.title), ["1", "2", "", "1", "2"])
+    }
+
+    func testSelectSpaceFromMenu_dispatchesRegularAndFullscreenSpaces() {
+        var switchedSpaceIDs: [Int] = []
+        var activatedSpaceIDs: [Int] = []
+        let localSut = AppDelegate(
+            appState: appState,
+            confirmAction: confirmStub.callAsFunction,
+            accessibilityTrusted: { true },
+            activateFullscreenSpace: {
+                activatedSpaceIDs.append($0)
+                return true
+            },
+            switchSpace: { switchedSpaceIDs.append($0) }
+        )
+        store.clickToSwitchSpaces = true
+
+        let regularItem = NSMenuItem()
+        regularItem.representedObject = 100
+        localSut.selectSpaceFromMenu(regularItem)
+
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [(id: 100, isFullscreen: false), (id: 102, isFullscreen: true)],
+                activeSpaceID: 100
+            ),
+        ]
+        appState.forceSpaceUpdate()
+        let fullscreenItem = NSMenuItem()
+        fullscreenItem.representedObject = 102
+        localSut.selectSpaceFromMenu(fullscreenItem)
+
+        XCTAssertEqual(switchedSpaceIDs, [100])
+        XCTAssertEqual(activatedSpaceIDs, [102])
+    }
+
+    func testSelectSpaceFromMenu_ignoresCurrentAndInvalidSpaces() {
+        var switchedSpaceIDs: [Int] = []
+        let localSut = AppDelegate(
+            appState: appState,
+            confirmAction: confirmStub.callAsFunction,
+            accessibilityTrusted: { true },
+            switchSpace: { switchedSpaceIDs.append($0) }
+        )
+        store.clickToSwitchSpaces = true
+
+        let currentItem = NSMenuItem()
+        currentItem.representedObject = 101
+        localSut.selectSpaceFromMenu(currentItem)
+        localSut.selectSpaceFromMenu(NSMenuItem())
+
+        XCTAssertTrue(switchedSpaceIDs.isEmpty)
+    }
+
     func testHandleMiddleClickEvent_consumesMiddleClickInsideButtonAndSendsNotification() throws {
         var notifications: [String] = []
         let sender: (CFString) -> Void = { notifications.append($0 as String) }

@@ -70,6 +70,10 @@ final class ActionHandler: NSObject {
         launchAtLogin.isEnabled.toggle()
     }
 
+    @objc func toggleLeftClickSpaceSelector() {
+        store.leftClickSpaceSelector.toggle()
+    }
+
     @objc func toggleShowAllDisplays() {
         SettingsConstraints.setShowAllDisplays(!store.showAllDisplays, store: store)
     }

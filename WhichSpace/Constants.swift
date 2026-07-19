@@ -159,6 +159,7 @@ enum MenuTag: Int {
     case labelInput
     case labelMenuItem
     case launchAtLogin
+    case leftClickSpaceSelector
     case localSpaceNumbers
     case paddingRow
     case separatorColorDivider
@@ -292,6 +293,7 @@ enum Localization {
     static let tipInvertColors = String(localized: "tip_invert_colors")
     static let tipLabelInput = String(localized: "tip_label_input")
     static let tipLaunchAtLogin = String(localized: "tip_launch_at_login")
+    static let tipLeftClickSpaceSelector = String(localized: "tip_left_click_space_selector")
     static let tipLocalSpaceNumbers = String(localized: "tip_local_space_numbers")
     static let tipQuit = String(localized: "tip_quit")
     static let tipResetAllSpacesToDefault = String(localized: "tip_reset_all_spaces_to_default")
@@ -312,6 +314,7 @@ enum Localization {
     static let toggleHideFullscreenApps = String(localized: "toggle_hide_fullscreen_apps")
     static let toggleHideSingleSpace = String(localized: "toggle_hide_single_space")
     static let toggleLaunchAtLogin = String(localized: "toggle_launch_at_login")
+    static let toggleLeftClickSpaceSelector = String(localized: "toggle_left_click_space_selector")
     static let toggleLocalSpaceNumbers = String(localized: "toggle_local_space_numbers")
     static let toggleShowAllDisplays = String(localized: "toggle_show_all_displays")
     static let toggleShowAllSpaces = String(localized: "toggle_show_all_spaces")

@@ -159,6 +159,40 @@ final class StatusBarRenderer {
         return generateStatusBarIcon(isDark: appState.darkModeEnabled)
     }
 
+    /// Renders one selector entry with same per-Space styling used by
+    /// Show all Spaces and Show all Displays.
+    func spaceSelectorIcon(forSpaceID spaceID: Int) -> NSImage? {
+        for display in appState.allDisplaysSpaceInfo {
+            guard let entryIndex = display.entries.firstIndex(where: { $0.id == spaceID }) else {
+                continue
+            }
+
+            let entry = display.entries[entryIndex]
+            let localIndex = entryIndex + 1
+            let globalIndex = Self.globalIndex(entry: entry, globalStartIndex: display.globalStartIndex)
+            let displayNumber = store.localSpaceNumbers ? (entry.regularIndex ?? localIndex) : globalIndex
+            let labels = fetchLabels(displayID: display.displayID)
+            let label = displayLabel(
+                entry: entry,
+                displayNumber: displayNumber,
+                localIndex: localIndex,
+                labels: labels,
+                isFullscreen: entry.label == Labels.fullscreen
+            )
+
+            return generateSingleIconForCrossDisplay(
+                label: label,
+                labels: labels,
+                displayID: display.displayID,
+                localIndex: localIndex,
+                spaceID: entry.id,
+                displayNumber: displayNumber,
+                darkMode: appState.darkModeEnabled
+            )
+        }
+        return nil
+    }
+
     /// Returns the layout of visible icons in the status bar for the current mode
     func statusBarLayout() -> StatusBarLayout {
         if showAllDisplays {

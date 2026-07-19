@@ -198,6 +198,7 @@ struct DefaultsIsolationGuardTests {
             "hideEmptySpaces",
             "hideFullscreenApps",
             "hideSingleSpace",
+            "leftClickSpaceSelector",
             "localSpaceNumbers",
             "paddingScale",
             "separatorColor",

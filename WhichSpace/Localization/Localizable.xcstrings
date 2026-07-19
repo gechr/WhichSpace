@@ -41414,6 +41414,16 @@
         }
       }
     },
+    "tip_left_click_space_selector" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show a menu for switching Spaces when clicking the menu bar icon"
+          }
+        }
+      }
+    },
     "tip_local_space_numbers" : {
       "localizations" : {
         "ar" : {
@@ -46650,6 +46660,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "登入時啟動"
+          }
+        }
+      }
+    },
+    "toggle_left_click_space_selector" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Space selector menu"
           }
         }
       }

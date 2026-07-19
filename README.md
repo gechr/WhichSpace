@@ -8,7 +8,7 @@ Have you ever forgotten _which space_ is currently active on macOS and wanted a 
 
 - **Multiple Spaces** - Show current Space only, or all Spaces at once
 - **Multiple Displays** - Show Spaces across multiple monitors
-- **Click-to-Switch** - Jump to any Space directly from the menu bar
+- **Click-to-Switch** - Click a visible Space in the menu bar or choose one from the optional selector
 - **Colors** - Set foreground and background colors per Space
 - **Icons** - Choose from multiple icon styles (square, circle, triangle, and more)
 - **Labels** - Replace Space numbers with custom text labels
@@ -53,6 +53,12 @@ brew install --cask whichspace
 > Inactive Spaces are dimmed by default.
 >
 > Empty Spaces can be hidden entirely.
+
+#### Switch Spaces from the selector menu
+
+<img src="Screenshots/SpaceSelector.png" width="80">
+
+Enable **Space selector menu**. Clicking the menu bar icon then opens a menu using your configured Space icons, grouped by display when **Show all Displays** is enabled.
 
 ### Displays
 

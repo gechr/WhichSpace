@@ -76,6 +76,7 @@ enum KeySpecs {
     static let hideEmptySpaces = TypedKeySpec(name: "hideEmptySpaces", defaultValue: false)
     static let hideFullscreenApps = TypedKeySpec(name: "hideFullscreenApps", defaultValue: false)
     static let hideSingleSpace = TypedKeySpec(name: "hideSingleSpace", defaultValue: false)
+    static let leftClickSpaceSelector = TypedKeySpec(name: "leftClickSpaceSelector", defaultValue: false)
     static let localSpaceNumbers = TypedKeySpec(name: "localSpaceNumbers", defaultValue: false)
     static let separatorColor = TypedKeySpec(name: "separatorColor", defaultValue: Data?.none)
     static let showAllDisplays = TypedKeySpec(name: "showAllDisplays", defaultValue: false)
@@ -110,6 +111,7 @@ enum KeySpecs {
         hideEmptySpaces,
         hideFullscreenApps,
         hideSingleSpace,
+        leftClickSpaceSelector,
         localSpaceNumbers,
         paddingScale,
         separatorColor,
@@ -133,6 +135,7 @@ enum KeySpecs {
     /// icon-affecting by default - the safe direction for cache invalidation.
     static let nonIconKeyNames: Set<String> = [
         clickToSwitchSpaces.name,
+        leftClickSpaceSelector.name,
         soundName.name,
     ]
 
@@ -298,6 +301,11 @@ final class DefaultsStore {
     var hideSingleSpace: Bool {
         get { self[KeySpecs.hideSingleSpace] }
         set { self[KeySpecs.hideSingleSpace] = newValue }
+    }
+
+    var leftClickSpaceSelector: Bool {
+        get { self[KeySpecs.leftClickSpaceSelector] }
+        set { self[KeySpecs.leftClickSpaceSelector] = newValue }
     }
 
     var localSpaceNumbers: Bool {

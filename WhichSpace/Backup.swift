@@ -68,6 +68,7 @@ struct BackupSettings: Codable {
     var hideFullscreenApps: Bool
     var hideSingleSpace: Bool
     var launchAtLogin: Bool
+    var leftClickSpaceSelector: Bool
     var localSpaceNumbers: Bool
     var paddingScale: Double?
     var separatorColor: CodableColor?
@@ -80,7 +81,8 @@ struct BackupSettings: Codable {
     private enum CodingKeys: String, CodingKey {
         case clickToSwitchSpaces, dimInactiveSpaces, fullscreenIconStyle, hideEmptySpaces
         case hideFullscreenApps, hideSingleSpace
-        case launchAtLogin, localSpaceNumbers, paddingScale, separatorColor, showAllDisplays, showAllSpaces
+        case launchAtLogin, leftClickSpaceSelector, localSpaceNumbers, paddingScale, separatorColor
+        case showAllDisplays, showAllSpaces
         case sizeScale, soundName, uniqueIconsPerDisplay
     }
 
@@ -94,6 +96,7 @@ struct BackupSettings: Codable {
         hideFullscreenApps = try container.decodeIfPresent(Bool.self, forKey: .hideFullscreenApps) ?? false
         hideSingleSpace = try container.decodeIfPresent(Bool.self, forKey: .hideSingleSpace) ?? false
         launchAtLogin = try container.decodeIfPresent(Bool.self, forKey: .launchAtLogin) ?? false
+        leftClickSpaceSelector = try container.decodeIfPresent(Bool.self, forKey: .leftClickSpaceSelector) ?? false
         localSpaceNumbers = try container.decodeIfPresent(Bool.self, forKey: .localSpaceNumbers) ?? false
         paddingScale = try container.decodeIfPresent(Double.self, forKey: .paddingScale)
         separatorColor = try container.decodeIfPresent(CodableColor.self, forKey: .separatorColor)
@@ -112,6 +115,7 @@ struct BackupSettings: Codable {
         hideFullscreenApps: Bool,
         hideSingleSpace: Bool,
         launchAtLogin: Bool,
+        leftClickSpaceSelector: Bool,
         localSpaceNumbers: Bool,
         paddingScale: Double?,
         separatorColor: CodableColor?,
@@ -128,6 +132,7 @@ struct BackupSettings: Codable {
         self.hideFullscreenApps = hideFullscreenApps
         self.hideSingleSpace = hideSingleSpace
         self.launchAtLogin = launchAtLogin
+        self.leftClickSpaceSelector = leftClickSpaceSelector
         self.localSpaceNumbers = localSpaceNumbers
         self.paddingScale = paddingScale
         self.separatorColor = separatorColor
@@ -412,6 +417,7 @@ enum BackupManager {
             hideFullscreenApps: store.hideFullscreenApps,
             hideSingleSpace: store.hideSingleSpace,
             launchAtLogin: launchAtLogin.isEnabled,
+            leftClickSpaceSelector: store.leftClickSpaceSelector,
             localSpaceNumbers: store.localSpaceNumbers,
             paddingScale: store.paddingScale,
             separatorColor: store.separatorColor.map { CodableColor(from: $0) },
@@ -527,6 +533,7 @@ enum BackupManager {
         store.hideSingleSpace = backup.settings.hideSingleSpace
         var launchAtLogin = launchAtLogin
         launchAtLogin.isEnabled = backup.settings.launchAtLogin
+        store.leftClickSpaceSelector = backup.settings.leftClickSpaceSelector
         store.localSpaceNumbers = backup.settings.localSpaceNumbers
         store.paddingScale = (backup.settings.paddingScale ?? Layout.defaultPaddingScale)
             .clamped(to: Layout.paddingScaleRange)
