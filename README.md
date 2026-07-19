@@ -20,6 +20,7 @@ Have you ever forgotten _which space_ is currently active on macOS and wanted a 
 - **Sound** - Play a sound when switching Spaces
 - **Shortcuts** - Native actions for the Shortcuts app
 - **AppleScript** - Automate with scripting support
+- **URL Scheme** - Trigger Space switches from any launcher via `whichspace://` links
 - **Launch at Login** - Start automatically with macOS
 - **Auto-Updates** - Stay up-to-date with automatic updates
 - **Languages** - Translated into multiple languages
@@ -193,4 +194,20 @@ osascript -e 'tell application "WhichSpace" to reset current space badge'
 
 # Reset the badges of all Spaces to their defaults
 osascript -e 'tell application "WhichSpace" to reset all space badges'
+```
+
+### URL Scheme
+
+#### Automate WhichSpace from any launcher (Raycast, Alfred, and so on)
+
+```bash
+# Switch to a specific Space on the current display
+open "whichspace://switch/3"
+
+# Switch to a Space and apply a label and badge in one step
+open "whichspace://switch/3?label=Work&badge=A"
+
+# Switch to the next or previous Space on the current display
+open "whichspace://switch/next"
+open "whichspace://switch/previous"
 ```

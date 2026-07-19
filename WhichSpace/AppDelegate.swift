@@ -196,6 +196,41 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         false
     }
 
+    func application(_: NSApplication, open urls: [URL]) {
+        for url in urls {
+            guard let command = URLCommand.parse(url) else {
+                NSLog("AppDelegate: ignoring unrecognized URL '%@'", url.absoluteString)
+                continue
+            }
+            handleURLCommand(command)
+        }
+    }
+
+    /// Routes a parsed `whichspace://` command through the same helpers as the
+    /// AppleScript and Shortcuts surfaces, so validation and reset semantics match.
+    private func handleURLCommand(_ command: URLCommand) {
+        do {
+            switch command {
+            case let .switchToSpace(number, label, badge):
+                try ScriptingHelpers.switchToSpace(number: number, appState: appState)
+                // Keyed by the target Space number, so these cannot race the
+                // asynchronous switch animation
+                if let label {
+                    ScriptingHelpers.setLabel(label, forSpace: number, appState: appState, store: store)
+                }
+                if let badge {
+                    try ScriptingHelpers.setBadge(badge, forSpace: number, appState: appState, store: store)
+                }
+            case .switchToNext:
+                try ScriptingHelpers.switchRelative(goRight: true)
+            case .switchToPrevious:
+                try ScriptingHelpers.switchRelative(goRight: false)
+            }
+        } catch {
+            NSLog("AppDelegate: URL command failed - %@", error.localizedDescription)
+        }
+    }
+
     // MARK: - Observation
 
     /// Test hook to start the observation task. In production, this is called from applicationDidFinishLaunching.
