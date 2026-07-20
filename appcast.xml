@@ -6,6 +6,21 @@
     <description>Most recent changes with links to updates.</description>
     <language>en</language>
     <item>
+        <title>Version 1.1.2</title>
+        <sparkle:releaseNotesLink>
+          https://github.com/gechr/WhichSpace/releases/tag/v1.1.2
+        </sparkle:releaseNotesLink>
+        <pubDate>Mon, 20 Jul 2026 10:50:07 +0100</pubDate>
+        <enclosure
+          url="https://github.com/gechr/WhichSpace/releases/download/v1.1.2/WhichSpace.zip"
+          sparkle:version="1.1.2"
+          sparkle:shortVersionString="1.1.2"
+          sparkle:edSignature="cSz8p+fV+kovy0MWWYFhQFr5lpGgSG7oHyC2M6sp88009312cj5xBOC2cu9rIpprtW86my3IEU87IjsQ9p9XBQ=="
+          length="2807804"
+          type="application/octet-stream" />
+        <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      </item>
+    <item>
         <title>Version 1.1.1</title>
         <sparkle:releaseNotesLink>
           https://github.com/gechr/WhichSpace/releases/tag/v1.1.1
