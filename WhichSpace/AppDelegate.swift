@@ -526,13 +526,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     /// Pops up a menu listing every Space on the current display, each item
     /// rendered exactly like its status bar icon, with the active Space checked.
     private func showSpacePickerMenu(from button: NSStatusBarButton) {
-        let menu = MenuBuilder.buildSpacePickerMenu(
-            entries: appState.spacePickerEntries(),
-            target: actionHandler
-        )
-        guard !menu.items.isEmpty else {
+        let entries = appState.spacePickerEntries()
+        // A single Space leaves nothing to switch to
+        guard entries.count > 1 else {
             return
         }
+        let menu = MenuBuilder.buildSpacePickerMenu(entries: entries, target: actionHandler)
         let position = NSPoint(x: 0, y: button.bounds.height + 5)
         menu.popUp(positioning: nil, at: position, in: button)
     }
