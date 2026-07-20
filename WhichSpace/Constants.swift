@@ -168,6 +168,7 @@ enum MenuTag: Int {
     case launchAtLogin
     case localSpaceNumbers
     case paddingRow
+    case scrollHapticFeedback
     case scrollMenuItem
     case scrollSensitivityRow
     case separatorColorDivider
@@ -320,6 +321,7 @@ enum Localization {
     static let tipResetSpaceToDefault = String(localized: "tip_reset_space_to_default")
     static let tipResetStyleToDefault = String(localized: "tip_reset_style_to_default")
     static let tipScrollEnabled = String(localized: "tip_scroll_enabled")
+    static let tipScrollHapticFeedback = String(localized: "tip_scroll_haptic_feedback")
     static let tipScrollInverted = String(localized: "tip_scroll_inverted")
     static let tipSetDefaultStyle = String(localized: "tip_set_default_style")
     static let tipShowAllDisplays = String(localized: "tip_show_all_displays")
@@ -334,6 +336,7 @@ enum Localization {
     static let toggleLaunchAtLogin = String(localized: "toggle_launch_at_login")
     static let toggleLocalSpaceNumbers = String(localized: "toggle_local_space_numbers")
     static let toggleScrollEnabled = String(localized: "toggle_scroll_enabled")
+    static let toggleScrollHapticFeedback = String(localized: "toggle_scroll_haptic_feedback")
     static let toggleScrollInverted = String(localized: "toggle_scroll_inverted")
     static let toggleShowAllDisplays = String(localized: "toggle_show_all_displays")
     static let toggleShowAllSpaces = String(localized: "toggle_show_all_spaces")

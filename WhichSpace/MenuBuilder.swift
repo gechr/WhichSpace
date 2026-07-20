@@ -112,6 +112,7 @@ final class MenuBuilder {
         setCheckmark(.horizontalScrollEnabled, store.horizontalScrollEnabled)
         setCheckmark(.invertVerticalScroll, store.invertVerticalScroll)
         setCheckmark(.invertHorizontalScroll, store.invertHorizontalScroll)
+        setCheckmark(.scrollHapticFeedback, store.scrollHapticFeedback)
 
         setCheckmark(.dimInactiveSpaces, store.dimInactiveSpaces)
         menu.item(withTag: MenuTag.dimInactiveSpaces.rawValue)?.isHidden = !showMultiSpaceOptions
@@ -755,6 +756,18 @@ final class MenuBuilder {
     ) {
         let scrollMenu = NSMenu(title: Localization.menuScroll)
         scrollMenu.delegate = delegate
+
+        addMenuItem(
+            to: scrollMenu,
+            title: Localization.toggleScrollHapticFeedback,
+            action: #selector(ActionHandler.toggleScrollHapticFeedback),
+            target: target,
+            tag: .scrollHapticFeedback,
+            symbolName: "hand.tap",
+            toolTip: Localization.tipScrollHapticFeedback
+        )
+
+        scrollMenu.addItem(.separator())
 
         let verticalLabel = NSMenuItem(title: Localization.labelVertical, action: nil, keyEquivalent: "")
         verticalLabel.isEnabled = false

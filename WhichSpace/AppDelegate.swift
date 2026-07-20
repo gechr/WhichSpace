@@ -461,6 +461,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
         if shouldSwitch {
             lastScrollSwitchTimestamp = event.timestamp
+            // Trackpad gestures only: the haptic motor is in the trackpad, so
+            // actuating for a mouse wheel would buzz hardware the user is not
+            // touching
+            if precise, store.scrollHapticFeedback {
+                HapticActuator.actuate()
+            }
             relativeSpaceSwitchAction(goRight)
         }
         return nil

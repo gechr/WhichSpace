@@ -106,6 +106,10 @@ final class ActionHandler: NSObject {
         store.localSpaceNumbers.toggle()
     }
 
+    @objc func toggleScrollHapticFeedback() {
+        store.scrollHapticFeedback.toggle()
+    }
+
     @objc func toggleVerticalScroll() {
         let newValue = !store.verticalScrollEnabled
         if !SettingsConstraints.setScrollSwitching(newValue, axis: \.verticalScrollEnabled, store: store) {

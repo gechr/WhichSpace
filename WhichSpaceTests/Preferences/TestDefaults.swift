@@ -203,6 +203,7 @@ struct DefaultsIsolationGuardTests {
             "invertVerticalScroll",
             "localSpaceNumbers",
             "paddingScale",
+            "scrollHapticFeedback",
             "scrollSensitivity",
             "separatorColor",
             "showAllDisplays",

@@ -19,6 +19,7 @@
 		5EB457D62EEDE8C00021C6BD /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB457C82EEDE8C00021C6BD /* AppState.swift */; };
 		C94204F22B0647EEA70C0CAB /* SpaceUpdateCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0621BB91706643C2B80B3FB2 /* SpaceUpdateCoordinator.swift */; };
 		5EB457D72EEDE8C00021C6BD /* DefaultsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB457CC2EEDE8C00021C6BD /* DefaultsStore.swift */; };
+		D91E604932D44F33863FB9A6 /* HapticActuator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9FEF98C20749E19B4CA885 /* HapticActuator.swift */; };
 		916A68BD7378463E9C5EF426 /* IconPreviewCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17CD53AA147E41AD96B6D6E8 /* IconPreviewCoordinator.swift */; };
 		5EB457D82EEDE8C00021C6BD /* ItemData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB457CE2EEDE8C00021C6BD /* ItemData.swift */; };
 		5EB457D92EEDE8C00021C6BD /* Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB457CA2EEDE8C00021C6BD /* Alerts.swift */; };
@@ -129,6 +130,7 @@
 		5EB457CC2EEDE8C00021C6BD /* DefaultsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultsStore.swift; sourceTree = "<group>"; };
 		5EB457CD2EEDE8C00021C6BD /* SpaceIconGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceIconGenerator.swift; sourceTree = "<group>"; };
 		26FDEA134CE245FD99C0FA05 /* SpaceIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceIntents.swift; sourceTree = "<group>"; };
+		4B9FEF98C20749E19B4CA885 /* HapticActuator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticActuator.swift; sourceTree = "<group>"; };
 		17CD53AA147E41AD96B6D6E8 /* IconPreviewCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconPreviewCoordinator.swift; sourceTree = "<group>"; };
 		5EB457CE2EEDE8C00021C6BD /* ItemData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemData.swift; sourceTree = "<group>"; };
 		5EB457CF2EEDE8C00021C6BD /* ItemPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemPicker.swift; sourceTree = "<group>"; };
@@ -261,6 +263,7 @@
 				AF09DFE5172F0C9088479C2E /* DisplaySpaceProvider.swift */,
 				5EB457CD2EEDE8C00021C6BD /* SpaceIconGenerator.swift */,
 				26FDEA134CE245FD99C0FA05 /* SpaceIntents.swift */,
+				4B9FEF98C20749E19B4CA885 /* HapticActuator.swift */,
 				17CD53AA147E41AD96B6D6E8 /* IconPreviewCoordinator.swift */,
 				5EB457CE2EEDE8C00021C6BD /* ItemData.swift */,
 				5EB457CF2EEDE8C00021C6BD /* ItemPicker.swift */,
@@ -549,6 +552,7 @@
 				5EB457F32EEDE8C00021C6BD /* SpaceMonitor.swift in Sources */,
 				5EB457D72EEDE8C00021C6BD /* DefaultsStore.swift in Sources */,
 				BA5B89440132B31951EAF51B /* DisplaySpaceProvider.swift in Sources */,
+				D91E604932D44F33863FB9A6 /* HapticActuator.swift in Sources */,
 				916A68BD7378463E9C5EF426 /* IconPreviewCoordinator.swift in Sources */,
 				5EB457D82EEDE8C00021C6BD /* ItemData.swift in Sources */,
 				5EB457D92EEDE8C00021C6BD /* Alerts.swift in Sources */,

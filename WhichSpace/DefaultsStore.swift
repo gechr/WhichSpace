@@ -80,6 +80,10 @@ enum KeySpecs {
     static let hideFullscreenApps = TypedKeySpec(name: "hideFullscreenApps", defaultValue: false)
     static let hideSingleSpace = TypedKeySpec(name: "hideSingleSpace", defaultValue: false)
     static let localSpaceNumbers = TypedKeySpec(name: "localSpaceNumbers", defaultValue: false)
+    static let scrollHapticFeedback = TypedKeySpec(
+        name: "scrollHapticFeedback",
+        defaultValue: false
+    )
     static let scrollSensitivity = TypedKeySpec(
         name: "scrollSensitivity",
         defaultValue: Layout.defaultScrollSensitivity
@@ -123,6 +127,7 @@ enum KeySpecs {
         invertVerticalScroll,
         localSpaceNumbers,
         paddingScale,
+        scrollHapticFeedback,
         scrollSensitivity,
         separatorColor,
         showAllDisplays,
@@ -149,6 +154,7 @@ enum KeySpecs {
         horizontalScrollEnabled.name,
         invertHorizontalScroll.name,
         invertVerticalScroll.name,
+        scrollHapticFeedback.name,
         scrollSensitivity.name,
         soundName.name,
         verticalScrollEnabled.name,
@@ -341,6 +347,11 @@ final class DefaultsStore {
     var paddingScale: Double {
         get { self[KeySpecs.paddingScale] }
         set { self[KeySpecs.paddingScale] = newValue }
+    }
+
+    var scrollHapticFeedback: Bool {
+        get { self[KeySpecs.scrollHapticFeedback] }
+        set { self[KeySpecs.scrollHapticFeedback] = newValue }
     }
 
     var scrollSensitivity: Double {
