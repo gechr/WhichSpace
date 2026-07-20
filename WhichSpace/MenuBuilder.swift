@@ -299,7 +299,7 @@ final class MenuBuilder {
     // MARK: - Sound Discovery
 
     private static let systemSounds = discoverSounds(in: URL(fileURLWithPath: "/System/Library/Sounds"))
-    private static let userSoundsDirectory =
+    static let userSoundsDirectory =
         FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/Sounds")
 
     private nonisolated static func discoverSounds(in directory: URL) -> [String] {
@@ -402,6 +402,16 @@ final class MenuBuilder {
             item.state = selectedSound == soundName ? .on : .off
             menu.addItem(item)
         }
+
+        menu.addItem(.separator())
+
+        let customItem = NSMenuItem(
+            title: Localization.soundCustom,
+            action: #selector(ActionHandler.openCustomSoundsFolder),
+            keyEquivalent: ""
+        )
+        customItem.target = target
+        menu.addItem(customItem)
     }
 
     // MARK: - Public Build Methods

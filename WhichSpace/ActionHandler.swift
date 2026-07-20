@@ -138,6 +138,29 @@ final class ActionHandler: NSObject {
         store.soundName = soundName
     }
 
+    /// Explains how custom sounds work and, if confirmed, opens ~/Library/Sounds in Finder.
+    @objc func openCustomSoundsFolder() {
+        let confirmed = InfoAlert(
+            message: Localization.alertCustomSoundsTitle,
+            detail: Localization.alertCustomSoundsDetail,
+            primaryButtonTitle: Localization.buttonOpen,
+            dismissButtonTitle: Localization.buttonCancel
+        ).runModal()
+        guard confirmed else {
+            return
+        }
+        let directory = MenuBuilder.userSoundsDirectory
+        if FileManager.default.fileExists(atPath: directory.path) {
+            NSWorkspace.shared.open(directory)
+            return
+        }
+        try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        // Give the filesystem a moment to settle so Finder opens the new folder reliably
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            NSWorkspace.shared.open(directory)
+        }
+    }
+
     // MARK: - Confirmation Helper
 
     /// Shows a confirmation alert and, if confirmed, runs the given action then refreshes the status-bar icon.
