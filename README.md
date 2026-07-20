@@ -6,21 +6,21 @@ Have you ever forgotten _which space_ is currently active on macOS and wanted a 
 
 ## Overview
 
-- **Multiple Spaces** - Show current Space only, or all Spaces at once
-- **Multiple Displays** - Show Spaces across multiple monitors
-- **Click-to-Switch** - Jump to any Space directly from the menu bar
-- **Scroll-to-Switch** - Cycle through Spaces by scrolling over the menu bar icon
-- **Colors** - Set foreground and background colors per Space
-- **Icons** - Choose from multiple icon styles (square, circle, triangle, and more)
-- **Labels** - Replace Space numbers with custom text labels
-- **Symbols** - Use native macOS symbols instead of numbers
-- **Emojis** - Use emojis to get even more creative
-- **Badges** - Add a small character of your choice next to the Space number
-- **Size** - Scale icons to your preference
-- **Sound** - Play a sound when switching Spaces
-- **Shortcuts** - Native actions for the Shortcuts app
-- **AppleScript** - Automate with scripting support
-- **URL Scheme** - Trigger Space switches from any launcher via `whichspace://` links
+- [**Multiple Spaces**](#spaces) - Show current Space only, or all Spaces at once
+- [**Multiple Displays**](#displays) - Show Spaces across multiple monitors
+- [**Click-to-Switch**](#click-on-a-space-to-switch-to-it) - Jump to any Space directly from the menu bar
+- [**Scroll-to-Switch**](#click-on-a-space-to-switch-to-it) - Cycle through Spaces by scrolling over the menu bar icon
+- [**Colors**](#colors) - Set foreground and background colors per Space
+- [**Icons**](#icons) - Choose from multiple icon styles (square, circle, triangle, and more)
+- [**Labels**](#labels) - Replace Space numbers with custom text labels
+- [**Symbols**](#symbols) - Use native macOS symbols instead of numbers
+- [**Emojis**](#symbols) - Use emojis to get even more creative
+- [**Badges**](#badges) - Add a small character of your choice next to the Space number
+- [**Size**](#size) - Scale icons to your preference
+- [**Sound**](#sounds) - Play a sound when switching Spaces
+- [**Shortcuts**](#shortcuts) - Native actions for the Shortcuts app
+- [**AppleScript**](#scripting) - Automate with scripting support
+- [**URL Scheme**](#url-scheme) - Trigger Space switches from any launcher via `whichspace://` links
 - **Launch at Login** - Start automatically with macOS
 - **Auto-Updates** - Stay up-to-date with automatic updates
 - **Languages** - Translated into multiple languages
