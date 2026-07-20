@@ -20,7 +20,12 @@ enum SpaceSnapshotService {
         }
 
         // Collect space info from ALL displays
-        var parsedDisplays: [(displayID: String, entries: [SpaceEntry], regularSpaceCount: Int)] = []
+        var parsedDisplays: [(
+            displayID: String,
+            entries: [SpaceEntry],
+            activeSpaceID: Int?,
+            regularSpaceCount: Int
+        )] = []
 
         for display in displays {
             guard let spaces = display["Spaces"] as? [[String: Any]],
@@ -32,6 +37,7 @@ enum SpaceSnapshotService {
 
             var regularSpaceIndex = 0
             var entries: [SpaceEntry] = []
+            let activeSpaceID = (display["Current Space"] as? [String: Any])?["ManagedSpaceID"] as? Int
 
             for space in spaces {
                 guard let spaceID = space["ManagedSpaceID"] as? Int else {
@@ -55,7 +61,12 @@ enum SpaceSnapshotService {
             }
 
             if !entries.isEmpty {
-                parsedDisplays.append((displayID: displayID, entries: entries, regularSpaceCount: regularSpaceIndex))
+                parsedDisplays.append((
+                    displayID: displayID,
+                    entries: entries,
+                    activeSpaceID: activeSpaceID,
+                    regularSpaceCount: regularSpaceIndex
+                ))
             }
         }
 
@@ -66,6 +77,7 @@ enum SpaceSnapshotService {
             allDisplays.append(DisplaySpaceInfo(
                 displayID: parsed.displayID,
                 entries: parsed.entries,
+                activeSpaceID: parsed.activeSpaceID,
                 globalStartIndex: globalIndex,
                 regularSpaceCount: parsed.regularSpaceCount
             ))

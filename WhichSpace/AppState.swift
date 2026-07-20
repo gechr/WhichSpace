@@ -13,6 +13,8 @@ struct SpaceEntry: Equatable {
 struct DisplaySpaceInfo: Equatable {
     let displayID: String
     let entries: [SpaceEntry]
+    /// The currently active Space on this display.
+    let activeSpaceID: Int?
     /// Count of regular (non-fullscreen) spaces on this display
     let regularSpaceCount: Int
     /// The global starting index for this display's spaces (1-based)
@@ -21,11 +23,13 @@ struct DisplaySpaceInfo: Equatable {
     init(
         displayID: String,
         entries: [SpaceEntry],
+        activeSpaceID: Int? = nil,
         globalStartIndex: Int = 1,
         regularSpaceCount: Int? = nil
     ) {
         self.displayID = displayID
         self.entries = entries
+        self.activeSpaceID = activeSpaceID
         self.globalStartIndex = globalStartIndex
         self.regularSpaceCount = regularSpaceCount ?? entries.compactMap(\.regularIndex).count
     }
@@ -35,6 +39,7 @@ struct DisplaySpaceInfo: Equatable {
         displayID: String,
         labels: [String],
         spaceIDs: [Int],
+        activeSpaceID: Int? = nil,
         globalStartIndex: Int = 1,
         spaceIndices: [Int?] = [],
         regularSpaceCount: Int? = nil
@@ -58,6 +63,7 @@ struct DisplaySpaceInfo: Equatable {
         self.init(
             displayID: displayID,
             entries: entries,
+            activeSpaceID: activeSpaceID,
             globalStartIndex: globalStartIndex,
             regularSpaceCount: regularSpaceCount ?? computedRegularIndices.compactMap(\.self).count
         )

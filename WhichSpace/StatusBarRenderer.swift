@@ -883,6 +883,8 @@ final class StatusBarRenderer {
     }
 
     /// Resolves visible spaces across all displays into fully computed slots grouped by display.
+    /// Each display contributes only its active Space unless Show all Spaces
+    /// is also enabled, in which case every display contributes all of its Spaces.
     private func resolveCrossDisplaySlots() -> [[ResolvedSlot]] {
         let allSpaceIDsAcrossDisplays = appState.allDisplaysSpaceInfo.flatMap { $0.entries.map(\.id) }
         let nonEmptySpaceIDs: Set<Int> = if store.hideEmptySpaces {
@@ -896,14 +898,21 @@ final class StatusBarRenderer {
         for displayInfo in appState.allDisplaysSpaceInfo {
             let labels = fetchLabels(displayID: displayInfo.displayID)
             var displaySlots: [ResolvedSlot] = []
+            let isCurrentDisplay = displayInfo.displayID == appState.currentDisplayID
+            let activeSpaceID = displayInfo.activeSpaceID ?? (isCurrentDisplay ? appState.currentSpaceID : nil)
 
             for (arrayIndex, entry) in displayInfo.entries.enumerated() {
+                if !showAllSpaces, entry.id != activeSpaceID {
+                    continue
+                }
+
                 let localIndex = arrayIndex + 1
                 let globalIndex = Self.globalIndex(entry: entry, globalStartIndex: displayInfo.globalStartIndex)
+                let isDisplayActiveSpace = entry.id == activeSpaceID
                 let isActive = entry.id == appState.currentSpaceID
                 let isFullscreen = entry.label == Labels.fullscreen
 
-                guard isActive || shouldShowSpace(
+                guard isDisplayActiveSpace || shouldShowSpace(
                     label: entry.label, spaceID: entry.id, nonEmptySpaceIDs: nonEmptySpaceIDs
                 )
                 else {

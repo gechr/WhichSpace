@@ -437,9 +437,7 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         XCTAssertTrue(store.invertHorizontalScroll)
         XCTAssertTrue(store.invertVerticalScroll)
         XCTAssertTrue(store.localSpaceNumbers)
-        // showAllDisplays and showAllSpaces are mutually exclusive; the constraint
-        // resolves the conflicting backup in favor of showAllSpaces (applied last)
-        XCTAssertFalse(store.showAllDisplays)
+        XCTAssertTrue(store.showAllDisplays)
         XCTAssertTrue(store.showAllSpaces)
         XCTAssertEqual(store.sizeScale, 75.0)
         XCTAssertEqual(store.scrollSensitivity, 175.0)

@@ -421,6 +421,89 @@ struct AppStateTests {
         }
     }
 
+    @Test("showAllDisplays: active Space on another display is dimmed")
+    func showAllDisplays_otherDisplayActiveSpaceIsDimmed() throws {
+        store.showAllDisplays = true
+        store.dimInactiveSpaces = true
+        stub.activeDisplayIdentifier = "DisplayA"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "DisplayA",
+                spaces: [(id: 100, isFullscreen: false), (id: 101, isFullscreen: false)],
+                activeSpaceID: 100
+            ),
+            CGSStub.makeDisplay(
+                displayID: "DisplayB",
+                spaces: [(id: 200, isFullscreen: false), (id: 201, isFullscreen: false)],
+                activeSpaceID: 200
+            ),
+        ]
+
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let bitmap = try #require(sut.statusBarIcon.bitmapRepresentation())
+
+        let scale = Double(bitmap.pixelsWide) / sut.statusBarIcon.size.width
+        let segmentWidth = Int(Layout.statusItemWidth * scale)
+        let separatorWidth = Int(Layout.displaySeparatorWidth * scale)
+        let activeAlpha = bitmap.sampleMaxAlpha(inRect: CGRect(
+            x: 0,
+            y: 0,
+            width: segmentWidth,
+            height: bitmap.pixelsHigh
+        ))
+        let inactiveAlpha = bitmap.sampleMaxAlpha(inRect: CGRect(
+            x: segmentWidth + separatorWidth,
+            y: 0,
+            width: segmentWidth,
+            height: bitmap.pixelsHigh
+        ))
+
+        #expect(activeAlpha > inactiveAlpha)
+        #expect(inactiveAlpha / activeAlpha < 0.5)
+    }
+
+    @Test("combined mode: only the current Space is undimmed across displays")
+    func combinedMode_onlyCurrentSpaceIsUndimmedAcrossDisplays() throws {
+        store.showAllDisplays = true
+        store.showAllSpaces = true
+        store.dimInactiveSpaces = true
+        stub.activeDisplayIdentifier = "DisplayA"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "DisplayA",
+                spaces: [(id: 100, isFullscreen: false), (id: 101, isFullscreen: false)],
+                activeSpaceID: 100
+            ),
+            CGSStub.makeDisplay(
+                displayID: "DisplayB",
+                spaces: [(id: 200, isFullscreen: false), (id: 201, isFullscreen: false)],
+                activeSpaceID: 200
+            ),
+        ]
+
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let icon = sut.statusBarIcon
+        let bitmap = try #require(icon.bitmapRepresentation())
+
+        let scale = Double(bitmap.pixelsWide) / icon.size.width
+        let segmentWidth = Int(Layout.statusItemWidth * scale)
+        let separatorWidth = Int(Layout.displaySeparatorWidth * scale)
+        let segmentStarts = [0, segmentWidth, 2 * segmentWidth + separatorWidth, 3 * segmentWidth + separatorWidth]
+        let alphas = segmentStarts.map { startX in
+            bitmap.sampleMaxAlpha(inRect: CGRect(
+                x: startX,
+                y: 0,
+                width: segmentWidth,
+                height: bitmap.pixelsHigh
+            ))
+        }
+
+        for inactiveAlpha in alphas.dropFirst() {
+            #expect(alphas[0] > inactiveAlpha)
+            #expect(inactiveAlpha / alphas[0] < 0.5)
+        }
+    }
+
     @Test("showAllSpaces with dimInactive disabled: all spaces equal alpha")
     func showAllSpaces_dimInactiveDisabled_allSpacesSameAlpha() throws {
         store.showAllSpaces = true
@@ -614,19 +697,21 @@ struct AppStateTests {
         #expect(layout.totalWidth < Layout.statusItemWidth * 3)
     }
 
-    @Test("statusBarLayout cross-display includes separator and skips fullscreen targets")
-    func statusBarLayout_crossDisplayIncludesSeparatorAndSkipsFullscreenTargets() {
+    @Test("statusBarLayout combined mode includes all Spaces on every display")
+    func statusBarLayout_combinedModeIncludesAllSpacesOnEveryDisplay() {
         let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
         let displayA = DisplaySpaceInfo(
             displayID: "DisplayA",
             labels: ["1", Labels.fullscreen],
             spaceIDs: [100, 101],
+            activeSpaceID: 100,
             globalStartIndex: 1
         )
         let displayB = DisplaySpaceInfo(
             displayID: "DisplayB",
             labels: ["1", "2"],
             spaceIDs: [200, 201],
+            activeSpaceID: 201,
             globalStartIndex: 3
         )
 
@@ -640,6 +725,7 @@ struct AppStateTests {
             globalSpaceIndex: 1
         )
         store.showAllDisplays = true
+        store.showAllSpaces = true
 
         let slots = sut.statusBarLayout().slots
 
@@ -681,12 +767,12 @@ struct AppStateTests {
         )
         sut.setSpaceState(
             labels: ["1", "2", "3", "4", "5"],
-            currentSpace: 1,
-            currentLabel: "1",
+            currentSpace: 5,
+            currentLabel: "5",
             displayID: "Main",
             spaceIDs: [100, 101, 102, 103, 104],
             allDisplays: [display],
-            globalSpaceIndex: 1
+            globalSpaceIndex: 5
         )
         store.showAllDisplays = true
         store.hideEmptySpaces = true
@@ -694,7 +780,7 @@ struct AppStateTests {
 
         let slots = sut.statusBarLayout().slots
 
-        #expect(slots.map(\.targetSpace) == [1, 5])
+        #expect(slots.map(\.targetSpace) == [5])
     }
 
     @Test("light appearance sets darkModeEnabled false")

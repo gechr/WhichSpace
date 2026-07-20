@@ -11,26 +11,26 @@ struct SettingsConstraintsTests {
         store = DefaultsStore(suite: testSuite.suite)
     }
 
-    // MARK: - showAllSpaces / showAllDisplays Mutual Exclusion
+    // MARK: - showAllSpaces / showAllDisplays Independence
 
-    @Test("enabling showAllSpaces disables showAllDisplays")
-    func enablingShowAllSpaces_disablesShowAllDisplays() {
+    @Test("enabling showAllSpaces preserves showAllDisplays")
+    func enablingShowAllSpaces_preservesShowAllDisplays() {
         store.showAllDisplays = true
 
         SettingsConstraints.setShowAllSpaces(true, store: store)
 
         #expect(store.showAllSpaces)
-        #expect(!store.showAllDisplays, "showAllDisplays should be disabled when showAllSpaces is enabled")
+        #expect(store.showAllDisplays)
     }
 
-    @Test("enabling showAllDisplays disables showAllSpaces")
-    func enablingShowAllDisplays_disablesShowAllSpaces() {
+    @Test("enabling showAllDisplays preserves showAllSpaces")
+    func enablingShowAllDisplays_preservesShowAllSpaces() {
         store.showAllSpaces = true
 
         SettingsConstraints.setShowAllDisplays(true, store: store)
 
         #expect(store.showAllDisplays)
-        #expect(!store.showAllSpaces, "showAllSpaces should be disabled when showAllDisplays is enabled")
+        #expect(store.showAllSpaces)
     }
 
     @Test("disabling showAllSpaces does not affect showAllDisplays")

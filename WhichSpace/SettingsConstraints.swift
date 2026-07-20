@@ -1,25 +1,16 @@
 import AppKit
 
-/// Enforces mutual-exclusion invariants between settings.
-///
-/// Both `ActionHandler` (menu toggles) and `SettingsView` (SwiftUI bindings)
-/// route through these methods so the invariants are enforced in one place.
+/// Applies settings that require shared validation or side effects.
 @MainActor
 enum SettingsConstraints {
-    /// Sets `showAllSpaces`, disabling `showAllDisplays` when enabling.
+    /// Sets `showAllSpaces` independently of `showAllDisplays`.
     static func setShowAllSpaces(_ value: Bool, store: DefaultsStore) {
         store.showAllSpaces = value
-        if value {
-            store.showAllDisplays = false
-        }
     }
 
-    /// Sets `showAllDisplays`, disabling `showAllSpaces` when enabling.
+    /// Sets `showAllDisplays` independently of `showAllSpaces`.
     static func setShowAllDisplays(_ value: Bool, store: DefaultsStore) {
         store.showAllDisplays = value
-        if value {
-            store.showAllSpaces = false
-        }
     }
 
     /// Attempts to set `clickToSwitchSpaces`.

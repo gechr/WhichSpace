@@ -208,8 +208,45 @@ struct DynamicDisplayTests {
 
         let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        let icon = sut.statusBarIcon
-        #expect(icon.size.width > Layout.statusItemWidth)
+        let slots = sut.statusBarLayout().slots
+
+        #expect(slots.map(\.spaceID) == [100, 200])
+        #expect(slots.map(\.targetSpace) == [1, 2])
+    }
+
+    @Test("show all Spaces and displays includes every Space on every display")
+    func showAllSpacesAndDisplaysIncludesEverySpaceOnEveryDisplay() {
+        store.showAllDisplays = true
+        store.showAllSpaces = true
+        stub.activeDisplayIdentifier = "DisplayA"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "DisplayA",
+                spaces: [
+                    (id: 100, isFullscreen: false),
+                    (id: 101, isFullscreen: false),
+                    (id: 102, isFullscreen: false),
+                ],
+                activeSpaceID: 101
+            ),
+            CGSStub.makeDisplay(
+                displayID: "DisplayB",
+                spaces: [
+                    (id: 200, isFullscreen: false),
+                    (id: 201, isFullscreen: false),
+                    (id: 202, isFullscreen: false),
+                ],
+                activeSpaceID: 202
+            ),
+        ]
+
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+
+        let slots = sut.statusBarLayout().slots
+
+        #expect(slots.map(\.spaceID) == [100, 101, 102, 200, 201, 202])
+        #expect(slots.map(\.targetSpace) == [1, 2, 3, 4, 5, 6])
+        #expect(slots[3].startX == Layout.statusItemWidth * 3 + Layout.displaySeparatorWidth)
     }
 
     // MARK: - Active Display ID Not Found
@@ -924,7 +961,7 @@ struct ShowAllDisplaysEdgeCaseTests {
 
         let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        let expectedSpaces = 4
+        let expectedSpaces = 2
         let expectedSeparators = 1
         let expectedWidth = Double(expectedSpaces) * Layout.statusItemWidth +
             Double(expectedSeparators) * Layout.displaySeparatorWidth

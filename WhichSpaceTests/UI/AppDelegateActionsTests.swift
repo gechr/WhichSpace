@@ -476,14 +476,14 @@ final class AppDelegateActionsTests: XCTestCase {
         XCTAssertTrue(store.showAllSpaces)
     }
 
-    func testToggleShowAllSpaces_disablesShowAllDisplays_whenEnabled() {
+    func testToggleShowAllSpaces_preservesShowAllDisplays_whenEnabled() {
         store.showAllDisplays = true
         store.showAllSpaces = false
 
         sut.actionHandler.toggleShowAllSpaces()
 
         XCTAssertTrue(store.showAllSpaces, "showAllSpaces should be enabled")
-        XCTAssertFalse(store.showAllDisplays, "showAllDisplays should be disabled when showAllSpaces is enabled")
+        XCTAssertTrue(store.showAllDisplays, "showAllDisplays should remain enabled")
     }
 
     func testToggleShowAllSpaces_doesNotAffectShowAllDisplays_whenDisabled() {
@@ -514,14 +514,14 @@ final class AppDelegateActionsTests: XCTestCase {
         XCTAssertFalse(store.showAllDisplays, "showAllDisplays should toggle to false")
     }
 
-    func testToggleShowAllDisplays_disablesShowAllSpaces_whenEnabled() {
+    func testToggleShowAllDisplays_preservesShowAllSpaces_whenEnabled() {
         store.showAllSpaces = true
         store.showAllDisplays = false
 
         sut.actionHandler.toggleShowAllDisplays()
 
         XCTAssertTrue(store.showAllDisplays, "showAllDisplays should be enabled")
-        XCTAssertFalse(store.showAllSpaces, "showAllSpaces should be disabled when showAllDisplays is enabled")
+        XCTAssertTrue(store.showAllSpaces, "showAllSpaces should remain enabled")
     }
 
     func testToggleShowAllDisplays_doesNotAffectShowAllSpaces_whenDisabled() {

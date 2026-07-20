@@ -59,8 +59,10 @@ struct SpaceSnapshotServiceTests {
         #expect(snapshot.allDisplaysSpaceInfo.count == 2)
         #expect(snapshot.allDisplaysSpaceInfo[0].globalStartIndex == 1)
         #expect(snapshot.allDisplaysSpaceInfo[0].regularSpaceCount == 2)
+        #expect(snapshot.allDisplaysSpaceInfo[0].activeSpaceID == 100)
         #expect(snapshot.allDisplaysSpaceInfo[1].globalStartIndex == 3)
         #expect(snapshot.allDisplaysSpaceInfo[1].regularSpaceCount == 3)
+        #expect(snapshot.allDisplaysSpaceInfo[1].activeSpaceID == 200)
     }
 
     // MARK: - Local vs Global Space Numbers

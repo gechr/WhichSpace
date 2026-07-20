@@ -146,8 +146,8 @@ struct IntegrationTests {
         // When
         let icon = appState.statusBarIcon
 
-        // Then: Width should be 4 spaces + 1 separator
-        let expectedWidth = 4.0 * Layout.statusItemWidth + Layout.displaySeparatorWidth
+        // Then: One active Space per display, plus one separator
+        let expectedWidth = 2.0 * Layout.statusItemWidth + Layout.displaySeparatorWidth
         #expect(abs(icon.size.width - expectedWidth) <= 0.1)
     }
 
@@ -378,11 +378,11 @@ struct IntegrationTests {
         // When
         let layout = appState.statusBarLayout()
 
-        // Then: 3 total slots (2 from DisplayA + 1 from DisplayB)
-        #expect(layout.slots.count == 3)
+        // Then: One active Space from each display
+        #expect(layout.slots.count == 2)
 
         // Second display's slot starts after separator
-        let expectedStartX = 2.0 * Layout.statusItemWidth + Layout.displaySeparatorWidth
-        #expect(abs(layout.slots[2].startX - expectedStartX) <= 0.1)
+        let expectedStartX = Layout.statusItemWidth + Layout.displaySeparatorWidth
+        #expect(abs(layout.slots[1].startX - expectedStartX) <= 0.1)
     }
 }
