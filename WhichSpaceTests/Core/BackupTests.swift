@@ -375,6 +375,46 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         XCTAssertEqual(backup.settings.soundName, "")
     }
 
+    func testEncodeCoversEveryScalarDefaultsKey() throws {
+        // separatorColor is optional in the JSON and omitted when nil
+        store.separatorColor = .systemRed
+
+        let json = try BackupManager.encode(store: store)
+        let data = try XCTUnwrap(json.data(using: .utf8))
+        let root = try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
+        let settings = try XCTUnwrap(root["settings"] as? [String: Any])
+
+        // Per-space and per-display dictionaries travel via spacePreferences and
+        // displaySpacePreferences rather than the settings object
+        let expected = KeySpecs.allKeyNames.filter {
+            !$0.hasPrefix("space") && !$0.hasPrefix("displaySpace")
+        }
+        let missing = expected.subtracting(settings.keys)
+        XCTAssertTrue(
+            missing.isEmpty,
+            "Keys missing from backup: \(missing.sorted()). Add them to BackupSettings and BackupManager.encode/apply."
+        )
+    }
+
+    func testApplyRestoresScrollHapticAndWrapAround() throws {
+        let json = """
+        {
+            "bundleId": "com.test.app",
+            "version": "1.0.0",
+            "settings": {
+                "scrollHapticFeedback": true,
+                "scrollWrapAround": true
+            }
+        }
+        """
+
+        let backup = try BackupManager.decode(jsonString: json)
+        BackupManager.apply(backup, to: store)
+
+        XCTAssertTrue(store.scrollHapticFeedback)
+        XCTAssertTrue(store.scrollWrapAround)
+    }
+
     func testDecodeInvalidJSONThrows() {
         let invalidJSON = "{ invalid json }"
         XCTAssertThrowsError(try BackupManager.decode(jsonString: invalidJSON)) { error in

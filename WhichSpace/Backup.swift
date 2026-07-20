@@ -73,7 +73,9 @@ struct BackupSettings: Codable {
     var launchAtLogin: Bool
     var localSpaceNumbers: Bool
     var paddingScale: Double?
+    var scrollHapticFeedback: Bool
     var scrollSensitivity: Double
+    var scrollWrapAround: Bool
     var separatorColor: CodableColor?
     var showAllDisplays: Bool
     var showAllSpaces: Bool
@@ -86,7 +88,8 @@ struct BackupSettings: Codable {
         case clickToSwitchSpaces, dimInactiveSpaces, fullscreenIconStyle, hideEmptySpaces
         case hideFullscreenApps, hideSingleSpace, horizontalScrollEnabled
         case invertHorizontalScroll, invertVerticalScroll, launchAtLogin, localSpaceNumbers, paddingScale
-        case scrollSensitivity, separatorColor, showAllDisplays, showAllSpaces
+        case scrollHapticFeedback, scrollSensitivity, scrollWrapAround
+        case separatorColor, showAllDisplays, showAllSpaces
         case sizeScale, soundName, uniqueIconsPerDisplay
         case verticalScrollEnabled
     }
@@ -106,8 +109,10 @@ struct BackupSettings: Codable {
         launchAtLogin = try container.decodeIfPresent(Bool.self, forKey: .launchAtLogin) ?? false
         localSpaceNumbers = try container.decodeIfPresent(Bool.self, forKey: .localSpaceNumbers) ?? false
         paddingScale = try container.decodeIfPresent(Double.self, forKey: .paddingScale)
+        scrollHapticFeedback = try container.decodeIfPresent(Bool.self, forKey: .scrollHapticFeedback) ?? false
         scrollSensitivity = try container.decodeIfPresent(Double.self, forKey: .scrollSensitivity)
             ?? Layout.defaultScrollSensitivity
+        scrollWrapAround = try container.decodeIfPresent(Bool.self, forKey: .scrollWrapAround) ?? false
         separatorColor = try container.decodeIfPresent(CodableColor.self, forKey: .separatorColor)
         showAllDisplays = try container.decodeIfPresent(Bool.self, forKey: .showAllDisplays) ?? false
         showAllSpaces = try container.decodeIfPresent(Bool.self, forKey: .showAllSpaces) ?? false
@@ -130,7 +135,9 @@ struct BackupSettings: Codable {
         launchAtLogin: Bool,
         localSpaceNumbers: Bool,
         paddingScale: Double?,
+        scrollHapticFeedback: Bool,
         scrollSensitivity: Double,
+        scrollWrapAround: Bool,
         separatorColor: CodableColor?,
         showAllDisplays: Bool,
         showAllSpaces: Bool,
@@ -151,7 +158,9 @@ struct BackupSettings: Codable {
         self.launchAtLogin = launchAtLogin
         self.localSpaceNumbers = localSpaceNumbers
         self.paddingScale = paddingScale
+        self.scrollHapticFeedback = scrollHapticFeedback
         self.scrollSensitivity = scrollSensitivity
+        self.scrollWrapAround = scrollWrapAround
         self.separatorColor = separatorColor
         self.showAllDisplays = showAllDisplays
         self.showAllSpaces = showAllSpaces
@@ -440,7 +449,9 @@ enum BackupManager {
             launchAtLogin: launchAtLogin.isEnabled,
             localSpaceNumbers: store.localSpaceNumbers,
             paddingScale: store.paddingScale,
+            scrollHapticFeedback: store.scrollHapticFeedback,
             scrollSensitivity: store.scrollSensitivity,
+            scrollWrapAround: store.scrollWrapAround,
             separatorColor: store.separatorColor.map { CodableColor(from: $0) },
             showAllDisplays: store.showAllDisplays,
             showAllSpaces: store.showAllSpaces,
@@ -561,7 +572,9 @@ enum BackupManager {
         store.localSpaceNumbers = backup.settings.localSpaceNumbers
         store.paddingScale = (backup.settings.paddingScale ?? Layout.defaultPaddingScale)
             .clamped(to: Layout.paddingScaleRange)
+        store.scrollHapticFeedback = backup.settings.scrollHapticFeedback
         store.scrollSensitivity = backup.settings.scrollSensitivity.clamped(to: Layout.scrollSensitivityRange)
+        store.scrollWrapAround = backup.settings.scrollWrapAround
         store.separatorColor = backup.settings.separatorColor?.toNSColor()
         // Route through SettingsConstraints so a hand-edited backup can't enable both
         SettingsConstraints.setShowAllDisplays(backup.settings.showAllDisplays, store: store)
