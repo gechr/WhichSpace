@@ -1350,7 +1350,7 @@ final class MenuBuilder {
     // MARK: - Update
 
     private func configureUpdateMenuItem(in menu: NSMenu, target: AnyObject) {
-        addMenuItem(
+        let updateItem = addMenuItem(
             to: menu,
             title: Localization.actionCheckForUpdates,
             action: #selector(ActionHandler.checkForUpdates),
@@ -1358,6 +1358,8 @@ final class MenuBuilder {
             symbolName: "square.and.arrow.down",
             toolTip: String(format: Localization.tipCheckForUpdates, AppInfo.appName)
         )
+        updateItem.keyEquivalent = "u"
+        updateItem.keyEquivalentModifierMask = [.command]
     }
 
     // MARK: - Settings
