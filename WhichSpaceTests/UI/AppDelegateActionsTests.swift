@@ -273,6 +273,10 @@ final class AppDelegateActionsTests: XCTestCase {
     }
 
     private func makeScrollSut(recording switches: @escaping (Bool) -> Void) -> AppDelegate {
+        makeScrollSut { goRight, _ in switches(goRight) }
+    }
+
+    private func makeScrollSut(recording switches: @escaping (Bool, Bool) -> Void) -> AppDelegate {
         AppDelegate(
             appState: appState,
             confirmAction: confirmStub.callAsFunction,
@@ -432,6 +436,29 @@ final class AppDelegateActionsTests: XCTestCase {
             XCTAssertNil(localSut.handleScrollEvent(event, in: buttonContaining(event)))
             XCTAssertEqual(switches, expected)
         }
+    }
+
+    func testHandleScrollEvent_forwardsWrapAroundPreference() throws {
+        store.scrollWrapAround = true
+        var wraps: [Bool] = []
+        let localSut = makeScrollSut { (_: Bool, wrap: Bool) in wraps.append(wrap) }
+        let event = try makeScrollEvent(deltaY: 1, precise: false)
+
+        let result = localSut.handleScrollEvent(event, in: buttonContaining(event))
+
+        XCTAssertNil(result)
+        XCTAssertEqual(wraps, [true])
+    }
+
+    func testHandleScrollEvent_wrapAroundDisabledByDefault() throws {
+        var wraps: [Bool] = []
+        let localSut = makeScrollSut { (_: Bool, wrap: Bool) in wraps.append(wrap) }
+        let event = try makeScrollEvent(deltaY: 1, precise: false)
+
+        let result = localSut.handleScrollEvent(event, in: buttonContaining(event))
+
+        XCTAssertNil(result)
+        XCTAssertEqual(wraps, [false])
     }
 
     func testHandleScrollEvent_momentumEventsConsumedWithoutSwitching() throws {

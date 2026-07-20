@@ -119,10 +119,12 @@ enum SpaceSwitcher {
         predictedIndex[display.identifier] = targetIndex
     }
 
-    /// Switches one Space left or right on the menu bar display, clamped at the edges.
+    /// Switches one Space left or right on the menu bar display, clamped at the
+    /// edges unless `wrap` is true, in which case scrolling past either edge
+    /// wraps around to the opposite end.
     /// Posts a single synthetic dock-swipe gesture, so fullscreen Spaces are
     /// traversed the same way a real three-finger swipe would.
-    @MainActor static func switchRelative(goRight: Bool) {
+    @MainActor static func switchRelative(goRight: Bool, wrap: Bool = false) {
         let conn = _CGSDefaultConnection()
 
         guard let activeDisplayRef = CGSCopyActiveMenuBarDisplayIdentifier(conn) else {
@@ -145,11 +147,34 @@ enum SpaceSwitcher {
         let currentIndex = predictedIndex[display.identifier] ?? cgsCurrentIndex
         let targetIndex = currentIndex + (goRight ? 1 : -1)
         guard display.spaces.indices.contains(targetIndex) else {
+            if wrap {
+                wrapAround(goRight: goRight, currentIndex: currentIndex, display: display)
+            }
             return
         }
 
         guard postSwipeGesture(goRight: goRight, velocity: swipeVelocity) else {
             return
+        }
+
+        predictedIndex[display.identifier] = targetIndex
+    }
+
+    /// Jumps from one edge of the Space strip to the other by swiping back
+    /// across every intermediate Space, mirroring how `switchToSpace(id:)`
+    /// covers multi-Space distances.
+    @MainActor private static func wrapAround(goRight: Bool, currentIndex: Int, display: ManagedDisplay) {
+        let targetIndex = goRight ? 0 : display.spaces.count - 1
+        let steps = abs(targetIndex - currentIndex)
+        guard steps > 0 else {
+            return
+        }
+
+        let velocity = swipeVelocity * Double(steps)
+        for _ in 0 ..< steps {
+            guard postSwipeGesture(goRight: !goRight, velocity: velocity) else {
+                return
+            }
         }
 
         predictedIndex[display.identifier] = targetIndex

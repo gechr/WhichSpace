@@ -51,7 +51,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     private var statusBarItem: NSStatusItem!
 
     /// Switches one Space left or right; injectable so scroll tests don't move real Spaces
-    private let relativeSpaceSwitchAction: (_ goRight: Bool) -> Void
+    private let relativeSpaceSwitchAction: (_ goRight: Bool, _ wrap: Bool) -> Void
     /// Accumulated precise scroll delta at 100% sensitivity; a switch fires on crossing
     private static let scrollSpaceBaseThreshold = 50.0
     /// Minimum interval between scroll-triggered switches, so a flick lands one Space over
@@ -95,11 +95,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         missionControlNotificationSender = { notification in
             _ = CoreDockSendNotification(notification)
         }
-        relativeSpaceSwitchAction = { goRight in
+        relativeSpaceSwitchAction = { goRight, wrap in
             guard AXIsProcessTrusted() else {
                 return
             }
-            SpaceSwitcher.switchRelative(goRight: goRight)
+            SpaceSwitcher.switchRelative(goRight: goRight, wrap: wrap)
         }
         super.init()
         configureActionHandler()
@@ -113,11 +113,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         missionControlNotificationSender: @escaping (CFString) -> Void = { notification in
             _ = CoreDockSendNotification(notification)
         },
-        relativeSpaceSwitchAction: @escaping (_ goRight: Bool) -> Void = { goRight in
+        relativeSpaceSwitchAction: @escaping (_ goRight: Bool, _ wrap: Bool) -> Void = { goRight, wrap in
             guard AXIsProcessTrusted() else {
                 return
             }
-            SpaceSwitcher.switchRelative(goRight: goRight)
+            SpaceSwitcher.switchRelative(goRight: goRight, wrap: wrap)
         }
     ) {
         self.appState = appState
@@ -467,7 +467,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             if precise, store.scrollHapticFeedback {
                 HapticActuator.actuate()
             }
-            relativeSpaceSwitchAction(goRight)
+            relativeSpaceSwitchAction(goRight, store.scrollWrapAround)
         }
         return nil
     }

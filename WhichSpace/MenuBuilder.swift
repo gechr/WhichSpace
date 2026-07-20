@@ -112,6 +112,7 @@ final class MenuBuilder {
         setCheckmark(.horizontalScrollEnabled, store.horizontalScrollEnabled)
         setCheckmark(.invertVerticalScroll, store.invertVerticalScroll)
         setCheckmark(.invertHorizontalScroll, store.invertHorizontalScroll)
+        setCheckmark(.scrollWrapAround, store.scrollWrapAround)
         setCheckmark(.scrollHapticFeedback, store.scrollHapticFeedback)
 
         setCheckmark(.dimInactiveSpaces, store.dimInactiveSpaces)
@@ -757,18 +758,6 @@ final class MenuBuilder {
         let scrollMenu = NSMenu(title: Localization.menuScroll)
         scrollMenu.delegate = delegate
 
-        addMenuItem(
-            to: scrollMenu,
-            title: Localization.toggleScrollHapticFeedback,
-            action: #selector(ActionHandler.toggleScrollHapticFeedback),
-            target: target,
-            tag: .scrollHapticFeedback,
-            symbolName: "hand.tap",
-            toolTip: Localization.tipScrollHapticFeedback
-        )
-
-        scrollMenu.addItem(.separator())
-
         let verticalLabel = NSMenuItem(title: Localization.labelVertical, action: nil, keyEquivalent: "")
         verticalLabel.isEnabled = false
         scrollMenu.addItem(verticalLabel)
@@ -813,6 +802,27 @@ final class MenuBuilder {
             tag: .invertHorizontalScroll,
             symbolName: "arrow.uturn.backward",
             toolTip: Localization.tipScrollInverted
+        )
+
+        scrollMenu.addItem(.separator())
+
+        addMenuItem(
+            to: scrollMenu,
+            title: Localization.toggleScrollWrapAround,
+            action: #selector(ActionHandler.toggleScrollWrapAround),
+            target: target,
+            tag: .scrollWrapAround,
+            symbolName: "repeat",
+            toolTip: Localization.tipScrollWrapAround
+        )
+        addMenuItem(
+            to: scrollMenu,
+            title: Localization.toggleScrollHapticFeedback,
+            action: #selector(ActionHandler.toggleScrollHapticFeedback),
+            target: target,
+            tag: .scrollHapticFeedback,
+            symbolName: "hand.tap",
+            toolTip: Localization.tipScrollHapticFeedback
         )
 
         scrollMenu.addItem(.separator())

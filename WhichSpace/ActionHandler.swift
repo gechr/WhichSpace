@@ -110,6 +110,10 @@ final class ActionHandler: NSObject {
         store.scrollHapticFeedback.toggle()
     }
 
+    @objc func toggleScrollWrapAround() {
+        store.scrollWrapAround.toggle()
+    }
+
     @objc func toggleVerticalScroll() {
         let newValue = !store.verticalScrollEnabled
         if !SettingsConstraints.setScrollSwitching(newValue, axis: \.verticalScrollEnabled, store: store) {

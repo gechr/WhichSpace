@@ -205,6 +205,7 @@ struct DefaultsIsolationGuardTests {
             "paddingScale",
             "scrollHapticFeedback",
             "scrollSensitivity",
+            "scrollWrapAround",
             "separatorColor",
             "showAllDisplays",
             "showAllSpaces",
