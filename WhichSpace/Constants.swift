@@ -5,8 +5,9 @@ import EmojiKit
 // MARK: - Defaults Keys
 
 extension Defaults.Keys {
-    /// Global emoji picker skin tone preference (used by ItemPicker UI)
-    static let emojiPickerSkinTone = Key<SkinTone>("emojiPickerSkinTone", default: .default)
+    /// Global emoji picker skin tone preference (used by ItemPicker UI).
+    /// Derived from the `KeySpecs` registry so backup and reset stay in sync.
+    static let emojiPickerSkinTone = KeySpecs.emojiPickerSkinTone.key(suite: .standard)
 }
 
 // MARK: - Labels

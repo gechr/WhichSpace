@@ -63,6 +63,7 @@ struct Backup: Codable {
 struct BackupSettings: Codable {
     var clickToSwitchSpaces: Bool
     var dimInactiveSpaces: Bool
+    var emojiPickerSkinTone: Int
     var fullscreenIconStyle: String?
     var hideEmptySpaces: Bool
     var hideFullscreenApps: Bool
@@ -85,7 +86,7 @@ struct BackupSettings: Codable {
     var verticalScrollEnabled: Bool
 
     private enum CodingKeys: String, CodingKey {
-        case clickToSwitchSpaces, dimInactiveSpaces, fullscreenIconStyle, hideEmptySpaces
+        case clickToSwitchSpaces, dimInactiveSpaces, emojiPickerSkinTone, fullscreenIconStyle, hideEmptySpaces
         case hideFullscreenApps, hideSingleSpace, horizontalScrollEnabled
         case invertHorizontalScroll, invertVerticalScroll, launchAtLogin, localSpaceNumbers, paddingScale
         case scrollHapticFeedback, scrollSensitivity, scrollWrapAround
@@ -99,6 +100,8 @@ struct BackupSettings: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         clickToSwitchSpaces = try container.decodeIfPresent(Bool.self, forKey: .clickToSwitchSpaces) ?? false
         dimInactiveSpaces = try container.decodeIfPresent(Bool.self, forKey: .dimInactiveSpaces) ?? true
+        emojiPickerSkinTone = try container.decodeIfPresent(Int.self, forKey: .emojiPickerSkinTone)
+            ?? SkinTone.default.rawValue
         fullscreenIconStyle = try container.decodeIfPresent(String.self, forKey: .fullscreenIconStyle)
         hideEmptySpaces = try container.decodeIfPresent(Bool.self, forKey: .hideEmptySpaces) ?? false
         hideFullscreenApps = try container.decodeIfPresent(Bool.self, forKey: .hideFullscreenApps) ?? false
@@ -125,6 +128,7 @@ struct BackupSettings: Codable {
     init(
         clickToSwitchSpaces: Bool,
         dimInactiveSpaces: Bool,
+        emojiPickerSkinTone: Int,
         fullscreenIconStyle: String?,
         hideEmptySpaces: Bool,
         hideFullscreenApps: Bool,
@@ -148,6 +152,7 @@ struct BackupSettings: Codable {
     ) {
         self.clickToSwitchSpaces = clickToSwitchSpaces
         self.dimInactiveSpaces = dimInactiveSpaces
+        self.emojiPickerSkinTone = emojiPickerSkinTone
         self.fullscreenIconStyle = fullscreenIconStyle
         self.hideEmptySpaces = hideEmptySpaces
         self.hideFullscreenApps = hideFullscreenApps
@@ -439,6 +444,7 @@ enum BackupManager {
         let settings = BackupSettings(
             clickToSwitchSpaces: store.clickToSwitchSpaces,
             dimInactiveSpaces: store.dimInactiveSpaces,
+            emojiPickerSkinTone: store.emojiPickerSkinTone.rawValue,
             fullscreenIconStyle: store.fullscreenIconStyle.rawValue,
             hideEmptySpaces: store.hideEmptySpaces,
             hideFullscreenApps: store.hideFullscreenApps,
@@ -559,6 +565,7 @@ enum BackupManager {
         store.clickToSwitchSpaces = backup.settings.clickToSwitchSpaces
         store.dimInactiveSpaces = backup.settings.dimInactiveSpaces
         // Unrecognized values (from a newer app version or hand edit) keep the default
+        store.emojiPickerSkinTone = SkinTone(rawValue: backup.settings.emojiPickerSkinTone) ?? .default
         store.fullscreenIconStyle = backup.settings.fullscreenIconStyle
             .flatMap { FullscreenIconStyle(rawValue: $0) } ?? .appIcon
         store.hideEmptySpaces = backup.settings.hideEmptySpaces

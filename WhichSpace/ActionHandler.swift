@@ -759,7 +759,7 @@ final class ActionHandler: NSObject {
         // When setting an emoji, also set the per-space skin tone to match the current global picker tone
         if let symbol, symbol.containsEmoji {
             SpacePreferences.setSkinTone(
-                Defaults[.emojiPickerSkinTone],
+                store.emojiPickerSkinTone,
                 forSpace: appState.currentSpace,
                 display: appState.currentDisplayID,
                 store: store

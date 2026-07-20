@@ -68,6 +68,7 @@ enum KeySpecs {
         name: "displaySpaceSymbols",
         defaultValue: [String: [Int: String]]()
     )
+    static let emojiPickerSkinTone = TypedKeySpec(name: "emojiPickerSkinTone", defaultValue: SkinTone.default)
     static let fullscreenIconStyle = TypedKeySpec(
         name: "fullscreenIconStyle",
         defaultValue: FullscreenIconStyle.appIcon
@@ -119,6 +120,7 @@ enum KeySpecs {
         displaySpaceLabelStyles,
         displaySpaceSkinTones,
         displaySpaceSymbols,
+        emojiPickerSkinTone,
         fullscreenIconStyle,
         hideEmptySpaces,
         hideFullscreenApps,
@@ -305,6 +307,11 @@ final class DefaultsStore {
     var displaySpaceSymbols: [String: [Int: String]] {
         get { self[KeySpecs.displaySpaceSymbols] }
         set { self[KeySpecs.displaySpaceSymbols] = newValue }
+    }
+
+    var emojiPickerSkinTone: SkinTone {
+        get { self[KeySpecs.emojiPickerSkinTone] }
+        set { self[KeySpecs.emojiPickerSkinTone] = newValue }
     }
 
     var fullscreenIconStyle: FullscreenIconStyle {

@@ -194,6 +194,7 @@ struct DefaultsIsolationGuardTests {
             "displaySpaceLabelStyles",
             "displaySpaceSkinTones",
             "displaySpaceSymbols",
+            "emojiPickerSkinTone",
             "fullscreenIconStyle",
             "hideEmptySpaces",
             "hideFullscreenApps",

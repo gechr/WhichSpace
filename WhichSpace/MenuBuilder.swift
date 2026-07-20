@@ -1111,7 +1111,7 @@ final class MenuBuilder {
             actionDelegate?.symbolSelected(item)
         }
         picker.onItemHoverStart = { [weak self, weak actionDelegate] item in
-            let skinTone = item.containsEmoji ? Defaults[.emojiPickerSkinTone] : nil
+            let skinTone = item.containsEmoji ? self?.store.emojiPickerSkinTone : nil
             let foreground = self?.appState.currentColors?.foreground
             let background = self?.appState.currentColors?.background
             actionDelegate?.symbolHoverStarted(item, foreground: foreground, background: background, skinTone: skinTone)
