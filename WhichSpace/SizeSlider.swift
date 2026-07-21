@@ -3,40 +3,56 @@ import Cocoa
 // MARK: - Size Row View
 
 final class SizeSlider: NSView {
-    private let maxLabel: NSTextField
-    private let minLabel: NSTextField
     private let slider: NSSlider
-    private let stepper: NSStepper
+    private let titleLabel: NSTextField
     private let valueLabel: NSTextField
     private let valueFormatter: (Double) -> String
 
-    private let controlHeight = 20.0
-    private let labelHeight = 12.0
+    private static let titleFont = NSFont.systemFont(ofSize: 12, weight: .semibold)
+    private static let valueFont = NSFont.monospacedDigitSystemFont(ofSize: 12, weight: .regular)
+
+    private static let labelGap = 8.0
+    private static let minimumContentWidth = 168.0
+
+    private let bottomPadding = 5.0
+    private let controlHeight = 18.0
     private let padding = 16.0
-    private let sliderWidth = 140.0
-    private let stepperWidth = 20.0
-    private let valueLabelHeight = 20.0
+    private let rowGap = 5.0
+    private let titleHeight = 16.0
+    private let topPadding = 7.0
+
+    private let increment = 1.0
+    private let range: ClosedRange<Double>
+
+    /// Content width that fits the title next to the widest formatted value
+    private var requiredContentWidth = 0.0
 
     var onSizeChanged: ((Double) -> Void)?
 
-    var currentSize: Double {
-        get { slider.doubleValue }
-        set {
-            slider.doubleValue = newValue
-            stepper.doubleValue = newValue
-            valueLabel.stringValue = valueFormatter(newValue)
+    private var value: Double {
+        didSet {
+            slider.doubleValue = value
+            valueLabel.stringValue = valueFormatter(value)
+            needsLayout = true
         }
     }
 
+    var currentSize: Double {
+        get { value }
+        set { value = newValue }
+    }
+
     init(
+        title: String,
         initialSize: Double,
         range: ClosedRange<Double>,
-        minimumLabel: String? = nil,
-        maximumLabel: String? = nil,
         numberOfTickMarks: Int? = nil,
         valueFormatter: @escaping (Double) -> String = { String(format: "%.0f%%", $0) }
     ) {
+        self.range = range
         self.valueFormatter = valueFormatter
+        value = initialSize
+
         slider = NSSlider(
             value: initialSize,
             minValue: range.lowerBound,
@@ -44,17 +60,15 @@ final class SizeSlider: NSView {
             target: nil,
             action: nil
         )
-        stepper = NSStepper()
-        minLabel = NSTextField(labelWithString: minimumLabel ?? String(format: "%.0f%%", range.lowerBound))
-        maxLabel = NSTextField(labelWithString: maximumLabel ?? String(format: "%.0f%%", range.upperBound))
+        titleLabel = NSTextField(labelWithString: title)
         valueLabel = NSTextField(labelWithString: valueFormatter(initialSize))
 
         super.init(frame: .zero)
 
-        setupSlider(range: range, numberOfTickMarks: numberOfTickMarks)
-        setupStepper(range: range)
+        autoresizingMask = [.width]
+        setupSlider(numberOfTickMarks: numberOfTickMarks)
         setupLabels()
-        currentSize = initialSize
+        measureRequiredContentWidth(numberOfTickMarks: numberOfTickMarks)
     }
 
     @available(*, unavailable)
@@ -64,9 +78,8 @@ final class SizeSlider: NSView {
 
     // MARK: - Setup
 
-    private func setupSlider(range: ClosedRange<Double>, numberOfTickMarks: Int?) {
-        slider.minValue = range.lowerBound
-        slider.maxValue = range.upperBound
+    private func setupSlider(numberOfTickMarks: Int?) {
+        slider.controlSize = .small
         slider.target = self
         slider.action = #selector(sliderChanged)
         slider.isContinuous = true
@@ -77,81 +90,79 @@ final class SizeSlider: NSView {
         addSubview(slider)
     }
 
-    private func setupStepper(range: ClosedRange<Double>) {
-        stepper.minValue = range.lowerBound
-        stepper.maxValue = range.upperBound
-        stepper.increment = 1
-        stepper.valueWraps = false
-        stepper.target = self
-        stepper.action = #selector(stepperChanged)
-        addSubview(stepper)
+    /// Measures with the actual labels so NSTextField's internal padding is included.
+    /// Discrete sliders can show a word per tick, so measure every stop; numeric
+    /// labels use monospaced digits, so the endpoints are the widest.
+    private func measureRequiredContentWidth(numberOfTickMarks: Int?) {
+        let sampleValues: [Double]
+        if let numberOfTickMarks, numberOfTickMarks > 1 {
+            let step = (range.upperBound - range.lowerBound) / Double(numberOfTickMarks - 1)
+            sampleValues = (0 ..< numberOfTickMarks).map { range.lowerBound + Double($0) * step }
+        } else {
+            sampleValues = [range.lowerBound, range.upperBound]
+        }
+        var maxValueWidth = 0.0
+        for sampleValue in sampleValues {
+            valueLabel.stringValue = valueFormatter(sampleValue)
+            maxValueWidth = max(maxValueWidth, valueLabel.intrinsicContentSize.width)
+        }
+        valueLabel.stringValue = valueFormatter(value)
+
+        let titleWidth = titleLabel.intrinsicContentSize.width
+        requiredContentWidth = max(Self.minimumContentWidth, ceil(titleWidth + Self.labelGap + maxValueWidth))
+        invalidateIntrinsicContentSize()
     }
 
     private func setupLabels() {
-        let smallFont = NSFont.monospacedDigitSystemFont(ofSize: 9, weight: .regular)
-        let smallColor = NSColor.secondaryLabelColor
+        titleLabel.font = Self.titleFont
+        titleLabel.textColor = .secondaryLabelColor
+        titleLabel.lineBreakMode = .byTruncatingTail
+        titleLabel.alignment = .left
+        addSubview(titleLabel)
 
-        minLabel.font = smallFont
-        minLabel.textColor = smallColor
-        minLabel.alignment = .left
-        addSubview(minLabel)
-
-        maxLabel.font = smallFont
-        maxLabel.textColor = smallColor
-        maxLabel.alignment = .right
-        addSubview(maxLabel)
-
-        valueLabel.font = NSFont.monospacedDigitSystemFont(ofSize: 13, weight: .bold)
+        valueLabel.font = Self.valueFont
         valueLabel.textColor = .labelColor
-        valueLabel.alignment = .center
+        valueLabel.alignment = .right
         addSubview(valueLabel)
     }
 
     // MARK: - Layout
 
     override var intrinsicContentSize: CGSize {
-        let width = padding + sliderWidth + 8 + stepperWidth + padding
-        return CGSize(width: width, height: controlHeight + labelHeight + valueLabelHeight + 12)
+        let width = padding + requiredContentWidth + padding
+        let height = bottomPadding + controlHeight + rowGap + titleHeight + topPadding
+        return CGSize(width: width, height: height)
     }
 
     override func layout() {
         super.layout()
 
-        let bottomLabelY = 2.0
-        let yControls = bottomLabelY + labelHeight + 2
-        let topLabelY = yControls + controlHeight + 2
+        let contentWidth = max(bounds.width - padding * 2, requiredContentWidth)
+        let sliderY = bottomPadding
+        let titleY = sliderY + controlHeight + rowGap
 
-        slider.frame = CGRect(x: padding, y: yControls, width: sliderWidth, height: controlHeight)
-        stepper.frame = CGRect(x: padding + sliderWidth + 8, y: yControls, width: stepperWidth, height: controlHeight)
+        slider.frame = CGRect(x: padding, y: sliderY, width: contentWidth, height: controlHeight)
 
-        let labelWidth = 60.0
-        minLabel.frame = CGRect(x: padding, y: bottomLabelY, width: labelWidth, height: labelHeight)
-        maxLabel.frame = CGRect(
-            x: padding + sliderWidth - labelWidth,
-            y: bottomLabelY,
-            width: labelWidth,
-            height: labelHeight
+        valueLabel.sizeToFit()
+        let valueWidth = min(valueLabel.frame.width, contentWidth)
+        valueLabel.frame = CGRect(
+            x: padding + contentWidth - valueWidth,
+            y: titleY,
+            width: valueWidth,
+            height: titleHeight
         )
-        valueLabel.frame = CGRect(x: padding, y: topLabelY, width: sliderWidth, height: valueLabelHeight)
+        titleLabel.frame = CGRect(
+            x: padding,
+            y: titleY,
+            width: max(0, contentWidth - valueWidth - Self.labelGap),
+            height: titleHeight
+        )
     }
 
     // MARK: - Mouse Events
 
     override func mouseDown(with event: NSEvent) {
         window?.makeFirstResponder(self)
-        let location = convert(event.locationInWindow, from: nil)
-
-        if stepper.frame.contains(location) {
-            let stepperMidY = stepper.frame.midY
-            if location.y > stepperMidY {
-                stepper.doubleValue += stepper.increment
-            } else {
-                stepper.doubleValue -= stepper.increment
-            }
-            stepperChanged()
-            return
-        }
-
         super.mouseDown(with: event)
     }
 
@@ -171,11 +182,9 @@ final class SizeSlider: NSView {
     override func keyDown(with event: NSEvent) {
         switch event.keyCode {
         case KeyCode.leftArrow, KeyCode.downArrow:
-            stepper.doubleValue = max(stepper.minValue, stepper.doubleValue - stepper.increment)
-            stepperChanged()
+            step(by: -1)
         case KeyCode.rightArrow, KeyCode.upArrow:
-            stepper.doubleValue = min(stepper.maxValue, stepper.doubleValue + stepper.increment)
-            stepperChanged()
+            step(by: 1)
         default:
             super.keyDown(with: event)
         }
@@ -209,30 +218,26 @@ final class SizeSlider: NSView {
             return
         }
 
-        let newValue = stepper.doubleValue + steps * stepper.increment
-        stepper.doubleValue = newValue.clamped(to: stepper.minValue ... stepper.maxValue)
-        stepperChanged()
+        step(by: steps)
     }
 
     // MARK: - Actions
 
-    @objc private func sliderChanged() {
+    /// Adjusts the value by a number of increments, clamped to the range.
+    /// Always notifies, matching stepper-style semantics at the bounds.
+    private func step(by steps: Double) {
         window?.makeFirstResponder(self)
-        let value = round(slider.doubleValue)
-        let changed = value != stepper.doubleValue
-        slider.doubleValue = value
-        stepper.doubleValue = value
-        valueLabel.stringValue = valueFormatter(value)
-        if changed {
-            onSizeChanged?(value)
-        }
+        value = (value + steps * increment).clamped(to: range)
+        onSizeChanged?(value)
     }
 
-    @objc private func stepperChanged() {
+    @objc private func sliderChanged() {
         window?.makeFirstResponder(self)
-        let value = stepper.doubleValue
-        slider.doubleValue = value
-        valueLabel.stringValue = valueFormatter(value)
-        onSizeChanged?(value)
+        let newValue = round(slider.doubleValue)
+        let changed = newValue != value
+        value = newValue
+        if changed {
+            onSizeChanged?(newValue)
+        }
     }
 }

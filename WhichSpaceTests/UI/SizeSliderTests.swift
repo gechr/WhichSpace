@@ -10,7 +10,7 @@ struct SizeSliderTests {
     private let initialSize = 100.0
 
     init() {
-        sut = SizeSlider(initialSize: initialSize, range: testRange)
+        sut = SizeSlider(title: "Icon", initialSize: initialSize, range: testRange)
         sut.frame = NSRect(origin: .zero, size: sut.intrinsicContentSize)
         sut.layout()
 
@@ -35,12 +35,12 @@ struct SizeSliderTests {
     @Test("Initial state with different initial size")
     func initialState_withDifferentInitialSize() {
         let customSize = 80.0
-        let customSut = SizeSlider(initialSize: customSize, range: testRange)
+        let customSut = SizeSlider(title: "Icon", initialSize: customSize, range: testRange)
 
         #expect(customSut.currentSize == customSize, "currentSize should match custom initial size")
     }
 
-    // MARK: - Slider/Stepper Sync Tests
+    // MARK: - Current Size Tests
 
     @Test("Setting current size updates internal state")
     func settingCurrentSize_updatesInternalState() {
@@ -81,7 +81,7 @@ struct SizeSliderTests {
             receivedValues.append(value)
         }
 
-        // Simulate keyboard adjustment (which goes through stepperChanged)
+        // Simulate keyboard adjustment (which goes through the stepping path)
         simulateKeyDown(keyCode: 124) // Right arrow
 
         #expect(!receivedValues.isEmpty, "Should have received at least one value")
@@ -191,65 +191,6 @@ struct SizeSliderTests {
         #expect(callbackCalled, "Callback should still fire at bounds")
     }
 
-    // MARK: - Stepper Click Tests
-
-    @Test("Stepper click up increases value")
-    func stepperClickUp_increasesValue() {
-        let originalValue = sut.currentSize
-        simulateStepperClick(increment: true)
-
-        #expect(sut.currentSize == originalValue + 1, "Stepper up click should increase value by 1")
-    }
-
-    @Test("Stepper click down decreases value")
-    func stepperClickDown_decreasesValue() {
-        let originalValue = sut.currentSize
-        simulateStepperClick(increment: false)
-
-        #expect(sut.currentSize == originalValue - 1, "Stepper down click should decrease value by 1")
-    }
-
-    @Test("Stepper click fires onSizeChanged callback")
-    func stepperClick_firesOnSizeChangedCallback() {
-        var receivedValue: Double?
-        sut.onSizeChanged = { value in
-            receivedValue = value
-        }
-
-        simulateStepperClick(increment: true)
-
-        #expect(receivedValue != nil, "onSizeChanged should be called on stepper click")
-        #expect(receivedValue == initialSize + 1, "Callback should receive the new value")
-    }
-
-    @Test("Stepper click at upper bound clamps value")
-    func stepperClickAtUpperBound_clampsValue() {
-        sut.currentSize = testRange.upperBound
-        var receivedValue: Double?
-        sut.onSizeChanged = { value in
-            receivedValue = value
-        }
-
-        simulateStepperClick(increment: true)
-
-        #expect(sut.currentSize == testRange.upperBound, "Value should stay at upper bound")
-        #expect(receivedValue == testRange.upperBound, "Callback should receive clamped value")
-    }
-
-    @Test("Stepper click at lower bound clamps value")
-    func stepperClickAtLowerBound_clampsValue() {
-        sut.currentSize = testRange.lowerBound
-        var receivedValue: Double?
-        sut.onSizeChanged = { value in
-            receivedValue = value
-        }
-
-        simulateStepperClick(increment: false)
-
-        #expect(sut.currentSize == testRange.lowerBound, "Value should stay at lower bound")
-        #expect(receivedValue == testRange.lowerBound, "Callback should receive clamped value")
-    }
-
     // MARK: - Value Clamping Tests
 
     @Test("onSizeChanged receives clamped value at upper bound")
@@ -297,9 +238,9 @@ struct SizeSliderTests {
 
         // Multiple interactions
         simulateKeyDown(keyCode: 124) // Right arrow
-        simulateStepperClick(increment: true)
+        simulateKeyDown(keyCode: 126) // Up arrow
         simulateKeyDown(keyCode: 123) // Left arrow
-        simulateStepperClick(increment: false)
+        simulateKeyDown(keyCode: 125) // Down arrow
 
         for value in receivedValues {
             #expect(value == round(value), "All callback values should be rounded integers")
@@ -349,13 +290,13 @@ struct SizeSliderTests {
         #expect(labelAfter == "101%", "Value label should show new value with percent suffix")
     }
 
-    @Test("Value label updates after stepper click")
-    func valueLabel_updatesAfterStepperClick() {
+    @Test("Value label updates after decreasing keyboard interaction")
+    func valueLabel_updatesAfterDecreasingKeyboardInteraction() {
         let labelBefore = findValueLabel()?.stringValue
-        simulateStepperClick(increment: false)
+        simulateKeyDown(keyCode: 123) // Left arrow
         let labelAfter = findValueLabel()?.stringValue
 
-        #expect(labelBefore != labelAfter, "Value label should update after stepper click")
+        #expect(labelBefore != labelAfter, "Value label should update after keyboard interaction")
         #expect(labelAfter == "99%", "Value label should show new value with percent suffix")
     }
 
@@ -412,24 +353,7 @@ struct SizeSliderTests {
         #expect(findValueLabel()?.stringValue == "86%", "Label should show rounded value")
     }
 
-    @Test("Slider drag syncs stepper")
-    func sliderDrag_syncsStepper() {
-        simulateSliderDrag(to: 90.0)
-
-        guard let stepper = findStepper() else {
-            Issue.record("Could not find stepper")
-            return
-        }
-
-        #expect(stepper.doubleValue == 90.0, "Stepper should sync with slider value")
-    }
-
     // MARK: - Helpers
-
-    /// Finds the stepper control in the view hierarchy
-    private func findStepper() -> NSStepper? {
-        sut.subviews.compactMap { $0 as? NSStepper }.first
-    }
 
     /// Finds the slider control in the view hierarchy
     private func findSlider() -> NSSlider? {
@@ -438,10 +362,10 @@ struct SizeSliderTests {
 
     /// Finds the value label (the one showing the percentage) in the view hierarchy
     private func findValueLabel() -> NSTextField? {
-        // The value label has a larger font than min/max labels
+        // The value label is right-aligned; the title label is left-aligned
         sut.subviews
             .compactMap { $0 as? NSTextField }
-            .first { $0.font?.pointSize == 13 }
+            .first { $0.alignment == .right }
     }
 
     /// Simulates keyboard adjustment by directly calling keyDown
@@ -461,35 +385,6 @@ struct SizeSliderTests {
         )!
 
         sut.keyDown(with: event)
-    }
-
-    /// Simulates clicking on the stepper by directly manipulating the stepper value
-    /// and triggering the action. This is more robust than coordinate-based clicks.
-    private func simulateStepperClick(increment: Bool) {
-        guard let stepper = findStepper() else {
-            Issue.record("Could not find stepper")
-            return
-        }
-
-        // Directly adjust stepper value and trigger action via mouseDown
-        // This mimics what the SizeSlider.mouseDown does
-        let stepperMidY = stepper.frame.midY
-        let clickY = increment ? stepperMidY + 5 : stepperMidY - 5
-        let clickPoint = CGPoint(x: stepper.frame.midX, y: clickY)
-
-        let event = NSEvent.mouseEvent(
-            with: .leftMouseDown,
-            location: clickPoint,
-            modifierFlags: [],
-            timestamp: ProcessInfo.processInfo.systemUptime,
-            windowNumber: testWindow.windowNumber,
-            context: nil,
-            eventNumber: 0,
-            clickCount: 1,
-            pressure: 1.0
-        )!
-
-        sut.mouseDown(with: event)
     }
 
     /// Simulates slider drag by setting value and triggering action

@@ -556,6 +556,10 @@ final class MenuBuilder {
         let foregroundLabel = NSMenuItem(title: Localization.labelNumberForeground, action: nil, keyEquivalent: "")
         foregroundLabel.isEnabled = false
         foregroundLabel.tag = MenuTag.foregroundLabel.rawValue
+        foregroundLabel.image = NSImage(
+            systemSymbolName: "square.2.layers.3d.top.filled",
+            accessibilityDescription: nil
+        )
         menu.addItem(foregroundLabel)
 
         menu.addItem(makeColorSwatchItem(
@@ -573,6 +577,10 @@ final class MenuBuilder {
         let backgroundLabel = NSMenuItem(title: Localization.labelNumberBackground, action: nil, keyEquivalent: "")
         backgroundLabel.isEnabled = false
         backgroundLabel.tag = MenuTag.backgroundLabel.rawValue
+        backgroundLabel.image = NSImage(
+            systemSymbolName: "square.2.layers.3d.bottom.filled",
+            accessibilityDescription: nil
+        )
         menu.addItem(backgroundLabel)
 
         menu.addItem(makeColorSwatchItem(
@@ -762,6 +770,7 @@ final class MenuBuilder {
 
         let verticalLabel = NSMenuItem(title: Localization.labelVertical, action: nil, keyEquivalent: "")
         verticalLabel.isEnabled = false
+        verticalLabel.image = NSImage(systemSymbolName: "arrow.up.and.down", accessibilityDescription: nil)
         scrollMenu.addItem(verticalLabel)
         addMenuItem(
             to: scrollMenu,
@@ -786,6 +795,7 @@ final class MenuBuilder {
 
         let horizontalLabel = NSMenuItem(title: Localization.labelHorizontal, action: nil, keyEquivalent: "")
         horizontalLabel.isEnabled = false
+        horizontalLabel.image = NSImage(systemSymbolName: "arrow.left.and.right", accessibilityDescription: nil)
         scrollMenu.addItem(horizontalLabel)
         addMenuItem(
             to: scrollMenu,
@@ -808,6 +818,10 @@ final class MenuBuilder {
 
         scrollMenu.addItem(.separator())
 
+        let behaviorLabel = NSMenuItem(title: Localization.labelBehavior, action: nil, keyEquivalent: "")
+        behaviorLabel.isEnabled = false
+        behaviorLabel.image = NSImage(systemSymbolName: "switch.2", accessibilityDescription: nil)
+        scrollMenu.addItem(behaviorLabel)
         addMenuItem(
             to: scrollMenu,
             title: Localization.toggleScrollWrapAround,
@@ -819,17 +833,12 @@ final class MenuBuilder {
         )
         scrollMenu.addItem(.separator())
 
-        let hapticLabel = NSMenuItem(title: Localization.toggleScrollHapticFeedback, action: nil, keyEquivalent: "")
-        hapticLabel.isEnabled = false
-        scrollMenu.addItem(hapticLabel)
-
         let hapticItem = NSMenuItem()
         hapticItem.tag = MenuTag.scrollHapticIntensityRow.rawValue
         let hapticSlider = SizeSlider(
+            title: Localization.toggleScrollHapticFeedback,
             initialSize: store.scrollHapticFeedback ? Double(store.scrollHapticIntensity) : 0,
             range: 0 ... Double(Layout.scrollHapticIntensityRange.upperBound),
-            minimumLabel: "Off",
-            maximumLabel: "Maximum",
             numberOfTickMarks: Layout.scrollHapticIntensityRange.upperBound + 1
         ) { HapticIntensityLabel.label(for: Int($0)) }
         hapticSlider.frame = NSRect(origin: .zero, size: hapticSlider.intrinsicContentSize)
@@ -842,13 +851,10 @@ final class MenuBuilder {
 
         scrollMenu.addItem(.separator())
 
-        let sensitivityLabel = NSMenuItem(title: Localization.labelSensitivity, action: nil, keyEquivalent: "")
-        sensitivityLabel.isEnabled = false
-        scrollMenu.addItem(sensitivityLabel)
-
         let sensitivityItem = NSMenuItem()
         sensitivityItem.tag = MenuTag.scrollSensitivityRow.rawValue
         let sensitivitySlider = SizeSlider(
+            title: Localization.labelSensitivity,
             initialSize: store.scrollSensitivity,
             range: Layout.scrollSensitivityRange
         )
@@ -1162,13 +1168,10 @@ final class MenuBuilder {
         let sizeMenu = NSMenu(title: Localization.menuSize)
         sizeMenu.delegate = delegate
 
-        let iconLabel = NSMenuItem(title: Localization.menuIcon, action: nil, keyEquivalent: "")
-        iconLabel.isEnabled = false
-        sizeMenu.addItem(iconLabel)
-
         let sizeItem = NSMenuItem()
         sizeItem.tag = MenuTag.sizeRow.rawValue
         let sizeSlider = SizeSlider(
+            title: Localization.menuIcon,
             initialSize: store.sizeScale,
             range: Layout.sizeScaleRange
         )
@@ -1181,13 +1184,10 @@ final class MenuBuilder {
 
         sizeMenu.addItem(.separator())
 
-        let paddingLabel = NSMenuItem(title: Localization.menuPadding, action: nil, keyEquivalent: "")
-        paddingLabel.isEnabled = false
-        sizeMenu.addItem(paddingLabel)
-
         let paddingItem = NSMenuItem()
         paddingItem.tag = MenuTag.paddingRow.rawValue
         let paddingSlider = SizeSlider(
+            title: Localization.menuPadding,
             initialSize: store.paddingScale,
             range: Layout.paddingScaleRange
         )

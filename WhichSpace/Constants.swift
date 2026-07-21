@@ -115,19 +115,19 @@ enum HapticIntensityLabel {
     static func label(for intensity: Int) -> String {
         switch intensity {
         case 1:
-            "Very Light"
+            Localization.labelHapticVeryLight
         case 2:
-            "Light"
+            Localization.labelHapticLight
         case 3:
-            "Medium"
+            Localization.labelHapticMedium
         case 4:
-            "Strong"
+            Localization.labelHapticStrong
         case 5:
-            "Very Strong"
+            Localization.labelHapticVeryStrong
         case 6:
-            "Maximum"
+            Localization.labelHapticMaximum
         default:
-            "Off"
+            Localization.labelHapticOff
         }
     }
 }
@@ -287,6 +287,14 @@ enum Localization {
     static let errorScriptingSpaceOutOfRange = String(localized: "error_scripting_space_out_of_range")
 
     static let labelBadgePosition = String(localized: "label_badge_position")
+    static let labelBehavior = String(localized: "label_behavior")
+    static let labelHapticLight = String(localized: "label_haptic_light")
+    static let labelHapticMaximum = String(localized: "label_haptic_maximum")
+    static let labelHapticMedium = String(localized: "label_haptic_medium")
+    static let labelHapticOff = String(localized: "label_haptic_off")
+    static let labelHapticStrong = String(localized: "label_haptic_strong")
+    static let labelHapticVeryLight = String(localized: "label_haptic_very_light")
+    static let labelHapticVeryStrong = String(localized: "label_haptic_very_strong")
     static let labelHorizontal = String(localized: "label_horizontal")
     static let labelNumber = String(localized: "label_number")
     static let labelNumberBackground = String(localized: "label_number_background")
