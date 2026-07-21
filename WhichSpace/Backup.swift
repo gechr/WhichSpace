@@ -75,6 +75,7 @@ struct BackupSettings: Codable {
     var localSpaceNumbers: Bool
     var paddingScale: Double?
     var scrollHapticFeedback: Bool
+    var scrollHapticIntensity: Int
     var scrollSensitivity: Double
     var scrollWrapAround: Bool
     var separatorColor: CodableColor?
@@ -89,7 +90,7 @@ struct BackupSettings: Codable {
         case clickToSwitchSpaces, dimInactiveSpaces, emojiPickerSkinTone, fullscreenIconStyle, hideEmptySpaces
         case hideFullscreenApps, hideSingleSpace, horizontalScrollEnabled
         case invertHorizontalScroll, invertVerticalScroll, launchAtLogin, localSpaceNumbers, paddingScale
-        case scrollHapticFeedback, scrollSensitivity, scrollWrapAround
+        case scrollHapticFeedback, scrollHapticIntensity, scrollSensitivity, scrollWrapAround
         case separatorColor, showAllDisplays, showAllSpaces
         case sizeScale, soundName, uniqueIconsPerDisplay
         case verticalScrollEnabled
@@ -113,6 +114,8 @@ struct BackupSettings: Codable {
         localSpaceNumbers = try container.decodeIfPresent(Bool.self, forKey: .localSpaceNumbers) ?? false
         paddingScale = try container.decodeIfPresent(Double.self, forKey: .paddingScale)
         scrollHapticFeedback = try container.decodeIfPresent(Bool.self, forKey: .scrollHapticFeedback) ?? false
+        scrollHapticIntensity = try container.decodeIfPresent(Int.self, forKey: .scrollHapticIntensity)
+            ?? Layout.defaultScrollHapticIntensity
         scrollSensitivity = try container.decodeIfPresent(Double.self, forKey: .scrollSensitivity)
             ?? Layout.defaultScrollSensitivity
         scrollWrapAround = try container.decodeIfPresent(Bool.self, forKey: .scrollWrapAround) ?? false
@@ -140,6 +143,7 @@ struct BackupSettings: Codable {
         localSpaceNumbers: Bool,
         paddingScale: Double?,
         scrollHapticFeedback: Bool,
+        scrollHapticIntensity: Int,
         scrollSensitivity: Double,
         scrollWrapAround: Bool,
         separatorColor: CodableColor?,
@@ -164,6 +168,7 @@ struct BackupSettings: Codable {
         self.localSpaceNumbers = localSpaceNumbers
         self.paddingScale = paddingScale
         self.scrollHapticFeedback = scrollHapticFeedback
+        self.scrollHapticIntensity = scrollHapticIntensity
         self.scrollSensitivity = scrollSensitivity
         self.scrollWrapAround = scrollWrapAround
         self.separatorColor = separatorColor
@@ -456,6 +461,7 @@ enum BackupManager {
             localSpaceNumbers: store.localSpaceNumbers,
             paddingScale: store.paddingScale,
             scrollHapticFeedback: store.scrollHapticFeedback,
+            scrollHapticIntensity: store.scrollHapticIntensity,
             scrollSensitivity: store.scrollSensitivity,
             scrollWrapAround: store.scrollWrapAround,
             separatorColor: store.separatorColor.map { CodableColor(from: $0) },
@@ -580,6 +586,7 @@ enum BackupManager {
         store.paddingScale = (backup.settings.paddingScale ?? Layout.defaultPaddingScale)
             .clamped(to: Layout.paddingScaleRange)
         store.scrollHapticFeedback = backup.settings.scrollHapticFeedback
+        store.scrollHapticIntensity = backup.settings.scrollHapticIntensity
         store.scrollSensitivity = backup.settings.scrollSensitivity.clamped(to: Layout.scrollSensitivityRange)
         store.scrollWrapAround = backup.settings.scrollWrapAround
         store.separatorColor = backup.settings.separatorColor?.toNSColor()

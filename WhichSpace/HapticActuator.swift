@@ -25,9 +25,6 @@ enum HapticActuator {
         let actuate: MTActuatorActuateFn
     }
 
-    /// A subtle single tap (6 is the strong Force Touch detent weight)
-    private static let actuationID: Int32 = 3
-
     private static let api: API? = {
         guard let handle = dlopen(
             "/System/Library/PrivateFrameworks/MultitouchSupport.framework/MultitouchSupport",
@@ -50,33 +47,39 @@ enum HapticActuator {
         )
     }()
 
-    private static var actuator: CFTypeRef?
+    private static var actuators: [CFTypeRef] = []
+    private static var didOpenActuators = false
 
-    /// Plays one haptic tap, opening the actuator on first use. Does nothing
-    /// on hardware without a haptic trackpad.
-    static func actuate() {
+    /// Plays one haptic tap on every available Force Touch trackpad, opening
+    /// their actuators on first use. Does nothing without a haptic trackpad.
+    static func actuate(intensity: Int) {
         guard let api else {
             return
         }
-        if actuator == nil {
-            actuator = openActuator(api: api)
+        if !didOpenActuators {
+            actuators = openActuators(api: api)
+            didOpenActuators = true
         }
-        guard let actuator else {
+        guard !actuators.isEmpty else {
             return
         }
-        if api.actuate(actuator, actuationID, 0, 0, 0) != 0 {
-            // The actuator can go stale (e.g. across sleep/wake); drop it so
-            // the next call reopens a fresh one
-            Self.actuator = nil
+        let actuationID = Int32(intensity.clamped(to: Layout.scrollHapticIntensityRange))
+        let results = actuators.map { api.actuate($0, actuationID, 0, 0, 0) }
+        if results.contains(where: { $0 != 0 }) {
+            // Actuators can go stale (e.g. across sleep/wake); drop them so
+            // the next call enumerates and opens the current devices again.
+            actuators.removeAll()
+            didOpenActuators = false
         }
     }
 
-    /// Returns the first multitouch device whose actuator opens successfully.
-    /// Device IDs vary by hardware generation, so enumeration is required.
-    private static func openActuator(api: API) -> CFTypeRef? {
+    /// Returns every multitouch device whose actuator opens successfully.
+    /// This covers Macs used with both a built-in and an external trackpad.
+    private static func openActuators(api: API) -> [CFTypeRef] {
         guard let list = api.createList()?.takeRetainedValue() else {
-            return nil
+            return []
         }
+        var actuators: [CFTypeRef] = []
         for device in list as NSArray {
             var deviceID: UInt64 = 0
             guard api.getDeviceID(device as AnyObject, &deviceID) == 0,
@@ -85,9 +88,9 @@ enum HapticActuator {
                 continue
             }
             if api.open(actuator) == 0 {
-                return actuator
+                actuators.append(actuator)
             }
         }
-        return nil
+        return actuators
     }
 }

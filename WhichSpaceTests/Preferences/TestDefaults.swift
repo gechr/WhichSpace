@@ -165,6 +165,8 @@ struct DefaultsIsolationGuardTests {
     func storeOperations() {
         #expect(!store.showAllSpaces)
         #expect(store.sizeScale == Layout.defaultSizeScale)
+        #expect(!store.scrollHapticFeedback)
+        #expect(store.scrollHapticIntensity == Layout.defaultScrollHapticIntensity)
         #expect(store.spaceColors.isEmpty)
 
         store.showAllSpaces = true
@@ -205,6 +207,7 @@ struct DefaultsIsolationGuardTests {
             "localSpaceNumbers",
             "paddingScale",
             "scrollHapticFeedback",
+            "scrollHapticIntensity",
             "scrollSensitivity",
             "scrollWrapAround",
             "separatorColor",

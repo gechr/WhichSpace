@@ -85,6 +85,10 @@ enum KeySpecs {
         name: "scrollHapticFeedback",
         defaultValue: false
     )
+    static let scrollHapticIntensity = TypedKeySpec(
+        name: "scrollHapticIntensity",
+        defaultValue: Layout.defaultScrollHapticIntensity
+    )
     static let scrollSensitivity = TypedKeySpec(
         name: "scrollSensitivity",
         defaultValue: Layout.defaultScrollSensitivity
@@ -131,6 +135,7 @@ enum KeySpecs {
         localSpaceNumbers,
         paddingScale,
         scrollHapticFeedback,
+        scrollHapticIntensity,
         scrollSensitivity,
         scrollWrapAround,
         separatorColor,
@@ -159,6 +164,7 @@ enum KeySpecs {
         invertHorizontalScroll.name,
         invertVerticalScroll.name,
         scrollHapticFeedback.name,
+        scrollHapticIntensity.name,
         scrollSensitivity.name,
         scrollWrapAround.name,
         soundName.name,
@@ -362,6 +368,11 @@ final class DefaultsStore {
     var scrollHapticFeedback: Bool {
         get { self[KeySpecs.scrollHapticFeedback] }
         set { self[KeySpecs.scrollHapticFeedback] = newValue }
+    }
+
+    var scrollHapticIntensity: Int {
+        get { self[KeySpecs.scrollHapticIntensity] }
+        set { self[KeySpecs.scrollHapticIntensity] = newValue.clamped(to: Layout.scrollHapticIntensityRange) }
     }
 
     var scrollSensitivity: Double {

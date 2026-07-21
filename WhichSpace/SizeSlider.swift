@@ -8,6 +8,7 @@ final class SizeSlider: NSView {
     private let slider: NSSlider
     private let stepper: NSStepper
     private let valueLabel: NSTextField
+    private let valueFormatter: (Double) -> String
 
     private let controlHeight = 20.0
     private let labelHeight = 12.0
@@ -23,11 +24,19 @@ final class SizeSlider: NSView {
         set {
             slider.doubleValue = newValue
             stepper.doubleValue = newValue
-            valueLabel.stringValue = String(format: "%.0f%%", newValue)
+            valueLabel.stringValue = valueFormatter(newValue)
         }
     }
 
-    init(initialSize: Double, range: ClosedRange<Double>) {
+    init(
+        initialSize: Double,
+        range: ClosedRange<Double>,
+        minimumLabel: String? = nil,
+        maximumLabel: String? = nil,
+        numberOfTickMarks: Int? = nil,
+        valueFormatter: @escaping (Double) -> String = { String(format: "%.0f%%", $0) }
+    ) {
+        self.valueFormatter = valueFormatter
         slider = NSSlider(
             value: initialSize,
             minValue: range.lowerBound,
@@ -36,13 +45,13 @@ final class SizeSlider: NSView {
             action: nil
         )
         stepper = NSStepper()
-        minLabel = NSTextField(labelWithString: String(format: "%.0f%%", range.lowerBound))
-        maxLabel = NSTextField(labelWithString: String(format: "%.0f%%", range.upperBound))
-        valueLabel = NSTextField(labelWithString: String(format: "%.0f%%", initialSize))
+        minLabel = NSTextField(labelWithString: minimumLabel ?? String(format: "%.0f%%", range.lowerBound))
+        maxLabel = NSTextField(labelWithString: maximumLabel ?? String(format: "%.0f%%", range.upperBound))
+        valueLabel = NSTextField(labelWithString: valueFormatter(initialSize))
 
         super.init(frame: .zero)
 
-        setupSlider(range: range)
+        setupSlider(range: range, numberOfTickMarks: numberOfTickMarks)
         setupStepper(range: range)
         setupLabels()
         currentSize = initialSize
@@ -55,12 +64,16 @@ final class SizeSlider: NSView {
 
     // MARK: - Setup
 
-    private func setupSlider(range: ClosedRange<Double>) {
+    private func setupSlider(range: ClosedRange<Double>, numberOfTickMarks: Int?) {
         slider.minValue = range.lowerBound
         slider.maxValue = range.upperBound
         slider.target = self
         slider.action = #selector(sliderChanged)
         slider.isContinuous = true
+        if let numberOfTickMarks {
+            slider.numberOfTickMarks = numberOfTickMarks
+            slider.allowsTickMarkValuesOnly = true
+        }
         addSubview(slider)
     }
 
@@ -111,7 +124,7 @@ final class SizeSlider: NSView {
         slider.frame = CGRect(x: padding, y: yControls, width: sliderWidth, height: controlHeight)
         stepper.frame = CGRect(x: padding + sliderWidth + 8, y: yControls, width: stepperWidth, height: controlHeight)
 
-        let labelWidth = 32.0
+        let labelWidth = 60.0
         minLabel.frame = CGRect(x: padding, y: bottomLabelY, width: labelWidth, height: labelHeight)
         maxLabel.frame = CGRect(
             x: padding + sliderWidth - labelWidth,
@@ -206,17 +219,20 @@ final class SizeSlider: NSView {
     @objc private func sliderChanged() {
         window?.makeFirstResponder(self)
         let value = round(slider.doubleValue)
+        let changed = value != stepper.doubleValue
         slider.doubleValue = value
         stepper.doubleValue = value
-        valueLabel.stringValue = String(format: "%.0f%%", value)
-        onSizeChanged?(value)
+        valueLabel.stringValue = valueFormatter(value)
+        if changed {
+            onSizeChanged?(value)
+        }
     }
 
     @objc private func stepperChanged() {
         window?.makeFirstResponder(self)
         let value = stepper.doubleValue
         slider.doubleValue = value
-        valueLabel.stringValue = String(format: "%.0f%%", value)
+        valueLabel.stringValue = valueFormatter(value)
         onSizeChanged?(value)
     }
 }

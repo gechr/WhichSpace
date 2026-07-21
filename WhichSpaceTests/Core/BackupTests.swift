@@ -403,6 +403,7 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
             "version": "1.0.0",
             "settings": {
                 "scrollHapticFeedback": true,
+                "scrollHapticIntensity": 6,
                 "scrollWrapAround": true
             }
         }
@@ -412,6 +413,7 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         BackupManager.apply(backup, to: store)
 
         XCTAssertTrue(store.scrollHapticFeedback)
+        XCTAssertEqual(store.scrollHapticIntensity, 6)
         XCTAssertTrue(store.scrollWrapAround)
     }
 

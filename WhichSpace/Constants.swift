@@ -83,6 +83,8 @@ enum Layout {
     // Scroll-to-switch sensitivity (percentage)
     static let defaultScrollSensitivity = 100.0
     static let scrollSensitivityRange = 25.0 ... 200.0
+    static let scrollHapticIntensityRange = 1 ... 6
+    static let defaultScrollHapticIntensity = 4
     static let defaultHorizontalPadding = statusItemWidth - baseSquareSize // 4.0pt
 
     // Base sizes (at 100% scale)
@@ -106,6 +108,27 @@ enum Layout {
         static let polygonCornerRadius = 3.0
         static let sfSymbolPointSize = 16.0
         static let triangleCornerRadius = 5.0
+    }
+}
+
+enum HapticIntensityLabel {
+    static func label(for intensity: Int) -> String {
+        switch intensity {
+        case 1:
+            "Very Light"
+        case 2:
+            "Light"
+        case 3:
+            "Medium"
+        case 4:
+            "Strong"
+        case 5:
+            "Very Strong"
+        case 6:
+            "Maximum"
+        default:
+            "Off"
+        }
     }
 }
 
@@ -169,7 +192,7 @@ enum MenuTag: Int {
     case launchAtLogin
     case localSpaceNumbers
     case paddingRow
-    case scrollHapticFeedback
+    case scrollHapticIntensityRow
     case scrollMenuItem
     case scrollSensitivityRow
     case scrollWrapAround

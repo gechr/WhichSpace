@@ -10,6 +10,7 @@ protocol MenuActionDelegate: AnyObject {
     func sizeChanged(to scale: Double)
     func paddingChanged(to scale: Double)
     func scrollSensitivityChanged(to scale: Double)
+    func scrollHapticIntensityChanged(to intensity: Int)
     func skinToneSelected(_ tone: SkinTone)
     func foregroundColorSelected(_ color: NSColor)
     func backgroundColorSelected(_ color: NSColor)
@@ -113,8 +114,6 @@ final class MenuBuilder {
         setCheckmark(.invertVerticalScroll, store.invertVerticalScroll)
         setCheckmark(.invertHorizontalScroll, store.invertHorizontalScroll)
         setCheckmark(.scrollWrapAround, store.scrollWrapAround)
-        setCheckmark(.scrollHapticFeedback, store.scrollHapticFeedback)
-
         setCheckmark(.dimInactiveSpaces, store.dimInactiveSpaces)
         menu.item(withTag: MenuTag.dimInactiveSpaces.rawValue)?.isHidden = !showMultiSpaceOptions
 
@@ -276,6 +275,9 @@ final class MenuBuilder {
 
             if item.tag == MenuTag.scrollSensitivityRow.rawValue, let view = item.view as? SizeSlider {
                 view.currentSize = store.scrollSensitivity
+            }
+            if item.tag == MenuTag.scrollHapticIntensityRow.rawValue, let view = item.view as? SizeSlider {
+                view.currentSize = store.scrollHapticFeedback ? Double(store.scrollHapticIntensity) : 0
             }
 
             // Update badge character input
@@ -815,15 +817,28 @@ final class MenuBuilder {
             symbolName: "repeat",
             toolTip: Localization.tipScrollWrapAround
         )
-        addMenuItem(
-            to: scrollMenu,
-            title: Localization.toggleScrollHapticFeedback,
-            action: #selector(ActionHandler.toggleScrollHapticFeedback),
-            target: target,
-            tag: .scrollHapticFeedback,
-            symbolName: "hand.tap",
-            toolTip: Localization.tipScrollHapticFeedback
-        )
+        scrollMenu.addItem(.separator())
+
+        let hapticLabel = NSMenuItem(title: Localization.toggleScrollHapticFeedback, action: nil, keyEquivalent: "")
+        hapticLabel.isEnabled = false
+        scrollMenu.addItem(hapticLabel)
+
+        let hapticItem = NSMenuItem()
+        hapticItem.tag = MenuTag.scrollHapticIntensityRow.rawValue
+        let hapticSlider = SizeSlider(
+            initialSize: store.scrollHapticFeedback ? Double(store.scrollHapticIntensity) : 0,
+            range: 0 ... Double(Layout.scrollHapticIntensityRange.upperBound),
+            minimumLabel: "Off",
+            maximumLabel: "Maximum",
+            numberOfTickMarks: Layout.scrollHapticIntensityRange.upperBound + 1
+        ) { HapticIntensityLabel.label(for: Int($0)) }
+        hapticSlider.frame = NSRect(origin: .zero, size: hapticSlider.intrinsicContentSize)
+        hapticSlider.onSizeChanged = { [weak actionDelegate] intensity in
+            actionDelegate?.scrollHapticIntensityChanged(to: Int(intensity))
+        }
+        hapticItem.view = hapticSlider
+        hapticItem.toolTip = Localization.tipScrollHapticFeedback
+        scrollMenu.addItem(hapticItem)
 
         scrollMenu.addItem(.separator())
 

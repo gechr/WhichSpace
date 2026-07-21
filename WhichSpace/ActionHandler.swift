@@ -106,10 +106,6 @@ final class ActionHandler: NSObject {
         store.localSpaceNumbers.toggle()
     }
 
-    @objc func toggleScrollHapticFeedback() {
-        store.scrollHapticFeedback.toggle()
-    }
-
     @objc func toggleScrollWrapAround() {
         store.scrollWrapAround.toggle()
     }

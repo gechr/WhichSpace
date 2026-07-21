@@ -52,6 +52,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
     /// Switches one Space left or right; injectable so scroll tests don't move real Spaces
     private let relativeSpaceSwitchAction: (_ goRight: Bool, _ wrap: Bool) -> Void
+    /// Plays scroll haptics; injectable so gesture classification can be tested.
+    private let scrollHapticAction: @MainActor (Int) -> Void
     /// Accumulated precise scroll delta at 100% sensitivity; a switch fires on crossing
     private static let scrollSpaceBaseThreshold = 50.0
     /// Minimum interval between scroll-triggered switches, so a flick lands one Space over
@@ -101,6 +103,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             }
             SpaceSwitcher.switchRelative(goRight: goRight, wrap: wrap)
         }
+        scrollHapticAction = HapticActuator.actuate
         super.init()
         configureActionHandler()
     }
@@ -118,13 +121,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
                 return
             }
             SpaceSwitcher.switchRelative(goRight: goRight, wrap: wrap)
-        }
+        },
+        scrollHapticAction: @escaping @MainActor (Int) -> Void = HapticActuator.actuate
     ) {
         self.appState = appState
         self.confirmAction = confirmAction
         self.launchAtLogin = launchAtLogin
         self.missionControlNotificationSender = missionControlNotificationSender
         self.relativeSpaceSwitchAction = relativeSpaceSwitchAction
+        self.scrollHapticAction = scrollHapticAction
         super.init()
         configureActionHandler()
     }
@@ -461,11 +466,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
         if shouldSwitch {
             lastScrollSwitchTimestamp = event.timestamp
-            // Trackpad gestures only: the haptic motor is in the trackpad, so
-            // actuating for a mouse wheel would buzz hardware the user is not
-            // touching
-            if precise, store.scrollHapticFeedback {
-                HapticActuator.actuate()
+            // Gesture phases indicate direct touch interaction more reliably
+            // than precise deltas, which smooth-scrolling mice can also emit.
+            if !event.phase.isEmpty, store.scrollHapticFeedback {
+                scrollHapticAction(store.scrollHapticIntensity)
             }
             relativeSpaceSwitchAction(goRight, store.scrollWrapAround)
         }
@@ -749,6 +753,14 @@ extension AppDelegate: MenuActionDelegate {
 
     func scrollSensitivityChanged(to scale: Double) {
         store.scrollSensitivity = scale
+    }
+
+    func scrollHapticIntensityChanged(to intensity: Int) {
+        store.scrollHapticFeedback = intensity > 0
+        if intensity > 0 {
+            store.scrollHapticIntensity = intensity
+            scrollHapticAction(intensity)
+        }
     }
 
     func skinToneSelected(_ tone: SkinTone) {

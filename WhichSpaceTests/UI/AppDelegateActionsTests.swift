@@ -245,6 +245,7 @@ final class AppDelegateActionsTests: XCTestCase {
         deltaX: Int32 = 0,
         precise: Bool,
         momentum: Bool = false,
+        phase: Int64? = nil,
         timestamp: TimeInterval = 0
     ) throws -> NSEvent {
         let cgEvent = try XCTUnwrap(CGEvent(
@@ -259,6 +260,9 @@ final class AppDelegateActionsTests: XCTestCase {
         cgEvent.timestamp = CGEventTimestamp(timestamp * 1_000_000_000)
         if momentum {
             cgEvent.setIntegerValueField(.scrollWheelEventMomentumPhase, value: 1)
+        }
+        if let phase {
+            cgEvent.setIntegerValueField(.scrollWheelEventScrollPhase, value: phase)
         }
         return try XCTUnwrap(NSEvent(cgEvent: cgEvent))
     }
@@ -470,6 +474,78 @@ final class AppDelegateActionsTests: XCTestCase {
 
         XCTAssertNil(result)
         XCTAssertEqual(switches, [])
+    }
+
+    func testHandleScrollEvent_directGesturePlaysHapticEvenWithoutPreciseDeltas() throws {
+        store.scrollHapticFeedback = true
+        store.scrollHapticIntensity = 6
+        var hapticIntensities: [Int] = []
+        let localSut = AppDelegate(
+            appState: appState,
+            confirmAction: confirmStub.callAsFunction,
+            launchAtLogin: launchAtLoginStub,
+            relativeSpaceSwitchAction: { _, _ in },
+            scrollHapticAction: { hapticIntensities.append($0) }
+        )
+        let event = try makeScrollEvent(deltaY: 1, precise: false, phase: 2)
+
+        XCTAssertNil(localSut.handleScrollEvent(event, in: buttonContaining(event)))
+
+        XCTAssertEqual(hapticIntensities, [6])
+    }
+
+    func testHandleScrollEvent_preciseScrollWithoutGesturePhaseDoesNotPlayHaptic() throws {
+        store.scrollHapticFeedback = true
+        var hapticCount = 0
+        let localSut = AppDelegate(
+            appState: appState,
+            confirmAction: confirmStub.callAsFunction,
+            launchAtLogin: launchAtLoginStub,
+            relativeSpaceSwitchAction: { _, _ in },
+            scrollHapticAction: { _ in hapticCount += 1 }
+        )
+        let event = try makeScrollEvent(deltaY: 60, precise: true)
+
+        XCTAssertNil(localSut.handleScrollEvent(event, in: buttonContaining(event)))
+
+        XCTAssertEqual(hapticCount, 0)
+    }
+
+    func testScrollHapticIntensityChanged_zeroDisablesFeedback() {
+        store.scrollHapticFeedback = true
+        store.scrollHapticIntensity = 4
+        var previews: [Int] = []
+        let localSut = AppDelegate(
+            appState: appState,
+            confirmAction: confirmStub.callAsFunction,
+            launchAtLogin: launchAtLoginStub,
+            missionControlNotificationSender: { _ in },
+            relativeSpaceSwitchAction: { _, _ in }
+        ) { previews.append($0) }
+
+        localSut.scrollHapticIntensityChanged(to: 0)
+
+        XCTAssertFalse(store.scrollHapticFeedback)
+        XCTAssertEqual(store.scrollHapticIntensity, 4)
+        XCTAssertEqual(previews, [])
+    }
+
+    func testScrollHapticIntensityChanged_enablesFeedbackAndPreviewsLevel() {
+        store.scrollHapticFeedback = false
+        var previews: [Int] = []
+        let localSut = AppDelegate(
+            appState: appState,
+            confirmAction: confirmStub.callAsFunction,
+            launchAtLogin: launchAtLoginStub,
+            missionControlNotificationSender: { _ in },
+            relativeSpaceSwitchAction: { _, _ in }
+        ) { previews.append($0) }
+
+        localSut.scrollHapticIntensityChanged(to: 5)
+
+        XCTAssertTrue(store.scrollHapticFeedback)
+        XCTAssertEqual(store.scrollHapticIntensity, 5)
+        XCTAssertEqual(previews, [5])
     }
 
     // MARK: - toggleShowAllSpaces Tests
