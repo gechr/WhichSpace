@@ -277,10 +277,13 @@ final class AppDelegateActionsTests: XCTestCase {
     }
 
     private func makeScrollSut(recording switches: @escaping (Bool) -> Void) -> AppDelegate {
-        makeScrollSut { goRight, _ in switches(goRight) }
+        makeScrollSut { goRight, _ in
+            switches(goRight)
+            return true
+        }
     }
 
-    private func makeScrollSut(recording switches: @escaping (Bool, Bool) -> Void) -> AppDelegate {
+    private func makeScrollSut(recording switches: @escaping (Bool, Bool) -> Bool) -> AppDelegate {
         AppDelegate(
             appState: appState,
             confirmAction: confirmStub.callAsFunction,
@@ -445,7 +448,10 @@ final class AppDelegateActionsTests: XCTestCase {
     func testHandleScrollEvent_forwardsWrapAroundPreference() throws {
         store.scrollWrapAround = true
         var wraps: [Bool] = []
-        let localSut = makeScrollSut { (_: Bool, wrap: Bool) in wraps.append(wrap) }
+        let localSut = makeScrollSut { (_: Bool, wrap: Bool) in
+            wraps.append(wrap)
+            return true
+        }
         let event = try makeScrollEvent(deltaY: 1, precise: false)
 
         let result = localSut.handleScrollEvent(event, in: buttonContaining(event))
@@ -456,7 +462,10 @@ final class AppDelegateActionsTests: XCTestCase {
 
     func testHandleScrollEvent_wrapAroundDisabledByDefault() throws {
         var wraps: [Bool] = []
-        let localSut = makeScrollSut { (_: Bool, wrap: Bool) in wraps.append(wrap) }
+        let localSut = makeScrollSut { (_: Bool, wrap: Bool) in
+            wraps.append(wrap)
+            return true
+        }
         let event = try makeScrollEvent(deltaY: 1, precise: false)
 
         let result = localSut.handleScrollEvent(event, in: buttonContaining(event))
@@ -484,7 +493,7 @@ final class AppDelegateActionsTests: XCTestCase {
             appState: appState,
             confirmAction: confirmStub.callAsFunction,
             launchAtLogin: launchAtLoginStub,
-            relativeSpaceSwitchAction: { _, _ in },
+            relativeSpaceSwitchAction: { _, _ in true },
             scrollHapticAction: { hapticIntensities.append($0) }
         )
         let event = try makeScrollEvent(deltaY: 1, precise: false, phase: 2)
@@ -494,6 +503,24 @@ final class AppDelegateActionsTests: XCTestCase {
         XCTAssertEqual(hapticIntensities, [6])
     }
 
+    func testHandleScrollEvent_noHapticWhenSwitchDoesNotHappen() throws {
+        store.scrollHapticFeedback = true
+        store.scrollHapticIntensity = 6
+        var hapticCount = 0
+        let localSut = AppDelegate(
+            appState: appState,
+            confirmAction: confirmStub.callAsFunction,
+            launchAtLogin: launchAtLoginStub,
+            relativeSpaceSwitchAction: { _, _ in false },
+            scrollHapticAction: { _ in hapticCount += 1 }
+        )
+        let event = try makeScrollEvent(deltaY: 1, precise: false, phase: 2)
+
+        XCTAssertNil(localSut.handleScrollEvent(event, in: buttonContaining(event)))
+
+        XCTAssertEqual(hapticCount, 0)
+    }
+
     func testHandleScrollEvent_preciseScrollWithoutGesturePhaseDoesNotPlayHaptic() throws {
         store.scrollHapticFeedback = true
         var hapticCount = 0
@@ -501,7 +528,7 @@ final class AppDelegateActionsTests: XCTestCase {
             appState: appState,
             confirmAction: confirmStub.callAsFunction,
             launchAtLogin: launchAtLoginStub,
-            relativeSpaceSwitchAction: { _, _ in },
+            relativeSpaceSwitchAction: { _, _ in true },
             scrollHapticAction: { _ in hapticCount += 1 }
         )
         let event = try makeScrollEvent(deltaY: 60, precise: true)
@@ -520,7 +547,7 @@ final class AppDelegateActionsTests: XCTestCase {
             confirmAction: confirmStub.callAsFunction,
             launchAtLogin: launchAtLoginStub,
             missionControlNotificationSender: { _ in },
-            relativeSpaceSwitchAction: { _, _ in }
+            relativeSpaceSwitchAction: { _, _ in true }
         ) { previews.append($0) }
 
         localSut.scrollHapticIntensityChanged(to: 0)
@@ -538,7 +565,7 @@ final class AppDelegateActionsTests: XCTestCase {
             confirmAction: confirmStub.callAsFunction,
             launchAtLogin: launchAtLoginStub,
             missionControlNotificationSender: { _ in },
-            relativeSpaceSwitchAction: { _, _ in }
+            relativeSpaceSwitchAction: { _, _ in true }
         ) { previews.append($0) }
 
         localSut.scrollHapticIntensityChanged(to: 5)

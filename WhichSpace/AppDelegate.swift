@@ -51,7 +51,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     private var statusBarItem: NSStatusItem!
 
     /// Switches one Space left or right; injectable so scroll tests don't move real Spaces
-    private let relativeSpaceSwitchAction: (_ goRight: Bool, _ wrap: Bool) -> Void
+    private let relativeSpaceSwitchAction: (_ goRight: Bool, _ wrap: Bool) -> Bool
     /// Plays scroll haptics; injectable so gesture classification can be tested.
     private let scrollHapticAction: @MainActor (Int) -> Void
     /// Accumulated precise scroll delta at 100% sensitivity; a switch fires on crossing
@@ -99,9 +99,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
         relativeSpaceSwitchAction = { goRight, wrap in
             guard AXIsProcessTrusted() else {
-                return
+                return false
             }
-            SpaceSwitcher.switchRelative(goRight: goRight, wrap: wrap)
+            return SpaceSwitcher.switchRelative(goRight: goRight, wrap: wrap)
         }
         scrollHapticAction = HapticActuator.actuate
         super.init()
@@ -116,11 +116,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         missionControlNotificationSender: @escaping (CFString) -> Void = { notification in
             _ = CoreDockSendNotification(notification)
         },
-        relativeSpaceSwitchAction: @escaping (_ goRight: Bool, _ wrap: Bool) -> Void = { goRight, wrap in
+        relativeSpaceSwitchAction: @escaping (_ goRight: Bool, _ wrap: Bool) -> Bool = { goRight, wrap in
             guard AXIsProcessTrusted() else {
-                return
+                return false
             }
-            SpaceSwitcher.switchRelative(goRight: goRight, wrap: wrap)
+            return SpaceSwitcher.switchRelative(goRight: goRight, wrap: wrap)
         },
         scrollHapticAction: @escaping @MainActor (Int) -> Void = HapticActuator.actuate
     ) {
@@ -466,12 +466,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
         if shouldSwitch {
             lastScrollSwitchTimestamp = event.timestamp
+            let switched = relativeSpaceSwitchAction(goRight, store.scrollWrapAround)
             // Gesture phases indicate direct touch interaction more reliably
             // than precise deltas, which smooth-scrolling mice can also emit.
-            if !event.phase.isEmpty, store.scrollHapticFeedback {
+            if switched, !event.phase.isEmpty, store.scrollHapticFeedback {
                 scrollHapticAction(store.scrollHapticIntensity)
             }
-            relativeSpaceSwitchAction(goRight, store.scrollWrapAround)
         }
         return nil
     }

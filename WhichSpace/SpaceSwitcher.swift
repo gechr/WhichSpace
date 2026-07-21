@@ -124,60 +124,65 @@ enum SpaceSwitcher {
     /// wraps around to the opposite end.
     /// Posts a single synthetic dock-swipe gesture, so fullscreen Spaces are
     /// traversed the same way a real three-finger swipe would.
-    @MainActor static func switchRelative(goRight: Bool, wrap: Bool = false) {
+    /// Returns whether a switch was actually performed, so callers can skip
+    /// feedback (e.g. haptics) when the gesture was a no-op.
+    @discardableResult
+    @MainActor static func switchRelative(goRight: Bool, wrap: Bool = false) -> Bool {
         let conn = _CGSDefaultConnection()
 
         guard let activeDisplayRef = CGSCopyActiveMenuBarDisplayIdentifier(conn) else {
             NSLog("SpaceSwitcher: failed to get active menu bar display")
-            return
+            return false
         }
         let activeDisplayID = activeDisplayRef.takeRetainedValue() as String
 
         let displays = managedDisplays(connection: conn)
         guard let display = displays.first(where: { $0.identifier == activeDisplayID }) ?? displays.first else {
             NSLog("SpaceSwitcher: no display found")
-            return
+            return false
         }
 
         guard let cgsCurrentIndex = display.spaces.firstIndex(where: { $0.id == display.currentSpaceID }) else {
             NSLog("SpaceSwitcher: could not find current space (%d)", display.currentSpaceID)
-            return
+            return false
         }
 
         let currentIndex = predictedIndex[display.identifier] ?? cgsCurrentIndex
         let targetIndex = currentIndex + (goRight ? 1 : -1)
         guard display.spaces.indices.contains(targetIndex) else {
             if wrap {
-                wrapAround(goRight: goRight, currentIndex: currentIndex, display: display)
+                return wrapAround(goRight: goRight, currentIndex: currentIndex, display: display)
             }
-            return
+            return false
         }
 
         guard postSwipeGesture(goRight: goRight, velocity: swipeVelocity) else {
-            return
+            return false
         }
 
         predictedIndex[display.identifier] = targetIndex
+        return true
     }
 
     /// Jumps from one edge of the Space strip to the other by swiping back
     /// across every intermediate Space, mirroring how `switchToSpace(id:)`
     /// covers multi-Space distances.
-    @MainActor private static func wrapAround(goRight: Bool, currentIndex: Int, display: ManagedDisplay) {
+    @MainActor private static func wrapAround(goRight: Bool, currentIndex: Int, display: ManagedDisplay) -> Bool {
         let targetIndex = goRight ? 0 : display.spaces.count - 1
         let steps = abs(targetIndex - currentIndex)
         guard steps > 0 else {
-            return
+            return false
         }
 
         let velocity = swipeVelocity * Double(steps)
         for _ in 0 ..< steps {
             guard postSwipeGesture(goRight: !goRight, velocity: velocity) else {
-                return
+                return false
             }
         }
 
         predictedIndex[display.identifier] = targetIndex
+        return true
     }
 
     // MARK: - CGS Dictionary Decoding
