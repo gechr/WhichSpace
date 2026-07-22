@@ -29,7 +29,7 @@ enum LabelTemplate {
 
     /// Maximum label content length, excluding template tokens.
     /// Shared by the menu input field and the AppleScript setter.
-    static let maxContentLength = 10
+    static let maxContentLength = 20
 
     /// Returns the content length of a label, excluding template tokens.
     /// Used for character limit validation in the input field.

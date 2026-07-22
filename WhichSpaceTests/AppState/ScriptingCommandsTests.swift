@@ -275,18 +275,24 @@ struct ScriptingCommandsTests {
     func setCurrentLabel_overLimitTruncatesWithEllipsis() {
         let appState = makeAppState()
 
-        ScriptingHelpers.setCurrentLabel("ABCDEFGHIJKLMNOP", appState: appState, store: store)
+        ScriptingHelpers.setCurrentLabel(String(repeating: "A", count: 25), appState: appState, store: store)
 
-        #expect(SpacePreferences.label(forSpace: 2, display: appState.currentDisplayID, store: store) == "ABCDEFGHI…")
+        #expect(
+            SpacePreferences.label(forSpace: 2, display: appState.currentDisplayID, store: store) ==
+                String(repeating: "A", count: 19) + "…"
+        )
     }
 
     @Test("setCurrentLabel at exactly the limit is stored unchanged")
     func setCurrentLabel_atLimitIsStoredUnchanged() {
         let appState = makeAppState()
 
-        ScriptingHelpers.setCurrentLabel("ABCDEFGHIJ", appState: appState, store: store)
+        ScriptingHelpers.setCurrentLabel(String(repeating: "A", count: 20), appState: appState, store: store)
 
-        #expect(SpacePreferences.label(forSpace: 2, display: appState.currentDisplayID, store: store) == "ABCDEFGHIJ")
+        #expect(
+            SpacePreferences.label(forSpace: 2, display: appState.currentDisplayID, store: store) ==
+                String(repeating: "A", count: 20)
+        )
     }
 
     @Test("setCurrentLabel excludes {number} tokens from the limit")

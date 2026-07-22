@@ -266,15 +266,21 @@ struct InputValidationTests {
 
     @Test("LabelTemplate truncate trims content to the limit")
     func labelTemplateTruncate() {
-        #expect(LabelTemplate.truncate("ABCDEFGHIJKLMNOP") == "ABCDEFGHIJ")
-        #expect(LabelTemplate.truncate("ABCDEFGHIJ") == "ABCDEFGHIJ")
+        #expect(LabelTemplate.truncate(String(repeating: "A", count: 25)) == String(repeating: "A", count: 20))
+        #expect(LabelTemplate.truncate(String(repeating: "A", count: 20)) == String(repeating: "A", count: 20))
         #expect(LabelTemplate.truncate("").isEmpty)
     }
 
     @Test("LabelTemplate truncate appends ellipsis only when trimming")
     func labelTemplateTruncateWithEllipsis() {
-        #expect(LabelTemplate.truncate("ABCDEFGHIJKLMNOP", ellipsis: true) == "ABCDEFGHI…")
-        #expect(LabelTemplate.truncate("ABCDEFGHIJ", ellipsis: true) == "ABCDEFGHIJ")
+        #expect(
+            LabelTemplate.truncate(String(repeating: "A", count: 25), ellipsis: true) ==
+                String(repeating: "A", count: 19) + "…"
+        )
+        #expect(LabelTemplate.truncate(String(repeating: "A", count: 20), ellipsis: true) == String(
+            repeating: "A",
+            count: 20
+        ))
         #expect(LabelTemplate.truncate("", ellipsis: true).isEmpty)
     }
 
@@ -282,8 +288,14 @@ struct InputValidationTests {
     func labelTemplateTruncatePreservesTokens() {
         // Trimming into a token turns "{number" into content, so the loop
         // keeps trimming until the partial token is gone
-        #expect(LabelTemplate.truncate("{number} - ABCDEFGHIJK") == "{number} - ABCDEFG")
-        #expect(LabelTemplate.truncate("{number} - ABCDEFGHIJK", ellipsis: true) == "{number} - ABCDEF…")
+        #expect(
+            LabelTemplate.truncate("{number} - " + String(repeating: "A", count: 25)) ==
+                "{number} - " + String(repeating: "A", count: 17)
+        )
+        #expect(
+            LabelTemplate.truncate("{number} - " + String(repeating: "A", count: 25), ellipsis: true) ==
+                "{number} - " + String(repeating: "A", count: 16) + "…"
+        )
         #expect(LabelTemplate.truncate("{number}") == "{number}")
     }
 
