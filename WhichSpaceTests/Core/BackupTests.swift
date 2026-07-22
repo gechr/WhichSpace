@@ -765,5 +765,56 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
     func testDefaultFilename() {
         XCTAssertEqual(BackupManager.defaultFilename, "WhichSpaceSettings.json")
     }
+
+    // MARK: - Combined Symbol Layout Tests
+
+    func testEncodeApplyRoundTripPreservesSymbolLayout() throws {
+        SpacePreferences.setLabel("Work", forSpace: 1, store: store)
+        SpacePreferences.setSymbol("star.fill", forSpace: 1, store: store)
+        SpacePreferences.setSymbolPosition(.right, forSpace: 1, store: store)
+        SpacePreferences.setSymbolWrap(.outside, forSpace: 1, store: store)
+        SpacePreferences.setSymbolGap(7.0, forSpace: 1, store: store)
+        SpacePreferences.setColors(
+            SpaceColors(foreground: .red, background: .blue, symbol: .green),
+            forSpace: 1,
+            store: store
+        )
+
+        let json = try BackupManager.encode(store: store)
+        SpacePreferences.clearAll(store: store)
+        let backup = try BackupManager.decode(jsonString: json)
+        BackupManager.apply(backup, to: store)
+
+        XCTAssertEqual(SpacePreferences.label(forSpace: 1, store: store), "Work")
+        XCTAssertEqual(SpacePreferences.symbol(forSpace: 1, store: store), "star.fill")
+        XCTAssertEqual(SpacePreferences.symbolPosition(forSpace: 1, store: store), .right)
+        XCTAssertEqual(SpacePreferences.symbolWrap(forSpace: 1, store: store), .outside)
+        XCTAssertEqual(SpacePreferences.symbolGap(forSpace: 1, store: store), 7.0)
+        XCTAssertNotNil(SpacePreferences.colors(forSpace: 1, store: store)?.symbol)
+    }
+
+    func testLegacyBackupWithoutSymbolLayoutFieldsImports() throws {
+        let json = """
+        {
+            "bundleId": "com.test.app",
+            "version": "1.0.0",
+            "settings": {},
+            "spacePreferences": {
+                "labels": { "1": "Work" },
+                "symbols": { "1": "star.fill" }
+            },
+            "displaySpacePreferences": {}
+        }
+        """
+
+        let backup = try BackupManager.decode(jsonString: json)
+        BackupManager.apply(backup, to: store)
+
+        XCTAssertEqual(SpacePreferences.label(forSpace: 1, store: store), "Work")
+        XCTAssertEqual(SpacePreferences.symbol(forSpace: 1, store: store), "star.fill")
+        XCTAssertNil(SpacePreferences.symbolPosition(forSpace: 1, store: store))
+        XCTAssertNil(SpacePreferences.symbolWrap(forSpace: 1, store: store))
+        XCTAssertNil(SpacePreferences.symbolGap(forSpace: 1, store: store))
+    }
     // swiftlint:enable line_length
 }

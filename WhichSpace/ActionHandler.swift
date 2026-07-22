@@ -208,7 +208,7 @@ final class ActionHandler: NSObject {
         let foreground = appState.currentColors?.foreground ?? defaults.foreground
         let background = appState.currentColors?.background ?? defaults.background
         SpacePreferences.setColors(
-            SpaceColors(foreground: background, background: foreground),
+            SpaceColors(foreground: background, background: foreground, symbol: appState.currentColors?.symbol),
             forSpace: appState.currentSpace,
             display: appState.currentDisplayID,
             store: store
@@ -356,6 +356,61 @@ final class ActionHandler: NSObject {
         }
         SpacePreferences.setBadge(
             SpaceBadge(character: character, position: position),
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
+        onStatusBarIconNeedsUpdate?()
+    }
+
+    // MARK: - Combined Symbol Layout
+
+    @objc func symbolPositionSelected(_ sender: NSMenuItem) {
+        guard appState.currentSpace > 0,
+              let rawValue = sender.representedObject as? String,
+              let position = SymbolPosition(rawValue: rawValue)
+        else {
+            return
+        }
+        SpacePreferences.setSymbolPosition(
+            position,
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
+        updateCheckmarks(in: sender.menu, tags: [.symbolPositionLeft, .symbolPositionRight], selected: sender.tag)
+        onStatusBarIconNeedsUpdate?()
+    }
+
+    @objc func symbolWrapSelected(_ sender: NSMenuItem) {
+        guard appState.currentSpace > 0,
+              let rawValue = sender.representedObject as? String,
+              let wrap = SymbolWrap(rawValue: rawValue)
+        else {
+            return
+        }
+        SpacePreferences.setSymbolWrap(
+            wrap,
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
+        updateCheckmarks(in: sender.menu, tags: [.symbolWrapInside, .symbolWrapOutside], selected: sender.tag)
+        onStatusBarIconNeedsUpdate?()
+    }
+
+    private func updateCheckmarks(in menu: NSMenu?, tags: [MenuTag], selected: Int) {
+        for tag in tags {
+            menu?.item(withTag: tag.rawValue)?.state = tag.rawValue == selected ? .on : .off
+        }
+    }
+
+    func setSymbolGap(_ gap: Double) {
+        guard appState.currentSpace > 0 else {
+            return
+        }
+        SpacePreferences.setSymbolGap(
+            gap.clamped(to: Layout.symbolGapScaleRange),
             forSpace: appState.currentSpace,
             display: appState.currentDisplayID,
             store: store
@@ -556,7 +611,23 @@ final class ActionHandler: NSObject {
         let foreground = isForeground ? color : (appState.currentColors?.foreground ?? defaults.foreground)
         let background = isForeground ? (appState.currentColors?.background ?? defaults.background) : color
         SpacePreferences.setColors(
-            SpaceColors(foreground: foreground, background: background),
+            SpaceColors(foreground: foreground, background: background, symbol: appState.currentColors?.symbol),
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
+        onStatusBarIconNeedsUpdate?()
+    }
+
+    func setSymbolColor(_ color: NSColor) {
+        guard appState.currentSpace > 0 else {
+            return
+        }
+        let defaults = IconColors.filledColors(darkMode: appState.darkModeEnabled)
+        let foreground = appState.currentColors?.foreground ?? defaults.foreground
+        let background = appState.currentColors?.background ?? defaults.background
+        SpacePreferences.setColors(
+            SpaceColors(foreground: foreground, background: background, symbol: color),
             forSpace: appState.currentSpace,
             display: appState.currentDisplayID,
             store: store
@@ -645,14 +716,6 @@ final class ActionHandler: NSObject {
             display: appState.currentDisplayID,
             store: store
         )
-        // Clear symbol so the label takes effect immediately
-        if let label, !label.isEmpty {
-            SpacePreferences.clearSymbol(
-                forSpace: appState.currentSpace,
-                display: appState.currentDisplayID,
-                store: store
-            )
-        }
         onStatusBarIconNeedsUpdate?()
     }
 
@@ -744,14 +807,6 @@ final class ActionHandler: NSObject {
             display: appState.currentDisplayID,
             store: store
         )
-        // Clear label so the symbol takes effect immediately
-        if symbol != nil {
-            SpacePreferences.clearLabel(
-                forSpace: appState.currentSpace,
-                display: appState.currentDisplayID,
-                store: store
-            )
-        }
         // When setting an emoji, also set the per-space skin tone to match the current global picker tone
         if let symbol, symbol.containsEmoji {
             SpacePreferences.setSkinTone(

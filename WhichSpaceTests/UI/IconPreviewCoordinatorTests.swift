@@ -5,15 +5,18 @@ import Testing
 struct IconPreviewCoordinatorTests {
     private func request(_ symbol: String) -> IconPreviewRequest {
         IconPreviewRequest(
-            style: nil,
-            labelStyle: nil,
-            symbol: symbol,
-            foreground: nil,
             background: nil,
-            separatorColor: nil,
+            badgePosition: nil,
             clearSymbol: false,
+            foreground: nil,
+            labelStyle: nil,
+            separatorColor: nil,
             skinTone: nil,
-            badgePosition: nil
+            style: nil,
+            symbol: symbol,
+            symbolColor: nil,
+            symbolPosition: nil,
+            symbolWrap: nil
         )
     }
 

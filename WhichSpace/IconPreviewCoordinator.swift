@@ -2,15 +2,18 @@ import AppKit
 
 /// A single hover-preview render request for the status bar icon.
 struct IconPreviewRequest {
-    let style: IconStyle?
-    let labelStyle: IconStyle?
-    let symbol: String?
-    let foreground: NSColor?
     let background: NSColor?
-    let separatorColor: NSColor?
-    let clearSymbol: Bool
-    let skinTone: SkinTone?
     let badgePosition: BadgePosition?
+    let clearSymbol: Bool
+    let foreground: NSColor?
+    let labelStyle: IconStyle?
+    let separatorColor: NSColor?
+    let skinTone: SkinTone?
+    let style: IconStyle?
+    let symbol: String?
+    let symbolColor: NSColor?
+    let symbolPosition: SymbolPosition?
+    let symbolWrap: SymbolWrap?
 }
 
 /// Owns the status bar icon hover-preview lifecycle: coalesces rapid

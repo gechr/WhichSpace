@@ -80,6 +80,12 @@ enum Layout {
     static let defaultPaddingScale = 100.0
     static let paddingScaleRange = 0.0 ... 200.0
 
+    /// Gap between a combined symbol and label at the 100% slider position, in points
+    static let maxSymbolGap = 12.0
+    /// Default gap percentage (25% of the maximum = 3 points)
+    static let defaultSymbolGapScale = 25.0
+    static let symbolGapScaleRange = 0.0 ... 100.0
+
     // Scroll-to-switch sensitivity (percentage)
     static let defaultScrollSensitivity = 100.0
     static let scrollSensitivityRange = 25.0 ... 200.0
@@ -205,7 +211,16 @@ enum MenuTag: Int {
     case skinToneLabel
     case skinToneSwatch
     case symbolColorSwatch
+    case symbolGapRow
+    case symbolGapSeparator
     case symbolLabel
+    case symbolPositionHeader
+    case symbolPositionLeft
+    case symbolPositionRight
+    case symbolSectionSeparator
+    case symbolWrapHeader
+    case symbolWrapInside
+    case symbolWrapOutside
     case uniqueIconsPerDisplay
     case verticalScrollEnabled
 }
@@ -296,6 +311,8 @@ enum Localization {
     static let labelHapticVeryLight = String(localized: "label_haptic_very_light")
     static let labelHapticVeryStrong = String(localized: "label_haptic_very_strong")
     static let labelHorizontal = String(localized: "label_horizontal")
+    static let labelLabelBackground = String(localized: "label_label_background")
+    static let labelLabelForeground = String(localized: "label_label_foreground")
     static let labelNumber = String(localized: "label_number")
     static let labelNumberBackground = String(localized: "label_number_background")
     static let labelNumberForeground = String(localized: "label_number_foreground")
@@ -303,6 +320,8 @@ enum Localization {
     static let labelSeparator = String(localized: "label_separator")
     static let labelSkinTone = String(localized: "label_skin_tone")
     static let labelSymbol = String(localized: "label_symbol")
+    static let labelSymbolPosition = String(localized: "label_symbol_position")
+    static let labelSymbolWrap = String(localized: "label_symbol_wrap")
     static let labelStyleBox = String(localized: "label_style_box")
     static let labelStyleBoxOutline = String(localized: "label_style_box_outline")
     static let labelStylePill = String(localized: "label_style_pill")
@@ -326,6 +345,10 @@ enum Localization {
     static let soundNone = String(localized: "sound_none")
     static let soundSystem = String(localized: "sound_system")
     static let soundUser = String(localized: "sound_user")
+    static let symbolPositionLeft = String(localized: "symbol_position_left")
+    static let symbolPositionRight = String(localized: "symbol_position_right")
+    static let symbolWrapInside = String(localized: "symbol_wrap_inside")
+    static let symbolWrapOutside = String(localized: "symbol_wrap_outside")
     static let tipCopyBadgeToAll = String(localized: "tip_copy_badge_to_all")
     static let tipCopyColorToAll = String(localized: "tip_copy_color_to_all")
     static let tipCopyLabelToAll = String(localized: "tip_copy_label_to_all")
@@ -333,6 +356,7 @@ enum Localization {
     static let tipCopyToAll = String(localized: "tip_copy_to_all")
     static let tipBadgeInput = String(localized: "tip_badge_input")
     static let tipCheckForUpdates = String(localized: "tip_check_for_updates")
+    static let tipClearSymbol = String(localized: "tip_clear_symbol")
     static let tipClickToSwitchSpaces = String(localized: "tip_click_to_switch_spaces")
     static let tipDimInactiveSpaces = String(localized: "tip_dim_inactive_spaces")
     static let tipExportSettings = String(localized: "tip_export_settings")
@@ -360,6 +384,10 @@ enum Localization {
     static let tipSetDefaultStyle = String(localized: "tip_set_default_style")
     static let tipShowAllDisplays = String(localized: "tip_show_all_displays")
     static let tipShowAllSpaces = String(localized: "tip_show_all_spaces")
+    static let tipSymbolPositionLeft = String(localized: "tip_symbol_position_left")
+    static let tipSymbolPositionRight = String(localized: "tip_symbol_position_right")
+    static let tipSymbolWrapInside = String(localized: "tip_symbol_wrap_inside")
+    static let tipSymbolWrapOutside = String(localized: "tip_symbol_wrap_outside")
     static let tipUniqueIconsPerDisplay = String(localized: "tip_unique_icons_per_display")
     static let tipUseFForFullscreenApps = String(localized: "tip_use_f_for_fullscreen_apps")
     static let toggleClickToSwitchSpaces = String(localized: "toggle_click_to_switch_spaces")

@@ -64,9 +64,21 @@ enum KeySpecs {
         name: "displaySpaceSkinTones",
         defaultValue: [String: [Int: SkinTone]]()
     )
+    static let displaySpaceSymbolGaps = TypedKeySpec(
+        name: "displaySpaceSymbolGaps",
+        defaultValue: [String: [Int: Double]]()
+    )
+    static let displaySpaceSymbolPositions = TypedKeySpec(
+        name: "displaySpaceSymbolPositions",
+        defaultValue: [String: [Int: SymbolPosition]]()
+    )
     static let displaySpaceSymbols = TypedKeySpec(
         name: "displaySpaceSymbols",
         defaultValue: [String: [Int: String]]()
+    )
+    static let displaySpaceSymbolWraps = TypedKeySpec(
+        name: "displaySpaceSymbolWraps",
+        defaultValue: [String: [Int: SymbolWrap]]()
     )
     static let emojiPickerSkinTone = TypedKeySpec(name: "emojiPickerSkinTone", defaultValue: SkinTone.default)
     static let fullscreenIconStyle = TypedKeySpec(
@@ -107,7 +119,13 @@ enum KeySpecs {
     static let spaceLabels = TypedKeySpec(name: "spaceLabels", defaultValue: [Int: String]())
     static let spaceLabelStyles = TypedKeySpec(name: "spaceLabelStyles", defaultValue: [Int: IconStyle]())
     static let spaceSkinTones = TypedKeySpec(name: "spaceSkinTones", defaultValue: [Int: SkinTone]())
+    static let spaceSymbolGaps = TypedKeySpec(name: "spaceSymbolGaps", defaultValue: [Int: Double]())
+    static let spaceSymbolPositions = TypedKeySpec(
+        name: "spaceSymbolPositions",
+        defaultValue: [Int: SymbolPosition]()
+    )
     static let spaceSymbols = TypedKeySpec(name: "spaceSymbols", defaultValue: [Int: String]())
+    static let spaceSymbolWraps = TypedKeySpec(name: "spaceSymbolWraps", defaultValue: [Int: SymbolWrap]())
     static let uniqueIconsPerDisplay = TypedKeySpec(name: "uniqueIconsPerDisplay", defaultValue: false)
 
     /// The single key registry: reset, test enumeration, and icon-change
@@ -123,7 +141,10 @@ enum KeySpecs {
         displaySpaceLabels,
         displaySpaceLabelStyles,
         displaySpaceSkinTones,
+        displaySpaceSymbolGaps,
+        displaySpaceSymbolPositions,
         displaySpaceSymbols,
+        displaySpaceSymbolWraps,
         emojiPickerSkinTone,
         fullscreenIconStyle,
         hideEmptySpaces,
@@ -150,7 +171,10 @@ enum KeySpecs {
         spaceLabels,
         spaceLabelStyles,
         spaceSkinTones,
+        spaceSymbolGaps,
+        spaceSymbolPositions,
         spaceSymbols,
+        spaceSymbolWraps,
         uniqueIconsPerDisplay,
         verticalScrollEnabled,
     ]
@@ -310,9 +334,24 @@ final class DefaultsStore {
         set { self[KeySpecs.displaySpaceSkinTones] = newValue }
     }
 
+    var displaySpaceSymbolGaps: [String: [Int: Double]] {
+        get { self[KeySpecs.displaySpaceSymbolGaps] }
+        set { self[KeySpecs.displaySpaceSymbolGaps] = newValue }
+    }
+
+    var displaySpaceSymbolPositions: [String: [Int: SymbolPosition]] {
+        get { self[KeySpecs.displaySpaceSymbolPositions] }
+        set { self[KeySpecs.displaySpaceSymbolPositions] = newValue }
+    }
+
     var displaySpaceSymbols: [String: [Int: String]] {
         get { self[KeySpecs.displaySpaceSymbols] }
         set { self[KeySpecs.displaySpaceSymbols] = newValue }
+    }
+
+    var displaySpaceSymbolWraps: [String: [Int: SymbolWrap]] {
+        get { self[KeySpecs.displaySpaceSymbolWraps] }
+        set { self[KeySpecs.displaySpaceSymbolWraps] = newValue }
     }
 
     var emojiPickerSkinTone: SkinTone {
@@ -476,9 +515,24 @@ final class DefaultsStore {
         set { self[KeySpecs.spaceSkinTones] = newValue }
     }
 
+    var spaceSymbolGaps: [Int: Double] {
+        get { self[KeySpecs.spaceSymbolGaps] }
+        set { self[KeySpecs.spaceSymbolGaps] = newValue }
+    }
+
+    var spaceSymbolPositions: [Int: SymbolPosition] {
+        get { self[KeySpecs.spaceSymbolPositions] }
+        set { self[KeySpecs.spaceSymbolPositions] = newValue }
+    }
+
     var spaceSymbols: [Int: String] {
         get { self[KeySpecs.spaceSymbols] }
         set { self[KeySpecs.spaceSymbols] = newValue }
+    }
+
+    var spaceSymbolWraps: [Int: SymbolWrap] {
+        get { self[KeySpecs.spaceSymbolWraps] }
+        set { self[KeySpecs.spaceSymbolWraps] = newValue }
     }
 
     var uniqueIconsPerDisplay: Bool {

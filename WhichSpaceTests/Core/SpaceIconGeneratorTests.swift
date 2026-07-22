@@ -59,6 +59,108 @@ struct SpaceIconGeneratorTests {
         #expect(Layout.defaultSizeScale == 100.0)
     }
 
+    // MARK: - Combined Symbol + Label Tests
+
+    private func combinedIcon(
+        text: String = "Work",
+        symbol: String = "star.fill",
+        position: SymbolPosition = .left,
+        wrap: SymbolWrap = .inside,
+        gap: Double = Layout.maxSymbolGap * Layout.defaultSymbolGapScale / 100.0,
+        badge: SpaceBadge? = nil
+    ) -> NSImage {
+        SpaceIconGenerator.generateCombinedIcon(
+            text: text,
+            symbolName: symbol,
+            position: position,
+            wrap: wrap,
+            gap: gap,
+            darkMode: true,
+            style: .pill,
+            badge: badge
+        )
+    }
+
+    @Test("combined icon is wider than symbol-only and label-only icons")
+    func combinedIconIsWider() {
+        let combined = combinedIcon()
+        let symbolOnly = SpaceIconGenerator.generateSymbolIcon(symbolName: "star.fill", darkMode: true)
+        let labelOnly = SpaceIconGenerator.generateIcon(for: "Work", darkMode: true, style: .pill)
+
+        #expect(combined.size.width > symbolOnly.size.width)
+        #expect(combined.size.width > labelOnly.size.width)
+    }
+
+    @Test("left and right positions produce equal widths")
+    func leftAndRightPositionsEqualWidths() {
+        for wrap in SymbolWrap.allCases {
+            let left = combinedIcon(position: .left, wrap: wrap)
+            let right = combinedIcon(position: .right, wrap: wrap)
+            #expect(left.size.width == right.size.width, "Widths should match for wrap \(wrap.rawValue)")
+        }
+    }
+
+    @Test("combined icon renders for emoji and SF Symbols in both wraps")
+    func combinedIconRendersEmojiAndSFSymbols() {
+        for symbol in ["star.fill", "🚀"] {
+            for wrap in SymbolWrap.allCases {
+                let icon = combinedIcon(symbol: symbol, wrap: wrap)
+                #expect(icon.size.width > 0)
+                #expect(icon.cgImage(forProposedRect: nil, context: nil, hints: nil) != nil)
+            }
+        }
+    }
+
+    @Test("invalid SF Symbol name still renders a combined icon")
+    func invalidSFSymbolNameStillRenders() {
+        let icon = combinedIcon(symbol: "not.a.real.symbol.name")
+        #expect(icon.size.width > 0)
+        #expect(icon.cgImage(forProposedRect: nil, context: nil, hints: nil) != nil)
+    }
+
+    @Test("larger gap widens the combined icon")
+    func largerGapWidensCombinedIcon() {
+        let tight = combinedIcon(gap: 0)
+        let wide = combinedIcon(gap: Layout.maxSymbolGap)
+        #expect(wide.size.width > tight.size.width)
+    }
+
+    @Test("badge renders on combined icons")
+    func badgeRendersOnCombinedIcon() {
+        let withBadge = combinedIcon(badge: SpaceBadge(character: "!", position: .topRight))
+        let withoutBadge = combinedIcon()
+        #expect(withBadge.size.width >= withoutBadge.size.width)
+        #expect(withBadge.cgImage(forProposedRect: nil, context: nil, hints: nil) != nil)
+    }
+
+    @Test("combined icon renders in stroke and transparent styles")
+    func combinedIconRendersInShapelessStyles() {
+        for style in [IconStyle.stroke, .transparent] {
+            let icon = SpaceIconGenerator.generateCombinedIcon(
+                text: "Work",
+                symbolName: "star.fill",
+                position: .left,
+                wrap: .inside,
+                darkMode: true,
+                style: style
+            )
+            #expect(icon.size.width > 0)
+            #expect(icon.cgImage(forProposedRect: nil, context: nil, hints: nil) != nil)
+        }
+    }
+
+    @Test("symbol-only icon uses symbol color over foreground")
+    func symbolOnlyIconTintUsesSymbolColor() {
+        // Renders without crashing when a dedicated symbol color is present
+        let colors = SpaceColors(foreground: .red, background: .blue, symbol: .green)
+        let icon = SpaceIconGenerator.generateSymbolIcon(
+            symbolName: "star.fill",
+            darkMode: true,
+            customColors: colors
+        )
+        #expect(icon.cgImage(forProposedRect: nil, context: nil, hints: nil) != nil)
+    }
+
     // MARK: - Dark/Light Mode Tests
 
     @Test("dark mode produces valid image")

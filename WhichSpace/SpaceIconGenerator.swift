@@ -10,7 +10,7 @@ import Cocoa
 
 // MARK: - IconStyle Shape Metadata
 
-enum ShapeType {
+enum ShapeType: Equatable {
     case circle
     case pill
     case polygon(sides: Int)
@@ -447,7 +447,7 @@ enum SpaceIconGenerator {
         }
 
         let color: NSColor = if let customColors {
-            customColors.foreground
+            customColors.symbol ?? customColors.foreground
         } else if darkMode {
             NSColor(calibratedWhite: 0.7, alpha: 1)
         } else {
@@ -461,6 +461,245 @@ enum SpaceIconGenerator {
             let yStart = (rect.height - imageSize.height) / 2
             let imageRect = CGRect(x: xStart, y: yStart, width: imageSize.width, height: imageSize.height)
             tintedImage.draw(in: imageRect)
+            return true
+        }
+    }
+
+    /// Generates a combined icon showing a symbol/emoji alongside a custom
+    /// label, like a menu bar item with icon and title.
+    /// - Parameters:
+    ///   - text: The resolved label text
+    ///   - symbolName: The SF Symbol name or emoji character
+    ///   - position: Which side of the label the symbol is drawn on
+    ///   - wrap: Whether the label's background shape wraps the symbol too
+    ///   - style: The label's render style (already mapped via renderStyle)
+    static func generateCombinedIcon(
+        text: String,
+        symbolName: String,
+        position: SymbolPosition,
+        wrap: SymbolWrap,
+        gap: Double = Layout.maxSymbolGap * Layout.defaultSymbolGapScale / 100.0,
+        darkMode: Bool,
+        customColors: SpaceColors? = nil,
+        customFont: NSFont? = nil,
+        style: IconStyle = .square,
+        skinTone: SkinTone? = nil,
+        sizeScale: Double = Layout.defaultSizeScale,
+        paddingScale: Double = Layout.defaultPaddingScale,
+        badge: SpaceBadge? = nil
+    ) -> NSImage {
+        // Stroke and transparent have no enclosing shape, so inside wrap
+        // degenerates to the same side-by-side layout as outside
+        let hasWrappingShape = switch style.shapeType {
+        case .pill, .slim, .square:
+            true
+        default:
+            false
+        }
+
+        if wrap == .inside, hasWrappingShape {
+            return generateInsideCombinedIcon(
+                text: text,
+                symbolName: symbolName,
+                position: position,
+                gap: gap,
+                darkMode: darkMode,
+                customColors: customColors,
+                customFont: customFont,
+                style: style,
+                skinTone: skinTone,
+                sizeScale: sizeScale,
+                paddingScale: paddingScale,
+                badge: badge
+            )
+        }
+        return generateOutsideCombinedIcon(
+            text: text,
+            symbolName: symbolName,
+            position: position,
+            gap: gap,
+            darkMode: darkMode,
+            customColors: customColors,
+            customFont: customFont,
+            style: style,
+            skinTone: skinTone,
+            sizeScale: sizeScale,
+            paddingScale: paddingScale,
+            badge: badge
+        )
+    }
+
+    /// Symbol and text share one background shape (pill/slim/square).
+    private static func generateInsideCombinedIcon(
+        text: String,
+        symbolName: String,
+        position: SymbolPosition,
+        gap: Double,
+        darkMode: Bool,
+        customColors: SpaceColors?,
+        customFont: NSFont?,
+        style: IconStyle,
+        skinTone: SkinTone?,
+        sizeScale: Double,
+        paddingScale: Double,
+        badge: SpaceBadge?
+    ) -> NSImage {
+        let scale = sizeScale / 100.0
+        let filled = style.isFilled
+        let colors = getColors(darkMode: darkMode, customColors: customColors, filled: filled)
+        // Symbol falls back to the label foreground so it stays legible on
+        // the filled shape
+        let symbolContent = resolveSymbolContent(
+            symbolName: symbolName,
+            skinTone: skinTone,
+            tint: customColors?.symbol ?? colors.foreground,
+            scale: scale
+        )
+
+        let font = scaledFont(for: text.count, customFont: customFont, scale: scale)
+        let attrText = buildBadgedAttributedString(
+            number: text, badge: badge, font: font, color: colors.foreground
+        )
+        let textSize = attrText.size()
+
+        let scaledGap = gap * scale
+        let height = squareSize(scale: scale)
+        let textPadding = style.shapeType == .pill ? height / 2 : 4.0 * scale
+        // The glyph needs less edge padding than text to look balanced; the
+        // gap setting only controls the symbol-to-text distance
+        let symbolPadding = 7.0 * scale
+        let contentWidth = symbolContent.size.width + scaledGap + textSize.width
+        let shapeSize = CGSize(
+            width: contentWidth + symbolPadding + textPadding,
+            height: height
+        )
+        let canvasSize = effectiveStatusItemSize(
+            contentWidth: shapeSize.width,
+            sizeScale: scale,
+            paddingScale: paddingScale
+        )
+
+        return NSImage(size: canvasSize, flipped: false) { rect in
+            let shapeRect = centeredRect(size: shapeSize, in: rect)
+            let radius = style.shapeType == .pill ? height / 2 : Layout.Icon.cornerRadius
+            let path = NSBezierPath(roundedRect: shapeRect, xRadius: radius, yRadius: radius)
+            fillOrStroke(path: path, color: colors.background, filled: filled)
+
+            var xCursor = shapeRect.minX + (position == .left ? symbolPadding : textPadding)
+            let drawSymbol = {
+                // SF Symbol images carry baseline-relative spacing, so pure
+                // size centering seats the glyph slightly low; nudge up
+                let symbolRect = CGRect(
+                    x: xCursor,
+                    y: shapeRect.minY + (shapeRect.height - symbolContent.size.height) / 2 + 0.5 * scale,
+                    width: symbolContent.size.width,
+                    height: symbolContent.size.height
+                )
+                symbolContent.draw(symbolRect)
+                xCursor += symbolContent.size.width + scaledGap
+            }
+            let drawText = {
+                let textRect = CGRect(
+                    x: xCursor,
+                    y: shapeRect.minY + (shapeRect.height - textSize.height) / 2,
+                    width: textSize.width,
+                    height: textSize.height
+                )
+                attrText.draw(in: textRect)
+                xCursor += textSize.width + scaledGap
+            }
+            if position == .left {
+                drawSymbol()
+                drawText()
+            } else {
+                drawText()
+                drawSymbol()
+            }
+            return true
+        }
+    }
+
+    /// Bare symbol drawn beside the independently styled label.
+    private static func generateOutsideCombinedIcon(
+        text: String,
+        symbolName: String,
+        position: SymbolPosition,
+        gap: Double,
+        darkMode: Bool,
+        customColors: SpaceColors?,
+        customFont: NSFont?,
+        style: IconStyle,
+        skinTone: SkinTone?,
+        sizeScale: Double,
+        paddingScale: Double,
+        badge: SpaceBadge?
+    ) -> NSImage {
+        let scale = sizeScale / 100.0
+        // paddingScale 0 collapses the label canvas to its content width,
+        // yielding a tight image to compose with the symbol
+        let labelImage = generateIcon(
+            for: text,
+            darkMode: darkMode,
+            customColors: customColors,
+            customFont: customFont,
+            style: style,
+            sizeScale: sizeScale,
+            paddingScale: 0,
+            badge: badge
+        )
+        // Bare symbol matches the standalone symbol icon's colors
+        let fallbackTint: NSColor = darkMode
+            ? NSColor(calibratedWhite: 0.7, alpha: 1)
+            : NSColor(calibratedWhite: 0.3, alpha: 1)
+        let symbolContent = resolveSymbolContent(
+            symbolName: symbolName,
+            skinTone: skinTone,
+            tint: customColors?.symbol ?? customColors?.foreground ?? fallbackTint,
+            scale: scale
+        )
+
+        let scaledGap = gap * scale
+        let contentWidth = labelImage.size.width + scaledGap + symbolContent.size.width
+        let canvasSize = effectiveStatusItemSize(
+            contentWidth: contentWidth,
+            sizeScale: scale,
+            paddingScale: paddingScale
+        )
+
+        return NSImage(size: canvasSize, flipped: false) { rect in
+            var xCursor = rect.minX + (rect.width - contentWidth) / 2
+            let drawSymbol = {
+                let symbolRect = CGRect(
+                    x: xCursor,
+                    y: rect.minY + (rect.height - symbolContent.size.height) / 2,
+                    width: symbolContent.size.width,
+                    height: symbolContent.size.height
+                )
+                symbolContent.draw(symbolRect)
+                xCursor += symbolContent.size.width + scaledGap
+            }
+            let drawLabel = {
+                let labelRect = CGRect(
+                    x: xCursor,
+                    y: rect.minY + (rect.height - labelImage.size.height) / 2,
+                    width: labelImage.size.width,
+                    height: labelImage.size.height
+                )
+                labelImage.draw(
+                    in: labelRect,
+                    from: NSRect(origin: .zero, size: labelImage.size),
+                    operation: .sourceOver,
+                    fraction: 1
+                )
+                xCursor += labelImage.size.width + scaledGap
+            }
+            if position == .left {
+                drawSymbol()
+                drawLabel()
+            } else {
+                drawLabel()
+                drawSymbol()
+            }
             return true
         }
     }
@@ -520,6 +759,58 @@ enum SpaceIconGenerator {
     }
 
     // MARK: - Private Helpers
+
+    /// Measured symbol/emoji content with a deferred drawing closure, used
+    /// to lay the glyph out beside label text in combined icons.
+    private struct SymbolContent {
+        let size: CGSize
+        let draw: (CGRect) -> Void
+    }
+
+    private static func resolveSymbolContent(
+        symbolName: String,
+        skinTone: SkinTone?,
+        tint: NSColor,
+        scale: Double
+    ) -> SymbolContent {
+        if symbolName.containsEmoji {
+            // Emoji are never tinted; matches generateEmojiIcon's font size
+            let displayEmoji = SkinTone.apply(to: symbolName, tone: skinTone)
+            let attributes: [NSAttributedString.Key: Any] = [.font: NSFont.systemFont(ofSize: 13.0 * scale)]
+            let size = displayEmoji.size(withAttributes: attributes)
+            return SymbolContent(size: size) { rect in
+                displayEmoji.draw(in: rect, withAttributes: attributes)
+            }
+        }
+
+        let scaledPointSize = Layout.Icon.sfSymbolPointSize * scale
+        let symbolConfig = NSImage.SymbolConfiguration(pointSize: scaledPointSize, weight: .medium)
+        if let sfImage = NSImage(systemSymbolName: symbolName, accessibilityDescription: nil)?
+            .withSymbolConfiguration(symbolConfig)
+        {
+            let tintedImage = sfImage.tinted(with: tint)
+            var size = tintedImage.size
+            // Keep oversized glyphs within the wrapping shape's height
+            let maxHeight = squareSize(scale: scale) - 2
+            if size.height > maxHeight {
+                let ratio = maxHeight / size.height
+                size = CGSize(width: size.width * ratio, height: maxHeight)
+            }
+            return SymbolContent(size: size) { rect in
+                tintedImage.draw(in: rect)
+            }
+        }
+
+        // Unknown SF Symbol name: draw a "?" placeholder run
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: NSFont.boldSystemFont(ofSize: scaledPointSize),
+            .foregroundColor: tint,
+        ]
+        let size = "?".size(withAttributes: attributes)
+        return SymbolContent(size: size) { rect in
+            "?".draw(in: rect, withAttributes: attributes)
+        }
+    }
 
     private static func getColors(
         darkMode: Bool,

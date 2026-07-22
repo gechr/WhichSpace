@@ -261,14 +261,15 @@ struct ScriptingCommandsTests {
         #expect(SpacePreferences.label(forSpace: 0, display: appState.currentDisplayID, store: store) == nil)
     }
 
-    @Test("setCurrentLabel clears symbol so label takes effect")
-    func setCurrentLabel_clearsSymbol() {
+    @Test("setCurrentLabel keeps the symbol so both can combine")
+    func setCurrentLabel_keepsSymbol() {
         let appState = makeAppState()
         SpacePreferences.setSymbol("star", forSpace: 2, display: appState.currentDisplayID, store: store)
 
         ScriptingHelpers.setCurrentLabel("Work", appState: appState, store: store)
 
-        #expect(SpacePreferences.symbol(forSpace: 2, display: appState.currentDisplayID, store: store) == nil)
+        #expect(SpacePreferences.symbol(forSpace: 2, display: appState.currentDisplayID, store: store) == "star")
+        #expect(SpacePreferences.label(forSpace: 2, display: appState.currentDisplayID, store: store) == "Work")
     }
 
     @Test("setCurrentLabel truncates over-limit labels with an ellipsis")

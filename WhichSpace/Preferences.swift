@@ -102,10 +102,17 @@ struct SpaceColors: Equatable, Defaults.Serializable {
                     withRootObject: value.background,
                     requiringSecureCoding: true
                 )
-                return [
+                var serialized = [
                     "foreground": foregroundData,
                     "background": backgroundData,
                 ]
+                if let symbol = value.symbol {
+                    serialized["symbol"] = try NSKeyedArchiver.archivedData(
+                        withRootObject: symbol,
+                        requiringSecureCoding: true
+                    )
+                }
+                return serialized
             } catch {
                 NSLog("SpaceColors: failed to archive colors: %@", error.localizedDescription)
                 return nil
@@ -132,7 +139,11 @@ struct SpaceColors: Equatable, Defaults.Serializable {
                 else {
                     return nil
                 }
-                return SpaceColors(foreground: foreground, background: background)
+                // Absent in payloads written before the symbol color existed
+                let symbol = try object["symbol"].flatMap {
+                    try NSKeyedUnarchiver.unarchivedObject(ofClass: NSColor.self, from: $0)
+                }
+                return SpaceColors(foreground: foreground, background: background, symbol: symbol)
             } catch {
                 NSLog("SpaceColors: failed to unarchive colors: %@", error.localizedDescription)
                 return nil
@@ -144,6 +155,13 @@ struct SpaceColors: Equatable, Defaults.Serializable {
 
     var foreground: NSColor
     var background: NSColor
+    var symbol: NSColor?
+
+    init(foreground: NSColor, background: NSColor, symbol: NSColor? = nil) {
+        self.foreground = foreground
+        self.background = background
+        self.symbol = symbol
+    }
 }
 
 // MARK: - BadgePosition
@@ -160,6 +178,25 @@ enum BadgePosition: String, CaseIterable, Codable, Defaults.Serializable {
 struct SpaceBadge: Codable, Equatable, Defaults.Serializable {
     let character: String
     let position: BadgePosition
+}
+
+// MARK: - SymbolPosition
+
+/// Where a symbol/emoji is drawn relative to a custom label when both are
+/// set. An absent key resolves to `.left`.
+enum SymbolPosition: String, CaseIterable, Codable, Defaults.Serializable {
+    case left
+    case right
+}
+
+// MARK: - SymbolWrap
+
+/// Whether the label's background shape wraps the symbol together with the
+/// text, or the symbol is drawn bare beside the styled label. An absent key
+/// resolves to `.inside`.
+enum SymbolWrap: String, CaseIterable, Codable, Defaults.Serializable {
+    case inside
+    case outside
 }
 
 // MARK: - SpacePreferences
@@ -231,6 +268,15 @@ enum SpacePreferences {
     )
     private static let skinTones = Accessor<SkinTone>(
         shared: \.spaceSkinTones, perDisplay: \.displaySpaceSkinTones
+    )
+    private static let symbolGaps = Accessor<Double>(
+        shared: \.spaceSymbolGaps, perDisplay: \.displaySpaceSymbolGaps
+    )
+    private static let symbolPositions = Accessor<SymbolPosition>(
+        shared: \.spaceSymbolPositions, perDisplay: \.displaySpaceSymbolPositions
+    )
+    private static let symbolWraps = Accessor<SymbolWrap>(
+        shared: \.spaceSymbolWraps, perDisplay: \.displaySpaceSymbolWraps
     )
 
     // MARK: - Symbols (SF Symbols or Emojis)
@@ -461,6 +507,87 @@ enum SpacePreferences {
         skinTones.set(nil, forSpace: spaceNumber, display: display, store: store)
     }
 
+    // MARK: - Symbol Gap
+
+    static func symbolGap(
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) -> Double? {
+        symbolGaps.get(forSpace: spaceNumber, display: display, store: store)
+    }
+
+    static func setSymbolGap(
+        _ gap: Double?,
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) {
+        symbolGaps.set(gap, forSpace: spaceNumber, display: display, store: store)
+    }
+
+    static func clearSymbolGap(
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) {
+        symbolGaps.set(nil, forSpace: spaceNumber, display: display, store: store)
+    }
+
+    // MARK: - Symbol Position
+
+    static func symbolPosition(
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) -> SymbolPosition? {
+        symbolPositions.get(forSpace: spaceNumber, display: display, store: store)
+    }
+
+    static func setSymbolPosition(
+        _ position: SymbolPosition?,
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) {
+        symbolPositions.set(position, forSpace: spaceNumber, display: display, store: store)
+    }
+
+    static func clearSymbolPosition(
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) {
+        symbolPositions.set(nil, forSpace: spaceNumber, display: display, store: store)
+    }
+
+    // MARK: - Symbol Wrap
+
+    static func symbolWrap(
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) -> SymbolWrap? {
+        symbolWraps.get(forSpace: spaceNumber, display: display, store: store)
+    }
+
+    static func setSymbolWrap(
+        _ wrap: SymbolWrap?,
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) {
+        symbolWraps.set(wrap, forSpace: spaceNumber, display: display, store: store)
+    }
+
+    static func clearSymbolWrap(
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) {
+        symbolWraps.set(nil, forSpace: spaceNumber, display: display, store: store)
+    }
+
     // MARK: - Inheritance
 
     /// Returns true if the space has any per-space preference set.
@@ -477,6 +604,9 @@ enum SpacePreferences {
             || labels.get(forSpace: spaceNumber, display: display, store: store) != nil
             || labelStyles.get(forSpace: spaceNumber, display: display, store: store) != nil
             || skinTones.get(forSpace: spaceNumber, display: display, store: store) != nil
+            || symbolGaps.get(forSpace: spaceNumber, display: display, store: store) != nil
+            || symbolPositions.get(forSpace: spaceNumber, display: display, store: store) != nil
+            || symbolWraps.get(forSpace: spaceNumber, display: display, store: store) != nil
     }
 
     /// Copies all per-space preferences from one space to another.
@@ -522,6 +652,15 @@ enum SpacePreferences {
         if let tone = skinTones.get(forSpace: source, display: fromDisplay, store: store) {
             skinTones.set(tone, forSpace: target, display: toDisplay, store: store)
         }
+        if let gap = symbolGaps.get(forSpace: source, display: fromDisplay, store: store) {
+            symbolGaps.set(gap, forSpace: target, display: toDisplay, store: store)
+        }
+        if let position = symbolPositions.get(forSpace: source, display: fromDisplay, store: store) {
+            symbolPositions.set(position, forSpace: target, display: toDisplay, store: store)
+        }
+        if let wrap = symbolWraps.get(forSpace: source, display: fromDisplay, store: store) {
+            symbolWraps.set(wrap, forSpace: target, display: toDisplay, store: store)
+        }
     }
 
     /// Clears all preferences for a specific space.
@@ -538,6 +677,9 @@ enum SpacePreferences {
         labels.set(nil, forSpace: spaceNumber, display: display, store: store)
         labelStyles.set(nil, forSpace: spaceNumber, display: display, store: store)
         skinTones.set(nil, forSpace: spaceNumber, display: display, store: store)
+        symbolGaps.set(nil, forSpace: spaceNumber, display: display, store: store)
+        symbolPositions.set(nil, forSpace: spaceNumber, display: display, store: store)
+        symbolWraps.set(nil, forSpace: spaceNumber, display: display, store: store)
     }
 
     // MARK: - Default Style
@@ -590,6 +732,9 @@ enum SpacePreferences {
         store.spaceLabels = [:]
         store.spaceLabelStyles = [:]
         store.spaceSymbols = [:]
+        store.spaceSymbolGaps = [:]
+        store.spaceSymbolPositions = [:]
+        store.spaceSymbolWraps = [:]
         store.spaceFonts = [:]
         store.spaceSkinTones = [:]
         store.displaySpaceBadges = [:]
@@ -598,6 +743,9 @@ enum SpacePreferences {
         store.displaySpaceLabels = [:]
         store.displaySpaceLabelStyles = [:]
         store.displaySpaceSymbols = [:]
+        store.displaySpaceSymbolGaps = [:]
+        store.displaySpaceSymbolPositions = [:]
+        store.displaySpaceSymbolWraps = [:]
         store.displaySpaceFonts = [:]
         store.displaySpaceSkinTones = [:]
     }

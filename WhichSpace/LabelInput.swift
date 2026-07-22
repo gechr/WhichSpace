@@ -4,10 +4,12 @@ import Cocoa
 
 final class LabelInput: NSView {
     private let textField: NSTextField
+    private let clearButton = NSButton()
 
     private let padding = 28.0
     private let fieldWidth = 180.0
     private let fieldHeight = 22.0
+    private let clearButtonSize = 16.0
 
     var onLabelChanged: ((String?) -> Void)?
 
@@ -18,6 +20,7 @@ final class LabelInput: NSView {
         }
         set {
             textField.stringValue = newValue ?? ""
+            clearButton.isHidden = newValue?.isEmpty != false
         }
     }
 
@@ -27,6 +30,7 @@ final class LabelInput: NSView {
         super.init(frame: .zero)
 
         setupTextField()
+        setupClearButton()
     }
 
     @available(*, unavailable)
@@ -47,6 +51,26 @@ final class LabelInput: NSView {
         textField.cell?.isScrollable = true
         textField.cell?.wraps = false
         addSubview(textField)
+    }
+
+    private func setupClearButton() {
+        clearButton.image = NSImage(
+            systemSymbolName: "xmark.circle.fill",
+            accessibilityDescription: Localization.actionResetLabelToDefault
+        )
+        clearButton.contentTintColor = .secondaryLabelColor
+        clearButton.isBordered = false
+        clearButton.target = self
+        clearButton.action = #selector(clearLabel)
+        clearButton.isHidden = true
+        addSubview(clearButton)
+    }
+
+    @objc private func clearLabel() {
+        textField.stringValue = ""
+        clearButton.isHidden = true
+        onLabelChanged?(nil)
+        window?.makeFirstResponder(textField)
     }
 
     // MARK: - Focus
@@ -70,6 +94,12 @@ final class LabelInput: NSView {
 
         let yCenter = (bounds.height - fieldHeight) / 2
         textField.frame = CGRect(x: padding, y: yCenter, width: fieldWidth, height: fieldHeight)
+        clearButton.frame = CGRect(
+            x: padding + fieldWidth - clearButtonSize - 4,
+            y: (bounds.height - clearButtonSize) / 2,
+            width: clearButtonSize,
+            height: clearButtonSize
+        )
     }
 }
 
@@ -87,6 +117,7 @@ extension LabelInput: NSTextFieldDelegate {
             field.stringValue = text
         }
 
+        clearButton.isHidden = text.isEmpty
         onLabelChanged?(text.isEmpty ? nil : text)
     }
 }

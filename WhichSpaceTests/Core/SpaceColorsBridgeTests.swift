@@ -34,6 +34,39 @@ struct SpaceColorsBridgeTests {
         #expect(serialized?.count == 2)
     }
 
+    @Test("serialize includes symbol key only when set")
+    func serializeIncludesSymbolKeyOnlyWhenSet() {
+        let withSymbol = bridge.serialize(SpaceColors(foreground: .red, background: .blue, symbol: .green))
+        #expect(withSymbol?["symbol"] != nil)
+        #expect(withSymbol?.count == 3)
+
+        let withoutSymbol = bridge.serialize(SpaceColors(foreground: .red, background: .blue))
+        #expect(withoutSymbol?["symbol"] == nil)
+        #expect(withoutSymbol?.count == 2)
+    }
+
+    @Test("symbol color round-trips")
+    func symbolColorRoundTrips() {
+        let colors = SpaceColors(foreground: .red, background: .blue, symbol: .green)
+        let roundTripped = bridge.deserialize(bridge.serialize(colors))
+
+        #expect(roundTripped?.symbol == .green)
+        #expect(roundTripped?.foreground == .red)
+        #expect(roundTripped?.background == .blue)
+    }
+
+    @Test("legacy payload without symbol key deserializes with nil symbol")
+    func legacyPayloadWithoutSymbolKeyDeserializes() {
+        // Simulates data written before the symbol color existed
+        var legacy = bridge.serialize(SpaceColors(foreground: .red, background: .blue, symbol: .green))
+        legacy?.removeValue(forKey: "symbol")
+
+        let deserialized = bridge.deserialize(legacy)
+        #expect(deserialized != nil)
+        #expect(deserialized?.symbol == nil)
+        #expect(deserialized?.foreground == .red)
+    }
+
     // MARK: - Deserialize Tests
 
     @Test("deserialize nil returns nil")

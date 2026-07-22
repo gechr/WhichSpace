@@ -192,15 +192,20 @@ struct BackupSpacePreferences: Codable {
     var labels: [String: String]
     var labelStyles: [String: String]
     var skinTones: [String: Int]
+    var symbolGaps: [String: Double]
+    var symbolPositions: [String: String]
     var symbols: [String: String]
+    var symbolWraps: [String: String]
 
     private enum CodingKeys: String, CodingKey {
-        case badges, colors, fonts, iconStyles, labels, labelStyles, skinTones, symbols
+        case badges, colors, fonts, iconStyles, labels, labelStyles, skinTones, symbolGaps,
+             symbolPositions, symbols, symbolWraps
     }
 
     var isEmpty: Bool {
         badges.isEmpty && colors.isEmpty && fonts.isEmpty && iconStyles.isEmpty
-            && labels.isEmpty && labelStyles.isEmpty && skinTones.isEmpty && symbols.isEmpty
+            && labels.isEmpty && labelStyles.isEmpty && skinTones.isEmpty && symbolGaps.isEmpty
+            && symbolPositions.isEmpty && symbols.isEmpty && symbolWraps.isEmpty
     }
 
     func encode(to encoder: Encoder) throws {
@@ -226,8 +231,17 @@ struct BackupSpacePreferences: Codable {
         if !skinTones.isEmpty {
             try container.encode(skinTones, forKey: .skinTones)
         }
+        if !symbolGaps.isEmpty {
+            try container.encode(symbolGaps, forKey: .symbolGaps)
+        }
+        if !symbolPositions.isEmpty {
+            try container.encode(symbolPositions, forKey: .symbolPositions)
+        }
         if !symbols.isEmpty {
             try container.encode(symbols, forKey: .symbols)
+        }
+        if !symbolWraps.isEmpty {
+            try container.encode(symbolWraps, forKey: .symbolWraps)
         }
     }
 
@@ -240,7 +254,10 @@ struct BackupSpacePreferences: Codable {
         labels = try container.decodeIfPresent([String: String].self, forKey: .labels) ?? [:]
         labelStyles = try container.decodeIfPresent([String: String].self, forKey: .labelStyles) ?? [:]
         skinTones = try container.decodeIfPresent([String: Int].self, forKey: .skinTones) ?? [:]
+        symbolGaps = try container.decodeIfPresent([String: Double].self, forKey: .symbolGaps) ?? [:]
+        symbolPositions = try container.decodeIfPresent([String: String].self, forKey: .symbolPositions) ?? [:]
         symbols = try container.decodeIfPresent([String: String].self, forKey: .symbols) ?? [:]
+        symbolWraps = try container.decodeIfPresent([String: String].self, forKey: .symbolWraps) ?? [:]
     }
 
     init(
@@ -251,7 +268,10 @@ struct BackupSpacePreferences: Codable {
         labels: [Int: String] = [:],
         labelStyles: [Int: IconStyle] = [:],
         skinTones: [Int: SkinTone] = [:],
-        symbols: [Int: String] = [:]
+        symbolGaps: [Int: Double] = [:],
+        symbolPositions: [Int: SymbolPosition] = [:],
+        symbols: [Int: String] = [:],
+        symbolWraps: [Int: SymbolWrap] = [:]
     ) {
         self.badges = badges.reduce(into: [:]) { result, pair in
             result[String(pair.key)] = CodableBadge(from: pair.value)
@@ -274,8 +294,17 @@ struct BackupSpacePreferences: Codable {
         self.skinTones = skinTones.reduce(into: [:]) { result, pair in
             result[String(pair.key)] = pair.value.rawValue
         }
+        self.symbolGaps = symbolGaps.reduce(into: [:]) { result, pair in
+            result[String(pair.key)] = pair.value
+        }
+        self.symbolPositions = symbolPositions.reduce(into: [:]) { result, pair in
+            result[String(pair.key)] = pair.value.rawValue
+        }
         self.symbols = symbols.reduce(into: [:]) { result, pair in
             result[String(pair.key)] = pair.value
+        }
+        self.symbolWraps = symbolWraps.reduce(into: [:]) { result, pair in
+            result[String(pair.key)] = pair.value.rawValue
         }
     }
 
@@ -316,8 +345,20 @@ struct BackupSpacePreferences: Codable {
         convertDict(skinTones) { SkinTone(rawValue: $0) }
     }
 
+    func toSymbolGaps() -> [Int: Double] {
+        convertDict(symbolGaps) { $0.clamped(to: Layout.symbolGapScaleRange) }
+    }
+
+    func toSymbolPositions() -> [Int: SymbolPosition] {
+        convertDict(symbolPositions) { SymbolPosition(rawValue: $0) }
+    }
+
     func toSymbols() -> [Int: String] {
         convertDict(symbols) { $0 }
+    }
+
+    func toSymbolWraps() -> [Int: SymbolWrap] {
+        convertDict(symbolWraps) { SymbolWrap(rawValue: $0) }
     }
 }
 
@@ -366,20 +407,24 @@ struct CodableColor: Codable {
 
 // MARK: - CodableSpaceColors
 
-/// Space colors (foreground/background) for JSON serialization.
+/// Space colors (foreground/background/symbol) for JSON serialization.
 struct CodableSpaceColors: Codable {
     let foreground: CodableColor
     let background: CodableColor
+    /// Optional so backups written before the symbol color existed still decode
+    let symbol: CodableColor?
 
     init(from colors: SpaceColors) {
         foreground = CodableColor(from: colors.foreground)
         background = CodableColor(from: colors.background)
+        symbol = colors.symbol.map { CodableColor(from: $0) }
     }
 
     func toSpaceColors() -> SpaceColors? {
         SpaceColors(
             foreground: foreground.toNSColor(),
-            background: background.toNSColor()
+            background: background.toNSColor(),
+            symbol: symbol?.toNSColor()
         )
     }
 }
@@ -481,7 +526,10 @@ enum BackupManager {
             labels: store.spaceLabels,
             labelStyles: store.spaceLabelStyles,
             skinTones: store.spaceSkinTones,
-            symbols: store.spaceSymbols
+            symbolGaps: store.spaceSymbolGaps,
+            symbolPositions: store.spaceSymbolPositions,
+            symbols: store.spaceSymbols,
+            symbolWraps: store.spaceSymbolWraps
         )
 
         var displaySpacePreferences = [String: BackupSpacePreferences]()
@@ -493,7 +541,10 @@ enum BackupManager {
         displayIds.formUnion(store.displaySpaceLabels.keys)
         displayIds.formUnion(store.displaySpaceLabelStyles.keys)
         displayIds.formUnion(store.displaySpaceSkinTones.keys)
+        displayIds.formUnion(store.displaySpaceSymbolGaps.keys)
+        displayIds.formUnion(store.displaySpaceSymbolPositions.keys)
         displayIds.formUnion(store.displaySpaceSymbols.keys)
+        displayIds.formUnion(store.displaySpaceSymbolWraps.keys)
 
         for displayId in displayIds {
             displaySpacePreferences[displayId] = BackupSpacePreferences(
@@ -504,7 +555,10 @@ enum BackupManager {
                 labels: store.displaySpaceLabels[displayId] ?? [:],
                 labelStyles: store.displaySpaceLabelStyles[displayId] ?? [:],
                 skinTones: store.displaySpaceSkinTones[displayId] ?? [:],
-                symbols: store.displaySpaceSymbols[displayId] ?? [:]
+                symbolGaps: store.displaySpaceSymbolGaps[displayId] ?? [:],
+                symbolPositions: store.displaySpaceSymbolPositions[displayId] ?? [:],
+                symbols: store.displaySpaceSymbols[displayId] ?? [:],
+                symbolWraps: store.displaySpaceSymbolWraps[displayId] ?? [:]
             )
         }
 
@@ -606,7 +660,10 @@ enum BackupManager {
         store.spaceLabels = backup.spacePreferences.toLabels()
         store.spaceLabelStyles = backup.spacePreferences.toLabelStyles()
         store.spaceSkinTones = backup.spacePreferences.toSkinTones()
+        store.spaceSymbolGaps = backup.spacePreferences.toSymbolGaps()
+        store.spaceSymbolPositions = backup.spacePreferences.toSymbolPositions()
         store.spaceSymbols = backup.spacePreferences.toSymbols()
+        store.spaceSymbolWraps = backup.spacePreferences.toSymbolWraps()
 
         // Apply per-display space preferences
         var displayBadges = [String: [Int: SpaceBadge]]()
@@ -616,7 +673,10 @@ enum BackupManager {
         var displayLabels = [String: [Int: String]]()
         var displayLabelStyles = [String: [Int: IconStyle]]()
         var displayTones = [String: [Int: SkinTone]]()
+        var displaySymbolGaps = [String: [Int: Double]]()
+        var displaySymbolPositions = [String: [Int: SymbolPosition]]()
         var displaySymbols = [String: [Int: String]]()
+        var displaySymbolWraps = [String: [Int: SymbolWrap]]()
 
         for (displayId, prefs) in backup.displaySpacePreferences {
             displayBadges[displayId] = prefs.toBadges()
@@ -626,7 +686,10 @@ enum BackupManager {
             displayLabels[displayId] = prefs.toLabels()
             displayLabelStyles[displayId] = prefs.toLabelStyles()
             displayTones[displayId] = prefs.toSkinTones()
+            displaySymbolGaps[displayId] = prefs.toSymbolGaps()
+            displaySymbolPositions[displayId] = prefs.toSymbolPositions()
             displaySymbols[displayId] = prefs.toSymbols()
+            displaySymbolWraps[displayId] = prefs.toSymbolWraps()
         }
 
         store.displaySpaceBadges = displayBadges
@@ -636,7 +699,10 @@ enum BackupManager {
         store.displaySpaceLabels = displayLabels
         store.displaySpaceLabelStyles = displayLabelStyles
         store.displaySpaceSkinTones = displayTones
+        store.displaySpaceSymbolGaps = displaySymbolGaps
+        store.displaySpaceSymbolPositions = displaySymbolPositions
         store.displaySpaceSymbols = displaySymbols
+        store.displaySpaceSymbolWraps = displaySymbolWraps
 
         NotificationCenter.default.post(name: .backupImported, object: nil)
     }

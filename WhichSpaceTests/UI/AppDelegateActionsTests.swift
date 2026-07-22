@@ -2396,4 +2396,110 @@ final class AppDelegateActionsTests: XCTestCase {
 
         XCTAssertNil(localDelegate.observationTask, "Task should be nil after cleanup")
     }
+
+    // MARK: - Combined Symbol + Label Tests
+
+    func testSetLabel_preservesSymbol() {
+        let space = appState.currentSpace
+        SpacePreferences.setSymbol("star.fill", forSpace: space, store: store)
+
+        sut.actionHandler.setLabel("Work")
+
+        XCTAssertEqual(SpacePreferences.symbol(forSpace: space, store: store), "star.fill")
+        XCTAssertEqual(SpacePreferences.label(forSpace: space, store: store), "Work")
+    }
+
+    func testSetSymbol_preservesLabel() {
+        let space = appState.currentSpace
+        SpacePreferences.setLabel("Work", forSpace: space, store: store)
+
+        sut.actionHandler.setSymbol("star.fill")
+
+        XCTAssertEqual(SpacePreferences.label(forSpace: space, store: store), "Work")
+        XCTAssertEqual(SpacePreferences.symbol(forSpace: space, store: store), "star.fill")
+    }
+
+    func testSymbolPositionSelected_writesPreference() {
+        let item = NSMenuItem()
+        item.tag = MenuTag.symbolPositionRight.rawValue
+        item.representedObject = SymbolPosition.right.rawValue
+
+        sut.actionHandler.symbolPositionSelected(item)
+
+        XCTAssertEqual(
+            SpacePreferences.symbolPosition(forSpace: appState.currentSpace, store: store),
+            .right
+        )
+    }
+
+    func testSymbolWrapSelected_writesPreference() {
+        let item = NSMenuItem()
+        item.tag = MenuTag.symbolWrapOutside.rawValue
+        item.representedObject = SymbolWrap.outside.rawValue
+
+        sut.actionHandler.symbolWrapSelected(item)
+
+        XCTAssertEqual(
+            SpacePreferences.symbolWrap(forSpace: appState.currentSpace, store: store),
+            .outside
+        )
+    }
+
+    func testSetSymbolGap_writesClampedPreference() {
+        sut.actionHandler.setSymbolGap(50.0)
+        XCTAssertEqual(SpacePreferences.symbolGap(forSpace: appState.currentSpace, store: store), 50.0)
+
+        sut.actionHandler.setSymbolGap(9999.0)
+        XCTAssertEqual(
+            SpacePreferences.symbolGap(forSpace: appState.currentSpace, store: store),
+            Layout.symbolGapScaleRange.upperBound
+        )
+    }
+
+    func testSetSymbolColor_preservesForegroundAndBackground() {
+        let space = appState.currentSpace
+        SpacePreferences.setColors(
+            SpaceColors(foreground: .red, background: .blue),
+            forSpace: space,
+            store: store
+        )
+
+        sut.actionHandler.setSymbolColor(.green)
+
+        let colors = SpacePreferences.colors(forSpace: space, store: store)
+        XCTAssertEqual(colors?.foreground, .red)
+        XCTAssertEqual(colors?.background, .blue)
+        XCTAssertEqual(colors?.symbol, .green)
+    }
+
+    func testSetColor_preservesSymbolColor() {
+        let space = appState.currentSpace
+        SpacePreferences.setColors(
+            SpaceColors(foreground: .red, background: .blue, symbol: .green),
+            forSpace: space,
+            store: store
+        )
+
+        sut.actionHandler.setColor(.white, isForeground: true)
+
+        let colors = SpacePreferences.colors(forSpace: space, store: store)
+        XCTAssertEqual(colors?.foreground, .white)
+        XCTAssertEqual(colors?.symbol, .green)
+    }
+
+    func testInvertColors_preservesSymbolColor() {
+        let space = appState.currentSpace
+        SpacePreferences.setColors(
+            SpaceColors(foreground: .red, background: .blue, symbol: .green),
+            forSpace: space,
+            store: store
+        )
+
+        sut.actionHandler.invertColors()
+
+        let colors = SpacePreferences.colors(forSpace: space, store: store)
+        XCTAssertEqual(colors?.foreground, .blue)
+        XCTAssertEqual(colors?.background, .red)
+        XCTAssertEqual(colors?.symbol, .green)
+    }
 }

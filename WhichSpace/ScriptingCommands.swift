@@ -234,12 +234,6 @@ enum ScriptingHelpers {
             display: appState.currentDisplayID,
             store: store
         )
-        // Clear the symbol so the label takes effect immediately, matching the menu path.
-        SpacePreferences.clearSymbol(
-            forSpace: number,
-            display: appState.currentDisplayID,
-            store: store
-        )
     }
 
     /// Applies a custom label to the current Space; see `setLabel(_:forSpace:)`.

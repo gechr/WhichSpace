@@ -107,6 +107,11 @@ final class ItemPicker: NSView {
     private let spacing: Double = 6
     private let visibleRows = 8
 
+    /// Height of the search row the grid content is inset below
+    private var gridTopInset: Double {
+        padding + searchFieldHeight + padding
+    }
+
     // MARK: - Public Properties
 
     var darkMode = false {
@@ -119,10 +124,15 @@ final class ItemPicker: NSView {
     var onItemHoverEnd: (() -> Void)?
     var onItemHoverStart: ((String) -> Void)?
     var onItemSelected: ((String?) -> Void)?
-    var selectedItem: String?
+    var selectedItem: String? {
+        didSet {
+            clearButton.isEnabled = selectedItem != nil
+        }
+    }
 
     // MARK: - Private Properties
 
+    private let clearButton = NSButton()
     private let gridView: ItemGridView
     private let itemType: ItemType
     private let searchField = NSSearchField()
@@ -192,6 +202,20 @@ final class ItemPicker: NSView {
         searchField.translatesAutoresizingMaskIntoConstraints = false
         addSubview(searchField)
 
+        // Clear button removes the current Space's symbol selection
+        clearButton.image = NSImage(
+            systemSymbolName: "arrow.uturn.backward.circle.fill",
+            accessibilityDescription: Localization.tipClearSymbol
+        )
+        clearButton.contentTintColor = .labelColor
+        clearButton.isBordered = false
+        clearButton.toolTip = Localization.tipClearSymbol
+        clearButton.target = self
+        clearButton.action = #selector(clearSelection)
+        clearButton.isEnabled = selectedItem != nil
+        clearButton.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(clearButton)
+
         // Tone label (emoji picker only) - custom view that handles mouseUp
         // Clicking cycles through skin tones (yellow -> light -> medium-light -> medium -> medium-dark -> dark)
         if itemType == .emojis {
@@ -204,7 +228,9 @@ final class ItemPicker: NSView {
             toneLabelView = labelView
         }
 
-        // Scroll view for grid
+        // Scroll view for grid. It spans the picker's full height so the
+        // scroller reaches the top; content insets keep the grid below the
+        // search row, and the scroller inset cancels that out
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.hasVerticalScroller = true
         scrollView.hasHorizontalScroller = false
@@ -212,13 +238,55 @@ final class ItemPicker: NSView {
         scrollView.autohidesScrollers = false
         scrollView.borderType = .noBorder
         scrollView.drawsBackground = false
-        addSubview(scrollView)
+        scrollView.automaticallyAdjustsContentInsets = false
+        scrollView.contentInsets = NSEdgeInsets(top: gridTopInset, left: 0, bottom: 0, right: 0)
+        scrollView.scrollerInsets = NSEdgeInsets(top: -gridTopInset, left: 0, bottom: 0, right: 0)
+        addSubview(scrollView, positioned: .below, relativeTo: searchField)
+
+        // Backdrop matching the menu background so grid content scrolling
+        // under the search row doesn't show through; stops short of the
+        // scroller, which runs the full height
+        let topMask = NSVisualEffectView()
+        topMask.material = .menu
+        topMask.blendingMode = .behindWindow
+        // Pill-shaped backdrop, anchored to the very top so scrolled grid
+        // content never peeks out above the search row
+        let maskInset = 3.0
+        let maskHeight = gridTopInset - maskInset * 2
+        let maskRadius = maskHeight / 2
+        let maskSide = maskRadius * 2 + 1
+        let maskImage = NSImage(size: NSSize(width: maskSide, height: maskSide), flipped: false) { rect in
+            NSColor.black.setFill()
+            NSBezierPath(roundedRect: rect, xRadius: maskRadius, yRadius: maskRadius).fill()
+            return true
+        }
+        maskImage.capInsets = NSEdgeInsets(
+            top: maskRadius, left: maskRadius, bottom: maskRadius, right: maskRadius
+        )
+        maskImage.resizingMode = .stretch
+        topMask.maskImage = maskImage
+        topMask.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(topMask, positioned: .above, relativeTo: scrollView)
+        // Uniform padding between the pill and the controls it contains
+        let fieldPad = 5.0
+        let rightmostControl: NSView = toneLabelView ?? clearButton
+        NSLayoutConstraint.activate([
+            topMask.topAnchor.constraint(equalTo: topAnchor),
+            topMask.leadingAnchor.constraint(equalTo: leadingAnchor, constant: maskInset),
+            topMask.trailingAnchor.constraint(
+                equalTo: rightmostControl.trailingAnchor, constant: fieldPad
+            ),
+            topMask.heightAnchor.constraint(equalToConstant: maskHeight),
+        ])
 
         // Grid view inside scroll view
         gridView.onItemSelected = { [weak self] item in
             guard let self else {
                 return
             }
+            // Keep the picker's selection in sync so grid refreshes don't
+            // resurrect a deselected item
+            selectedItem = item
             // Save the base emoji without skin tone - the per-space skin tone
             // from the Color menu will be applied at render time
             onItemSelected?(item)
@@ -232,32 +300,65 @@ final class ItemPicker: NSView {
         scrollView.documentView = gridView
 
         var constraints = [
-            searchField.topAnchor.constraint(equalTo: topAnchor, constant: padding),
-            searchField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: padding),
+            // Centered within the pill backdrop, with fieldPad on each side
+            searchField.topAnchor.constraint(
+                equalTo: topAnchor, constant: (maskHeight - searchFieldHeight) / 2
+            ),
+            searchField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: maskInset + fieldPad),
             searchField.heightAnchor.constraint(equalToConstant: searchFieldHeight),
 
-            scrollView.topAnchor.constraint(equalTo: searchField.bottomAnchor, constant: padding),
+            clearButton.centerYAnchor.constraint(equalTo: searchField.centerYAnchor),
+            clearButton.widthAnchor.constraint(equalToConstant: 20),
+            clearButton.heightAnchor.constraint(equalToConstant: searchFieldHeight),
+
+            scrollView.topAnchor.constraint(equalTo: topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: bottomAnchor),
         ]
 
+        // Emoji picker: the skin-tone control sits after the clear button,
+        // centered on the last grid column
         if let toneLabelView {
+            let toneWidth = 36.0
+            let lastColumnCenterFromTrailing = scrollbarWidth + padding + itemType.itemSize / 2
             constraints.append(contentsOf: [
-                searchField.trailingAnchor.constraint(equalTo: toneLabelView.leadingAnchor, constant: -4),
-                toneLabelView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -padding),
+                searchField.trailingAnchor.constraint(equalTo: clearButton.leadingAnchor, constant: -4),
+                clearButton.trailingAnchor.constraint(equalTo: toneLabelView.leadingAnchor, constant: 0),
+                toneLabelView.trailingAnchor.constraint(
+                    equalTo: trailingAnchor,
+                    constant: -(lastColumnCenterFromTrailing - toneWidth / 2)
+                ),
                 toneLabelView.centerYAnchor.constraint(equalTo: searchField.centerYAnchor),
-                toneLabelView.widthAnchor.constraint(equalToConstant: 36),
+                toneLabelView.widthAnchor.constraint(equalToConstant: toneWidth),
                 toneLabelView.heightAnchor.constraint(equalToConstant: searchFieldHeight),
             ])
         } else {
-            constraints.append(
-                searchField.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -padding)
-            )
+            constraints.append(contentsOf: [
+                searchField.trailingAnchor.constraint(equalTo: clearButton.leadingAnchor, constant: -4),
+                clearButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -(padding + 20)),
+            ])
         }
 
         NSLayoutConstraint.activate(constraints)
         updateGridView()
+        scrollToTop()
+    }
+
+    /// Rests the grid at the content-inset origin. With manual content
+    /// insets the clip view starts at y=0 - under the search row - so the
+    /// inset position must be applied explicitly.
+    private func scrollToTop() {
+        scrollView.contentView.scroll(to: NSPoint(x: 0, y: -gridTopInset))
+        scrollView.reflectScrolledClipView(scrollView.contentView)
+    }
+
+    /// Clears the current symbol selection, reverting the Space's icon to
+    /// its label or number.
+    @objc private func clearSelection() {
+        selectedItem = nil
+        updateGridView()
+        onItemSelected?(nil)
     }
 
     // MARK: - Skin Tone Support
@@ -322,7 +423,7 @@ private final class ItemGridView: NSView {
     var items: [String]
     var onItemHoverEnd: (() -> Void)?
     var onItemHoverStart: ((String) -> Void)?
-    var onItemSelected: ((String) -> Void)?
+    var onItemSelected: ((String?) -> Void)?
     var selectedItem: String?
     var skinToneModifier: String? {
         didSet {
@@ -497,7 +598,11 @@ private final class ItemGridView: NSView {
     override func mouseUp(with event: NSEvent) {
         let location = convert(event.locationInWindow, from: nil)
         if let index = indexForLocation(location), index < items.count {
-            onItemSelected?(items[index])
+            // Re-clicking the selected item deselects it
+            let item = items[index] == selectedItem ? nil : items[index]
+            selectedItem = item
+            needsDisplay = true
+            onItemSelected?(item)
         }
     }
 

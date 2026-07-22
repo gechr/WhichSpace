@@ -96,6 +96,9 @@ final class StatusBarRenderer {
         var skinTone: SkinTone?
         var style: IconStyle?
         var symbol: String?
+        var symbolColor: NSColor?
+        var symbolPosition: SymbolPosition?
+        var symbolWrap: SymbolWrap?
     }
 
     private var preview: PreviewState?
@@ -136,6 +139,9 @@ final class StatusBarRenderer {
         overrideSymbol: String? = nil,
         overrideForeground: NSColor? = nil,
         overrideBackground: NSColor? = nil,
+        overrideSymbolColor: NSColor? = nil,
+        overrideSymbolPosition: SymbolPosition? = nil,
+        overrideSymbolWrap: SymbolWrap? = nil,
         overrideSeparatorColor: NSColor? = nil,
         clearSymbol: Bool = false,
         skinTone: SkinTone? = nil,
@@ -163,7 +169,10 @@ final class StatusBarRenderer {
             separatorColor: overrideSeparatorColor,
             skinTone: skinTone,
             style: overrideStyle,
-            symbol: overrideSymbol
+            symbol: overrideSymbol,
+            symbolColor: overrideSymbolColor,
+            symbolPosition: overrideSymbolPosition,
+            symbolWrap: overrideSymbolWrap
         )
         defer { preview = nil }
 
@@ -529,6 +538,13 @@ final class StatusBarRenderer {
         /// App icon drawn for fullscreen spaces; takes precedence over text/symbol
         let appIcon: NSImage?
         let darkMode: Bool
+        /// True only when text came from a user label; a symbol combines
+        /// with a custom label but never with the plain space number
+        let hasCustomLabel: Bool
+        let symbolPosition: SymbolPosition
+        let symbolWrap: SymbolWrap
+        /// Gap between symbol and label in points at 100% scale
+        let symbolGap: Double
     }
 
     /// Shared icon generation: resolves preferences and preview overrides
@@ -571,6 +587,19 @@ final class StatusBarRenderer {
         let isStylePreview = applyPreview && preview?.style != nil
         let isLabelStylePreview = applyPreview && preview?.labelStyle != nil
 
+        // Number style previews force the plain number, which never combines
+        let hasCustomLabel = !isStylePreview && labels[space]?.isEmpty == false
+        let symbolPosition = (applyPreview ? preview?.symbolPosition : nil)
+            ?? SpacePreferences.symbolPosition(forSpace: space, display: displayID, store: store)
+            ?? .left
+        let symbolWrap = (applyPreview ? preview?.symbolWrap : nil)
+            ?? SpacePreferences.symbolWrap(forSpace: space, display: displayID, store: store)
+            ?? .inside
+        let symbolGapScale = SpacePreferences.symbolGap(
+            forSpace: space, display: displayID, store: store
+        ) ?? Layout.defaultSymbolGapScale
+        let symbolGap = Layout.maxSymbolGap * symbolGapScale / 100.0
+
         var colors = SpacePreferences.colors(forSpace: space, display: displayID, store: store)
         let style: IconStyle
         let font: NSFont?
@@ -607,11 +636,18 @@ final class StatusBarRenderer {
                 let defaults = IconColors.filledColors(darkMode: darkMode)
                 if let fg = preview.foreground {
                     let bg = colors?.background ?? defaults.background
-                    colors = SpaceColors(foreground: fg, background: bg)
+                    colors = SpaceColors(foreground: fg, background: bg, symbol: colors?.symbol)
                 }
                 if let bg = preview.background {
                     let fg = colors?.foreground ?? defaults.foreground
-                    colors = SpaceColors(foreground: fg, background: bg)
+                    colors = SpaceColors(foreground: fg, background: bg, symbol: colors?.symbol)
+                }
+                if let symbolColor = preview.symbolColor {
+                    colors = SpaceColors(
+                        foreground: colors?.foreground ?? defaults.foreground,
+                        background: colors?.background ?? defaults.background,
+                        symbol: symbolColor
+                    )
                 }
             }
         }
@@ -629,7 +665,11 @@ final class StatusBarRenderer {
                 skinTone: .default,
                 badge: nil,
                 appIcon: fullscreenAppIcon(forSpaceID: spaceID),
-                darkMode: darkMode
+                darkMode: darkMode,
+                hasCustomLabel: false,
+                symbolPosition: symbolPosition,
+                symbolWrap: symbolWrap,
+                symbolGap: symbolGap
             )
         }
 
@@ -647,12 +687,17 @@ final class StatusBarRenderer {
                 skinTone: skinTone,
                 badge: nil,
                 appIcon: nil,
-                darkMode: darkMode
+                darkMode: darkMode,
+                hasCustomLabel: hasCustomLabel,
+                symbolPosition: symbolPosition,
+                symbolWrap: symbolWrap,
+                symbolGap: symbolGap
             )
         }
 
-        // Skip all pref reads during style preview
-        let skipSymbolAndBadge = isStylePreview || isLabelStylePreview
+        // Skip symbol/badge reads during number style preview only; label
+        // style hovers preview the real combined result
+        let skipSymbolAndBadge = isStylePreview
         let symbol: String? = skipSymbolAndBadge
             ? nil
             : ((applyPreview && (preview?.clearSymbol ?? false))
@@ -680,7 +725,11 @@ final class StatusBarRenderer {
             skinTone: skinTone,
             badge: badge,
             appIcon: nil,
-            darkMode: darkMode
+            darkMode: darkMode,
+            hasCustomLabel: hasCustomLabel,
+            symbolPosition: symbolPosition,
+            symbolWrap: symbolWrap,
+            symbolGap: symbolGap
         )
     }
 
@@ -694,6 +743,23 @@ final class StatusBarRenderer {
             )
         }
         if let symbol = spec.symbol {
+            if spec.hasCustomLabel {
+                return SpaceIconGenerator.generateCombinedIcon(
+                    text: spec.text,
+                    symbolName: symbol,
+                    position: spec.symbolPosition,
+                    wrap: spec.symbolWrap,
+                    gap: spec.symbolGap,
+                    darkMode: spec.darkMode,
+                    customColors: spec.colors,
+                    customFont: spec.font,
+                    style: spec.style,
+                    skinTone: spec.skinTone,
+                    sizeScale: store.sizeScale,
+                    paddingScale: store.paddingScale,
+                    badge: spec.badge
+                )
+            }
             return SpaceIconGenerator.generateSymbolIcon(
                 symbolName: symbol,
                 darkMode: spec.darkMode,

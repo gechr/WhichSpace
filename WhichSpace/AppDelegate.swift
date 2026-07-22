@@ -61,7 +61,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     private var scrollAccumulator = 0.0
     private var lastScrollSwitchTimestamp: TimeInterval = -.infinity
 
-    private var isPickingForeground = true
+    /// Which color the shared color panel is currently editing
+    private enum ColorPanelTarget {
+        case foreground
+        case background
+        case symbol
+    }
+
+    private var colorPanelTarget = ColorPanelTarget.foreground
     /// Owns hover-preview coalescing and restore timing for the status icon
     private lazy var previewCoordinator = IconPreviewCoordinator(
         applyPreview: { [weak self] request in
@@ -579,8 +586,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     }
 
     private func updateBadgeMenuVisibility() {
-        let symbolIsActive = appState.currentSymbol != nil
-        statusMenu.item(withTag: MenuTag.badgeMenuItem.rawValue)?.isHidden = symbolIsActive
+        // Combined symbol+label icons render text, so badges apply there;
+        // only a symbol shown alone hides the badge menu
+        let symbolAlone = appState.currentSymbol != nil && !currentSpaceHasLabel
+        statusMenu.item(withTag: MenuTag.badgeMenuItem.rawValue)?.isHidden = symbolAlone
+    }
+
+    private var currentSpaceHasLabel: Bool {
+        let label = SpacePreferences.label(
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
+        return label.map { !$0.isEmpty } ?? false
     }
 
     private func updateStatusBarVisibility() {
@@ -627,6 +645,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         symbol: String? = nil,
         foreground: NSColor? = nil,
         background: NSColor? = nil,
+        symbolColor: NSColor? = nil,
+        symbolPosition: SymbolPosition? = nil,
+        symbolWrap: SymbolWrap? = nil,
         separatorColor: NSColor? = nil,
         clearSymbol: Bool = false,
         skinTone: SkinTone? = nil,
@@ -636,15 +657,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             return
         }
         previewCoordinator.show(IconPreviewRequest(
-            style: style,
-            labelStyle: labelStyle,
-            symbol: symbol,
-            foreground: foreground,
             background: background,
-            separatorColor: separatorColor,
+            badgePosition: badgePosition,
             clearSymbol: clearSymbol,
+            foreground: foreground,
+            labelStyle: labelStyle,
+            separatorColor: separatorColor,
             skinTone: skinTone,
-            badgePosition: badgePosition
+            style: style,
+            symbol: symbol,
+            symbolColor: symbolColor,
+            symbolPosition: symbolPosition,
+            symbolWrap: symbolWrap
         ))
     }
 
@@ -660,6 +684,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             overrideSymbol: request.symbol,
             overrideForeground: request.foreground,
             overrideBackground: request.background,
+            overrideSymbolColor: request.symbolColor,
+            overrideSymbolPosition: request.symbolPosition,
+            overrideSymbolWrap: request.symbolWrap,
             overrideSeparatorColor: request.separatorColor,
             clearSymbol: request.clearSymbol,
             skinTone: request.skinTone,
@@ -709,17 +736,28 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         colorPanel.setAction(#selector(colorChanged(_:)))
         colorPanel.isContinuous = true
 
-        if let colors = appState.currentColors {
-            colorPanel.color = isPickingForeground ? colors.foreground : colors.background
-        } else {
-            colorPanel.color = isPickingForeground ? .white : .black
+        let colors = appState.currentColors
+        colorPanel.color = switch colorPanelTarget {
+        case .foreground:
+            colors?.foreground ?? .white
+        case .background:
+            colors?.background ?? .black
+        case .symbol:
+            colors?.symbol ?? colors?.foreground ?? .white
         }
 
         colorPanel.makeKeyAndOrderFront(nil)
     }
 
     @objc private func colorChanged(_ sender: NSColorPanel) {
-        actionHandler.setColor(sender.color, isForeground: isPickingForeground)
+        switch colorPanelTarget {
+        case .foreground:
+            actionHandler.setColor(sender.color, isForeground: true)
+        case .background:
+            actionHandler.setColor(sender.color, isForeground: false)
+        case .symbol:
+            actionHandler.setSymbolColor(sender.color)
+        }
     }
 
     // MARK: - Font Panel
@@ -749,6 +787,10 @@ extension AppDelegate: MenuActionDelegate {
     func paddingChanged(to scale: Double) {
         store.paddingScale = scale
         updateStatusBarIcon()
+    }
+
+    func symbolGapChanged(to gap: Double) {
+        actionHandler.setSymbolGap(gap)
     }
 
     func scrollSensitivityChanged(to scale: Double) {
@@ -788,13 +830,22 @@ extension AppDelegate: MenuActionDelegate {
         actionHandler.setSeparatorColor(color)
     }
 
+    func symbolColorSelected(_ color: NSColor) {
+        actionHandler.setSymbolColor(color)
+    }
+
     func customForegroundColorRequested() {
-        isPickingForeground = true
+        colorPanelTarget = .foreground
         showColorPanel()
     }
 
     func customBackgroundColorRequested() {
-        isPickingForeground = false
+        colorPanelTarget = .background
+        showColorPanel()
+    }
+
+    func customSymbolColorRequested() {
+        colorPanelTarget = .symbol
         showColorPanel()
     }
 
@@ -805,6 +856,8 @@ extension AppDelegate: MenuActionDelegate {
     func symbolSelected(_ symbol: String?) {
         actionHandler.setSymbol(symbol)
         updateBadgeMenuVisibility()
+        // The combined position/wrap section depends on symbol presence
+        updateLabelMenuVisibility(hasLabel: currentSpaceHasLabel)
     }
 
     func iconStyleSelected(_ style: IconStyle, stylePicker: StylePicker?) {
@@ -823,6 +876,8 @@ extension AppDelegate: MenuActionDelegate {
         previewCoordinator.endWithoutRestore()
         actionHandler.setLabel(label)
         updateLabelMenuVisibility(hasLabel: label != nil && !label!.isEmpty)
+        // Combined icons render text, so badge availability changes too
+        updateBadgeMenuVisibility()
     }
 
     private func updateLabelMenuVisibility(hasLabel: Bool) {
@@ -843,6 +898,10 @@ extension AppDelegate: MenuActionDelegate {
                 item.isHidden = !hasLabel
             }
         }
+        menuBuilder.updateSymbolSection(
+            in: labelMenu,
+            visible: hasLabel && appState.currentSymbol != nil
+        )
     }
 
     func labelStyleSelected(_ style: IconStyle, stylePicker: StylePicker?) {
@@ -894,6 +953,10 @@ extension AppDelegate: MenuActionDelegate {
         showPreviewIcon(separatorColor: ColorSwatch.presetColors[index])
     }
 
+    func symbolColorHoverStarted(index: Int) {
+        showPreviewIcon(symbolColor: ColorSwatch.presetColors[index])
+    }
+
     func symbolHoverStarted(_ symbol: String, foreground: NSColor?, background: NSColor?, skinTone: SkinTone?) {
         showPreviewIcon(symbol: symbol, foreground: foreground, background: background, skinTone: skinTone)
     }
@@ -941,6 +1004,24 @@ extension AppDelegate: NSMenuDelegate {
 
         if let position = badgePositionTags[item.tag] {
             showPreviewIcon(badgePosition: position)
+            return
+        }
+
+        let symbolPositionTags: [Int: SymbolPosition] = [
+            MenuTag.symbolPositionLeft.rawValue: .left,
+            MenuTag.symbolPositionRight.rawValue: .right,
+        ]
+        if let position = symbolPositionTags[item.tag] {
+            showPreviewIcon(symbolPosition: position)
+            return
+        }
+
+        let symbolWrapTags: [Int: SymbolWrap] = [
+            MenuTag.symbolWrapInside.rawValue: .inside,
+            MenuTag.symbolWrapOutside.rawValue: .outside,
+        ]
+        if let wrap = symbolWrapTags[item.tag] {
+            showPreviewIcon(symbolWrap: wrap)
             return
         }
 

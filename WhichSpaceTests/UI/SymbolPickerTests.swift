@@ -125,6 +125,22 @@ struct SymbolPickerTests {
         #expect(sut.onItemSelected == nil)
     }
 
+    @Test("re-clicking the selected item deselects it")
+    func reClickingSelectedItemDeselects() {
+        var receivedItems: [String?] = []
+        sut.onItemSelected = { item in
+            receivedItems.append(item)
+        }
+
+        simulateClickOnItemCell(row: 0, column: 0)
+        simulateClickOnItemCell(row: 0, column: 0)
+
+        #expect(receivedItems.count == 2, "Should receive callback for each click")
+        #expect(receivedItems.first != nil && receivedItems.first! != nil, "First click selects")
+        #expect(receivedItems.last != nil && receivedItems.last! == nil, "Second click deselects")
+        #expect(sut.selectedItem == nil, "Picker selection should be cleared")
+    }
+
     // MARK: - darkMode Tests
 
     @Test("darkMode defaults to false")

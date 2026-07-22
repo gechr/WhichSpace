@@ -482,4 +482,129 @@ struct SpacePreferencesTests {
         // Per-display storage should be empty
         #expect(store.displaySpaceIconStyles["SomeDisplay"]?[1] == nil)
     }
+
+    // MARK: - Combined Symbol Layout Tests
+
+    @Test("label and symbol can coexist")
+    func labelAndSymbolCanCoexist() {
+        SpacePreferences.setLabel("Work", forSpace: 2, store: store)
+        SpacePreferences.setSymbol("star.fill", forSpace: 2, store: store)
+
+        #expect(SpacePreferences.label(forSpace: 2, store: store) == "Work")
+        #expect(SpacePreferences.symbol(forSpace: 2, store: store) == "star.fill")
+    }
+
+    @Test("symbol position set, get, and clear")
+    func symbolPositionSetGetClear() {
+        #expect(SpacePreferences.symbolPosition(forSpace: 2, store: store) == nil)
+
+        SpacePreferences.setSymbolPosition(.right, forSpace: 2, store: store)
+        #expect(SpacePreferences.symbolPosition(forSpace: 2, store: store) == .right)
+
+        SpacePreferences.clearSymbolPosition(forSpace: 2, store: store)
+        #expect(SpacePreferences.symbolPosition(forSpace: 2, store: store) == nil)
+    }
+
+    @Test("symbol wrap set, get, and clear")
+    func symbolWrapSetGetClear() {
+        #expect(SpacePreferences.symbolWrap(forSpace: 2, store: store) == nil)
+
+        SpacePreferences.setSymbolWrap(.outside, forSpace: 2, store: store)
+        #expect(SpacePreferences.symbolWrap(forSpace: 2, store: store) == .outside)
+
+        SpacePreferences.clearSymbolWrap(forSpace: 2, store: store)
+        #expect(SpacePreferences.symbolWrap(forSpace: 2, store: store) == nil)
+    }
+
+    @Test("symbol gap set, get, and clear")
+    func symbolGapSetGetClear() {
+        #expect(SpacePreferences.symbolGap(forSpace: 2, store: store) == nil)
+
+        SpacePreferences.setSymbolGap(6.0, forSpace: 2, store: store)
+        #expect(SpacePreferences.symbolGap(forSpace: 2, store: store) == 6.0)
+
+        SpacePreferences.clearSymbolGap(forSpace: 2, store: store)
+        #expect(SpacePreferences.symbolGap(forSpace: 2, store: store) == nil)
+    }
+
+    @Test("symbol layout preferences respect per-display mode")
+    func symbolLayoutRespectsPerDisplay() {
+        store.uniqueIconsPerDisplay = true
+
+        SpacePreferences.setSymbolPosition(.right, forSpace: 1, display: "Display1", store: store)
+        SpacePreferences.setSymbolWrap(.outside, forSpace: 1, display: "Display1", store: store)
+        SpacePreferences.setSymbolGap(8.0, forSpace: 1, display: "Display1", store: store)
+
+        #expect(SpacePreferences.symbolPosition(forSpace: 1, display: "Display1", store: store) == .right)
+        #expect(SpacePreferences.symbolPosition(forSpace: 1, display: "Display2", store: store) == nil)
+        #expect(SpacePreferences.symbolWrap(forSpace: 1, display: "Display2", store: store) == nil)
+        #expect(SpacePreferences.symbolGap(forSpace: 1, display: "Display2", store: store) == nil)
+    }
+
+    @Test("hasAnyPreference sees symbol layout preferences")
+    func hasAnyPreferenceSeesSymbolLayout() {
+        #expect(!SpacePreferences.hasAnyPreference(forSpace: 4, store: store))
+
+        SpacePreferences.setSymbolPosition(.right, forSpace: 4, store: store)
+        #expect(SpacePreferences.hasAnyPreference(forSpace: 4, store: store))
+
+        SpacePreferences.clearPreferences(forSpace: 4, store: store)
+        #expect(!SpacePreferences.hasAnyPreference(forSpace: 4, store: store))
+
+        SpacePreferences.setSymbolGap(5.0, forSpace: 4, store: store)
+        #expect(SpacePreferences.hasAnyPreference(forSpace: 4, store: store))
+    }
+
+    @Test("copyPreferences copies symbol layout")
+    func copyPreferencesCopiesSymbolLayout() {
+        SpacePreferences.setSymbolPosition(.right, forSpace: 1, store: store)
+        SpacePreferences.setSymbolWrap(.outside, forSpace: 1, store: store)
+        SpacePreferences.setSymbolGap(7.0, forSpace: 1, store: store)
+
+        SpacePreferences.copyPreferences(from: 1, to: 2, store: store)
+
+        #expect(SpacePreferences.symbolPosition(forSpace: 2, store: store) == .right)
+        #expect(SpacePreferences.symbolWrap(forSpace: 2, store: store) == .outside)
+        #expect(SpacePreferences.symbolGap(forSpace: 2, store: store) == 7.0)
+    }
+
+    @Test("clearAll removes symbol layout preferences")
+    func clearAllRemovesSymbolLayout() {
+        SpacePreferences.setSymbolPosition(.right, forSpace: 1, store: store)
+        SpacePreferences.setSymbolWrap(.outside, forSpace: 2, store: store)
+        SpacePreferences.setSymbolGap(9.0, forSpace: 3, store: store)
+
+        SpacePreferences.clearAll(store: store)
+
+        #expect(SpacePreferences.symbolPosition(forSpace: 1, store: store) == nil)
+        #expect(SpacePreferences.symbolWrap(forSpace: 2, store: store) == nil)
+        #expect(SpacePreferences.symbolGap(forSpace: 3, store: store) == nil)
+    }
+
+    // MARK: - Symbol Color Tests
+
+    @Test("symbol color stored independently of foreground")
+    func symbolColorIndependentOfForeground() {
+        SpacePreferences.setColors(
+            SpaceColors(foreground: .red, background: .blue, symbol: .green),
+            forSpace: 2,
+            store: store
+        )
+
+        let colors = SpacePreferences.colors(forSpace: 2, store: store)
+        #expect(colors?.foreground == .red)
+        #expect(colors?.background == .blue)
+        #expect(colors?.symbol == .green)
+    }
+
+    @Test("symbol color defaults to nil")
+    func symbolColorDefaultsToNil() {
+        SpacePreferences.setColors(
+            SpaceColors(foreground: .red, background: .blue),
+            forSpace: 2,
+            store: store
+        )
+
+        #expect(SpacePreferences.colors(forSpace: 2, store: store)?.symbol == nil)
+    }
 }

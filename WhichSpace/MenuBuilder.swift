@@ -9,15 +9,18 @@ import Defaults
 protocol MenuActionDelegate: AnyObject {
     func sizeChanged(to scale: Double)
     func paddingChanged(to scale: Double)
+    func symbolGapChanged(to gap: Double)
     func scrollSensitivityChanged(to scale: Double)
     func scrollHapticIntensityChanged(to intensity: Int)
     func skinToneSelected(_ tone: SkinTone)
     func foregroundColorSelected(_ color: NSColor)
     func backgroundColorSelected(_ color: NSColor)
     func separatorColorSelected(_ color: NSColor)
+    func symbolColorSelected(_ color: NSColor)
     func customForegroundColorRequested()
     func customBackgroundColorRequested()
     func customSeparatorColorRequested()
+    func customSymbolColorRequested()
     func symbolSelected(_ symbol: String?)
     func iconStyleSelected(_ style: IconStyle, stylePicker: StylePicker?)
     func badgeCharacterChanged(_ character: String?)
@@ -31,6 +34,7 @@ protocol MenuActionDelegate: AnyObject {
     func colorHoverStarted(index: Int, isForeground: Bool)
     func backgroundColorHoverStarted(index: Int)
     func separatorColorHoverStarted(index: Int)
+    func symbolColorHoverStarted(index: Int)
     func symbolHoverStarted(_ symbol: String, foreground: NSColor?, background: NSColor?, skinTone: SkinTone?)
     func styleHoverStarted(_ style: IconStyle)
     func hoverEnded()
@@ -140,9 +144,6 @@ final class MenuBuilder {
         let currentSymbolIsEmoji = currentSymbol?.containsEmoji ?? false
         let currentSymbolIsSFSymbol = symbolIsActive && !currentSymbolIsEmoji
 
-        // Hide badge menu when symbol/emoji is active (badges only apply to number/label icons)
-        menu.item(withTag: MenuTag.badgeMenuItem.rawValue)?.isHidden = symbolIsActive
-
         // Update label input value and label style pickers
         let currentLabel = SpacePreferences.label(
             forSpace: appState.currentSpace,
@@ -151,6 +152,10 @@ final class MenuBuilder {
         )
         labelInput?.currentLabel = currentLabel
         let hasLabel = currentLabel.map { !$0.isEmpty } ?? false
+
+        // Hide badge menu when a symbol is shown alone; combined
+        // symbol+label icons render text, so badges apply there
+        menu.item(withTag: MenuTag.badgeMenuItem.rawValue)?.isHidden = symbolIsActive && !hasLabel
         let currentLabelStyle = SpacePreferences.labelStyle(
             forSpace: appState.currentSpace,
             display: appState.currentDisplayID,
@@ -183,6 +188,10 @@ final class MenuBuilder {
                     view.needsDisplay = true
                 }
             }
+
+            // Symbol position/wrap section applies only when a symbol and a
+            // label are combined
+            updateSymbolSection(in: resolvedLabelMenu, visible: hasLabel && symbolIsActive)
         }
 
         let badgePositionTags: [MenuTag: BadgePosition] = [
@@ -245,24 +254,34 @@ final class MenuBuilder {
                 item.isHidden = !store.showAllDisplays || !hasMultipleDisplays
             }
 
-            // Hide foreground/background labels and swatches when any symbol is active (SF Symbol or emoji)
+            // Hide foreground/background labels and swatches only when a
+            // symbol is shown alone; combined symbol+label icons use them.
             // Also hide background items when style is transparent (no background to color)
+            let symbolAlone = symbolIsActive && !hasLabel
             if Self.foregroundTags.contains(item.tag) {
-                item.isHidden = symbolIsActive
+                item.isHidden = symbolAlone
             }
             if Self.backgroundTags.contains(item.tag) {
-                item.isHidden = symbolIsActive || currentStyle == .transparent
+                item.isHidden = symbolAlone || currentStyle == .transparent
             }
 
-            // Hide "Invert color" when any symbol is active (no fg/bg to swap)
+            // Hide "Invert color" when a symbol is shown alone (no fg/bg to swap)
             if item.tag == MenuTag.invertColors.rawValue {
-                item.isHidden = symbolIsActive
+                item.isHidden = symbolAlone
             }
-            // Update foreground label text: "Number" for transparent, "Number (Foreground)" otherwise
+            // Foreground/background headers name what they color: the label
+            // when one is set, otherwise the number. Transparent styles have
+            // no background, so the foreground header drops the suffix
             if item.tag == MenuTag.foregroundLabel.rawValue {
-                item.title = currentStyle == .transparent
-                    ? Localization.labelNumber
-                    : Localization.labelNumberForeground
+                let styleForTitle = hasLabel ? currentLabelStyle : currentStyle
+                item.title = if styleForTitle == .transparent {
+                    hasLabel ? Localization.menuLabel : Localization.labelNumber
+                } else {
+                    hasLabel ? Localization.labelLabelForeground : Localization.labelNumberForeground
+                }
+            }
+            if item.tag == MenuTag.backgroundLabel.rawValue {
+                item.title = hasLabel ? Localization.labelLabelBackground : Localization.labelNumberBackground
             }
 
             if item.tag == MenuTag.sizeRow.rawValue, let view = item.view as? SizeSlider {
@@ -291,12 +310,58 @@ final class MenuBuilder {
                 item.state = activePosition == position ? .on : .off
             }
 
-            // Update sound menu checkmarks (skip badge position items which also use String representedObject)
+            // Update sound menu checkmarks (skip badge position and symbol
+            // position/wrap items which also use String representedObject)
             let isBadgePositionItem = MenuTag(rawValue: item.tag).flatMap { badgePositionTags[$0] } != nil
-            if item.representedObject is String, !isBadgePositionItem {
+            let isSymbolSectionItem = Self.symbolSectionTags.contains(item.tag)
+            if item.representedObject is String, !isBadgePositionItem, !isSymbolSectionItem {
                 let soundName = item.representedObject as? String ?? ""
                 item.state = soundName == store.soundName ? .on : .off
             }
+        }
+    }
+
+    private static let symbolSectionTags: Set<Int> = [
+        MenuTag.symbolSectionSeparator.rawValue,
+        MenuTag.symbolPositionHeader.rawValue,
+        MenuTag.symbolPositionLeft.rawValue,
+        MenuTag.symbolPositionRight.rawValue,
+        MenuTag.symbolWrapHeader.rawValue,
+        MenuTag.symbolWrapInside.rawValue,
+        MenuTag.symbolWrapOutside.rawValue,
+        MenuTag.symbolGapSeparator.rawValue,
+        MenuTag.symbolGapRow.rawValue,
+    ]
+
+    /// Shows or hides the combined symbol position/wrap rows in the Label
+    /// menu and refreshes their checkmarks.
+    func updateSymbolSection(in labelMenu: NSMenu, visible: Bool) {
+        for tag in Self.symbolSectionTags {
+            labelMenu.item(withTag: tag)?.isHidden = !visible
+        }
+        guard visible else {
+            return
+        }
+        let position = SpacePreferences.symbolPosition(
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        ) ?? .left
+        let wrap = SpacePreferences.symbolWrap(
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        ) ?? .inside
+        labelMenu.item(withTag: MenuTag.symbolPositionLeft.rawValue)?.state = position == .left ? .on : .off
+        labelMenu.item(withTag: MenuTag.symbolPositionRight.rawValue)?.state = position == .right ? .on : .off
+        labelMenu.item(withTag: MenuTag.symbolWrapInside.rawValue)?.state = wrap == .inside ? .on : .off
+        labelMenu.item(withTag: MenuTag.symbolWrapOutside.rawValue)?.state = wrap == .outside ? .on : .off
+        if let slider = labelMenu.item(withTag: MenuTag.symbolGapRow.rawValue)?.view as? SizeSlider {
+            slider.currentSize = SpacePreferences.symbolGap(
+                forSpace: appState.currentSpace,
+                display: appState.currentDisplayID,
+                store: store
+            ) ?? Layout.defaultSymbolGapScale
         }
     }
 
@@ -538,14 +603,15 @@ final class MenuBuilder {
         let symbolLabelItem = NSMenuItem(title: Localization.labelSymbol, action: nil, keyEquivalent: "")
         symbolLabelItem.isEnabled = false
         symbolLabelItem.tag = MenuTag.symbolLabel.rawValue
+        symbolLabelItem.image = NSImage(systemSymbolName: "burst.fill", accessibilityDescription: nil)
         symbolLabelItem.isHidden = true
         menu.addItem(symbolLabelItem)
 
         let symbolSwatchItem = makeColorSwatchItem(
             tag: .symbolColorSwatch,
-            onColorSelected: { [weak actionDelegate] in actionDelegate?.foregroundColorSelected($0) },
-            onCustomColorRequested: { [weak actionDelegate] in actionDelegate?.customForegroundColorRequested() },
-            onHoverStart: { [weak actionDelegate] in actionDelegate?.colorHoverStarted(index: $0, isForeground: true) },
+            onColorSelected: { [weak actionDelegate] in actionDelegate?.symbolColorSelected($0) },
+            onCustomColorRequested: { [weak actionDelegate] in actionDelegate?.customSymbolColorRequested() },
+            onHoverStart: { [weak actionDelegate] in actionDelegate?.symbolColorHoverStarted(index: $0) },
             onHoverEnd: { [weak actionDelegate] in actionDelegate?.hoverEnded() }
         )
         symbolSwatchItem.isHidden = true
@@ -1078,6 +1144,106 @@ final class MenuBuilder {
             item.representedObject = style
             labelMenu.addItem(item)
         }
+
+        // Combined symbol+label section (visible only when both are set)
+        let symbolSectionSeparator = NSMenuItem.separator()
+        symbolSectionSeparator.tag = MenuTag.symbolSectionSeparator.rawValue
+        labelMenu.addItem(symbolSectionSeparator)
+
+        let positionHeader = NSMenuItem(title: Localization.labelSymbolPosition, action: nil, keyEquivalent: "")
+        positionHeader.isEnabled = false
+        positionHeader.tag = MenuTag.symbolPositionHeader.rawValue
+        positionHeader.image = NSImage(systemSymbolName: "arrow.left.and.right", accessibilityDescription: nil)
+        labelMenu.addItem(positionHeader)
+
+        let positions: [(SymbolPosition, MenuTag, String, String, String)] = [
+            (
+                .left,
+                .symbolPositionLeft,
+                Localization.symbolPositionLeft,
+                "arrow.left.to.line",
+                Localization.tipSymbolPositionLeft
+            ),
+            (
+                .right,
+                .symbolPositionRight,
+                Localization.symbolPositionRight,
+                "arrow.right.to.line",
+                Localization.tipSymbolPositionRight
+            ),
+        ]
+        for (position, tag, title, symbolName, toolTip) in positions {
+            let item = NSMenuItem(
+                title: title,
+                action: #selector(ActionHandler.symbolPositionSelected(_:)),
+                keyEquivalent: ""
+            )
+            item.target = target
+            item.tag = tag.rawValue
+            item.representedObject = position.rawValue
+            item.image = NSImage(systemSymbolName: symbolName, accessibilityDescription: nil)
+            item.toolTip = toolTip
+            labelMenu.addItem(item)
+        }
+
+        let wrapHeader = NSMenuItem(title: Localization.labelSymbolWrap, action: nil, keyEquivalent: "")
+        wrapHeader.isEnabled = false
+        wrapHeader.tag = MenuTag.symbolWrapHeader.rawValue
+        wrapHeader.image = NSImage(systemSymbolName: "rectangle.dashed", accessibilityDescription: nil)
+        labelMenu.addItem(wrapHeader)
+
+        let wraps: [(SymbolWrap, MenuTag, String, String, String)] = [
+            (
+                .inside,
+                .symbolWrapInside,
+                Localization.symbolWrapInside,
+                "rectangle.inset.filled",
+                Localization.tipSymbolWrapInside
+            ),
+            (
+                .outside,
+                .symbolWrapOutside,
+                Localization.symbolWrapOutside,
+                "rectangle.split.2x1",
+                Localization.tipSymbolWrapOutside
+            ),
+        ]
+        for (wrap, tag, title, symbolName, toolTip) in wraps {
+            let item = NSMenuItem(
+                title: title,
+                action: #selector(ActionHandler.symbolWrapSelected(_:)),
+                keyEquivalent: ""
+            )
+            item.target = target
+            item.tag = tag.rawValue
+            item.representedObject = wrap.rawValue
+            item.image = NSImage(systemSymbolName: symbolName, accessibilityDescription: nil)
+            item.toolTip = toolTip
+            labelMenu.addItem(item)
+        }
+
+        // Gap between symbol and label text
+        let gapSeparator = NSMenuItem.separator()
+        gapSeparator.tag = MenuTag.symbolGapSeparator.rawValue
+        labelMenu.addItem(gapSeparator)
+
+        let gapItem = NSMenuItem()
+        gapItem.tag = MenuTag.symbolGapRow.rawValue
+        let gapSlider = SizeSlider(
+            title: Localization.menuPadding,
+            initialSize: SpacePreferences.symbolGap(
+                forSpace: appState.currentSpace,
+                display: appState.currentDisplayID,
+                store: store
+            ) ?? Layout.defaultSymbolGapScale,
+            range: Layout.symbolGapScaleRange
+        )
+        gapSlider.frame = NSRect(origin: .zero, size: gapSlider.intrinsicContentSize)
+        gapSlider.onSizeChanged = { [weak actionDelegate] gap in
+            actionDelegate?.symbolGapChanged(to: gap)
+        }
+        gapItem.view = gapSlider
+        labelMenu.addItem(gapItem)
 
         let fontSepBefore = NSMenuItem.separator()
         fontSepBefore.tag = MenuTag.fontMenuItem.rawValue
