@@ -62,7 +62,12 @@ enum ItemData {
             "server.rack", "xserve", "macpro.gen3.fill", "pc", "laptopcomputer", "desktopcomputer", "macwindow",
             "cpu.fill", "memorychip.fill", "opticaldisc.fill",
             "terminal.fill", "chevron.left.forwardslash.chevron.right", "curlybraces", "curlybraces.square.fill",
+            "ellipsis.curlybraces", "swift", "doc.text.magnifyingglass", "ladybug.circle.fill",
+            "arrow.triangle.branch", "arrow.triangle.merge", "arrow.triangle.pull",
+            "cylinder.split.1x2.fill", "cube.fill", "cube.transparent", "point.3.connected.trianglepath.dotted",
+            "icloud.fill", "arrow.clockwise.icloud.fill", "speedometer", "gauge.with.needle.fill",
             "apple.terminal.fill", "command", "option", "control", "shift.fill", "capslock.fill",
+            "escape", "delete.left.fill",
             "power", "power.circle.fill", "powerplug.fill", "battery.100", "battery.75", "battery.50",
             "bolt.horizontal.fill", "cable.connector", "cable.connector.horizontal",
             "printer.fill", "scanner.fill", "display", "display.2", "tv.and.mediabox.fill",
@@ -197,6 +202,7 @@ enum ItemData {
 
             // Objects & Tools
             "gear", "gearshape.fill", "gearshape.2.fill", "slider.horizontal.3",
+            "gear.badge", "gearshape.circle.fill", "switch.2", "slider.vertical.3", "dial.low.fill",
             "wrench.fill", "wrench.and.screwdriver.fill", "hammer.fill", "hammer.circle.fill", "screwdriver.fill",
             "eyedropper.halffull", "paintbrush.fill", "level.fill", "ruler.fill",
             "scroll.fill", "theatermasks.fill", "crown.fill", "wand.and.stars",
