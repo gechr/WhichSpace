@@ -560,6 +560,40 @@ final class AppState {
         SpacePreferences.colors(forSpace: currentSpace, display: currentDisplayID, store: store)
     }
 
+    var currentCombinedSymbolLayout: CombinedSymbolLayout? {
+        guard let symbol = currentSymbol,
+              !symbol.containsEmoji,
+              let label = SpacePreferences.label(
+                  forSpace: currentSpace,
+                  display: currentDisplayID,
+                  store: store
+              ),
+              !label.isEmpty
+        else {
+            return nil
+        }
+        let labelStyle = SpacePreferences.labelStyle(
+            forSpace: currentSpace,
+            display: currentDisplayID,
+            store: store
+        ) ?? .square
+        let wrap = SpacePreferences.symbolWrap(
+            forSpace: currentSpace,
+            display: currentDisplayID,
+            store: store
+        ) ?? .inside
+        return labelStyle.combinedSymbolLayout(for: wrap)
+    }
+
+    var currentInvertedColors: SpaceColors {
+        let defaults = IconColors.filledColors(darkMode: darkModeEnabled)
+        let colors = currentColors ?? SpaceColors(
+            foreground: defaults.foreground,
+            background: defaults.background
+        )
+        return colors.inverted(for: currentCombinedSymbolLayout)
+    }
+
     var currentFont: NSFont? {
         SpacePreferences.font(forSpace: currentSpace, display: currentDisplayID, store: store)?.font
     }
@@ -599,10 +633,12 @@ final class AppState {
         overrideForeground: NSColor? = nil,
         overrideBackground: NSColor? = nil,
         overrideSymbolColor: NSColor? = nil,
+        overrideSymbolBackground: NSColor? = nil,
         overrideSymbolPosition: SymbolPosition? = nil,
         overrideSymbolWrap: SymbolWrap? = nil,
         overrideSeparatorColor: NSColor? = nil,
         clearSymbol: Bool = false,
+        clearSymbolBackground: Bool = false,
         skinTone: SkinTone? = nil,
         overrideBadgePosition: BadgePosition? = nil
     ) -> NSImage {
@@ -613,10 +649,12 @@ final class AppState {
             overrideForeground: overrideForeground,
             overrideBackground: overrideBackground,
             overrideSymbolColor: overrideSymbolColor,
+            overrideSymbolBackground: overrideSymbolBackground,
             overrideSymbolPosition: overrideSymbolPosition,
             overrideSymbolWrap: overrideSymbolWrap,
             overrideSeparatorColor: overrideSeparatorColor,
             clearSymbol: clearSymbol,
+            clearSymbolBackground: clearSymbolBackground,
             skinTone: skinTone,
             overrideBadgePosition: overrideBadgePosition
         )

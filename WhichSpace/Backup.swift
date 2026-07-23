@@ -411,20 +411,23 @@ struct CodableColor: Codable {
 struct CodableSpaceColors: Codable {
     let foreground: CodableColor
     let background: CodableColor
-    /// Optional so backups written before the symbol color existed still decode
+    /// Optional so backups written before these colors existed still decode
     let symbol: CodableColor?
+    let symbolBackground: CodableColor?
 
     init(from colors: SpaceColors) {
         foreground = CodableColor(from: colors.foreground)
         background = CodableColor(from: colors.background)
         symbol = colors.symbol.map { CodableColor(from: $0) }
+        symbolBackground = colors.symbolBackground.map { CodableColor(from: $0) }
     }
 
     func toSpaceColors() -> SpaceColors? {
         SpaceColors(
             foreground: foreground.toNSColor(),
             background: background.toNSColor(),
-            symbol: symbol?.toNSColor()
+            symbol: symbol?.toNSColor(),
+            symbolBackground: symbolBackground?.toNSColor()
         )
     }
 }

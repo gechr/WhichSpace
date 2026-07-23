@@ -66,6 +66,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         case foreground
         case background
         case symbol
+        case symbolBackground
     }
 
     private var colorPanelTarget = ColorPanelTarget.foreground
@@ -646,10 +647,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         foreground: NSColor? = nil,
         background: NSColor? = nil,
         symbolColor: NSColor? = nil,
+        symbolBackground: NSColor? = nil,
         symbolPosition: SymbolPosition? = nil,
         symbolWrap: SymbolWrap? = nil,
         separatorColor: NSColor? = nil,
         clearSymbol: Bool = false,
+        clearSymbolBackground: Bool = false,
         skinTone: SkinTone? = nil,
         badgePosition: BadgePosition? = nil
     ) {
@@ -660,12 +663,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             background: background,
             badgePosition: badgePosition,
             clearSymbol: clearSymbol,
+            clearSymbolBackground: clearSymbolBackground,
             foreground: foreground,
             labelStyle: labelStyle,
             separatorColor: separatorColor,
             skinTone: skinTone,
             style: style,
             symbol: symbol,
+            symbolBackground: symbolBackground,
             symbolColor: symbolColor,
             symbolPosition: symbolPosition,
             symbolWrap: symbolWrap
@@ -685,10 +690,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             overrideForeground: request.foreground,
             overrideBackground: request.background,
             overrideSymbolColor: request.symbolColor,
+            overrideSymbolBackground: request.symbolBackground,
             overrideSymbolPosition: request.symbolPosition,
             overrideSymbolWrap: request.symbolWrap,
             overrideSeparatorColor: request.separatorColor,
             clearSymbol: request.clearSymbol,
+            clearSymbolBackground: request.clearSymbolBackground,
             skinTone: request.skinTone,
             overrideBadgePosition: request.badgePosition
         )
@@ -705,10 +712,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     }
 
     private func showInvertedColorPreview() {
-        let defaults = IconColors.filledColors(darkMode: appState.darkModeEnabled)
-        let foreground = appState.currentColors?.foreground ?? defaults.foreground
-        let background = appState.currentColors?.background ?? defaults.background
-        showPreviewIcon(foreground: background, background: foreground)
+        let colors = appState.currentInvertedColors
+        showPreviewIcon(
+            foreground: colors.foreground,
+            background: colors.background,
+            symbolColor: colors.symbol,
+            symbolBackground: colors.symbolBackground
+        )
     }
 
     // MARK: - Color Panel
@@ -744,6 +754,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             colors?.background ?? .black
         case .symbol:
             colors?.symbol ?? colors?.foreground ?? .white
+        case .symbolBackground:
+            colors?.symbolBackground ?? colors?.background ?? .black
         }
 
         colorPanel.makeKeyAndOrderFront(nil)
@@ -757,6 +769,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             actionHandler.setColor(sender.color, isForeground: false)
         case .symbol:
             actionHandler.setSymbolColor(sender.color)
+        case .symbolBackground:
+            actionHandler.setSymbolBackgroundColor(sender.color)
         }
     }
 
@@ -834,6 +848,14 @@ extension AppDelegate: MenuActionDelegate {
         actionHandler.setSymbolColor(color)
     }
 
+    func symbolBackgroundColorSelected(_ color: NSColor) {
+        actionHandler.setSymbolBackgroundColor(color)
+    }
+
+    func symbolBackgroundColorCleared() {
+        actionHandler.clearSymbolBackgroundColor()
+    }
+
     func customForegroundColorRequested() {
         colorPanelTarget = .foreground
         showColorPanel()
@@ -846,6 +868,11 @@ extension AppDelegate: MenuActionDelegate {
 
     func customSymbolColorRequested() {
         colorPanelTarget = .symbol
+        showColorPanel()
+    }
+
+    func customSymbolBackgroundColorRequested() {
+        colorPanelTarget = .symbolBackground
         showColorPanel()
     }
 
@@ -906,6 +933,9 @@ extension AppDelegate: MenuActionDelegate {
 
     func labelStyleSelected(_ style: IconStyle, stylePicker: StylePicker?) {
         actionHandler.selectLabelStyle(style, stylePicker: stylePicker)
+        // Wrap rows depend on whether the new style's shape can wrap, so
+        // refresh while the menu is still open
+        updateLabelMenuVisibility(hasLabel: currentSpaceHasLabel)
     }
 
     func labelStyleHoverStarted(_ style: IconStyle) {
@@ -955,6 +985,18 @@ extension AppDelegate: MenuActionDelegate {
 
     func symbolColorHoverStarted(index: Int) {
         showPreviewIcon(symbolColor: ColorSwatch.presetColors[index])
+    }
+
+    func symbolBackgroundColorHoverStarted(index: Int) {
+        showPreviewIcon(symbolBackground: ColorSwatch.presetColors[index])
+    }
+
+    func symbolBackgroundClearHoverStarted() {
+        showPreviewIcon(clearSymbolBackground: true)
+    }
+
+    func backgroundClearHoverStarted() {
+        showPreviewIcon(background: .clear)
     }
 
     func symbolHoverStarted(_ symbol: String, foreground: NSColor?, background: NSColor?, skinTone: SkinTone?) {

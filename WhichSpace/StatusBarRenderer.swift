@@ -90,12 +90,14 @@ final class StatusBarRenderer {
         var badge: SpaceBadge?
         var background: NSColor?
         var clearSymbol = false
+        var clearSymbolBackground = false
         var foreground: NSColor?
         var labelStyle: IconStyle?
         var separatorColor: NSColor?
         var skinTone: SkinTone?
         var style: IconStyle?
         var symbol: String?
+        var symbolBackground: NSColor?
         var symbolColor: NSColor?
         var symbolPosition: SymbolPosition?
         var symbolWrap: SymbolWrap?
@@ -140,10 +142,12 @@ final class StatusBarRenderer {
         overrideForeground: NSColor? = nil,
         overrideBackground: NSColor? = nil,
         overrideSymbolColor: NSColor? = nil,
+        overrideSymbolBackground: NSColor? = nil,
         overrideSymbolPosition: SymbolPosition? = nil,
         overrideSymbolWrap: SymbolWrap? = nil,
         overrideSeparatorColor: NSColor? = nil,
         clearSymbol: Bool = false,
+        clearSymbolBackground: Bool = false,
         skinTone: SkinTone? = nil,
         overrideBadgePosition: BadgePosition? = nil
     ) -> NSImage {
@@ -164,12 +168,14 @@ final class StatusBarRenderer {
             badge: badgeOverride,
             background: overrideBackground,
             clearSymbol: clearSymbol,
+            clearSymbolBackground: clearSymbolBackground,
             foreground: overrideForeground,
             labelStyle: overrideLabelStyle,
             separatorColor: overrideSeparatorColor,
             skinTone: skinTone,
             style: overrideStyle,
             symbol: overrideSymbol,
+            symbolBackground: overrideSymbolBackground,
             symbolColor: overrideSymbolColor,
             symbolPosition: overrideSymbolPosition,
             symbolWrap: overrideSymbolWrap
@@ -636,17 +642,44 @@ final class StatusBarRenderer {
                 let defaults = IconColors.filledColors(darkMode: darkMode)
                 if let fg = preview.foreground {
                     let bg = colors?.background ?? defaults.background
-                    colors = SpaceColors(foreground: fg, background: bg, symbol: colors?.symbol)
+                    colors = SpaceColors(
+                        foreground: fg,
+                        background: bg,
+                        symbol: colors?.symbol,
+                        symbolBackground: colors?.symbolBackground
+                    )
                 }
                 if let bg = preview.background {
                     let fg = colors?.foreground ?? defaults.foreground
-                    colors = SpaceColors(foreground: fg, background: bg, symbol: colors?.symbol)
+                    colors = SpaceColors(
+                        foreground: fg,
+                        background: bg,
+                        symbol: colors?.symbol,
+                        symbolBackground: colors?.symbolBackground
+                    )
                 }
                 if let symbolColor = preview.symbolColor {
                     colors = SpaceColors(
                         foreground: colors?.foreground ?? defaults.foreground,
                         background: colors?.background ?? defaults.background,
-                        symbol: symbolColor
+                        symbol: symbolColor,
+                        symbolBackground: colors?.symbolBackground
+                    )
+                }
+                if let symbolBackground = preview.symbolBackground {
+                    colors = SpaceColors(
+                        foreground: colors?.foreground ?? defaults.foreground,
+                        background: colors?.background ?? defaults.background,
+                        symbol: colors?.symbol,
+                        symbolBackground: symbolBackground
+                    )
+                }
+                if preview.clearSymbolBackground, let current = colors {
+                    colors = SpaceColors(
+                        foreground: current.foreground,
+                        background: current.background,
+                        symbol: current.symbol,
+                        symbolBackground: nil
                     )
                 }
             }

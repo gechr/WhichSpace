@@ -210,6 +210,8 @@ enum MenuTag: Int {
     case sizeRow
     case skinToneLabel
     case skinToneSwatch
+    case symbolBackgroundLabel
+    case symbolBackgroundSwatch
     case symbolColorSwatch
     case symbolGapRow
     case symbolGapSeparator
@@ -320,6 +322,8 @@ enum Localization {
     static let labelSeparator = String(localized: "label_separator")
     static let labelSkinTone = String(localized: "label_skin_tone")
     static let labelSymbol = String(localized: "label_symbol")
+    static let labelSymbolBackground = String(localized: "label_symbol_background")
+    static let labelSymbolForeground = String(localized: "label_symbol_foreground")
     static let labelSymbolPosition = String(localized: "label_symbol_position")
     static let labelSymbolWrap = String(localized: "label_symbol_wrap")
     static let labelStyleBox = String(localized: "label_style_box")

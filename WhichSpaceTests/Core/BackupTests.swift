@@ -57,7 +57,12 @@ struct CodableColorTests {
 struct CodableSpaceColorsTests {
     @Test("round-trip conversion preserves white/black")
     func roundTripConversion() throws {
-        let original = SpaceColors(foreground: .white, background: .black)
+        let original = SpaceColors(
+            foreground: .white,
+            background: .black,
+            symbol: .green,
+            symbolBackground: .red
+        )
         let codable = CodableSpaceColors(from: original)
         let restored = try #require(codable.toSpaceColors())
 
@@ -67,6 +72,8 @@ struct CodableSpaceColorsTests {
         #expect(abs(restored.background.redComponent - 0.0) < 0.001)
         #expect(abs(restored.background.greenComponent - 0.0) < 0.001)
         #expect(abs(restored.background.blueComponent - 0.0) < 0.001)
+        #expect(restored.symbol == .green)
+        #expect(restored.symbolBackground == .red)
     }
 
     @Test("JSON encode/decode round-trip")
@@ -77,6 +84,21 @@ struct CodableSpaceColorsTests {
 
         #expect(abs(decoded.foreground.red - original.foreground.red) < 0.001)
         #expect(abs(decoded.background.blue - original.background.blue) < 0.001)
+    }
+
+    @Test("legacy JSON without optional symbol colors decodes")
+    func legacyJSONDecodes() throws {
+        let data = Data("""
+        {
+          "foreground": {"red": 1, "green": 0, "blue": 0, "alpha": 1},
+          "background": {"red": 0, "green": 0, "blue": 1, "alpha": 1}
+        }
+        """.utf8)
+        let decoded = try JSONDecoder().decode(CodableSpaceColors.self, from: data)
+        let restored = try #require(decoded.toSpaceColors())
+
+        #expect(restored.symbol == nil)
+        #expect(restored.symbolBackground == nil)
     }
 }
 
@@ -208,9 +230,14 @@ struct BackupSpacePreferencesTests {
     }
 
     @Test("colors conversion round-trip")
-    func colorsConversion() {
+    func colorsConversion() throws {
         let colors: [Int: SpaceColors] = [
-            1: SpaceColors(foreground: .red, background: .blue),
+            1: SpaceColors(
+                foreground: .red,
+                background: .blue,
+                symbol: .white,
+                symbolBackground: .black
+            ),
             2: SpaceColors(foreground: .green, background: .yellow),
         ]
         let prefs = BackupSpacePreferences(colors: colors)
@@ -223,6 +250,14 @@ struct BackupSpacePreferencesTests {
         #expect(restored.count == 2)
         #expect(restored[1] != nil)
         #expect(restored[2] != nil)
+        let symbol = try #require(restored[1]?.symbol?.usingColorSpace(.deviceRGB))
+        let symbolBackground = try #require(restored[1]?.symbolBackground?.usingColorSpace(.deviceRGB))
+        #expect(abs(symbol.redComponent - 1) < 0.001)
+        #expect(abs(symbol.greenComponent - 1) < 0.001)
+        #expect(abs(symbol.blueComponent - 1) < 0.001)
+        #expect(abs(symbolBackground.redComponent) < 0.001)
+        #expect(abs(symbolBackground.greenComponent) < 0.001)
+        #expect(abs(symbolBackground.blueComponent) < 0.001)
     }
 
     // swiftlint:disable:next function_body_length

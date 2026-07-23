@@ -105,6 +105,19 @@ struct ColorSwatchTests {
         #expect(!colorSelectedCalled, "Custom color circle should not trigger onColorSelected")
     }
 
+    @Test("Click on clear cell calls onClearRequested")
+    func clickOnClearCell_callsOnClearRequested() {
+        var clearRequested = false
+        sut.onClearRequested = {
+            clearRequested = true
+        }
+        resizeForCurrentItems()
+
+        simulateClickOnSwatch(at: ColorSwatch.clearIndex)
+
+        #expect(clearRequested, "Clear cell should trigger onClearRequested")
+    }
+
     // MARK: - Edge Case Tests
 
     @Test("Click outside swatches does not call callbacks")
@@ -226,6 +239,14 @@ struct ColorSwatchTests {
         #expect(abs(size.height - expectedHeight) <= 0.1, "Height should match expected calculation")
     }
 
+    @Test("Clear cell expands intrinsic content size")
+    func clearCellExpandsIntrinsicContentSize() {
+        let originalWidth = sut.intrinsicContentSize.width
+        sut.onClearRequested = {}
+
+        #expect(sut.intrinsicContentSize.width > originalWidth)
+    }
+
     // MARK: - Helpers
 
     /// Layout constants derived from view's intrinsic size for tolerance-based calculations
@@ -279,6 +300,11 @@ struct ColorSwatchTests {
     /// Simulates clicking on the custom color button
     private func simulateClickOnCustomColorButton() {
         simulateMouseUp(at: centerPointForCustomColorButton())
+    }
+
+    private func resizeForCurrentItems() {
+        sut.frame.size = sut.intrinsicContentSize
+        testWindow.setContentSize(sut.intrinsicContentSize)
     }
 
     private func simulateMouseUp(at point: CGPoint) {

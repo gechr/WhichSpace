@@ -21,6 +21,11 @@ enum ShapeType: Equatable {
     case triangle
 }
 
+enum CombinedSymbolLayout {
+    case insideLabel
+    case outsideLabel
+}
+
 extension IconStyle {
     var shapeType: ShapeType {
         switch self {
@@ -53,6 +58,25 @@ extension IconStyle {
              .squareOutline, .stroke, .transparent, .triangleOutline:
             false
         }
+    }
+
+    /// Resolves the user's wrap preference to the layout the renderer will
+    /// actually use. Styles without a stretchable shape always render the
+    /// symbol outside the label.
+    func combinedSymbolLayout(for wrap: SymbolWrap) -> CombinedSymbolLayout {
+        guard wrap == .inside else {
+            return .outsideLabel
+        }
+        return switch shapeType {
+        case .pill, .slim, .square:
+            .insideLabel
+        default:
+            .outsideLabel
+        }
+    }
+
+    var supportsInsideSymbolLayout: Bool {
+        combinedSymbolLayout(for: .inside) == .insideLabel
     }
 }
 
@@ -420,6 +444,35 @@ enum SpaceIconGenerator {
             paddingScale: paddingScale
         )
 
+        // A symbol background color gives the standalone symbol the same
+        // fixed square chip as the combined label+symbol layout
+        if let symbolBackground = customColors?.symbolBackground,
+           customColors?.hasVisibleSymbolBackground == true
+        {
+            let symbolContent = resolveSymbolContent(
+                symbolName: symbolName,
+                skinTone: skinTone,
+                tint: bareSymbolTint(customColors: customColors, darkMode: darkMode),
+                scale: scale * chipGlyphScale
+            )
+            let chip = symbolChipSize(for: symbolContent, scale: scale)
+            let chipCanvasSize = effectiveStatusItemSize(
+                contentWidth: chip.width,
+                sizeScale: scale,
+                paddingScale: paddingScale
+            )
+            return NSImage(size: chipCanvasSize, flipped: false) { rect in
+                let chipRect = CGRect(
+                    x: rect.midX - chip.width / 2,
+                    y: rect.midY - chip.height / 2,
+                    width: chip.width,
+                    height: chip.height
+                )
+                drawSymbolChip(symbolContent, in: chipRect, background: symbolBackground)
+                return true
+            }
+        }
+
         // Check if it's an emoji (contains emoji Unicode characters)
         if symbolName.containsEmoji {
             return generateEmojiIcon(
@@ -446,13 +499,7 @@ enum SpaceIconGenerator {
             )
         }
 
-        let color: NSColor = if let customColors {
-            customColors.symbol ?? customColors.foreground
-        } else if darkMode {
-            NSColor(calibratedWhite: 0.7, alpha: 1)
-        } else {
-            NSColor(calibratedWhite: 0.3, alpha: 1)
-        }
+        let color = bareSymbolTint(customColors: customColors, darkMode: darkMode)
 
         return NSImage(size: canvasSize, flipped: false) { rect in
             let tintedImage = sfImage.tinted(with: color)
@@ -488,16 +535,7 @@ enum SpaceIconGenerator {
         paddingScale: Double = Layout.defaultPaddingScale,
         badge: SpaceBadge? = nil
     ) -> NSImage {
-        // Stroke and transparent have no enclosing shape, so inside wrap
-        // degenerates to the same side-by-side layout as outside
-        let hasWrappingShape = switch style.shapeType {
-        case .pill, .slim, .square:
-            true
-        default:
-            false
-        }
-
-        if wrap == .inside, hasWrappingShape {
+        if style.combinedSymbolLayout(for: wrap) == .insideLabel {
             return generateInsideCombinedIcon(
                 text: text,
                 symbolName: symbolName,
@@ -565,9 +603,9 @@ enum SpaceIconGenerator {
         let scaledGap = gap * scale
         let height = squareSize(scale: scale)
         let textPadding = style.shapeType == .pill ? height / 2 : 4.0 * scale
-        // The glyph needs less edge padding than text to look balanced; the
-        // gap setting only controls the symbol-to-text distance
-        let symbolPadding = 7.0 * scale
+        // Pill ends need optical compensation for their curvature. Box
+        // layouts use equal symbol and text padding.
+        let symbolPadding = style.shapeType == .pill ? 7.0 * scale : textPadding
         let contentWidth = symbolContent.size.width + scaledGap + textSize.width
         let shapeSize = CGSize(
             width: contentWidth + symbolPadding + textPadding,
@@ -647,19 +685,21 @@ enum SpaceIconGenerator {
             paddingScale: 0,
             badge: badge
         )
+        // A symbol background color gives the bare symbol a fixed square chip
+        let symbolBackground = customColors?.symbolBackground
+        let hasSymbolChip = customColors?.hasVisibleSymbolBackground == true
         // Bare symbol matches the standalone symbol icon's colors
-        let fallbackTint: NSColor = darkMode
-            ? NSColor(calibratedWhite: 0.7, alpha: 1)
-            : NSColor(calibratedWhite: 0.3, alpha: 1)
         let symbolContent = resolveSymbolContent(
             symbolName: symbolName,
             skinTone: skinTone,
-            tint: customColors?.symbol ?? customColors?.foreground ?? fallbackTint,
-            scale: scale
+            tint: bareSymbolTint(customColors: customColors, darkMode: darkMode),
+            scale: scale * (hasSymbolChip ? chipGlyphScale : 1)
         )
 
         let scaledGap = gap * scale
-        let contentWidth = labelImage.size.width + scaledGap + symbolContent.size.width
+        let chip = symbolChipSize(for: symbolContent, scale: scale)
+        let symbolBoxWidth = hasSymbolChip ? chip.width : symbolContent.size.width
+        let contentWidth = labelImage.size.width + scaledGap + symbolBoxWidth
         let canvasSize = effectiveStatusItemSize(
             contentWidth: contentWidth,
             sizeScale: scale,
@@ -669,14 +709,23 @@ enum SpaceIconGenerator {
         return NSImage(size: canvasSize, flipped: false) { rect in
             var xCursor = rect.minX + (rect.width - contentWidth) / 2
             let drawSymbol = {
-                let symbolRect = CGRect(
-                    x: xCursor,
-                    y: rect.minY + (rect.height - symbolContent.size.height) / 2,
-                    width: symbolContent.size.width,
-                    height: symbolContent.size.height
-                )
-                symbolContent.draw(symbolRect)
-                xCursor += symbolContent.size.width + scaledGap
+                if hasSymbolChip, let symbolBackground {
+                    let chipRect = CGRect(
+                        x: xCursor,
+                        y: rect.midY - chip.height / 2,
+                        width: chip.width,
+                        height: chip.height
+                    )
+                    drawSymbolChip(symbolContent, in: chipRect, background: symbolBackground)
+                } else {
+                    symbolContent.draw(CGRect(
+                        x: xCursor,
+                        y: rect.minY + (rect.height - symbolContent.size.height) / 2,
+                        width: symbolContent.size.width,
+                        height: symbolContent.size.height
+                    ))
+                }
+                xCursor += symbolBoxWidth + scaledGap
             }
             let drawLabel = {
                 let labelRect = CGRect(
@@ -764,7 +813,149 @@ enum SpaceIconGenerator {
     /// to lay the glyph out beside label text in combined icons.
     private struct SymbolContent {
         let size: CGSize
+        /// Tight bounds of the visible glyph within `size`; SF Symbol images
+        /// carry asymmetric baseline/bearing margins, so box centering alone
+        /// seats the glyph off-center
+        var opaqueBounds: CGRect?
         let draw: (CGRect) -> Void
+    }
+
+    /// Rasterizes and tints an SF Symbol at the menu bar's Retina backing
+    /// scale. Measuring and drawing the same concrete pixels avoids subtle
+    /// per-scale shifts from nesting block-based NSImage drawing handlers.
+    private static func rasterizedSymbol(
+        _ image: NSImage,
+        size: CGSize,
+        tint: NSColor
+    ) -> (image: NSImage, opaqueBounds: CGRect)? {
+        let sampling = 2.0
+        let width = Int((size.width * sampling).rounded())
+        let height = Int((size.height * sampling).rounded())
+        guard width > 0, height > 0,
+              let rep = NSBitmapImageRep(
+                  bitmapDataPlanes: nil,
+                  pixelsWide: width,
+                  pixelsHigh: height,
+                  bitsPerSample: 8,
+                  samplesPerPixel: 4,
+                  hasAlpha: true,
+                  isPlanar: false,
+                  colorSpaceName: .deviceRGB,
+                  bytesPerRow: 0,
+                  bitsPerPixel: 0
+              )
+        else {
+            return nil
+        }
+        let rasterSize = CGSize(
+            width: Double(width) / sampling,
+            height: Double(height) / sampling
+        )
+        // Point size must be set before deriving the context, or the scale
+        // transform is not applied and drawing fills only part of the bitmap
+        rep.size = rasterSize
+        guard let context = NSGraphicsContext(bitmapImageRep: rep) else {
+            return nil
+        }
+        NSGraphicsContext.saveGraphicsState()
+        NSGraphicsContext.current = context
+        let rect = CGRect(origin: .zero, size: rasterSize)
+        image.draw(in: rect)
+        tint.set()
+        rect.fill(using: .sourceAtop)
+        NSGraphicsContext.restoreGraphicsState()
+
+        guard let data = rep.bitmapData else {
+            return nil
+        }
+        let bytesPerRow = rep.bytesPerRow
+        let samplesPerPixel = rep.samplesPerPixel
+        var minX = width
+        var minY = height
+        var maxX = -1
+        var maxY = -1
+        for y in 0 ..< height {
+            let row = data + y * bytesPerRow
+            for x in 0 ..< width where row[x * samplesPerPixel + 3] > 127 {
+                minX = min(minX, x)
+                minY = min(minY, y)
+                maxX = max(maxX, x)
+                maxY = max(maxY, y)
+            }
+        }
+        guard maxX >= minX else {
+            return nil
+        }
+        let rasterizedImage = NSImage(size: rasterSize)
+        rasterizedImage.addRepresentation(rep)
+        // Bitmap rows are top-down; flip to the flipped:false drawing space
+        let bounds = CGRect(
+            x: Double(minX) / sampling,
+            y: Double(height - 1 - maxY) / sampling,
+            width: Double(maxX - minX + 1) / sampling,
+            height: Double(maxY - minY + 1) / sampling
+        )
+        return (rasterizedImage, bounds)
+    }
+
+    /// Tint for a symbol drawn without an enclosing label shape: the symbol
+    /// color, else the foreground, else the appearance-matched gray.
+    private static func bareSymbolTint(customColors: SpaceColors?, darkMode: Bool) -> NSColor {
+        customColors?.symbol
+            ?? customColors?.foreground
+            ?? NSColor(calibratedWhite: darkMode ? 0.7 : 0.3, alpha: 1)
+    }
+
+    /// Scale factor applied to a glyph inside a chip so it keeps clear
+    /// breathing room from the chip edges
+    private static let chipGlyphScale = 0.9
+
+    /// Fixed square chip behind a bare symbol; widens only when a wide
+    /// glyph would overflow it
+    private static func symbolChipSize(for symbolContent: SymbolContent, scale: Double) -> CGSize {
+        let height = squareSize(scale: scale)
+        return CGSize(width: max(height, symbolContent.size.width + 4.0 * scale), height: height)
+    }
+
+    /// Snaps chip geometry to the Retina device-pixel grid. The glyph origin
+    /// stays unsnapped so odd-pixel glyphs can center on an even-pixel chip.
+    private static func snapToHalfPoint(_ value: Double) -> Double {
+        (value * 2).rounded() / 2
+    }
+
+    /// Fills the chip shape and draws the glyph centered on its visible
+    /// bounds (not the padded image box, whose margins are asymmetric)
+    private static func drawSymbolChip(
+        _ symbolContent: SymbolContent,
+        in chipRect: CGRect,
+        background: NSColor
+    ) {
+        let chip = CGRect(
+            x: snapToHalfPoint(chipRect.minX),
+            y: snapToHalfPoint(chipRect.minY),
+            width: snapToHalfPoint(chipRect.width),
+            height: snapToHalfPoint(chipRect.height)
+        )
+        let path = NSBezierPath(
+            roundedRect: chip,
+            xRadius: Layout.Icon.cornerRadius + 1,
+            yRadius: Layout.Icon.cornerRadius + 1
+        )
+        background.setFill()
+        path.fill()
+
+        let origin = if let glyph = symbolContent.opaqueBounds {
+            CGPoint(x: chip.midX - glyph.midX, y: chip.midY - glyph.midY)
+        } else {
+            CGPoint(
+                x: chip.midX - symbolContent.size.width / 2,
+                y: chip.midY - symbolContent.size.height / 2
+            )
+        }
+        symbolContent.draw(CGRect(
+            origin: origin,
+            size: symbolContent.size
+        ))
     }
 
     private static func resolveSymbolContent(
@@ -788,15 +979,25 @@ enum SpaceIconGenerator {
         if let sfImage = NSImage(systemSymbolName: symbolName, accessibilityDescription: nil)?
             .withSymbolConfiguration(symbolConfig)
         {
-            let tintedImage = sfImage.tinted(with: tint)
-            var size = tintedImage.size
+            var size = sfImage.size
             // Keep oversized glyphs within the wrapping shape's height
             let maxHeight = squareSize(scale: scale) - 2
             if size.height > maxHeight {
                 let ratio = maxHeight / size.height
                 size = CGSize(width: size.width * ratio, height: maxHeight)
             }
-            return SymbolContent(size: size) { rect in
+            if let rasterized = rasterizedSymbol(sfImage, size: size, tint: tint) {
+                return SymbolContent(size: rasterized.image.size, opaqueBounds: rasterized.opaqueBounds) { rect in
+                    rasterized.image.draw(
+                        in: rect,
+                        from: CGRect(origin: .zero, size: rasterized.image.size),
+                        operation: .sourceOver,
+                        fraction: 1
+                    )
+                }
+            }
+            let tintedImage = sfImage.tinted(with: tint)
+            return SymbolContent(size: size, opaqueBounds: nil) { rect in
                 tintedImage.draw(in: rect)
             }
         }

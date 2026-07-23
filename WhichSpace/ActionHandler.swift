@@ -204,11 +204,8 @@ final class ActionHandler: NSObject {
         guard appState.currentSpace > 0 else {
             return
         }
-        let defaults = IconColors.filledColors(darkMode: appState.darkModeEnabled)
-        let foreground = appState.currentColors?.foreground ?? defaults.foreground
-        let background = appState.currentColors?.background ?? defaults.background
         SpacePreferences.setColors(
-            SpaceColors(foreground: background, background: foreground, symbol: appState.currentColors?.symbol),
+            appState.currentInvertedColors,
             forSpace: appState.currentSpace,
             display: appState.currentDisplayID,
             store: store
@@ -611,7 +608,12 @@ final class ActionHandler: NSObject {
         let foreground = isForeground ? color : (appState.currentColors?.foreground ?? defaults.foreground)
         let background = isForeground ? (appState.currentColors?.background ?? defaults.background) : color
         SpacePreferences.setColors(
-            SpaceColors(foreground: foreground, background: background, symbol: appState.currentColors?.symbol),
+            SpaceColors(
+                foreground: foreground,
+                background: background,
+                symbol: appState.currentColors?.symbol,
+                symbolBackground: appState.currentColors?.symbolBackground
+            ),
             forSpace: appState.currentSpace,
             display: appState.currentDisplayID,
             store: store
@@ -627,7 +629,47 @@ final class ActionHandler: NSObject {
         let foreground = appState.currentColors?.foreground ?? defaults.foreground
         let background = appState.currentColors?.background ?? defaults.background
         SpacePreferences.setColors(
-            SpaceColors(foreground: foreground, background: background, symbol: color),
+            SpaceColors(
+                foreground: foreground,
+                background: background,
+                symbol: color,
+                symbolBackground: appState.currentColors?.symbolBackground
+            ),
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
+        onStatusBarIconNeedsUpdate?()
+    }
+
+    func setSymbolBackgroundColor(_ color: NSColor) {
+        guard appState.currentSpace > 0 else {
+            return
+        }
+        let defaults = IconColors.filledColors(darkMode: appState.darkModeEnabled)
+        let foreground = appState.currentColors?.foreground ?? defaults.foreground
+        let background = appState.currentColors?.background ?? defaults.background
+        SpacePreferences.setColors(
+            SpaceColors(
+                foreground: foreground,
+                background: background,
+                symbol: appState.currentColors?.symbol,
+                symbolBackground: color
+            ),
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        )
+        onStatusBarIconNeedsUpdate?()
+    }
+
+    func clearSymbolBackgroundColor() {
+        guard appState.currentSpace > 0, var colors = appState.currentColors else {
+            return
+        }
+        colors.symbolBackground = nil
+        SpacePreferences.setColors(
+            colors,
             forSpace: appState.currentSpace,
             display: appState.currentDisplayID,
             store: store

@@ -5,12 +5,14 @@ struct IconPreviewRequest {
     let background: NSColor?
     let badgePosition: BadgePosition?
     let clearSymbol: Bool
+    let clearSymbolBackground: Bool
     let foreground: NSColor?
     let labelStyle: IconStyle?
     let separatorColor: NSColor?
     let skinTone: SkinTone?
     let style: IconStyle?
     let symbol: String?
+    let symbolBackground: NSColor?
     let symbolColor: NSColor?
     let symbolPosition: SymbolPosition?
     let symbolWrap: SymbolWrap?

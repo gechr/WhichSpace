@@ -17,10 +17,13 @@ protocol MenuActionDelegate: AnyObject {
     func backgroundColorSelected(_ color: NSColor)
     func separatorColorSelected(_ color: NSColor)
     func symbolColorSelected(_ color: NSColor)
+    func symbolBackgroundColorSelected(_ color: NSColor)
+    func symbolBackgroundColorCleared()
     func customForegroundColorRequested()
     func customBackgroundColorRequested()
     func customSeparatorColorRequested()
     func customSymbolColorRequested()
+    func customSymbolBackgroundColorRequested()
     func symbolSelected(_ symbol: String?)
     func iconStyleSelected(_ style: IconStyle, stylePicker: StylePicker?)
     func badgeCharacterChanged(_ character: String?)
@@ -33,8 +36,11 @@ protocol MenuActionDelegate: AnyObject {
     func skinToneHoverStarted(_ tone: SkinTone)
     func colorHoverStarted(index: Int, isForeground: Bool)
     func backgroundColorHoverStarted(index: Int)
+    func backgroundClearHoverStarted()
     func separatorColorHoverStarted(index: Int)
     func symbolColorHoverStarted(index: Int)
+    func symbolBackgroundColorHoverStarted(index: Int)
+    func symbolBackgroundClearHoverStarted()
     func symbolHoverStarted(_ symbol: String, foreground: NSColor?, background: NSColor?, skinTone: SkinTone?)
     func styleHoverStarted(_ style: IconStyle)
     func hoverEnded()
@@ -58,7 +64,6 @@ final class MenuBuilder {
         MenuTag.foregroundSwatch.rawValue,
     ]
     private static let backgroundTags: Set<Int> = [
-        MenuTag.colorSeparator.rawValue,
         MenuTag.backgroundLabel.rawValue,
         MenuTag.backgroundSwatch.rawValue,
     ]
@@ -205,6 +210,16 @@ final class MenuBuilder {
             display: appState.currentDisplayID,
             store: store
         )
+        let currentWrap = SpacePreferences.symbolWrap(
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        ) ?? .inside
+        // Symbol background applies whenever the symbol renders bare: shown
+        // alone (no label), or beside a styled label via the outside wrap
+        // (any non-wrapping label style always renders side-by-side)
+        let symbolBackgroundVisible = symbolIsActive
+            && (!hasLabel || currentWrap == .outside || !currentLabelStyleCanWrap)
 
         for item in menu.items {
             // Update icon style views - only show checkmark when not in symbol
@@ -243,6 +258,28 @@ final class MenuBuilder {
             // Show symbol label and color swatch only when SF Symbol is active (not emoji)
             if item.tag == MenuTag.symbolLabel.rawValue || item.tag == MenuTag.symbolColorSwatch.rawValue {
                 item.isHidden = !currentSymbolIsSFSymbol
+            }
+            // The header only needs the "(Foreground)" qualifier when a
+            // background row is shown alongside it
+            if item.tag == MenuTag.symbolLabel.rawValue {
+                item.title = symbolBackgroundVisible
+                    ? Localization.labelSymbolForeground
+                    : Localization.labelSymbol
+            }
+
+            if item.tag == MenuTag.symbolBackgroundLabel.rawValue
+                || item.tag == MenuTag.symbolBackgroundSwatch.rawValue
+            {
+                item.isHidden = !symbolBackgroundVisible
+            }
+
+            // The divider separates the symbol color sections from the
+            // label/number ones, so it needs something visible above it
+            if item.tag == MenuTag.colorSeparator.rawValue {
+                let symbolSectionVisible = currentSymbolIsSFSymbol || currentSymbolIsEmoji
+                    || symbolBackgroundVisible
+                let symbolAlone = symbolIsActive && !hasLabel
+                item.isHidden = !symbolSectionVisible || symbolAlone
             }
 
             // Show separator divider, label, and swatch only when Show all Displays is enabled
@@ -339,6 +376,17 @@ final class MenuBuilder {
         for tag in Self.symbolSectionTags {
             labelMenu.item(withTag: tag)?.isHidden = !visible
         }
+        // Wrap only applies when the label shape can stretch around the
+        // symbol; other shapes always render the side-by-side layout, so
+        // Inside/Outside would be a no-op choice
+        let wrapTags = [
+            MenuTag.symbolWrapHeader.rawValue,
+            MenuTag.symbolWrapInside.rawValue,
+            MenuTag.symbolWrapOutside.rawValue,
+        ]
+        for tag in wrapTags {
+            labelMenu.item(withTag: tag)?.isHidden = !(visible && currentLabelStyleCanWrap)
+        }
         guard visible else {
             return
         }
@@ -363,6 +411,17 @@ final class MenuBuilder {
                 store: store
             ) ?? Layout.defaultSymbolGapScale
         }
+    }
+
+    /// Whether the current Space's label style has a shape that can wrap a
+    /// symbol together with the text.
+    private var currentLabelStyleCanWrap: Bool {
+        let labelStyle = SpacePreferences.labelStyle(
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        ) ?? .square
+        return labelStyle.supportsInsideSymbolLayout
     }
 
     // MARK: - Sound Discovery
@@ -616,9 +675,53 @@ final class MenuBuilder {
         )
         symbolSwatchItem.isHidden = true
         menu.addItem(symbolSwatchItem)
+
+        let symbolBackgroundLabelItem = NSMenuItem(
+            title: Localization.labelSymbolBackground,
+            action: nil,
+            keyEquivalent: ""
+        )
+        symbolBackgroundLabelItem.isEnabled = false
+        symbolBackgroundLabelItem.tag = MenuTag.symbolBackgroundLabel.rawValue
+        symbolBackgroundLabelItem.image = NSImage(systemSymbolName: "burst", accessibilityDescription: nil)
+        symbolBackgroundLabelItem.isHidden = true
+        menu.addItem(symbolBackgroundLabelItem)
+
+        let symbolBackgroundSwatchItem = makeColorSwatchItem(
+            tag: .symbolBackgroundSwatch,
+            onColorSelected: { [weak actionDelegate] in actionDelegate?.symbolBackgroundColorSelected($0) },
+            onCustomColorRequested: { [weak actionDelegate] in
+                actionDelegate?.customSymbolBackgroundColorRequested()
+            },
+            onHoverStart: { [weak actionDelegate] in actionDelegate?.symbolBackgroundColorHoverStarted(index: $0) },
+            onHoverEnd: { [weak actionDelegate] in actionDelegate?.hoverEnded() }
+        )
+        if let swatch = symbolBackgroundSwatchItem.view as? ColorSwatch {
+            swatch.onClearRequested = { [weak actionDelegate] in
+                actionDelegate?.symbolBackgroundColorCleared()
+            }
+            // The clear cell needs its own hover preview, which the shared
+            // swatch factory's preset-only hover guard would swallow
+            swatch.onHoverStart = { [weak actionDelegate] index in
+                if index < ColorSwatch.presetColors.count {
+                    actionDelegate?.symbolBackgroundColorHoverStarted(index: index)
+                } else if index == ColorSwatch.clearIndex {
+                    actionDelegate?.symbolBackgroundClearHoverStarted()
+                }
+            }
+            // The clear cell adds an item, so re-measure after enabling it
+            swatch.frame = NSRect(origin: .zero, size: swatch.intrinsicContentSize)
+        }
+        symbolBackgroundSwatchItem.isHidden = true
+        menu.addItem(symbolBackgroundSwatchItem)
     }
 
     private func addForegroundBackgroundSection(to menu: NSMenu, actionDelegate: MenuActionDelegate) {
+        // Divides the symbol color sections above from the label/number ones
+        let separator = NSMenuItem.separator()
+        separator.tag = MenuTag.colorSeparator.rawValue
+        menu.addItem(separator)
+
         let foregroundLabel = NSMenuItem(title: Localization.labelNumberForeground, action: nil, keyEquivalent: "")
         foregroundLabel.isEnabled = false
         foregroundLabel.tag = MenuTag.foregroundLabel.rawValue
@@ -636,10 +739,6 @@ final class MenuBuilder {
             onHoverEnd: { [weak actionDelegate] in actionDelegate?.hoverEnded() }
         ))
 
-        let separator = NSMenuItem.separator()
-        separator.tag = MenuTag.colorSeparator.rawValue
-        menu.addItem(separator)
-
         let backgroundLabel = NSMenuItem(title: Localization.labelNumberBackground, action: nil, keyEquivalent: "")
         backgroundLabel.isEnabled = false
         backgroundLabel.tag = MenuTag.backgroundLabel.rawValue
@@ -649,13 +748,28 @@ final class MenuBuilder {
         )
         menu.addItem(backgroundLabel)
 
-        menu.addItem(makeColorSwatchItem(
+        let backgroundSwatchItem = makeColorSwatchItem(
             tag: .backgroundSwatch,
             onColorSelected: { [weak actionDelegate] in actionDelegate?.backgroundColorSelected($0) },
             onCustomColorRequested: { [weak actionDelegate] in actionDelegate?.customBackgroundColorRequested() },
             onHoverStart: { [weak actionDelegate] in actionDelegate?.backgroundColorHoverStarted(index: $0) },
             onHoverEnd: { [weak actionDelegate] in actionDelegate?.hoverEnded() }
-        ))
+        )
+        if let swatch = backgroundSwatchItem.view as? ColorSwatch {
+            // The clear cell is an alias for a fully transparent background
+            swatch.onClearRequested = { [weak actionDelegate] in
+                actionDelegate?.backgroundColorSelected(.clear)
+            }
+            swatch.onHoverStart = { [weak actionDelegate] index in
+                if index < ColorSwatch.presetColors.count {
+                    actionDelegate?.backgroundColorHoverStarted(index: index)
+                } else if index == ColorSwatch.clearIndex {
+                    actionDelegate?.backgroundClearHoverStarted()
+                }
+            }
+            swatch.frame = NSRect(origin: .zero, size: swatch.intrinsicContentSize)
+        }
+        menu.addItem(backgroundSwatchItem)
     }
 
     private func addSeparatorColorSection(to menu: NSMenu, actionDelegate: MenuActionDelegate) {

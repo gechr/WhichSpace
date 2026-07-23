@@ -112,6 +112,12 @@ struct SpaceColors: Equatable, Defaults.Serializable {
                         requiringSecureCoding: true
                     )
                 }
+                if let symbolBackground = value.symbolBackground {
+                    serialized["symbolBackground"] = try NSKeyedArchiver.archivedData(
+                        withRootObject: symbolBackground,
+                        requiringSecureCoding: true
+                    )
+                }
                 return serialized
             } catch {
                 NSLog("SpaceColors: failed to archive colors: %@", error.localizedDescription)
@@ -139,11 +145,19 @@ struct SpaceColors: Equatable, Defaults.Serializable {
                 else {
                     return nil
                 }
-                // Absent in payloads written before the symbol color existed
+                // Absent in payloads written before these colors existed
                 let symbol = try object["symbol"].flatMap {
                     try NSKeyedUnarchiver.unarchivedObject(ofClass: NSColor.self, from: $0)
                 }
-                return SpaceColors(foreground: foreground, background: background, symbol: symbol)
+                let symbolBackground = try object["symbolBackground"].flatMap {
+                    try NSKeyedUnarchiver.unarchivedObject(ofClass: NSColor.self, from: $0)
+                }
+                return SpaceColors(
+                    foreground: foreground,
+                    background: background,
+                    symbol: symbol,
+                    symbolBackground: symbolBackground
+                )
             } catch {
                 NSLog("SpaceColors: failed to unarchive colors: %@", error.localizedDescription)
                 return nil
@@ -156,11 +170,41 @@ struct SpaceColors: Equatable, Defaults.Serializable {
     var foreground: NSColor
     var background: NSColor
     var symbol: NSColor?
+    var symbolBackground: NSColor?
 
-    init(foreground: NSColor, background: NSColor, symbol: NSColor? = nil) {
+    var hasVisibleSymbolBackground: Bool {
+        (symbolBackground?.alphaComponent ?? 0) > 0.001
+    }
+
+    init(
+        foreground: NSColor,
+        background: NSColor,
+        symbol: NSColor? = nil,
+        symbolBackground: NSColor? = nil
+    ) {
         self.foreground = foreground
         self.background = background
         self.symbol = symbol
+        self.symbolBackground = symbolBackground
+    }
+
+    func inverted(for symbolLayout: CombinedSymbolLayout?) -> Self {
+        var result = Self(
+            foreground: background,
+            background: foreground,
+            symbol: symbol,
+            symbolBackground: symbolBackground
+        )
+        switch symbolLayout {
+        case .insideLabel:
+            result.symbol = background
+        case .outsideLabel where hasVisibleSymbolBackground:
+            result.symbol = symbolBackground
+            result.symbolBackground = symbol ?? foreground
+        case .outsideLabel, nil:
+            break
+        }
+        return result
     }
 }
 

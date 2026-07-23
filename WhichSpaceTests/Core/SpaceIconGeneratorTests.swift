@@ -100,6 +100,30 @@ struct SpaceIconGeneratorTests {
         }
     }
 
+    @Test("inside box layouts balance outer content padding")
+    func insideBoxLayoutsBalanceOuterContentPadding() throws {
+        let colors = SpaceColors(foreground: .blue, background: .red, symbol: .green)
+        for position in SymbolPosition.allCases {
+            let image = SpaceIconGenerator.generateCombinedIcon(
+                text: "Developer",
+                symbolName: "creditcard.circle.fill",
+                position: position,
+                wrap: .inside,
+                gap: 3,
+                darkMode: true,
+                customColors: colors,
+                style: .slim
+            )
+            let rep = try #require(bitmap(image, sampling: 2))
+            let padding = try #require(insideCombinedHorizontalPadding(in: rep))
+
+            #expect(
+                abs(padding.leading - padding.trailing) <= 3,
+                "\(position.rawValue) padding is \(padding.leading) px leading and \(padding.trailing) px trailing"
+            )
+        }
+    }
+
     @Test("combined icon renders for emoji and SF Symbols in both wraps")
     func combinedIconRendersEmojiAndSFSymbols() {
         for symbol in ["star.fill", "🚀"] {
@@ -305,6 +329,64 @@ struct SpaceIconGeneratorTests {
 
         #expect(icon.size == Layout.statusItemSize)
         #expect(icon.tiffRepresentation != nil)
+    }
+
+    @Test("symbol chips center glyphs at Retina backing scale")
+    func symbolChipsCenterGlyphsAtRetinaScale() throws {
+        let colors = SpaceColors(
+            foreground: .blue,
+            background: .black,
+            symbol: .green,
+            symbolBackground: .red
+        )
+        let symbols = [
+            "creditcard.fill",
+            "snowflake",
+            "safari.fill",
+            "music.note",
+            "chevron.left.forwardslash.chevron.right",
+            "figure.walk",
+            "arrow.up.right",
+        ]
+
+        for symbol in symbols {
+            let renderings = [
+                (
+                    "standalone",
+                    SpaceIconGenerator.generateSymbolIcon(
+                        symbolName: symbol,
+                        darkMode: true,
+                        customColors: colors
+                    )
+                ),
+                (
+                    "combined",
+                    SpaceIconGenerator.generateCombinedIcon(
+                        text: "1",
+                        symbolName: symbol,
+                        position: .left,
+                        wrap: .outside,
+                        darkMode: true,
+                        customColors: colors,
+                        style: .square
+                    )
+                ),
+            ]
+            for (rendering, image) in renderings {
+                let rep = try #require(bitmap(image, sampling: 2))
+                let centers = try #require(chipAndGlyphCenters(in: rep))
+                let deltaX = abs(centers.glyph.x - centers.chip.x)
+                let deltaY = abs(centers.glyph.y - centers.chip.y)
+                #expect(
+                    deltaX <= 0.5,
+                    "\(symbol) \(rendering) is \(deltaX) device pixels off-center horizontally"
+                )
+                #expect(
+                    deltaY <= 0.5,
+                    "\(symbol) \(rendering) is \(deltaY) device pixels off-center vertically"
+                )
+            }
+        }
     }
 
     @Test("invalid symbol falls back to question mark")
@@ -642,6 +724,95 @@ struct SpaceIconGeneratorTests {
 
     // MARK: - Helpers
 
+    private func bitmap(_ image: NSImage, sampling: Double) -> NSBitmapImageRep? {
+        let width = Int((image.size.width * sampling).rounded(.up))
+        let height = Int((image.size.height * sampling).rounded(.up))
+        guard let rep = NSBitmapImageRep(
+            bitmapDataPlanes: nil,
+            pixelsWide: width,
+            pixelsHigh: height,
+            bitsPerSample: 8,
+            samplesPerPixel: 4,
+            hasAlpha: true,
+            isPlanar: false,
+            colorSpaceName: .deviceRGB,
+            bytesPerRow: 0,
+            bitsPerPixel: 0
+        ) else {
+            return nil
+        }
+        rep.size = image.size
+        guard let context = NSGraphicsContext(bitmapImageRep: rep) else {
+            return nil
+        }
+        NSGraphicsContext.saveGraphicsState()
+        NSGraphicsContext.current = context
+        image.draw(in: CGRect(origin: .zero, size: image.size))
+        NSGraphicsContext.restoreGraphicsState()
+        return rep
+    }
+
+    private func chipAndGlyphCenters(in rep: NSBitmapImageRep) -> (chip: CGPoint, glyph: CGPoint)? {
+        guard let data = rep.bitmapData else {
+            return nil
+        }
+        var chipBounds = PixelBounds()
+        var glyphBounds = PixelBounds()
+        for y in 0 ..< rep.pixelsHigh {
+            let row = data + y * rep.bytesPerRow
+            for x in 0 ..< rep.pixelsWide {
+                let pixel = row + x * rep.samplesPerPixel
+                let red = Int(pixel[0])
+                let green = Int(pixel[1])
+                let alpha = Int(pixel[3])
+                if alpha > 127, red > green * 2 {
+                    chipBounds.include(x: x, y: y)
+                }
+                if alpha > 127, green > red * 2 {
+                    glyphBounds.include(x: x, y: y)
+                }
+            }
+        }
+        guard let chip = chipBounds.center, let glyph = glyphBounds.center else {
+            return nil
+        }
+        return (chip, glyph)
+    }
+
+    private func insideCombinedHorizontalPadding(
+        in rep: NSBitmapImageRep
+    ) -> (leading: Int, trailing: Int)? {
+        var shapeBounds = PixelBounds()
+        var contentBounds = PixelBounds()
+        for y in 0 ..< rep.pixelsHigh {
+            for x in 0 ..< rep.pixelsWide {
+                guard let color = rep.colorAt(x: x, y: y)?.usingColorSpace(.deviceRGB),
+                      color.alphaComponent > 0.5
+                else {
+                    continue
+                }
+                let red = color.redComponent
+                let green = color.greenComponent
+                let blue = color.blueComponent
+                if red > green * 2, red > blue * 2 {
+                    shapeBounds.include(x: x, y: y)
+                }
+                if green > 0.1 || blue > 0.1 {
+                    contentBounds.include(x: x, y: y)
+                }
+            }
+        }
+        guard let shape = shapeBounds.horizontalRange,
+              let content = contentBounds.horizontalRange
+        else {
+            return nil
+        }
+        return (
+            leading: content.lowerBound - shape.lowerBound,
+            trailing: shape.upperBound - content.upperBound
+        )
+    }
+
     private func samplePixelColor(from image: NSImage, at point: CGPoint) -> NSColor? {
         guard let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
             return nil
@@ -803,5 +974,33 @@ struct SpaceIconGeneratorTests {
             width: maxX - minX + 1,
             height: maxY - minY + 1
         )
+    }
+
+    private struct PixelBounds {
+        private var minX = Int.max
+        private var minY = Int.max
+        private var maxX = Int.min
+        private var maxY = Int.min
+
+        mutating func include(x: Int, y: Int) {
+            minX = min(minX, x)
+            minY = min(minY, y)
+            maxX = max(maxX, x)
+            maxY = max(maxY, y)
+        }
+
+        var center: CGPoint? {
+            guard maxX >= minX else {
+                return nil
+            }
+            return CGPoint(x: Double(minX + maxX) / 2, y: Double(minY + maxY) / 2)
+        }
+
+        var horizontalRange: ClosedRange<Int>? {
+            guard maxX >= minX else {
+                return nil
+            }
+            return minX ... maxX
+        }
     }
 }

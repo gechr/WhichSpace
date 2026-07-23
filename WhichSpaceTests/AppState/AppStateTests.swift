@@ -331,6 +331,31 @@ struct AppStateTests {
         #expect(abs(icon.size.width - expectedWidth) < 0.1)
     }
 
+    @Test("symbol background clear preview differs from stored background")
+    func symbolBackgroundClearPreviewDiffersFromStoredBackground() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [
+            CGSStub.makeDisplay(displayID: "Main", spaces: [(id: 100, isFullscreen: false)], activeSpaceID: 100),
+        ]
+        SpacePreferences.setSymbol("star.fill", forSpace: 1, store: store)
+        SpacePreferences.setColors(
+            SpaceColors(
+                foreground: .blue,
+                background: .black,
+                symbol: .green,
+                symbolBackground: .red
+            ),
+            forSpace: 1,
+            store: store
+        )
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+
+        let stored = sut.generatePreviewIcon()
+        let cleared = sut.generatePreviewIcon(clearSymbolBackground: true)
+
+        #expect(stored.tiffRepresentation != cleared.tiffRepresentation)
+    }
+
     @Test("showAllSpaces: inactive spaces have reduced alpha")
     func showAllSpaces_inactiveSpacesHaveReducedAlpha() throws {
         store.showAllSpaces = true

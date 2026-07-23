@@ -201,6 +201,11 @@ final class SizeSlider: NSView {
         guard event.momentumPhase.isEmpty else {
             return
         }
+        // Each gesture starts from a clean slate so leftovers don't carry
+        // over and fight a direction change
+        if event.phase == .began {
+            scrollAccumulator = 0
+        }
 
         // Positive deltaY = scroll up = increase value
         // Negative deltaY = scroll down = decrease value

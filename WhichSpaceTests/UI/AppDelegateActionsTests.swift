@@ -1811,6 +1811,30 @@ final class AppDelegateActionsTests: XCTestCase {
         }
     }
 
+    func testLabelStyleSelected_hidesWrapRowsForNonWrappingStyles() throws {
+        let space = appState.currentSpace
+        SpacePreferences.setLabel("Work", forSpace: space, store: store)
+        SpacePreferences.setSymbol("star.fill", forSpace: space, store: store)
+        SpacePreferences.setLabelStyle(.square, forSpace: space, store: store)
+        sut.configureMenuBarIcon()
+        let labelMenu = try XCTUnwrap(
+            MenuBuilder.findMenuItem(withTag: MenuTag.labelMenuItem.rawValue, in: sut.statusMenu)?.submenu
+        )
+
+        sut.menuWillOpen(labelMenu)
+        XCTAssertFalse(labelMenu.item(withTag: MenuTag.symbolWrapHeader.rawValue)?.isHidden ?? true)
+
+        sut.labelStyleSelected(.circle, stylePicker: nil)
+        XCTAssertTrue(labelMenu.item(withTag: MenuTag.symbolWrapHeader.rawValue)?.isHidden ?? false)
+        XCTAssertTrue(labelMenu.item(withTag: MenuTag.symbolWrapInside.rawValue)?.isHidden ?? false)
+        XCTAssertTrue(labelMenu.item(withTag: MenuTag.symbolWrapOutside.rawValue)?.isHidden ?? false)
+
+        sut.labelStyleSelected(.pill, stylePicker: nil)
+        XCTAssertFalse(labelMenu.item(withTag: MenuTag.symbolWrapHeader.rawValue)?.isHidden ?? true)
+        XCTAssertFalse(labelMenu.item(withTag: MenuTag.symbolWrapInside.rawValue)?.isHidden ?? true)
+        XCTAssertFalse(labelMenu.item(withTag: MenuTag.symbolWrapOutside.rawValue)?.isHidden ?? true)
+    }
+
     func testMenuWillOpen_setsDimInactiveSpacesCheckmark_whenEnabled() {
         sut.configureMenuBarIcon()
         store.dimInactiveSpaces = true
@@ -2017,6 +2041,31 @@ final class AppDelegateActionsTests: XCTestCase {
         )
     }
 
+    func testMenuWillOpen_showsSymbolBackgroundSwatchOnlyForBareSymbol() throws {
+        let space = appState.currentSpace
+        SpacePreferences.setSymbol("star.fill", forSpace: space, store: store)
+        sut.configureMenuBarIcon()
+        let colorsMenu = try XCTUnwrap(
+            sut.statusMenu.items.first { $0.title == Localization.menuColor }?.submenu
+        )
+        let symbolBackground = try XCTUnwrap(
+            colorsMenu.item(withTag: MenuTag.symbolBackgroundSwatch.rawValue)
+        )
+
+        sut.menuWillOpen(colorsMenu)
+        XCTAssertFalse(symbolBackground.isHidden)
+
+        SpacePreferences.setLabel("Work", forSpace: space, store: store)
+        SpacePreferences.setLabelStyle(.square, forSpace: space, store: store)
+        SpacePreferences.setSymbolWrap(.inside, forSpace: space, store: store)
+        sut.menuWillOpen(colorsMenu)
+        XCTAssertTrue(symbolBackground.isHidden)
+
+        SpacePreferences.setSymbolWrap(.outside, forSpace: space, store: store)
+        sut.menuWillOpen(colorsMenu)
+        XCTAssertFalse(symbolBackground.isHidden)
+    }
+
     func testMenuWillOpen_hidesSymbolColorSwatch_whenSymbolNotActive() {
         sut.configureMenuBarIcon()
         SpacePreferences.clearSymbol(forSpace: appState.currentSpace, store: store)
@@ -2057,7 +2106,9 @@ final class AppDelegateActionsTests: XCTestCase {
 
         XCTAssertFalse(foregroundLabel?.isHidden ?? true, "Foreground label should be visible when no symbol")
         XCTAssertFalse(foregroundSwatch?.isHidden ?? true, "Foreground swatch should be visible when no symbol")
-        XCTAssertFalse(colorSeparator?.isHidden ?? true, "Color separator should be visible when no symbol")
+        // The separator divides the symbol color sections from the
+        // label/number ones, so it hides when no symbol section is shown
+        XCTAssertTrue(colorSeparator?.isHidden ?? false, "Color separator should be hidden when no symbol")
         XCTAssertFalse(backgroundLabel?.isHidden ?? true, "Background label should be visible when no symbol")
         XCTAssertFalse(backgroundSwatch?.isHidden ?? true, "Background swatch should be visible when no symbol")
     }
@@ -2472,10 +2523,40 @@ final class AppDelegateActionsTests: XCTestCase {
         XCTAssertEqual(colors?.symbol, .green)
     }
 
-    func testSetColor_preservesSymbolColor() {
+    func testSetAndClearSymbolBackgroundColor_preservesOtherColors() {
         let space = appState.currentSpace
         SpacePreferences.setColors(
             SpaceColors(foreground: .red, background: .blue, symbol: .green),
+            forSpace: space,
+            store: store
+        )
+
+        sut.actionHandler.setSymbolBackgroundColor(.yellow)
+
+        var colors = SpacePreferences.colors(forSpace: space, store: store)
+        XCTAssertEqual(colors?.foreground, .red)
+        XCTAssertEqual(colors?.background, .blue)
+        XCTAssertEqual(colors?.symbol, .green)
+        XCTAssertEqual(colors?.symbolBackground, .yellow)
+
+        sut.actionHandler.clearSymbolBackgroundColor()
+
+        colors = SpacePreferences.colors(forSpace: space, store: store)
+        XCTAssertEqual(colors?.foreground, .red)
+        XCTAssertEqual(colors?.background, .blue)
+        XCTAssertEqual(colors?.symbol, .green)
+        XCTAssertNil(colors?.symbolBackground)
+    }
+
+    func testSetColor_preservesSymbolColor() {
+        let space = appState.currentSpace
+        SpacePreferences.setColors(
+            SpaceColors(
+                foreground: .red,
+                background: .blue,
+                symbol: .green,
+                symbolBackground: .yellow
+            ),
             forSpace: space,
             store: store
         )
@@ -2485,10 +2566,89 @@ final class AppDelegateActionsTests: XCTestCase {
         let colors = SpacePreferences.colors(forSpace: space, store: store)
         XCTAssertEqual(colors?.foreground, .white)
         XCTAssertEqual(colors?.symbol, .green)
+        XCTAssertEqual(colors?.symbolBackground, .yellow)
     }
 
-    func testInvertColors_preservesSymbolColor() {
+    func testInvertColors_updatesSymbolForegroundForInsideLabel() {
         let space = appState.currentSpace
+        SpacePreferences.setLabel("Work", forSpace: space, store: store)
+        SpacePreferences.setSymbol("star.fill", forSpace: space, store: store)
+        SpacePreferences.setLabelStyle(.square, forSpace: space, store: store)
+        SpacePreferences.setSymbolWrap(.inside, forSpace: space, store: store)
+        SpacePreferences.setColors(
+            SpaceColors(
+                foreground: .red,
+                background: .blue,
+                symbol: .green,
+                symbolBackground: .yellow
+            ),
+            forSpace: space,
+            store: store
+        )
+
+        sut.actionHandler.invertColors()
+
+        let colors = SpacePreferences.colors(forSpace: space, store: store)
+        XCTAssertEqual(colors?.foreground, .blue)
+        XCTAssertEqual(colors?.background, .red)
+        XCTAssertEqual(colors?.symbol, .blue)
+        XCTAssertEqual(colors?.symbolBackground, .yellow)
+    }
+
+    func testInvertColors_swapsOutsideSymbolColorsWhenBackgroundVisible() {
+        let space = appState.currentSpace
+        SpacePreferences.setLabel("Work", forSpace: space, store: store)
+        SpacePreferences.setSymbol("star.fill", forSpace: space, store: store)
+        SpacePreferences.setSymbolWrap(.outside, forSpace: space, store: store)
+        SpacePreferences.setColors(
+            SpaceColors(
+                foreground: .red,
+                background: .blue,
+                symbol: .green,
+                symbolBackground: .yellow
+            ),
+            forSpace: space,
+            store: store
+        )
+
+        sut.actionHandler.invertColors()
+
+        let colors = SpacePreferences.colors(forSpace: space, store: store)
+        XCTAssertEqual(colors?.foreground, .blue)
+        XCTAssertEqual(colors?.background, .red)
+        XCTAssertEqual(colors?.symbol, .yellow)
+        XCTAssertEqual(colors?.symbolBackground, .green)
+    }
+
+    func testInvertColors_usesEffectiveOutsideLayoutForNonWrappingStyle() {
+        let space = appState.currentSpace
+        SpacePreferences.setLabel("Work", forSpace: space, store: store)
+        SpacePreferences.setSymbol("star.fill", forSpace: space, store: store)
+        SpacePreferences.setLabelStyle(.circle, forSpace: space, store: store)
+        SpacePreferences.setSymbolWrap(.inside, forSpace: space, store: store)
+        SpacePreferences.setColors(
+            SpaceColors(
+                foreground: .red,
+                background: .blue,
+                symbol: .green,
+                symbolBackground: .yellow
+            ),
+            forSpace: space,
+            store: store
+        )
+
+        sut.actionHandler.invertColors()
+
+        let colors = SpacePreferences.colors(forSpace: space, store: store)
+        XCTAssertEqual(colors?.symbol, .yellow)
+        XCTAssertEqual(colors?.symbolBackground, .green)
+    }
+
+    func testInvertColors_preservesOutsideSymbolWithoutBackground() {
+        let space = appState.currentSpace
+        SpacePreferences.setLabel("Work", forSpace: space, store: store)
+        SpacePreferences.setSymbol("star.fill", forSpace: space, store: store)
+        SpacePreferences.setSymbolWrap(.outside, forSpace: space, store: store)
         SpacePreferences.setColors(
             SpaceColors(foreground: .red, background: .blue, symbol: .green),
             forSpace: space,
@@ -2501,5 +2661,47 @@ final class AppDelegateActionsTests: XCTestCase {
         XCTAssertEqual(colors?.foreground, .blue)
         XCTAssertEqual(colors?.background, .red)
         XCTAssertEqual(colors?.symbol, .green)
+        XCTAssertNil(colors?.symbolBackground)
+    }
+
+    func testInvertColors_preservesOutsideSymbolWithClearBackground() {
+        let space = appState.currentSpace
+        SpacePreferences.setLabel("Work", forSpace: space, store: store)
+        SpacePreferences.setSymbol("star.fill", forSpace: space, store: store)
+        SpacePreferences.setSymbolWrap(.outside, forSpace: space, store: store)
+        SpacePreferences.setColors(
+            SpaceColors(
+                foreground: .red,
+                background: .blue,
+                symbol: .green,
+                symbolBackground: .clear
+            ),
+            forSpace: space,
+            store: store
+        )
+
+        sut.actionHandler.invertColors()
+
+        let colors = SpacePreferences.colors(forSpace: space, store: store)
+        XCTAssertEqual(colors?.symbol, .green)
+        XCTAssertEqual(colors?.symbolBackground, .clear)
+    }
+
+    func testInvertColors_swapsResolvedOutsideSymbolForeground() {
+        let space = appState.currentSpace
+        SpacePreferences.setLabel("Work", forSpace: space, store: store)
+        SpacePreferences.setSymbol("star.fill", forSpace: space, store: store)
+        SpacePreferences.setSymbolWrap(.outside, forSpace: space, store: store)
+        SpacePreferences.setColors(
+            SpaceColors(foreground: .red, background: .blue, symbolBackground: .yellow),
+            forSpace: space,
+            store: store
+        )
+
+        sut.actionHandler.invertColors()
+
+        let colors = SpacePreferences.colors(forSpace: space, store: store)
+        XCTAssertEqual(colors?.symbol, .yellow)
+        XCTAssertEqual(colors?.symbolBackground, .red)
     }
 }
