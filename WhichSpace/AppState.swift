@@ -612,6 +612,28 @@ final class AppState {
         return currentGlobalSpaceIndex > 0 ? currentGlobalSpaceIndex : currentSpace
     }
 
+    /// The user-visible number for the Space at `number`, a 1-based
+    /// fullscreen-inclusive position matching `allSpaceEntries` indexing.
+    /// Generalises `currentSpaceDisplayNumber` to arbitrary Spaces, and defers
+    /// to it for the current Space so both agree on the authoritative snapshot
+    /// value. Out-of-range positions return `number` unchanged.
+    func displayNumber(forSpace number: Int) -> Int {
+        guard number != currentSpace else {
+            return currentSpaceDisplayNumber
+        }
+        let index = number - 1
+        guard allSpaceEntries.indices.contains(index) else {
+            return number
+        }
+        let regularIndex = allSpaceEntries[index].regularIndex
+        if store.localSpaceNumbers {
+            return regularIndex ?? number
+        }
+        let globalStartIndex = allDisplaysSpaceInfo
+            .first { $0.displayID == currentDisplayID }?.globalStartIndex ?? 1
+        return globalStartIndex + max((regularIndex ?? 0) - 1, 0)
+    }
+
     func getAllSpaceIndices() -> [Int] {
         guard !allSpaceEntries.isEmpty else {
             return []

@@ -162,6 +162,15 @@ osascript -e 'tell application "WhichSpace" to switch to previous space'
 ```bash
 # Get the current Space number (1-based numeric index)
 osascript -e 'tell application "WhichSpace" to get current space number'
+
+# Get the number of Spaces on the current display
+osascript -e 'tell application "WhichSpace" to get space count'
+
+# Get the labels of all Spaces, in order (item `N` is the target of `switch to space number N`)
+osascript -e 'tell application "WhichSpace" to get space labels'
+
+# Get the badges of all Spaces, in the same order
+osascript -e 'tell application "WhichSpace" to get space badges'
 ```
 
 ##### Labels

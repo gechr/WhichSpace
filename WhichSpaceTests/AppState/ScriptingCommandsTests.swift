@@ -534,4 +534,122 @@ struct ScriptingCommandsTests {
         #expect(appState.currentSpace == 2)
         #expect(appState.currentSpaceLabel == Labels.fullscreen)
     }
+
+    // MARK: - Enumeration Tests
+
+    @Test("spaceCount matches the switchable Space range")
+    func spaceCount_matchesSwitchableRange() {
+        let appState = makeAppState()
+
+        // Asserted structurally against the array `switchToSpace` indexes.
+        // Calling `switchToSpace` here would gate on `AXIsProcessTrusted`,
+        // which is granted on a developer machine but never on CI
+        #expect(ScriptingHelpers.spaceCount(appState: appState) == appState.allSpaceEntries.count)
+        #expect(ScriptingHelpers.spaceCount(appState: appState) == 2)
+        #expect(ScriptingHelpers.resolveAllLabels(appState: appState, store: store).count == 2)
+        #expect(ScriptingHelpers.resolveAllBadges(appState: appState, store: store).count == 2)
+    }
+
+    @Test("spaceCount is zero when no Spaces are available")
+    func spaceCount_emptyWithoutSpaces() {
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+
+        #expect(ScriptingHelpers.spaceCount(appState: appState) == 0)
+        #expect(ScriptingHelpers.resolveAllLabels(appState: appState, store: store).isEmpty)
+        #expect(ScriptingHelpers.resolveAllBadges(appState: appState, store: store).isEmpty)
+    }
+
+    @Test("resolveAllLabels returns defaults when no labels are customized")
+    func resolveAllLabels_defaults() {
+        let appState = makeAppState()
+
+        #expect(ScriptingHelpers.resolveAllLabels(appState: appState, store: store) == ["1", "2"])
+    }
+
+    @Test("resolveAllLabels includes custom labels for non-current Spaces")
+    func resolveAllLabels_includesCustomLabels() {
+        let appState = makeAppState(activeSpaceID: 101)
+        SpacePreferences.setLabel("Mail", forSpace: 1, display: appState.currentDisplayID, store: store)
+
+        #expect(ScriptingHelpers.resolveAllLabels(appState: appState, store: store) == ["Mail", "2"])
+    }
+
+    @Test("resolveAllLabels resolves templates against each Space's number")
+    func resolveAllLabels_resolvesTemplatePerSpace() {
+        let appState = makeAppState()
+        SpacePreferences.setLabel("S{number}", forSpace: 1, display: appState.currentDisplayID, store: store)
+        SpacePreferences.setLabel("S{number}", forSpace: 2, display: appState.currentDisplayID, store: store)
+
+        #expect(ScriptingHelpers.resolveAllLabels(appState: appState, store: store) == ["S1", "S2"])
+    }
+
+    @Test("resolveAllLabels marks fullscreen Spaces with the default label")
+    func resolveAllLabels_fullscreen() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [
+                    (id: 100, isFullscreen: false),
+                    (id: 101, isFullscreen: true),
+                    (id: 102, isFullscreen: false),
+                ],
+                activeSpaceID: 100
+            ),
+        ]
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+
+        #expect(
+            ScriptingHelpers.resolveAllLabels(appState: appState, store: store)
+                == ["1", Labels.fullscreen, "2"],
+            "Fullscreen entries occupy a position but do not consume a Space number"
+        )
+    }
+
+    @Test("resolveAllBadges yields an empty string for unbadged Spaces")
+    func resolveAllBadges_emptyWhenUnset() throws {
+        let appState = makeAppState()
+        try ScriptingHelpers.setBadge("A", forSpace: 1, appState: appState, store: store)
+
+        #expect(ScriptingHelpers.resolveAllBadges(appState: appState, store: store) == ["A", ""])
+    }
+
+    @Test("resolveAllBadges resolves the number token per Space")
+    func resolveAllBadges_resolvesSpaceToken() throws {
+        let appState = makeAppState()
+        try ScriptingHelpers.setBadge(
+            BadgeTemplate.spaceToken,
+            forSpace: 1,
+            appState: appState,
+            store: store
+        )
+        try ScriptingHelpers.setBadge(
+            BadgeTemplate.spaceToken,
+            forSpace: 2,
+            appState: appState,
+            store: store
+        )
+
+        #expect(ScriptingHelpers.resolveAllBadges(appState: appState, store: store) == ["1", "2"])
+    }
+
+    @Test("enumeration order matches switchToSpace indexing")
+    func enumeration_orderMatchesSwitchIndexing() throws {
+        let appState = makeAppState(activeSpaceID: 100)
+        SpacePreferences.setLabel("Target", forSpace: 2, display: appState.currentDisplayID, store: store)
+
+        let labels = ScriptingHelpers.resolveAllLabels(appState: appState, store: store)
+        let index = try #require(labels.firstIndex(of: "Target"))
+
+        // A caller reading the list and switching to item N+1 lands on that Space
+        #expect(appState.allSpaceEntries[index].id == 101)
+    }
+
+    @Test("resolveLabel and resolveBadge return empty for out-of-range Spaces")
+    func resolveLabelAndBadge_outOfRange() {
+        let appState = makeAppState()
+
+        #expect(ScriptingHelpers.resolveLabel(forSpace: 99, appState: appState, store: store).isEmpty)
+        #expect(ScriptingHelpers.resolveBadge(forSpace: 99, appState: appState, store: store).isEmpty)
+    }
 }

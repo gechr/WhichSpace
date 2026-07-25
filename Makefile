@@ -47,6 +47,7 @@ fmt:
 .PHONY: lint
 lint:
 	@swiftlint lint --strict
+	@xmllint --noout --nonet --valid WhichSpace/WhichSpace.sdef
 
 .PHONY: run
 run:

@@ -196,7 +196,50 @@ enum ScriptingHelpers {
         SpaceSwitcher.switchRelative(goRight: goRight)
     }
 
+    /// Returns the number of Spaces on the current display, matching the
+    /// 1-based indexing accepted by `switchToSpace(number:appState:)`.
+    static func spaceCount(appState: AppState) -> Int {
+        appState.allSpaceEntries.count
+    }
+
+    /// Returns the resolved label of every Space on the current display, in the
+    /// same order as `spaceCount`, so position N in the list is the Space that
+    /// `switch to space number N` targets.
+    static func resolveAllLabels(appState: AppState, store: DefaultsStore) -> [String] {
+        appState.allSpaceEntries.indices.map {
+            resolveLabel(forSpace: $0 + 1, appState: appState, store: store)
+        }
+    }
+
+    /// Returns the badge of every Space on the current display, in the same
+    /// order as `resolveAllLabels`. Spaces without a badge yield "".
+    static func resolveAllBadges(appState: AppState, store: DefaultsStore) -> [String] {
+        appState.allSpaceEntries.indices.map {
+            resolveBadge(forSpace: $0 + 1, appState: appState, store: store)
+        }
+    }
+
+    /// Returns the label shown for the given Space: its custom label when set,
+    /// with `{number}` resolved against the displayed number, otherwise the
+    /// default label ("1", "2", "F" for fullscreen).
+    static func resolveLabel(forSpace number: Int, appState: AppState, store: DefaultsStore) -> String {
+        if let customLabel = SpacePreferences.label(
+            forSpace: number,
+            display: appState.currentDisplayID,
+            store: store
+        ), !customLabel.isEmpty {
+            return LabelTemplate.resolve(customLabel, space: appState.displayNumber(forSpace: number))
+        }
+        let index = number - 1
+        guard appState.allSpaceEntries.indices.contains(index) else {
+            return ""
+        }
+        return appState.allSpaceEntries[index].label
+    }
+
     static func resolveCurrentLabel(appState: AppState, store: DefaultsStore) -> String {
+        // The current Space keeps the snapshot's own label as its fallback,
+        // which stays correct even while entries are momentarily empty
         if let customLabel = SpacePreferences.label(
             forSpace: appState.currentSpace,
             display: appState.currentDisplayID,
@@ -258,8 +301,15 @@ enum ScriptingHelpers {
     /// The special `#` character resolves to the displayed Space number,
     /// matching the menu bar rendering.
     static func resolveCurrentBadge(appState: AppState, store: DefaultsStore) -> String {
+        resolveBadge(forSpace: appState.currentSpace, appState: appState, store: store)
+    }
+
+    /// Returns the badge character for the given Space, or "" when no badge is
+    /// set. The special `#` character resolves to that Space's displayed
+    /// number, matching the menu bar rendering.
+    static func resolveBadge(forSpace number: Int, appState: AppState, store: DefaultsStore) -> String {
         guard let badge = SpacePreferences.badge(
-            forSpace: appState.currentSpace,
+            forSpace: number,
             display: appState.currentDisplayID,
             store: store
         ) else {
@@ -268,7 +318,7 @@ enum ScriptingHelpers {
         guard badge.character == BadgeTemplate.spaceToken else {
             return badge.character
         }
-        return String(appState.currentSpaceDisplayNumber)
+        return String(appState.displayNumber(forSpace: number))
     }
 
     /// Applies a badge character to the given Space on the current display,
@@ -336,6 +386,33 @@ extension NSApplication {
     /// Usage: `tell application "WhichSpace" to get current space number`
     @MainActor @objc var currentSpaceNumber: Int {
         AppEnvironment.shared.appState.currentSpace
+    }
+
+    /// Returns the number of Spaces on the current display.
+    /// The count bounds the numbers accepted by `switch to space number`.
+    /// Usage: `tell application "WhichSpace" to get space count`
+    @MainActor @objc var spaceCount: Int {
+        ScriptingHelpers.spaceCount(appState: AppEnvironment.shared.appState)
+    }
+
+    /// Returns the label of every Space on the current display, in order, so
+    /// item N of the list is the Space that `switch to space number N` targets.
+    /// Usage: `tell application "WhichSpace" to get space labels`
+    @MainActor @objc var spaceLabels: [String] {
+        ScriptingHelpers.resolveAllLabels(
+            appState: AppEnvironment.shared.appState,
+            store: AppEnvironment.shared.store
+        )
+    }
+
+    /// Returns the badge of every Space on the current display, in the same
+    /// order as `spaceLabels`. Spaces without a badge yield "".
+    /// Usage: `tell application "WhichSpace" to get space badges`
+    @MainActor @objc var spaceBadges: [String] {
+        ScriptingHelpers.resolveAllBadges(
+            appState: AppEnvironment.shared.appState,
+            store: AppEnvironment.shared.store
+        )
     }
 
     /// Gets or sets the current space label.

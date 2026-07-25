@@ -32,6 +32,17 @@
         </command>
         <class name="application" code="capp" description="The WhichSpace application.">
             <cocoa class="NSApplication"/>
+            <property name="space count" code="spct" type="integer" access="r" description="The number of Spaces on the current display. Bounds the numbers accepted by `switch to space number`.">
+                <cocoa key="spaceCount"/>
+            </property>
+            <property name="space labels" code="splb" access="r" description="The labels of all Spaces on the current display, in order. Item N is the Space that `switch to space number N` targets.">
+                <cocoa key="spaceLabels"/>
+                <type type="text" list="yes"/>
+            </property>
+            <property name="space badges" code="spbd" access="r" description="The badge characters of all Spaces on the current display, in the same order as `space labels`. Spaces without a badge yield an empty string.">
+                <cocoa key="spaceBadges"/>
+                <type type="text" list="yes"/>
+            </property>
             <property name="current space number" code="cusn" type="integer" access="r" description="The current Space number.">
                 <cocoa key="currentSpaceNumber"/>
             </property>
