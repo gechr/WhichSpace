@@ -310,6 +310,89 @@ struct SpaceIconGeneratorTests {
         #expect(hasGreenPixels)
     }
 
+    // MARK: - Knockout Tests
+
+    @Test("clear foreground knocks the number out of the filled shape")
+    func clearForegroundKnocksOutNumber() {
+        let icon = SpaceIconGenerator.generateIcon(
+            for: "1",
+            darkMode: true,
+            customColors: SpaceColors(foreground: .clear, background: .red),
+            style: .square
+        )
+        #expect(holeInsideRedRegion(icon))
+    }
+
+    @Test("opaque foreground leaves no hole in the filled shape")
+    func opaqueForegroundLeavesNoHole() {
+        let icon = SpaceIconGenerator.generateIcon(
+            for: "1",
+            darkMode: true,
+            customColors: SpaceColors(foreground: .white, background: .red),
+            style: .square
+        )
+        #expect(!holeInsideRedRegion(icon))
+    }
+
+    @Test("clear foreground on transparent style falls back to the outline tone", arguments: [true, false])
+    func clearForegroundOnTransparentStyleStaysVisible(darkMode: Bool) {
+        let icon = SpaceIconGenerator.generateIcon(
+            for: "1",
+            darkMode: darkMode,
+            customColors: SpaceColors(foreground: .clear, background: .red),
+            style: .transparent
+        )
+        // Alpha alone is not enough: the fallback must use the
+        // appearance-matched outline tone, or the glyph is technically
+        // visible yet vanishes against the menu bar
+        #expect(containsOutlineTone(icon, darkMode: darkMode))
+    }
+
+    @Test("clear foreground and background fall back to the outline tone", arguments: [true, false])
+    func bothColorsClearStaysVisible(darkMode: Bool) {
+        let icon = SpaceIconGenerator.generateIcon(
+            for: "1",
+            darkMode: darkMode,
+            customColors: SpaceColors(foreground: .clear, background: .clear),
+            style: .square
+        )
+        #expect(containsOutlineTone(icon, darkMode: darkMode))
+    }
+
+    @Test("clear symbol tint knocks the glyph out of its chip")
+    func clearSymbolTintKnocksOutChip() {
+        let icon = SpaceIconGenerator.generateSymbolIcon(
+            symbolName: "star.fill",
+            darkMode: true,
+            customColors: SpaceColors(
+                foreground: .white, background: .black, symbol: .clear, symbolBackground: .red
+            )
+        )
+        #expect(holeInsideRedRegion(icon))
+    }
+
+    @Test("invalid symbol fallback honors chip knockout")
+    func invalidSymbolFallbackHonorsChipKnockout() {
+        let icon = SpaceIconGenerator.generateSymbolIcon(
+            symbolName: "definitely.not.a.real.symbol",
+            darkMode: true,
+            customColors: SpaceColors(
+                foreground: .white, background: .black, symbol: .clear, symbolBackground: .red
+            )
+        )
+        #expect(holeInsideRedRegion(icon))
+    }
+
+    @Test("clear bare symbol tint without a chip falls back to the outline tone", arguments: [true, false])
+    func clearBareSymbolTintStaysVisible(darkMode: Bool) {
+        let icon = SpaceIconGenerator.generateSymbolIcon(
+            symbolName: "star.fill",
+            darkMode: darkMode,
+            customColors: SpaceColors(foreground: .clear, background: .black, symbol: .clear)
+        )
+        #expect(containsOutlineTone(icon, darkMode: darkMode))
+    }
+
     // MARK: - Symbol Tests
 
     @Test("symbol icon has expected size")
@@ -752,6 +835,53 @@ struct SpaceIconGeneratorTests {
         return rep
     }
 
+    /// Whether any pixel inside the bounding box of red pixels is fully
+    /// transparent - i.e. a knockout punched a hole through the shape
+    private func holeInsideRedRegion(_ image: NSImage) -> Bool {
+        guard let rep = bitmap(image, sampling: 2) else {
+            return false
+        }
+        var redBounds = PixelBounds()
+        for y in 0 ..< rep.pixelsHigh {
+            for x in 0 ..< rep.pixelsWide {
+                guard let color = rep.colorAt(x: x, y: y)?.usingColorSpace(.deviceRGB) else {
+                    continue
+                }
+                if color.alphaComponent > 0.5, color.redComponent > 0.5,
+                   color.greenComponent < 0.3, color.blueComponent < 0.3
+                {
+                    redBounds.include(x: x, y: y)
+                }
+            }
+        }
+        guard let xRange = redBounds.horizontalRange, let yRange = redBounds.verticalRange,
+              xRange.count > 4, yRange.count > 4
+        else {
+            return false
+        }
+        // Scan only the central region: the shape's rounded corners sit
+        // inside the bounding box and are legitimately transparent
+        let insetX = xRange.count * 3 / 10
+        let insetY = yRange.count * 3 / 10
+        for y in (yRange.lowerBound + insetY) ... (yRange.upperBound - insetY) {
+            for x in (xRange.lowerBound + insetX) ... (xRange.upperBound - insetX)
+                where (rep.colorAt(x: x, y: y)?.alphaComponent ?? 1) < 0.1
+            {
+                return true
+            }
+        }
+        return false
+    }
+
+    /// Whether the image contains the appearance-matched outline tone -
+    /// the display fallback used for clear colors with no backdrop
+    private func containsOutlineTone(_ image: NSImage, darkMode: Bool) -> Bool {
+        let white = darkMode ? 0.7 : 0.3
+        return imageContainsColor(
+            image, targetRed: white, targetGreen: white, targetBlue: white, tolerance: 0.1
+        )
+    }
+
     private func chipAndGlyphCenters(in rep: NSBitmapImageRep) -> (chip: CGPoint, glyph: CGPoint)? {
         guard let data = rep.bitmapData else {
             return nil
@@ -1001,6 +1131,13 @@ struct SpaceIconGeneratorTests {
                 return nil
             }
             return minX ... maxX
+        }
+
+        var verticalRange: ClosedRange<Int>? {
+            guard maxY >= minY else {
+                return nil
+            }
+            return minY ... maxY
         }
     }
 }

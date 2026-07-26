@@ -22,6 +22,19 @@ final class ColorSwatch: Swatch {
     /// selecting it invokes this callback
     var onClearRequested: (() -> Void)?
 
+    /// Gates the clear cell independently of `onClearRequested`, so "no
+    /// color" can be offered conditionally (e.g. hidden while the opposite
+    /// side of a foreground/background pair is already transparent). Only
+    /// triggers a redraw: the frame keeps the full-width measurement so the
+    /// cell can toggle in place while the menu stays open
+    var showsClearCell = true {
+        didSet {
+            if showsClearCell != oldValue {
+                needsDisplay = true
+            }
+        }
+    }
+
     /// Index of the optional clear cell (last, after the custom button)
     static var clearIndex: Int {
         presetColors.count + 1
@@ -30,7 +43,7 @@ final class ColorSwatch: Swatch {
     // MARK: - SwatchView Overrides
 
     override var itemCount: Int {
-        Self.presetColors.count + 1 + (onClearRequested != nil ? 1 : 0)
+        Self.presetColors.count + 1 + (onClearRequested != nil && showsClearCell ? 1 : 0)
     } // +1 for custom color button, +1 for the optional clear cell
     override var swatchSize: Double {
         16.0

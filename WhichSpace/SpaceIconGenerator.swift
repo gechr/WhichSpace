@@ -449,11 +449,13 @@ enum SpaceIconGenerator {
         if let symbolBackground = customColors?.symbolBackground,
            customColors?.hasVisibleSymbolBackground == true
         {
+            let tint = bareSymbolTint(customColors: customColors, darkMode: darkMode)
             let symbolContent = resolveSymbolContent(
                 symbolName: symbolName,
                 skinTone: skinTone,
-                tint: bareSymbolTint(customColors: customColors, darkMode: darkMode),
-                scale: scale * chipGlyphScale
+                tint: tint,
+                scale: scale * chipGlyphScale,
+                knockout: isKnockout(tint)
             )
             let chip = symbolChipSize(for: symbolContent, scale: scale)
             let chipCanvasSize = effectiveStatusItemSize(
@@ -499,7 +501,12 @@ enum SpaceIconGenerator {
             )
         }
 
-        let color = bareSymbolTint(customColors: customColors, darkMode: darkMode)
+        // Bare symbols have no backdrop to knock out of, so a clear tint
+        // falls back to the default foreground instead of vanishing
+        let color = visibleForeground(
+            bareSymbolTint(customColors: customColors, darkMode: darkMode),
+            darkMode: darkMode
+        )
 
         return NSImage(size: canvasSize, flipped: false) { rect in
             let tintedImage = sfImage.tinted(with: color)
@@ -587,16 +594,24 @@ enum SpaceIconGenerator {
         let colors = getColors(darkMode: darkMode, customColors: customColors, filled: filled)
         // Symbol falls back to the label foreground so it stays legible on
         // the filled shape
+        let backdropVisible = filled && !isKnockout(colors.background)
+        let symbolTint = customColors?.symbol ?? colors.foreground
+        let symbolKnockout = backdropVisible && isKnockout(symbolTint)
         let symbolContent = resolveSymbolContent(
             symbolName: symbolName,
             skinTone: skinTone,
-            tint: customColors?.symbol ?? colors.foreground,
-            scale: scale
+            tint: symbolKnockout ? symbolTint : visibleForeground(symbolTint, darkMode: darkMode),
+            scale: scale,
+            knockout: symbolKnockout
         )
 
         let font = scaledFont(for: text.count, customFont: customFont, scale: scale)
+        let textKnockout = backdropVisible && isKnockout(colors.foreground)
+        let textColor: NSColor = textKnockout
+            ? .black
+            : visibleForeground(colors.foreground, darkMode: darkMode)
         let attrText = buildBadgedAttributedString(
-            number: text, badge: badge, font: font, color: colors.foreground
+            number: text, badge: badge, font: font, color: textColor
         )
         let textSize = attrText.size()
 
@@ -643,7 +658,9 @@ enum SpaceIconGenerator {
                     width: textSize.width,
                     height: textSize.height
                 )
-                attrText.draw(in: textRect)
+                withKnockout(textKnockout) {
+                    attrText.draw(in: textRect)
+                }
                 xCursor += textSize.width + scaledGap
             }
             if position == .left {
@@ -689,11 +706,14 @@ enum SpaceIconGenerator {
         let symbolBackground = customColors?.symbolBackground
         let hasSymbolChip = customColors?.hasVisibleSymbolBackground == true
         // Bare symbol matches the standalone symbol icon's colors
+        let symbolTint = bareSymbolTint(customColors: customColors, darkMode: darkMode)
+        let symbolKnockout = hasSymbolChip && isKnockout(symbolTint)
         let symbolContent = resolveSymbolContent(
             symbolName: symbolName,
             skinTone: skinTone,
-            tint: bareSymbolTint(customColors: customColors, darkMode: darkMode),
-            scale: scale * (hasSymbolChip ? chipGlyphScale : 1)
+            tint: symbolKnockout ? symbolTint : visibleForeground(symbolTint, darkMode: darkMode),
+            scale: scale * (hasSymbolChip ? chipGlyphScale : 1),
+            knockout: symbolKnockout
         )
 
         let scaledGap = gap * scale
@@ -962,8 +982,13 @@ enum SpaceIconGenerator {
         symbolName: String,
         skinTone: SkinTone?,
         tint: NSColor,
-        scale: Double
+        scale: Double,
+        knockout: Bool = false
     ) -> SymbolContent {
+        // A knockout renders the glyph as an opaque mask that erases the
+        // shape beneath it, so the menu bar shows through
+        let tint = knockout ? .black : tint
+        let operation: NSCompositingOperation = knockout ? .destinationOut : .sourceOver
         if symbolName.containsEmoji {
             // Emoji are never tinted; matches generateEmojiIcon's font size
             let displayEmoji = SkinTone.apply(to: symbolName, tone: skinTone)
@@ -991,14 +1016,19 @@ enum SpaceIconGenerator {
                     rasterized.image.draw(
                         in: rect,
                         from: CGRect(origin: .zero, size: rasterized.image.size),
-                        operation: .sourceOver,
+                        operation: operation,
                         fraction: 1
                     )
                 }
             }
             let tintedImage = sfImage.tinted(with: tint)
             return SymbolContent(size: size, opaqueBounds: nil) { rect in
-                tintedImage.draw(in: rect)
+                tintedImage.draw(
+                    in: rect,
+                    from: CGRect(origin: .zero, size: tintedImage.size),
+                    operation: operation,
+                    fraction: 1
+                )
             }
         }
 
@@ -1009,8 +1039,43 @@ enum SpaceIconGenerator {
         ]
         let size = "?".size(withAttributes: attributes)
         return SymbolContent(size: size) { rect in
-            "?".draw(in: rect, withAttributes: attributes)
+            withKnockout(operation == .destinationOut) {
+                "?".draw(in: rect, withAttributes: attributes)
+            }
         }
+    }
+
+    /// A fully transparent color renders as a knockout: the glyph erases
+    /// the shape underneath so the menu bar shows through
+    private static func isKnockout(_ color: NSColor) -> Bool {
+        color.alphaComponent < 0.001
+    }
+
+    /// Display-only backstop for a transparent color with no visible
+    /// backdrop to knock out of (transparent style, cleared background,
+    /// stale state reached through style or label transitions): fall back
+    /// to the outline foreground so the icon never renders fully
+    /// invisible. The outline color is the appearance-matched tone for
+    /// content drawn directly on the menu bar; the filled foreground would
+    /// be black-on-dark/white-on-light and vanish without its shape. The
+    /// stored color is left untouched.
+    private static func visibleForeground(_ color: NSColor, darkMode: Bool) -> NSColor {
+        isKnockout(color) ? IconColors.outlineColors(darkMode: darkMode).foreground : color
+    }
+
+    /// Runs `draw` in destinationOut blend mode when `knockout` is set, so
+    /// the drawn content erases the pixels beneath it. The content must be
+    /// drawn opaque for the erase to take full effect.
+    private static func withKnockout(_ knockout: Bool, draw: () -> Void) {
+        guard knockout else {
+            draw()
+            return
+        }
+        let cgContext = NSGraphicsContext.current?.cgContext
+        cgContext?.saveGState()
+        cgContext?.setBlendMode(.destinationOut)
+        draw()
+        cgContext?.restoreGState()
     }
 
     private static func getColors(
@@ -1178,15 +1243,23 @@ enum SpaceIconGenerator {
                 scale: scale
             )
 
-            if let badge, !badge.character.isEmpty {
-                let attrString = buildBadgedAttributedString(
-                    number: spaceNumber, badge: badge, font: font, color: colors.foreground
-                )
-                drawCenteredAttributedText(attrString, in: textRect, yOffset: textYOffset)
-            } else {
-                drawCenteredText(
-                    spaceNumber, in: textRect, font: font, color: colors.foreground, yOffset: textYOffset
-                )
+            // A fully transparent foreground cuts the glyphs out of the
+            // filled shape so the menu bar shows through
+            let knockout = filled && isKnockout(colors.foreground) && !isKnockout(colors.background)
+            let textColor: NSColor = knockout
+                ? .black
+                : visibleForeground(colors.foreground, darkMode: darkMode)
+            withKnockout(knockout) {
+                if let badge, !badge.character.isEmpty {
+                    let attrString = buildBadgedAttributedString(
+                        number: spaceNumber, badge: badge, font: font, color: textColor
+                    )
+                    drawCenteredAttributedText(attrString, in: textRect, yOffset: textYOffset)
+                } else {
+                    drawCenteredText(
+                        spaceNumber, in: textRect, font: font, color: textColor, yOffset: textYOffset
+                    )
+                }
             }
             return true
         }

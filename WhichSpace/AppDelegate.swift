@@ -834,10 +834,12 @@ extension AppDelegate: MenuActionDelegate {
 
     func foregroundColorSelected(_ color: NSColor) {
         actionHandler.setColor(color, isForeground: true)
+        menuBuilder.updateClearCellVisibility()
     }
 
     func backgroundColorSelected(_ color: NSColor) {
         actionHandler.setColor(color, isForeground: false)
+        menuBuilder.updateClearCellVisibility()
     }
 
     func separatorColorSelected(_ color: NSColor) {
@@ -846,14 +848,17 @@ extension AppDelegate: MenuActionDelegate {
 
     func symbolColorSelected(_ color: NSColor) {
         actionHandler.setSymbolColor(color)
+        menuBuilder.updateClearCellVisibility()
     }
 
     func symbolBackgroundColorSelected(_ color: NSColor) {
         actionHandler.setSymbolBackgroundColor(color)
+        menuBuilder.updateClearCellVisibility()
     }
 
     func symbolBackgroundColorCleared() {
         actionHandler.clearSymbolBackgroundColor()
+        menuBuilder.updateClearCellVisibility()
     }
 
     func customForegroundColorRequested() {
@@ -975,6 +980,10 @@ extension AppDelegate: MenuActionDelegate {
         showPreviewIcon(foreground: ColorSwatch.presetColors[index])
     }
 
+    func foregroundClearHoverStarted() {
+        showPreviewIcon(foreground: .clear)
+    }
+
     func backgroundColorHoverStarted(index: Int) {
         showPreviewIcon(background: ColorSwatch.presetColors[index])
     }
@@ -983,8 +992,16 @@ extension AppDelegate: MenuActionDelegate {
         showPreviewIcon(separatorColor: ColorSwatch.presetColors[index])
     }
 
+    func separatorClearHoverStarted() {
+        showPreviewIcon(separatorColor: .clear)
+    }
+
     func symbolColorHoverStarted(index: Int) {
         showPreviewIcon(symbolColor: ColorSwatch.presetColors[index])
+    }
+
+    func symbolClearHoverStarted() {
+        showPreviewIcon(symbolColor: .clear)
     }
 
     func symbolBackgroundColorHoverStarted(index: Int) {
