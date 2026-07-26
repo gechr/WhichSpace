@@ -4,10 +4,12 @@ import Cocoa
 
 final class BadgeInput: NSView {
     private let textField: NSTextField
+    private let clearButton = NSButton()
 
     private let padding = 28.0
     private let fieldWidth = 40.0
     private let fieldHeight = 22.0
+    private let clearButtonSize = 16.0
 
     var onCharacterChanged: ((String?) -> Void)?
 
@@ -18,6 +20,7 @@ final class BadgeInput: NSView {
         }
         set {
             textField.stringValue = newValue ?? ""
+            clearButton.isHidden = newValue?.isEmpty != false
         }
     }
 
@@ -27,6 +30,7 @@ final class BadgeInput: NSView {
         super.init(frame: .zero)
 
         setupTextField()
+        setupClearButton()
     }
 
     @available(*, unavailable)
@@ -45,6 +49,27 @@ final class BadgeInput: NSView {
         textField.maximumNumberOfLines = 1
         textField.usesSingleLineMode = true
         addSubview(textField)
+    }
+
+    private func setupClearButton() {
+        clearButton.image = NSImage(
+            systemSymbolName: "xmark.circle.fill",
+            accessibilityDescription: Localization.actionResetBadgeToDefault
+        )
+        clearButton.contentTintColor = .secondaryLabelColor
+        clearButton.toolTip = Localization.tipClearBadge
+        clearButton.isBordered = false
+        clearButton.target = self
+        clearButton.action = #selector(clearCharacter)
+        clearButton.isHidden = true
+        addSubview(clearButton)
+    }
+
+    @objc private func clearCharacter() {
+        textField.stringValue = ""
+        clearButton.isHidden = true
+        onCharacterChanged?(nil)
+        window?.makeFirstResponder(textField)
     }
 
     // MARK: - Focus
@@ -68,6 +93,12 @@ final class BadgeInput: NSView {
 
         let yCenter = (bounds.height - fieldHeight) / 2
         textField.frame = CGRect(x: padding, y: yCenter, width: fieldWidth, height: fieldHeight)
+        clearButton.frame = CGRect(
+            x: padding + fieldWidth + 4,
+            y: (bounds.height - clearButtonSize) / 2,
+            width: clearButtonSize,
+            height: clearButtonSize
+        )
     }
 }
 
@@ -88,6 +119,7 @@ extension BadgeInput: NSTextFieldDelegate {
             }
         }
 
+        clearButton.isHidden = text.isEmpty
         onCharacterChanged?(text.isEmpty ? nil : text)
     }
 }
