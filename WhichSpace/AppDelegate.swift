@@ -167,18 +167,33 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         guard ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil else {
             return
         }
+
+        // AppKit's tooltip manager reads this key
+        // register() keeps it session-only and yields to a user-set value
+        UserDefaults.standard.register(defaults: ["NSInitialToolTipDelay": 500])
+
+        // Offer to move to /Applications when launched from elsewhere (e.g. Downloads)
+        // - running translocated would break Sparkle updates
         AppMover.moveIfNecessary(appName: AppInfo.appName)
+
+        // Menu bar only - no Dock icon or app-switcher entry
         NSApp.setActivationPolicy(.accessory)
-        statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+
+        // Start Sparkle so scheduled update checks run
         updaterController = SPUStandardUpdaterController(
             startingUpdater: true,
             updaterDelegate: nil,
             userDriverDelegate: self
         )
+
+        // Create the status item and keep its icon in sync with renderer state
+        statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         configureMenuBarIcon()
         appState.renderer.onIconNeedsUpdate = { [weak self] in
             self?.updateStatusBarIcon()
         }
+
+        // Begin observing app state, Space changes, and preference edits
         startObservingAppState()
         startObservingSpaceChanges()
         startObservingPreferences()
