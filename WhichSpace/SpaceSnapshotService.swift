@@ -57,7 +57,12 @@ enum SpaceSnapshotService {
                     regularIndex = regularSpaceIndex
                 }
 
-                entries.append(SpaceEntry(id: spaceID, label: label, regularIndex: regularIndex))
+                entries.append(SpaceEntry(
+                    id: spaceID,
+                    label: label,
+                    regularIndex: regularIndex,
+                    uuid: space["uuid"] as? String
+                ))
             }
 
             if !entries.isEmpty {

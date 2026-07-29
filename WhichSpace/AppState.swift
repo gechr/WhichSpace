@@ -7,6 +7,15 @@ struct SpaceEntry: Equatable {
     let label: String
     /// Local regular-space index (nil for fullscreen entries)
     let regularIndex: Int?
+    /// CGS Space UUID; Space renaming tools key their custom names by it
+    let uuid: String?
+
+    init(id: Int, label: String, regularIndex: Int?, uuid: String? = nil) {
+        self.id = id
+        self.label = label
+        self.regularIndex = regularIndex
+        self.uuid = uuid
+    }
 }
 
 /// Information about spaces on a single display

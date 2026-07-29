@@ -255,6 +255,67 @@ final class StatusBarRenderer {
         }
     }
 
+    /// Renders the icon for any (space, display) pair for the settings
+    /// window, without preview overrides. Space 0 renders the default-style
+    /// template, whose preferences always live in the shared maps.
+    ///
+    /// `sizeScale` is a percentage of the status bar rendering; the returned
+    /// image is handler-backed, so enlarged copies re-render their content at
+    /// the destination scale instead of interpolating a small bitmap.
+    func settingsIcon(forSpace space: Int, display displayID: String?, sizeScale: Double = 100) -> NSImage {
+        let isTemplate = space == SpacePreferences.defaultStyleSpace
+        let labels = isTemplate ? store.spaceLabels : fetchLabels(displayID: displayID ?? "")
+        let displayInfo = appState.allDisplaysSpaceInfo.first { $0.displayID == displayID }
+        let entry: SpaceEntry? = displayInfo.flatMap {
+            $0.entries.indices.contains(space - 1) ? $0.entries[space - 1] : nil
+        }
+
+        let displayNumber: Int = if isTemplate {
+            1
+        } else if let entry, let displayInfo {
+            store.localSpaceNumbers
+                ? (entry.regularIndex ?? space)
+                : Self.globalIndex(entry: entry, globalStartIndex: displayInfo.globalStartIndex)
+        } else {
+            space
+        }
+
+        let label: String = if let entry {
+            displayLabel(
+                entry: entry,
+                displayNumber: displayNumber,
+                localIndex: space,
+                labels: labels,
+                isFullscreen: entry.label == Labels.fullscreen
+            )
+        } else if let custom = labels[space], !custom.isEmpty {
+            LabelTemplate.resolve(custom, space: displayNumber)
+        } else {
+            String(displayNumber)
+        }
+
+        let spec = resolveIconSpec(
+            forSpace: space,
+            spaceID: entry?.id ?? 0,
+            displayNumber: displayNumber,
+            label: label,
+            labels: labels,
+            displayID: isTemplate ? nil : displayID,
+            applyPreview: false,
+            darkMode: appState.darkModeEnabled
+        )
+        let base = render(spec)
+        guard sizeScale != 100 else {
+            return base
+        }
+        let factor = sizeScale / 100
+        let size = NSSize(width: base.size.width * factor, height: base.size.height * factor)
+        return NSImage(size: size, flipped: false) { rect in
+            base.draw(in: rect)
+            return true
+        }
+    }
+
     /// Marks window occupancy stale after a Space snapshot changes.
     ///
     /// Keep populated data available so the next render can return it immediately
@@ -1049,7 +1110,7 @@ final class StatusBarRenderer {
 
     // MARK: - Slot Helpers
 
-    private static func globalIndex(entry: SpaceEntry, globalStartIndex: Int) -> Int {
+    static func globalIndex(entry: SpaceEntry, globalStartIndex: Int) -> Int {
         let localRegularIndex = entry.regularIndex ?? 0
         return globalStartIndex + max(localRegularIndex - 1, 0)
     }
@@ -1072,7 +1133,7 @@ final class StatusBarRenderer {
 
     /// Maps a stored label style to the rendering style used by SpaceIconGenerator.
     /// Multi-character labels use Slim/SlimOutline for auto-expanding width.
-    private static func renderStyle(for labelStyle: IconStyle, labelLength: Int) -> IconStyle {
+    static func renderStyle(for labelStyle: IconStyle, labelLength: Int) -> IconStyle {
         guard labelLength > 1 else {
             return labelStyle
         }

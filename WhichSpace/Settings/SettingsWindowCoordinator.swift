@@ -12,22 +12,37 @@ extension Settings.PaneIdentifier {
         Self("menuBar")
     }
 
+    static var spaces: Self {
+        Self("spaces")
+    }
+
     static var switching: Self {
         Self("switching")
     }
 }
 
+/// A settings model with an external-change observation stream scoped to the
+/// window's lifetime.
+@MainActor
+protocol SettingsObservingModel: AnyObject {
+    func startObserving()
+    func stopObserving()
+}
+
+extension SettingsModel: SettingsObservingModel {}
+extension SpaceEditorModel: SettingsObservingModel {}
+
 /// Owns the single settings window. Holding one controller instance is
 /// load-bearing: creating a controller per show() produces duplicate windows.
 @MainActor
 final class SettingsWindowCoordinator {
-    private let model: SettingsModel
+    private let models: [SettingsObservingModel]
     private let panes: [SettingsPane]
     private var windowController: SettingsWindowController?
     private var closeObserver: NSObjectProtocol?
 
-    init(model: SettingsModel, panes: [SettingsPane]) {
-        self.model = model
+    init(models: [SettingsObservingModel], panes: [SettingsPane]) {
+        self.models = models
         self.panes = panes
     }
 
@@ -46,20 +61,26 @@ final class SettingsWindowCoordinator {
             )
             windowController = controller
             if let window = controller.window {
-                // The external-change observation stream only needs to run
-                // while the window can show its effects
+                // The external-change observation streams only need to run
+                // while the window can show their effects; the shared color
+                // panel must not outlive the selection it edits
                 closeObserver = NotificationCenter.default.addObserver(
                     forName: NSWindow.willCloseNotification,
                     object: window,
                     queue: .main
-                ) { [weak model] _ in
+                ) { [weak self] _ in
                     Task { @MainActor in
-                        model?.stopObserving()
+                        for model in self?.models ?? [] {
+                            model.stopObserving()
+                        }
+                        ColorPanelCoordinator.closeSharedPanel()
                     }
                 }
             }
         }
-        model.startObserving()
+        for model in models {
+            model.startObserving()
+        }
         windowController?.show()
         if isFirstShow, let window = windowController?.window {
             positionAboveCenter(window)

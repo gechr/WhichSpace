@@ -1228,25 +1228,6 @@ final class MenuBuilder {
         return iconMenu
     }
 
-    private static let labelStyles: [IconStyle] = [
-        .pill, .pillOutline, .square, .squareOutline, .stroke, .transparent,
-    ]
-
-    private static func labelStyleTitle(for style: IconStyle) -> String? {
-        switch style {
-        case .pill:
-            Localization.labelStylePill
-        case .pillOutline:
-            Localization.labelStylePillOutline
-        case .square:
-            Localization.labelStyleBox
-        case .squareOutline:
-            Localization.labelStyleBoxOutline
-        default:
-            nil
-        }
-    }
-
     private func createLabelMenu(
         target: AnyObject, delegate: NSMenuDelegate?, actionDelegate: MenuActionDelegate
     ) -> NSMenu {
@@ -1291,11 +1272,11 @@ final class MenuBuilder {
             store: store
         ) ?? .square
 
-        for style in Self.labelStyles {
+        for style in StyleGridView.labelStyles {
             let item = NSMenuItem()
             let stylePicker = StylePicker(style: style)
             stylePicker.frame = NSRect(origin: .zero, size: stylePicker.intrinsicContentSize)
-            stylePicker.titleOverride = Self.labelStyleTitle(for: style)
+            stylePicker.titleOverride = StyleGridView.labelStyleTitle(for: style)
             stylePicker.isChecked = style == currentLabelStyle
             stylePicker.customColors = appState.currentColors
             stylePicker.darkMode = appState.darkModeEnabled

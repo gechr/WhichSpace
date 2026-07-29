@@ -171,6 +171,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     func showSettingsWindow() {
         if settingsCoordinator == nil {
             let model = SettingsModel(store: store, launchAtLogin: launchAtLogin)
+            let editorModel = SpaceEditorModel(appState: appState)
             let generalPane = Settings.PaneHostingController(pane: Settings.Pane(
                 identifier: .general,
                 title: Localization.paneGeneral,
@@ -184,6 +185,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
                     onExportSettings: { [weak self] in self?.actionHandler.exportSettings() },
                     onOpenCustomSoundsFolder: { [weak self] in self?.actionHandler.openCustomSoundsFolder() }
                 )
+            })
+            let spacesPane = Settings.PaneHostingController(pane: Settings.Pane(
+                identifier: .spaces,
+                title: Localization.paneSpaces,
+                toolbarIcon: NSImage(systemSymbolName: "square.grid.2x2", accessibilityDescription: nil)!
+            ) {
+                SpacesPane(model: editorModel)
             })
             let menuBarPane = Settings.PaneHostingController(pane: Settings.Pane(
                 identifier: .menuBar,
@@ -202,8 +210,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
                 }
             })
             settingsCoordinator = SettingsWindowCoordinator(
-                model: model,
-                panes: [generalPane, menuBarPane, switchingPane]
+                models: [model, editorModel],
+                panes: [generalPane, spacesPane, menuBarPane, switchingPane]
             )
         }
         settingsCoordinator?.show()

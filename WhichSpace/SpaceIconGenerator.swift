@@ -640,11 +640,9 @@ enum SpaceIconGenerator {
 
             var xCursor = shapeRect.minX + (position == .left ? symbolPadding : textPadding)
             let drawSymbol = {
-                // SF Symbol images carry baseline-relative spacing, so pure
-                // size centering seats the glyph slightly low; nudge up
                 let symbolRect = CGRect(
                     x: xCursor,
-                    y: shapeRect.minY + (shapeRect.height - symbolContent.size.height) / 2 + 0.5 * scale,
+                    y: shapeRect.minY + (shapeRect.height - symbolContent.size.height) / 2,
                     width: symbolContent.size.width,
                     height: symbolContent.size.height
                 )
