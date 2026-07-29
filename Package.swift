@@ -15,6 +15,9 @@ let package = Package(
         .package(url: "https://github.com/danielsaidi/EmojiKit", "2.2.0" ..< "3.0.0"),
         .package(url: "https://github.com/sindresorhus/Defaults", from: "9.0.0"),
         .package(url: "https://github.com/sindresorhus/LaunchAtLogin-Modern", from: "1.0.0"),
+        // Pinned to a main revision: the fix keeping the settings window from
+        // becoming the main window (#125) is not in any tagged release yet
+        .package(url: "https://github.com/sindresorhus/Settings", revision: "f41475771f65379ca10852c95119a7f53f0de5a5"),
         .package(url: "https://github.com/sparkle-project/Sparkle", from: "2.0.0"),
     ]
 )

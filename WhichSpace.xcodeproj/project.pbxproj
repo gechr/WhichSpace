@@ -13,6 +13,7 @@
 		5E4C3D012F890A230003F864 /* LaunchAtLogin in Frameworks */ = {isa = PBXBuildFile; productRef = 5E4C3D032F890A230003F866 /* LaunchAtLogin */; };
 		5E4C3D042F890A230003F867 /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = 5E4C3D062F890A230003F869 /* Defaults */; };
 		5E4C3D0A2F890A230003F86C /* EmojiKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5E4C3D092F890A230003F86B /* EmojiKit */; };
+		F2FD7A5EB5A34621A9DE9737 /* Settings in Frameworks */ = {isa = PBXBuildFile; productRef = A269B1CFED06451BBDCA0F59 /* Settings */; };
 		5E51B7851E7EE7BF009395E6 /* (null) in CopyFiles */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5EB457D42EEDE8C00021C6BD /* SpaceIconGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB457CD2EEDE8C00021C6BD /* SpaceIconGenerator.swift */; };
 		A4DBB5AA21394887AEABA90A /* SpaceIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26FDEA134CE245FD99C0FA05 /* SpaceIntents.swift */; };
@@ -61,6 +62,11 @@
 		ABC98EC5F8E24F379B3B00FA /* LocalizationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9001E72867604936A813A394 /* LocalizationTests.swift */; };
 		B4E235CBC3DD715950C1C319 /* Swatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA6BF7DB8700734BA5B03AD /* Swatch.swift */; };
 		C63F3F79D586496191407F75 /* AppMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A2C450B5934A628A010AA5 /* AppMain.swift */; };
+		C8E21F2B26B540A195B5913F /* SoundCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67CF7D1738D45C395B8857D /* SoundCatalog.swift */; };
+		8976D687BBC24BFF9A222E05 /* SettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6241577D589844078C9013D5 /* SettingsModel.swift */; };
+		9993B4CD8B3B4EB6ACC8E0F1 /* GeneralPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3704DA229A9A4AD382D4EAE3 /* GeneralPane.swift */; };
+		DB9AE51A0FC740C3934ED35F /* SettingsWindowCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC23E2C9B32B4A6D8727DB7C /* SettingsWindowCoordinator.swift */; };
+		04E6412D4806450180BB1178 /* SettingsForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = B83EF1992DCF490596AD2E33 /* SettingsForm.swift */; };
 		CB61E710EE0AA61181E63F29 /* EmojiRenderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23AEB50704228D44E33A4061 /* EmojiRenderTests.swift */; };
 		D02BF5284E654581B9D8F8D2 /* SpaceSwitcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE10FC5B04340818E50E9C5 /* SpaceSwitcher.swift */; };
 		DB808F9A959C72ABCBAADCCE /* ErrorRecoveryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C010908C363337F4F938B12E /* ErrorRecoveryTests.swift */; };
@@ -71,6 +77,7 @@
 		E73A40E4FB4441B3A2156727 /* WhichSpace.sdef in Resources */ = {isa = PBXBuildFile; fileRef = B27F1B6A56284EC7A38483EF /* WhichSpace.sdef */; };
 		D2D70ADA82964EB7A70A43FE /* Backup.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1583461EC9248878918878E /* Backup.swift */; };
 		AD2F9BA0FC424FB6AD1E4A05 /* BackupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18A849DF0DCE419FA63FF287 /* BackupTests.swift */; };
+		24942840EA374208999A691E /* SettingsModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C9B0B15D88D445C8BF528F3 /* SettingsModelTests.swift */; };
 		60A10359545448879C213924 /* IntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4082BFCDC5A54825AF80AF6F /* IntegrationTests.swift */; };
 		C9D290A3F9CA484EAFABF2E8 /* PerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08E5FE968EBE447E9C29ECB3 /* PerformanceTests.swift */; };
 		BA5B89440132B31951EAF51B /* DisplaySpaceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF09DFE5172F0C9088479C2E /* DisplaySpaceProvider.swift */; };
@@ -159,6 +166,11 @@
 		9001E72867604936A813A394 /* LocalizationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationTests.swift; sourceTree = "<group>"; };
 		9E2F7B4B45454315A483BD4D /* Localization/Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localization/Localizable.xcstrings; sourceTree = "<group>"; };
 		A4A2C450B5934A628A010AA5 /* AppMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppMain.swift; sourceTree = "<group>"; };
+		A67CF7D1738D45C395B8857D /* SoundCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundCatalog.swift; sourceTree = "<group>"; };
+		6241577D589844078C9013D5 /* SettingsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsModel.swift; sourceTree = "<group>"; };
+		3704DA229A9A4AD382D4EAE3 /* GeneralPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralPane.swift; sourceTree = "<group>"; };
+		BC23E2C9B32B4A6D8727DB7C /* SettingsWindowCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowCoordinator.swift; sourceTree = "<group>"; };
+		B83EF1992DCF490596AD2E33 /* SettingsForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsForm.swift; sourceTree = "<group>"; };
 		ACE10FC5B04340818E50E9C5 /* SpaceSwitcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceSwitcher.swift; sourceTree = "<group>"; };
 		AF0AF4972C51445493EFBEFE /* Localization/AppMover.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localization/AppMover.xcstrings; sourceTree = "<group>"; };
 		B166782E5DC04625A4473365 /* RapidOperationsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RapidOperationsTests.swift; sourceTree = "<group>"; };
@@ -176,6 +188,7 @@
 		860F2F6428234559874C54BF /* URLCommandsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLCommandsTests.swift; sourceTree = "<group>"; };
 		B27F1B6A56284EC7A38483EF /* WhichSpace.sdef */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.sdef; path = WhichSpace.sdef; sourceTree = "<group>"; };
 		18A849DF0DCE419FA63FF287 /* BackupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupTests.swift; sourceTree = "<group>"; };
+		3C9B0B15D88D445C8BF528F3 /* SettingsModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsModelTests.swift; sourceTree = "<group>"; };
 		AF09DFE5172F0C9088479C2E /* DisplaySpaceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySpaceProvider.swift; sourceTree = "<group>"; };
 		B7C030C19840D638AEC463CE /* MenuBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBuilder.swift; sourceTree = "<group>"; };
 		24AF849C10194983B7CE0EC3 /* StatusBarRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarRenderer.swift; sourceTree = "<group>"; };
@@ -204,6 +217,7 @@
 				5E4C3D012F890A230003F864 /* LaunchAtLogin in Frameworks */,
 				5E4C3D042F890A230003F867 /* Defaults in Frameworks */,
 				5E4C3D0A2F890A230003F86C /* EmojiKit in Frameworks */,
+				F2FD7A5EB5A34621A9DE9737 /* Settings in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -241,6 +255,8 @@
 			isa = PBXGroup;
 			children = (
 				A4A2C450B5934A628A010AA5 /* AppMain.swift */,
+				A67CF7D1738D45C395B8857D /* SoundCatalog.swift */,
+				4E15BE765D6845B591A9C4DE /* Settings */,
 				5EB457C72EEDE8C00021C6BD /* AppDelegate.swift */,
 				40D63520F7B9493EB2D5A9FF /* AppEnvironment.swift */,
 				5F8A1BFF1531410487C22D45 /* Accessibility.swift */,
@@ -316,8 +332,20 @@
 				D97E397B395ABA84D3E5BDA3 /* SkinToneTests.swift */,
 				95472826A5194C68A05C210F /* SkinToneSwiftTests.swift */,
 				8F29AA76FD29EB8C39DC818F /* ItemDataTests.swift */,
+				3C9B0B15D88D445C8BF528F3 /* SettingsModelTests.swift */,
 			);
 			path = Core;
+			sourceTree = "<group>";
+		};
+		4E15BE765D6845B591A9C4DE /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				3704DA229A9A4AD382D4EAE3 /* GeneralPane.swift */,
+				B83EF1992DCF490596AD2E33 /* SettingsForm.swift */,
+				6241577D589844078C9013D5 /* SettingsModel.swift */,
+				BC23E2C9B32B4A6D8727DB7C /* SettingsWindowCoordinator.swift */,
+			);
+			path = Settings;
 			sourceTree = "<group>";
 		};
 		5EB458412EEDE9690021C6BD /* Preferences */ = {
@@ -508,6 +536,7 @@
 				5E4C3D022F890A230003F865 /* XCRemoteSwiftPackageReference "LaunchAtLogin-Modern" */,
 				5E4C3D052F890A230003F868 /* XCRemoteSwiftPackageReference "Defaults" */,
 				5E4C3D082F890A230003F86A /* XCRemoteSwiftPackageReference "EmojiKit" */,
+				60A8BCFFA24A458AABBE2B4C /* XCRemoteSwiftPackageReference "Settings" */,
 			);
 			productRefGroup = 5E13C8881BE03A6F00FF4305 /* Products */;
 			projectDirPath = "";
@@ -566,6 +595,11 @@
 				5EB457DE2EEDE8C00021C6BD /* AppDelegate.swift in Sources */,
 				8F5ADAC35A5749F283408953 /* AppMover.swift in Sources */,
 				C63F3F79D586496191407F75 /* AppMain.swift in Sources */,
+				C8E21F2B26B540A195B5913F /* SoundCatalog.swift in Sources */,
+				8976D687BBC24BFF9A222E05 /* SettingsModel.swift in Sources */,
+				9993B4CD8B3B4EB6ACC8E0F1 /* GeneralPane.swift in Sources */,
+				DB9AE51A0FC740C3934ED35F /* SettingsWindowCoordinator.swift in Sources */,
+				04E6412D4806450180BB1178 /* SettingsForm.swift in Sources */,
 				D02BF5284E654581B9D8F8D2 /* SpaceSwitcher.swift in Sources */,
 				5EB457DF2EEDE8C00021C6BD /* Preferences.swift in Sources */,
 				5EB457E02EEDE8C00021C6BD /* ColorSwatch.swift in Sources */,
@@ -589,6 +623,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AD2F9BA0FC424FB6AD1E4A05 /* BackupTests.swift in Sources */,
+				24942840EA374208999A691E /* SettingsModelTests.swift in Sources */,
 				5EB458492EEDE9690021C6BD /* SymbolPickerTests.swift in Sources */,
 				5EB4584A2EEDE9690021C6BD /* SpaceColorsBridgeTests.swift in Sources */,
 				5EB4584B2EEDE9690021C6BD /* TestDefaults.swift in Sources */,
@@ -937,6 +972,14 @@
 				minimumVersion = 2.2.1;
 			};
 		};
+		60A8BCFFA24A458AABBE2B4C /* XCRemoteSwiftPackageReference "Settings" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/Settings";
+			requirement = {
+				kind = revision;
+				revision = f41475771f65379ca10852c95119a7f53f0de5a5;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -959,6 +1002,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5E4C3D082F890A230003F86A /* XCRemoteSwiftPackageReference "EmojiKit" */;
 			productName = EmojiKit;
+		};
+		A269B1CFED06451BBDCA0F59 /* Settings */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 60A8BCFFA24A458AABBE2B4C /* XCRemoteSwiftPackageReference "Settings" */;
+			productName = Settings;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

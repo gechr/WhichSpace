@@ -525,41 +525,17 @@ final class MenuBuilder {
 
     // MARK: - Sound Discovery
 
-    private static let systemSounds = discoverSounds(in: URL(fileURLWithPath: "/System/Library/Sounds"))
-    static let userSoundsDirectory =
-        FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/Sounds")
-
-    private nonisolated static func discoverSounds(in directory: URL) -> [String] {
-        guard let contents = try? FileManager.default.contentsOfDirectory(
-            at: directory,
-            includingPropertiesForKeys: [.contentTypeKey]
-        ) else {
-            return []
-        }
-        var sounds = Set<String>()
-        for url in contents {
-            guard let type = try? url.resourceValues(forKeys: [.contentTypeKey]).contentType,
-                  type.conforms(to: .audio)
-            else {
-                continue
-            }
-            sounds.insert(url.deletingPathExtension().lastPathComponent)
-        }
-        return sounds.sorted()
-    }
-
     /// Asynchronously rescans ~/Library/Sounds and rebuilds the sound submenu.
     /// Called when the main menu opens so results are ready before the user reaches the Sound submenu.
     func refreshUserSounds() {
         guard soundMenu != nil else {
             return
         }
-        let directory = Self.userSoundsDirectory
         nonisolated(unsafe) let target = soundMenuTarget
         let selectedSound = store.soundName
 
         DispatchQueue.global(qos: .userInitiated).async {
-            let sounds = Self.discoverSounds(in: directory)
+            let sounds = SoundCatalog.discoverUserSounds()
 
             DispatchQueue.main.async { [weak self] in
                 guard let self, let soundMenu else {
@@ -618,7 +594,7 @@ final class MenuBuilder {
             menu.addItem(systemHeader)
         }
 
-        for soundName in Self.systemSounds {
+        for soundName in SoundCatalog.systemSounds {
             let item = NSMenuItem(
                 title: soundName,
                 action: #selector(ActionHandler.selectSound(_:)),
@@ -1741,6 +1717,16 @@ final class MenuBuilder {
 
     private func configureSettingsMenuItem(in menu: NSMenu, target: AnyObject) {
         menu.addItem(.separator())
+
+        let settingsWindowItem = addMenuItem(
+            to: menu,
+            title: Localization.menuSettingsWindow,
+            action: #selector(ActionHandler.openSettingsWindow),
+            target: target,
+            symbolName: "gearshape"
+        )
+        settingsWindowItem.keyEquivalent = ","
+        settingsWindowItem.keyEquivalentModifierMask = [.command]
 
         let settingsMenu = NSMenu(title: Localization.menuSettings)
 

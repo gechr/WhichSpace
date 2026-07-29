@@ -23,6 +23,9 @@ final class ActionHandler: NSObject {
     /// Callback invoked to check for app updates (handled by AppDelegate's Sparkle integration).
     let onCheckForUpdates: (() -> Void)?
 
+    /// Callback invoked to open the settings window (handled by AppDelegate's coordinator).
+    let onOpenSettings: (() -> Void)?
+
     /// Convenience accessor for the store via appState.
     private var store: DefaultsStore {
         appState.store
@@ -36,7 +39,8 @@ final class ActionHandler: NSObject {
         launchAtLogin: LaunchAtLoginProvider,
         onStatusBarIconNeedsUpdate: (() -> Void)? = nil,
         onStatusBarVisibilityNeedsUpdate: (() -> Void)? = nil,
-        onCheckForUpdates: (() -> Void)? = nil
+        onCheckForUpdates: (() -> Void)? = nil,
+        onOpenSettings: (() -> Void)? = nil
     ) {
         self.appState = appState
         self.confirmAction = confirmAction
@@ -44,6 +48,7 @@ final class ActionHandler: NSObject {
         self.onStatusBarIconNeedsUpdate = onStatusBarIconNeedsUpdate
         self.onStatusBarVisibilityNeedsUpdate = onStatusBarVisibilityNeedsUpdate
         self.onCheckForUpdates = onCheckForUpdates
+        self.onOpenSettings = onOpenSettings
         super.init()
     }
 
@@ -132,6 +137,12 @@ final class ActionHandler: NSObject {
         onCheckForUpdates?()
     }
 
+    // MARK: - Settings Window
+
+    @objc func openSettingsWindow() {
+        onOpenSettings?()
+    }
+
     // MARK: - Sound Action
 
     @objc func selectSound(_ sender: NSMenuItem) {
@@ -153,16 +164,7 @@ final class ActionHandler: NSObject {
         guard confirmed else {
             return
         }
-        let directory = MenuBuilder.userSoundsDirectory
-        if FileManager.default.fileExists(atPath: directory.path) {
-            NSWorkspace.shared.open(directory)
-            return
-        }
-        try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-        // Give the filesystem a moment to settle so Finder opens the new folder reliably
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            NSWorkspace.shared.open(directory)
-        }
+        SoundCatalog.openUserSoundsFolder()
     }
 
     // MARK: - Confirmation Helper

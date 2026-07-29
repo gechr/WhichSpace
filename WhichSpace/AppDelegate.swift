@@ -3,6 +3,7 @@ import Defaults
 import LaunchAtLogin
 import Observation
 import QuartzCore
+import Settings
 @preconcurrency import Sparkle
 
 // MARK: - NSEvent Right-Click Detection
@@ -81,6 +82,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     )
     private var launchAtLogin: LaunchAtLoginProvider
     private var preferenceObservationTasks: [Task<Void, Never>] = []
+    private var settingsCoordinator: SettingsWindowCoordinator?
     private var updaterController: SPUStandardUpdaterController!
 
     private(set) var observationTask: Task<Void, Never>?
@@ -156,8 +158,36 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             onCheckForUpdates: { [weak self] in
                 NSApp.activate(ignoringOtherApps: true)
                 self?.updaterController.checkForUpdates(nil)
+            },
+            onOpenSettings: { [weak self] in
+                self?.showSettingsWindow()
             }
         )
+    }
+
+    // MARK: - Settings Window
+
+    /// Opens (creating on first use) the settings window.
+    func showSettingsWindow() {
+        if settingsCoordinator == nil {
+            let model = SettingsModel(store: store, launchAtLogin: launchAtLogin)
+            let generalPane = Settings.PaneHostingController(pane: Settings.Pane(
+                identifier: .general,
+                title: Localization.paneGeneral,
+                toolbarIcon: NSImage(systemSymbolName: "gearshape", accessibilityDescription: nil)!
+            ) {
+                GeneralPane(
+                    model: model,
+                    updater: updaterController?.updater,
+                    onCheckForUpdates: { [weak self] in self?.actionHandler.checkForUpdates() },
+                    onImportSettings: { [weak self] in self?.actionHandler.importSettings() },
+                    onExportSettings: { [weak self] in self?.actionHandler.exportSettings() },
+                    onOpenCustomSoundsFolder: { [weak self] in self?.actionHandler.openCustomSoundsFolder() }
+                )
+            })
+            settingsCoordinator = SettingsWindowCoordinator(model: model, panes: [generalPane])
+        }
+        settingsCoordinator?.show()
     }
 
     // MARK: - NSApplicationDelegate
