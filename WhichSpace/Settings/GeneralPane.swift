@@ -1,3 +1,4 @@
+import AppKit
 import Settings
 import Sparkle
 import SwiftUI
@@ -22,12 +23,13 @@ struct GeneralPane: View {
             SettingsSection {
                 SettingsToggleRow(
                     title: Localization.toggleLaunchAtLogin,
-                    isOn: model.launchAtLoginBinding
+                    isOn: model.launchAtLoginBinding,
+                    icon: "sunrise",
+                    subtitle: String(format: Localization.tipLaunchAtLogin, AppInfo.appName)
                 )
-                .help(String(format: Localization.tipLaunchAtLogin, AppInfo.appName))
             }
             SettingsSection {
-                SettingsRow {
+                SettingsRow(icon: "speaker.wave.2", subtitle: Localization.tipSound) {
                     Text(Localization.menuSound)
                 } control: {
                     soundPicker
@@ -48,15 +50,17 @@ struct GeneralPane: View {
                     isOn: Binding(
                         get: { updater?.automaticallyChecksForUpdates ?? false },
                         set: { updater?.automaticallyChecksForUpdates = $0 }
-                    )
+                    ),
+                    icon: "arrow.triangle.2.circlepath"
                 )
                 SettingsRowDivider()
                 SettingsToggleRow(
-                    title: Localization.toggleAutoDownloadUpdates,
+                    title: Localization.toggleAutoInstallUpdates,
                     isOn: Binding(
                         get: { updater?.automaticallyDownloadsUpdates ?? false },
                         set: { updater?.automaticallyDownloadsUpdates = $0 }
-                    )
+                    ),
+                    icon: "square.and.arrow.down"
                 )
                 SettingsRowDivider()
                 SettingsRow {
@@ -69,17 +73,15 @@ struct GeneralPane: View {
                 }
             }
             SettingsSection {
-                SettingsRow {
+                SettingsRow(icon: "externaldrive", subtitle: Localization.tipBackup) {
                     Text(Localization.labelBackup)
                 } control: {
                     Button(Localization.actionImportSettings) {
                         onImportSettings()
                     }
-                    .help(Localization.tipImportSettings)
                     Button(Localization.actionExportSettings) {
                         onExportSettings()
                     }
-                    .help(Localization.tipExportSettings)
                 }
             }
             footer
@@ -91,8 +93,25 @@ struct GeneralPane: View {
         }
     }
 
+    /// Plays the newly selected sound.
+    private var soundBinding: Binding<String> {
+        let stored = model.binding(\.soundName)
+        return Binding(
+            get: { stored.wrappedValue },
+            set: { name in
+                stored.wrappedValue = name
+                guard !name.isEmpty,
+                      let sound = NSSound(named: NSSound.Name(name))?.copy() as? NSSound
+                else {
+                    return
+                }
+                sound.play()
+            }
+        )
+    }
+
     private var soundPicker: some View {
-        Picker(Localization.menuSound, selection: model.binding(\.soundName)) {
+        Picker(Localization.menuSound, selection: soundBinding) {
             Text(Localization.soundNone).tag("")
             if !userSounds.isEmpty {
                 Divider()
@@ -108,12 +127,14 @@ struct GeneralPane: View {
     }
 
     private var footer: some View {
-        HStack(spacing: 8) {
+        HStack {
             let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
-            Text("\(AppInfo.appName) v\(version)")
-                .foregroundStyle(.secondary)
+            let name = "\(AppInfo.appName) v\(version)"
             if let url = URL(string: "https://github.com/gechr/WhichSpace") {
-                Link(Localization.actionViewOnGitHub, destination: url)
+                Link(name, destination: url)
+            } else {
+                Text(name)
+                    .foregroundStyle(.secondary)
             }
         }
         .font(.callout)

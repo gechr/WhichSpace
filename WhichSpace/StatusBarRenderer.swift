@@ -470,9 +470,9 @@ final class StatusBarRenderer {
 
         let imageSize = NSSize(width: totalWidth, height: Layout.statusItemHeight)
         let dimInactive = store.dimInactiveSpaces
-        let separatorColor = preview?.separatorColor ?? store.separatorColor ?? (darkMode
-            ? NSColor(calibratedWhite: 0.5, alpha: 0.6)
-            : NSColor(calibratedWhite: 0.4, alpha: 0.6))
+        let separatorColor = preview?.separatorColor
+            ?? store.separatorColor
+            ?? IconColors.defaultSeparator(darkMode: darkMode)
         return Self.drawDeferred(size: imageSize) {
             var xOffset: Double = 0
 

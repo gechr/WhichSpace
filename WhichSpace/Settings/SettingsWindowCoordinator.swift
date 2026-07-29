@@ -7,6 +7,14 @@ extension Settings.PaneIdentifier {
     static var general: Self {
         Self("general")
     }
+
+    static var menuBar: Self {
+        Self("menuBar")
+    }
+
+    static var switching: Self {
+        Self("switching")
+    }
 }
 
 /// Owns the single settings window. Holding one controller instance is
@@ -27,7 +35,9 @@ final class SettingsWindowCoordinator {
     /// `orderFrontRegardless` + `activate` is what reliably fronts a window
     /// from an accessory (LSUIElement) app.
     func show() {
+        var isFirstShow = false
         if windowController == nil {
+            isFirstShow = true
             let controller = SettingsWindowController(
                 panes: panes,
                 style: .toolbarItems,
@@ -51,10 +61,31 @@ final class SettingsWindowCoordinator {
         }
         model.startObserving()
         windowController?.show()
+        if isFirstShow, let window = windowController?.window {
+            positionAboveCenter(window)
+        }
         windowController?.window?.orderFrontRegardless()
         NSApp.activate(ignoringOtherApps: true)
         // Drop the automatic focus on the first control so the window opens
         // without a highlighted toggle; Tab still reaches every control
         windowController?.window?.makeFirstResponder(nil)
+    }
+
+    /// Opens the window above screen center so taller panes, which grow
+    /// downward from a fixed top edge when switching tabs, stay on screen.
+    /// First show only - later shows respect wherever the user moved it.
+    private func positionAboveCenter(_ window: NSWindow) {
+        guard let screen = window.screen ?? NSScreen.main else {
+            return
+        }
+        let visible = screen.visibleFrame
+        let frame = window.frame
+        let slack = max(0, visible.height - frame.height)
+        let topMargin = min(slack * 0.25, 64)
+        let origin = NSPoint(
+            x: visible.midX - frame.width / 2,
+            y: visible.maxY - topMargin - frame.height
+        )
+        window.setFrameOrigin(origin)
     }
 }

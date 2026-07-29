@@ -65,6 +65,8 @@
 		C8E21F2B26B540A195B5913F /* SoundCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67CF7D1738D45C395B8857D /* SoundCatalog.swift */; };
 		8976D687BBC24BFF9A222E05 /* SettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6241577D589844078C9013D5 /* SettingsModel.swift */; };
 		9993B4CD8B3B4EB6ACC8E0F1 /* GeneralPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3704DA229A9A4AD382D4EAE3 /* GeneralPane.swift */; };
+		52840BDABB8046F182D6E070 /* MenuBarPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 670259493A4A468DA2AEF2F5 /* MenuBarPane.swift */; };
+		32524A4E9AFA4C15AC5ECA06 /* SwitchingPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 898C17D652A047DAB402245A /* SwitchingPane.swift */; };
 		DB9AE51A0FC740C3934ED35F /* SettingsWindowCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC23E2C9B32B4A6D8727DB7C /* SettingsWindowCoordinator.swift */; };
 		04E6412D4806450180BB1178 /* SettingsForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = B83EF1992DCF490596AD2E33 /* SettingsForm.swift */; };
 		CB61E710EE0AA61181E63F29 /* EmojiRenderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23AEB50704228D44E33A4061 /* EmojiRenderTests.swift */; };
@@ -169,6 +171,8 @@
 		A67CF7D1738D45C395B8857D /* SoundCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundCatalog.swift; sourceTree = "<group>"; };
 		6241577D589844078C9013D5 /* SettingsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsModel.swift; sourceTree = "<group>"; };
 		3704DA229A9A4AD382D4EAE3 /* GeneralPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralPane.swift; sourceTree = "<group>"; };
+		670259493A4A468DA2AEF2F5 /* MenuBarPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarPane.swift; sourceTree = "<group>"; };
+		898C17D652A047DAB402245A /* SwitchingPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchingPane.swift; sourceTree = "<group>"; };
 		BC23E2C9B32B4A6D8727DB7C /* SettingsWindowCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowCoordinator.swift; sourceTree = "<group>"; };
 		B83EF1992DCF490596AD2E33 /* SettingsForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsForm.swift; sourceTree = "<group>"; };
 		ACE10FC5B04340818E50E9C5 /* SpaceSwitcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceSwitcher.swift; sourceTree = "<group>"; };
@@ -341,9 +345,11 @@
 			isa = PBXGroup;
 			children = (
 				3704DA229A9A4AD382D4EAE3 /* GeneralPane.swift */,
+				670259493A4A468DA2AEF2F5 /* MenuBarPane.swift */,
 				B83EF1992DCF490596AD2E33 /* SettingsForm.swift */,
 				6241577D589844078C9013D5 /* SettingsModel.swift */,
 				BC23E2C9B32B4A6D8727DB7C /* SettingsWindowCoordinator.swift */,
+				898C17D652A047DAB402245A /* SwitchingPane.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -598,6 +604,8 @@
 				C8E21F2B26B540A195B5913F /* SoundCatalog.swift in Sources */,
 				8976D687BBC24BFF9A222E05 /* SettingsModel.swift in Sources */,
 				9993B4CD8B3B4EB6ACC8E0F1 /* GeneralPane.swift in Sources */,
+				52840BDABB8046F182D6E070 /* MenuBarPane.swift in Sources */,
+				32524A4E9AFA4C15AC5ECA06 /* SwitchingPane.swift in Sources */,
 				DB9AE51A0FC740C3934ED35F /* SettingsWindowCoordinator.swift in Sources */,
 				04E6412D4806450180BB1178 /* SettingsForm.swift in Sources */,
 				D02BF5284E654581B9D8F8D2 /* SpaceSwitcher.swift in Sources */,

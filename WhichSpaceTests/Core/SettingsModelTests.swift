@@ -15,6 +15,10 @@ struct SettingsModelTests {
         model = SettingsModel(store: store, launchAtLogin: launchAtLogin)
     }
 
+    private func makeModel(trusted: Bool) -> SettingsModel {
+        SettingsModel(store: store, launchAtLogin: launchAtLogin) { trusted }
+    }
+
     @Test("binding round-trips through the memoizing subscript")
     func bindingRoundTrip() {
         let binding = model.binding(\.showAllSpaces)
@@ -44,5 +48,101 @@ struct SettingsModelTests {
 
         model.launchAtLoginBinding.wrappedValue = false
         #expect(!launchAtLogin.isEnabled)
+    }
+
+    @Test("value registers a tick dependency and reads the store")
+    func valueReadsStore() {
+        store.showAllDisplays = true
+        #expect(model.value(\.showAllDisplays))
+    }
+
+    @Test("accessibilityGranted reflects the injected trust check")
+    func accessibilityGranted() {
+        #expect(makeModel(trusted: true).accessibilityGranted)
+        #expect(!makeModel(trusted: false).accessibilityGranted)
+    }
+
+    @Test("gated click binding persists when trusted")
+    func clickBindingTrusted() {
+        let trusted = makeModel(trusted: true)
+        trusted.clickToSwitchSpacesBinding.wrappedValue = true
+        #expect(store.clickToSwitchSpaces)
+    }
+
+    @Test("gated click binding snaps back when untrusted")
+    func clickBindingUntrusted() {
+        let untrusted = makeModel(trusted: false)
+        let before = untrusted.tick
+        untrusted.clickToSwitchSpacesBinding.wrappedValue = true
+
+        // The refused write leaves the store unchanged; the tick bump is what
+        // forces SwiftUI to re-read the getter so the toggle snaps back off
+        #expect(!store.clickToSwitchSpaces)
+        #expect(!untrusted.clickToSwitchSpacesBinding.wrappedValue)
+        #expect(untrusted.tick > before)
+    }
+
+    @Test("gated scroll binding persists when trusted")
+    func scrollBindingTrusted() {
+        let trusted = makeModel(trusted: true)
+        trusted.scrollSwitchingBinding(axis: \.verticalScrollEnabled).wrappedValue = true
+        #expect(store.verticalScrollEnabled)
+    }
+
+    @Test("gated scroll binding snaps back when untrusted")
+    func scrollBindingUntrusted() {
+        let untrusted = makeModel(trusted: false)
+        let before = untrusted.tick
+        let binding = untrusted.scrollSwitchingBinding(axis: \.horizontalScrollEnabled)
+        binding.wrappedValue = true
+
+        #expect(!store.horizontalScrollEnabled)
+        #expect(!binding.wrappedValue)
+        #expect(untrusted.tick > before)
+    }
+
+    @Test("disabling a gated setting never requires permission")
+    func gatedDisableUntrusted() {
+        store.clickToSwitchSpaces = true
+        store.verticalScrollEnabled = true
+
+        let untrusted = makeModel(trusted: false)
+        untrusted.clickToSwitchSpacesBinding.wrappedValue = false
+        untrusted.scrollSwitchingBinding(axis: \.verticalScrollEnabled).wrappedValue = false
+
+        #expect(!store.clickToSwitchSpaces)
+        #expect(!store.verticalScrollEnabled)
+    }
+
+    @Test("haptic binding maps 0 to disabled and preserves intensity")
+    func hapticBinding() {
+        let binding = model.scrollHapticIntensityBinding
+        #expect(binding.wrappedValue == 0)
+
+        binding.wrappedValue = 3
+        #expect(store.scrollHapticFeedback)
+        #expect(store.scrollHapticIntensity == 3)
+
+        binding.wrappedValue = 0
+        #expect(!store.scrollHapticFeedback)
+        // The last strength survives so re-enabling restores it
+        #expect(store.scrollHapticIntensity == 3)
+        #expect(binding.wrappedValue == 0)
+
+        binding.wrappedValue = 3
+        #expect(store.scrollHapticFeedback)
+        #expect(binding.wrappedValue == 3)
+    }
+
+    @Test("showAll bindings write through the constraints setters")
+    func showAllBindings() {
+        model.showAllSpacesBinding.wrappedValue = true
+        model.showAllDisplaysBinding.wrappedValue = true
+        #expect(store.showAllSpaces)
+        #expect(store.showAllDisplays)
+
+        model.showAllSpacesBinding.wrappedValue = false
+        #expect(!store.showAllSpaces)
+        #expect(store.showAllDisplays)
     }
 }

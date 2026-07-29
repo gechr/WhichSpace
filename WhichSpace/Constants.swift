@@ -93,12 +93,17 @@ enum Layout {
     static let defaultScrollHapticIntensity = 4
 
     // Settings window
-    static let settingsPaneContentWidth = 480.0
+    static let settingsPaneContentWidth = 540.0
     static let settingsPanePadding = 16.0
     static let settingsSectionSpacing = 12.0
     static let settingsRowHorizontalPadding = 16.0
     static let settingsRowVerticalPadding = 8.0
     static let settingsRowFontSize = 13.0
+    static let settingsRowIconWidth = 24.0
+    static let settingsRowIndent = 16.0
+    static let settingsRowSubtitleFontSize = 11.0
+    static let settingsSliderWidth = 140.0
+    static let settingsSliderValueFontSize = 11.0
     static let defaultHorizontalPadding = statusItemWidth - baseSquareSize // 4.0pt
 
     // Base sizes (at 100% scale)
@@ -162,6 +167,12 @@ enum IconColors {
     static let filledLightBackground = NSColor(calibratedWhite: 0.3, alpha: 1)
     static let outlineDark = NSColor(calibratedWhite: 0.7, alpha: 1)
     static let outlineLight = NSColor(calibratedWhite: 0.3, alpha: 1)
+    static let separatorDark = NSColor(calibratedWhite: 0.5, alpha: 0.6)
+    static let separatorLight = NSColor(calibratedWhite: 0.4, alpha: 0.6)
+
+    static func defaultSeparator(darkMode: Bool) -> NSColor {
+        darkMode ? separatorDark : separatorLight
+    }
 
     static func filledColors(darkMode: Bool) -> (foreground: NSColor, background: NSColor) {
         darkMode
@@ -248,6 +259,7 @@ enum Localization {
     static let actionFont = String(localized: "action_font")
     static let actionImportSettings = String(localized: "action_import_settings")
     static let actionInvertColors = String(localized: "action_invert_colors")
+    static let actionOpenSystemSettings = String(localized: "action_open_system_settings")
     static let actionQuit = String(localized: "action_quit")
     static let actionResetAllSpacesToDefault = String(localized: "action_reset_all_spaces_to_default")
     static let actionResetBadgeToDefault = String(localized: "action_reset_badge_to_default")
@@ -257,7 +269,6 @@ enum Localization {
     static let actionResetSpaceToDefault = String(localized: "action_reset_space_to_default")
     static let actionResetStyleToDefault = String(localized: "action_reset_style_to_default")
     static let actionSetDefaultStyle = String(localized: "action_set_default_style")
-    static let actionViewOnGitHub = String(localized: "action_view_on_github")
     static let alertAccessibilityDetail = String(localized: "alert_accessibility_detail")
     static let alertAccessibilityRequired = String(localized: "alert_accessibility_required")
     static let alertCustomSoundsDetail = String(localized: "alert_custom_sounds_detail")
@@ -268,6 +279,7 @@ enum Localization {
     static let badgePositionBottomRight = String(localized: "badge_position_bottom_right")
     static let badgePositionTopLeft = String(localized: "badge_position_top_left")
     static let badgePositionTopRight = String(localized: "badge_position_top_right")
+    static let bannerAccessibilityDetail = String(localized: "banner_accessibility_detail")
     static let buttonCancel = String(localized: "button_cancel")
     static let buttonContinue = String(localized: "button_continue")
     static let buttonLearnMore = String(localized: "button_learn_more")
@@ -315,6 +327,7 @@ enum Localization {
     static let labelBackup = String(localized: "label_backup")
     static let labelBadgePosition = String(localized: "label_badge_position")
     static let labelBehavior = String(localized: "label_behavior")
+    static let labelClick = String(localized: "label_click")
     static let labelHapticLight = String(localized: "label_haptic_light")
     static let labelHapticMaximum = String(localized: "label_haptic_maximum")
     static let labelHapticMedium = String(localized: "label_haptic_medium")
@@ -356,6 +369,8 @@ enum Localization {
     static let menuStyle = String(localized: "menu_style")
     static let menuSymbol = String(localized: "menu_symbol")
     static let paneGeneral = String(localized: "pane_general")
+    static let paneMenuBar = String(localized: "pane_menu_bar")
+    static let paneSwitching = String(localized: "pane_switching")
     static let search = String(localized: "search")
     static let soundCustom = String(localized: "sound_custom")
     static let soundNone = String(localized: "sound_none")
@@ -370,6 +385,7 @@ enum Localization {
     static let tipCopyLabelToAll = String(localized: "tip_copy_label_to_all")
     static let tipCopyStyleToAll = String(localized: "tip_copy_style_to_all")
     static let tipCopyToAll = String(localized: "tip_copy_to_all")
+    static let tipBackup = String(localized: "tip_backup")
     static let tipBadgeInput = String(localized: "tip_badge_input")
     static let tipCheckForUpdates = String(localized: "tip_check_for_updates")
     static let tipClearBadge = String(localized: "tip_clear_badge")
@@ -398,9 +414,12 @@ enum Localization {
     static let tipScrollHapticFeedback = String(localized: "tip_scroll_haptic_feedback")
     static let tipScrollInverted = String(localized: "tip_scroll_inverted")
     static let tipScrollWrapAround = String(localized: "tip_scroll_wrap_around")
+    static let tipSensitivity = String(localized: "tip_sensitivity")
+    static let tipSeparator = String(localized: "tip_separator")
     static let tipSetDefaultStyle = String(localized: "tip_set_default_style")
     static let tipShowAllDisplays = String(localized: "tip_show_all_displays")
     static let tipShowAllSpaces = String(localized: "tip_show_all_spaces")
+    static let tipSound = String(localized: "tip_sound")
     static let tipSymbolPositionLeft = String(localized: "tip_symbol_position_left")
     static let tipSymbolPositionRight = String(localized: "tip_symbol_position_right")
     static let tipSymbolWrapInside = String(localized: "tip_symbol_wrap_inside")
@@ -408,7 +427,7 @@ enum Localization {
     static let tipUniqueIconsPerDisplay = String(localized: "tip_unique_icons_per_display")
     static let tipUseFForFullscreenApps = String(localized: "tip_use_f_for_fullscreen_apps")
     static let toggleAutoCheckUpdates = String(localized: "toggle_auto_check_updates")
-    static let toggleAutoDownloadUpdates = String(localized: "toggle_auto_download_updates")
+    static let toggleAutoInstallUpdates = String(localized: "toggle_auto_install_updates")
     static let toggleClickToSwitchSpaces = String(localized: "toggle_click_to_switch_spaces")
     static let toggleDimInactiveSpaces = String(localized: "toggle_dim_inactive_spaces")
     static let toggleHideEmptySpaces = String(localized: "toggle_hide_empty_spaces")

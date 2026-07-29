@@ -185,7 +185,26 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
                     onOpenCustomSoundsFolder: { [weak self] in self?.actionHandler.openCustomSoundsFolder() }
                 )
             })
-            settingsCoordinator = SettingsWindowCoordinator(model: model, panes: [generalPane])
+            let menuBarPane = Settings.PaneHostingController(pane: Settings.Pane(
+                identifier: .menuBar,
+                title: Localization.paneMenuBar,
+                toolbarIcon: NSImage(systemSymbolName: "menubar.rectangle", accessibilityDescription: nil)!
+            ) {
+                MenuBarPane(model: model)
+            })
+            let switchingPane = Settings.PaneHostingController(pane: Settings.Pane(
+                identifier: .switching,
+                title: Localization.paneSwitching,
+                toolbarIcon: NSImage(systemSymbolName: "computermouse", accessibilityDescription: nil)!
+            ) {
+                SwitchingPane(model: model) { [weak self] intensity in
+                    self?.scrollHapticAction(intensity)
+                }
+            })
+            settingsCoordinator = SettingsWindowCoordinator(
+                model: model,
+                panes: [generalPane, menuBarPane, switchingPane]
+            )
         }
         settingsCoordinator?.show()
     }
