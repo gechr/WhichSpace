@@ -287,6 +287,15 @@ final class DefaultsStore {
             .map { $0.anyKey(suite: suite) }
     }
 
+    /// Suite-bound keys for every preference that never affects icon
+    /// rendering. These still need observing: external defaults writes must
+    /// drop the memo cache or reads keep returning the stale cached value.
+    var nonIconKeys: [Defaults._AnyKey] {
+        KeySpecs.allSpecs
+            .filter { KeySpecs.nonIconKeyNames.contains($0.name) }
+            .map { $0.anyKey(suite: suite) }
+    }
+
     // MARK: - Property Accessors
 
     var clickToSwitchSpaces: Bool {

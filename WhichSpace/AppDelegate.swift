@@ -293,7 +293,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         stopObservingPreferences()
     }
 
-    private func stopObservingPreferences() {
+    func stopObservingPreferences() {
         for task in preferenceObservationTasks {
             task.cancel()
         }
@@ -323,8 +323,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         sound.play()
     }
 
-    /// Observes preference changes that affect the status bar icon using Defaults async streams
-    private func startObservingPreferences() {
+    /// Observes preference changes that affect the status bar icon using Defaults async streams.
+    /// Internal so tests can drive the observation streams directly.
+    func startObservingPreferences() {
         stopObservingPreferences()
 
         // Derived from the KeySpecs registry so newly added preferences are
@@ -351,6 +352,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
                 guard !Task.isCancelled
                 else { return }
                 self?.appState.forceSpaceUpdate()
+            }
+        })
+
+        // Non-icon keys are read through the memo cache too (e.g. per scroll
+        // event), so external defaults writes must still drop the cache even
+        // though no icon rebuild is needed
+        let nonIconKeys = store.nonIconKeys
+        preferenceObservationTasks.append(Task { [weak self] in
+            for await _ in Defaults.updates(nonIconKeys, initial: false) {
+                // Same coalescing as above: a slider drag writes continuously,
+                // and each invalidation drops every memoized value
+                try? await Task.sleep(for: .milliseconds(16))
+                guard !Task.isCancelled
+                else { return }
+                self?.store.invalidateCachedValues()
             }
         })
     }

@@ -1,4 +1,5 @@
 import AppKit
+import Defaults
 import XCTest
 @testable import WhichSpace
 
@@ -2703,5 +2704,29 @@ final class AppDelegateActionsTests: XCTestCase {
         let colors = SpacePreferences.colors(forSpace: space, store: store)
         XCTAssertEqual(colors?.symbol, .yellow)
         XCTAssertEqual(colors?.symbolBackground, .red)
+    }
+
+    // MARK: - Preference Observation
+
+    func testExternalNonIconKeyWriteInvalidatesMemoCache() async throws {
+        sut.startObservingPreferences()
+        defer { sut.stopObservingPreferences() }
+
+        // Prime the memo cache with the current value
+        XCTAssertEqual(store.scrollSensitivity, Layout.defaultScrollSensitivity)
+
+        // External writes bypassing the store's subscript (e.g. `defaults write`).
+        // Each retry writes a new value: the observation stream subscribes
+        // asynchronously, so an early write can land before the observer
+        // exists, and rewriting an unchanged value emits no KVO event
+        let key = store.keyFor(KeySpecs.scrollSensitivity)
+        let deadline = ContinuousClock.now.advanced(by: .seconds(2))
+        var external = Layout.defaultScrollSensitivity
+        while store.scrollSensitivity == Layout.defaultScrollSensitivity, ContinuousClock.now < deadline {
+            external += 1
+            Defaults[key] = external
+            try await Task.sleep(for: .milliseconds(25))
+        }
+        XCTAssertEqual(store.scrollSensitivity, external)
     }
 }
