@@ -12247,259 +12247,259 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ستستخدم المساحات الجديدة هذا النمط ما لم تكن قد خُصّصت من قبل."
+            "value" : "ستستخدم المساحات هذا النمط ما لم تكن قد خُصّصت من قبل."
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Новите Пространства ще използват този стил, освен ако вече не са персонализирани."
+            "value" : "Пространствата ще използват този стил, освен ако вече не са персонализирани."
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Els Espais nous faran servir aquest estil llevat que ja s'hagin personalitzat."
+            "value" : "Els Espais faran servir aquest estil llevat que ja s'hagin personalitzat."
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nové Spaces budou používat tento styl, pokud již nebyly upraveny."
+            "value" : "Spaces budou používat tento styl, pokud již nebyly upraveny."
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nye Spaces bruger denne stil, medmindre de allerede er blevet tilpasset."
+            "value" : "Spaces bruger denne stil, medmindre de allerede er blevet tilpasset."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Neue Spaces verwenden diesen Stil, sofern sie nicht bereits angepasst wurden."
+            "value" : "Spaces verwenden diesen Stil, sofern sie nicht bereits angepasst wurden."
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Οι νέοι Χώροι θα χρησιμοποιούν αυτό το στιλ, εκτός αν έχουν ήδη προσαρμοστεί."
+            "value" : "Οι Χώροι θα χρησιμοποιούν αυτό το στιλ, εκτός αν έχουν ήδη προσαρμοστεί."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "New Spaces will use this style unless they have already been customized."
+            "value" : "Spaces will use this style unless they have already been customized."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "New Spaces will use this style unless they have already been customised."
+            "value" : "Spaces will use this style unless they have already been customised."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Los Espacios nuevos usarán este estilo a menos que ya se hayan personalizado."
+            "value" : "Los Espacios usarán este estilo a menos que ya se hayan personalizado."
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "فضاهای جدید از این سبک استفاده می‌کنند، مگر اینکه قبلاً سفارشی شده باشند."
+            "value" : "فضاها از این سبک استفاده می‌کنند، مگر اینکه قبلاً سفارشی شده باشند."
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Uudet Spacet käyttävät tätä tyyliä, elleivät ne ole jo mukautettuja."
+            "value" : "Spacet käyttävät tätä tyyliä, elleivät ne ole jo mukautettuja."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les nouveaux Espaces utiliseront ce style, sauf s'ils ont déjà été personnalisés."
+            "value" : "Les Espaces utiliseront ce style, sauf s'ils ont déjà été personnalisés."
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "מרחבים חדשים ישתמשו בסגנון זה, אלא אם כבר הותאמו."
+            "value" : "מרחבים ישתמשו בסגנון זה, אלא אם כבר הותאמו."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "नए स्पेसेस इस शैली का उपयोग करेंगे, जब तक कि वे पहले से अनुकूलित न हों।"
+            "value" : "स्पेसेस इस शैली का उपयोग करेंगे, जब तक कि वे पहले से अनुकूलित न हों।"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Az új Space-ek ezt a stílust használják, hacsak nem lettek már testreszabva."
+            "value" : "A Space-ek ezt a stílust használják, hacsak nem lettek már testreszabva."
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Space baru akan menggunakan gaya ini kecuali sudah pernah dikustomisasi."
+            "value" : "Space akan menggunakan gaya ini kecuali sudah pernah dikustomisasi."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "I nuovi Spazi useranno questo stile, a meno che non siano già stati personalizzati."
+            "value" : "Gli Spazi useranno questo stile, a meno che non siano già stati personalizzati."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "新しいスペースは、すでにカスタマイズされている場合を除き、このスタイルを使用します。"
+            "value" : "スペースは、すでにカスタマイズされている場合を除き、このスタイルを使用します。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "새 스페이스는 이미 사용자 지정된 경우가 아니면 이 스타일을 사용합니다."
+            "value" : "스페이스는 이미 사용자 지정된 경우가 아니면 이 스타일을 사용합니다."
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Новите Простори ќе го користат овој стил, освен ако веќе не се прилагодени."
+            "value" : "Просторите ќе го користат овој стил, освен ако веќе не се прилагодени."
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ruang baharu akan menggunakan gaya ini melainkan sudah disesuaikan."
+            "value" : "Ruang akan menggunakan gaya ini melainkan sudah disesuaikan."
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nye Spaces bruker denne stilen med mindre de allerede har blitt tilpasset."
+            "value" : "Spaces bruker denne stilen med mindre de allerede har blitt tilpasset."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nieuwe Spaces gebruiken deze stijl, tenzij ze al zijn aangepast."
+            "value" : "Spaces gebruiken deze stijl, tenzij ze al zijn aangepast."
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nye Spaces brukar denne stilen med mindre dei allereie har vorte tilpassa."
+            "value" : "Spaces brukar denne stilen med mindre dei allereie har vorte tilpassa."
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "نویاں سپیسز ایہ سٹائل ورتن گیاں جے اوہناں دی پہلاں کسٹمائزیشن نہیں ہوئی۔"
+            "value" : "سپیسز ایہ سٹائل ورتن گیاں جے اوہناں دی پہلاں کسٹمائزیشن نہیں ہوئی۔"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nowe Spaces będą używać tego stylu, chyba że zostały już dostosowane."
+            "value" : "Spaces będą używać tego stylu, chyba że zostały już dostosowane."
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "نوي سپېسونه به دا سټایل کاروي، مګر که دمخه سمون شوي وي."
+            "value" : "سپېسونه به دا سټایل کاروي، مګر که دمخه سمون شوي وي."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Os Espaços novos irão usar este estilo, a menos que já tenham sido personalizados."
+            "value" : "Os Espaços irão usar este estilo, a menos que já tenham sido personalizados."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Os Espaços novos usarão este estilo, a menos que já tenham sido personalizados."
+            "value" : "Os Espaços usarão este estilo, a menos que já tenham sido personalizados."
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spațiile noi vor folosi acest stil, cu excepția cazului în care au fost deja personalizate."
+            "value" : "Spațiile vor folosi acest stil, cu excepția cazului în care au fost deja personalizate."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Новые Пространства будут использовать этот стиль, если только они уже не были настроены."
+            "value" : "Пространства будут использовать этот стиль, если только они уже не были настроены."
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nové Priestory budú používať tento štýl, pokiaľ už neboli prispôsobené."
+            "value" : "Priestory budú používať tento štýl, pokiaľ už neboli prispôsobené."
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Novi Prostori će koristiti ovaj stil osim ako već nisu prilagođeni."
+            "value" : "Prostori će koristiti ovaj stil osim ako već nisu prilagođeni."
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nya Spaces använder den här stilen om de inte redan har anpassats."
+            "value" : "Spaces använder den här stilen om de inte redan har anpassats."
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Space ใหม่จะใช้สไตล์นี้ เว้นแต่จะได้รับการปรับแต่งแล้ว"
+            "value" : "Space จะใช้สไตล์นี้ เว้นแต่จะได้รับการปรับแต่งแล้ว"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Yeni Alanlar, daha önce özelleştirilmedikleri sürece bu stili kullanır."
+            "value" : "Alanlar, daha önce özelleştirilmedikleri sürece bu stili kullanır."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Нові Простори використовуватимуть цей стиль, якщо вони ще не налаштовувалися."
+            "value" : "Простори використовуватимуть цей стиль, якщо вони ще не налаштовувалися."
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "نئی اسپیسز یہ اسٹائل استعمال کریں گی جب تک کہ وہ پہلے سے تخصیص شدہ نہ ہوں۔"
+            "value" : "اسپیسز یہ اسٹائل استعمال کریں گی جب تک کہ وہ پہلے سے تخصیص شدہ نہ ہوں۔"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Không gian mới sẽ dùng kiểu này trừ khi đã được tùy chỉnh."
+            "value" : "Không gian sẽ dùng kiểu này trừ khi đã được tùy chỉnh."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "新空间将使用此样式，除非已经自定义过。"
+            "value" : "空间将使用此样式，除非已经自定义过。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "新空間將使用此樣式，除非已經自訂過。"
+            "value" : "空間將使用此樣式，除非已經自訂過。"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "新空間將使用此樣式，除非已經自訂過。"
+            "value" : "空間將使用此樣式，除非已經自訂過。"
           }
         }
       }
@@ -47624,6 +47624,268 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "將此空間的顏色、樣式、符號與字體儲存為新空間的預設值"
+          }
+        }
+      }
+    },
+    "tip_settings_window" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "فتح نافذة إعدادات %@"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отвори прозореца с настройки на %@"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obre la finestra de configuració de %@"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otevřít okno nastavení %@"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Åbn indstillingsvinduet for %@"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einstellungsfenster von %@ öffnen"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Άνοιγμα του παραθύρου ρυθμίσεων του %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open the %@ settings window"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open the %@ settings window"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir la ventana de ajustes de %@"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "باز کردن پنجره تنظیمات %@"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avaa %@:n asetusikkuna"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvrir la fenêtre des réglages de %@"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "פתח את חלון ההגדרות של %@"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ की सेटिंग्स विंडो खोलें"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A(z) %@ beállítási ablakának megnyitása"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buka jendela pengaturan %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apri la finestra delle impostazioni di %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ の設定ウインドウを開く"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@의 설정 윈도우 열기"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отвори го прозорецот со поставки на %@"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buka tetingkap tetapan %@"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Åpne innstillingsvinduet for %@"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Instellingenvenster van %@ openen"
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opne innstillingsvindauget for %@"
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ دیاں سیٹنگاں دی ونڈو کھولو"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otwórz okno ustawień %@"
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "د %@ د امستنو کړکۍ پرانیزئ"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir a janela de definições do %@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir a janela de configurações do %@"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deschide fereastra de setări pentru %@"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Открыть окно настроек %@"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otvoriť okno nastavení %@"
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otvori prozor podešavanja za %@"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öppna inställningsfönstret för %@"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "เปิดหน้าต่างการตั้งค่าของ %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ayarlar penceresini aç"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Відкрити вікно налаштувань %@"
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ کی ترتیبات کی ونڈو کھولیں"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mở cửa sổ cài đặt của %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开 %@ 设置窗口"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打開 %@ 設定視窗"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開啟 %@ 設定視窗"
           }
         }
       }

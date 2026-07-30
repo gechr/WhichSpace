@@ -103,6 +103,9 @@ enum Layout {
     static let scrollHapticIntensityRange = 1 ... 6
     static let defaultScrollHapticIntensity = 4
 
+    /// Mission Control's per-display Space limit
+    static let maxSpacesPerDisplay = 16
+
     // Settings window
     static let settingsPaneContentWidth = 540.0
     static let settingsPanePadding = 16.0
@@ -116,9 +119,11 @@ enum Layout {
     static let settingsSliderWidth = 140.0
     static let settingsSliderValueFontSize = 11.0
     static let settingsSpaceListWidth = 140.0
+    static let settingsSpaceListMaxHeight = 800.0
+    static let settingsSpaceListScrollerWidth = 16.0
     static let settingsSpaceNameMaxLength = 10
     static let settingsSpacesEditorHeight = 480.0
-    static let settingsSpacesPaneWidth = 660.0
+    static let settingsSpacesPaneWidth = 680.0
     static let settingsSpacesPreviewHeight = 96.0
     static let settingsSpacesPreviewScale = 300.0
     static let defaultHorizontalPadding = statusItemWidth - baseSquareSize // 4.0pt
@@ -343,6 +348,7 @@ enum Localization {
     static let tipSensitivity = String(localized: "tip_sensitivity")
     static let tipSeparator = String(localized: "tip_separator")
     static let tipSetDefaultStyle = String(localized: "tip_set_default_style")
+    static let tipSettingsWindow = String(localized: "tip_settings_window")
     static let tipShowAllDisplays = String(localized: "tip_show_all_displays")
     static let tipShowAllSpaces = String(localized: "tip_show_all_spaces")
     static let tipSound = String(localized: "tip_sound")

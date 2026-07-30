@@ -14,7 +14,12 @@ struct GeneralPane: View {
     let onImportSettings: () -> Void
     let onExportSettings: () -> Void
 
+    /// Sparkle state is not observable; bumped when the check toggle flips
+    /// so dependent rows re-read the updater
+    @State private var updaterTick = 0
+
     var body: some View {
+        let _ = updaterTick
         SettingsForm {
             SettingsSection {
                 SettingsToggleRow(
@@ -29,7 +34,10 @@ struct GeneralPane: View {
                     title: Localization.toggleAutoCheckUpdates,
                     isOn: Binding(
                         get: { updater?.automaticallyChecksForUpdates ?? false },
-                        set: { updater?.automaticallyChecksForUpdates = $0 }
+                        set: {
+                            updater?.automaticallyChecksForUpdates = $0
+                            updaterTick += 1
+                        }
                     ),
                     icon: "arrow.triangle.2.circlepath"
                 )
@@ -40,7 +48,9 @@ struct GeneralPane: View {
                         get: { updater?.automaticallyDownloadsUpdates ?? false },
                         set: { updater?.automaticallyDownloadsUpdates = $0 }
                     ),
-                    icon: "square.and.arrow.down"
+                    icon: "square.and.arrow.down",
+                    indented: true,
+                    disabled: !(updater?.automaticallyChecksForUpdates ?? false)
                 )
                 SettingsRowDivider()
                 SettingsRow {

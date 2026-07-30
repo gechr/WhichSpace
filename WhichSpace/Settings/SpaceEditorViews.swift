@@ -53,9 +53,9 @@ struct SpaceEditorView: View {
                 CommittingTextField(
                     placeholder: LabelTemplate.spaceToken,
                     initialValue: model.label ?? "",
-                    clearHelp: Localization.tipClearLabel
+                    clearHelp: Localization.tipClearLabel,
+                    fieldWidth: 140
                 ) { model.setLabel($0) }
-                    .frame(width: 140)
             }
             .id("label-\(entryIdentity)")
             if rules.hasLabel {
@@ -310,9 +310,10 @@ struct SpaceEditorView: View {
                 CommittingTextField(
                     placeholder: BadgeTemplate.spaceToken,
                     initialValue: model.badge?.character ?? "",
-                    clearHelp: Localization.tipClearBadge
+                    clearHelp: Localization.tipClearBadge,
+                    fieldWidth: 44,
+                    centered: true
                 ) { model.setBadgeCharacter($0) }
-                    .frame(width: 44)
             }
             .id("badge-\(entryIdentity)")
             SettingsRowDivider()
@@ -545,6 +546,8 @@ struct CommittingTextField: View {
     let placeholder: String
     let initialValue: String
     let clearHelp: String
+    let fieldWidth: Double
+    let centered: Bool
     let onChange: (String) -> Void
 
     @State private var text: String
@@ -553,33 +556,85 @@ struct CommittingTextField: View {
         placeholder: String,
         initialValue: String,
         clearHelp: String,
+        fieldWidth: Double,
+        centered: Bool = false,
         onChange: @escaping (String) -> Void
     ) {
         self.placeholder = placeholder
         self.initialValue = initialValue
         self.clearHelp = clearHelp
+        self.fieldWidth = fieldWidth
+        self.centered = centered
         self.onChange = onChange
         _text = State(initialValue: initialValue)
     }
 
     var body: some View {
-        TextField(placeholder, text: $text)
-            .textFieldStyle(.roundedBorder)
-            .overlay(alignment: .trailing) {
-                if !text.isEmpty {
-                    Button {
-                        text = ""
-                    } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundStyle(.secondary)
-                    }
-                    .buttonStyle(.plain)
-                    .padding(.trailing, 4)
-                    .help(clearHelp)
-                }
+        // The clear button sits outside the field: any control overlapping
+        // the focused field editor keeps the I-beam cursor regardless of
+        // its own cursor handling. The width applies to the field alone so
+        // the button never squeezes it, and hiding rather than removing the
+        // button keeps the layout stable as text appears and disappears.
+        HStack(spacing: 4) {
+            TextField(placeholder, text: $text)
+                .textFieldStyle(.roundedBorder)
+                .multilineTextAlignment(centered ? .center : .leading)
+                .frame(width: fieldWidth)
+            Button {
+                text = ""
+            } label: {
+                Image(systemName: "xmark.circle.fill")
+                    .foregroundStyle(.secondary)
             }
-            .onChange(of: text) { _, newValue in
-                onChange(newValue)
-            }
+            .buttonStyle(.plain)
+            .arrowCursorOnHover()
+            .help(clearHelp)
+            .opacity(text.isEmpty ? 0 : 1)
+            .disabled(text.isEmpty)
+        }
+        .onChange(of: text) { _, newValue in
+            onChange(newValue)
+        }
     }
+}
+
+// MARK: - Cursor helpers
+
+extension View {
+    /// Shows the arrow cursor while hovering a control embedded in a text
+    /// field, which would otherwise keep the field's I-beam cursor.
+    func arrowCursorOnHover() -> some View {
+        overlay(ArrowCursorArea())
+    }
+}
+
+/// The field editor owns an I-beam cursor rect, and overlapping tracking-area
+/// callbacks race with undefined order, so setting the cursor from hover
+/// events cannot reliably win. A nested AppKit cursor rect is the native
+/// arbitration mechanism; this view claims one for the arrow while staying
+/// transparent to clicks.
+private struct ArrowCursorArea: NSViewRepresentable {
+    private final class CursorView: NSView {
+        override func resetCursorRects() {
+            super.resetCursorRects()
+            // The intersection is null while the view is fully clipped, such
+            // as during the pane's initial layout, and addCursorRect throws
+            // on a null rect
+            let rect = bounds.intersection(visibleRect)
+            guard !rect.isEmpty else {
+                return
+            }
+            addCursorRect(rect, cursor: .arrow)
+        }
+
+        override func hitTest(_: CGPoint) -> NSView? {
+            nil
+        }
+    }
+
+    func makeNSView(context _: Context) -> NSView {
+        CursorView()
+    }
+
+    func updateNSView(_: NSView, context _: Context) {}
 }

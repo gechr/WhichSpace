@@ -63,6 +63,7 @@ struct SymbolGridView: View {
                         .foregroundStyle(.secondary)
                 }
                 .buttonStyle(.borderless)
+                .arrowCursorOnHover()
             }
         }
         .padding(.horizontal, 8)

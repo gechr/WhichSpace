@@ -69,7 +69,10 @@ struct StyleGridView: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 6, style: .continuous)
-                    .strokeBorder(isSelected ? AnyShapeStyle(.tint) : AnyShapeStyle(.clear))
+                    .strokeBorder(
+                        isSelected ? AnyShapeStyle(.tint) : AnyShapeStyle(.clear),
+                        lineWidth: 2
+                    )
             )
         }
         .buttonStyle(.plain)

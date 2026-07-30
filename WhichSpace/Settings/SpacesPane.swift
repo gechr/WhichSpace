@@ -12,19 +12,25 @@ struct SpacesPane: View {
     @State private var colorPanel = ColorPanelCoordinator()
 
     var body: some View {
-        let listWidth = listWidth
         HStack(alignment: .top, spacing: Layout.settingsSectionSpacing) {
             listColumn
-                .frame(width: listWidth)
+                .frame(minWidth: Layout.settingsSpaceListWidth, alignment: .leading)
             editorColumn
+                .frame(width: editorWidth)
         }
         .padding(Layout.settingsPanePadding)
-        .frame(width: Layout.settingsSpacesPaneWidth + listWidth - Layout.settingsSpaceListWidth)
         .toggleStyle(.switch)
         .font(.system(size: Layout.settingsRowFontSize))
         .onAppear {
             model.normalizeSelection()
         }
+    }
+
+    /// The editor column keeps its base-configuration width; the pane's
+    /// total width follows the list's natural width.
+    private var editorWidth: Double {
+        Layout.settingsSpacesPaneWidth - Layout.settingsSpaceListWidth
+            - Layout.settingsSectionSpacing - 2 * Layout.settingsPanePadding
     }
 
     // MARK: - Space List
@@ -44,36 +50,44 @@ struct SpacesPane: View {
                     Divider()
                         .padding(.vertical, 3)
                     ForEach(model.spaceEntries, id: \.number) { candidate in
-                        listRow(for: .space(candidate.number), title: model.spaceName(for: candidate))
+                        listRow(
+                            for: .space(candidate.number),
+                            title: model.spaceName(for: candidate),
+                            dimmed: candidate.entry == nil
+                        )
                     }
                 }
+                // Ideal width instead of the proposed width, so the list
+                // sizes to its widest row - whatever the font - rather
+                // than truncating against a predicted width
+                .fixedSize(horizontal: true, vertical: false)
                 .background(
                     RoundedRectangle(cornerRadius: 10, style: .continuous)
                         .fill(Color(nsColor: .quaternarySystemFill))
                 )
+                // The overlay scroller must not cover row text
+                .padding(.trailing, listOverflows ? Layout.settingsSpaceListScrollerWidth : 0)
             }
+            .frame(height: min(listContentHeight, Layout.settingsSpaceListMaxHeight))
         }
-        .frame(maxHeight: Layout.settingsSpacesEditorHeight + Layout.settingsSpacesPreviewHeight
-            + Layout.settingsSectionSpacing)
     }
 
-    /// The list column's width: wide enough for its longest row, never
-    /// narrower than the base width. The pane widens by the same amount so
-    /// the editor column keeps its layout.
-    private var listWidth: Double {
+    private var listOverflows: Bool {
+        listContentHeight > Layout.settingsSpaceListMaxHeight
+    }
+
+    /// The height the list needs to show every row without scrolling: each
+    /// row is its icon or text (whichever is taller) plus vertical padding,
+    /// and the template divider adds its own height and padding.
+    private var listContentHeight: Double {
         let font = NSFont.systemFont(ofSize: Layout.settingsRowFontSize)
-        var rows: [(icon: NSImage, title: String?)] = [
-            (model.listIcon(for: .defaultStyle), "[\(Localization.labelDefault)]"),
-        ]
+        let textHeight = ("Ag" as NSString).size(withAttributes: [.font: font]).height
+        var rowHeights = [max(model.listIcon(for: .defaultStyle).size.height, textHeight) + 2 * 6]
         for candidate in model.spaceEntries {
-            rows.append((model.listIcon(for: .space(candidate.number)), model.spaceName(for: candidate)))
+            let icon = model.listIcon(for: .space(candidate.number))
+            rowHeights.append(max(icon.size.height, textHeight) + 2 * 6)
         }
-        let widths = rows.map { row -> Double in
-            let text = row.title.map { ($0 as NSString).size(withAttributes: [.font: font]).width } ?? 0
-            return row.icon.size.width + 8 + text + 2 * 10
-        }
-        let widest = widths.max() ?? 0
-        return max(Layout.settingsSpaceListWidth, ceil(widest) + 2)
+        return ceil(rowHeights.reduce(0, +) + 1 + 2 * 3)
     }
 
     private func listHeader(_ title: String) -> some View {
@@ -90,6 +104,7 @@ struct SpacesPane: View {
         }
         .pickerStyle(.segmented)
         .labelsHidden()
+        .focusable(false)
     }
 
     private var displayBinding: Binding<String?> {
@@ -102,27 +117,48 @@ struct SpacesPane: View {
         )
     }
 
-    private func listRow(for selection: SpaceEditorModel.Selection, title: String?) -> some View {
+    /// Dimmed rows are placeholders for Spaces that do not exist yet -
+    /// stylable ahead of time but not real Spaces. The template row renders
+    /// bold instead to stand apart from the numbered rows.
+    private func listRow(
+        for selection: SpaceEditorModel.Selection, title: String?, dimmed: Bool = false
+    ) -> some View {
         let isSelected = model.selection == selection
+        let icon = model.listIcon(for: selection)
         return Button {
             model.selection = selection
         } label: {
             HStack(spacing: 8) {
-                Image(nsImage: model.listIcon(for: selection))
+                if selection == .defaultStyle {
+                    Image(systemName: "paintbrush.fill")
+                        .font(.system(size: icon.size.height * 0.5, weight: .semibold))
+                        .foregroundStyle(.secondary)
+                        .frame(width: icon.size.width, height: icon.size.height)
+                } else {
+                    Image(nsImage: icon)
+                }
                 if let title {
                     Text(title)
                         .lineLimit(1)
+                        .fontWeight(selection == .defaultStyle ? .bold : .regular)
                         .foregroundStyle(
                             selection == .defaultStyle
                                 ? AnyShapeStyle(.secondary)
-                                : AnyShapeStyle(.primary)
+                                : dimmed ? AnyShapeStyle(.secondary) : AnyShapeStyle(.primary)
                         )
                 }
                 Spacer(minLength: 0)
             }
+            .opacity(dimmed ? 0.5 : 1)
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
             .contentShape(Rectangle())
+            // The keyboard focus ring follows the inset highlight shape;
+            // the button's full bounds would clip against the scroll edges
+            .contentShape(
+                .focusEffect,
+                RoundedRectangle(cornerRadius: 6, style: .continuous).inset(by: 4)
+            )
             .background(
                 RoundedRectangle(cornerRadius: 6, style: .continuous)
                     .fill(isSelected ? AnyShapeStyle(.selection.opacity(0.35)) : AnyShapeStyle(.clear))
@@ -130,6 +166,7 @@ struct SpacesPane: View {
             )
         }
         .buttonStyle(.plain)
+        .focusable(false)
     }
 
     // MARK: - Editor

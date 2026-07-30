@@ -85,11 +85,26 @@ final class SpaceEditorModel {
         appState.allDisplaysSpaceInfo
     }
 
-    /// Entries of the selected display, as (1-based position, entry) pairs.
-    var spaceEntries: [(number: Int, entry: SpaceEntry)] {
+    /// Entries of the selected display, as (1-based position, entry) pairs,
+    /// padded with nil entries up to the per-display Space limit so Spaces
+    /// can be styled before they are created.
+    var spaceEntries: [(number: Int, entry: SpaceEntry?)] {
         let info = displays.first { $0.displayID == selectedDisplayID }
         let entries = info?.entries ?? appState.allSpaceEntries
-        return entries.enumerated().map { (number: $0.offset + 1, entry: $0.element) }
+        let real = entries.enumerated().map { (number: $0.offset + 1, entry: SpaceEntry?($0.element)) }
+        guard entries.count < Layout.maxSpacesPerDisplay else {
+            return real
+        }
+        let placeholders = ((entries.count + 1) ... Layout.maxSpacesPerDisplay)
+            .map { (number: $0, entry: SpaceEntry?.none) }
+        return real + placeholders
+    }
+
+    /// The number of Spaces that exist right now on the selected display;
+    /// list entries beyond it are placeholders for future Spaces.
+    var existingSpaceCount: Int {
+        let info = displays.first { $0.displayID == selectedDisplayID }
+        return (info?.entries ?? appState.allSpaceEntries).count
     }
 
     /// Keeps the selection valid when the display changes or Spaces close.
@@ -125,15 +140,24 @@ final class SpaceEditorModel {
     /// renaming tool stored for the Space's UUID when present, otherwise a
     /// localized "Desktop N" fallback numbered like Mission Control.
     /// Fullscreen entries carry no desktop number and stay untitled.
-    func spaceName(for candidate: (number: Int, entry: SpaceEntry)) -> String? {
+    /// Placeholder entries extrapolate the desktop number new Spaces would
+    /// get - Mission Control appends new desktops after the existing ones.
+    func spaceName(for candidate: (number: Int, entry: SpaceEntry?)) -> String? {
         _ = tick
-        if let uuid = candidate.entry.uuid, let custom = customNames()[uuid] {
+        guard let entry = candidate.entry else {
+            let info = displays.first { $0.displayID == selectedDisplayID }
+            let entries = info?.entries ?? appState.allSpaceEntries
+            let regularCount = entries.compactMap(\.regularIndex).max() ?? 0
+            let number = regularCount + candidate.number - entries.count
+            return String(format: Localization.labelDesktopNumber, number)
+        }
+        if let uuid = entry.uuid, let custom = customNames()[uuid] {
             let trimmed = custom.trimmingCharacters(in: .whitespaces)
             if !trimmed.isEmpty {
                 return Self.truncatedName(trimmed)
             }
         }
-        guard let regularIndex = candidate.entry.regularIndex else {
+        guard let regularIndex = entry.regularIndex else {
             return nil
         }
         return String(format: Localization.labelDesktopNumber, regularIndex)
@@ -515,7 +539,7 @@ final class SpaceEditorModel {
             return
         }
         for display in displays {
-            for number in 1 ... max(display.entries.count, 1)
+            for number in 1 ... max(display.entries.count, Layout.maxSpacesPerDisplay)
                 where number != editingSpace || display.displayID != selectedDisplayID
             {
                 SpacePreferences.copyPreferences(

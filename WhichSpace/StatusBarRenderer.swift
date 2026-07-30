@@ -207,6 +207,16 @@ final class StatusBarRenderer {
             space
         }
 
+        // A Space that does not exist yet and has no preferences of its own
+        // will receive the default style template when it is created, so
+        // render it from the template (which lives in the shared maps under
+        // space 0) while keeping its own number.
+        let inheritsTemplate = !isTemplate && entry == nil
+            && !SpacePreferences.hasAnyPreference(forSpace: space, display: displayID, store: store)
+            && SpacePreferences.hasDefaultStyle(store: store)
+        let prefSpace = inheritsTemplate ? SpacePreferences.defaultStyleSpace : space
+        let prefLabels = inheritsTemplate ? store.spaceLabels : labels
+
         let label: String = if let entry {
             displayLabel(
                 entry: entry,
@@ -215,19 +225,19 @@ final class StatusBarRenderer {
                 labels: labels,
                 isFullscreen: entry.label == Labels.fullscreen
             )
-        } else if let custom = labels[space], !custom.isEmpty {
+        } else if let custom = prefLabels[prefSpace], !custom.isEmpty {
             LabelTemplate.resolve(custom, space: displayNumber)
         } else {
             String(displayNumber)
         }
 
         let spec = resolveIconSpec(
-            forSpace: space,
+            forSpace: prefSpace,
             spaceID: entry?.id ?? 0,
             displayNumber: displayNumber,
             label: label,
-            labels: labels,
-            displayID: isTemplate ? nil : displayID,
+            labels: prefLabels,
+            displayID: isTemplate || inheritsTemplate ? nil : displayID,
             darkMode: appState.darkModeEnabled
         )
         let base = render(spec)

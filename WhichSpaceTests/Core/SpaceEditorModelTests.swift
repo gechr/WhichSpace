@@ -54,12 +54,42 @@ struct SpaceEditorModelTests {
         #expect(model.editingDisplay == nil)
     }
 
-    @Test("normalizeSelection recovers from a vanished Space")
-    func normalizeSelection() {
+    @Test("normalizeSelection keeps a placeholder Space selected")
+    func normalizeSelectionKeepsPlaceholder() {
         let model = makeModel()
         model.selection = .space(9)
         model.normalizeSelection()
+        #expect(model.selection == .space(9))
+    }
+
+    @Test("normalizeSelection recovers from a Space beyond the limit")
+    func normalizeSelection() {
+        let model = makeModel()
+        model.selection = .space(Layout.maxSpacesPerDisplay + 1)
+        model.normalizeSelection()
         #expect(model.selection == .space(1))
+    }
+
+    // MARK: - Space List
+
+    @Test("the Space list pads placeholders up to the per-display limit")
+    func spaceEntriesPadding() {
+        let model = makeModel()
+        let entries = model.spaceEntries
+        #expect(entries.count == Layout.maxSpacesPerDisplay)
+        #expect(entries.prefix(3).allSatisfy { $0.entry != nil })
+        #expect(entries.dropFirst(3).allSatisfy { $0.entry == nil })
+        #expect(entries.map(\.number) == Array(1 ... Layout.maxSpacesPerDisplay))
+        #expect(model.existingSpaceCount == 3)
+    }
+
+    @Test("placeholder entries extrapolate their desktop name")
+    func placeholderSpaceName() {
+        let model = makeModel()
+        let placeholder = model.spaceEntries[3]
+        #expect(placeholder.entry == nil)
+        #expect(model.spaceName(for: placeholder)
+            == String(format: Localization.labelDesktopNumber, 4))
     }
 
     // MARK: - Key Routing
@@ -222,6 +252,9 @@ struct SpaceEditorModelTests {
         #expect(SpacePreferences.label(forSpace: 2, display: "Main", store: store) == "Work")
         #expect(SpacePreferences.label(forSpace: 3, display: "Main", store: store) == "Work")
         #expect(SpacePreferences.sound(forSpace: 2, display: "Main", store: store) == "Pop")
+        #expect(SpacePreferences.label(
+            forSpace: Layout.maxSpacesPerDisplay, display: "Main", store: store
+        ) == "Work")
     }
 
     @Test("copy to all displays covers every display's Spaces")
@@ -246,6 +279,8 @@ struct SpaceEditorModelTests {
         #expect(store.displaySpaceLabels["Main"]?[2] == "Work")
         #expect(store.displaySpaceLabels["Side"]?[1] == "Work")
         #expect(store.displaySpaceLabels["Side"]?[2] == "Work")
+        #expect(store.displaySpaceLabels["Main"]?[Layout.maxSpacesPerDisplay] == "Work")
+        #expect(store.displaySpaceLabels["Side"]?[Layout.maxSpacesPerDisplay] == "Work")
     }
 
     @Test("a declined confirmation leaves the store unchanged")

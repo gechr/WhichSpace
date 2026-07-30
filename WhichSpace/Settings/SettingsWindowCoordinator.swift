@@ -61,6 +61,7 @@ final class SettingsWindowCoordinator {
             )
             windowController = controller
             if let window = controller.window {
+                window.autorecalculatesKeyViewLoop = true
                 // The external-change observation streams only need to run
                 // while the window can show their effects; the shared color
                 // panel must not outlive the selection it edits

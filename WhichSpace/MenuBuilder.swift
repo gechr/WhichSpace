@@ -83,7 +83,8 @@ enum MenuBuilder {
             title: Localization.menuSettingsWindow,
             action: #selector(ActionHandler.openSettingsWindow),
             target: target,
-            symbolName: "gearshape"
+            symbolName: "gearshape",
+            toolTip: String(format: Localization.tipSettingsWindow, AppInfo.appName)
         )
         settingsItem.keyEquivalent = ","
         settingsItem.keyEquivalentModifierMask = [.command]
