@@ -650,12 +650,17 @@ enum SpaceIconGenerator {
                 xCursor += symbolContent.size.width + scaledGap
             }
             let drawText = {
-                let textRect = CGRect(
+                var textRect = CGRect(
                     x: xCursor,
                     y: shapeRect.minY + (shapeRect.height - textSize.height) / 2,
                     width: textSize.width,
                     height: textSize.height
                 )
+                // Custom fonts center on glyph ink; x stays cursor-based so
+                // the symbol gap is preserved
+                if customFont != nil, let ink = inkBounds(of: attrText) {
+                    textRect.origin.y += shapeRect.midY - (textRect.minY + ink.midY)
+                }
                 withKnockout(textKnockout) {
                     attrText.draw(in: textRect)
                 }
@@ -1106,8 +1111,14 @@ enum SpaceIconGenerator {
         }
 
         if let customFont {
-            // Scale the custom font proportionally
-            let scaledSize = customFont.pointSize * scale
+            // Normalize by cap height so the custom font's digits render at
+            // the same visual size as the default bold system font, then
+            // scale proportionally
+            let reference = NSFont.boldSystemFont(ofSize: customFont.pointSize)
+            let ratio = customFont.capHeight > 0
+                ? min(max(reference.capHeight / customFont.capHeight, 0.5), 2.0)
+                : 1.0
+            let scaledSize = customFont.pointSize * ratio * scale
             return NSFontManager.shared.convert(customFont, toSize: scaledSize)
         }
         return NSFont.boldSystemFont(ofSize: (baseFontSize + sizeAdjustment) * scale)
@@ -1134,21 +1145,104 @@ enum SpaceIconGenerator {
         }
     }
 
+    /// Tight bounds of the rendered glyph ink, relative to the layout box
+    /// origin used by draw(in:), in unflipped coordinates. Custom display
+    /// fonts carry asymmetric ascent/descent and side bearings, so
+    /// centering the layout box alone seats their glyphs off-center.
+    private static func inkBounds(of attrString: NSAttributedString) -> CGRect? {
+        let layoutSize = attrString.size()
+        guard layoutSize.width > 0, layoutSize.height > 0 else {
+            return nil
+        }
+        let sampling = 2.0
+        // Swashes and overhangs can extend past the layout box
+        let margin = layoutSize.height
+        let width = Int(((layoutSize.width + margin * 2) * sampling).rounded(.up))
+        let height = Int(((layoutSize.height + margin * 2) * sampling).rounded(.up))
+        guard let rep = NSBitmapImageRep(
+            bitmapDataPlanes: nil,
+            pixelsWide: width,
+            pixelsHigh: height,
+            bitsPerSample: 8,
+            samplesPerPixel: 4,
+            hasAlpha: true,
+            isPlanar: false,
+            colorSpaceName: .deviceRGB,
+            bytesPerRow: 0,
+            bitsPerPixel: 0
+        ) else {
+            return nil
+        }
+        // Point size must be set before deriving the context, or the scale
+        // transform is not applied and drawing fills only part of the bitmap
+        rep.size = CGSize(width: Double(width) / sampling, height: Double(height) / sampling)
+        guard let context = NSGraphicsContext(bitmapImageRep: rep) else {
+            return nil
+        }
+        // Measure an opaque copy so translucent label colors still register
+        let measured = NSMutableAttributedString(attributedString: attrString)
+        measured.addAttribute(
+            .foregroundColor,
+            value: NSColor.black,
+            range: NSRange(location: 0, length: measured.length)
+        )
+        NSGraphicsContext.saveGraphicsState()
+        NSGraphicsContext.current = context
+        measured.draw(in: CGRect(
+            origin: CGPoint(x: margin, y: margin),
+            size: CGSize(width: layoutSize.width + 1, height: layoutSize.height)
+        ))
+        NSGraphicsContext.restoreGraphicsState()
+
+        guard let data = rep.bitmapData else {
+            return nil
+        }
+        let bytesPerRow = rep.bytesPerRow
+        let samplesPerPixel = rep.samplesPerPixel
+        var minX = width
+        var minY = height
+        var maxX = -1
+        var maxY = -1
+        for y in 0 ..< height {
+            let row = data + y * bytesPerRow
+            // Low alpha threshold keeps hairline strokes in the measurement
+            for x in 0 ..< width where row[x * samplesPerPixel + 3] > 25 {
+                minX = min(minX, x)
+                minY = min(minY, y)
+                maxX = max(maxX, x)
+                maxY = max(maxY, y)
+            }
+        }
+        guard maxX >= minX else {
+            return nil
+        }
+        // Bitmap rows are top-down; flip to the flipped:false drawing space
+        return CGRect(
+            x: Double(minX) / sampling - margin,
+            y: Double(height - 1 - maxY) / sampling - margin,
+            width: Double(maxX - minX + 1) / sampling,
+            height: Double(maxY - minY + 1) / sampling
+        )
+    }
+
     private static func drawCenteredText(
         _ text: String,
         in rect: CGRect,
         font: NSFont,
         color: NSColor,
+        opticallyCenter: Bool = false,
         yOffset: Double = 0
     ) {
         let attributes: [NSAttributedString.Key: Any] = [
             .font: font,
             .foregroundColor: color,
         ]
-        let textSize = text.size(withAttributes: attributes)
-        var textRect = centeredRect(size: textSize, in: rect)
-        textRect.origin.y += yOffset
-        text.draw(in: textRect, withAttributes: attributes)
+        drawCenteredAttributedText(
+            NSAttributedString(string: text, attributes: attributes),
+            in: rect,
+            opticallyCenter: opticallyCenter,
+            yOffset: yOffset
+        )
     }
 
     // MARK: - Badge Helpers
@@ -1207,10 +1301,15 @@ enum SpaceIconGenerator {
     private static func drawCenteredAttributedText(
         _ attrString: NSAttributedString,
         in rect: CGRect,
+        opticallyCenter: Bool = false,
         yOffset: Double = 0
     ) {
         let textSize = attrString.size()
         var textRect = centeredRect(size: textSize, in: rect)
+        if opticallyCenter, let ink = inkBounds(of: attrString) {
+            textRect.origin.x += rect.midX - (textRect.minX + ink.midX)
+            textRect.origin.y += rect.midY - (textRect.minY + ink.midY)
+        }
         textRect.origin.y += yOffset
         attrString.draw(in: textRect)
     }
@@ -1252,10 +1351,20 @@ enum SpaceIconGenerator {
                     let attrString = buildBadgedAttributedString(
                         number: spaceNumber, badge: badge, font: font, color: textColor
                     )
-                    drawCenteredAttributedText(attrString, in: textRect, yOffset: textYOffset)
+                    drawCenteredAttributedText(
+                        attrString,
+                        in: textRect,
+                        opticallyCenter: customFont != nil,
+                        yOffset: textYOffset
+                    )
                 } else {
                     drawCenteredText(
-                        spaceNumber, in: textRect, font: font, color: textColor, yOffset: textYOffset
+                        spaceNumber,
+                        in: textRect,
+                        font: font,
+                        color: textColor,
+                        opticallyCenter: customFont != nil,
+                        yOffset: textYOffset
                     )
                 }
             }
@@ -1299,17 +1408,25 @@ enum SpaceIconGenerator {
             let attrString = buildBadgedAttributedString(
                 number: spaceNumber, badge: badge, font: font, color: fillColor
             )
-            let textSize = attrString.size()
-            let textX = (rect.width - textSize.width) / 2
-
-            // Account for font metrics - CTFont draws from baseline
-            let ctFont = font as CTFont
-            let ascent = CTFontGetAscent(ctFont)
-            let descent = CTFontGetDescent(ctFont)
-            let textHeight = ascent + descent
-            let textY = (rect.height - textHeight) / 2 + descent
-
             let path = textPath(for: attrString)
+
+            let textX: Double
+            let textY: Double
+            let ink = path.boundingBoxOfPath
+            if customFont != nil, !ink.isNull, !ink.isEmpty {
+                // Custom fonts center on the glyph ink; their layout metrics
+                // seat the glyphs off-center
+                textX = rect.midX - ink.midX
+                textY = rect.midY - ink.midY
+            } else {
+                // Account for font metrics - CTFont draws from baseline
+                let textSize = attrString.size()
+                let ctFont = font as CTFont
+                let ascent = CTFontGetAscent(ctFont)
+                let descent = CTFontGetDescent(ctFont)
+                textX = (rect.width - textSize.width) / 2
+                textY = (rect.height - (ascent + descent)) / 2 + descent
+            }
 
             context.saveGState()
             context.translateBy(x: textX, y: textY)

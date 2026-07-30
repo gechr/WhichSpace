@@ -145,8 +145,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     // MARK: - Settings Window
 
     /// Opens (creating on first use) the settings window, optionally on a
-    /// named pane with one row briefly highlighted.
-    func showSettingsWindow(pane: SettingsPaneID? = nil, anchor: SettingsAnchor? = nil) {
+    /// named pane with one row scrolled into view.
+    func showSettingsWindow(pane: SettingsPaneID? = nil, focus: SettingsFocus? = nil) {
         if settingsCoordinator == nil {
             let model = SettingsModel(store: store, launchAtLogin: launchAtLogin)
             let editorModel = SpaceEditorModel(appState: appState, confirmAction: confirmAction)
@@ -199,7 +199,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
                 highlighter: highlighter
             )
         }
-        settingsCoordinator?.show(pane: pane, anchor: anchor)
+        settingsCoordinator?.show(pane: pane, focus: focus)
     }
 
     // MARK: - NSApplicationDelegate
@@ -295,8 +295,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
                 try ScriptingHelpers.switchRelative(goRight: true)
             case .switchToPrevious:
                 try ScriptingHelpers.switchRelative(goRight: false)
-            case let .openSettings(pane, anchor):
-                showSettingsWindow(pane: pane, anchor: anchor)
+            case let .openSettings(pane, focus):
+                showSettingsWindow(pane: pane, focus: focus)
             }
         } catch {
             NSLog("AppDelegate: URL command failed - %@", error.localizedDescription)

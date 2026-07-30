@@ -185,6 +185,62 @@ struct SpaceIconGeneratorTests {
         #expect(icon.cgImage(forProposedRect: nil, context: nil, hints: nil) != nil)
     }
 
+    // MARK: - Custom Font Optical Positioning Tests
+
+    @Test("custom display font glyph centers on the shape", arguments: ["8", "3", "12"])
+    func customFontGlyphCentersOnShape(number: String) throws {
+        let font = try #require(NSFont(name: "Didot", size: Layout.baseFontSize), "Didot is unavailable")
+        let icon = SpaceIconGenerator.generateIcon(
+            for: number,
+            darkMode: true,
+            customColors: SpaceColors(foreground: .green, background: .red),
+            customFont: font,
+            style: .square
+        )
+        let rep = try #require(bitmap(icon, sampling: 2))
+        let centers = try #require(chipAndGlyphCenters(in: rep))
+        let deltaX = abs(centers.glyph.x - centers.chip.x)
+        let deltaY = abs(centers.glyph.y - centers.chip.y)
+        #expect(deltaX <= 1.5, "\(number) is \(deltaX) device pixels off-center horizontally")
+        #expect(deltaY <= 1.5, "\(number) is \(deltaY) device pixels off-center vertically")
+    }
+
+    @Test("custom display font digits match the default font's visual size")
+    func customFontDigitsMatchDefaultVisualSize() throws {
+        let font = try #require(NSFont(name: "Didot", size: Layout.baseFontSize), "Didot is unavailable")
+        let defaultHeight = try #require(glyphInkHeight(customFont: nil))
+        let customHeight = try #require(glyphInkHeight(customFont: font))
+        let delta = abs(Double(defaultHeight - customHeight))
+        #expect(
+            delta <= Double(defaultHeight) * 0.15,
+            "custom glyph is \(customHeight) device pixels tall vs \(defaultHeight) default"
+        )
+    }
+
+    private func glyphInkHeight(customFont: NSFont?) -> Int? {
+        let icon = SpaceIconGenerator.generateIcon(
+            for: "8",
+            darkMode: true,
+            customColors: SpaceColors(foreground: .green, background: .red),
+            customFont: customFont,
+            style: .square
+        )
+        guard let rep = bitmap(icon, sampling: 2), let data = rep.bitmapData else {
+            return nil
+        }
+        var bounds = PixelBounds()
+        for y in 0 ..< rep.pixelsHigh {
+            let row = data + y * rep.bytesPerRow
+            for x in 0 ..< rep.pixelsWide {
+                let pixel = row + x * rep.samplesPerPixel
+                if Int(pixel[3]) > 127, Int(pixel[1]) > Int(pixel[0]) * 2 {
+                    bounds.include(x: x, y: y)
+                }
+            }
+        }
+        return bounds.verticalRange?.count
+    }
+
     // MARK: - Dark/Light Mode Tests
 
     @Test("dark mode produces valid image")

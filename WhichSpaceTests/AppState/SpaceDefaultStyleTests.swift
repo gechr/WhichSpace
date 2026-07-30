@@ -3,319 +3,241 @@ import Testing
 
 @MainActor
 struct SpaceDefaultStyleTests {
-    private let stub: CGSStub
     private let store: DefaultsStore
     private let testSuite: TestSuite
 
     init() {
         testSuite = TestSuiteFactory.createSuite()
         store = DefaultsStore(suite: testSuite.suite)
-        stub = CGSStub()
     }
 
-    // MARK: - Helpers
-
-    private func makeAppState(spaces: [(id: Int, isFullscreen: Bool)], activeSpaceID: Int) -> AppState {
-        stub.activeDisplayIdentifier = "Main"
-        stub.displays = [
-            CGSStub.makeDisplay(displayID: "Main", spaces: spaces, activeSpaceID: activeSpaceID),
-        ]
-        return AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
-    }
-
-    private func updateStub(spaces: [(id: Int, isFullscreen: Bool)], activeSpaceID: Int) {
-        stub.displays = [
-            CGSStub.makeDisplay(displayID: "Main", spaces: spaces, activeSpaceID: activeSpaceID),
-        ]
-    }
-
-    private func makeAppState(
-        displays: [(displayID: String, spaces: [(id: Int, isFullscreen: Bool)], activeSpaceID: Int)],
-        activeDisplayID: String
-    ) -> AppState {
-        stub.activeDisplayIdentifier = activeDisplayID
-        stub.displays = displays.map { display in
-            CGSStub.makeDisplay(
-                displayID: display.displayID,
-                spaces: display.spaces,
-                activeSpaceID: display.activeSpaceID
-            )
+    /// Builds a template by styling space 1 and saving it, mirroring the
+    /// settings flow. saveDefaultStyle strips the source, so space 1 ends
+    /// up inheriting the template it produced.
+    private func saveTemplate(style: IconStyle = .circle, symbol: String? = nil) {
+        SpacePreferences.setIconStyle(style, forSpace: 1, store: store)
+        if let symbol {
+            SpacePreferences.setSymbol(symbol, forSpace: 1, store: store)
         }
-        return AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
-    }
-
-    private func updateStub(
-        displays: [(displayID: String, spaces: [(id: Int, isFullscreen: Bool)], activeSpaceID: Int)]
-    ) {
-        stub.displays = displays.map { display in
-            CGSStub.makeDisplay(
-                displayID: display.displayID,
-                spaces: display.spaces,
-                activeSpaceID: display.activeSpaceID
-            )
-        }
-    }
-
-    // MARK: - Default Style Applied to New Spaces
-
-    @Test("new space inherits default icon style")
-    func newSpace_appliesDefaultStyle() {
-        SpacePreferences.setIconStyle(.circle, forSpace: 1, store: store)
         SpacePreferences.saveDefaultStyle(fromSpace: 1, store: store)
+    }
 
-        let sut = makeAppState(
-            spaces: [(100, false), (101, false)],
-            activeSpaceID: 101
-        )
+    // MARK: - Live Inheritance
 
-        updateStub(
-            spaces: [(100, false), (101, false), (102, false)],
-            activeSpaceID: 102
-        )
-        sut.forceSpaceUpdate()
+    @Test("space without its own style resolves the template")
+    func unconfiguredSpace_resolvesTemplate() {
+        saveTemplate(style: .circle, symbol: "star.fill")
 
         #expect(SpacePreferences.iconStyle(forSpace: 3, store: store) == .circle)
+        #expect(SpacePreferences.symbol(forSpace: 3, store: store) == "star.fill")
     }
 
-    @Test("new space inherits default colors and symbol")
-    func newSpace_appliesDefaultColorsAndSymbol() {
-        let colors = SpaceColors(foreground: .red, background: .blue)
-        SpacePreferences.setColors(colors, forSpace: 1, store: store)
-        SpacePreferences.setSymbol("star.fill", forSpace: 1, store: store)
-        SpacePreferences.saveDefaultStyle(fromSpace: 1, store: store)
-
-        let sut = makeAppState(
-            spaces: [(100, false)],
-            activeSpaceID: 100
-        )
-
-        updateStub(
-            spaces: [(100, false), (101, false)],
-            activeSpaceID: 101
-        )
-        sut.forceSpaceUpdate()
-
-        let inherited = SpacePreferences.colors(forSpace: 2, store: store)
-        #expect(inherited != nil)
-        #expect(inherited?.foreground == .red)
-        #expect(inherited?.background == .blue)
-        #expect(SpacePreferences.symbol(forSpace: 2, store: store) == "star.fill")
-    }
-
-    @Test("new space inherits multiple default preferences")
-    func newSpace_appliesMultipleDefaultPreferences() {
-        SpacePreferences.setIconStyle(.circle, forSpace: 1, store: store)
-        SpacePreferences.setColors(SpaceColors(foreground: .red, background: .blue), forSpace: 1, store: store)
-        SpacePreferences.setSymbol("star", forSpace: 1, store: store)
-        SpacePreferences.setBadge(SpaceBadge(character: "A", position: .topRight), forSpace: 1, store: store)
-        SpacePreferences.saveDefaultStyle(fromSpace: 1, store: store)
-
-        let sut = makeAppState(
-            spaces: [(100, false)],
-            activeSpaceID: 100
-        )
-
-        updateStub(
-            spaces: [(100, false), (101, false)],
-            activeSpaceID: 101
-        )
-        sut.forceSpaceUpdate()
-
-        #expect(SpacePreferences.iconStyle(forSpace: 2, store: store) == .circle)
-        #expect(SpacePreferences.colors(forSpace: 2, store: store)?.foreground == .red)
-        #expect(SpacePreferences.symbol(forSpace: 2, store: store) == "star")
-        #expect(SpacePreferences.badge(forSpace: 2, store: store)?.character == "A")
-    }
-
-    @Test("new space on secondary display uses local shared space number")
-    func newSpace_onSecondaryDisplay_appliesDefaultToLocalSharedSpaceNumber() {
-        SpacePreferences.setIconStyle(.circle, forSpace: 1, store: store)
-        SpacePreferences.saveDefaultStyle(fromSpace: 1, store: store)
-
-        let sut = makeAppState(
-            displays: [
-                (displayID: "Main", spaces: [(100, false), (101, false)], activeSpaceID: 100),
-                (displayID: "Secondary", spaces: [(200, false), (201, false)], activeSpaceID: 201),
-            ],
-            activeDisplayID: "Secondary"
-        )
-
-        updateStub(
-            displays: [
-                (displayID: "Main", spaces: [(100, false), (101, false)], activeSpaceID: 100),
-                (displayID: "Secondary", spaces: [(200, false), (201, false), (202, false)], activeSpaceID: 202),
-            ]
-        )
-        sut.forceSpaceUpdate()
-
-        #expect(SpacePreferences.iconStyle(forSpace: 3, store: store) == .circle)
-        #expect(SpacePreferences.iconStyle(forSpace: 5, store: store) == nil)
-    }
-
-    @Test("new space on secondary display uses local per-display space number")
-    func newSpace_onSecondaryDisplay_appliesDefaultToLocalPerDisplaySpaceNumber() {
-        store.uniqueIconsPerDisplay = true
-        SpacePreferences.setIconStyle(.circle, forSpace: 1, display: "Main", store: store)
-        SpacePreferences.saveDefaultStyle(fromSpace: 1, display: "Main", store: store)
-
-        let sut = makeAppState(
-            displays: [
-                (displayID: "Main", spaces: [(100, false), (101, false)], activeSpaceID: 100),
-                (displayID: "Secondary", spaces: [(200, false), (201, false)], activeSpaceID: 201),
-            ],
-            activeDisplayID: "Secondary"
-        )
-
-        updateStub(
-            displays: [
-                (displayID: "Main", spaces: [(100, false), (101, false)], activeSpaceID: 100),
-                (displayID: "Secondary", spaces: [(200, false), (201, false), (202, false)], activeSpaceID: 202),
-            ]
-        )
-        sut.forceSpaceUpdate()
-
-        #expect(SpacePreferences.iconStyle(forSpace: 3, display: "Secondary", store: store) == .circle)
-        #expect(SpacePreferences.iconStyle(forSpace: 5, display: "Secondary", store: store) == nil)
-        #expect(SpacePreferences.iconStyle(forSpace: 3, display: "Main", store: store) == nil)
-    }
-
-    @Test("new space after a fullscreen space uses its array-index key")
-    func newSpace_afterFullscreenSpace_usesArrayIndexKey() {
-        SpacePreferences.setIconStyle(.circle, forSpace: 1, store: store)
-        SpacePreferences.saveDefaultStyle(fromSpace: 1, store: store)
-
-        let sut = makeAppState(
-            spaces: [(100, false), (200, true)],
-            activeSpaceID: 100
-        )
-
-        updateStub(
-            spaces: [(100, false), (200, true), (101, false)],
-            activeSpaceID: 101
-        )
-        sut.forceSpaceUpdate()
-
-        // Preferences are keyed by array index + 1, so the new regular space
-        // (after the fullscreen entry) is space 3, not space 2
-        #expect(SpacePreferences.iconStyle(forSpace: 3, store: store) == .circle)
-        #expect(SpacePreferences.iconStyle(forSpace: 2, store: store) == nil)
-    }
-
-    // MARK: - No Default Style
-
-    @Test("new space without default style stays unconfigured")
-    func newSpace_noDefaultStyle_getsNoCustomization() {
-        let sut = makeAppState(
-            spaces: [(100, false), (101, false)],
-            activeSpaceID: 101
-        )
-        SpacePreferences.setIconStyle(.circle, forSpace: 2, store: store)
-
-        updateStub(
-            spaces: [(100, false), (101, false), (102, false)],
-            activeSpaceID: 102
-        )
-        sut.forceSpaceUpdate()
-
-        #expect(!SpacePreferences.hasAnyPreference(forSpace: 3, store: store))
-    }
-
-    // MARK: - Guards
-
-    @Test("does not overwrite preferences already set on the new space")
-    func newSpace_doesNotApplyDefaultWhenTargetHasPreferences() {
-        SpacePreferences.setIconStyle(.circle, forSpace: 1, store: store)
-        SpacePreferences.saveDefaultStyle(fromSpace: 1, store: store)
+    @Test("own preference wins over the template")
+    func ownPreference_winsOverTemplate() {
+        saveTemplate(style: .circle)
         SpacePreferences.setIconStyle(.hexagon, forSpace: 3, store: store)
-
-        let sut = makeAppState(
-            spaces: [(100, false), (101, false)],
-            activeSpaceID: 100
-        )
-
-        updateStub(
-            spaces: [(100, false), (101, false), (102, false)],
-            activeSpaceID: 102
-        )
-        sut.forceSpaceUpdate()
 
         #expect(SpacePreferences.iconStyle(forSpace: 3, store: store) == .hexagon)
     }
 
-    @Test("does not apply default when space count decreases")
-    func newSpace_doesNotApplyDefaultWhenSpaceCountDecreases() {
+    @Test("cascade falls back per key, not per space")
+    func cascade_isPerKey() {
         SpacePreferences.setIconStyle(.circle, forSpace: 1, store: store)
+        SpacePreferences.setColors(
+            SpaceColors(foreground: .red, background: .blue), forSpace: 1, store: store
+        )
         SpacePreferences.saveDefaultStyle(fromSpace: 1, store: store)
+        SpacePreferences.setSymbol("flame.fill", forSpace: 3, store: store)
 
-        let sut = makeAppState(
-            spaces: [(100, false), (101, false), (102, false)],
-            activeSpaceID: 101
-        )
-
-        updateStub(
-            spaces: [(100, false), (101, false)],
-            activeSpaceID: 101
-        )
-        sut.forceSpaceUpdate()
-
-        #expect(SpacePreferences.iconStyle(forSpace: 3, store: store) == nil)
+        // Space 3 keeps its symbol and inherits everything else
+        #expect(SpacePreferences.symbol(forSpace: 3, store: store) == "flame.fill")
+        #expect(SpacePreferences.iconStyle(forSpace: 3, store: store) == .circle)
+        #expect(SpacePreferences.colors(forSpace: 3, store: store)?.foreground == .red)
     }
 
-    @Test("does not apply default on initial launch")
-    func newSpace_doesNotApplyDefaultOnInitialLaunch() {
-        SpacePreferences.setIconStyle(.circle, forSpace: 1, store: store)
-        SpacePreferences.saveDefaultStyle(fromSpace: 1, store: store)
-
-        _ = makeAppState(
-            spaces: [(100, false), (101, false), (102, false)],
-            activeSpaceID: 100
+    @Test("template edits reach inheriting spaces immediately")
+    func templateEdit_reachesInheritors() {
+        saveTemplate(style: .circle)
+        SpacePreferences.setIconStyle(
+            .hexagon, forSpace: SpacePreferences.defaultStyleSpace, store: store
         )
 
-        #expect(SpacePreferences.iconStyle(forSpace: 2, store: store) == nil)
-        #expect(SpacePreferences.iconStyle(forSpace: 3, store: store) == nil)
+        #expect(SpacePreferences.iconStyle(forSpace: 5, store: store) == .hexagon)
     }
 
-    // MARK: - Per-Display
+    @Test("template does not fall back to itself")
+    func template_doesNotFallBackToItself() {
+        #expect(SpacePreferences.iconStyle(forSpace: SpacePreferences.defaultStyleSpace, store: store) == nil)
+        #expect(!SpacePreferences.hasDefaultStyle(store: store))
+    }
 
-    @Test("per-display default applies to new space on its display")
-    func newSpace_appliesDefault_perDisplay() {
+    @Test("no template means no fallback")
+    func noTemplate_noFallback() {
+        #expect(SpacePreferences.iconStyle(forSpace: 3, store: store) == nil)
+        #expect(!SpacePreferences.hasAnyPreference(forSpace: 3, store: store))
+    }
+
+    @Test("clearing a preference returns the space to the template")
+    func clear_returnsToTemplate() {
+        saveTemplate(style: .circle)
+        SpacePreferences.setIconStyle(.hexagon, forSpace: 3, store: store)
+        SpacePreferences.clearIconStyle(forSpace: 3, store: store)
+
+        #expect(SpacePreferences.iconStyle(forSpace: 3, store: store) == .circle)
+    }
+
+    @Test("empty-string sentinels stop the cascade for symbol and label")
+    func sentinels_stopCascade() {
+        SpacePreferences.setSymbol("star.fill", forSpace: 1, store: store)
+        SpacePreferences.setLabel("Work", forSpace: 1, store: store)
+        SpacePreferences.saveDefaultStyle(fromSpace: 1, store: store)
+
+        SpacePreferences.setSymbol("", forSpace: 3, store: store)
+        SpacePreferences.setLabel("", forSpace: 3, store: store)
+
+        #expect(SpacePreferences.symbol(forSpace: 3, store: store) == nil)
+        #expect(SpacePreferences.label(forSpace: 3, store: store) == nil)
+        // Other spaces still inherit
+        #expect(SpacePreferences.symbol(forSpace: 4, store: store) == "star.fill")
+        #expect(SpacePreferences.label(forSpace: 4, store: store) == "Work")
+    }
+
+    @Test("sound does not cascade from the template slot")
+    func sound_doesNotCascade() {
+        SpacePreferences.setSound(
+            "Glass", forSpace: SpacePreferences.defaultStyleSpace, store: store
+        )
+
+        #expect(SpacePreferences.sound(forSpace: 3, store: store) == nil)
+    }
+
+    @Test("per-display value wins, absent per-display falls back to the shared template")
+    func perDisplay_fallsBackToSharedTemplate() {
+        saveTemplate(style: .circle)
         store.uniqueIconsPerDisplay = true
+        SpacePreferences.setIconStyle(.hexagon, forSpace: 2, display: "Main", store: store)
 
-        SpacePreferences.setIconStyle(.circle, forSpace: 1, display: "Main", store: store)
-        SpacePreferences.saveDefaultStyle(fromSpace: 1, display: "Main", store: store)
-
-        let sut = makeAppState(
-            spaces: [(100, false)],
-            activeSpaceID: 100
-        )
-
-        updateStub(
-            spaces: [(100, false), (101, false)],
-            activeSpaceID: 101
-        )
-        sut.forceSpaceUpdate()
-
-        #expect(SpacePreferences.iconStyle(forSpace: 2, display: "Main", store: store) == .circle)
+        #expect(SpacePreferences.iconStyle(forSpace: 2, display: "Main", store: store) == .hexagon)
+        #expect(SpacePreferences.iconStyle(forSpace: 3, display: "Main", store: store) == .circle)
+        #expect(SpacePreferences.iconStyle(forSpace: 2, display: "Secondary", store: store) == .circle)
     }
 
-    // MARK: - Switching Without New Space
+    // MARK: - Save as Default
 
-    @Test("switching active space does not apply default")
-    func switchingSpaces_doesNotApplyDefault() {
+    @Test("saveDefaultStyle strips the source space into an inheritor")
+    func saveDefaultStyle_stripsSource() {
         SpacePreferences.setIconStyle(.circle, forSpace: 1, store: store)
+        SpacePreferences.setColors(
+            SpaceColors(foreground: .red, background: .blue), forSpace: 1, store: store
+        )
         SpacePreferences.saveDefaultStyle(fromSpace: 1, store: store)
 
-        let sut = makeAppState(
-            spaces: [(100, false), (101, false), (102, false)],
-            activeSpaceID: 100
-        )
+        #expect(!SpacePreferences.hasAnyPreference(forSpace: 1, store: store))
+        #expect(SpacePreferences.hasDefaultStyle(store: store))
+        // The source renders identically, now via the cascade
+        #expect(SpacePreferences.iconStyle(forSpace: 1, store: store) == .circle)
+        #expect(SpacePreferences.colors(forSpace: 1, store: store)?.foreground == .red)
+    }
 
-        updateStub(
-            spaces: [(100, false), (101, false), (102, false)],
-            activeSpaceID: 101
-        )
-        sut.forceSpaceUpdate()
+    @Test("saveDefaultStyle leaves the source's sound alone")
+    func saveDefaultStyle_keepsSourceSound() {
+        SpacePreferences.setIconStyle(.circle, forSpace: 1, store: store)
+        SpacePreferences.setSound("Glass", forSpace: 1, store: store)
+        SpacePreferences.saveDefaultStyle(fromSpace: 1, store: store)
 
-        #expect(SpacePreferences.iconStyle(forSpace: 2, store: store) == nil)
+        #expect(SpacePreferences.sound(forSpace: 1, store: store) == "Glass")
+        #expect(SpacePreferences.sound(forSpace: SpacePreferences.defaultStyleSpace, store: store) == nil)
+    }
+
+    // MARK: - Migration
+
+    /// Re-creates what the retired creation-time stamp wrote: a full copy
+    /// of the template's preferences under a space's own keys.
+    private func stamp(space: Int) {
+        SpacePreferences.copyPreferences(
+            from: SpacePreferences.defaultStyleSpace, to: space, fromDisplay: nil, toDisplay: nil, store: store
+        )
+    }
+
+    @Test("migration strips spaces whose stored preferences match the template")
+    func migration_stripsExactMatches() {
+        saveTemplate(style: .circle, symbol: "star.fill")
+        stamp(space: 2)
+        stamp(space: 3)
+        SpacePreferences.setSound("Glass", forSpace: 3, store: store)
+
+        SpacePreferences.migrateStampedTemplateCopies(store: store)
+
+        #expect(!SpacePreferences.hasAnyPreference(forSpace: 2, store: store))
+        // The sound-only leftover survives; the stamped copies are gone
+        #expect(SpacePreferences.sound(forSpace: 3, store: store) == "Glass")
+        #expect(store.spaceIconStyles[3] == nil)
+        // Rendering is unchanged: both spaces resolve the template
+        #expect(SpacePreferences.iconStyle(forSpace: 2, store: store) == .circle)
+        #expect(SpacePreferences.iconStyle(forSpace: 3, store: store) == .circle)
+    }
+
+    @Test("migration keeps spaces that differ from the template")
+    func migration_keepsDifferingSpaces() {
+        saveTemplate(style: .circle, symbol: "star.fill")
+        stamp(space: 2)
+        SpacePreferences.setIconStyle(.hexagon, forSpace: 2, store: store)
+
+        SpacePreferences.migrateStampedTemplateCopies(store: store)
+
+        #expect(SpacePreferences.iconStyle(forSpace: 2, store: store) == .hexagon)
+        #expect(store.spaceSymbols[2] == "star.fill")
+    }
+
+    @Test("migration scans per-display copies regardless of the current storage mode")
+    func migration_stripsPerDisplayCopies() {
+        saveTemplate(style: .circle)
+        // A stamp written while uniqueIconsPerDisplay was on
+        store.displaySpaceIconStyles = ["Main": [2: .circle]]
+
+        SpacePreferences.migrateStampedTemplateCopies(store: store)
+
+        #expect(store.displaySpaceIconStyles["Main"]?[2] == nil)
+    }
+
+    @Test("migration runs once")
+    func migration_runsOnce() {
+        saveTemplate(style: .circle)
+        SpacePreferences.migrateStampedTemplateCopies(store: store)
+        #expect(store.spaceStyleMigrationVersion == 1)
+
+        stamp(space: 2)
+        SpacePreferences.migrateStampedTemplateCopies(store: store)
+
+        #expect(store.spaceIconStyles[2] == .circle)
+    }
+
+    @Test("migration without a template only sets the flag")
+    func migration_withoutTemplate_setsFlagOnly() {
+        SpacePreferences.setIconStyle(.hexagon, forSpace: 2, store: store)
+        var snapshotCalls = 0
+
+        SpacePreferences.migrateStampedTemplateCopies(store: store) {
+            snapshotCalls += 1
+        }
+
+        #expect(store.spaceStyleMigrationVersion == 1)
+        #expect(snapshotCalls == 0)
+        #expect(SpacePreferences.iconStyle(forSpace: 2, store: store) == .hexagon)
+    }
+
+    @Test("migration snapshots before stripping")
+    func migration_snapshotsFirst() {
+        saveTemplate(style: .circle)
+        stamp(space: 2)
+        var snapshotCalls = 0
+
+        SpacePreferences.migrateStampedTemplateCopies(store: store) {
+            snapshotCalls += 1
+            #expect(store.spaceIconStyles[2] == .circle)
+        }
+
+        #expect(snapshotCalls == 1)
+        #expect(store.spaceIconStyles[2] == nil)
     }
 }

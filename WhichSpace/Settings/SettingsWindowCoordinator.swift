@@ -68,9 +68,10 @@ final class SettingsWindowCoordinator {
     /// `orderFrontRegardless` + `activate` is what reliably fronts a window
     /// from an accessory (LSUIElement) app.
     ///
-    /// A nil pane leaves whichever pane was last shown selected. An anchor
-    /// briefly highlights one row, for links that point at a single setting.
-    func show(pane: SettingsPaneID? = nil, anchor: SettingsAnchor? = nil) {
+    /// A nil pane leaves whichever pane was last shown selected. A focus
+    /// brings one row into view, for links that point at a single setting,
+    /// and briefly highlights it when the link asked for emphasis.
+    func show(pane: SettingsPaneID? = nil, focus: SettingsFocus? = nil) {
         var isFirstShow = false
         if windowController == nil {
             isFirstShow = true
@@ -113,7 +114,7 @@ final class SettingsWindowCoordinator {
         // without a highlighted toggle; Tab still reaches every control
         windowController?.window?.makeFirstResponder(nil)
         // Set last so the fade runs against a pane that is already on screen
-        highlighter.highlight(anchor)
+        highlighter.point(at: focus)
     }
 
     /// Opens the window above screen center so taller panes, which grow

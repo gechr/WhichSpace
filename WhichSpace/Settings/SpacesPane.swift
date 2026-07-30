@@ -28,11 +28,13 @@ struct SpacesPane: View {
         }
     }
 
-    /// The editor column keeps its base-configuration width; the pane's
-    /// total width follows the list's natural width.
+    /// The editor column keeps its base-configuration width, widened by the
+    /// gutter its cards give up to the scroller; the pane's total width
+    /// follows the list's natural width.
     private var editorWidth: Double {
         Layout.settingsSpacesPaneWidth - Layout.settingsSpaceListWidth
             - Layout.settingsSectionSpacing - 2 * Layout.settingsPanePadding
+            + Layout.settingsSpacesEditorGutter
     }
 
     // MARK: - Space List
@@ -76,6 +78,17 @@ struct SpacesPane: View {
 
     private var listOverflows: Bool {
         listContentHeight > Layout.settingsSpaceListMaxHeight
+    }
+
+    /// The width of the widest row icon. Styles like the pill auto-expand
+    /// for two-digit numbers, so each row centers its icon in a shared
+    /// column instead of letting wide icons eat the gap to the title.
+    private var listIconColumnWidth: Double {
+        var widths = [model.listIcon(for: .defaultStyle).size.width]
+        for candidate in model.spaceEntries {
+            widths.append(model.listIcon(for: .space(candidate.number)).size.width)
+        }
+        return widths.max() ?? 0
     }
 
     /// The height the list needs to show every row without scrolling: each
@@ -131,14 +144,8 @@ struct SpacesPane: View {
             model.selection = selection
         } label: {
             HStack(spacing: 8) {
-                if selection == .defaultStyle {
-                    Image(systemName: "paintbrush.fill")
-                        .font(.system(size: icon.size.height * 0.5, weight: .semibold))
-                        .foregroundStyle(.secondary)
-                        .frame(width: icon.size.width, height: icon.size.height)
-                } else {
-                    Image(nsImage: icon)
-                }
+                Image(nsImage: icon)
+                    .frame(width: listIconColumnWidth, alignment: .center)
                 if let title {
                     Text(title)
                         .lineLimit(1)
@@ -150,6 +157,24 @@ struct SpacesPane: View {
                         )
                 }
                 Spacer(minLength: 0)
+                // Rows with their own style carry a revert button; resetSpace
+                // confirms through the model before clearing anything. The
+                // slot is reserved on every row so the list width does not
+                // jump when a Space first gains its own style.
+                ZStack {
+                    if case let .space(number) = selection, model.hasOwnStyle(for: selection) {
+                        Button {
+                            model.resetSpace(number)
+                        } label: {
+                            Image(systemName: "arrow.counterclockwise")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundStyle(.secondary)
+                        }
+                        .buttonStyle(.plain)
+                        .help(Localization.tipHasOwnStyle)
+                    }
+                }
+                .frame(width: 14)
             }
             .opacity(dimmed ? 0.5 : 1)
             .padding(.horizontal, 10)
@@ -175,12 +200,17 @@ struct SpacesPane: View {
 
     private var editorColumn: some View {
         VStack(alignment: .leading, spacing: Layout.settingsSectionSpacing) {
-            if model.isEditingDefaultStyle {
-                defaultStyleBanner
+            // These sit outside the scroll view, so they take the scroller
+            // gutter themselves to stay aligned with the scrolling cards
+            Group {
+                if model.isEditingDefaultStyle {
+                    defaultStyleBanner
+                }
+                SettingsSection(Localization.labelPreview, anchor: .preview) {
+                    previewRow
+                }
             }
-            SettingsSection(Localization.labelPreview, anchor: .preview) {
-                previewRow
-            }
+            .padding(.trailing, Layout.settingsSpacesEditorGutter)
             // This is the one pane tall enough to scroll, so a deep-linked row
             // has to be brought into view rather than only highlighted
             ScrollViewReader { proxy in
@@ -190,6 +220,9 @@ struct SpacesPane: View {
                         colorPanel: colorPanel,
                         onOpenCustomSoundsFolder: onOpenCustomSoundsFolder
                     )
+                    // The scroller sits at the trailing edge, so the cards
+                    // stop short of it rather than running up against it
+                    .padding(.trailing, Layout.settingsSpacesEditorGutter)
                 }
                 .frame(height: Layout.settingsSpacesEditorHeight)
                 // onAppear covers a link that opens the window on this pane,

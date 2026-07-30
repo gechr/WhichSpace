@@ -237,6 +237,7 @@ struct DefaultsIsolationGuardTests {
             "spaceLabelStyles",
             "spaceSkinTones",
             "spaceSounds",
+            "spaceStyleMigrationVersion",
             "spaceSymbolGaps",
             "spaceSymbolPositions",
             "spaceSymbols",

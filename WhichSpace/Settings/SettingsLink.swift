@@ -99,28 +99,73 @@ enum SettingsAnchor: String, CaseIterable {
     }
 }
 
+// MARK: - SettingsFocus
+
+/// What a deep link asks the window to do with the setting it names.
+///
+/// Both forms select the pane and scroll the row into view; only `highlight`
+/// lights it up, so a link can land on a setting without the flash of
+/// emphasis.
+enum SettingsFocus: Equatable {
+    case highlight(SettingsAnchor)
+    case navigate(SettingsAnchor)
+
+    /// The row the link points at, whichever form it took.
+    var anchor: SettingsAnchor {
+        switch self {
+        case let .highlight(anchor), let .navigate(anchor):
+            anchor
+        }
+    }
+
+    /// Whether the row lights up once it is in view.
+    var isEmphasized: Bool {
+        switch self {
+        case .highlight:
+            true
+        case .navigate:
+            false
+        }
+    }
+}
+
 // MARK: - SettingsHighlighter
 
-/// Tracks the row a deep link asked to emphasize.
+/// Tracks the row a deep link pointed at, and whether it asked for emphasis.
 ///
-/// The highlight clears itself after a few seconds so it reads as a pointer
-/// to a setting rather than a state the row is stuck in.
+/// The focus clears itself after a few seconds so a highlight reads as a
+/// pointer to a setting rather than a state the row is stuck in.
 @MainActor
 @Observable
 final class SettingsHighlighter {
     /// How long a highlight stays lit before fading on its own
     static let duration: Duration = .seconds(3)
 
-    private(set) var anchor: SettingsAnchor?
+    private(set) var focus: SettingsFocus?
+
+    /// The row a link pointed at, whether or not it lights up.
+    var anchor: SettingsAnchor? {
+        focus?.anchor
+    }
 
     @ObservationIgnored private var clearTask: Task<Void, Never>?
 
-    /// Lights the given row, replacing any highlight already showing. Passing
-    /// nil clears immediately, which is what a paneless link wants.
-    func highlight(_ anchor: SettingsAnchor?) {
+    /// Whether the given row is the one a link asked to light up. Rows carry
+    /// their own anchor, so they ask rather than compare.
+    func isEmphasizing(_ anchor: SettingsAnchor?) -> Bool {
+        guard let anchor, let focus, focus.isEmphasized else {
+            return false
+        }
+        return focus.anchor.target == anchor
+    }
+
+    /// Points the window at a row, replacing whatever a previous link asked
+    /// for. Passing nil clears immediately, which is what a paneless link
+    /// wants.
+    func point(at focus: SettingsFocus?) {
         clearTask?.cancel()
-        self.anchor = anchor
-        guard anchor != nil else {
+        self.focus = focus
+        guard focus != nil else {
             return
         }
         clearTask = Task { [weak self] in
@@ -128,7 +173,7 @@ final class SettingsHighlighter {
             guard !Task.isCancelled else {
                 return
             }
-            self?.anchor = nil
+            self?.focus = nil
         }
     }
 }

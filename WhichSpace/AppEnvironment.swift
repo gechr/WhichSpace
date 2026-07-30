@@ -1,3 +1,5 @@
+import Foundation
+
 /// Composition root that centralises the creation and ownership of
 /// the app's core dependencies.
 ///
@@ -12,6 +14,31 @@ struct AppEnvironment {
 
     static let shared: AppEnvironment = {
         let store = DefaultsStore(suite: .standard)
+        // Runs before AppState builds its first snapshot, so no icon is ever
+        // rendered from unmigrated preferences.
+        SpacePreferences.migrateStampedTemplateCopies(store: store) {
+            Self.writePreMigrationBackup(store: store)
+        }
         return Self(appState: AppState(store: store), store: store)
     }()
+
+    /// Best-effort safety net: the migration only removes per-space values
+    /// proven identical to the default style template, but keep a snapshot
+    /// in Application Support in case a report proves that wrong.
+    private static func writePreMigrationBackup(store: DefaultsStore) {
+        guard let json = try? BackupManager.encode(store: store),
+              let support = FileManager.default.urls(
+                  for: .applicationSupportDirectory, in: .userDomainMask
+              ).first
+        else {
+            return
+        }
+        let directory = support.appendingPathComponent("WhichSpace", isDirectory: true)
+        try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        try? json.write(
+            to: directory.appendingPathComponent("PreMigrationBackup.json"),
+            atomically: true,
+            encoding: .utf8
+        )
+    }
 }

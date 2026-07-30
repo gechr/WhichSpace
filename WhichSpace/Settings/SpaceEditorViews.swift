@@ -30,10 +30,24 @@ struct SpaceEditorView: View {
             soundSection
         }
         .task {
-            userSounds = await Task.detached(priority: .userInitiated) {
-                SoundCatalog.discoverUserSounds()
-            }.value
+            await rescanUserSounds()
         }
+        // Dropping a file into ~/Library/Sounds happens in Finder, so the
+        // return trip makes the settings window key again - rescan then,
+        // rather than only on first appearance
+        .onReceive(
+            NotificationCenter.default.publisher(for: NSWindow.didBecomeKeyNotification)
+        ) { _ in
+            Task {
+                await rescanUserSounds()
+            }
+        }
+    }
+
+    private func rescanUserSounds() async {
+        userSounds = await Task.detached(priority: .userInitiated) {
+            SoundCatalog.discoverUserSounds()
+        }.value
     }
 
     /// Cell identity for state that must reset when the edited entry changes.
@@ -179,9 +193,7 @@ struct SpaceEditorView: View {
             .padding(.vertical, Layout.settingsRowVerticalPadding)
             if symbolCatalog == .emojis || rules.symbolIsEmoji {
                 SettingsRowDivider()
-                SettingsRow(icon: "hand.wave", anchor: .skinTone) {
-                    Text(Localization.labelSkinTone)
-                } control: {
+                SettingsControlRow(anchor: .skinTone) {
                     SkinToneRow(selected: rules.symbolIsEmoji ? model.skinTone : model.pickerSkinTone) { tone in
                         model.setPickerSkinTone(tone)
                         if rules.symbolIsEmoji {
@@ -397,7 +409,13 @@ struct SpaceEditorView: View {
 
     private var soundSection: some View {
         SettingsSection(Localization.menuSound) {
-            SettingsRow(icon: "speaker.wave.2", subtitle: Localization.tipSound, anchor: .sound) {
+            // A Space's sound plays on arrival at that Space; only the
+            // template row edits the sound for every switch
+            SettingsRow(
+                icon: "speaker.wave.2",
+                subtitle: model.isEditingDefaultStyle ? Localization.tipSound : Localization.tipSoundSpace,
+                anchor: .sound
+            ) {
                 Text(Localization.menuSound)
             } control: {
                 soundPicker
@@ -421,15 +439,24 @@ struct SpaceEditorView: View {
                 Divider()
             }
             Text(Localization.soundNone).tag(String?.some(""))
-            if !userSounds.isEmpty {
+            // The group headers only disambiguate when both groups exist;
+            // with no user sounds the system list stands alone unlabeled
+            if userSounds.isEmpty {
                 Divider()
-                ForEach(userSounds, id: \.self) { sound in
+                ForEach(SoundCatalog.systemSounds, id: \.self) { sound in
                     Text(sound).tag(String?.some(sound))
                 }
-            }
-            Divider()
-            ForEach(SoundCatalog.systemSounds, id: \.self) { sound in
-                Text(sound).tag(String?.some(sound))
+            } else {
+                Section(Localization.soundUser) {
+                    ForEach(userSounds, id: \.self) { sound in
+                        Text(sound).tag(String?.some(sound))
+                    }
+                }
+                Section(Localization.soundSystem) {
+                    ForEach(SoundCatalog.systemSounds, id: \.self) { sound in
+                        Text(sound).tag(String?.some(sound))
+                    }
+                }
             }
         }
     }

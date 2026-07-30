@@ -207,16 +207,9 @@ final class StatusBarRenderer {
             space
         }
 
-        // A Space that does not exist yet and has no preferences of its own
-        // will receive the default style template when it is created, so
-        // render it from the template (which lives in the shared maps under
-        // space 0) while keeping its own number.
-        let inheritsTemplate = !isTemplate && entry == nil
-            && !SpacePreferences.hasAnyPreference(forSpace: space, display: displayID, store: store)
-            && SpacePreferences.hasDefaultStyle(store: store)
-        let prefSpace = inheritsTemplate ? SpacePreferences.defaultStyleSpace : space
-        let prefLabels = inheritsTemplate ? store.spaceLabels : labels
-
+        // Preference getters and fetchLabels resolve through the default
+        // style template, so a Space without its own values - existing or
+        // not yet created - renders the template while keeping its number.
         let label: String = if let entry {
             displayLabel(
                 entry: entry,
@@ -225,19 +218,19 @@ final class StatusBarRenderer {
                 labels: labels,
                 isFullscreen: entry.label == Labels.fullscreen
             )
-        } else if let custom = prefLabels[prefSpace], !custom.isEmpty {
+        } else if let custom = labels[space], !custom.isEmpty {
             LabelTemplate.resolve(custom, space: displayNumber)
         } else {
             String(displayNumber)
         }
 
         let spec = resolveIconSpec(
-            forSpace: prefSpace,
+            forSpace: space,
             spaceID: entry?.id ?? 0,
             displayNumber: displayNumber,
             label: label,
-            labels: prefLabels,
-            displayID: isTemplate || inheritsTemplate ? nil : displayID,
+            labels: labels,
+            displayID: isTemplate ? nil : displayID,
             darkMode: appState.darkModeEnabled
         )
         let base = render(spec)
@@ -939,12 +932,19 @@ final class StatusBarRenderer {
         return globalStartIndex + max(localRegularIndex - 1, 0)
     }
 
-    /// Fetches all custom labels for a display in a single read.
+    /// Fetches all custom labels for a display in a single read, overlaying
+    /// the default style template: a space with no label of its own inherits
+    /// the template's (stored under space 0 in the shared map), and a stored
+    /// empty string - the explicit "no label" sentinel - drops out.
     private func fetchLabels(displayID: String) -> [Int: String] {
-        if store.uniqueIconsPerDisplay {
-            return store.displaySpaceLabels[displayID] ?? [:]
+        var labels = store.uniqueIconsPerDisplay
+            ? store.displaySpaceLabels[displayID] ?? [:]
+            : store.spaceLabels
+        let template = store.spaceLabels[SpacePreferences.defaultStyleSpace]
+        for space in 1 ... Layout.maxSpacesPerDisplay where labels[space] == nil {
+            labels[space] = template
         }
-        return store.spaceLabels
+        return labels.filter { !$0.value.isEmpty }
     }
 
     /// Resolves the `#` badge token to the current space number.

@@ -11,11 +11,13 @@ import Foundation
 /// - `whichspace://settings/spaces` - open settings on a named pane
 /// - `whichspace://settings?highlight=icon-size` - open settings on whichever
 ///   pane holds that setting and highlight it
+/// - `whichspace://settings?navigate=icon-size` - the same, without lighting
+///   the row up
 enum URLCommand: Equatable {
     case switchToSpace(number: Int, label: String?, badge: String?)
     case switchToNext
     case switchToPrevious
-    case openSettings(pane: SettingsPaneID?, anchor: SettingsAnchor?)
+    case openSettings(pane: SettingsPaneID?, focus: SettingsFocus?)
 
     /// Parses a `whichspace://` URL into a command, or nil when the URL
     /// does not match a supported form. Matching is case-insensitive.
@@ -72,8 +74,15 @@ enum URLCommand: Equatable {
             return nil
         }
 
-        guard let raw = queryValue(url, "highlight") else {
-            return .openSettings(pane: pane, anchor: nil)
+        let highlighted = queryValue(url, "highlight")
+        let navigated = queryValue(url, "navigate")
+        // The two forms ask for opposite treatment of the same row, so a link
+        // carrying both states no intent at all
+        guard highlighted == nil || navigated == nil else {
+            return nil
+        }
+        guard let raw = highlighted ?? navigated else {
+            return .openSettings(pane: pane, focus: nil)
         }
         guard let anchor = SettingsAnchor(rawValue: raw.lowercased()) else {
             return nil
@@ -83,7 +92,8 @@ enum URLCommand: Equatable {
         guard pane == nil || pane == anchor.pane else {
             return nil
         }
-        return .openSettings(pane: anchor.pane, anchor: anchor)
+        let focus: SettingsFocus = highlighted == nil ? .navigate(anchor) : .highlight(anchor)
+        return .openSettings(pane: anchor.pane, focus: focus)
     }
 
     private static func queryValue(_ url: URL, _ name: String) -> String? {

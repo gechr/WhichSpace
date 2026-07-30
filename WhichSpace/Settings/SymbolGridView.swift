@@ -46,6 +46,12 @@ struct SymbolGridView: View {
                 .padding(.vertical, 2)
             }
             .frame(height: Self.gridHeight)
+            // A shared scroll view keeps its offset across a catalog swap, and
+            // the catalogs differ enough in length that an offset deep into the
+            // longer one clamps into the shorter one, realizing hundreds of
+            // cells in a single update. A fresh scroll view per catalog starts
+            // each at the top and materializes one screenful.
+            .id(catalog)
         }
     }
 
@@ -149,17 +155,23 @@ struct SkinToneRow: View {
                 } label: {
                     Text(Self.skinToneEmojis[tone.rawValue])
                         .font(.system(size: 15))
-                        .frame(width: 22, height: 22)
+                        .frame(width: 28, height: 28)
                         .overlay(
                             Circle()
                                 .strokeBorder(
                                     tone == selected ? AnyShapeStyle(.tint) : AnyShapeStyle(.clear),
-                                    lineWidth: 2
+                                    lineWidth: 2.5
                                 )
                         )
                 }
                 .buttonStyle(.plain)
             }
         }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 4)
+        .background(
+            RoundedRectangle(cornerRadius: 5, style: .continuous)
+                .fill(Color.gray.opacity(0.15))
+        )
     }
 }

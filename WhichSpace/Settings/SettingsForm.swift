@@ -55,7 +55,7 @@ struct SettingsSection<Content: View>: View {
     }
 
     private var isHighlighted: Bool {
-        anchor != nil && highlighter?.anchor?.target == anchor
+        highlighter?.isEmphasizing(anchor) == true
     }
 
     var body: some View {
@@ -86,6 +86,32 @@ struct SettingsSection<Content: View>: View {
 
 // MARK: - SettingsRow
 
+/// Paints the deep-link highlight on a card row and registers its scroll
+/// target. The fill is inset from the card edge so the highlight reads as one
+/// row rather than a second card stacked on the section.
+private struct SettingsRowHighlight: ViewModifier {
+    let anchor: SettingsAnchor?
+
+    @Environment(SettingsHighlighter.self) private var highlighter: SettingsHighlighter?
+
+    private var isHighlighted: Bool {
+        highlighter?.isEmphasizing(anchor) == true
+    }
+
+    func body(content: Content) -> some View {
+        content
+            .background {
+                if isHighlighted {
+                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                        .fill(Color.accentColor.opacity(0.25))
+                        .padding(.horizontal, 4)
+                }
+            }
+            .animation(.easeInOut(duration: 0.25), value: isHighlighted)
+            .settingsScrollAnchor(anchor)
+    }
+}
+
 /// A single card row: an optional SF Symbol (mirroring the status menu's
 /// icon for the same setting), the label with an optional always-visible
 /// subtitle, and the control pinned to the trailing edge.
@@ -101,12 +127,6 @@ struct SettingsRow<Label: View, Control: View>: View {
     var anchor: SettingsAnchor?
     @ViewBuilder var label: Label
     @ViewBuilder var control: Control
-
-    @Environment(SettingsHighlighter.self) private var highlighter: SettingsHighlighter?
-
-    private var isHighlighted: Bool {
-        anchor != nil && highlighter?.anchor?.target == anchor
-    }
 
     var body: some View {
         HStack {
@@ -140,17 +160,23 @@ struct SettingsRow<Label: View, Control: View>: View {
         .padding(.leading, indented ? Layout.settingsRowIndent : 0)
         .padding(.horizontal, Layout.settingsRowHorizontalPadding)
         .padding(.vertical, Layout.settingsRowVerticalPadding)
-        // Inset from the card edge so the highlight reads as one row rather
-        // than a second card stacked on the section
-        .background {
-            if isHighlighted {
-                RoundedRectangle(cornerRadius: 6, style: .continuous)
-                    .fill(Color.accentColor.opacity(0.25))
-                    .padding(.horizontal, 4)
-            }
-        }
-        .animation(.easeInOut(duration: 0.25), value: isHighlighted)
-        .settingsScrollAnchor(anchor)
+        .modifier(SettingsRowHighlight(anchor: anchor))
+    }
+}
+
+/// A card row holding only a control, centered across the row. Suits controls
+/// whose own contents name the setting, leaving no label to lead with.
+struct SettingsControlRow<Control: View>: View {
+    /// Identifies the row to `whichspace://settings?highlight=` deep links
+    var anchor: SettingsAnchor?
+    @ViewBuilder var control: Control
+
+    var body: some View {
+        control
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, Layout.settingsRowHorizontalPadding)
+            .padding(.vertical, Layout.settingsRowVerticalPadding)
+            .modifier(SettingsRowHighlight(anchor: anchor))
     }
 }
 

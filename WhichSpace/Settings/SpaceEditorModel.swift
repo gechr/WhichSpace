@@ -312,13 +312,27 @@ final class SpaceEditorModel {
         return SpacePreferences.hasDefaultStyle(store: store)
     }
 
+    /// Whether a Space list entry carries any style of its own instead of
+    /// following the default style template. Drives the list's indicator dot.
+    func hasOwnStyle(for selection: Selection) -> Bool {
+        _ = tick
+        guard case let .space(number) = selection else {
+            return false
+        }
+        return SpacePreferences.hasAnyPreference(
+            forSpace: number, display: selectedDisplayID, store: store
+        )
+    }
+
     // MARK: - Writes
 
-    /// Selecting a number style returns the entry to plain-number mode,
-    /// clearing any symbol and label - the same semantics as the menu.
+    /// Selecting a number style returns the entry to plain-number mode. The
+    /// empty strings are explicit "none" sentinels rather than clears - a
+    /// clear would fall back to the default style template, letting an
+    /// inherited symbol or label bleed through the plain number.
     func setIconStyle(_ style: IconStyle) {
-        SpacePreferences.clearSymbol(forSpace: editingSpace, display: editingDisplay, store: store)
-        SpacePreferences.clearLabel(forSpace: editingSpace, display: editingDisplay, store: store)
+        SpacePreferences.setSymbol("", forSpace: editingSpace, display: editingDisplay, store: store)
+        SpacePreferences.setLabel("", forSpace: editingSpace, display: editingDisplay, store: store)
         SpacePreferences.setIconStyle(style, forSpace: editingSpace, display: editingDisplay, store: store)
         tick += 1
     }
@@ -569,16 +583,26 @@ final class SpaceEditorModel {
             }
             SpacePreferences.clearDefaultStyle(store: store)
         } else {
-            guard confirmAction(
-                Localization.confirmResetSpace,
-                Localization.detailResetSpace,
-                Localization.buttonReset,
-                true
-            ) else {
-                return
-            }
-            SpacePreferences.clearPreferences(forSpace: editingSpace, display: editingDisplay, store: store)
+            resetSpace(editingSpace)
+            return
         }
+        tick += 1
+    }
+
+    /// Clears one Space's own preferences after confirming, so it follows
+    /// the default style again. Selects the Space first: the confirmation
+    /// names "the current Space", and the reveal shows what is resetting.
+    func resetSpace(_ number: Int) {
+        selection = .space(number)
+        guard confirmAction(
+            Localization.confirmResetSpace,
+            Localization.detailResetSpace,
+            Localization.buttonReset,
+            true
+        ) else {
+            return
+        }
+        SpacePreferences.clearPreferences(forSpace: number, display: selectedDisplayID, store: store)
         tick += 1
     }
 

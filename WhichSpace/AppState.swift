@@ -472,7 +472,6 @@ final class AppState {
         }
 
         // Save previous values for space change detection
-        let oldDisplaysSpaceInfo = snapshot.allDisplaysSpaceInfo
         let oldSpaceID = snapshot.currentSpaceID
         let oldDisplayID = snapshot.currentDisplayID
 
@@ -487,47 +486,8 @@ final class AppState {
             SpaceSwitcher.resetPredictions()
         }
 
-        // Apply default style to newly created spaces
-        applyDefaultStyleToNewSpaces(previousDisplays: oldDisplaysSpaceInfo)
-
         // Post notification if space changed on the same display
         postCurrentDisplaySpaceChangeIfNeeded(oldSpaceID: oldSpaceID, oldDisplayID: oldDisplayID)
-    }
-
-    /// When an existing display gains new regular spaces, apply the stored default style to each
-    /// new local space index if it doesn't already have preferences set.
-    private func applyDefaultStyleToNewSpaces(previousDisplays: [DisplaySpaceInfo]) {
-        // Skip on initial launch or if no default style is saved.
-        guard !previousDisplays.isEmpty, SpacePreferences.hasDefaultStyle(store: store) else {
-            return
-        }
-
-        let previousCounts = Dictionary(
-            uniqueKeysWithValues: previousDisplays.map { ($0.displayID, $0.regularSpaceCount) }
-        )
-
-        for displayInfo in allDisplaysSpaceInfo {
-            guard let oldCount = previousCounts[displayInfo.displayID],
-                  displayInfo.regularSpaceCount > oldCount
-            else {
-                continue
-            }
-
-            let display = store.uniqueIconsPerDisplay ? displayInfo.displayID : nil
-            // Preferences are keyed by array index + 1 (fullscreen-inclusive), so derive
-            // each new regular space's key from its position in the entries array
-            for (arrayIndex, entry) in displayInfo.entries.enumerated() {
-                guard let regularIndex = entry.regularIndex, regularIndex > oldCount else {
-                    continue
-                }
-                let newSpace = arrayIndex + 1
-                guard !SpacePreferences.hasAnyPreference(forSpace: newSpace, display: display, store: store) else {
-                    continue
-                }
-
-                SpacePreferences.applyDefaultStyle(toSpace: newSpace, display: display, store: store)
-            }
-        }
     }
 
     /// Posts currentDisplaySpaceDidChange when the space changes on the same display

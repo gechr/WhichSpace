@@ -56,8 +56,8 @@ struct URLCommandsTests {
 
     @Test("settings without a pane opens the last pane shown")
     func settingsWithoutPane() {
-        #expect(parse("whichspace://settings") == .openSettings(pane: nil, anchor: nil))
-        #expect(parse("whichspace://settings/") == .openSettings(pane: nil, anchor: nil))
+        #expect(parse("whichspace://settings") == .openSettings(pane: nil, focus: nil))
+        #expect(parse("whichspace://settings/") == .openSettings(pane: nil, focus: nil))
     }
 
     @Test("every pane name parses")
@@ -65,14 +65,14 @@ struct URLCommandsTests {
         for pane in SettingsPaneID.allCases {
             #expect(
                 parse("whichspace://settings/\(pane.rawValue)")
-                    == .openSettings(pane: pane, anchor: nil)
+                    == .openSettings(pane: pane, focus: nil)
             )
         }
     }
 
     @Test("pane names are case-insensitive")
     func paneNamesAreCaseInsensitive() {
-        #expect(parse("whichspace://settings/MenuBar") == .openSettings(pane: .menuBar, anchor: nil))
+        #expect(parse("whichspace://settings/MenuBar") == .openSettings(pane: .menuBar, focus: nil))
     }
 
     @Test("every setting is reachable by highlight alone")
@@ -80,16 +80,38 @@ struct URLCommandsTests {
         for anchor in SettingsAnchor.allCases {
             #expect(
                 parse("whichspace://settings?highlight=\(anchor.rawValue)")
-                    == .openSettings(pane: anchor.pane, anchor: anchor)
+                    == .openSettings(pane: anchor.pane, focus: .highlight(anchor))
             )
         }
+    }
+
+    @Test("every setting is reachable by navigate alone")
+    func everyAnchorRoundTripsWithoutEmphasis() {
+        for anchor in SettingsAnchor.allCases {
+            #expect(
+                parse("whichspace://settings?navigate=\(anchor.rawValue)")
+                    == .openSettings(pane: anchor.pane, focus: .navigate(anchor))
+            )
+        }
+    }
+
+    @Test("navigate lands on the same row without emphasis")
+    func navigateSkipsEmphasis() {
+        let focus = SettingsFocus.navigate(.iconSize)
+        #expect(focus.anchor == SettingsFocus.highlight(.iconSize).anchor)
+        #expect(focus.isEmphasized == false)
+        #expect(SettingsFocus.highlight(.iconSize).isEmphasized)
     }
 
     @Test("a pane naming one of its own settings is accepted")
     func matchingPaneAndAnchorParse() {
         #expect(
             parse("whichspace://settings/switching?highlight=scroll-sensitivity")
-                == .openSettings(pane: .switching, anchor: .scrollSensitivity)
+                == .openSettings(pane: .switching, focus: .highlight(.scrollSensitivity))
+        )
+        #expect(
+            parse("whichspace://settings/switching?navigate=scroll-sensitivity")
+                == .openSettings(pane: .switching, focus: .navigate(.scrollSensitivity))
         )
     }
 
@@ -98,7 +120,11 @@ struct URLCommandsTests {
         #expect(parse("whichspace://settings/nowhere") == nil)
         #expect(parse("whichspace://settings/general/extra") == nil)
         #expect(parse("whichspace://settings?highlight=nothing") == nil)
+        #expect(parse("whichspace://settings?navigate=nothing") == nil)
         // The pane does not hold that setting, so neither reading is right
         #expect(parse("whichspace://settings/general?highlight=icon-size") == nil)
+        #expect(parse("whichspace://settings/general?navigate=icon-size") == nil)
+        // The two forms ask for opposite treatment of the same row
+        #expect(parse("whichspace://settings?highlight=icon-size&navigate=icon-size") == nil)
     }
 }

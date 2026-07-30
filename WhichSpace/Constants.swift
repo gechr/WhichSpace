@@ -122,6 +122,7 @@ enum Layout {
     static let settingsSpaceListMaxHeight = 800.0
     static let settingsSpaceListScrollerWidth = 16.0
     static let settingsSpaceNameMaxLength = 10
+    static let settingsSpacesEditorGutter = 10.0
     static let settingsSpacesEditorHeight = 480.0
     static let settingsSpacesPaneWidth = 680.0
     static let settingsSpacesPreviewHeight = 96.0
@@ -293,7 +294,6 @@ enum Localization {
     static let labelRight = String(localized: "label_right")
     static let labelSensitivity = String(localized: "label_sensitivity")
     static let labelSeparator = String(localized: "label_separator")
-    static let labelSkinTone = String(localized: "label_skin_tone")
     static let labelSymbol = String(localized: "label_symbol")
     static let labelSymbolBackground = String(localized: "label_symbol_background")
     static let labelSymbolForeground = String(localized: "label_symbol_foreground")
@@ -322,6 +322,8 @@ enum Localization {
     static let search = String(localized: "search")
     static let soundCustom = String(localized: "sound_custom")
     static let soundNone = String(localized: "sound_none")
+    static let soundSystem = String(localized: "sound_system")
+    static let soundUser = String(localized: "sound_user")
     static let tipCopyTo = String(localized: "tip_copy_to")
     static let tipBackup = String(localized: "tip_backup")
     static let tipBadgeInput = String(localized: "tip_badge_input")
@@ -332,6 +334,7 @@ enum Localization {
     static let tipClickToSwitchSpaces = String(localized: "tip_click_to_switch_spaces")
     static let tipDimInactiveSpaces = String(localized: "tip_dim_inactive_spaces")
     static let tipFont = String(localized: "tip_font")
+    static let tipHasOwnStyle = String(localized: "tip_has_own_style")
     static let tipHideEmptySpaces = String(localized: "tip_hide_empty_spaces")
     static let tipHideFullscreenApps = String(localized: "tip_hide_fullscreen_apps")
     static let tipHideSingleSpace = String(localized: "tip_hide_single_space")
@@ -352,6 +355,7 @@ enum Localization {
     static let tipShowAllDisplays = String(localized: "tip_show_all_displays")
     static let tipShowAllSpaces = String(localized: "tip_show_all_spaces")
     static let tipSound = String(localized: "tip_sound")
+    static let tipSoundSpace = String(localized: "tip_sound_space")
     static let tipUniqueIconsPerDisplay = String(localized: "tip_unique_icons_per_display")
     static let tipUseFForFullscreenApps = String(localized: "tip_use_f_for_fullscreen_apps")
     static let toggleAutoCheckUpdates = String(localized: "toggle_auto_check_updates")

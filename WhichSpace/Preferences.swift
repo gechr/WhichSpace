@@ -287,6 +287,46 @@ enum SpacePreferences {
                 }
             }
         }
+
+        /// The value the space renders with: its own stored value when
+        /// present, otherwise the default style template (space 0, shared
+        /// storage). An own value always wins, so a stored empty-string
+        /// sentinel stops the cascade before the template is consulted.
+        func resolve(forSpace spaceNumber: Int, display: String?, store: DefaultsStore) -> T? {
+            if let own = get(forSpace: spaceNumber, display: display, store: store) {
+                return own
+            }
+            guard spaceNumber != SpacePreferences.defaultStyleSpace else {
+                return nil
+            }
+            return get(forSpace: SpacePreferences.defaultStyleSpace, display: nil, store: store)
+        }
+
+        /// Reads directly from one storage family (shared when `context` is
+        /// nil, else that display's map), ignoring `uniqueIconsPerDisplay`.
+        /// Migration uses this to inspect stamped copies wherever they live.
+        func raw(forSpace spaceNumber: Int, context display: String?, store: DefaultsStore) -> T? {
+            if let display {
+                return store[keyPath: perDisplay][display]?[spaceNumber]
+            }
+            return store[keyPath: shared][spaceNumber]
+        }
+
+        /// Removes a value from one storage family, ignoring
+        /// `uniqueIconsPerDisplay`.
+        func removeRaw(forSpace spaceNumber: Int, context display: String?, store: DefaultsStore) {
+            if let display {
+                var perDisplayMap = store[keyPath: perDisplay]
+                guard var spaceMap = perDisplayMap[display] else {
+                    return
+                }
+                spaceMap.removeValue(forKey: spaceNumber)
+                perDisplayMap[display] = spaceMap
+                store[keyPath: perDisplay] = perDisplayMap
+            } else {
+                store[keyPath: shared].removeValue(forKey: spaceNumber)
+            }
+        }
     }
 
     private static let symbols = Accessor<String>(
@@ -326,14 +366,80 @@ enum SpacePreferences {
         shared: \.spaceSounds, perDisplay: \.displaySpaceSounds
     )
 
+    // MARK: - Template Accessors
+
+    /// Type-erased handle over one template-eligible accessor (every
+    /// per-space preference except sound), shared by template saves and
+    /// the stamped-copy migration.
+    private struct TemplateAccessor {
+        let clear: (Int, String?, DefaultsStore) -> Void
+        let hasRaw: (Int, String?, DefaultsStore) -> Bool
+        let rawMatchesTemplate: (Int, String?, DefaultsStore) -> Bool
+        let removeRaw: (Int, String?, DefaultsStore) -> Void
+        let displayKeys: (DefaultsStore) -> [String]
+    }
+
+    /// Colors and fonts compare through their serialized form: their
+    /// NSColor/NSFont equality is representation-sensitive, while equal
+    /// archives are what "same stored value" actually means here.
+    private static func erase<T: Equatable>(
+        _ accessor: Accessor<T>,
+        equals: @escaping (T?, T?) -> Bool = { $0 == $1 }
+    ) -> TemplateAccessor {
+        TemplateAccessor(
+            clear: { space, display, store in
+                accessor.set(nil, forSpace: space, display: display, store: store)
+            },
+            hasRaw: { space, context, store in
+                accessor.raw(forSpace: space, context: context, store: store) != nil
+            },
+            rawMatchesTemplate: { space, context, store in
+                equals(
+                    accessor.raw(forSpace: space, context: context, store: store),
+                    accessor.raw(forSpace: defaultStyleSpace, context: nil, store: store)
+                )
+            },
+            removeRaw: { space, context, store in
+                accessor.removeRaw(forSpace: space, context: context, store: store)
+            },
+            displayKeys: { store in
+                Array(store[keyPath: accessor.perDisplay].keys)
+            }
+        )
+    }
+
+    private static let templateAccessors: [TemplateAccessor] = [
+        erase(colorsAccessor) {
+            SpaceColors.bridge.serialize($0) == SpaceColors.bridge.serialize($1)
+        },
+        erase(fonts) {
+            SpaceFont.bridge.serialize($0) == SpaceFont.bridge.serialize($1)
+        },
+        erase(iconStyles),
+        erase(symbols),
+        erase(badges),
+        erase(labels),
+        erase(labelStyles),
+        erase(skinTones),
+        erase(symbolGaps),
+        erase(symbolPositions),
+        erase(symbolWraps),
+    ]
+
     // MARK: - Symbols (SF Symbols or Emojis)
 
+    /// The getters below resolve through the default style template: a
+    /// space without its own value inherits the template's, per key. A
+    /// stored empty string is an explicit "none" for symbol and label -
+    /// it stops the cascade and reads as nil, the same idiom
+    /// `resolvedSoundName` uses for silence.
     static func symbol(
         forSpace spaceNumber: Int,
         display: String? = nil,
         store: DefaultsStore = AppEnvironment.shared.store
     ) -> String? {
-        symbols.get(forSpace: spaceNumber, display: display, store: store)
+        let symbol = symbols.resolve(forSpace: spaceNumber, display: display, store: store)
+        return symbol?.isEmpty == false ? symbol : nil
     }
 
     static func setSymbol(
@@ -360,7 +466,7 @@ enum SpacePreferences {
         display: String? = nil,
         store: DefaultsStore = AppEnvironment.shared.store
     ) -> IconStyle? {
-        iconStyles.get(forSpace: spaceNumber, display: display, store: store)
+        iconStyles.resolve(forSpace: spaceNumber, display: display, store: store)
     }
 
     static func setIconStyle(
@@ -387,7 +493,8 @@ enum SpacePreferences {
         display: String? = nil,
         store: DefaultsStore = AppEnvironment.shared.store
     ) -> String? {
-        labels.get(forSpace: spaceNumber, display: display, store: store)
+        let label = labels.resolve(forSpace: spaceNumber, display: display, store: store)
+        return label?.isEmpty == false ? label : nil
     }
 
     static func setLabel(
@@ -420,7 +527,7 @@ enum SpacePreferences {
         display: String? = nil,
         store: DefaultsStore = AppEnvironment.shared.store
     ) -> IconStyle? {
-        labelStyles.get(forSpace: spaceNumber, display: display, store: store)
+        labelStyles.resolve(forSpace: spaceNumber, display: display, store: store)
     }
 
     static func setLabelStyle(
@@ -447,7 +554,7 @@ enum SpacePreferences {
         display: String? = nil,
         store: DefaultsStore = AppEnvironment.shared.store
     ) -> SpaceColors? {
-        colorsAccessor.get(forSpace: spaceNumber, display: display, store: store)
+        colorsAccessor.resolve(forSpace: spaceNumber, display: display, store: store)
     }
 
     static func setColors(
@@ -474,7 +581,7 @@ enum SpacePreferences {
         display: String? = nil,
         store: DefaultsStore = AppEnvironment.shared.store
     ) -> SpaceFont? {
-        fonts.get(forSpace: spaceNumber, display: display, store: store)
+        fonts.resolve(forSpace: spaceNumber, display: display, store: store)
     }
 
     static func setFont(
@@ -501,7 +608,7 @@ enum SpacePreferences {
         display: String? = nil,
         store: DefaultsStore = AppEnvironment.shared.store
     ) -> SpaceBadge? {
-        badges.get(forSpace: spaceNumber, display: display, store: store)
+        badges.resolve(forSpace: spaceNumber, display: display, store: store)
     }
 
     static func setBadge(
@@ -534,7 +641,7 @@ enum SpacePreferences {
         display: String? = nil,
         store: DefaultsStore = AppEnvironment.shared.store
     ) -> SkinTone? {
-        skinTones.get(forSpace: spaceNumber, display: display, store: store)
+        skinTones.resolve(forSpace: spaceNumber, display: display, store: store)
     }
 
     static func setSkinTone(
@@ -561,7 +668,7 @@ enum SpacePreferences {
         display: String? = nil,
         store: DefaultsStore = AppEnvironment.shared.store
     ) -> Double? {
-        symbolGaps.get(forSpace: spaceNumber, display: display, store: store)
+        symbolGaps.resolve(forSpace: spaceNumber, display: display, store: store)
     }
 
     static func setSymbolGap(
@@ -588,7 +695,7 @@ enum SpacePreferences {
         display: String? = nil,
         store: DefaultsStore = AppEnvironment.shared.store
     ) -> SymbolPosition? {
-        symbolPositions.get(forSpace: spaceNumber, display: display, store: store)
+        symbolPositions.resolve(forSpace: spaceNumber, display: display, store: store)
     }
 
     static func setSymbolPosition(
@@ -615,7 +722,7 @@ enum SpacePreferences {
         display: String? = nil,
         store: DefaultsStore = AppEnvironment.shared.store
     ) -> SymbolWrap? {
-        symbolWraps.get(forSpace: spaceNumber, display: display, store: store)
+        symbolWraps.resolve(forSpace: spaceNumber, display: display, store: store)
     }
 
     static func setSymbolWrap(
@@ -781,7 +888,11 @@ enum SpacePreferences {
     /// The sentinel space number used to store the default style template.
     static let defaultStyleSpace = 0
 
-    /// Saves all preferences from the given space as the default style for new spaces.
+    /// Saves all preferences from the given space as the default style, then
+    /// clears the source's own copies: they are identical to the template it
+    /// just became, and only as an inheritor does it track future template
+    /// edits. Sound stays out of the template - the template row edits the
+    /// live global default instead.
     static func saveDefaultStyle(
         fromSpace spaceNumber: Int,
         display: String? = nil,
@@ -790,8 +901,6 @@ enum SpacePreferences {
         // Clear any existing default first
         clearDefaultStyle(store: store)
 
-        // Copy each preference from the source space to the default template (space 0, no display).
-        // Sound stays out of the template: the template row edits the live global default.
         copyPreferences(
             from: spaceNumber,
             to: defaultStyleSpace,
@@ -800,18 +909,10 @@ enum SpacePreferences {
             includeSound: false,
             store: store
         )
-    }
 
-    /// Applies the stored default style to a new space, if a default is set.
-    static func applyDefaultStyle(
-        toSpace spaceNumber: Int,
-        display: String? = nil,
-        store: DefaultsStore = AppEnvironment.shared.store
-    ) {
-        guard hasAnyPreference(forSpace: defaultStyleSpace, store: store) else {
-            return
+        for accessor in templateAccessors {
+            accessor.clear(spaceNumber, display, store)
         }
-        copyPreferences(from: defaultStyleSpace, to: spaceNumber, fromDisplay: nil, toDisplay: display, store: store)
     }
 
     /// Clears the stored default style template.
@@ -822,6 +923,49 @@ enum SpacePreferences {
     /// Returns true if a default style has been saved.
     static func hasDefaultStyle(store: DefaultsStore = AppEnvironment.shared.store) -> Bool {
         hasAnyPreference(forSpace: defaultStyleSpace, store: store)
+    }
+
+    // MARK: - Migration
+
+    /// One-time upgrade for installs from when the default style was stamped
+    /// onto each new Space at creation. A Space whose stored template-eligible
+    /// preferences exactly match the template - same keys present, equal
+    /// values - loses its copies and becomes a live inheritor, rendering
+    /// identically. Any difference leaves the Space untouched, and sound is
+    /// never compared or removed. Both storage families are scanned, since
+    /// stamps landed wherever `uniqueIconsPerDisplay` pointed at the time.
+    /// `snapshot` runs once before anything is stripped.
+    static func migrateStampedTemplateCopies(
+        store: DefaultsStore = AppEnvironment.shared.store,
+        snapshot: () -> Void = {}
+    ) {
+        guard store.spaceStyleMigrationVersion < 1 else {
+            return
+        }
+        defer {
+            store.spaceStyleMigrationVersion = 1
+        }
+        guard hasDefaultStyle(store: store) else {
+            return
+        }
+        snapshot()
+
+        let displays = Set(templateAccessors.flatMap { $0.displayKeys(store) })
+        let contexts: [String?] = [nil] + displays.sorted()
+        for context in contexts {
+            for space in 1 ... Layout.maxSpacesPerDisplay {
+                let hasAny = templateAccessors.contains { $0.hasRaw(space, context, store) }
+                let matchesTemplate = templateAccessors.allSatisfy {
+                    $0.rawMatchesTemplate(space, context, store)
+                }
+                guard hasAny, matchesTemplate else {
+                    continue
+                }
+                for accessor in templateAccessors {
+                    accessor.removeRaw(space, context, store)
+                }
+            }
+        }
     }
 
     // MARK: - Clear All

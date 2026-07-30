@@ -44,11 +44,13 @@ struct InputValidationTests {
 
     // MARK: - Symbol Name Edge Cases
 
-    @Test("empty symbol name can be stored")
-    func emptySymbolName() throws {
+    @Test("empty symbol name is stored but reads as no symbol")
+    func emptySymbolName() {
         SpacePreferences.setSymbol("", forSpace: 1, store: store)
-        let symbol = try #require(SpacePreferences.symbol(forSpace: 1, store: store))
-        #expect(symbol.isEmpty)
+        // "" is the explicit-none sentinel: kept in storage to stop the
+        // default style cascade, surfaced to callers as nil
+        #expect(SpacePreferences.symbol(forSpace: 1, store: store) == nil)
+        #expect(store.spaceSymbols[1]?.isEmpty == true)
     }
 
     @Test("very long symbol name can be stored")

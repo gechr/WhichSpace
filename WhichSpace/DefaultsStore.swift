@@ -124,6 +124,7 @@ enum KeySpecs {
     static let spaceLabelStyles = TypedKeySpec(name: "spaceLabelStyles", defaultValue: [Int: IconStyle]())
     static let spaceSkinTones = TypedKeySpec(name: "spaceSkinTones", defaultValue: [Int: SkinTone]())
     static let spaceSounds = TypedKeySpec(name: "spaceSounds", defaultValue: [Int: String]())
+    static let spaceStyleMigrationVersion = TypedKeySpec(name: "spaceStyleMigrationVersion", defaultValue: 0)
     static let spaceSymbolGaps = TypedKeySpec(name: "spaceSymbolGaps", defaultValue: [Int: Double]())
     static let spaceSymbolPositions = TypedKeySpec(
         name: "spaceSymbolPositions",
@@ -178,6 +179,7 @@ enum KeySpecs {
         spaceLabelStyles,
         spaceSkinTones,
         spaceSounds,
+        spaceStyleMigrationVersion,
         spaceSymbolGaps,
         spaceSymbolPositions,
         spaceSymbols,
@@ -201,6 +203,7 @@ enum KeySpecs {
         scrollWrapAround.name,
         soundName.name,
         spaceSounds.name,
+        spaceStyleMigrationVersion.name,
         verticalScrollEnabled.name,
     ]
 
@@ -541,6 +544,11 @@ final class DefaultsStore {
     var spaceSounds: [Int: String] {
         get { self[KeySpecs.spaceSounds] }
         set { self[KeySpecs.spaceSounds] = newValue }
+    }
+
+    var spaceStyleMigrationVersion: Int {
+        get { self[KeySpecs.spaceStyleMigrationVersion] }
+        set { self[KeySpecs.spaceStyleMigrationVersion] = newValue }
     }
 
     var spaceSymbolGaps: [Int: Double] {
