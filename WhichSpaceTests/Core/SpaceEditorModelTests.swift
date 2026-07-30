@@ -159,6 +159,35 @@ struct SpaceEditorModelTests {
         #expect(model.badge == nil)
     }
 
+    @Test("space sound writes route shared or per-display")
+    func spaceSoundRouting() {
+        let model = makeModel()
+        model.selection = .space(2)
+        model.setSpaceSound("Pop")
+        #expect(store.spaceSounds[2] == "Pop")
+        #expect(store.displaySpaceSounds.isEmpty)
+
+        model.setSpaceSound(nil)
+        #expect(model.spaceSound == nil)
+
+        store.uniqueIconsPerDisplay = true
+        model.setSpaceSound("Blow")
+        #expect(store.displaySpaceSounds["Main"]?[2] == "Blow")
+        #expect(store.spaceSounds.isEmpty)
+    }
+
+    @Test("global sound writes the store default and bumps caches")
+    func globalSoundWrite() {
+        let model = makeModel()
+        let mutationsBefore = store.mutationCount
+        let tickBefore = model.tick
+        model.setGlobalSoundName("Glass")
+        #expect(store.soundName == "Glass")
+        #expect(model.globalSoundName == "Glass")
+        #expect(store.mutationCount > mutationsBefore)
+        #expect(model.tick > tickBefore)
+    }
+
     @Test("color writes preserve the other components")
     func colorComponents() {
         let model = makeModel()
@@ -188,9 +217,11 @@ struct SpaceEditorModelTests {
     func copyToAll() {
         let model = makeModel()
         model.setLabel("Work")
+        model.setSpaceSound("Pop")
         model.copyToAllSpaces()
         #expect(SpacePreferences.label(forSpace: 2, display: "Main", store: store) == "Work")
         #expect(SpacePreferences.label(forSpace: 3, display: "Main", store: store) == "Work")
+        #expect(SpacePreferences.sound(forSpace: 2, display: "Main", store: store) == "Pop")
     }
 
     @Test("copy to all displays covers every display's Spaces")
@@ -233,9 +264,11 @@ struct SpaceEditorModelTests {
         let model = makeModel()
         model.setLabel("Work")
         model.setSymbol("star.fill")
+        model.setSpaceSound("Pop")
         model.resetToDefault()
         #expect(model.label == nil)
         #expect(model.symbol == nil)
+        #expect(model.spaceSound == nil)
     }
 
     @Test("reset all Spaces clears every preference map")

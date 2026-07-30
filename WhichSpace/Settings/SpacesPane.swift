@@ -7,6 +7,7 @@ import SwiftUI
 /// Container-agnostic - it knows nothing about the window chrome hosting it.
 struct SpacesPane: View {
     let model: SpaceEditorModel
+    let onOpenCustomSoundsFolder: () -> Void
 
     @State private var colorPanel = ColorPanelCoordinator()
 
@@ -142,7 +143,11 @@ struct SpacesPane: View {
                 previewRow
             }
             ScrollView {
-                SpaceEditorView(model: model, colorPanel: colorPanel)
+                SpaceEditorView(
+                    model: model,
+                    colorPanel: colorPanel,
+                    onOpenCustomSoundsFolder: onOpenCustomSoundsFolder
+                )
             }
             .frame(height: Layout.settingsSpacesEditorHeight)
         }

@@ -265,6 +265,18 @@ final class SpaceEditorModel {
         return SpacePreferences.symbolWrap(forSpace: editingSpace, display: editingDisplay, store: store) ?? .inside
     }
 
+    /// The per-space sound override; nil = inherit the global default.
+    var spaceSound: String? {
+        _ = tick
+        return SpacePreferences.sound(forSpace: editingSpace, display: editingDisplay, store: store)
+    }
+
+    /// The app-wide default sound, edited from the template row.
+    var globalSoundName: String {
+        _ = tick
+        return store.soundName
+    }
+
     /// Section visibility and clear-cell gating for the edited entry.
     var clearRules: ClearCellRules {
         _ = tick
@@ -378,6 +390,17 @@ final class SpaceEditorModel {
 
     func clearFont() {
         SpacePreferences.clearFont(forSpace: editingSpace, display: editingDisplay, store: store)
+        tick += 1
+    }
+
+    /// nil clears the override so the Space inherits the global default.
+    func setSpaceSound(_ name: String?) {
+        SpacePreferences.setSound(name, forSpace: editingSpace, display: editingDisplay, store: store)
+        tick += 1
+    }
+
+    func setGlobalSoundName(_ name: String) {
+        store.soundName = name
         tick += 1
     }
 
@@ -536,8 +559,8 @@ final class SpaceEditorModel {
     }
 
     /// Clears every Space's preferences on every display, including the
-    /// saved template. Icon sizing, sound, and separator settings live in
-    /// other panes and stay untouched.
+    /// saved template and per-space sounds. Icon sizing, separator, and the
+    /// global default sound stay untouched.
     func resetAllSpacesToDefault() {
         guard confirmAction(
             Localization.confirmResetAllSpaces,

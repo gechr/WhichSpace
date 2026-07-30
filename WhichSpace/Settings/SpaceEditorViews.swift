@@ -9,8 +9,10 @@ import SwiftUI
 struct SpaceEditorView: View {
     let model: SpaceEditorModel
     let colorPanel: ColorPanelCoordinator
+    let onOpenCustomSoundsFolder: () -> Void
 
     @State private var symbolCatalog = SymbolGridView.Catalog.symbols
+    @State private var userSounds: [String] = []
 
     var body: some View {
         let rules = model.clearRules
@@ -23,6 +25,12 @@ struct SpaceEditorView: View {
                 badgeSection
             }
             glyphSection(rules)
+            soundSection
+        }
+        .task {
+            userSounds = await Task.detached(priority: .userInitiated) {
+                SoundCatalog.discoverUserSounds()
+            }.value
         }
     }
 
@@ -359,6 +367,72 @@ struct SpaceEditorView: View {
                 .help(Localization.buttonReset)
             }
         }
+    }
+
+    // MARK: - Sound
+
+    private var soundSection: some View {
+        SettingsSection(Localization.menuSound) {
+            SettingsRow(icon: "speaker.wave.2", subtitle: Localization.tipSound) {
+                Text(Localization.menuSound)
+            } control: {
+                soundPicker
+                    .labelsHidden()
+            }
+            SettingsRowDivider()
+            SettingsRow {
+                EmptyView()
+            } control: {
+                Button(Localization.soundCustom) {
+                    onOpenCustomSoundsFolder()
+                }
+            }
+        }
+    }
+
+    private var soundPicker: some View {
+        Picker(Localization.menuSound, selection: soundBinding) {
+            if !model.isEditingDefaultStyle {
+                Text("[\(Localization.labelDefault)]").tag(String?.none)
+                Divider()
+            }
+            Text(Localization.soundNone).tag(String?.some(""))
+            if !userSounds.isEmpty {
+                Divider()
+                ForEach(userSounds, id: \.self) { sound in
+                    Text(sound).tag(String?.some(sound))
+                }
+            }
+            Divider()
+            ForEach(SoundCatalog.systemSounds, id: \.self) { sound in
+                Text(sound).tag(String?.some(sound))
+            }
+        }
+    }
+
+    /// The template row edits the live global default; a Space row edits the
+    /// per-space override (nil = inherit). Selecting previews the effective
+    /// sound.
+    private var soundBinding: Binding<String?> {
+        Binding(
+            get: {
+                model.isEditingDefaultStyle ? model.globalSoundName : model.spaceSound
+            },
+            set: { name in
+                if model.isEditingDefaultStyle {
+                    model.setGlobalSoundName(name ?? "")
+                } else {
+                    model.setSpaceSound(name)
+                }
+                let effective = name ?? model.globalSoundName
+                guard !effective.isEmpty,
+                      let sound = NSSound(named: NSSound.Name(effective))?.copy() as? NSSound
+                else {
+                    return
+                }
+                sound.play()
+            }
+        )
     }
 }
 

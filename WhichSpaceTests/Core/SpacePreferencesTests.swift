@@ -607,4 +607,128 @@ struct SpacePreferencesTests {
 
         #expect(SpacePreferences.colors(forSpace: 2, store: store)?.symbol == nil)
     }
+
+    // MARK: - Sound Tests
+
+    @Test("sound set, get, and clear")
+    func soundSetGetClear() {
+        #expect(SpacePreferences.sound(forSpace: 1, store: store) == nil)
+
+        SpacePreferences.setSound("Pop", forSpace: 1, store: store)
+        #expect(SpacePreferences.sound(forSpace: 1, store: store) == "Pop")
+
+        SpacePreferences.setSound(nil, forSpace: 1, store: store)
+        #expect(SpacePreferences.sound(forSpace: 1, store: store) == nil)
+
+        SpacePreferences.setSound("Blow", forSpace: 2, store: store)
+        SpacePreferences.clearSound(forSpace: 2, store: store)
+        #expect(SpacePreferences.sound(forSpace: 2, store: store) == nil)
+    }
+
+    @Test("sound per-display when enabled")
+    func soundPerDisplayWhenEnabled() {
+        store.uniqueIconsPerDisplay = true
+
+        SpacePreferences.setSound("Pop", forSpace: 1, display: "Display1", store: store)
+        SpacePreferences.setSound("Blow", forSpace: 1, display: "Display2", store: store)
+
+        #expect(SpacePreferences.sound(forSpace: 1, display: "Display1", store: store) == "Pop")
+        #expect(SpacePreferences.sound(forSpace: 1, display: "Display2", store: store) == "Blow")
+
+        // Shared storage stays untouched
+        store.uniqueIconsPerDisplay = false
+        #expect(SpacePreferences.sound(forSpace: 1, store: store) == nil)
+    }
+
+    @Test("hasAnyPreference returns true when sound set")
+    func hasAnyPreferenceReturnsTrueWhenSoundSet() {
+        SpacePreferences.setSound("Pop", forSpace: 1, store: store)
+        #expect(SpacePreferences.hasAnyPreference(forSpace: 1, store: store))
+    }
+
+    @Test("copyPreferences copies sound unless excluded")
+    func copyPreferencesCopiesSoundUnlessExcluded() {
+        SpacePreferences.setSound("Pop", forSpace: 1, store: store)
+
+        SpacePreferences.copyPreferences(from: 1, to: 2, store: store)
+        #expect(SpacePreferences.sound(forSpace: 2, store: store) == "Pop")
+
+        SpacePreferences.copyPreferences(from: 1, to: 3, includeSound: false, store: store)
+        #expect(SpacePreferences.sound(forSpace: 3, store: store) == nil)
+    }
+
+    @Test("clearPreferences clears sound")
+    func clearPreferencesClearsSound() {
+        SpacePreferences.setSound("Pop", forSpace: 1, store: store)
+        SpacePreferences.clearPreferences(forSpace: 1, store: store)
+        #expect(SpacePreferences.sound(forSpace: 1, store: store) == nil)
+    }
+
+    @Test("clearAll removes shared and per-display sounds")
+    func clearAllRemovesSounds() {
+        SpacePreferences.setSound("Pop", forSpace: 1, store: store)
+        store.uniqueIconsPerDisplay = true
+        SpacePreferences.setSound("Blow", forSpace: 1, display: "Display1", store: store)
+
+        SpacePreferences.clearAll(store: store)
+
+        #expect(SpacePreferences.sound(forSpace: 1, display: "Display1", store: store) == nil)
+        store.uniqueIconsPerDisplay = false
+        #expect(SpacePreferences.sound(forSpace: 1, store: store) == nil)
+    }
+
+    @Test("default style template excludes sound")
+    func defaultStyleTemplateExcludesSound() {
+        SpacePreferences.setLabel("Work", forSpace: 1, store: store)
+        SpacePreferences.setSound("Pop", forSpace: 1, store: store)
+
+        SpacePreferences.saveDefaultStyle(fromSpace: 1, store: store)
+
+        #expect(SpacePreferences.sound(forSpace: SpacePreferences.defaultStyleSpace, store: store) == nil)
+        #expect(SpacePreferences.hasDefaultStyle(store: store))
+
+        // A space with only a sound yields no template at all
+        SpacePreferences.clearDefaultStyle(store: store)
+        SpacePreferences.clearLabel(forSpace: 1, store: store)
+        SpacePreferences.saveDefaultStyle(fromSpace: 1, store: store)
+        #expect(!SpacePreferences.hasDefaultStyle(store: store))
+    }
+
+    @Test("resolvedSoundName override wins over global")
+    func resolvedSoundNameOverrideWins() {
+        store.soundName = "Glass"
+        SpacePreferences.setSound("Pop", forSpace: 1, store: store)
+
+        #expect(SpacePreferences.resolvedSoundName(forSpace: 1, store: store) == "Pop")
+    }
+
+    @Test("resolvedSoundName empty override silences despite global")
+    func resolvedSoundNameEmptyOverrideSilences() {
+        store.soundName = "Glass"
+        SpacePreferences.setSound("", forSpace: 1, store: store)
+
+        #expect(SpacePreferences.resolvedSoundName(forSpace: 1, store: store) == nil)
+    }
+
+    @Test("resolvedSoundName falls back to global when unset")
+    func resolvedSoundNameFallsBackToGlobal() {
+        store.soundName = "Glass"
+
+        #expect(SpacePreferences.resolvedSoundName(forSpace: 1, store: store) == "Glass")
+    }
+
+    @Test("resolvedSoundName nil when nothing set")
+    func resolvedSoundNameNilWhenNothingSet() {
+        #expect(SpacePreferences.resolvedSoundName(forSpace: 1, store: store) == nil)
+    }
+
+    @Test("resolvedSoundName respects per-display override")
+    func resolvedSoundNameRespectsPerDisplay() {
+        store.soundName = "Glass"
+        store.uniqueIconsPerDisplay = true
+        SpacePreferences.setSound("Pop", forSpace: 1, display: "Display1", store: store)
+
+        #expect(SpacePreferences.resolvedSoundName(forSpace: 1, display: "Display1", store: store) == "Pop")
+        #expect(SpacePreferences.resolvedSoundName(forSpace: 1, display: "Display2", store: store) == "Glass")
+    }
 }

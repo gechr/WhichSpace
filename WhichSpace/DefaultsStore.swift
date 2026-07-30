@@ -64,6 +64,10 @@ enum KeySpecs {
         name: "displaySpaceSkinTones",
         defaultValue: [String: [Int: SkinTone]]()
     )
+    static let displaySpaceSounds = TypedKeySpec(
+        name: "displaySpaceSounds",
+        defaultValue: [String: [Int: String]]()
+    )
     static let displaySpaceSymbolGaps = TypedKeySpec(
         name: "displaySpaceSymbolGaps",
         defaultValue: [String: [Int: Double]]()
@@ -119,6 +123,7 @@ enum KeySpecs {
     static let spaceLabels = TypedKeySpec(name: "spaceLabels", defaultValue: [Int: String]())
     static let spaceLabelStyles = TypedKeySpec(name: "spaceLabelStyles", defaultValue: [Int: IconStyle]())
     static let spaceSkinTones = TypedKeySpec(name: "spaceSkinTones", defaultValue: [Int: SkinTone]())
+    static let spaceSounds = TypedKeySpec(name: "spaceSounds", defaultValue: [Int: String]())
     static let spaceSymbolGaps = TypedKeySpec(name: "spaceSymbolGaps", defaultValue: [Int: Double]())
     static let spaceSymbolPositions = TypedKeySpec(
         name: "spaceSymbolPositions",
@@ -141,6 +146,7 @@ enum KeySpecs {
         displaySpaceLabels,
         displaySpaceLabelStyles,
         displaySpaceSkinTones,
+        displaySpaceSounds,
         displaySpaceSymbolGaps,
         displaySpaceSymbolPositions,
         displaySpaceSymbols,
@@ -171,6 +177,7 @@ enum KeySpecs {
         spaceLabels,
         spaceLabelStyles,
         spaceSkinTones,
+        spaceSounds,
         spaceSymbolGaps,
         spaceSymbolPositions,
         spaceSymbols,
@@ -184,6 +191,7 @@ enum KeySpecs {
     /// icon-affecting by default - the safe direction for cache invalidation.
     static let nonIconKeyNames: Set<String> = [
         clickToSwitchSpaces.name,
+        displaySpaceSounds.name,
         horizontalScrollEnabled.name,
         invertHorizontalScroll.name,
         invertVerticalScroll.name,
@@ -192,6 +200,7 @@ enum KeySpecs {
         scrollSensitivity.name,
         scrollWrapAround.name,
         soundName.name,
+        spaceSounds.name,
         verticalScrollEnabled.name,
     ]
 
@@ -341,6 +350,11 @@ final class DefaultsStore {
     var displaySpaceSkinTones: [String: [Int: SkinTone]] {
         get { self[KeySpecs.displaySpaceSkinTones] }
         set { self[KeySpecs.displaySpaceSkinTones] = newValue }
+    }
+
+    var displaySpaceSounds: [String: [Int: String]] {
+        get { self[KeySpecs.displaySpaceSounds] }
+        set { self[KeySpecs.displaySpaceSounds] = newValue }
     }
 
     var displaySpaceSymbolGaps: [String: [Int: Double]] {
@@ -522,6 +536,11 @@ final class DefaultsStore {
     var spaceSkinTones: [Int: SkinTone] {
         get { self[KeySpecs.spaceSkinTones] }
         set { self[KeySpecs.spaceSkinTones] = newValue }
+    }
+
+    var spaceSounds: [Int: String] {
+        get { self[KeySpecs.spaceSounds] }
+        set { self[KeySpecs.spaceSounds] = newValue }
     }
 
     var spaceSymbolGaps: [Int: Double] {

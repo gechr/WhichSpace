@@ -3,9 +3,8 @@ import Settings
 import Sparkle
 import SwiftUI
 
-/// The General settings pane: startup, Space-change sound, updates, and
-/// configuration backup. Container-agnostic - it knows nothing about the
-/// window chrome hosting it.
+/// The General settings pane: startup, updates, and configuration backup.
+/// Container-agnostic - it knows nothing about the window chrome hosting it.
 struct GeneralPane: View {
     let model: SettingsModel
     /// Sparkle persists these settings itself (SU* defaults), so the toggles
@@ -14,9 +13,6 @@ struct GeneralPane: View {
     let onCheckForUpdates: () -> Void
     let onImportSettings: () -> Void
     let onExportSettings: () -> Void
-    let onOpenCustomSoundsFolder: () -> Void
-
-    @State private var userSounds: [String] = []
 
     var body: some View {
         SettingsForm {
@@ -27,22 +23,6 @@ struct GeneralPane: View {
                     icon: "sunrise",
                     subtitle: String(format: Localization.tipLaunchAtLogin, AppInfo.appName)
                 )
-            }
-            SettingsSection {
-                SettingsRow(icon: "speaker.wave.2", subtitle: Localization.tipSound) {
-                    Text(Localization.menuSound)
-                } control: {
-                    soundPicker
-                        .labelsHidden()
-                }
-                SettingsRowDivider()
-                SettingsRow {
-                    EmptyView()
-                } control: {
-                    Button(Localization.soundCustom) {
-                        onOpenCustomSoundsFolder()
-                    }
-                }
             }
             SettingsSection {
                 SettingsToggleRow(
@@ -85,44 +65,6 @@ struct GeneralPane: View {
                 }
             }
             footer
-        }
-        .task {
-            userSounds = await Task.detached(priority: .userInitiated) {
-                SoundCatalog.discoverUserSounds()
-            }.value
-        }
-    }
-
-    /// Plays the newly selected sound.
-    private var soundBinding: Binding<String> {
-        let stored = model.binding(\.soundName)
-        return Binding(
-            get: { stored.wrappedValue },
-            set: { name in
-                stored.wrappedValue = name
-                guard !name.isEmpty,
-                      let sound = NSSound(named: NSSound.Name(name))?.copy() as? NSSound
-                else {
-                    return
-                }
-                sound.play()
-            }
-        )
-    }
-
-    private var soundPicker: some View {
-        Picker(Localization.menuSound, selection: soundBinding) {
-            Text(Localization.soundNone).tag("")
-            if !userSounds.isEmpty {
-                Divider()
-                ForEach(userSounds, id: \.self) { sound in
-                    Text(sound).tag(sound)
-                }
-            }
-            Divider()
-            ForEach(SoundCatalog.systemSounds, id: \.self) { sound in
-                Text(sound).tag(sound)
-            }
         }
     }
 

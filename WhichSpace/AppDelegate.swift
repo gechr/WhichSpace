@@ -159,8 +159,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
                     updater: updaterController?.updater,
                     onCheckForUpdates: { [weak self] in self?.actionHandler.checkForUpdates() },
                     onImportSettings: { [weak self] in self?.actionHandler.importSettings() },
-                    onExportSettings: { [weak self] in self?.actionHandler.exportSettings() },
-                    onOpenCustomSoundsFolder: { [weak self] in self?.actionHandler.openCustomSoundsFolder() }
+                    onExportSettings: { [weak self] in self?.actionHandler.exportSettings() }
                 )
             })
             let spacesPane = Settings.PaneHostingController(pane: Settings.Pane(
@@ -168,7 +167,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
                 title: Localization.paneSpaces,
                 toolbarIcon: NSImage(systemSymbolName: "square.grid.2x2", accessibilityDescription: nil)!
             ) {
-                SpacesPane(model: editorModel)
+                SpacesPane(model: editorModel) { [weak self] in
+                    self?.actionHandler.openCustomSoundsFolder()
+                }
             })
             let menuBarPane = Settings.PaneHostingController(pane: Settings.Pane(
                 identifier: .menuBar,
@@ -345,11 +346,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     }
 
     @objc private func handleSpaceDidChange() {
-        // Play sound if enabled (copy to allow overlapping sounds)
-        let soundName = store.soundName
-        guard !soundName.isEmpty else {
+        // Per-space override ("" = silent) falls back to the global default sound
+        guard let soundName = SpacePreferences.resolvedSoundName(
+            forSpace: appState.currentSpace,
+            display: appState.currentDisplayID,
+            store: store
+        ) else {
             return
         }
+        // Copy to allow overlapping sounds on rapid switches
         guard let sound = NSSound(named: NSSound.Name(soundName))?.copy() as? NSSound else {
             NSLog("AppDelegate: failed to load sound '%@'", soundName)
             return

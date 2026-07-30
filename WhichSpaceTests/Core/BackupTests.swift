@@ -772,6 +772,45 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         try? FileManager.default.removeItem(at: tempURL)
     }
 
+    func testSpaceSoundsRoundTrip() throws {
+        store.soundName = "Glass"
+        store.spaceSounds = [2: "Pop", 3: ""]
+        store.displaySpaceSounds = ["Display1": [1: "Blow"]]
+
+        let json = try BackupManager.encode(store: store)
+        store.resetAll()
+        XCTAssertTrue(store.spaceSounds.isEmpty)
+
+        let backup = try BackupManager.decode(jsonString: json)
+        BackupManager.apply(backup, to: store)
+
+        XCTAssertEqual(store.soundName, "Glass")
+        XCTAssertEqual(store.spaceSounds[2], "Pop")
+        XCTAssertEqual(store.spaceSounds[3], "")
+        XCTAssertEqual(store.displaySpaceSounds["Display1"]?[1], "Blow")
+    }
+
+    func testLegacyBackupWithoutSoundsDecodesEmpty() throws {
+        let json = """
+        {
+            "bundleId": "io.gechr.WhichSpace",
+            "version": "1.0.0",
+            "settings": {},
+            "spacePreferences": {
+                "labels": {"1": "Work"}
+            },
+            "displaySpacePreferences": {}
+        }
+        """
+
+        let backup = try BackupManager.decode(jsonString: json)
+        BackupManager.apply(backup, to: store)
+
+        XCTAssertTrue(store.spaceSounds.isEmpty)
+        XCTAssertTrue(store.displaySpaceSounds.isEmpty)
+        XCTAssertEqual(store.spaceLabels[1], "Work")
+    }
+
     func testLoadFromNonexistentFileThrows() {
         let fakeURL = URL(fileURLWithPath: "/nonexistent/path/settings.json")
         XCTAssertThrowsError(try BackupManager.load(from: fakeURL, store: store)) { error in

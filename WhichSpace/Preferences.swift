@@ -322,6 +322,9 @@ enum SpacePreferences {
     private static let symbolWraps = Accessor<SymbolWrap>(
         shared: \.spaceSymbolWraps, perDisplay: \.displaySpaceSymbolWraps
     )
+    private static let sounds = Accessor<String>(
+        shared: \.spaceSounds, perDisplay: \.displaySpaceSounds
+    )
 
     // MARK: - Symbols (SF Symbols or Emojis)
 
@@ -632,6 +635,45 @@ enum SpacePreferences {
         symbolWraps.set(nil, forSpace: spaceNumber, display: display, store: store)
     }
 
+    // MARK: - Sound
+
+    static func sound(
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) -> String? {
+        sounds.get(forSpace: spaceNumber, display: display, store: store)
+    }
+
+    static func setSound(
+        _ sound: String?,
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) {
+        sounds.set(sound, forSpace: spaceNumber, display: display, store: store)
+    }
+
+    static func clearSound(
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) {
+        sounds.set(nil, forSpace: spaceNumber, display: display, store: store)
+    }
+
+    /// The effective Space-change sound: the per-space override when set
+    /// ("" = explicitly silent), otherwise the global default ("" = none).
+    /// Returns nil when no sound should play.
+    static func resolvedSoundName(
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) -> String? {
+        let name = sounds.get(forSpace: spaceNumber, display: display, store: store) ?? store.soundName
+        return name.isEmpty ? nil : name
+    }
+
     // MARK: - Inheritance
 
     /// Returns true if the space has any per-space preference set.
@@ -651,6 +693,7 @@ enum SpacePreferences {
             || symbolGaps.get(forSpace: spaceNumber, display: display, store: store) != nil
             || symbolPositions.get(forSpace: spaceNumber, display: display, store: store) != nil
             || symbolWraps.get(forSpace: spaceNumber, display: display, store: store) != nil
+            || sounds.get(forSpace: spaceNumber, display: display, store: store) != nil
     }
 
     /// Copies all per-space preferences from one space to another.
@@ -665,11 +708,14 @@ enum SpacePreferences {
     }
 
     /// Copies all per-space preferences between spaces, allowing different source/target displays.
+    /// `includeSound` is false only when saving the default style template, which never holds a
+    /// sound - the template row edits the live global default instead.
     static func copyPreferences(
         from source: Int,
         to target: Int,
         fromDisplay: String? = nil,
         toDisplay: String? = nil,
+        includeSound: Bool = true,
         store: DefaultsStore = AppEnvironment.shared.store
     ) {
         if let colors = colorsAccessor.get(forSpace: source, display: fromDisplay, store: store) {
@@ -705,6 +751,9 @@ enum SpacePreferences {
         if let wrap = symbolWraps.get(forSpace: source, display: fromDisplay, store: store) {
             symbolWraps.set(wrap, forSpace: target, display: toDisplay, store: store)
         }
+        if includeSound, let sound = sounds.get(forSpace: source, display: fromDisplay, store: store) {
+            sounds.set(sound, forSpace: target, display: toDisplay, store: store)
+        }
     }
 
     /// Clears all preferences for a specific space.
@@ -724,6 +773,7 @@ enum SpacePreferences {
         symbolGaps.set(nil, forSpace: spaceNumber, display: display, store: store)
         symbolPositions.set(nil, forSpace: spaceNumber, display: display, store: store)
         symbolWraps.set(nil, forSpace: spaceNumber, display: display, store: store)
+        sounds.set(nil, forSpace: spaceNumber, display: display, store: store)
     }
 
     // MARK: - Default Style
@@ -740,8 +790,16 @@ enum SpacePreferences {
         // Clear any existing default first
         clearDefaultStyle(store: store)
 
-        // Copy each preference from the source space to the default template (space 0, no display)
-        copyPreferences(from: spaceNumber, to: defaultStyleSpace, fromDisplay: display, toDisplay: nil, store: store)
+        // Copy each preference from the source space to the default template (space 0, no display).
+        // Sound stays out of the template: the template row edits the live global default.
+        copyPreferences(
+            from: spaceNumber,
+            to: defaultStyleSpace,
+            fromDisplay: display,
+            toDisplay: nil,
+            includeSound: false,
+            store: store
+        )
     }
 
     /// Applies the stored default style to a new space, if a default is set.
@@ -781,6 +839,7 @@ enum SpacePreferences {
         store.spaceSymbolWraps = [:]
         store.spaceFonts = [:]
         store.spaceSkinTones = [:]
+        store.spaceSounds = [:]
         store.displaySpaceBadges = [:]
         store.displaySpaceColors = [:]
         store.displaySpaceIconStyles = [:]
@@ -792,5 +851,6 @@ enum SpacePreferences {
         store.displaySpaceSymbolWraps = [:]
         store.displaySpaceFonts = [:]
         store.displaySpaceSkinTones = [:]
+        store.displaySpaceSounds = [:]
     }
 }
