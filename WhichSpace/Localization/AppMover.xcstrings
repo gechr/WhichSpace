@@ -406,7 +406,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verplaats naar de map Programma's"
+            "value" : "Verplaats naar de map Apps"
           }
         },
         "nn" : {
@@ -430,7 +430,7 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "د غوښتنلیکونو فولډر ته ولېږدوه"
+            "value" : "د غوښتنلیکونو فولډر ته ولېږدوئ"
           }
         },
         "pt" : {
@@ -620,7 +620,7 @@
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bezárás és lecserélés"
+            "value" : "Kilépés és lecserélés"
           }
         },
         "id" : {
@@ -650,7 +650,7 @@
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Затвори и замени"
+            "value" : "Излези и замени"
           }
         },
         "ms" : {
@@ -728,7 +728,7 @@
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zatvori i zameni"
+            "value" : "Izađi i zameni"
           }
         },
         "sv" : {
@@ -752,7 +752,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Закрити й замінити"
+            "value" : "Вийти й замінити"
           }
         },
         "ur" : {
@@ -776,7 +776,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "退出並取代"
+            "value" : "結束並取代"
           }
         },
         "zh-HK" : {
@@ -918,7 +918,7 @@
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tidak dapat memindahkan ke folder Aplikasi"
+            "value" : "App tidak dapat dipindahkan ke folder Aplikasi."
           }
         },
         "nb" : {
@@ -954,7 +954,7 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "د غوښتنلیکونو فولډر ته لېږد ممکن نشو"
+            "value" : "د غوښتنلیکونو فولډر ته لېږدول ممکن نه شول"
           }
         },
         "pt" : {
@@ -1466,7 +1466,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ اپنے آپ نوں ایپلیکیشنز فولڈر وچ منتقل کر سکدا ہے۔"
+            "value" : "%@ اپنے آپ نوں ایپلیکیشنز فولڈر وچ منتقل کر سکدا اے۔"
           }
         },
         "pl" : {
@@ -1728,7 +1728,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ایپلیکیشنز فولڈر وچ منتقل کرنا ہے؟"
+            "value" : "ایپلیکیشنز فولڈر وچ منتقل کرنا اے؟"
           }
         },
         "pl" : {
@@ -1876,7 +1876,7 @@
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Μετακίνηση στον φάκελο Εφαρμογές στον φάκελο Αρχική;"
+            "value" : "Μετακίνηση στον φάκελο «Εφαρμογές» μέσα στον φάκελο αφετηρίας σας;"
           }
         },
         "en" : {
@@ -1936,7 +1936,7 @@
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pindahkan ke folder Aplikasi di folder Beranda Anda?"
+            "value" : "Pindahkan ke folder Aplikasi di folder utama Anda?"
           }
         },
         "it" : {
@@ -1990,7 +1990,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "اپنے ہوم فولڈر دے ایپلیکیشنز فولڈر وچ منتقل کرنا ہے؟"
+            "value" : "اپنے ہوم فولڈر دے ایپلیکیشنز فولڈر وچ منتقل کرنا اے؟"
           }
         },
         "pl" : {
@@ -2080,19 +2080,19 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "要移至主文件夹中的“应用程序”文件夹吗？"
+            "value" : "要移至个人文件夹中的“应用程序”文件夹吗？"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "要移至主資料夾中的「應用程式」資料夾嗎？"
+            "value" : "要移至個人專屬資料夾中的「應用程式」資料夾嗎？"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "要移至主資料夾中的「應用程式」資料夾嗎？"
+            "value" : "要移至個人專屬資料夾中的「應用程式」資料夾嗎？"
           }
         }
       }
@@ -2210,13 +2210,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ の別のバージョンがすでにアプリケーションフォルダから実行されています。インストール済みのコピーを置き換えるには終了してください。"
+            "value" : "%@ の別のバージョンがすでにアプリケーションフォルダから実行されています。インストール済みのアプリを置き換えるには、そのアプリを終了してください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "다른 버전의 %@이(가) 응용 프로그램 폴더에서 이미 실행 중입니다. 설치된 복사본을 교체하려면 종료하세요."
+            "value" : "다른 버전의 %@이(가) 응용 프로그램 폴더에서 이미 실행 중입니다. 설치된 앱을 교체하려면 해당 앱을 종료하세요."
           }
         },
         "mk" : {
@@ -2342,19 +2342,19 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ 的其他版本已从“应用程序”文件夹运行。请退出它以替换已安装的副本。"
+            "value" : "%@ 的另一个版本目前正在“应用程序”文件夹中运行。请退出该版本，以替换已安装的副本。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ 的其他版本已從「應用程式」資料夾執行。請先退出，以取代已安裝的副本。"
+            "value" : "%@ 的另一個版本目前正在「應用程式」資料夾中執行。請先結束該版本，以取代已安裝的副本。"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ 的其他版本已從「應用程式」資料夾執行。請先退出，以取代已安裝的副本。"
+            "value" : "%@ 的另一個版本目前正在「應用程式」資料夾中執行。請先結束該版本，以取代已安裝的副本。"
           }
         }
       }
@@ -2514,7 +2514,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "موجودہ ایپ نوں بدلنا ہے؟"
+            "value" : "موجودہ ایپ نوں بدلنا اے؟"
           }
         },
         "pl" : {

@@ -6551,6 +6551,100 @@
         }
       }
     },
+    "Switch to Next Space" : {
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "التبديل إلى المساحة التالية" } },
+        "bg" : { "stringUnit" : { "state" : "translated", "value" : "Превключи към следващото Пространство" } },
+        "ca" : { "stringUnit" : { "state" : "translated", "value" : "Canvia a l'Espai següent" } },
+        "cs" : { "stringUnit" : { "state" : "translated", "value" : "Přepnout na další Space" } },
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Skift til næste Space" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Zum nächsten Space wechseln" } },
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Εναλλαγή στον επόμενο Χώρο" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Switch to Next Space" } },
+        "en-GB" : { "stringUnit" : { "state" : "translated", "value" : "Switch to Next Space" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Cambiar al Espacio siguiente" } },
+        "fa" : { "stringUnit" : { "state" : "translated", "value" : "رفتن به فضای بعدی" } },
+        "fi" : { "stringUnit" : { "state" : "translated", "value" : "Vaihda seuraavaan Spaceen" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Passer à l'Espace suivant" } },
+        "he" : { "stringUnit" : { "state" : "translated", "value" : "עבור למרחב הבא" } },
+        "hi" : { "stringUnit" : { "state" : "translated", "value" : "अगले स्पेस पर स्विच करें" } },
+        "hu" : { "stringUnit" : { "state" : "translated", "value" : "Váltás a következő Space-re" } },
+        "id" : { "stringUnit" : { "state" : "translated", "value" : "Beralih ke Space berikutnya" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Passa allo Spazio successivo" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "次のスペースに切り替える" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "다음 스페이스로 전환" } },
+        "mk" : { "stringUnit" : { "state" : "translated", "value" : "Премини на следниот Простор" } },
+        "ms" : { "stringUnit" : { "state" : "translated", "value" : "Tukar ke Ruang seterusnya" } },
+        "nb" : { "stringUnit" : { "state" : "translated", "value" : "Bytt til neste Space" } },
+        "nl" : { "stringUnit" : { "state" : "translated", "value" : "Wissel naar de volgende Space" } },
+        "nn" : { "stringUnit" : { "state" : "translated", "value" : "Byt til neste Space" } },
+        "pa" : { "stringUnit" : { "state" : "translated", "value" : "اگلی سپیس تے جاؤ" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Przełącz na następny Space" } },
+        "ps" : { "stringUnit" : { "state" : "translated", "value" : "راتلونکي سپېس ته واوړئ" } },
+        "pt" : { "stringUnit" : { "state" : "translated", "value" : "Mudar para o Espaço seguinte" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Trocar para o Espaço seguinte" } },
+        "ro" : { "stringUnit" : { "state" : "translated", "value" : "Comută la Spațiul următor" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Переключиться на следующее Пространство" } },
+        "sk" : { "stringUnit" : { "state" : "translated", "value" : "Prepnúť na ďalší Priestor" } },
+        "sr" : { "stringUnit" : { "state" : "translated", "value" : "Prebaci na sledeći Prostor" } },
+        "sv" : { "stringUnit" : { "state" : "translated", "value" : "Byt till nästa Space" } },
+        "th" : { "stringUnit" : { "state" : "translated", "value" : "สลับไปยัง Space ถัดไป" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Sonraki Alana geç" } },
+        "uk" : { "stringUnit" : { "state" : "translated", "value" : "Перемкнутися на наступний Простір" } },
+        "ur" : { "stringUnit" : { "state" : "translated", "value" : "اگلی اسپیس پر جائیں" } },
+        "vi" : { "stringUnit" : { "state" : "translated", "value" : "Chuyển đến Không gian tiếp theo" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "切换到下一个空间" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "切換到下一個空間" } },
+        "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "切換到下一個空間" } }
+      }
+    },
+    "Switch to Previous Space" : {
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "التبديل إلى المساحة السابقة" } },
+        "bg" : { "stringUnit" : { "state" : "translated", "value" : "Превключи към предишното Пространство" } },
+        "ca" : { "stringUnit" : { "state" : "translated", "value" : "Canvia a l'Espai anterior" } },
+        "cs" : { "stringUnit" : { "state" : "translated", "value" : "Přepnout na předchozí Space" } },
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Skift til forrige Space" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Zum vorherigen Space wechseln" } },
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Εναλλαγή στον προηγούμενο Χώρο" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Switch to Previous Space" } },
+        "en-GB" : { "stringUnit" : { "state" : "translated", "value" : "Switch to Previous Space" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Cambiar al Espacio anterior" } },
+        "fa" : { "stringUnit" : { "state" : "translated", "value" : "رفتن به فضای قبلی" } },
+        "fi" : { "stringUnit" : { "state" : "translated", "value" : "Vaihda edelliseen Spaceen" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Passer à l'Espace précédent" } },
+        "he" : { "stringUnit" : { "state" : "translated", "value" : "עבור למרחב הקודם" } },
+        "hi" : { "stringUnit" : { "state" : "translated", "value" : "पिछले स्पेस पर स्विच करें" } },
+        "hu" : { "stringUnit" : { "state" : "translated", "value" : "Váltás az előző Space-re" } },
+        "id" : { "stringUnit" : { "state" : "translated", "value" : "Beralih ke Space sebelumnya" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Passa allo Spazio precedente" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "前のスペースに切り替える" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "이전 스페이스로 전환" } },
+        "mk" : { "stringUnit" : { "state" : "translated", "value" : "Премини на претходниот Простор" } },
+        "ms" : { "stringUnit" : { "state" : "translated", "value" : "Tukar ke Ruang sebelumnya" } },
+        "nb" : { "stringUnit" : { "state" : "translated", "value" : "Bytt til forrige Space" } },
+        "nl" : { "stringUnit" : { "state" : "translated", "value" : "Wissel naar de vorige Space" } },
+        "nn" : { "stringUnit" : { "state" : "translated", "value" : "Byt til førre Space" } },
+        "pa" : { "stringUnit" : { "state" : "translated", "value" : "پچھلی سپیس تے جاؤ" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Przełącz na poprzedni Space" } },
+        "ps" : { "stringUnit" : { "state" : "translated", "value" : "مخکیني سپېس ته واوړئ" } },
+        "pt" : { "stringUnit" : { "state" : "translated", "value" : "Mudar para o Espaço anterior" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Trocar para o Espaço anterior" } },
+        "ro" : { "stringUnit" : { "state" : "translated", "value" : "Comută la Spațiul anterior" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Переключиться на предыдущее Пространство" } },
+        "sk" : { "stringUnit" : { "state" : "translated", "value" : "Prepnúť na predchádzajúci Priestor" } },
+        "sr" : { "stringUnit" : { "state" : "translated", "value" : "Prebaci na prethodni Prostor" } },
+        "sv" : { "stringUnit" : { "state" : "translated", "value" : "Byt till föregående Space" } },
+        "th" : { "stringUnit" : { "state" : "translated", "value" : "สลับไปยัง Space ก่อนหน้า" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Önceki Alana geç" } },
+        "uk" : { "stringUnit" : { "state" : "translated", "value" : "Перемкнутися на попередній Простір" } },
+        "ur" : { "stringUnit" : { "state" : "translated", "value" : "پچھلی اسپیس پر جائیں" } },
+        "vi" : { "stringUnit" : { "state" : "translated", "value" : "Chuyển đến Không gian trước đó" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "切换到上一个空间" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "切換到上一個空間" } },
+        "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "切換到上一個空間" } }
+      }
+    },
     "Switch to Space ${spaceNumber}" : {
       "localizations" : {
         "ar" : {
@@ -7073,6 +7167,100 @@
             "value" : "切換到目前顯示器上的某個空間，並可選擇套用標籤和徽章。"
           }
         }
+      }
+    },
+    "Switches to the next Space on the current display." : {
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "ينتقل إلى المساحة التالية على الشاشة الحالية." } },
+        "bg" : { "stringUnit" : { "state" : "translated", "value" : "Превключва към следващото Пространство на текущия дисплей." } },
+        "ca" : { "stringUnit" : { "state" : "translated", "value" : "Canvia a l'Espai següent de la pantalla actual." } },
+        "cs" : { "stringUnit" : { "state" : "translated", "value" : "Přepne na další Space na aktuálním displeji." } },
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Skifter til det næste Space på den aktuelle skærm." } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Wechselt zum nächsten Space auf dem aktuellen Display." } },
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Μεταβαίνει στον επόμενο Χώρο στην τρέχουσα οθόνη." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Switches to the next Space on the current display." } },
+        "en-GB" : { "stringUnit" : { "state" : "translated", "value" : "Switches to the next Space on the current display." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Cambia al siguiente Espacio de la pantalla actual." } },
+        "fa" : { "stringUnit" : { "state" : "translated", "value" : "به فضای بعدی در نمایشگر فعلی می‌رود." } },
+        "fi" : { "stringUnit" : { "state" : "translated", "value" : "Vaihtaa seuraavaan Spaceen nykyisellä näytöllä." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Passe à l'Espace suivant de l'écran actuel." } },
+        "he" : { "stringUnit" : { "state" : "translated", "value" : "עובר למרחב הבא בצג הנוכחי." } },
+        "hi" : { "stringUnit" : { "state" : "translated", "value" : "वर्तमान डिस्प्ले के अगले स्पेस पर स्विच करता है।" } },
+        "hu" : { "stringUnit" : { "state" : "translated", "value" : "Átvált a következő Space-re az aktuális kijelzőn." } },
+        "id" : { "stringUnit" : { "state" : "translated", "value" : "Beralih ke Space berikutnya di layar saat ini." } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Passa allo Spazio successivo sul monitor attuale." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "現在のディスプレイの次のスペースに切り替えます。" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "현재 디스플레이의 다음 스페이스로 전환합니다." } },
+        "mk" : { "stringUnit" : { "state" : "translated", "value" : "Преминува на следниот Простор на тековниот екран." } },
+        "ms" : { "stringUnit" : { "state" : "translated", "value" : "Bertukar ke Ruang seterusnya pada paparan semasa." } },
+        "nb" : { "stringUnit" : { "state" : "translated", "value" : "Bytter til neste Space på gjeldende skjerm." } },
+        "nl" : { "stringUnit" : { "state" : "translated", "value" : "Wisselt naar de volgende Space op het huidige beeldscherm." } },
+        "nn" : { "stringUnit" : { "state" : "translated", "value" : "Byter til neste Space på gjeldande skjerm." } },
+        "pa" : { "stringUnit" : { "state" : "translated", "value" : "موجودہ ڈسپلے اُتے اگلی سپیس تے جاندا اے۔" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Przełącza na następny Space na bieżącym ekranie." } },
+        "ps" : { "stringUnit" : { "state" : "translated", "value" : "په اوسني ډسپلې کې راتلونکي سپېس ته اوړي." } },
+        "pt" : { "stringUnit" : { "state" : "translated", "value" : "Muda para o Espaço seguinte no ecrã atual." } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Troca para o Espaço seguinte na tela atual." } },
+        "ro" : { "stringUnit" : { "state" : "translated", "value" : "Comută la Spațiul următor de pe ecranul curent." } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Переключается на следующее Пространство на текущем дисплее." } },
+        "sk" : { "stringUnit" : { "state" : "translated", "value" : "Prepne na ďalší Priestor na aktuálnom displeji." } },
+        "sr" : { "stringUnit" : { "state" : "translated", "value" : "Prebacuje na sledeći Prostor na trenutnom ekranu." } },
+        "sv" : { "stringUnit" : { "state" : "translated", "value" : "Byter till nästa Space på aktuell skärm." } },
+        "th" : { "stringUnit" : { "state" : "translated", "value" : "สลับไปยัง Space ถัดไปบนจอภาพปัจจุบัน" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Geçerli ekrandaki sonraki Alana geçer." } },
+        "uk" : { "stringUnit" : { "state" : "translated", "value" : "Перемикається на наступний Простір на поточному дисплеї." } },
+        "ur" : { "stringUnit" : { "state" : "translated", "value" : "موجودہ ڈسپلے کی اگلی اسپیس پر جاتا ہے۔" } },
+        "vi" : { "stringUnit" : { "state" : "translated", "value" : "Chuyển đến Không gian tiếp theo trên màn hình hiện tại." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "切换到当前显示器上的下一个空间。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "切換到目前顯示器上的下一個空間。" } },
+        "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "切換到目前顯示器上的下一個空間。" } }
+      }
+    },
+    "Switches to the previous Space on the current display." : {
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "ينتقل إلى المساحة السابقة على الشاشة الحالية." } },
+        "bg" : { "stringUnit" : { "state" : "translated", "value" : "Превключва към предишното Пространство на текущия дисплей." } },
+        "ca" : { "stringUnit" : { "state" : "translated", "value" : "Canvia a l'Espai anterior de la pantalla actual." } },
+        "cs" : { "stringUnit" : { "state" : "translated", "value" : "Přepne na předchozí Space na aktuálním displeji." } },
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Skifter til det forrige Space på den aktuelle skærm." } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Wechselt zum vorherigen Space auf dem aktuellen Display." } },
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Μεταβαίνει στον προηγούμενο Χώρο στην τρέχουσα οθόνη." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Switches to the previous Space on the current display." } },
+        "en-GB" : { "stringUnit" : { "state" : "translated", "value" : "Switches to the previous Space on the current display." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Cambia al Espacio anterior de la pantalla actual." } },
+        "fa" : { "stringUnit" : { "state" : "translated", "value" : "به فضای قبلی در نمایشگر فعلی می‌رود." } },
+        "fi" : { "stringUnit" : { "state" : "translated", "value" : "Vaihtaa edelliseen Spaceen nykyisellä näytöllä." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Passe à l'Espace précédent de l'écran actuel." } },
+        "he" : { "stringUnit" : { "state" : "translated", "value" : "עובר למרחב הקודם בצג הנוכחי." } },
+        "hi" : { "stringUnit" : { "state" : "translated", "value" : "वर्तमान डिस्प्ले के पिछले स्पेस पर स्विच करता है।" } },
+        "hu" : { "stringUnit" : { "state" : "translated", "value" : "Átvált az előző Space-re az aktuális kijelzőn." } },
+        "id" : { "stringUnit" : { "state" : "translated", "value" : "Beralih ke Space sebelumnya di layar saat ini." } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Passa allo Spazio precedente sul monitor attuale." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "現在のディスプレイの前のスペースに切り替えます。" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "현재 디스플레이의 이전 스페이스로 전환합니다." } },
+        "mk" : { "stringUnit" : { "state" : "translated", "value" : "Преминува на претходниот Простор на тековниот екран." } },
+        "ms" : { "stringUnit" : { "state" : "translated", "value" : "Bertukar ke Ruang sebelumnya pada paparan semasa." } },
+        "nb" : { "stringUnit" : { "state" : "translated", "value" : "Bytter til forrige Space på gjeldende skjerm." } },
+        "nl" : { "stringUnit" : { "state" : "translated", "value" : "Wisselt naar de vorige Space op het huidige beeldscherm." } },
+        "nn" : { "stringUnit" : { "state" : "translated", "value" : "Byter til førre Space på gjeldande skjerm." } },
+        "pa" : { "stringUnit" : { "state" : "translated", "value" : "موجودہ ڈسپلے اُتے پچھلی سپیس تے جاندا اے۔" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Przełącza na poprzedni Space na bieżącym ekranie." } },
+        "ps" : { "stringUnit" : { "state" : "translated", "value" : "په اوسني ډسپلې کې مخکیني سپېس ته اوړي." } },
+        "pt" : { "stringUnit" : { "state" : "translated", "value" : "Muda para o Espaço anterior no ecrã atual." } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Troca para o Espaço anterior na tela atual." } },
+        "ro" : { "stringUnit" : { "state" : "translated", "value" : "Comută la Spațiul anterior de pe ecranul curent." } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Переключается на предыдущее Пространство на текущем дисплее." } },
+        "sk" : { "stringUnit" : { "state" : "translated", "value" : "Prepne na predchádzajúci Priestor na aktuálnom displeji." } },
+        "sr" : { "stringUnit" : { "state" : "translated", "value" : "Prebacuje na prethodni Prostor na trenutnom ekranu." } },
+        "sv" : { "stringUnit" : { "state" : "translated", "value" : "Byter till föregående Space på aktuell skärm." } },
+        "th" : { "stringUnit" : { "state" : "translated", "value" : "สลับไปยัง Space ก่อนหน้าบนจอภาพปัจจุบัน" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Geçerli ekrandaki önceki Alana geçer." } },
+        "uk" : { "stringUnit" : { "state" : "translated", "value" : "Перемикається на попередній Простір на поточному дисплеї." } },
+        "ur" : { "stringUnit" : { "state" : "translated", "value" : "موجودہ ڈسپلے کی پچھلی اسپیس پر جاتا ہے۔" } },
+        "vi" : { "stringUnit" : { "state" : "translated", "value" : "Chuyển đến Không gian trước đó trên màn hình hiện tại." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "切换到当前显示器上的上一个空间。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "切換到目前顯示器上的上一個空間。" } },
+        "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "切換到目前顯示器上的上一個空間。" } }
       }
     },
     "action_check_for_updates" : {
@@ -8570,7 +8758,7 @@
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deschide Setări sistem"
+            "value" : "Deschide Configurări sistem"
           }
         },
         "ru" : {
@@ -8636,13 +8824,13 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "打開系統設定"
+            "value" : "開啟系統設定"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "打開系統設定"
+            "value" : "開啟系統設定"
           }
         }
       }
@@ -9326,7 +9514,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "تمام سپیسز ڈیفالٹ 'تے"
+            "value" : "ساریاں سپیسز نوں ڈیفالٹ تے ری سیٹ کرو"
           }
         },
         "pl" : {
@@ -9338,7 +9526,7 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ټول سپېسونه ډیفالټ ته"
+            "value" : "ټول سپېسونه ډیفالټ ته وګرځوئ"
           }
         },
         "pt" : {
@@ -9588,7 +9776,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "موجودہ سپیس ڈیفالٹ 'تے"
+            "value" : "موجودہ سپیس نوں ڈیفالٹ تے ری سیٹ کرو"
           }
         },
         "pl" : {
@@ -9922,7 +10110,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Встановити як стандартні"
+            "value" : "Встановити як стандартний"
           }
         },
         "ur" : {
@@ -10052,7 +10240,7 @@
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A Spaces váltásához Kisegítő lehetőségek engedély szükséges.\n\nA Folytatás gombra kattintva a macOS engedélyt kér. Kattintson a \"Rendszerbeállítások megnyitása\" lehetőségre, keresse meg a WhichSpace alkalmazást a listában, és engedélyezze."
+            "value" : "A Space-ek közötti váltáshoz engedélyezni kell a Kisegítő lehetőségeket.\n\nA Folytatás gombra kattintva a macOS engedélyt kér. Kattintson a \"Rendszerbeállítások megnyitása\" lehetőségre, keresse meg a WhichSpace alkalmazást a listában, és engedélyezze."
           }
         },
         "id" : {
@@ -10118,7 +10306,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przełączanie Spaces wymaga uprawnienia Dostępności.\\n\\nPo kliknięciu Kontynuuj macOS poprosi o uprawnienie. Kliknij \"Otwórz Ustawienia systemowe\", znajdź WhichSpace na liście i włącz tę aplikację."
+            "value" : "Przełączanie Spaces wymaga uprawnienia Dostępności.\n\nPo kliknięciu Kontynuuj macOS poprosi o uprawnienie. Kliknij \"Otwórz Ustawienia systemowe\", znajdź WhichSpace na liście i włącz tę aplikację."
           }
         },
         "ps" : {
@@ -10154,7 +10342,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prepínanie Spaces vyžaduje povolenie Prístupnosti.\n\nPo kliknutí na Pokračovať vás macOS požiada o povolenie. Kliknite na \"Otvoriť Systémové nastavenia\", nájdite WhichSpace v zozname a povoľte ho."
+            "value" : "Prepínanie Priestorov vyžaduje povolenie Prístupnosti.\n\nPo kliknutí na Pokračovať vás macOS požiada o povolenie. Kliknite na \"Otvoriť Systémové nastavenia\", nájdite WhichSpace v zozname a povoľte ho."
           }
         },
         "sr" : {
@@ -10166,7 +10354,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Att byta Spaces kräver Tillgänglighetsbehörighet.\n\nEfter att du klickar Fortsätt kommer macOS att be om behörighet. Klicka på \"Öppna Systeminställningar\", hitta WhichSpace i listan och aktivera det."
+            "value" : "Att byta Spaces kräver hjälpmedelsbehörighet.\n\nEfter att du har klickat på Fortsätt kommer macOS att be om behörighet. Klicka på \"Öppna Systeminställningar\", hitta WhichSpace i listan och aktivera det."
           }
         },
         "th" : {
@@ -10208,13 +10396,13 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "切換空間需要輔助使用權限。\n\n按一下「繼續」後，macOS 會要求權限。按一下「打開系統設定」，在列表中找到 WhichSpace 並啟用。"
+            "value" : "切換空間需要輔助使用權限。\n\n按一下「繼續」後，macOS 會要求權限。按一下「開啟系統設定」，在列表中找到 WhichSpace 並啟用。"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "切換空間需要輔助使用權限。\n\n按一下「繼續」後，macOS 會要求權限。按一下「打開系統設定」，然後在列表中找到 WhichSpace 並啟用。"
+            "value" : "切換空間需要輔助使用權限。\n\n按一下「繼續」後，macOS 會要求權限。按一下「開啟系統設定」，然後在列表中找到 WhichSpace 並啟用。"
           }
         }
       }
@@ -10732,13 +10920,13 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "要加入自訂聲音，請將聲音檔案拷貝到~/Library/Sounds檔案夾。它們會顯示在聲音選單的「使用者」部分。"
+            "value" : "要加入自訂聲音，請將聲音檔案複製到 ~/Library/Sounds 資料夾。它們會顯示在聲音選單的「使用者」部分。"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "要加入自訂聲音，請將聲音檔案拷貝到~/Library/Sounds檔案夾。它們會顯示在聲音選單的「使用者」部分。"
+            "value" : "要加入自訂聲音，請將聲音檔案複製到 ~/Library/Sounds 資料夾。它們會顯示在聲音選單的「用戶」部分。"
           }
         }
       }
@@ -11160,7 +11348,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ترتیبات ایکسپورٹ کرن وچ ناکام"
+            "value" : "ترتیبات ایکسپورٹ نہیں ہو سکیاں"
           }
         },
         "pl" : {
@@ -11422,7 +11610,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ترتیبات امپورٹ کرن وچ ناکام"
+            "value" : "ترتیبات امپورٹ نہیں ہو سکیاں"
           }
         },
         "pl" : {
@@ -11887,7 +12075,7 @@
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A Spaces váltásához Kisegítő lehetőségek engedély szükséges."
+            "value" : "A Space-ek közötti váltáshoz engedélyezni kell a Kisegítő lehetőségeket."
           }
         },
         "id" : {
@@ -11989,7 +12177,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prepínanie Spaces vyžaduje povolenie Prístupnosti."
+            "value" : "Prepínanie Priestorov vyžaduje povolenie Prístupnosti."
           }
         },
         "sr" : {
@@ -13877,7 +14065,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "打開"
+            "value" : "開啟"
           }
         },
         "zh-HK" : {
@@ -17277,19 +17465,19 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "这会移除已保存的默认样式。新空间将不带自定义显示。"
+            "value" : "这会移除已保存的默认样式。新空间将以未自定义的状态显示。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "這會移除已儲存的預設樣式。新空間將不帶自訂顯示。"
+            "value" : "這會移除已儲存的預設樣式。新空間將以未自訂的狀態顯示。"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "這會移除已儲存的預設樣式。新空間將不帶自訂顯示。"
+            "value" : "這會移除已儲存的預設樣式。新空間將以未自訂的狀態顯示。"
           }
         }
       }
@@ -17883,7 +18071,7 @@
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "رمزگشایی تنظیمات ناموفق بود: %@"
+            "value" : "کدگشایی تنظیمات ناموفق بود: %@"
           }
         },
         "fi" : {
@@ -18145,7 +18333,7 @@
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "رمزگذاری تنظیمات ناموفق بود"
+            "value" : "کدگذاری تنظیمات ناموفق بود"
           }
         },
         "fi" : {
@@ -19145,13 +19333,13 @@
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cal el permís d'accessibilitat. Concediu-lo a Configuració del Sistema → Privadesa i seguretat → Accessibilitat."
+            "value" : "Cal el permís d'accessibilitat. Concediu-lo a Configuració del Sistema → Privacitat i seguretat → Accessibilitat."
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vyžaduje se oprávnění zpřístupnění. Udělte ho v Nastavení systému → Soukromí a zabezpečení → Zpřístupnění."
+            "value" : "Vyžaduje se oprávnění pro Zpřístupnění. Udělte je v Nastavení systému → Soukromí a zabezpečení → Zpřístupnění."
           }
         },
         "da" : {
@@ -19373,19 +19561,19 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "需要辅助功能权限。请在系统设置 → 隐私与安全性 → 辅助功能中授予。"
+            "value" : "需要辅助功能权限。请在系统设置 → 隐私与安全性 → 辅助功能中授予权限。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "需要輔助使用權限。請在系統設定 → 隱私權與安全性 → 輔助使用中授予。"
+            "value" : "需要輔助使用權限。請在系統設定 → 隱私權與安全性 → 輔助使用中授予權限。"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "需要輔助使用權限。請在系統設定 → 私隱權與安全性 → 輔助使用中授予。"
+            "value" : "需要輔助使用權限。請在系統設定 → 私隱與保安 → 輔助使用中授予權限。"
           }
         }
       }
@@ -19581,7 +19769,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Значок должен состоять из одного символа."
+            "value" : "Бейдж должен состоять из одного символа."
           }
         },
         "sk" : {
@@ -19617,7 +19805,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Значок має бути одним символом."
+            "value" : "Бейдж має бути одним символом."
           }
         },
         "ur" : {
@@ -19807,7 +19995,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "اک سپیس نمبر متوقع اے۔"
+            "value" : "اک سپیس نمبر دی لوڑ اے۔"
           }
         },
         "pl" : {
@@ -21999,13 +22187,13 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "點擊"
+            "value" : "按一下"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "點擊"
+            "value" : "按一下"
           }
         }
       }
@@ -23559,7 +23747,7 @@
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Glyph"
+            "value" : "Hình dạng ký tự"
           }
         },
         "zh-Hans" : {
@@ -27929,7 +28117,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "پیش منظر"
+            "value" : "پیش نظارہ"
           }
         },
         "pl" : {
@@ -28007,7 +28195,7 @@
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "پیش منظر"
+            "value" : "پیش نظارہ"
           }
         },
         "vi" : {
@@ -28673,7 +28861,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "セパレーター"
+            "value" : "区切り線"
           }
         },
         "ko" : {
@@ -28805,7 +28993,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "分隔符"
+            "value" : "分隔线"
           }
         },
         "zh-Hant" : {
@@ -29685,7 +29873,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pilule"
+            "value" : "Capsule"
           }
         },
         "he" : {
@@ -29947,7 +30135,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pilule (Contour)"
+            "value" : "Capsule (Contour)"
           }
         },
         "he" : {
@@ -33443,7 +33631,7 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ډکونه"
+            "value" : "دننی واټن"
           }
         },
         "pt" : {
@@ -37676,7 +37864,7 @@
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pentagon"
+            "value" : "Petougao"
           }
         },
         "sv" : {
@@ -37939,7 +38127,7 @@
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pentagon (kontura)"
+            "value" : "Petougao (kontura)"
           }
         },
         "sv" : {
@@ -38076,7 +38264,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pilule"
+            "value" : "Capsule"
           }
         },
         "he" : {
@@ -38339,7 +38527,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pilule (Contour)"
+            "value" : "Capsule (Contour)"
           }
         },
         "he" : {
@@ -41343,7 +41531,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Положение значка относительно текста"
+            "value" : "Положение бейджа относительно текста"
           }
         },
         "sk" : {
@@ -41379,7 +41567,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Розташування значка відносно тексту"
+            "value" : "Розташування бейджа відносно тексту"
           }
         },
         "ur" : {
@@ -42355,7 +42543,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "سپیس آئیکن 'تے کھبا کلک کر کے اس 'تے جاؤ"
+            "value" : "سپیس آئیکن تے کھبا کلک کر کے اس تے جاؤ"
           }
         },
         "pl" : {
@@ -44563,19 +44751,19 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "تشغيل %@ تلقائياً عند بدء التشغيل"
+            "value" : "تشغيل %@ تلقائياً عند تسجيل الدخول"
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Стартирай %@ автоматично при включване"
+            "value" : "Стартирай %@ автоматично при вход"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Executa %@ automàticament a l'inici"
+            "value" : "Executa %@ automàticament en iniciar sessió"
           }
         },
         "cs" : {
@@ -44593,7 +44781,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ automatisch beim Start ausführen"
+            "value" : "%@ automatisch beim Login ausführen"
           }
         },
         "el" : {
@@ -44605,19 +44793,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Automatically run %@ on startup"
+            "value" : "Automatically run %@ at login"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Automatically run %@ on startup"
+            "value" : "Automatically run %@ at login"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ejecutar %@ automáticamente al iniciar"
+            "value" : "Ejecutar %@ automáticamente al iniciar sesión"
           }
         },
         "fa" : {
@@ -44635,19 +44823,19 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lancer %@ automatiquement au démarrage"
+            "value" : "Lancer %@ automatiquement à la connexion"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "הפעל את %@ אוטומטית בעת ההפעלה"
+            "value" : "הפעל את %@ אוטומטית בעת ההתחברות"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "स्टार्टअप पर %@ को स्वतः चलाएँ"
+            "value" : "लॉगिन पर %@ को स्वतः चलाएँ"
           }
         },
         "hu" : {
@@ -44707,13 +44895,13 @@
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Køyr %@ automatisk ved oppstart"
+            "value" : "Køyr %@ automatisk ved innlogging"
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "آغاز 'تے %@ خودکار چلاؤ"
+            "value" : "لاگ اِن تے %@ خودکار چلاؤ"
           }
         },
         "pl" : {
@@ -44725,7 +44913,7 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ په پيل کې په اوتومات ډول وچلوئ"
+            "value" : "%@ د ننوتلو پر مهال په اوتومات ډول وچلوئ"
           }
         },
         "pt" : {
@@ -44737,13 +44925,13 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Executar %@ automaticamente na inicialização"
+            "value" : "Executar %@ automaticamente ao iniciar sessão"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rulează %@ automat la pornire"
+            "value" : "Rulează %@ automat la autentificare"
           }
         },
         "ru" : {
@@ -44755,7 +44943,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Automaticky spustiť %@ pri štarte"
+            "value" : "Automaticky spustiť %@ pri prihlásení"
           }
         },
         "sr" : {
@@ -44785,13 +44973,13 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Автоматично запускати %@ під час старту системи"
+            "value" : "Автоматично запускати %@ під час входу"
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "آغاز پر %@ خودکار طور پر چلائیں"
+            "value" : "لاگ اِن پر %@ خودکار طور پر چلائیں"
           }
         },
         "vi" : {
@@ -44803,7 +44991,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "启动时自动运行 %@"
+            "value" : "登录时自动运行 %@"
           }
         },
         "zh-Hant" : {
@@ -45857,7 +46045,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在選單列圖像上捲動以切換空間"
+            "value" : "在選單列圖示上捲動以切換空間"
           }
         },
         "zh-HK" : {
@@ -47553,7 +47741,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "すべてのディスプレイのスペースをグローバルな番号とセパレーター付きで表示"
+            "value" : "すべてのディスプレイのスペースをグローバルな番号と区切り線付きで表示"
           }
         },
         "ko" : {
@@ -47685,7 +47873,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "显示所有显示器的空间，使用全局编号和分隔符"
+            "value" : "显示所有显示器的空间，使用全局编号和分隔线"
           }
         },
         "zh-Hant" : {
@@ -48285,7 +48473,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Personalizar los iconos de Espacio por cada pantalla"
+            "value" : "Personalizar los iconos de Espacio por separado para cada pantalla"
           }
         },
         "fa" : {
@@ -50065,25 +50253,25 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "إخفاء تطبيقات ملء الشاشة"
+            "value" : "إخفاء المساحات التي تحتوي على تطبيقات بملء الشاشة"
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Скрий приложенията на цял екран"
+            "value" : "Скрий Пространствата с приложения на цял екран"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Amaga les aplicacions a pantalla completa"
+            "value" : "Amaga els Espais que contenen aplicacions a pantalla completa"
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Skrýt aplikace na celou obrazovku"
+            "value" : "Skrýt Spaces s aplikacemi na celou obrazovku"
           }
         },
         "da" : {
@@ -50101,97 +50289,97 @@
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Απόκρυψη εφαρμογών πλήρους οθόνης"
+            "value" : "Απόκρυψη Χώρων με εφαρμογές πλήρους οθόνης"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hide full-screen Applications"
+            "value" : "Hide Spaces containing full-screen applications"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hide full-screen Applications"
+            "value" : "Hide Spaces containing full-screen applications"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ocultar aplicaciones a pantalla completa"
+            "value" : "Ocultar Espacios con aplicaciones a pantalla completa"
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "مخفی کردن برنامه‌های تمام‌صفحه"
+            "value" : "فضاهای دارای برنامه تمام‌صفحه را مخفی کنید"
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Piilota koko näytön sovellukset"
+            "value" : "Piilota Spacet, joissa on koko näytön sovelluksia"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Masquer les applications en plein écran"
+            "value" : "Masquer les Espaces contenant des applications en plein écran"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "הסתר יישומי מסך מלא"
+            "value" : "הסתר מרחבים עם יישומים במסך מלא"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "फुल-स्क्रीन ऐप्स छिपाएँ"
+            "value" : "फुल-स्क्रीन ऐप वाले स्पेसेस छिपाएँ"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Teljes képernyős alkalmazások elrejtése"
+            "value" : "A teljes képernyős alkalmazásokat tartalmazó Space-ek elrejtése"
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sembunyikan aplikasi layar penuh"
+            "value" : "Sembunyikan Space yang berisi aplikasi layar penuh"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nascondi le app a schermo intero"
+            "value" : "Nascondi gli Spazi con app a schermo intero"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "全画面アプリを非表示"
+            "value" : "フルスクリーンアプリがあるスペースを非表示"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "전체 화면 앱 스페이스 숨기기"
+            "value" : "전체 화면 앱이 있는 스페이스 숨기기"
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Сокриј апликации на цел екран"
+            "value" : "Сокриј Простори што содржат апликации на цел екран"
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sembunyikan aplikasi skrin penuh"
+            "value" : "Sembunyikan Ruang yang mengandungi aplikasi skrin penuh"
           }
         },
         "nb" : {
@@ -50209,43 +50397,43 @@
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gøym fullskjermprogram"
+            "value" : "Gøym Spaces med program i fullskjerm"
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "فل اسکرین ایپس لکاؤ"
+            "value" : "فل اسکرین ایپس والے سپیسز لکاؤ"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ukryj aplikacje pełnoekranowe"
+            "value" : "Ukryj Spaces z aplikacjami na pełnym ekranie"
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "بشپړ سکرین اپلېکېشنونه پټ کړئ"
+            "value" : "هغه سپېسونه پټ کړئ چې بشپړ سکرین اپلېکېشنونه لري"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ocultar aplicações em ecrã inteiro"
+            "value" : "Ocultar Espaços com aplicações em ecrã inteiro"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ocultar aplicativos em tela cheia"
+            "value" : "Ocultar Espaços com aplicativos em tela cheia"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ascunde aplicațiile pe tot ecranul"
+            "value" : "Ascunde Spațiile cu aplicații pe tot ecranul"
           }
         },
         "ru" : {
@@ -50257,13 +50445,13 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Skryť celoobrazovkové aplikácie"
+            "value" : "Skryť Priestory obsahujúce celoobrazovkové aplikácie"
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sakrij aplikacije preko celog ekrana"
+            "value" : "Sakrij Prostore koji sadrže aplikacije preko celog ekrana"
           }
         },
         "sv" : {
@@ -50275,49 +50463,49 @@
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ซ่อนแอปเต็มหน้าจอ"
+            "value" : "ซ่อน Space ที่มีแอปเต็มหน้าจอ"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tam ekran uygulamaları gizle"
+            "value" : "Tam ekran uygulama içeren Alanları gizle"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Приховувати повноекранні застосунки"
+            "value" : "Приховати Простори з повноекранними застосунками"
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "فل اسکرین ایپس چھپائیں"
+            "value" : "فل اسکرین ایپس والے سپیسز چھپائیں"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ẩn ứng dụng toàn màn hình"
+            "value" : "Ẩn các Không gian chứa ứng dụng toàn màn hình"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "隐藏全屏应用的空间"
+            "value" : "隐藏包含全屏应用的空间"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "隱藏全螢幕應用程式的空間"
+            "value" : "隱藏包含全螢幕應用程式的空間"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "隱藏全螢幕應用程式"
+            "value" : "隱藏包含全螢幕應用程式的空間"
           }
         }
       }
@@ -50411,7 +50599,7 @@
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "एकल स्पेस छिपाएँ"
+            "value" : "केवल एक स्पेस होने पर मेनू बार आइकन छिपाएँ"
           }
         },
         "hu" : {
@@ -50763,7 +50951,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abrir na inicialização"
+            "value" : "Abrir ao iniciar sessão"
           }
         },
         "ro" : {
@@ -51787,7 +51975,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "چکر وچ بدلی"
+            "value" : "دوجے سرے توں جاری رکھو"
           }
         },
         "pl" : {
@@ -51799,7 +51987,7 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "څرخيز بدلون"
+            "value" : "له بل سر څخه بیا پیل"
           }
         },
         "pt" : {
