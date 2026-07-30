@@ -46,7 +46,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     private let appState: AppState
     private let missionControlNotificationSender: (CFString) -> Void
     private(set) var actionHandler: ActionHandler!
-    private var menuBuilder: MenuBuilder!
     private var middleClickMonitor: Any?
     private var scrollMonitor: Any?
     private var statusBarItem: NSStatusItem!
@@ -62,24 +61,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     private var scrollAccumulator = 0.0
     private var lastScrollSwitchTimestamp: TimeInterval = -.infinity
 
-    /// Which color the shared color panel is currently editing
-    private enum ColorPanelTarget {
-        case foreground
-        case background
-        case symbol
-        case symbolBackground
-    }
-
-    private var colorPanelTarget = ColorPanelTarget.foreground
-    /// Owns hover-preview coalescing and restore timing for the status icon
-    private lazy var previewCoordinator = IconPreviewCoordinator(
-        applyPreview: { [weak self] request in
-            self?.applyPreviewIcon(request) ?? false
-        },
-        restoreBaseIcon: { [weak self] in
-            self?.updateStatusBarIcon()
-        }
-    )
     private var launchAtLogin: LaunchAtLoginProvider
     private var preferenceObservationTasks: [Task<Void, Never>] = []
     private var settingsCoordinator: SettingsWindowCoordinator?
@@ -147,13 +128,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     private func configureActionHandler() {
         actionHandler = ActionHandler(
             appState: appState,
-            confirmAction: confirmAction,
             launchAtLogin: launchAtLogin,
             onStatusBarIconNeedsUpdate: { [weak self] in
                 self?.updateStatusBarIcon()
-            },
-            onStatusBarVisibilityNeedsUpdate: { [weak self] in
-                self?.updateStatusBarVisibility()
             },
             onCheckForUpdates: { [weak self] in
                 NSApp.activate(ignoringOtherApps: true)
@@ -171,7 +148,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     func showSettingsWindow() {
         if settingsCoordinator == nil {
             let model = SettingsModel(store: store, launchAtLogin: launchAtLogin)
-            let editorModel = SpaceEditorModel(appState: appState)
+            let editorModel = SpaceEditorModel(appState: appState, confirmAction: confirmAction)
             let generalPane = Settings.PaneHostingController(pane: Settings.Pane(
                 identifier: .general,
                 title: Localization.paneGeneral,
@@ -268,8 +245,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             }
         }
 
-        // Warm the symbol/emoji catalogs off-main so the first menu open doesn't
-        // pay for instantiating ~600 NSImages on the main thread
+        // Warm the symbol/emoji catalogs off-main so the first settings-window
+        // open doesn't pay for instantiating ~600 NSImages on the main thread
         Task.detached(priority: .utility) {
             _ = ItemData.symbols.count
             _ = ItemData.emojis.count
@@ -454,9 +431,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
     /// Test hook to configure the menu bar icon. In production, this is called from applicationDidFinishLaunching.
     func configureMenuBarIcon() {
-        menuBuilder = MenuBuilder(appState: appState, store: store)
-        statusMenu = menuBuilder.buildMenu(target: actionHandler, menuDelegate: self, actionDelegate: self)
-        statusMenu.delegate = self
+        statusMenu = MenuBuilder.buildMenu(target: actionHandler)
         statusBarItem?.button?.toolTip = AppInfo.appName
         statusBarItem?.button?.target = self
         statusBarItem?.button?.action = #selector(statusBarButtonClicked(_:))
@@ -646,13 +621,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
     /// The single funnel for base-icon refreshes, reached via three routes:
     /// the observation task (snapshot and dark-mode changes), the renderer's
-    /// `onIconNeedsUpdate` callback (background occupancy scans), and direct
-    /// calls from menu actions (preference writes, which observation can't
-    /// see because `DefaultsStore` isn't observable).
+    /// `onIconNeedsUpdate` callback (background occupancy scans), and the
+    /// preference observers (settings-window writes and external defaults
+    /// edits).
     func updateStatusBarIcon() {
-        guard !previewCoordinator.isPreviewing else {
-            return
-        }
         statusBarIconUpdateCount += 1
         guard let statusBarItem else {
             return
@@ -674,22 +646,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         updateStatusBarVisibility()
     }
 
-    private func updateBadgeMenuVisibility() {
-        // Combined symbol+label icons render text, so badges apply there;
-        // only a symbol shown alone hides the badge menu
-        let symbolAlone = appState.currentSymbol != nil && !currentSpaceHasLabel
-        statusMenu.item(withTag: MenuTag.badgeMenuItem.rawValue)?.isHidden = symbolAlone
-    }
-
-    private var currentSpaceHasLabel: Bool {
-        let label = SpacePreferences.label(
-            forSpace: appState.currentSpace,
-            display: appState.currentDisplayID,
-            store: store
-        )
-        return label.map { !$0.isEmpty } ?? false
-    }
-
     private func updateStatusBarVisibility() {
         guard let statusBarItem else {
             return
@@ -700,488 +656,5 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
         // Hide if there's only one regular (non-fullscreen) space across all displays
         statusBarItem.isVisible = appState.regularSpaceCount > 1
-    }
-
-    /// Updates the sizeScale on all StylePicker views in the icon menu
-    private func updateStylePickerSizeScales() {
-        let scale = store.sizeScale
-        for item in statusMenu.items {
-            guard let submenu = item.submenu else {
-                continue
-            }
-            for subItem in submenu.items {
-                guard let iconSubmenu = subItem.submenu else {
-                    continue
-                }
-                for iconItem in iconSubmenu.items {
-                    if let stylePicker = iconItem.view as? StylePicker {
-                        stylePicker.sizeScale = scale
-                        stylePicker.needsDisplay = true
-                    }
-                }
-            }
-        }
-    }
-
-    // MARK: - Preview
-
-    /// Forwards a preview request to the coordinator, which applies it
-    /// immediately when idle and otherwise coalesces to ~60Hz with
-    /// latest-wins semantics.
-    private func showPreviewIcon(
-        style: IconStyle? = nil,
-        labelStyle: IconStyle? = nil,
-        symbol: String? = nil,
-        foreground: NSColor? = nil,
-        background: NSColor? = nil,
-        symbolColor: NSColor? = nil,
-        symbolBackground: NSColor? = nil,
-        symbolPosition: SymbolPosition? = nil,
-        symbolWrap: SymbolWrap? = nil,
-        separatorColor: NSColor? = nil,
-        clearSymbol: Bool = false,
-        clearSymbolBackground: Bool = false,
-        skinTone: SkinTone? = nil,
-        badgePosition: BadgePosition? = nil
-    ) {
-        guard statusBarItem != nil else {
-            return
-        }
-        previewCoordinator.show(IconPreviewRequest(
-            background: background,
-            badgePosition: badgePosition,
-            clearSymbol: clearSymbol,
-            clearSymbolBackground: clearSymbolBackground,
-            foreground: foreground,
-            labelStyle: labelStyle,
-            separatorColor: separatorColor,
-            skinTone: skinTone,
-            style: style,
-            symbol: symbol,
-            symbolBackground: symbolBackground,
-            symbolColor: symbolColor,
-            symbolPosition: symbolPosition,
-            symbolWrap: symbolWrap
-        ))
-    }
-
-    /// Renders and installs a preview icon. Returns false when the status
-    /// bar item doesn't exist yet, so preview mode is not entered.
-    private func applyPreviewIcon(_ request: IconPreviewRequest) -> Bool {
-        guard let statusBarItem else {
-            return false
-        }
-        let previewIcon = appState.generatePreviewIcon(
-            overrideStyle: request.style,
-            overrideLabelStyle: request.labelStyle,
-            overrideSymbol: request.symbol,
-            overrideForeground: request.foreground,
-            overrideBackground: request.background,
-            overrideSymbolColor: request.symbolColor,
-            overrideSymbolBackground: request.symbolBackground,
-            overrideSymbolPosition: request.symbolPosition,
-            overrideSymbolWrap: request.symbolWrap,
-            overrideSeparatorColor: request.separatorColor,
-            clearSymbol: request.clearSymbol,
-            clearSymbolBackground: request.clearSymbolBackground,
-            skinTone: request.skinTone,
-            overrideBadgePosition: request.badgePosition
-        )
-        statusBarItem.length = previewIcon.size.width
-        statusBarItem.button?.image = previewIcon
-        // Force immediate redraw - during menu tracking AppKit defers display
-        // for the status bar button's window, causing visible preview lag.
-        statusBarItem.button?.display()
-        // Force the Core Animation commit - during rapid event streams the
-        // run loop never idles, so the beforeWaiting commit observer is
-        // starved and drawn frames reach the WindowServer late.
-        CATransaction.flush()
-        return true
-    }
-
-    private func showInvertedColorPreview() {
-        let colors = appState.currentInvertedColors
-        showPreviewIcon(
-            foreground: colors.foreground,
-            background: colors.background,
-            symbolColor: colors.symbol,
-            symbolBackground: colors.symbolBackground
-        )
-    }
-
-    // MARK: - Color Panel
-
-    private func showSeparatorColorPanel() {
-        NSApp.activate(ignoringOtherApps: true)
-
-        let colorPanel = NSColorPanel.shared
-        colorPanel.setTarget(self)
-        colorPanel.setAction(#selector(separatorColorChanged(_:)))
-        colorPanel.isContinuous = true
-        colorPanel.color = store.separatorColor ?? .gray
-        colorPanel.makeKeyAndOrderFront(nil)
-    }
-
-    @objc private func separatorColorChanged(_ sender: NSColorPanel) {
-        actionHandler.setSeparatorColor(sender.color)
-    }
-
-    private func showColorPanel() {
-        NSApp.activate(ignoringOtherApps: true)
-
-        let colorPanel = NSColorPanel.shared
-        colorPanel.setTarget(self)
-        colorPanel.setAction(#selector(colorChanged(_:)))
-        colorPanel.isContinuous = true
-
-        let colors = appState.currentColors
-        colorPanel.color = switch colorPanelTarget {
-        case .foreground:
-            colors?.foreground ?? .white
-        case .background:
-            colors?.background ?? .black
-        case .symbol:
-            colors?.symbol ?? colors?.foreground ?? .white
-        case .symbolBackground:
-            colors?.symbolBackground ?? colors?.background ?? .black
-        }
-
-        colorPanel.makeKeyAndOrderFront(nil)
-    }
-
-    @objc private func colorChanged(_ sender: NSColorPanel) {
-        switch colorPanelTarget {
-        case .foreground:
-            actionHandler.setColor(sender.color, isForeground: true)
-        case .background:
-            actionHandler.setColor(sender.color, isForeground: false)
-        case .symbol:
-            actionHandler.setSymbolColor(sender.color)
-        case .symbolBackground:
-            actionHandler.setSymbolBackgroundColor(sender.color)
-        }
-    }
-
-    // MARK: - Font Panel
-
-    @objc func showFontPanel() {
-        // Set responder-chain target/action before delegating presentation
-        let fontManager = NSFontManager.shared
-        fontManager.target = self
-        fontManager.action = #selector(changeFont(_:))
-        actionHandler.showFontPanel()
-    }
-
-    @objc func changeFont(_ sender: Any?) {
-        actionHandler.changeFont(sender)
-    }
-}
-
-// MARK: - MenuActionDelegate
-
-extension AppDelegate: MenuActionDelegate {
-    func sizeChanged(to scale: Double) {
-        store.sizeScale = scale
-        updateStatusBarIcon()
-        updateStylePickerSizeScales()
-    }
-
-    func paddingChanged(to scale: Double) {
-        store.paddingScale = scale
-        updateStatusBarIcon()
-    }
-
-    func symbolGapChanged(to gap: Double) {
-        actionHandler.setSymbolGap(gap)
-    }
-
-    func scrollSensitivityChanged(to scale: Double) {
-        store.scrollSensitivity = scale
-    }
-
-    func scrollHapticIntensityChanged(to intensity: Int) {
-        store.scrollHapticFeedback = intensity > 0
-        if intensity > 0 {
-            store.scrollHapticIntensity = intensity
-            scrollHapticAction(intensity)
-        }
-    }
-
-    func skinToneSelected(_ tone: SkinTone) {
-        guard appState.currentSpace > 0 else {
-            return
-        }
-        SpacePreferences.setSkinTone(
-            tone,
-            forSpace: appState.currentSpace,
-            display: appState.currentDisplayID,
-            store: store
-        )
-        updateStatusBarIcon()
-    }
-
-    func foregroundColorSelected(_ color: NSColor) {
-        actionHandler.setColor(color, isForeground: true)
-        menuBuilder.updateClearCellVisibility()
-    }
-
-    func backgroundColorSelected(_ color: NSColor) {
-        actionHandler.setColor(color, isForeground: false)
-        menuBuilder.updateClearCellVisibility()
-    }
-
-    func separatorColorSelected(_ color: NSColor) {
-        actionHandler.setSeparatorColor(color)
-    }
-
-    func symbolColorSelected(_ color: NSColor) {
-        actionHandler.setSymbolColor(color)
-        menuBuilder.updateClearCellVisibility()
-    }
-
-    func symbolBackgroundColorSelected(_ color: NSColor) {
-        actionHandler.setSymbolBackgroundColor(color)
-        menuBuilder.updateClearCellVisibility()
-    }
-
-    func symbolBackgroundColorCleared() {
-        actionHandler.clearSymbolBackgroundColor()
-        menuBuilder.updateClearCellVisibility()
-    }
-
-    func customForegroundColorRequested() {
-        colorPanelTarget = .foreground
-        showColorPanel()
-    }
-
-    func customBackgroundColorRequested() {
-        colorPanelTarget = .background
-        showColorPanel()
-    }
-
-    func customSymbolColorRequested() {
-        colorPanelTarget = .symbol
-        showColorPanel()
-    }
-
-    func customSymbolBackgroundColorRequested() {
-        colorPanelTarget = .symbolBackground
-        showColorPanel()
-    }
-
-    func customSeparatorColorRequested() {
-        showSeparatorColorPanel()
-    }
-
-    func symbolSelected(_ symbol: String?) {
-        actionHandler.setSymbol(symbol)
-        updateBadgeMenuVisibility()
-        // The combined position/wrap section depends on symbol presence
-        updateLabelMenuVisibility(hasLabel: currentSpaceHasLabel)
-    }
-
-    func iconStyleSelected(_ style: IconStyle, stylePicker: StylePicker?) {
-        actionHandler.selectIconStyle(style, stylePicker: stylePicker)
-        updateBadgeMenuVisibility()
-    }
-
-    func badgeCharacterChanged(_ character: String?) {
-        actionHandler.setBadgeCharacter(character)
-    }
-
-    func labelChanged(_ label: String?) {
-        // End preview mode fully - a preview left queued here would reapply
-        // after the label update and mask the new icon. Skip the restore:
-        // setLabel triggers its own icon update with the new label
-        previewCoordinator.endWithoutRestore()
-        actionHandler.setLabel(label)
-        updateLabelMenuVisibility(hasLabel: label != nil && !label!.isEmpty)
-        // Combined icons render text, so badge availability changes too
-        updateBadgeMenuVisibility()
-    }
-
-    private func updateLabelMenuVisibility(hasLabel: Bool) {
-        guard let labelMenu = MenuBuilder.findMenuItem(withTag: MenuTag.labelMenuItem.rawValue, in: statusMenu)?.submenu
-        else {
-            return
-        }
-        var pastInput = false
-        for item in labelMenu.items {
-            if item.tag == MenuTag.labelInput.rawValue {
-                pastInput = true
-                continue
-            }
-            // Only hide separators, disabled headers, and style pickers - not copy/reset actions
-            if pastInput, item.tag != MenuTag.fontMenuItem.rawValue,
-               item.isSeparatorItem || item.view is StylePicker || !item.isEnabled
-            {
-                item.isHidden = !hasLabel
-            }
-        }
-        menuBuilder.updateSymbolSection(
-            in: labelMenu,
-            visible: hasLabel && appState.currentSymbol != nil
-        )
-    }
-
-    func labelStyleSelected(_ style: IconStyle, stylePicker: StylePicker?) {
-        actionHandler.selectLabelStyle(style, stylePicker: stylePicker)
-        // Wrap rows depend on whether the new style's shape can wrap, so
-        // refresh while the menu is still open
-        updateLabelMenuVisibility(hasLabel: currentSpaceHasLabel)
-    }
-
-    func labelStyleHoverStarted(_ style: IconStyle) {
-        showPreviewIcon(labelStyle: style)
-    }
-
-    func badgePositionSelected(_ position: BadgePosition) {
-        guard appState.currentSpace > 0 else {
-            return
-        }
-        let currentBadge = SpacePreferences.badge(
-            forSpace: appState.currentSpace,
-            display: appState.currentDisplayID,
-            store: store
-        )
-        let character = currentBadge?.character ?? ""
-        guard !character.isEmpty else {
-            return
-        }
-        SpacePreferences.setBadge(
-            SpaceBadge(character: character, position: position),
-            forSpace: appState.currentSpace,
-            display: appState.currentDisplayID,
-            store: store
-        )
-        updateStatusBarIcon()
-    }
-
-    func skinToneHoverStarted(_ tone: SkinTone) {
-        guard let symbol = appState.currentSymbol else {
-            return
-        }
-        showPreviewIcon(symbol: symbol, skinTone: tone)
-    }
-
-    func colorHoverStarted(index: Int, isForeground _: Bool) {
-        showPreviewIcon(foreground: ColorSwatch.presetColors[index])
-    }
-
-    func foregroundClearHoverStarted() {
-        showPreviewIcon(foreground: .clear)
-    }
-
-    func backgroundColorHoverStarted(index: Int) {
-        showPreviewIcon(background: ColorSwatch.presetColors[index])
-    }
-
-    func separatorColorHoverStarted(index: Int) {
-        showPreviewIcon(separatorColor: ColorSwatch.presetColors[index])
-    }
-
-    func separatorClearHoverStarted() {
-        showPreviewIcon(separatorColor: .clear)
-    }
-
-    func symbolColorHoverStarted(index: Int) {
-        showPreviewIcon(symbolColor: ColorSwatch.presetColors[index])
-    }
-
-    func symbolClearHoverStarted() {
-        showPreviewIcon(symbolColor: .clear)
-    }
-
-    func symbolBackgroundColorHoverStarted(index: Int) {
-        showPreviewIcon(symbolBackground: ColorSwatch.presetColors[index])
-    }
-
-    func symbolBackgroundClearHoverStarted() {
-        showPreviewIcon(clearSymbolBackground: true)
-    }
-
-    func backgroundClearHoverStarted() {
-        showPreviewIcon(background: .clear)
-    }
-
-    func symbolHoverStarted(_ symbol: String, foreground: NSColor?, background: NSColor?, skinTone: SkinTone?) {
-        showPreviewIcon(symbol: symbol, foreground: foreground, background: background, skinTone: skinTone)
-    }
-
-    func styleHoverStarted(_ style: IconStyle) {
-        showPreviewIcon(style: style, clearSymbol: true)
-    }
-
-    func hoverEnded() {
-        previewCoordinator.scheduleRestore()
-    }
-}
-
-// MARK: - NSMenuDelegate
-
-extension AppDelegate: NSMenuDelegate {
-    func menuWillOpen(_ menu: NSMenu) {
-        menuBuilder.updateMenuState(menu: menu, launchAtLoginEnabled: launchAtLogin.isEnabled)
-
-        if menu == statusMenu {
-            menuBuilder.refreshUserSounds()
-        }
-
-        // Update status bar icon when menu opens
-        updateStatusBarIcon()
-    }
-
-    func menuDidClose(_: NSMenu) {
-        // End preview in case the menu closed while hovering (onHoverEnd may not fire)
-        previewCoordinator.end()
-    }
-
-    func menu(_: NSMenu, willHighlight item: NSMenuItem?) {
-        guard let item else {
-            previewCoordinator.scheduleRestore()
-            return
-        }
-
-        let badgePositionTags: [Int: BadgePosition] = [
-            MenuTag.badgePositionTopLeft.rawValue: .topLeft,
-            MenuTag.badgePositionTopRight.rawValue: .topRight,
-            MenuTag.badgePositionBottomLeft.rawValue: .bottomLeft,
-            MenuTag.badgePositionBottomRight.rawValue: .bottomRight,
-        ]
-
-        if let position = badgePositionTags[item.tag] {
-            showPreviewIcon(badgePosition: position)
-            return
-        }
-
-        let symbolPositionTags: [Int: SymbolPosition] = [
-            MenuTag.symbolPositionLeft.rawValue: .left,
-            MenuTag.symbolPositionRight.rawValue: .right,
-        ]
-        if let position = symbolPositionTags[item.tag] {
-            showPreviewIcon(symbolPosition: position)
-            return
-        }
-
-        let symbolWrapTags: [Int: SymbolWrap] = [
-            MenuTag.symbolWrapInside.rawValue: .inside,
-            MenuTag.symbolWrapOutside.rawValue: .outside,
-        ]
-        if let wrap = symbolWrapTags[item.tag] {
-            showPreviewIcon(symbolWrap: wrap)
-            return
-        }
-
-        switch item.tag {
-        case MenuTag.invertColors.rawValue:
-            showInvertedColorPreview()
-        default:
-            // Play sound preview on hover (sound items store name in representedObject)
-            if let soundName = item.representedObject as? String, !soundName.isEmpty {
-                let sound = NSSound(named: NSSound.Name(soundName))?.copy() as? NSSound
-                sound?.play()
-            }
-            previewCoordinator.scheduleRestore()
-        }
     }
 }

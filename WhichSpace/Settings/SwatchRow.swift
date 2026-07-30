@@ -2,10 +2,20 @@ import AppKit
 import SwiftUI
 
 /// A horizontal strip of preset color swatches with a rainbow cell for
-/// custom colors and an optional clear ("no color") cell, mirroring the
-/// status menu's `ColorSwatch` in SwiftUI. The current color is marked with
-/// a ring around its preset cell rather than a separate well.
+/// custom colors and an optional clear ("no color") cell. The current color
+/// is marked with a ring around its preset cell rather than a separate well.
 struct SwatchRow: View {
+    static let presetColors: [NSColor] = [
+        .black,
+        .white,
+        .systemRed,
+        .systemOrange,
+        .systemYellow,
+        .systemGreen,
+        .systemBlue,
+        .systemPurple,
+    ]
+
     /// The stored color; the matching preset cell gets a selection ring
     let currentColor: NSColor?
     /// Gated by `ClearCellRules` so no combination of clears can leave the
@@ -29,8 +39,8 @@ struct SwatchRow: View {
                 .buttonStyle(.plain)
                 .help(Localization.buttonReset)
             }
-            ForEach(0 ..< ColorSwatch.presetColors.count, id: \.self) { index in
-                let color = ColorSwatch.presetColors[index]
+            ForEach(0 ..< Self.presetColors.count, id: \.self) { index in
+                let color = Self.presetColors[index]
                 Button {
                     onSelect(color)
                 } label: {

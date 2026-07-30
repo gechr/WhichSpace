@@ -3,7 +3,7 @@ import EmojiKit
 
 // MARK: - ItemData
 
-/// Static data for symbols and emojis used by ItemPicker
+/// Static data for symbols and emojis used by the glyph grids
 enum ItemData {
     // MARK: - Symbols
 

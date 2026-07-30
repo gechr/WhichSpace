@@ -2,9 +2,8 @@ import AppKit
 import EmojiKit
 import SwiftUI
 
-/// A searchable grid over one of the symbol catalogs, mirroring the menu's
-/// `ItemPicker` in SwiftUI. `LazyVGrid` only materializes visible cells, so
-/// the ~600-item catalogs stay cheap.
+/// A searchable grid over one of the symbol catalogs. `LazyVGrid` only
+/// materializes visible cells, so the ~600-item catalogs stay cheap.
 struct SymbolGridView: View {
     enum Catalog {
         case symbols
@@ -125,9 +124,19 @@ struct SymbolGridView: View {
 
 // MARK: - SkinToneRow
 
-/// Six skin-tone choices with a selection ring, mirroring the menu's
-/// `SkinToneSwatch`.
+/// Six skin-tone choices with a selection ring.
 struct SkinToneRow: View {
+    /// Base emoji to display with skin tone modifiers (waving hand)
+    private static let baseEmoji = "\u{1F44B}"
+
+    /// The 6 skin tone options (yellow + 5 skin tones)
+    static let skinToneEmojis: [String] = SkinTone.modifiers.map { modifier in
+        if let modifier {
+            return baseEmoji + modifier
+        }
+        return baseEmoji
+    }
+
     let selected: SkinTone
     let onSelect: (SkinTone) -> Void
 
@@ -137,7 +146,7 @@ struct SkinToneRow: View {
                 Button {
                     onSelect(tone)
                 } label: {
-                    Text(SkinToneSwatch.skinToneEmojis[tone.rawValue])
+                    Text(Self.skinToneEmojis[tone.rawValue])
                         .font(.system(size: 15))
                         .frame(width: 22, height: 22)
                         .overlay(

@@ -220,7 +220,7 @@ enum ScriptingHelpers {
     }
 
     /// Returns the label shown for the given Space: its custom label when set,
-    /// with `{number}` resolved against the displayed number, otherwise the
+    /// with space tokens resolved against the displayed number, otherwise the
     /// default label ("1", "2", "F" for fullscreen).
     static func resolveLabel(forSpace number: Int, appState: AppState, store: DefaultsStore) -> String {
         if let customLabel = SpacePreferences.label(

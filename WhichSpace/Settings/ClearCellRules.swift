@@ -4,10 +4,6 @@ import AppKit
 /// derived from it. A clear ("no color") cell is offered only while the
 /// opposite side stays visible, so no combination of clears can leave the
 /// icon fully transparent.
-///
-/// The status menu derives the same facts inline (MenuBuilder.IconContext +
-/// updateClearCellVisibility); this value type is the shared, testable form
-/// used by the settings window.
 struct ClearCellRules: Equatable {
     let customColors: SpaceColors?
     let symbol: String?

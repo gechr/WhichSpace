@@ -101,7 +101,7 @@ brew install --cask whichspace
 <img src="Screenshots/LabelsMenu.png" width="60%">
 
 > [!NOTE]
-> Use `{number}` in a label to insert the current Space number, e.g. `{number} - Work` → `3 - Work`.
+> Use `{#}` in a label to insert the current Space number, e.g. `{#} - Work` → `3 - Work`.
 
 ### Size
 

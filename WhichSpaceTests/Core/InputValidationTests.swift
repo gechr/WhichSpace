@@ -238,16 +238,24 @@ struct InputValidationTests {
 
     // MARK: - Label Template Tests
 
-    @Test("LabelTemplate resolves {number} token")
+    @Test("LabelTemplate resolves {#} token")
     func labelTemplateResolvesSpace() {
-        #expect(LabelTemplate.resolve("{number}", space: 3) == "3")
-        #expect(LabelTemplate.resolve("{number} - Work", space: 5) == "5 - Work")
-        #expect(LabelTemplate.resolve("S{number}", space: 10) == "S10")
+        #expect(LabelTemplate.resolve("{#}", space: 3) == "3")
+        #expect(LabelTemplate.resolve("{#} - Work", space: 5) == "5 - Work")
+        #expect(LabelTemplate.resolve("S{#}", space: 10) == "S10")
     }
 
-    @Test("LabelTemplate resolves multiple {number} tokens")
+    @Test("LabelTemplate resolves the {number} synonym")
+    func labelTemplateResolvesSynonym() {
+        #expect(LabelTemplate.resolve("{number}", space: 3) == "3")
+        #expect(LabelTemplate.resolve("{number} - Work", space: 5) == "5 - Work")
+        #expect(LabelTemplate.resolve("{#}/{number}", space: 2) == "2/2")
+        #expect(LabelTemplate.contentLength("{number} - Work") == 7)
+    }
+
+    @Test("LabelTemplate resolves multiple {#} tokens")
     func labelTemplateResolvesMultiple() {
-        #expect(LabelTemplate.resolve("{number}/{number}", space: 2) == "2/2")
+        #expect(LabelTemplate.resolve("{#}/{#}", space: 2) == "2/2")
     }
 
     @Test("LabelTemplate passes through text without tokens")
@@ -256,12 +264,12 @@ struct InputValidationTests {
         #expect(LabelTemplate.resolve("", space: 1).isEmpty)
     }
 
-    @Test("LabelTemplate contentLength excludes {number} tokens")
+    @Test("LabelTemplate contentLength excludes {#} tokens")
     func labelTemplateContentLength() {
-        #expect(LabelTemplate.contentLength("{number}") == 0)
-        #expect(LabelTemplate.contentLength("{number} - Work") == 7)
+        #expect(LabelTemplate.contentLength("{#}") == 0)
+        #expect(LabelTemplate.contentLength("{#} - Work") == 7)
         #expect(LabelTemplate.contentLength("Hello") == 5)
-        #expect(LabelTemplate.contentLength("{number}{number}") == 0)
+        #expect(LabelTemplate.contentLength("{#}{number}") == 0)
     }
 
     @Test("LabelTemplate truncate trims content to the limit")
@@ -284,24 +292,25 @@ struct InputValidationTests {
         #expect(LabelTemplate.truncate("", ellipsis: true).isEmpty)
     }
 
-    @Test("LabelTemplate truncate preserves complete {number} tokens")
+    @Test("LabelTemplate truncate preserves complete {#} tokens")
     func labelTemplateTruncatePreservesTokens() {
-        // Trimming into a token turns "{number" into content, so the loop
+        // Trimming into a token turns "{#" into content, so the loop
         // keeps trimming until the partial token is gone
         #expect(
-            LabelTemplate.truncate("{number} - " + String(repeating: "A", count: 25)) ==
-                "{number} - " + String(repeating: "A", count: 17)
+            LabelTemplate.truncate("{#} - " + String(repeating: "A", count: 25)) ==
+                "{#} - " + String(repeating: "A", count: 17)
         )
         #expect(
-            LabelTemplate.truncate("{number} - " + String(repeating: "A", count: 25), ellipsis: true) ==
-                "{number} - " + String(repeating: "A", count: 16) + "…"
+            LabelTemplate.truncate("{#} - " + String(repeating: "A", count: 25), ellipsis: true) ==
+                "{#} - " + String(repeating: "A", count: 16) + "…"
         )
+        #expect(LabelTemplate.truncate("{#}") == "{#}")
         #expect(LabelTemplate.truncate("{number}") == "{number}")
     }
 
     @Test("LabelTemplate handles large space numbers")
     func labelTemplateHandlesLargeSpaceNumbers() {
-        #expect(LabelTemplate.resolve("{number}", space: 99) == "99")
-        #expect(LabelTemplate.resolve("S{number}", space: 16) == "S16")
+        #expect(LabelTemplate.resolve("{#}", space: 99) == "99")
+        #expect(LabelTemplate.resolve("S{#}", space: 16) == "S16")
     }
 }

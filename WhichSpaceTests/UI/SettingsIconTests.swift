@@ -58,7 +58,7 @@ struct SettingsIconTests {
     func resolvesLabels() {
         let appState = makeAppState()
         let plain = appState.renderer.settingsIcon(forSpace: 2, display: "Main")
-        SpacePreferences.setLabel("S{number}", forSpace: 2, display: "Main", store: store)
+        SpacePreferences.setLabel("S{#}", forSpace: 2, display: "Main", store: store)
         let labeled = appState.renderer.settingsIcon(forSpace: 2, display: "Main")
         #expect(pixels(labeled) != pixels(plain))
         // Labels widen the icon beyond the single-number canvas

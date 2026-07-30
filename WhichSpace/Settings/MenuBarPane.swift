@@ -28,13 +28,13 @@ struct MenuBarPane: View {
                     icon: "arrow.left.and.right"
                 )
             }
-            visibilitySection
             displaySection
+            visibilitySection
         }
     }
 
     /// Which Spaces get an icon. The dim/hide rows only apply when more than
-    /// the current Space is shown, mirroring the status menu's gating.
+    /// the current Space is shown.
     private var visibilitySection: some View {
         let dependentDisabled = !(model.value(\.showAllSpaces) || model.value(\.showAllDisplays))
         return SettingsSection {

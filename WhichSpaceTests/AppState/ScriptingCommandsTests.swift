@@ -30,11 +30,11 @@ struct ScriptingCommandsTests {
         let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
         // Labels are keyed by fullscreen-inclusive position (2), but the
         // displayed number for this space is its regular index (1)
-        SpacePreferences.setLabel("S{number}", forSpace: appState.currentSpace, store: store)
+        SpacePreferences.setLabel("S{#}", forSpace: appState.currentSpace, store: store)
 
         let label = ScriptingHelpers.resolveCurrentLabel(appState: appState, store: store)
 
-        #expect(label == "S1", "{number} should resolve to the displayed number, not the array position")
+        #expect(label == "S1", "{#} should resolve to the displayed number, not the array position")
     }
 
     // MARK: - currentSpaceNumber Tests
@@ -179,7 +179,7 @@ struct ScriptingCommandsTests {
             ),
         ]
         let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
-        SpacePreferences.setLabel("Work {number}", forSpace: 2, store: store)
+        SpacePreferences.setLabel("Work {#}", forSpace: 2, store: store)
 
         let label = ScriptingHelpers.resolveCurrentLabel(appState: appState, store: store)
         #expect(label == "Work 2")
@@ -296,15 +296,15 @@ struct ScriptingCommandsTests {
         )
     }
 
-    @Test("setCurrentLabel excludes {number} tokens from the limit")
+    @Test("setCurrentLabel excludes {#} tokens from the limit")
     func setCurrentLabel_tokensExcludedFromLimit() {
         let appState = makeAppState()
 
-        ScriptingHelpers.setCurrentLabel("{number} - ABCDEFG", appState: appState, store: store)
+        ScriptingHelpers.setCurrentLabel("{#} - ABCDEFG", appState: appState, store: store)
 
         #expect(
             SpacePreferences
-                .label(forSpace: 2, display: appState.currentDisplayID, store: store) == "{number} - ABCDEFG",
+                .label(forSpace: 2, display: appState.currentDisplayID, store: store) == "{#} - ABCDEFG",
             "Tokens are free; only content characters count toward the limit"
         )
     }
@@ -368,7 +368,7 @@ struct ScriptingCommandsTests {
     func setCurrentLabel_templateResolvesOnRead() {
         let appState = makeAppState()
 
-        ScriptingHelpers.setCurrentLabel("S{number}", appState: appState, store: store)
+        ScriptingHelpers.setCurrentLabel("S{#}", appState: appState, store: store)
 
         #expect(ScriptingHelpers.resolveCurrentLabel(appState: appState, store: store) == "S2")
     }
@@ -577,8 +577,8 @@ struct ScriptingCommandsTests {
     @Test("resolveAllLabels resolves templates against each Space's number")
     func resolveAllLabels_resolvesTemplatePerSpace() {
         let appState = makeAppState()
-        SpacePreferences.setLabel("S{number}", forSpace: 1, display: appState.currentDisplayID, store: store)
-        SpacePreferences.setLabel("S{number}", forSpace: 2, display: appState.currentDisplayID, store: store)
+        SpacePreferences.setLabel("S{#}", forSpace: 1, display: appState.currentDisplayID, store: store)
+        SpacePreferences.setLabel("S{#}", forSpace: 2, display: appState.currentDisplayID, store: store)
 
         #expect(ScriptingHelpers.resolveAllLabels(appState: appState, store: store) == ["S1", "S2"])
     }

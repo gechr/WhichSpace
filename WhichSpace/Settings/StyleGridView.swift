@@ -2,8 +2,7 @@ import AppKit
 import SwiftUI
 
 /// A grid of icon-style choices, each cell showing the style rendered with
-/// the edited entry's number and colors, mirroring the menu's `StylePicker`
-/// rows in SwiftUI.
+/// the edited entry's number and colors.
 struct StyleGridView: View {
     /// The label-shape subset offered for custom labels.
     static let labelStyles: [IconStyle] = [

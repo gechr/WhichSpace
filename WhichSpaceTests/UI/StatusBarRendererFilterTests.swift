@@ -31,7 +31,7 @@ struct StatusBarRendererFilterTests {
         store.localSpaceNumbers = true
         // Labels are keyed by fullscreen-inclusive position (3), but the
         // displayed number for that space is its regular index (2)
-        SpacePreferences.setLabel("S{number}", forSpace: 3, store: store)
+        SpacePreferences.setLabel("S{#}", forSpace: 3, store: store)
 
         let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
         let layout = appState.statusBarLayout()
@@ -243,7 +243,7 @@ struct StatusBarRendererFilterTests {
 
     // MARK: - Label Templates
 
-    @Test("label with {number} template resolves to space number")
+    @Test("label with {#} template resolves to space number")
     func labelTemplateResolvesInLayout() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
@@ -258,7 +258,7 @@ struct StatusBarRendererFilterTests {
             ),
         ]
         store.showAllSpaces = true
-        store.spaceLabels = [2: "{number} - Work"]
+        store.spaceLabels = [2: "{#} - Work"]
 
         let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
         let layout = appState.statusBarLayout()
@@ -267,7 +267,7 @@ struct StatusBarRendererFilterTests {
         #expect(labels == ["1", "2 - Work", "3"])
     }
 
-    @Test("label with only {number} template shows space number")
+    @Test("label with only {#} template shows space number")
     func labelTemplateOnlySpace() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
@@ -281,7 +281,7 @@ struct StatusBarRendererFilterTests {
             ),
         ]
         store.showAllSpaces = true
-        store.spaceLabels = [1: "{number}"]
+        store.spaceLabels = [1: "{#}"]
 
         let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
         let layout = appState.statusBarLayout()
