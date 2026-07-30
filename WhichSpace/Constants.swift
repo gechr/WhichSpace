@@ -322,6 +322,8 @@ enum Localization {
     static let tipBadgeInput = String(localized: "tip_badge_input")
     static let tipBadgePosition = String(localized: "tip_badge_position")
     static let tipCheckForUpdates = String(localized: "tip_check_for_updates")
+    static let tipClearBadge = String(localized: "tip_clear_badge")
+    static let tipClearLabel = String(localized: "tip_clear_label")
     static let tipClickToSwitchSpaces = String(localized: "tip_click_to_switch_spaces")
     static let tipDimInactiveSpaces = String(localized: "tip_dim_inactive_spaces")
     static let tipFont = String(localized: "tip_font")

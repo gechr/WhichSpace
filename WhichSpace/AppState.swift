@@ -656,41 +656,6 @@ final class AppState {
         renderer.statusBarIcon
     }
 
-    /// Sets preview overrides and returns the full status bar icon with previewed changes
-    func generatePreviewIcon(
-        overrideStyle: IconStyle? = nil,
-        overrideLabelStyle: IconStyle? = nil,
-        overrideSymbol: String? = nil,
-        overrideForeground: NSColor? = nil,
-        overrideBackground: NSColor? = nil,
-        overrideSymbolColor: NSColor? = nil,
-        overrideSymbolBackground: NSColor? = nil,
-        overrideSymbolPosition: SymbolPosition? = nil,
-        overrideSymbolWrap: SymbolWrap? = nil,
-        overrideSeparatorColor: NSColor? = nil,
-        clearSymbol: Bool = false,
-        clearSymbolBackground: Bool = false,
-        skinTone: SkinTone? = nil,
-        overrideBadgePosition: BadgePosition? = nil
-    ) -> NSImage {
-        renderer.generatePreviewIcon(
-            overrideStyle: overrideStyle,
-            overrideLabelStyle: overrideLabelStyle,
-            overrideSymbol: overrideSymbol,
-            overrideForeground: overrideForeground,
-            overrideBackground: overrideBackground,
-            overrideSymbolColor: overrideSymbolColor,
-            overrideSymbolBackground: overrideSymbolBackground,
-            overrideSymbolPosition: overrideSymbolPosition,
-            overrideSymbolWrap: overrideSymbolWrap,
-            overrideSeparatorColor: overrideSeparatorColor,
-            clearSymbol: clearSymbol,
-            clearSymbolBackground: clearSymbolBackground,
-            skinTone: skinTone,
-            overrideBadgePosition: overrideBadgePosition
-        )
-    }
-
     /// Returns the layout of visible icons in the status bar for the current mode
     func statusBarLayout() -> StatusBarLayout {
         renderer.statusBarLayout()

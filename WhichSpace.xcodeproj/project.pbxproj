@@ -21,7 +21,6 @@
 		C94204F22B0647EEA70C0CAB /* SpaceUpdateCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0621BB91706643C2B80B3FB2 /* SpaceUpdateCoordinator.swift */; };
 		5EB457D72EEDE8C00021C6BD /* DefaultsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB457CC2EEDE8C00021C6BD /* DefaultsStore.swift */; };
 		D91E604932D44F33863FB9A6 /* HapticActuator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9FEF98C20749E19B4CA885 /* HapticActuator.swift */; };
-		916A68BD7378463E9C5EF426 /* IconPreviewCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17CD53AA147E41AD96B6D6E8 /* IconPreviewCoordinator.swift */; };
 		5EB457D82EEDE8C00021C6BD /* ItemData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB457CE2EEDE8C00021C6BD /* ItemData.swift */; };
 		5EB457D92EEDE8C00021C6BD /* Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB457CA2EEDE8C00021C6BD /* Alerts.swift */; };
 		5EB457DC2EEDE8C00021C6BD /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB457CB2EEDE8C00021C6BD /* Constants.swift */; };
@@ -95,7 +94,6 @@
 		1050F7FD2AAB431293F440FD /* SpaceSnapshotServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2846E68501F241D1B6B97942 /* SpaceSnapshotServiceTests.swift */; };
 		41DC2A0FCDED45448BCD2E59 /* StatusBarRendererFilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0917E79DA5904B93A193473B /* StatusBarRendererFilterTests.swift */; };
 		4CF936909E624CE2B01D8E4B /* StatusBarLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F94D70B39D634FE3BDC1FE70 /* StatusBarLayoutTests.swift */; };
-		CDADF3016B184A1F9B63B62F /* IconPreviewCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C8D99666664457EAC572ECD /* IconPreviewCoordinatorTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -138,7 +136,6 @@
 		5EB457CD2EEDE8C00021C6BD /* SpaceIconGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceIconGenerator.swift; sourceTree = "<group>"; };
 		26FDEA134CE245FD99C0FA05 /* SpaceIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceIntents.swift; sourceTree = "<group>"; };
 		4B9FEF98C20749E19B4CA885 /* HapticActuator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticActuator.swift; sourceTree = "<group>"; };
-		17CD53AA147E41AD96B6D6E8 /* IconPreviewCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconPreviewCoordinator.swift; sourceTree = "<group>"; };
 		5EB457CE2EEDE8C00021C6BD /* ItemData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemData.swift; sourceTree = "<group>"; };
 		5EB457D02EEDE8C00021C6BD /* Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
 		5EB457F22EEDE8C00021C6BD /* SpaceMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceMonitor.swift; sourceTree = "<group>"; };
@@ -207,7 +204,6 @@
 		2846E68501F241D1B6B97942 /* SpaceSnapshotServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceSnapshotServiceTests.swift; sourceTree = "<group>"; };
 		0917E79DA5904B93A193473B /* StatusBarRendererFilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarRendererFilterTests.swift; sourceTree = "<group>"; };
 		F94D70B39D634FE3BDC1FE70 /* StatusBarLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarLayoutTests.swift; sourceTree = "<group>"; };
-		0C8D99666664457EAC572ECD /* IconPreviewCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconPreviewCoordinatorTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -279,7 +275,6 @@
 				5EB457CD2EEDE8C00021C6BD /* SpaceIconGenerator.swift */,
 				26FDEA134CE245FD99C0FA05 /* SpaceIntents.swift */,
 				4B9FEF98C20749E19B4CA885 /* HapticActuator.swift */,
-				17CD53AA147E41AD96B6D6E8 /* IconPreviewCoordinator.swift */,
 				5EB457CE2EEDE8C00021C6BD /* ItemData.swift */,
 				B7C030C19840D638AEC463CE /* MenuBuilder.swift */,
 				5EB457D02EEDE8C00021C6BD /* Preferences.swift */,
@@ -369,7 +364,6 @@
 				0917E79DA5904B93A193473B /* StatusBarRendererFilterTests.swift */,
 				ADB62D1E02A1408E9073D218 /* SettingsIconTests.swift */,
 				F94D70B39D634FE3BDC1FE70 /* StatusBarLayoutTests.swift */,
-				0C8D99666664457EAC572ECD /* IconPreviewCoordinatorTests.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -585,7 +579,6 @@
 				5EB457D72EEDE8C00021C6BD /* DefaultsStore.swift in Sources */,
 				BA5B89440132B31951EAF51B /* DisplaySpaceProvider.swift in Sources */,
 				D91E604932D44F33863FB9A6 /* HapticActuator.swift in Sources */,
-				916A68BD7378463E9C5EF426 /* IconPreviewCoordinator.swift in Sources */,
 				5EB457D82EEDE8C00021C6BD /* ItemData.swift in Sources */,
 				5EB457D92EEDE8C00021C6BD /* Alerts.swift in Sources */,
 				D2D70ADA82964EB7A70A43FE /* Backup.swift in Sources */,
@@ -661,7 +654,6 @@
 				1050F7FD2AAB431293F440FD /* SpaceSnapshotServiceTests.swift in Sources */,
 				41DC2A0FCDED45448BCD2E59 /* StatusBarRendererFilterTests.swift in Sources */,
 				4CF936909E624CE2B01D8E4B /* StatusBarLayoutTests.swift in Sources */,
-				CDADF3016B184A1F9B63B62F /* IconPreviewCoordinatorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

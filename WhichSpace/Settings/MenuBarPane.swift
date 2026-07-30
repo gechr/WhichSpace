@@ -39,17 +39,17 @@ struct MenuBarPane: View {
         let dependentDisabled = !(model.value(\.showAllSpaces) || model.value(\.showAllDisplays))
         return SettingsSection {
             SettingsToggleRow(
-                title: Localization.toggleShowAllSpaces,
-                isOn: model.showAllSpacesBinding,
-                icon: "square.grid.3x1.below.line.grid.1x2",
-                subtitle: Localization.tipShowAllSpaces
-            )
-            SettingsRowDivider()
-            SettingsToggleRow(
                 title: Localization.toggleShowAllDisplays,
                 isOn: model.showAllDisplaysBinding,
                 icon: "display.2",
                 subtitle: Localization.tipShowAllDisplays
+            )
+            SettingsRowDivider()
+            SettingsToggleRow(
+                title: Localization.toggleShowAllSpaces,
+                isOn: model.showAllSpacesBinding,
+                icon: "square.grid.3x1.below.line.grid.1x2",
+                subtitle: Localization.tipShowAllSpaces
             )
             SettingsRowDivider()
             SettingsToggleRow(

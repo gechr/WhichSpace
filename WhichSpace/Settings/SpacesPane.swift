@@ -38,7 +38,10 @@ struct SpacesPane: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
                     listRow(for: .defaultStyle, title: "[\(Localization.labelDefault)]")
-                    SettingsRowDivider()
+                    // Full-width and undimmed, unlike SettingsRowDivider, so the
+                    // template entry reads as separate from the real Spaces below
+                    Divider()
+                        .padding(.vertical, 3)
                     ForEach(model.spaceEntries, id: \.number) { candidate in
                         listRow(for: .space(candidate.number), title: model.spaceName(for: candidate))
                     }
@@ -108,6 +111,11 @@ struct SpacesPane: View {
                 if let title {
                     Text(title)
                         .lineLimit(1)
+                        .foregroundStyle(
+                            selection == .defaultStyle
+                                ? AnyShapeStyle(.secondary)
+                                : AnyShapeStyle(.primary)
+                        )
                 }
                 Spacer(minLength: 0)
             }
@@ -170,10 +178,10 @@ struct SpacesPane: View {
     /// The card's spare width carries the copy/save/reset actions.
     private var previewRow: some View {
         HStack(spacing: 10) {
-            // Centered in whatever width the action buttons leave over, so
-            // a wide icon can never run underneath them
+            // Leading-anchored in whatever width the action buttons leave
+            // over, so a wide icon can never run underneath them
             Image(nsImage: model.icon(sizeScale: Layout.settingsSpacesPreviewScale))
-                .frame(maxWidth: .infinity)
+                .frame(maxWidth: .infinity, alignment: .leading)
             VStack(alignment: .trailing, spacing: 6) {
                 if !model.isEditingDefaultStyle {
                     Button(Localization.actionSetAsDefault) {

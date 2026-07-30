@@ -188,7 +188,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             })
             settingsCoordinator = SettingsWindowCoordinator(
                 models: [model, editorModel],
-                panes: [generalPane, spacesPane, menuBarPane, switchingPane]
+                panes: [generalPane, spacesPane, switchingPane, menuBarPane]
             )
         }
         settingsCoordinator?.show()
@@ -638,10 +638,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
         statusBarItem.length = icon.size.width
         statusBarItem.button?.image = icon
-        // Force immediate redraw - during menu tracking AppKit defers display
-        // for the status bar button's window, causing visible preview lag.
+        // Force immediate redraw - during event tracking (e.g. settings
+        // slider drags) AppKit defers display for the status bar button's
+        // window, delaying the new icon visibly.
         statusBarItem.button?.display()
-        // Force the Core Animation commit (see showPreviewIcon)
+        // Force the Core Animation commit - during rapid event streams the
+        // run loop never idles, so the beforeWaiting commit observer is
+        // starved and drawn frames reach the WindowServer late.
         CATransaction.flush()
         updateStatusBarVisibility()
     }

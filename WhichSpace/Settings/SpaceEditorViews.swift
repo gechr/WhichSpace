@@ -44,7 +44,8 @@ struct SpaceEditorView: View {
             } control: {
                 CommittingTextField(
                     placeholder: LabelTemplate.spaceToken,
-                    initialValue: model.label ?? ""
+                    initialValue: model.label ?? "",
+                    clearHelp: Localization.tipClearLabel
                 ) { model.setLabel($0) }
                     .frame(width: 140)
             }
@@ -300,7 +301,8 @@ struct SpaceEditorView: View {
             } control: {
                 CommittingTextField(
                     placeholder: BadgeTemplate.spaceToken,
-                    initialValue: model.badge?.character ?? ""
+                    initialValue: model.badge?.character ?? "",
+                    clearHelp: Localization.tipClearBadge
                 ) { model.setBadgeCharacter($0) }
                     .frame(width: 44)
             }
@@ -468,13 +470,20 @@ private struct FontPickerButton: View {
 struct CommittingTextField: View {
     let placeholder: String
     let initialValue: String
+    let clearHelp: String
     let onChange: (String) -> Void
 
     @State private var text: String
 
-    init(placeholder: String, initialValue: String, onChange: @escaping (String) -> Void) {
+    init(
+        placeholder: String,
+        initialValue: String,
+        clearHelp: String,
+        onChange: @escaping (String) -> Void
+    ) {
         self.placeholder = placeholder
         self.initialValue = initialValue
+        self.clearHelp = clearHelp
         self.onChange = onChange
         _text = State(initialValue: initialValue)
     }
@@ -482,6 +491,19 @@ struct CommittingTextField: View {
     var body: some View {
         TextField(placeholder, text: $text)
             .textFieldStyle(.roundedBorder)
+            .overlay(alignment: .trailing) {
+                if !text.isEmpty {
+                    Button {
+                        text = ""
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.trailing, 4)
+                    .help(clearHelp)
+                }
+            }
             .onChange(of: text) { _, newValue in
                 onChange(newValue)
             }

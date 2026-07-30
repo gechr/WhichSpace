@@ -83,28 +83,6 @@ final class StatusBarRenderer {
     private var cachedIcon: NSImage?
     private var cachedIconKey: IconCacheKey?
 
-    // MARK: - Preview Overrides
-
-    /// Temporary overrides for previewing style changes (only applied to current space)
-    private struct PreviewState {
-        var badge: SpaceBadge?
-        var background: NSColor?
-        var clearSymbol = false
-        var clearSymbolBackground = false
-        var foreground: NSColor?
-        var labelStyle: IconStyle?
-        var separatorColor: NSColor?
-        var skinTone: SkinTone?
-        var style: IconStyle?
-        var symbol: String?
-        var symbolBackground: NSColor?
-        var symbolColor: NSColor?
-        var symbolPosition: SymbolPosition?
-        var symbolWrap: SymbolWrap?
-    }
-
-    private var preview: PreviewState?
-
     init(appState: AppState, displaySpaceProvider: DisplaySpaceProvider, store: DefaultsStore) {
         self.appState = appState
         self.displaySpaceProvider = displaySpaceProvider
@@ -132,57 +110,6 @@ final class StatusBarRenderer {
         cachedIcon = icon
         cachedIconKey = key
         return icon
-    }
-
-    /// Sets preview overrides and returns the full status bar icon with previewed changes
-    func generatePreviewIcon(
-        overrideStyle: IconStyle? = nil,
-        overrideLabelStyle: IconStyle? = nil,
-        overrideSymbol: String? = nil,
-        overrideForeground: NSColor? = nil,
-        overrideBackground: NSColor? = nil,
-        overrideSymbolColor: NSColor? = nil,
-        overrideSymbolBackground: NSColor? = nil,
-        overrideSymbolPosition: SymbolPosition? = nil,
-        overrideSymbolWrap: SymbolWrap? = nil,
-        overrideSeparatorColor: NSColor? = nil,
-        clearSymbol: Bool = false,
-        clearSymbolBackground: Bool = false,
-        skinTone: SkinTone? = nil,
-        overrideBadgePosition: BadgePosition? = nil
-    ) -> NSImage {
-        var badgeOverride: SpaceBadge?
-        if let position = overrideBadgePosition {
-            let current = SpacePreferences.badge(
-                forSpace: appState.currentSpace,
-                display: appState.currentDisplayID,
-                store: store
-            )
-            let character = current?.character ?? ""
-            if !character.isEmpty {
-                badgeOverride = SpaceBadge(character: character, position: position)
-            }
-        }
-
-        preview = PreviewState(
-            badge: badgeOverride,
-            background: overrideBackground,
-            clearSymbol: clearSymbol,
-            clearSymbolBackground: clearSymbolBackground,
-            foreground: overrideForeground,
-            labelStyle: overrideLabelStyle,
-            separatorColor: overrideSeparatorColor,
-            skinTone: skinTone,
-            style: overrideStyle,
-            symbol: overrideSymbol,
-            symbolBackground: overrideSymbolBackground,
-            symbolColor: overrideSymbolColor,
-            symbolPosition: overrideSymbolPosition,
-            symbolWrap: overrideSymbolWrap
-        )
-        defer { preview = nil }
-
-        return generateStatusBarIcon(isDark: appState.darkModeEnabled)
     }
 
     /// Returns the layout of visible icons in the status bar for the current mode
@@ -256,8 +183,8 @@ final class StatusBarRenderer {
     }
 
     /// Renders the icon for any (space, display) pair for the settings
-    /// window, without preview overrides. Space 0 renders the default-style
-    /// template, whose preferences always live in the shared maps.
+    /// window. Space 0 renders the default-style template, whose
+    /// preferences always live in the shared maps.
     ///
     /// `sizeScale` is a percentage of the status bar rendering; the returned
     /// image is handler-backed, so enlarged copies re-render their content at
@@ -301,7 +228,6 @@ final class StatusBarRenderer {
             label: label,
             labels: labels,
             displayID: isTemplate ? nil : displayID,
-            applyPreview: false,
             darkMode: appState.darkModeEnabled
         )
         let base = render(spec)
@@ -431,15 +357,13 @@ final class StatusBarRenderer {
     private func generateSingleIcon(
         for space: Int, spaceID: Int, displayNumber: Int, label: String, labels: [Int: String], darkMode: Bool
     ) -> NSImage {
-        let isCurrentSpace = space == appState.currentSpace
-        return generateIcon(
+        generateIcon(
             forSpace: space,
             spaceID: spaceID,
             displayNumber: displayNumber,
             label: label,
             labels: labels,
             displayID: appState.currentDisplayID,
-            applyPreview: isCurrentSpace,
             darkMode: darkMode
         )
     }
@@ -531,8 +455,7 @@ final class StatusBarRenderer {
 
         let imageSize = NSSize(width: totalWidth, height: Layout.statusItemHeight)
         let dimInactive = store.dimInactiveSpaces
-        let separatorColor = preview?.separatorColor
-            ?? store.separatorColor
+        let separatorColor = store.separatorColor
             ?? IconColors.defaultSeparator(darkMode: darkMode)
         return Self.drawDeferred(size: imageSize) {
             var xOffset: Double = 0
@@ -575,25 +498,19 @@ final class StatusBarRenderer {
         displayNumber: Int,
         darkMode: Bool
     ) -> NSImage {
-        // When uniqueIconsPerDisplay is OFF, preview should apply to all spaces with same local index
-        // (since they share settings). When ON, only apply to the exact current space.
-        let shouldApplyPreview = localIndex == appState.currentSpace
-            && (displayID == appState.currentDisplayID || !store.uniqueIconsPerDisplay)
-
-        return generateIcon(
+        generateIcon(
             forSpace: localIndex,
             spaceID: spaceID,
             displayNumber: displayNumber,
             label: label,
             labels: labels,
             displayID: displayID,
-            applyPreview: shouldApplyPreview,
             darkMode: darkMode
         )
     }
 
     /// Fully resolved inputs for one space icon, computed from preferences
-    /// and any active preview overrides before any drawing happens.
+    /// before any drawing happens.
     private struct IconSpec {
         let text: String
         let colors: SpaceColors?
@@ -614,8 +531,8 @@ final class StatusBarRenderer {
         let symbolGap: Double
     }
 
-    /// Shared icon generation: resolves preferences and preview overrides
-    /// into an IconSpec, then draws it.
+    /// Shared icon generation: resolves preferences into an IconSpec, then
+    /// draws it.
     private func generateIcon(
         forSpace space: Int,
         spaceID: Int,
@@ -623,7 +540,6 @@ final class StatusBarRenderer {
         label: String,
         labels: [Int: String],
         displayID: String?,
-        applyPreview: Bool,
         darkMode: Bool
     ) -> NSImage {
         render(resolveIconSpec(
@@ -633,13 +549,12 @@ final class StatusBarRenderer {
             label: label,
             labels: labels,
             displayID: displayID,
-            applyPreview: applyPreview,
             darkMode: darkMode
         ))
     }
 
-    /// Resolves preferences and preview overrides into final rendering
-    /// inputs, so drawing needs no further preference reads.
+    /// Resolves preferences into final rendering inputs, so drawing needs
+    /// no further preference reads.
     private func resolveIconSpec(
         forSpace space: Int,
         spaceID: Int,
@@ -647,103 +562,37 @@ final class StatusBarRenderer {
         label: String,
         labels: [Int: String],
         displayID: String?,
-        applyPreview: Bool,
         darkMode: Bool
     ) -> IconSpec {
-        // During style preview, skip all preference reads for speed
-        let isStylePreview = applyPreview && preview?.style != nil
-        let isLabelStylePreview = applyPreview && preview?.labelStyle != nil
-
-        // Number style previews force the plain number, which never combines
-        let hasCustomLabel = !isStylePreview && labels[space]?.isEmpty == false
-        let symbolPosition = (applyPreview ? preview?.symbolPosition : nil)
-            ?? SpacePreferences.symbolPosition(forSpace: space, display: displayID, store: store)
-            ?? .left
-        let symbolWrap = (applyPreview ? preview?.symbolWrap : nil)
-            ?? SpacePreferences.symbolWrap(forSpace: space, display: displayID, store: store)
-            ?? .inside
+        let hasCustomLabel = labels[space]?.isEmpty == false
+        let symbolPosition = SpacePreferences.symbolPosition(
+            forSpace: space, display: displayID, store: store
+        ) ?? .left
+        let symbolWrap = SpacePreferences.symbolWrap(
+            forSpace: space, display: displayID, store: store
+        ) ?? .inside
         let symbolGapScale = SpacePreferences.symbolGap(
             forSpace: space, display: displayID, store: store
         ) ?? Layout.defaultSymbolGapScale
         let symbolGap = Layout.maxSymbolGap * symbolGapScale / 100.0
 
-        var colors = SpacePreferences.colors(forSpace: space, display: displayID, store: store)
+        let colors = SpacePreferences.colors(forSpace: space, display: displayID, store: store)
         let style: IconStyle
         let font: NSFont?
-        if isStylePreview {
-            style = preview!.style!
-            font = SpacePreferences.font(forSpace: space, display: displayID, store: store)?.font
-        } else if isLabelStylePreview {
-            let resolvedLabel = labels[space].flatMap { $0.isEmpty ? nil : $0 }
-                .map { LabelTemplate.resolve($0, space: displayNumber) }
-            style = Self.renderStyle(for: preview!.labelStyle!, labelLength: resolvedLabel?.count ?? 1)
+        let resolvedLabel = labels[space].flatMap { $0.isEmpty ? nil : $0 }
+            .map { LabelTemplate.resolve($0, space: displayNumber) }
+        if let resolvedLabel {
+            let labelStyle = SpacePreferences.labelStyle(
+                forSpace: space, display: displayID, store: store
+            ) ?? .square
+            style = Self.renderStyle(for: labelStyle, labelLength: resolvedLabel.count)
             let userFont = SpacePreferences.font(forSpace: space, display: displayID, store: store)?.font
-            font = (resolvedLabel?.count ?? 0) > 1 && userFont == nil
+            font = resolvedLabel.count > 1 && userFont == nil
                 ? NSFont.boldSystemFont(ofSize: Layout.baseFontSizeSmall)
                 : userFont
         } else {
-            let resolvedLabel = labels[space].flatMap { $0.isEmpty ? nil : $0 }
-                .map { LabelTemplate.resolve($0, space: displayNumber) }
-            if let resolvedLabel {
-                let labelStyle = SpacePreferences.labelStyle(
-                    forSpace: space, display: displayID, store: store
-                ) ?? .square
-                style = Self.renderStyle(for: labelStyle, labelLength: resolvedLabel.count)
-                let userFont = SpacePreferences.font(forSpace: space, display: displayID, store: store)?.font
-                font = resolvedLabel.count > 1 && userFont == nil
-                    ? NSFont.boldSystemFont(ofSize: Layout.baseFontSizeSmall)
-                    : userFont
-            } else {
-                style = SpacePreferences.iconStyle(forSpace: space, display: displayID, store: store) ?? .square
-                font = SpacePreferences.font(forSpace: space, display: displayID, store: store)?.font
-            }
-
-            // Apply non-style preview overrides (color)
-            if applyPreview, let preview {
-                let defaults = IconColors.filledColors(darkMode: darkMode)
-                if let fg = preview.foreground {
-                    let bg = colors?.background ?? defaults.background
-                    colors = SpaceColors(
-                        foreground: fg,
-                        background: bg,
-                        symbol: colors?.symbol,
-                        symbolBackground: colors?.symbolBackground
-                    )
-                }
-                if let bg = preview.background {
-                    let fg = colors?.foreground ?? defaults.foreground
-                    colors = SpaceColors(
-                        foreground: fg,
-                        background: bg,
-                        symbol: colors?.symbol,
-                        symbolBackground: colors?.symbolBackground
-                    )
-                }
-                if let symbolColor = preview.symbolColor {
-                    colors = SpaceColors(
-                        foreground: colors?.foreground ?? defaults.foreground,
-                        background: colors?.background ?? defaults.background,
-                        symbol: symbolColor,
-                        symbolBackground: colors?.symbolBackground
-                    )
-                }
-                if let symbolBackground = preview.symbolBackground {
-                    colors = SpaceColors(
-                        foreground: colors?.foreground ?? defaults.foreground,
-                        background: colors?.background ?? defaults.background,
-                        symbol: colors?.symbol,
-                        symbolBackground: symbolBackground
-                    )
-                }
-                if preview.clearSymbolBackground, let current = colors {
-                    colors = SpaceColors(
-                        foreground: current.foreground,
-                        background: current.background,
-                        symbol: current.symbol,
-                        symbolBackground: nil
-                    )
-                }
-            }
+            style = SpacePreferences.iconStyle(forSpace: space, display: displayID, store: store) ?? .square
+            font = SpacePreferences.font(forSpace: space, display: displayID, store: store)?.font
         }
 
         // Fullscreen spaces show the owning app's icon (or "F" when the
@@ -767,51 +616,16 @@ final class StatusBarRenderer {
             )
         }
 
-        // A preview symbol override takes precedence over stored preferences
-        if applyPreview, let previewSymbol = preview?.symbol {
-            let skinTone = preview?.skinTone
-                ?? SpacePreferences.skinTone(forSpace: space, display: displayID, store: store)
-                ?? .default
-            return IconSpec(
-                text: label,
-                colors: colors,
-                font: font,
-                style: style,
-                symbol: previewSymbol,
-                skinTone: skinTone,
-                badge: nil,
-                appIcon: nil,
-                darkMode: darkMode,
-                hasCustomLabel: hasCustomLabel,
-                symbolPosition: symbolPosition,
-                symbolWrap: symbolWrap,
-                symbolGap: symbolGap
-            )
-        }
-
-        // Skip symbol/badge reads during number style preview only; label
-        // style hovers preview the real combined result
-        let skipSymbolAndBadge = isStylePreview
-        let symbol: String? = skipSymbolAndBadge
-            ? nil
-            : ((applyPreview && (preview?.clearSymbol ?? false))
-                ? nil
-                : SpacePreferences.symbol(forSpace: space, display: displayID, store: store))
-
-        let rawBadge: SpaceBadge? = skipSymbolAndBadge
-            ? nil
-            : ((applyPreview ? preview?.badge : nil)
-                ?? SpacePreferences.badge(forSpace: space, display: displayID, store: store))
+        let symbol = SpacePreferences.symbol(forSpace: space, display: displayID, store: store)
+        let rawBadge = SpacePreferences.badge(forSpace: space, display: displayID, store: store)
         let badge = rawBadge.map { Self.resolveBadge($0, space: displayNumber) }
 
         let skinTone = symbol == nil
             ? SkinTone.default
             : SpacePreferences.skinTone(forSpace: space, display: displayID, store: store) ?? .default
 
-        // During number style preview, show the space number instead of a
-        // custom label
         return IconSpec(
-            text: isStylePreview ? String(space) : label,
+            text: label,
             colors: colors,
             font: font,
             style: style,
@@ -880,8 +694,8 @@ final class StatusBarRenderer {
     /// (matching the single-icon path - a fixed-scale bitmap would blur on
     /// 1x displays and color-shift on wide-gamut ones).
     ///
-    /// The block runs after preview state has been cleared, so callers must
-    /// resolve all rendering inputs eagerly and capture only values.
+    /// The block runs at display time, so callers must resolve all
+    /// rendering inputs eagerly and capture only values.
     private static func drawDeferred(size: CGSize, draw: @escaping () -> Void) -> NSImage {
         NSImage(size: size, flipped: false) { _ in
             draw()
