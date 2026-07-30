@@ -56,6 +56,7 @@
 		32524A4E9AFA4C15AC5ECA06 /* SwitchingPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 898C17D652A047DAB402245A /* SwitchingPane.swift */; };
 		DB9AE51A0FC740C3934ED35F /* SettingsWindowCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC23E2C9B32B4A6D8727DB7C /* SettingsWindowCoordinator.swift */; };
 		04E6412D4806450180BB1178 /* SettingsForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = B83EF1992DCF490596AD2E33 /* SettingsForm.swift */; };
+		0C395699903E4956BA979400 /* SettingsLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5025AE756CE44D34B07C6D7F /* SettingsLink.swift */; };
 		F1A3BABB887343F4BFC019C0 /* ClearCellRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C05CF03E51F4C2098379928 /* ClearCellRules.swift */; };
 		50E3F80C474448BCB600C246 /* PanelCoordinators.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E8A92F68BA74F77896B96BE /* PanelCoordinators.swift */; };
 		EA171A9D752C4E1AB555B1EF /* SpaceEditorModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08917A8992F645A19E36C693 /* SpaceEditorModel.swift */; };
@@ -160,6 +161,7 @@
 		898C17D652A047DAB402245A /* SwitchingPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchingPane.swift; sourceTree = "<group>"; };
 		BC23E2C9B32B4A6D8727DB7C /* SettingsWindowCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowCoordinator.swift; sourceTree = "<group>"; };
 		B83EF1992DCF490596AD2E33 /* SettingsForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsForm.swift; sourceTree = "<group>"; };
+		5025AE756CE44D34B07C6D7F /* SettingsLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsLink.swift; sourceTree = "<group>"; };
 		2C05CF03E51F4C2098379928 /* ClearCellRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearCellRules.swift; sourceTree = "<group>"; };
 		7E8A92F68BA74F77896B96BE /* PanelCoordinators.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelCoordinators.swift; sourceTree = "<group>"; };
 		08917A8992F645A19E36C693 /* SpaceEditorModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceEditorModel.swift; sourceTree = "<group>"; };
@@ -336,6 +338,7 @@
 				670259493A4A468DA2AEF2F5 /* MenuBarPane.swift */,
 				7E8A92F68BA74F77896B96BE /* PanelCoordinators.swift */,
 				B83EF1992DCF490596AD2E33 /* SettingsForm.swift */,
+				5025AE756CE44D34B07C6D7F /* SettingsLink.swift */,
 				6241577D589844078C9013D5 /* SettingsModel.swift */,
 				BC23E2C9B32B4A6D8727DB7C /* SettingsWindowCoordinator.swift */,
 				08917A8992F645A19E36C693 /* SpaceEditorModel.swift */,
@@ -593,6 +596,7 @@
 				32524A4E9AFA4C15AC5ECA06 /* SwitchingPane.swift in Sources */,
 				DB9AE51A0FC740C3934ED35F /* SettingsWindowCoordinator.swift in Sources */,
 				04E6412D4806450180BB1178 /* SettingsForm.swift in Sources */,
+				0C395699903E4956BA979400 /* SettingsLink.swift in Sources */,
 				F1A3BABB887343F4BFC019C0 /* ClearCellRules.swift in Sources */,
 				50E3F80C474448BCB600C246 /* PanelCoordinators.swift in Sources */,
 				EA171A9D752C4E1AB555B1EF /* SpaceEditorModel.swift in Sources */,

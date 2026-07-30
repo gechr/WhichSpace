@@ -1,5 +1,18 @@
 import SwiftUI
 
+private extension View {
+    /// Registers a scroll target for anchored rows and sections, so a
+    /// `ScrollViewReader` can bring a deep-linked setting into view.
+    @ViewBuilder
+    func settingsScrollAnchor(_ anchor: SettingsAnchor?) -> some View {
+        if let anchor {
+            id(anchor)
+        } else {
+            self
+        }
+    }
+}
+
 // MARK: - SettingsForm
 
 /// Vertical stack of grouped-card sections for a settings pane.
@@ -28,11 +41,21 @@ struct SettingsForm<Content: View>: View {
 /// lighter background containing rows.
 struct SettingsSection<Content: View>: View {
     private let title: String?
+    private let anchor: SettingsAnchor?
     private let content: Content
 
-    init(_ title: String? = nil, @ViewBuilder content: () -> Content) {
+    @Environment(SettingsHighlighter.self) private var highlighter: SettingsHighlighter?
+
+    /// `anchor` identifies sections whose content is a grid rather than rows,
+    /// so a deep link can point at the section as a whole.
+    init(_ title: String? = nil, anchor: SettingsAnchor? = nil, @ViewBuilder content: () -> Content) {
         self.title = title
+        self.anchor = anchor
         self.content = content()
+    }
+
+    private var isHighlighted: Bool {
+        anchor != nil && highlighter?.anchor?.target == anchor
     }
 
     var body: some View {
@@ -45,11 +68,19 @@ struct SettingsSection<Content: View>: View {
             VStack(alignment: .leading, spacing: 0) {
                 content
             }
+            // Tinting the card itself, rather than layering a second shape
+            // over it, keeps the grid content legible while lit
             .background(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(Color(nsColor: .quaternarySystemFill))
+                    .fill(
+                        isHighlighted
+                            ? AnyShapeStyle(Color.accentColor.opacity(0.25))
+                            : AnyShapeStyle(Color(nsColor: .quaternarySystemFill))
+                    )
             )
+            .animation(.easeInOut(duration: 0.25), value: isHighlighted)
         }
+        .settingsScrollAnchor(anchor)
     }
 }
 
@@ -66,8 +97,16 @@ struct SettingsRow<Label: View, Control: View>: View {
     var subtitle: String?
     var disabled = false
     var indented = false
+    /// Identifies the row to `whichspace://settings?highlight=` deep links
+    var anchor: SettingsAnchor?
     @ViewBuilder var label: Label
     @ViewBuilder var control: Control
+
+    @Environment(SettingsHighlighter.self) private var highlighter: SettingsHighlighter?
+
+    private var isHighlighted: Bool {
+        anchor != nil && highlighter?.anchor?.target == anchor
+    }
 
     var body: some View {
         HStack {
@@ -101,6 +140,17 @@ struct SettingsRow<Label: View, Control: View>: View {
         .padding(.leading, indented ? Layout.settingsRowIndent : 0)
         .padding(.horizontal, Layout.settingsRowHorizontalPadding)
         .padding(.vertical, Layout.settingsRowVerticalPadding)
+        // Inset from the card edge so the highlight reads as one row rather
+        // than a second card stacked on the section
+        .background {
+            if isHighlighted {
+                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                    .fill(Color.accentColor.opacity(0.25))
+                    .padding(.horizontal, 4)
+            }
+        }
+        .animation(.easeInOut(duration: 0.25), value: isHighlighted)
+        .settingsScrollAnchor(anchor)
     }
 }
 
@@ -113,9 +163,16 @@ struct SettingsToggleRow: View {
     var indented = false
     var disabled = false
     var subtitle: String?
+    var anchor: SettingsAnchor?
 
     var body: some View {
-        SettingsRow(icon: icon, subtitle: subtitle, disabled: disabled, indented: indented) {
+        SettingsRow(
+            icon: icon,
+            subtitle: subtitle,
+            disabled: disabled,
+            indented: indented,
+            anchor: anchor
+        ) {
             Text(title)
                 .foregroundStyle(disabled ? .tertiary : .primary)
         } control: {
@@ -137,10 +194,11 @@ struct SettingsSliderRow: View {
     var icon: String?
     var disabled = false
     var subtitle: String?
+    var anchor: SettingsAnchor?
     var valueFormatter: (Double) -> String = { String(format: "%.0f%%", $0) }
 
     var body: some View {
-        SettingsRow(icon: icon, subtitle: subtitle, disabled: disabled) {
+        SettingsRow(icon: icon, subtitle: subtitle, disabled: disabled, anchor: anchor) {
             Text(title)
                 .foregroundStyle(disabled ? .tertiary : .primary)
         } control: {

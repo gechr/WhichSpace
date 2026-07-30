@@ -19,7 +19,8 @@ struct SwitchingPane: View {
                     title: Localization.toggleClickToSwitchSpaces,
                     isOn: model.clickToSwitchSpacesBinding,
                     icon: "hand.tap.fill",
-                    subtitle: Localization.tipClickToSwitchSpaces
+                    subtitle: Localization.tipClickToSwitchSpaces,
+                    anchor: .clickToSwitch
                 )
             }
             scrollSection
@@ -32,7 +33,7 @@ struct SwitchingPane: View {
     /// registers a grant watch so the banner clears live.
     private var accessibilityBanner: some View {
         SettingsSection {
-            SettingsRow {
+            SettingsRow(anchor: .accessibility) {
                 HStack(spacing: 10) {
                     Image(systemName: "lock.shield.fill")
                         .font(.system(size: 22))
@@ -60,7 +61,9 @@ struct SwitchingPane: View {
                 axis: \.verticalScrollEnabled,
                 invert: \.invertVerticalScroll,
                 axisIcon: "arrow.up.and.down",
-                invertIcon: "arrow.uturn.up"
+                invertIcon: "arrow.uturn.up",
+                axisAnchor: .verticalScroll,
+                invertAnchor: .invertVerticalScroll
             )
             SettingsRowDivider()
             scrollAxisRows(
@@ -68,7 +71,9 @@ struct SwitchingPane: View {
                 axis: \.horizontalScrollEnabled,
                 invert: \.invertHorizontalScroll,
                 axisIcon: "arrow.left.and.right",
-                invertIcon: "arrow.uturn.backward"
+                invertIcon: "arrow.uturn.backward",
+                axisAnchor: .horizontalScroll,
+                invertAnchor: .invertHorizontalScroll
             )
         }
     }
@@ -79,13 +84,16 @@ struct SwitchingPane: View {
         axis: ReferenceWritableKeyPath<DefaultsStore, Bool>,
         invert: ReferenceWritableKeyPath<DefaultsStore, Bool>,
         axisIcon: String,
-        invertIcon: String
+        invertIcon: String,
+        axisAnchor: SettingsAnchor,
+        invertAnchor: SettingsAnchor
     ) -> some View {
         SettingsToggleRow(
             title: title,
             isOn: model.scrollSwitchingBinding(axis: axis),
             icon: axisIcon,
-            subtitle: Localization.tipScrollEnabled
+            subtitle: Localization.tipScrollEnabled,
+            anchor: axisAnchor
         )
         SettingsRowDivider()
         SettingsToggleRow(
@@ -94,7 +102,8 @@ struct SwitchingPane: View {
             icon: invertIcon,
             indented: true,
             disabled: !model.value(axis),
-            subtitle: Localization.tipScrollInverted
+            subtitle: Localization.tipScrollInverted,
+            anchor: invertAnchor
         )
     }
 
@@ -104,7 +113,8 @@ struct SwitchingPane: View {
                 title: Localization.toggleScrollWrapAround,
                 isOn: model.binding(\.scrollWrapAround),
                 icon: "repeat",
-                subtitle: Localization.tipScrollWrapAround
+                subtitle: Localization.tipScrollWrapAround,
+                anchor: .scrollWrapAround
             )
             SettingsRowDivider()
             SettingsSliderRow(
@@ -113,7 +123,8 @@ struct SwitchingPane: View {
                 range: Layout.scrollSensitivityRange,
                 defaultValue: Layout.defaultScrollSensitivity,
                 icon: "speedometer",
-                subtitle: Localization.tipSensitivity
+                subtitle: Localization.tipSensitivity,
+                anchor: .scrollSensitivity
             )
             SettingsRowDivider()
             SettingsSliderRow(
@@ -123,7 +134,8 @@ struct SwitchingPane: View {
                 step: 1,
                 defaultValue: 0,
                 icon: "waveform",
-                subtitle: Localization.tipScrollHapticFeedback
+                subtitle: Localization.tipScrollHapticFeedback,
+                anchor: .scrollHaptics
             ) {
                 HapticIntensityLabel.label(for: Int($0))
             }

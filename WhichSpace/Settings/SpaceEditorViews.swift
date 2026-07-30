@@ -14,6 +14,8 @@ struct SpaceEditorView: View {
     @State private var symbolCatalog = SymbolGridView.Catalog.symbols
     @State private var userSounds: [String] = []
 
+    @Environment(SettingsHighlighter.self) private var highlighter: SettingsHighlighter?
+
     var body: some View {
         let rules = model.clearRules
         VStack(alignment: .leading, spacing: Layout.settingsSectionSpacing) {
@@ -47,7 +49,7 @@ struct SpaceEditorView: View {
 
     private func labelSection(_ rules: ClearCellRules) -> some View {
         SettingsSection(Localization.menuLabel) {
-            SettingsRow(icon: "character.textbox", subtitle: Localization.tipLabelInput) {
+            SettingsRow(icon: "character.textbox", subtitle: Localization.tipLabelInput, anchor: .spaceLabel) {
                 Text(Localization.menuLabel)
             } control: {
                 CommittingTextField(
@@ -85,7 +87,7 @@ struct SpaceEditorView: View {
     @ViewBuilder
     private func symbolLayoutRows(_ rules: ClearCellRules) -> some View {
         SettingsRowDivider()
-        SettingsRow(icon: "arrow.left.and.right") {
+        SettingsRow(icon: "arrow.left.and.right", anchor: .symbolPosition) {
             Text(Localization.labelSymbolPosition)
         } control: {
             Picker(Localization.labelSymbolPosition, selection: symbolPositionBinding) {
@@ -100,7 +102,7 @@ struct SpaceEditorView: View {
         // symbol; other shapes always render the side-by-side layout
         if rules.labelStyleCanWrap {
             SettingsRowDivider()
-            SettingsRow(icon: "rectangle.dashed") {
+            SettingsRow(icon: "rectangle.dashed", anchor: .symbolWrap) {
                 Text(Localization.labelSymbolWrap)
             } control: {
                 Picker(Localization.labelSymbolWrap, selection: symbolWrapBinding) {
@@ -118,7 +120,8 @@ struct SpaceEditorView: View {
             value: symbolGapBinding,
             range: Layout.symbolGapScaleRange,
             defaultValue: Layout.defaultSymbolGapScale,
-            icon: "arrow.left.and.right"
+            icon: "arrow.left.and.right",
+            anchor: .symbolGap
         )
     }
 
@@ -137,7 +140,7 @@ struct SpaceEditorView: View {
     // MARK: - Number
 
     private func numberSection(_ rules: ClearCellRules) -> some View {
-        SettingsSection(Localization.menuNumber) {
+        SettingsSection(Localization.menuNumber, anchor: .numberStyle) {
             StyleGridView(
                 styles: IconStyle.allCases,
                 // A symbol replaces the number entirely, so no style reads
@@ -154,8 +157,11 @@ struct SpaceEditorView: View {
 
     // MARK: - Glyph
 
+    /// Both `symbol` and `emoji` links land here, so the section keeps the
+    /// former as its fixed anchor and `SettingsAnchor.target` folds the latter
+    /// onto it.
     private func glyphSection(_ rules: ClearCellRules) -> some View {
-        SettingsSection(Localization.labelGlyph) {
+        SettingsSection(Localization.labelGlyph, anchor: .symbol) {
             VStack(spacing: 8) {
                 Picker(Localization.menuSymbol, selection: $symbolCatalog) {
                     Text(Localization.menuSymbol).tag(SymbolGridView.Catalog.symbols)
@@ -173,7 +179,7 @@ struct SpaceEditorView: View {
             .padding(.vertical, Layout.settingsRowVerticalPadding)
             if symbolCatalog == .emojis || rules.symbolIsEmoji {
                 SettingsRowDivider()
-                SettingsRow(icon: "hand.wave") {
+                SettingsRow(icon: "hand.wave", anchor: .skinTone) {
                     Text(Localization.labelSkinTone)
                 } control: {
                     SkinToneRow(selected: rules.symbolIsEmoji ? model.skinTone : model.pickerSkinTone) { tone in
@@ -190,6 +196,18 @@ struct SpaceEditorView: View {
                 symbolCatalog = .emojis
             }
         }
+        // Emoji is not the default catalog, so a link naming it has to switch
+        // the picker over rather than only pointing at the section
+        .onChange(of: highlighter?.anchor) { _, anchor in
+            switch anchor {
+            case .emoji:
+                symbolCatalog = .emojis
+            case .symbol:
+                symbolCatalog = .symbols
+            default:
+                break
+            }
+        }
     }
 
     // MARK: - Colors
@@ -198,7 +216,7 @@ struct SpaceEditorView: View {
         let defaults = IconColors.filledColors(darkMode: model.darkMode)
         return SettingsSection(Localization.menuColor) {
             if rules.symbolIsActive, !rules.symbolIsEmoji {
-                SettingsRow(icon: "burst.fill") {
+                SettingsRow(icon: "burst.fill", anchor: .symbolColor) {
                     // The "(Foreground)" qualifier only earns its place when
                     // a background row is shown alongside
                     Text(
@@ -222,7 +240,7 @@ struct SpaceEditorView: View {
                 SettingsRowDivider()
             }
             if rules.symbolBackgroundVisible {
-                SettingsRow(icon: "burst") {
+                SettingsRow(icon: "burst", anchor: .symbolBackground) {
                     Text(Localization.labelSymbolBackground)
                 } control: {
                     SwatchRow(
@@ -240,7 +258,7 @@ struct SpaceEditorView: View {
                 SettingsRowDivider()
             }
             if !rules.symbolAlone {
-                SettingsRow(icon: "square.2.layers.3d.top.filled") {
+                SettingsRow(icon: "square.2.layers.3d.top.filled", anchor: .foregroundColor) {
                     Text(foregroundTitle(rules))
                 } control: {
                     SwatchRow(
@@ -258,7 +276,7 @@ struct SpaceEditorView: View {
                 // Transparent styles have no background to color
                 if rules.styleForColors != .transparent {
                     SettingsRowDivider()
-                    SettingsRow(icon: "square.2.layers.3d.bottom.filled") {
+                    SettingsRow(icon: "square.2.layers.3d.bottom.filled", anchor: .backgroundColor) {
                         Text(
                             rules.hasLabel
                                 ? Localization.labelLabelBackground
@@ -279,7 +297,11 @@ struct SpaceEditorView: View {
                     }
                 }
                 SettingsRowDivider()
-                SettingsRow(icon: "arrow.left.arrow.right", subtitle: Localization.tipInvertColors) {
+                SettingsRow(
+                    icon: "arrow.left.arrow.right",
+                    subtitle: Localization.tipInvertColors,
+                    anchor: .invertColors
+                ) {
                     Text(Localization.actionInvertColors)
                 } control: {
                     Button(Localization.buttonSwap) {
@@ -304,7 +326,7 @@ struct SpaceEditorView: View {
 
     private var badgeSection: some View {
         SettingsSection(Localization.menuBadge) {
-            SettingsRow(icon: "tag", subtitle: Localization.tipBadgeInput) {
+            SettingsRow(icon: "tag", subtitle: Localization.tipBadgeInput, anchor: .badge) {
                 Text(Localization.menuBadge)
             } control: {
                 CommittingTextField(
@@ -326,7 +348,8 @@ struct SpaceEditorView: View {
         return SettingsRow(
             icon: "arrow.up.and.down.and.arrow.left.and.right",
             subtitle: Localization.tipBadgePosition,
-            disabled: !hasCharacter
+            disabled: !hasCharacter,
+            anchor: .badgePosition
         ) {
             Text(Localization.labelBadgePosition)
                 .foregroundStyle(hasCharacter ? .primary : .tertiary)
@@ -354,7 +377,7 @@ struct SpaceEditorView: View {
 
     private var fontSection: some View {
         SettingsSection(Localization.labelFont) {
-            SettingsRow(icon: "textformat", subtitle: Localization.tipFont) {
+            SettingsRow(icon: "textformat", subtitle: Localization.tipFont, anchor: .font) {
                 Text(Localization.labelFont)
             } control: {
                 FontPickerButton(current: model.font) { model.setFont($0) }
@@ -374,14 +397,14 @@ struct SpaceEditorView: View {
 
     private var soundSection: some View {
         SettingsSection(Localization.menuSound) {
-            SettingsRow(icon: "speaker.wave.2", subtitle: Localization.tipSound) {
+            SettingsRow(icon: "speaker.wave.2", subtitle: Localization.tipSound, anchor: .sound) {
                 Text(Localization.menuSound)
             } control: {
                 soundPicker
                     .labelsHidden()
             }
             SettingsRowDivider()
-            SettingsRow {
+            SettingsRow(anchor: .customSounds) {
                 EmptyView()
             } control: {
                 Button(Localization.soundCustom) {

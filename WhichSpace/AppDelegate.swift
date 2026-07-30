@@ -144,11 +144,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
     // MARK: - Settings Window
 
-    /// Opens (creating on first use) the settings window.
-    func showSettingsWindow() {
+    /// Opens (creating on first use) the settings window, optionally on a
+    /// named pane with one row briefly highlighted.
+    func showSettingsWindow(pane: SettingsPaneID? = nil, anchor: SettingsAnchor? = nil) {
         if settingsCoordinator == nil {
             let model = SettingsModel(store: store, launchAtLogin: launchAtLogin)
             let editorModel = SpaceEditorModel(appState: appState, confirmAction: confirmAction)
+            let highlighter = SettingsHighlighter()
             let generalPane = Settings.PaneHostingController(pane: Settings.Pane(
                 identifier: .general,
                 title: Localization.paneGeneral,
@@ -161,6 +163,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
                     onImportSettings: { [weak self] in self?.actionHandler.importSettings() },
                     onExportSettings: { [weak self] in self?.actionHandler.exportSettings() }
                 )
+                .environment(highlighter)
             })
             let spacesPane = Settings.PaneHostingController(pane: Settings.Pane(
                 identifier: .spaces,
@@ -170,6 +173,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
                 SpacesPane(model: editorModel) { [weak self] in
                     self?.actionHandler.openCustomSoundsFolder()
                 }
+                .environment(highlighter)
             })
             let menuBarPane = Settings.PaneHostingController(pane: Settings.Pane(
                 identifier: .menuBar,
@@ -177,6 +181,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
                 toolbarIcon: NSImage(systemSymbolName: "menubar.rectangle", accessibilityDescription: nil)!
             ) {
                 MenuBarPane(model: model)
+                    .environment(highlighter)
             })
             let switchingPane = Settings.PaneHostingController(pane: Settings.Pane(
                 identifier: .switching,
@@ -186,13 +191,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
                 SwitchingPane(model: model) { [weak self] intensity in
                     self?.scrollHapticAction(intensity)
                 }
+                .environment(highlighter)
             })
             settingsCoordinator = SettingsWindowCoordinator(
                 models: [model, editorModel],
-                panes: [generalPane, spacesPane, switchingPane, menuBarPane]
+                panes: [generalPane, spacesPane, switchingPane, menuBarPane],
+                highlighter: highlighter
             )
         }
-        settingsCoordinator?.show()
+        settingsCoordinator?.show(pane: pane, anchor: anchor)
     }
 
     // MARK: - NSApplicationDelegate
@@ -288,6 +295,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
                 try ScriptingHelpers.switchRelative(goRight: true)
             case .switchToPrevious:
                 try ScriptingHelpers.switchRelative(goRight: false)
+            case let .openSettings(pane, anchor):
+                showSettingsWindow(pane: pane, anchor: anchor)
             }
         } catch {
             NSLog("AppDelegate: URL command failed - %@", error.localizedDescription)

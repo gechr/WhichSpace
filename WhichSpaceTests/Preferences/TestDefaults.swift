@@ -37,7 +37,17 @@ enum TestSuiteFactory {
     static func createSuite() -> TestSuite {
         _ = cleanupOnce
         let name = "\(testSuitePrefix).\(UUID().uuidString)"
-        return TestSuite(suite: UserDefaults(suiteName: name)!, suiteName: name)
+        let suite = UserDefaults(suiteName: name)!
+        // A suite is inserted into the search list after the host application's
+        // own domain, so the developer's real preferences outrank it. That stays
+        // invisible until a key is written back to its default value, which the
+        // Defaults library records by removing the key rather than storing it -
+        // the read then falls through to whatever the host has set. Dropping the
+        // host domain from this instance keeps a suite genuinely isolated.
+        if let bundleID = Bundle.main.bundleIdentifier {
+            suite.removeSuite(named: bundleID)
+        }
+        return TestSuite(suite: suite, suiteName: name)
     }
 
     /// Removes a test suite's persistent domain.

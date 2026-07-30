@@ -7,18 +7,35 @@ import Foundation
 ///   `?label=...&badge=...` query items applied in one step
 /// - `whichspace://switch/next` - switch to the next Space
 /// - `whichspace://switch/previous` - switch to the previous Space
+/// - `whichspace://settings` - open settings on the last pane shown
+/// - `whichspace://settings/spaces` - open settings on a named pane
+/// - `whichspace://settings?highlight=icon-size` - open settings on whichever
+///   pane holds that setting and highlight it
 enum URLCommand: Equatable {
     case switchToSpace(number: Int, label: String?, badge: String?)
     case switchToNext
     case switchToPrevious
+    case openSettings(pane: SettingsPaneID?, anchor: SettingsAnchor?)
 
     /// Parses a `whichspace://` URL into a command, or nil when the URL
     /// does not match a supported form. Matching is case-insensitive.
     static func parse(_ url: URL) -> Self? {
-        guard url.scheme?.lowercased() == "whichspace",
-              url.host?.lowercased() == "switch",
-              url.pathComponents.count == 2
-        else {
+        guard url.scheme?.lowercased() == "whichspace" else {
+            return nil
+        }
+
+        switch url.host?.lowercased() {
+        case "switch":
+            return parseSwitch(url)
+        case "settings":
+            return parseSettings(url)
+        default:
+            return nil
+        }
+    }
+
+    private static func parseSwitch(_ url: URL) -> Self? {
+        guard url.pathComponents.count == 2 else {
             return nil
         }
 
@@ -31,12 +48,48 @@ enum URLCommand: Equatable {
             guard let number = Int(target) else {
                 return nil
             }
-            let queryItems = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems
             return .switchToSpace(
                 number: number,
-                label: queryItems?.first { $0.name.lowercased() == "label" }?.value,
-                badge: queryItems?.first { $0.name.lowercased() == "badge" }?.value
+                label: queryValue(url, "label"),
+                badge: queryValue(url, "badge")
             )
         }
+    }
+
+    private static func parseSettings(_ url: URL) -> Self? {
+        // Dropping the root component treats a trailing slash as no pane
+        let components = url.pathComponents.filter { $0 != "/" }
+        var pane: SettingsPaneID?
+        switch components.count {
+        case 0:
+            break
+        case 1:
+            guard let named = SettingsPaneID(rawValue: components[0].lowercased()) else {
+                return nil
+            }
+            pane = named
+        default:
+            return nil
+        }
+
+        guard let raw = queryValue(url, "highlight") else {
+            return .openSettings(pane: pane, anchor: nil)
+        }
+        guard let anchor = SettingsAnchor(rawValue: raw.lowercased()) else {
+            return nil
+        }
+        // A pane naming a setting it does not contain has no sensible reading,
+        // so reject it rather than silently picking one of the two
+        guard pane == nil || pane == anchor.pane else {
+            return nil
+        }
+        return .openSettings(pane: anchor.pane, anchor: anchor)
+    }
+
+    private static func queryValue(_ url: URL, _ name: String) -> String? {
+        URLComponents(url: url, resolvingAgainstBaseURL: false)?
+            .queryItems?
+            .first { $0.name.lowercased() == name }?
+            .value
     }
 }

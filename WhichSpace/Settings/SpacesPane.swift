@@ -11,6 +11,8 @@ struct SpacesPane: View {
 
     @State private var colorPanel = ColorPanelCoordinator()
 
+    @Environment(SettingsHighlighter.self) private var highlighter: SettingsHighlighter?
+
     var body: some View {
         HStack(alignment: .top, spacing: Layout.settingsSectionSpacing) {
             listColumn
@@ -176,17 +178,40 @@ struct SpacesPane: View {
             if model.isEditingDefaultStyle {
                 defaultStyleBanner
             }
-            SettingsSection(Localization.labelPreview) {
+            SettingsSection(Localization.labelPreview, anchor: .preview) {
                 previewRow
             }
-            ScrollView {
-                SpaceEditorView(
-                    model: model,
-                    colorPanel: colorPanel,
-                    onOpenCustomSoundsFolder: onOpenCustomSoundsFolder
-                )
+            // This is the one pane tall enough to scroll, so a deep-linked row
+            // has to be brought into view rather than only highlighted
+            ScrollViewReader { proxy in
+                ScrollView {
+                    SpaceEditorView(
+                        model: model,
+                        colorPanel: colorPanel,
+                        onOpenCustomSoundsFolder: onOpenCustomSoundsFolder
+                    )
+                }
+                .frame(height: Layout.settingsSpacesEditorHeight)
+                // onAppear covers a link that opens the window on this pane,
+                // where the anchor is already set before the editor exists
+                .onAppear {
+                    scroll(proxy, to: highlighter?.anchor)
+                }
+                .onChange(of: highlighter?.anchor) { _, anchor in
+                    scroll(proxy, to: anchor)
+                }
             }
-            .frame(height: Layout.settingsSpacesEditorHeight)
+        }
+    }
+
+    /// Centers the anchored row, leaving the pinned preview card alone since
+    /// it sits above the scroll view.
+    private func scroll(_ proxy: ScrollViewProxy, to anchor: SettingsAnchor?) {
+        guard let anchor, anchor != .preview else {
+            return
+        }
+        withAnimation {
+            proxy.scrollTo(anchor.target, anchor: .center)
         }
     }
 

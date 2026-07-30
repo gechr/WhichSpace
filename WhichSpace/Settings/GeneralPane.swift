@@ -26,7 +26,8 @@ struct GeneralPane: View {
                     title: Localization.toggleLaunchAtLogin,
                     isOn: model.launchAtLoginBinding,
                     icon: "sunrise",
-                    subtitle: String(format: Localization.tipLaunchAtLogin, AppInfo.appName)
+                    subtitle: String(format: Localization.tipLaunchAtLogin, AppInfo.appName),
+                    anchor: .launchAtLogin
                 )
             }
             SettingsSection {
@@ -39,7 +40,8 @@ struct GeneralPane: View {
                             updaterTick += 1
                         }
                     ),
-                    icon: "arrow.triangle.2.circlepath"
+                    icon: "arrow.triangle.2.circlepath",
+                    anchor: .autoCheckUpdates
                 )
                 SettingsRowDivider()
                 SettingsToggleRow(
@@ -50,10 +52,11 @@ struct GeneralPane: View {
                     ),
                     icon: "square.and.arrow.down",
                     indented: true,
-                    disabled: !(updater?.automaticallyChecksForUpdates ?? false)
+                    disabled: !(updater?.automaticallyChecksForUpdates ?? false),
+                    anchor: .autoInstallUpdates
                 )
                 SettingsRowDivider()
-                SettingsRow {
+                SettingsRow(anchor: .checkForUpdates) {
                     EmptyView()
                 } control: {
                     Button(Localization.actionCheckForUpdates) {
@@ -63,7 +66,7 @@ struct GeneralPane: View {
                 }
             }
             SettingsSection {
-                SettingsRow(icon: "externaldrive", subtitle: Localization.tipBackup) {
+                SettingsRow(icon: "externaldrive", subtitle: Localization.tipBackup, anchor: .backup) {
                     Text(Localization.labelBackup)
                 } control: {
                     Button(Localization.actionImportSettings) {

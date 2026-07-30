@@ -17,7 +17,8 @@ struct MenuBarPane: View {
                     value: model.binding(\.sizeScale),
                     range: Layout.sizeScaleRange,
                     defaultValue: Layout.defaultSizeScale,
-                    icon: "arrow.up.left.and.down.right.and.arrow.up.right.and.down.left"
+                    icon: "arrow.up.left.and.down.right.and.arrow.up.right.and.down.left",
+                    anchor: .iconSize
                 )
                 SettingsRowDivider()
                 SettingsSliderRow(
@@ -25,7 +26,8 @@ struct MenuBarPane: View {
                     value: model.binding(\.paddingScale),
                     range: Layout.paddingScaleRange,
                     defaultValue: Layout.defaultPaddingScale,
-                    icon: "arrow.left.and.right"
+                    icon: "arrow.left.and.right",
+                    anchor: .iconPadding
                 )
             }
             displaySection
@@ -42,14 +44,16 @@ struct MenuBarPane: View {
                 title: Localization.toggleShowAllDisplays,
                 isOn: model.showAllDisplaysBinding,
                 icon: "display.2",
-                subtitle: Localization.tipShowAllDisplays
+                subtitle: Localization.tipShowAllDisplays,
+                anchor: .showAllDisplays
             )
             SettingsRowDivider()
             SettingsToggleRow(
                 title: Localization.toggleShowAllSpaces,
                 isOn: model.showAllSpacesBinding,
                 icon: "square.grid.3x1.below.line.grid.1x2",
-                subtitle: Localization.tipShowAllSpaces
+                subtitle: Localization.tipShowAllSpaces,
+                anchor: .showAllSpaces
             )
             SettingsRowDivider()
             SettingsToggleRow(
@@ -58,7 +62,8 @@ struct MenuBarPane: View {
                 icon: "aqi.low",
                 indented: true,
                 disabled: dependentDisabled,
-                subtitle: Localization.tipDimInactiveSpaces
+                subtitle: Localization.tipDimInactiveSpaces,
+                anchor: .dimInactiveSpaces
             )
             SettingsRowDivider()
             SettingsToggleRow(
@@ -67,7 +72,8 @@ struct MenuBarPane: View {
                 icon: "eye.slash.fill",
                 indented: true,
                 disabled: dependentDisabled,
-                subtitle: Localization.tipHideEmptySpaces
+                subtitle: Localization.tipHideEmptySpaces,
+                anchor: .hideEmptySpaces
             )
             SettingsRowDivider()
             SettingsToggleRow(
@@ -76,7 +82,8 @@ struct MenuBarPane: View {
                 icon: "eye.slash.fill",
                 indented: true,
                 disabled: dependentDisabled,
-                subtitle: Localization.tipHideSingleSpace
+                subtitle: Localization.tipHideSingleSpace,
+                anchor: .hideSingleSpace
             )
             SettingsRowDivider()
             SettingsToggleRow(
@@ -85,7 +92,8 @@ struct MenuBarPane: View {
                 icon: "eye.slash.fill",
                 indented: true,
                 disabled: dependentDisabled,
-                subtitle: Localization.tipHideFullscreenApps
+                subtitle: Localization.tipHideFullscreenApps,
+                anchor: .hideFullscreenApps
             )
             SettingsRowDivider()
             SettingsToggleRow(
@@ -94,7 +102,8 @@ struct MenuBarPane: View {
                 icon: "f.square",
                 // Irrelevant while fullscreen Spaces are hidden altogether
                 disabled: model.value(\.hideFullscreenApps),
-                subtitle: Localization.tipUseFForFullscreenApps
+                subtitle: Localization.tipUseFForFullscreenApps,
+                anchor: .fullscreenLetter
             )
         }
     }
@@ -105,14 +114,16 @@ struct MenuBarPane: View {
                 title: Localization.toggleUniqueIconsPerDisplay,
                 isOn: model.binding(\.uniqueIconsPerDisplay),
                 icon: "theatermasks",
-                subtitle: Localization.tipUniqueIconsPerDisplay
+                subtitle: Localization.tipUniqueIconsPerDisplay,
+                anchor: .uniqueIconsPerDisplay
             )
             SettingsRowDivider()
             SettingsToggleRow(
                 title: Localization.toggleLocalSpaceNumbers,
                 isOn: model.binding(\.localSpaceNumbers),
                 icon: "1.square",
-                subtitle: Localization.tipLocalSpaceNumbers
+                subtitle: Localization.tipLocalSpaceNumbers,
+                anchor: .localSpaceNumbers
             )
             SettingsRowDivider()
             separatorColorRow
@@ -123,7 +134,12 @@ struct MenuBarPane: View {
     /// `showAllDisplays` toggle.
     private var separatorColorRow: some View {
         let disabled = !model.value(\.showAllDisplays)
-        return SettingsRow(icon: "poweron", subtitle: Localization.tipSeparator, disabled: disabled) {
+        return SettingsRow(
+            icon: "poweron",
+            subtitle: Localization.tipSeparator,
+            disabled: disabled,
+            anchor: .separatorColor
+        ) {
             Text(Localization.labelSeparator)
                 .foregroundStyle(disabled ? .tertiary : .primary)
         } control: {

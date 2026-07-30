@@ -21,6 +21,22 @@ extension Settings.PaneIdentifier {
     }
 }
 
+extension SettingsPaneID {
+    /// The Settings package identifier the deep-link pane name maps to.
+    var identifier: Settings.PaneIdentifier {
+        switch self {
+        case .general:
+            .general
+        case .menuBar:
+            .menuBar
+        case .spaces:
+            .spaces
+        case .switching:
+            .switching
+        }
+    }
+}
+
 /// A settings model with an external-change observation stream scoped to the
 /// window's lifetime.
 @MainActor
@@ -38,18 +54,23 @@ extension SpaceEditorModel: SettingsObservingModel {}
 final class SettingsWindowCoordinator {
     private let models: [SettingsObservingModel]
     private let panes: [SettingsPane]
+    private let highlighter: SettingsHighlighter
     private var windowController: SettingsWindowController?
     private var closeObserver: NSObjectProtocol?
 
-    init(models: [SettingsObservingModel], panes: [SettingsPane]) {
+    init(models: [SettingsObservingModel], panes: [SettingsPane], highlighter: SettingsHighlighter) {
         self.models = models
         self.panes = panes
+        self.highlighter = highlighter
     }
 
     /// Shows and fronts the settings window, creating it on first use.
     /// `orderFrontRegardless` + `activate` is what reliably fronts a window
     /// from an accessory (LSUIElement) app.
-    func show() {
+    ///
+    /// A nil pane leaves whichever pane was last shown selected. An anchor
+    /// briefly highlights one row, for links that point at a single setting.
+    func show(pane: SettingsPaneID? = nil, anchor: SettingsAnchor? = nil) {
         var isFirstShow = false
         if windowController == nil {
             isFirstShow = true
@@ -82,7 +103,7 @@ final class SettingsWindowCoordinator {
         for model in models {
             model.startObserving()
         }
-        windowController?.show()
+        windowController?.show(pane: pane?.identifier)
         if isFirstShow, let window = windowController?.window {
             positionAboveCenter(window)
         }
@@ -91,6 +112,8 @@ final class SettingsWindowCoordinator {
         // Drop the automatic focus on the first control so the window opens
         // without a highlighted toggle; Tab still reaches every control
         windowController?.window?.makeFirstResponder(nil)
+        // Set last so the fade runs against a pane that is already on screen
+        highlighter.highlight(anchor)
     }
 
     /// Opens the window above screen center so taller panes, which grow

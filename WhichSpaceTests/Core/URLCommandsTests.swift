@@ -51,4 +51,54 @@ struct URLCommandsTests {
         #expect(parse("whichspace://other/3") == nil)
         #expect(parse("otherscheme://switch/3") == nil)
     }
+
+    // MARK: - Settings
+
+    @Test("settings without a pane opens the last pane shown")
+    func settingsWithoutPane() {
+        #expect(parse("whichspace://settings") == .openSettings(pane: nil, anchor: nil))
+        #expect(parse("whichspace://settings/") == .openSettings(pane: nil, anchor: nil))
+    }
+
+    @Test("every pane name parses")
+    func everyPaneNameParses() {
+        for pane in SettingsPaneID.allCases {
+            #expect(
+                parse("whichspace://settings/\(pane.rawValue)")
+                    == .openSettings(pane: pane, anchor: nil)
+            )
+        }
+    }
+
+    @Test("pane names are case-insensitive")
+    func paneNamesAreCaseInsensitive() {
+        #expect(parse("whichspace://settings/MenuBar") == .openSettings(pane: .menuBar, anchor: nil))
+    }
+
+    @Test("every setting is reachable by highlight alone")
+    func everyAnchorRoundTrips() {
+        for anchor in SettingsAnchor.allCases {
+            #expect(
+                parse("whichspace://settings?highlight=\(anchor.rawValue)")
+                    == .openSettings(pane: anchor.pane, anchor: anchor)
+            )
+        }
+    }
+
+    @Test("a pane naming one of its own settings is accepted")
+    func matchingPaneAndAnchorParse() {
+        #expect(
+            parse("whichspace://settings/switching?highlight=scroll-sensitivity")
+                == .openSettings(pane: .switching, anchor: .scrollSensitivity)
+        )
+    }
+
+    @Test("unsupported settings URLs are rejected")
+    func unsupportedSettingsURLsAreRejected() {
+        #expect(parse("whichspace://settings/nowhere") == nil)
+        #expect(parse("whichspace://settings/general/extra") == nil)
+        #expect(parse("whichspace://settings?highlight=nothing") == nil)
+        // The pane does not hold that setting, so neither reading is right
+        #expect(parse("whichspace://settings/general?highlight=icon-size") == nil)
+    }
 }
