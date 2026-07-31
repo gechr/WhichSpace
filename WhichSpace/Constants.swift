@@ -118,6 +118,9 @@ enum Layout {
     static let settingsRowSubtitleFontSize = 11.0
     static let settingsSliderWidth = 140.0
     static let settingsSliderValueFontSize = 11.0
+    /// Fraction of the track where a slider's default value sits, so defaults
+    /// line up across rows whose ranges differ
+    static let settingsSliderDefaultPosition = 0.5
     static let settingsSpaceListWidth = 140.0
     static let settingsSpaceListMaxHeight = 800.0
     static let settingsSpaceListScrollerWidth = 16.0
@@ -338,6 +341,8 @@ enum Localization {
     static let tipHideEmptySpaces = String(localized: "tip_hide_empty_spaces")
     static let tipHideFullscreenApps = String(localized: "tip_hide_fullscreen_apps")
     static let tipHideSingleSpace = String(localized: "tip_hide_single_space")
+    static let tipIconPadding = String(localized: "tip_icon_padding")
+    static let tipIconSize = String(localized: "tip_icon_size")
     static let tipInvertColors = String(localized: "tip_invert_colors")
     static let tipLabelInput = String(
         format: String(localized: "tip_label_input"), LabelTemplate.maxContentLength

@@ -257,10 +257,52 @@ struct SettingsSliderRow: View {
             Slider(value: value, in: range, step: step) {
                 Text(title)
             }
+        } else if anchorsDefault {
+            Slider(value: anchoredPosition, in: 0 ... 1) {
+                Text(title)
+            }
+            // The slider carries a track position rather than the setting, so
+            // spell the setting out for VoiceOver
+            .accessibilityValue(Text(valueFormatter(value.wrappedValue)))
         } else {
             Slider(value: value, in: range) {
                 Text(title)
             }
+        }
+    }
+
+    /// A default sitting on either bound has no room for one of the two
+    /// segments, and a stepped slider steps in units of the setting rather
+    /// than of the track, so both keep the plain linear mapping.
+    private var anchorsDefault: Bool {
+        step == nil && defaultValue > range.lowerBound && defaultValue < range.upperBound
+    }
+
+    /// Maps the setting onto a 0-1 track that is linear either side of
+    /// `defaultValue`, putting every row's default at the same position.
+    /// The lower and upper segments cover different amounts of the range
+    /// whenever the default is off-centre, so the slider moves the setting at
+    /// a different rate in each half.
+    private var anchoredPosition: Binding<Double> {
+        let anchor = Layout.settingsSliderDefaultPosition
+        return Binding {
+            let current = value.wrappedValue.clamped(to: range)
+            return if current <= defaultValue {
+                anchor * (current - range.lowerBound) / (defaultValue - range.lowerBound)
+            } else {
+                anchor + (1 - anchor) * (current - defaultValue) / (range.upperBound - defaultValue)
+            }
+        } set: { position in
+            let mapped = if position < anchor {
+                range.lowerBound + (defaultValue - range.lowerBound) * position / anchor
+            } else {
+                defaultValue + (range.upperBound - defaultValue) * (position - anchor) / (1 - anchor)
+            }
+            // Whole units only: the row reads the value back as a rounded
+            // percentage, and the reset button compares against the default
+            // exactly, so a fraction of a percent would show as "100%" with
+            // reset still enabled
+            value.wrappedValue = mapped.rounded()
         }
     }
 }

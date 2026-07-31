@@ -18,6 +18,7 @@ struct MenuBarPane: View {
                     range: Layout.sizeScaleRange,
                     defaultValue: Layout.defaultSizeScale,
                     icon: "arrow.up.left.and.down.right.and.arrow.up.right.and.down.left",
+                    subtitle: Localization.tipIconSize,
                     anchor: .iconSize
                 )
                 SettingsRowDivider()
@@ -27,6 +28,7 @@ struct MenuBarPane: View {
                     range: Layout.paddingScaleRange,
                     defaultValue: Layout.defaultPaddingScale,
                     icon: "arrow.left.and.right",
+                    subtitle: Localization.tipIconPadding,
                     anchor: .iconPadding
                 )
             }
