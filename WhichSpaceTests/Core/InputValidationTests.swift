@@ -315,4 +315,12 @@ struct InputValidationTests {
         #expect(LabelTemplate.resolve("{#}", space: 99) == "99")
         #expect(LabelTemplate.resolve("S{#}", space: 16) == "S16")
     }
+
+    /// The tip quotes the limit, so a hardcoded number there goes stale the
+    /// moment `maxContentLength` moves.
+    @Test("label input tip quotes the current character limit")
+    func labelInputTipQuotesLimit() {
+        #expect(Localization.tipLabelInput.contains(String(LabelTemplate.maxContentLength)))
+        #expect(!Localization.tipLabelInput.contains("%lld"))
+    }
 }

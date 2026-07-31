@@ -10150,259 +10150,259 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "يتطلب تبديل المساحات إذن إمكانية الوصول.\n\nبعد النقر على متابعة، سيطلب منك macOS الإذن. انقر على \"فتح إعدادات النظام\"، ثم ابحث عن WhichSpace في القائمة وقم بتفعيله."
+            "value" : "يتطلب تبديل المساحات إذن إمكانية الوصول.\n\nبعد النقر على متابعة، سيطلب منك macOS الإذن. انقر على \"فتح إعدادات النظام\"، ثم ابحث عن %@ في القائمة وقم بتفعيله."
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Превключването на Пространства изисква разрешение за достъпност.\n\nСлед като натиснете Продължи, macOS ще поиска разрешение. Натиснете \"Отвори Системни настройки\", намерете WhichSpace в списъка и го активирайте."
+            "value" : "Превключването на Пространства изисква разрешение за достъпност.\n\nСлед като натиснете Продължи, macOS ще поиска разрешение. Натиснете \"Отвори Системни настройки\", намерете %@ в списъка и го активирайте."
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Canviar d'Espai requereix permís d'accessibilitat.\n\nDesprés de fer clic a Continuar, macOS et demanarà permís. Fes clic a \"Obre Configuració del Sistema\" i activa WhichSpace a la llista."
+            "value" : "Canviar d'Espai requereix permís d'accessibilitat.\n\nDesprés de fer clic a Continuar, macOS et demanarà permís. Fes clic a \"Obre Configuració del Sistema\" i activa %@ a la llista."
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Přepínání Spaces vyžaduje oprávnění přístupnosti.\n\nPo kliknutí na Pokračovat vás macOS požádá o oprávnění. Klikněte na \"Otevřít Nastavení systému\", najděte WhichSpace v seznamu a povolte jej."
+            "value" : "Přepínání Spaces vyžaduje oprávnění přístupnosti.\n\nPo kliknutí na Pokračovat vás macOS požádá o oprávnění. Klikněte na \"Otevřít Nastavení systému\", najděte %@ v seznamu a povolte jej."
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Skift mellem Spaces kræver tilladelse til Tilgængelighed.\n\nEfter du klikker Fortsæt, vil macOS bede om tilladelse. Klik på \"Åbn Systemindstillinger\", find WhichSpace på listen, og aktivér den."
+            "value" : "Skift mellem Spaces kræver tilladelse til Tilgængelighed.\n\nEfter du klikker Fortsæt, vil macOS bede om tilladelse. Klik på \"Åbn Systemindstillinger\", find %@ på listen, og aktivér den."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das Wechseln von Spaces erfordert die Bedienungshilfen-Berechtigung.\n\nNachdem du auf Fortfahren klickst, bittet macOS um Berechtigung. Klicke auf \"Systemeinstellungen öffnen\", suche WhichSpace in der Liste und aktiviere es."
+            "value" : "Das Wechseln von Spaces erfordert die Bedienungshilfen-Berechtigung.\n\nNachdem du auf Fortfahren klickst, bittet macOS um Berechtigung. Klicke auf \"Systemeinstellungen öffnen\", suche %@ in der Liste und aktiviere es."
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Η εναλλαγή Χώρων απαιτεί άδεια Προσβασιμότητας.\n\nΑφού πατήσετε Συνέχεια, το macOS θα ζητήσει άδεια. Πατήστε \"Άνοιγμα Ρυθμίσεων Συστήματος\", βρείτε το WhichSpace στη λίστα και ενεργοποιήστε το."
+            "value" : "Η εναλλαγή Χώρων απαιτεί άδεια Προσβασιμότητας.\n\nΑφού πατήσετε Συνέχεια, το macOS θα ζητήσει άδεια. Πατήστε \"Άνοιγμα Ρυθμίσεων Συστήματος\", βρείτε το %@ στη λίστα και ενεργοποιήστε το."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Switching Spaces requires Accessibility permission.\n\nAfter clicking Continue, macOS will prompt you for permission. Click \"Open System Settings\", then find WhichSpace in the list and enable it."
+            "value" : "Switching Spaces requires Accessibility permission.\n\nAfter clicking Continue, macOS will prompt you for permission. Click \"Open System Settings\", then find %@ in the list and enable it."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Switching Spaces requires Accessibility permission.\n\nAfter clicking Continue, macOS will prompt you for permission. Click \"Open System Settings\", then find WhichSpace in the list and enable it."
+            "value" : "Switching Spaces requires Accessibility permission.\n\nAfter clicking Continue, macOS will prompt you for permission. Click \"Open System Settings\", then find %@ in the list and enable it."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cambiar de Espacio requiere permiso de Accesibilidad.\n\nDespués de hacer clic en Continuar, macOS le pedirá permiso. Haga clic en \"Abrir Ajustes del Sistema\", busque WhichSpace en la lista y actívelo."
+            "value" : "Cambiar de Espacio requiere permiso de Accesibilidad.\n\nDespués de hacer clic en Continuar, macOS le pedirá permiso. Haga clic en \"Abrir Ajustes del Sistema\", busque %@ en la lista y actívelo."
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "جابه‌جایی بین فضاها به مجوز دسترس‌پذیری نیاز دارد.\n\nپس از کلیک روی ادامه، macOS از شما مجوز می‌خواهد. روی \"باز کردن تنظیمات سیستم\" کلیک کنید، سپس WhichSpace را در فهرست پیدا و فعال کنید."
+            "value" : "جابه‌جایی بین فضاها به مجوز دسترس‌پذیری نیاز دارد.\n\nپس از کلیک روی ادامه، macOS از شما مجوز می‌خواهد. روی \"باز کردن تنظیمات سیستم\" کلیک کنید، سپس %@ را در فهرست پیدا و فعال کنید."
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spaces-tilojen vaihtaminen vaatii Käyttöapu-luvan.\n\nKun napsautat Jatka, macOS pyytää lupaa. Napsauta \"Avaa Järjestelmäasetukset\", etsi WhichSpace luettelosta ja ota se käyttöön."
+            "value" : "Spaces-tilojen vaihtaminen vaatii Käyttöapu-luvan.\n\nKun napsautat Jatka, macOS pyytää lupaa. Napsauta \"Avaa Järjestelmäasetukset\", etsi %@ luettelosta ja ota se käyttöön."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le changement d'Espace nécessite l'autorisation d'accessibilité.\n\nAprès avoir cliqué sur Continuer, macOS vous demandera l'autorisation. Cliquez sur \" Ouvrir les Réglages Système \", puis trouvez WhichSpace dans la liste et activez-le."
+            "value" : "Le changement d'Espace nécessite l'autorisation d'accessibilité.\n\nAprès avoir cliqué sur Continuer, macOS vous demandera l'autorisation. Cliquez sur \" Ouvrir les Réglages Système \", puis trouvez %@ dans la liste et activez-le."
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "מעבר בין מרחבים דורש הרשאת נגישות.\n\nלאחר הלחיצה על המשך, macOS יבקש ממך הרשאה. לחץ על \"פתח את הגדרות המערכת\", ואז מצא את WhichSpace ברשימה והפעל אותו."
+            "value" : "מעבר בין מרחבים דורש הרשאת נגישות.\n\nלאחר הלחיצה על המשך, macOS יבקש ממך הרשאה. לחץ על \"פתח את הגדרות המערכת\", ואז מצא את %@ ברשימה והפעל אותו."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "स्पेसेस बदलने के लिए एक्सेसिबिलिटी अनुमति आवश्यक है।\n\nजारी रखें पर क्लिक करने के बाद, macOS आपसे अनुमति माँगेगा। \"सिस्टम सेटिंग्स खोलें\" पर क्लिक करें, फिर सूची में WhichSpace ढूँढें और इसे सक्षम करें।"
+            "value" : "स्पेसेस बदलने के लिए एक्सेसिबिलिटी अनुमति आवश्यक है।\n\nजारी रखें पर क्लिक करने के बाद, macOS आपसे अनुमति माँगेगा। \"सिस्टम सेटिंग्स खोलें\" पर क्लिक करें, फिर सूची में %@ ढूँढें और इसे सक्षम करें।"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A Space-ek közötti váltáshoz engedélyezni kell a Kisegítő lehetőségeket.\n\nA Folytatás gombra kattintva a macOS engedélyt kér. Kattintson a \"Rendszerbeállítások megnyitása\" lehetőségre, keresse meg a WhichSpace alkalmazást a listában, és engedélyezze."
+            "value" : "A Space-ek közötti váltáshoz engedélyezni kell a Kisegítő lehetőségeket.\n\nA Folytatás gombra kattintva a macOS engedélyt kér. Kattintson a \"Rendszerbeállítások megnyitása\" lehetőségre, keresse meg a %@ alkalmazást a listában, és engedélyezze."
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Beralih Space memerlukan izin Aksesibilitas.\n\nSetelah mengklik Lanjutkan, macOS akan meminta izin. Klik \"Buka Pengaturan Sistem\", temukan WhichSpace dalam daftar, dan aktifkan."
+            "value" : "Beralih Space memerlukan izin Aksesibilitas.\n\nSetelah mengklik Lanjutkan, macOS akan meminta izin. Klik \"Buka Pengaturan Sistem\", temukan %@ dalam daftar, dan aktifkan."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il passaggio tra Spazi richiede l'autorizzazione Accessibilità.\n\nDopo aver fatto clic su Continua, macOS chiederà l'autorizzazione. Fai clic su \"Apri Impostazioni di Sistema\", cerca WhichSpace nell'elenco e abilitalo."
+            "value" : "Il passaggio tra Spazi richiede l'autorizzazione Accessibilità.\n\nDopo aver fatto clic su Continua, macOS chiederà l'autorizzazione. Fai clic su \"Apri Impostazioni di Sistema\", cerca %@ nell'elenco e abilitalo."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "スペースの切り替えには、アクセシビリティの許可が必要です。\n\n「続ける」をクリックすると、macOSが許可を求めます。「システム設定を開く」をクリックし、リストからWhichSpaceを見つけて有効にしてください。"
+            "value" : "スペースの切り替えには、アクセシビリティの許可が必要です。\n\n「続ける」をクリックすると、macOSが許可を求めます。「システム設定を開く」をクリックし、リストから%@を見つけて有効にしてください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "스페이스 전환에는 손쉬운 사용 권한이 필요합니다.\n\n계속을 클릭하면 macOS에서 권한을 요청합니다. \"시스템 설정 열기\"를 클릭한 다음 목록에서 WhichSpace를 찾아 활성화하세요."
+            "value" : "스페이스 전환에는 손쉬운 사용 권한이 필요합니다.\n\n계속을 클릭하면 macOS에서 권한을 요청합니다. \"시스템 설정 열기\"를 클릭한 다음 목록에서 %@를 찾아 활성화하세요."
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Менувањето на Простори бара дозвола за пристапност.\n\nОткако ќе кликнете Продолжи, macOS ќе побара дозвола. Кликнете на \"Отвори Системски поставки\", пронајдете WhichSpace во списокот и овозможете го."
+            "value" : "Менувањето на Простори бара дозвола за пристапност.\n\nОткако ќе кликнете Продолжи, macOS ќе побара дозвола. Кликнете на \"Отвори Системски поставки\", пронајдете %@ во списокот и овозможете го."
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Menukar Ruang memerlukan kebenaran Kebolehcapaian.\n\nSelepas mengklik Teruskan, macOS akan meminta kebenaran. Klik \"Buka Tetapan Sistem\", cari WhichSpace dalam senarai dan dayakannya."
+            "value" : "Menukar Ruang memerlukan kebenaran Kebolehcapaian.\n\nSelepas mengklik Teruskan, macOS akan meminta kebenaran. Klik \"Buka Tetapan Sistem\", cari %@ dalam senarai dan dayakannya."
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bytte mellom Spaces krever tilgjengelighetstillatelse.\n\nEtter at du klikker Fortsett, vil macOS be om tillatelse. Klikk på \"Åpne Systeminnstillinger\", finn WhichSpace i listen og aktiver den."
+            "value" : "Bytte mellom Spaces krever tilgjengelighetstillatelse.\n\nEtter at du klikker Fortsett, vil macOS be om tillatelse. Klikk på \"Åpne Systeminnstillinger\", finn %@ i listen og aktiver den."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Het wisselen van Spaces vereist Toegankelijkheid-toestemming.\n\nNadat je op Ga door klikt, vraagt macOS om toestemming. Klik op \"Open Systeeminstellingen\", zoek WhichSpace in de lijst en schakel het in."
+            "value" : "Het wisselen van Spaces vereist Toegankelijkheid-toestemming.\n\nNadat je op Ga door klikt, vraagt macOS om toestemming. Klik op \"Open Systeeminstellingen\", zoek %@ in de lijst en schakel het in."
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Byte mellom Spaces krev løyve for tilgjenge.\n\nEtter at du klikkar Hald fram, vil macOS be om løyve. Klikk på \"Opne Systeminnstillingar\", finn WhichSpace i lista og slå det på."
+            "value" : "Byte mellom Spaces krev løyve for tilgjenge.\n\nEtter at du klikkar Hald fram, vil macOS be om løyve. Klikk på \"Opne Systeminnstillingar\", finn %@ i lista og slå det på."
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "سپیسز بدلن لئی ایکسیسبلٹی اجازت دی لوڑ ہے۔\n\n\"جاری رکھو\" تے کلک کرن مگروں، macOS اجازت منگے گا۔ \"سسٹم سیٹنگز کھولو\" تے کلک کرو، فیر لسٹ وچ WhichSpace لبھو تے اینوں چالو کرو۔"
+            "value" : "سپیسز بدلن لئی ایکسیسبلٹی اجازت دی لوڑ ہے۔\n\n\"جاری رکھو\" تے کلک کرن مگروں، macOS اجازت منگے گا۔ \"سسٹم سیٹنگز کھولو\" تے کلک کرو، فیر لسٹ وچ %@ لبھو تے اینوں چالو کرو۔"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przełączanie Spaces wymaga uprawnienia Dostępności.\n\nPo kliknięciu Kontynuuj macOS poprosi o uprawnienie. Kliknij \"Otwórz Ustawienia systemowe\", znajdź WhichSpace na liście i włącz tę aplikację."
+            "value" : "Przełączanie Spaces wymaga uprawnienia Dostępności.\n\nPo kliknięciu Kontynuuj macOS poprosi o uprawnienie. Kliknij \"Otwórz Ustawienia systemowe\", znajdź %@ na liście i włącz tę aplikację."
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "د سپېسونو بدلول د لاسرسي اجازې ته اړتیا لري.\n\nد \"دوام ورکړئ\" تر کلیک وروسته، macOS به له تاسو اجازه وغواړي. \"د سیسټم ترتیبات پرانیزئ\" کلیک کړئ، بیا په لیست کې WhichSpace ومومئ او فعال یې کړئ."
+            "value" : "د سپېسونو بدلول د لاسرسي اجازې ته اړتیا لري.\n\nد \"دوام ورکړئ\" تر کلیک وروسته، macOS به له تاسو اجازه وغواړي. \"د سیسټم ترتیبات پرانیزئ\" کلیک کړئ، بیا په لیست کې %@ ومومئ او فعال یې کړئ."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mudar de Espaço requer permissão de Acessibilidade.\n\nApós clicar em Continuar, o macOS pedirá permissão. Clique em \"Abrir Definições do Sistema\", encontre o WhichSpace na lista e ative-o."
+            "value" : "Mudar de Espaço requer permissão de Acessibilidade.\n\nApós clicar em Continuar, o macOS pedirá permissão. Clique em \"Abrir Definições do Sistema\", encontre o %@ na lista e ative-o."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trocar de Espaço requer permissão de Acessibilidade.\n\nApós clicar em Continuar, o macOS pedirá permissão. Clique em \"Abrir Ajustes do Sistema\", encontre o WhichSpace na lista e ative-o."
+            "value" : "Trocar de Espaço requer permissão de Acessibilidade.\n\nApós clicar em Continuar, o macOS pedirá permissão. Clique em \"Abrir Ajustes do Sistema\", encontre o %@ na lista e ative-o."
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comutarea între Spații necesită permisiunea de Accesibilitate.\n\nDupă ce faceți clic pe Continuă, macOS va solicita permisiunea. Faceți clic pe \"Deschide Setări sistem\", găsiți WhichSpace în listă și activați-l."
+            "value" : "Comutarea între Spații necesită permisiunea de Accesibilitate.\n\nDupă ce faceți clic pe Continuă, macOS va solicita permisiunea. Faceți clic pe \"Deschide Setări sistem\", găsiți %@ în listă și activați-l."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Для переключения Пространств требуется разрешение Универсального доступа.\n\nПосле нажатия \"Продолжить\" macOS запросит разрешение. Нажмите \"Открыть Системные настройки\", найдите WhichSpace в списке и включите."
+            "value" : "Для переключения Пространств требуется разрешение Универсального доступа.\n\nПосле нажатия \"Продолжить\" macOS запросит разрешение. Нажмите \"Открыть Системные настройки\", найдите %@ в списке и включите."
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prepínanie Priestorov vyžaduje povolenie Prístupnosti.\n\nPo kliknutí na Pokračovať vás macOS požiada o povolenie. Kliknite na \"Otvoriť Systémové nastavenia\", nájdite WhichSpace v zozname a povoľte ho."
+            "value" : "Prepínanie Priestorov vyžaduje povolenie Prístupnosti.\n\nPo kliknutí na Pokračovať vás macOS požiada o povolenie. Kliknite na \"Otvoriť Systémové nastavenia\", nájdite %@ v zozname a povoľte ho."
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prebacivanje Prostora zahteva dozvolu pristupačnosti.\n\nNakon što kliknete Nastavi, macOS će zatražiti dozvolu. Kliknite na \"Otvori Podešavanja sistema\", pronađite WhichSpace na listi i omogućite ga."
+            "value" : "Prebacivanje Prostora zahteva dozvolu pristupačnosti.\n\nNakon što kliknete Nastavi, macOS će zatražiti dozvolu. Kliknite na \"Otvori Podešavanja sistema\", pronađite %@ na listi i omogućite ga."
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Att byta Spaces kräver hjälpmedelsbehörighet.\n\nEfter att du har klickat på Fortsätt kommer macOS att be om behörighet. Klicka på \"Öppna Systeminställningar\", hitta WhichSpace i listan och aktivera det."
+            "value" : "Att byta Spaces kräver hjälpmedelsbehörighet.\n\nEfter att du har klickat på Fortsätt kommer macOS att be om behörighet. Klicka på \"Öppna Systeminställningar\", hitta %@ i listan och aktivera det."
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "การสลับ Spaces ต้องการสิทธิ์การช่วยการเข้าถึง\n\nหลังจากคลิกดำเนินการต่อ macOS จะขอสิทธิ์ คลิก \"เปิดการตั้งค่าระบบ\" จากนั้นค้นหา WhichSpace ในรายการและเปิดใช้งาน"
+            "value" : "การสลับ Spaces ต้องการสิทธิ์การช่วยการเข้าถึง\n\nหลังจากคลิกดำเนินการต่อ macOS จะขอสิทธิ์ คลิก \"เปิดการตั้งค่าระบบ\" จากนั้นค้นหา %@ ในรายการและเปิดใช้งาน"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alan değiştirmek Erişilebilirlik izni gerektirir.\n\nDevam Et'e tıkladıktan sonra macOS sizden izin isteyecektir. \"Sistem Ayarlarını Aç\"ı tıklayın, listede WhichSpace'i bulun ve etkinleştirin."
+            "value" : "Alan değiştirmek Erişilebilirlik izni gerektirir.\n\nDevam Et'e tıkladıktan sonra macOS sizden izin isteyecektir. \"Sistem Ayarlarını Aç\"ı tıklayın, listede %@'i bulun ve etkinleştirin."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Перемикання Просторів потребує дозволу Доступності.\n\nПісля натискання \"Продовжити\" macOS запросить дозвіл. Натисніть \"Відкрити Системні параметри\", знайдіть WhichSpace у списку та увімкніть."
+            "value" : "Перемикання Просторів потребує дозволу Доступності.\n\nПісля натискання \"Продовжити\" macOS запросить дозвіл. Натисніть \"Відкрити Системні параметри\", знайдіть %@ у списку та увімкніть."
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "اسپیسز تبدیل کرنے کے لیے ایکسیسبلٹی اجازت درکار ہے۔\n\nجاری رکھیں پر کلک کرنے کے بعد، macOS اجازت مانگے گا۔ \"سسٹم سیٹنگز کھولیں\" پر کلک کریں، فہرست میں WhichSpace تلاش کریں اور اسے فعال کریں۔"
+            "value" : "اسپیسز تبدیل کرنے کے لیے ایکسیسبلٹی اجازت درکار ہے۔\n\nجاری رکھیں پر کلک کرنے کے بعد، macOS اجازت مانگے گا۔ \"سسٹم سیٹنگز کھولیں\" پر کلک کریں، فہرست میں %@ تلاش کریں اور اسے فعال کریں۔"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chuyển đổi Không gian yêu cầu quyền Trợ năng.\n\nSau khi nhấp Tiếp tục, macOS sẽ yêu cầu quyền. Nhấp vào \"Mở Cài đặt Hệ thống\", tìm WhichSpace trong danh sách và bật lên."
+            "value" : "Chuyển đổi Không gian yêu cầu quyền Trợ năng.\n\nSau khi nhấp Tiếp tục, macOS sẽ yêu cầu quyền. Nhấp vào \"Mở Cài đặt Hệ thống\", tìm %@ trong danh sách và bật lên."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "切换空间需要辅助功能权限。\n\n点按\"继续\"后，macOS 会请求权限。点按\"打开系统设置\"，在列表中找到 WhichSpace 并启用。"
+            "value" : "切换空间需要辅助功能权限。\n\n点按\"继续\"后，macOS 会请求权限。点按\"打开系统设置\"，在列表中找到 %@ 并启用。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "切換空間需要輔助使用權限。\n\n按一下「繼續」後，macOS 會要求權限。按一下「開啟系統設定」，在列表中找到 WhichSpace 並啟用。"
+            "value" : "切換空間需要輔助使用權限。\n\n按一下「繼續」後，macOS 會要求權限。按一下「開啟系統設定」，在列表中找到 %@ 並啟用。"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "切換空間需要輔助使用權限。\n\n按一下「繼續」後，macOS 會要求權限。按一下「開啟系統設定」，然後在列表中找到 WhichSpace 並啟用。"
+            "value" : "切換空間需要輔助使用權限。\n\n按一下「繼續」後，macOS 會要求權限。按一下「開啟系統設定」，然後在列表中找到 %@ 並啟用。"
           }
         }
       }
@@ -45009,263 +45009,264 @@
       }
     },
     "tip_label_input" : {
+      "comment" : "%lld is LabelTemplate.maxContentLength; keep the specifier rather than a literal number.",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "نص مخصص، حتى 10 أحرف.\nاستخدم {#} لرقم المساحة."
+            "value" : "نص مخصص، حتى %lld حرفًا.\nاستخدم {#} لرقم المساحة."
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Персонализиран текст, до 10 знака.\nИзползвай {#} за номера на Пространството."
+            "value" : "Персонализиран текст, до %lld знака.\nИзползвай {#} за номера на Пространството."
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Text personalitzat, fins a 10 caràcters.\nUsa {#} per al número de l'Espai."
+            "value" : "Text personalitzat, fins a %lld caràcters.\nUsa {#} per al número de l'Espai."
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vlastní text, až 10 znaků.\nPoužijte {#} pro číslo Space."
+            "value" : "Vlastní text, až %lld znaků.\nPoužijte {#} pro číslo Space."
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tilpasset tekst, op til 10 tegn.\nBrug {#} for Space-nummeret."
+            "value" : "Tilpasset tekst, op til %lld tegn.\nBrug {#} for Space-nummeret."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Benutzerdefinierter Text, bis zu 10 Zeichen.\n{#} für die Space-Nummer verwenden."
+            "value" : "Benutzerdefinierter Text, bis zu %lld Zeichen.\n{#} für die Space-Nummer verwenden."
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Προσαρμοσμένο κείμενο, έως 10 χαρακτήρες.\nΧρησιμοποιήστε το {#} για τον αριθμό του Χώρου."
+            "value" : "Προσαρμοσμένο κείμενο, έως %lld χαρακτήρες.\nΧρησιμοποιήστε το {#} για τον αριθμό του Χώρου."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Custom text, up to 10 characters.\nUse {#} for the Space number."
+            "value" : "Custom text, up to %lld characters.\nUse {#} for the Space number."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Custom text, up to 10 characters.\nUse {#} for the Space number."
+            "value" : "Custom text, up to %lld characters.\nUse {#} for the Space number."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Texto personalizado, hasta 10 caracteres.\nUse {#} para el número del Espacio."
+            "value" : "Texto personalizado, hasta %lld caracteres.\nUse {#} para el número del Espacio."
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "متن دلخواه، تا ۱۰ کاراکتر.\nاز {#} برای شماره فضا استفاده کنید."
+            "value" : "متن دلخواه، تا %lld کاراکتر.\nاز {#} برای شماره فضا استفاده کنید."
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mukautettu teksti, enintään 10 merkkiä.\nKäytä {#}-merkintää Spacen numerolle."
+            "value" : "Mukautettu teksti, enintään %lld merkkiä.\nKäytä {#}-merkintää Spacen numerolle."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Texte personnalisé, jusqu'à 10 caractères.\nUtilisez {#} pour le numéro d'Espace."
+            "value" : "Texte personnalisé, jusqu'à %lld caractères.\nUtilisez {#} pour le numéro d'Espace."
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "טקסט מותאם אישית, עד 10 תווים.\nהשתמש ב-{#} עבור מספר המרחב."
+            "value" : "טקסט מותאם אישית, עד %lld תווים.\nהשתמש ב-{#} עבור מספר המרחב."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "कस्टम टेक्स्ट, अधिकतम 10 वर्ण।\nस्पेस नंबर के लिए {#} उपयोग करें।"
+            "value" : "कस्टम टेक्स्ट, अधिकतम %lld वर्ण।\nस्पेस नंबर के लिए {#} उपयोग करें।"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Egyéni szöveg, legfeljebb 10 karakter.\nHasználja a {#} helyőrzőt a Space számához."
+            "value" : "Egyéni szöveg, legfeljebb %lld karakter.\nHasználja a {#} helyőrzőt a Space számához."
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Teks kustom, hingga 10 karakter.\nGunakan {#} untuk nomor Space."
+            "value" : "Teks kustom, hingga %lld karakter.\nGunakan {#} untuk nomor Space."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Testo personalizzato, fino a 10 caratteri.\nUsa {#} per il numero dello Spazio."
+            "value" : "Testo personalizzato, fino a %lld caratteri.\nUsa {#} per il numero dello Spazio."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "カスタムテキスト（最大10文字）。\nスペース番号には{#}を使用。"
+            "value" : "カスタムテキスト（最大%lld文字）。\nスペース番号には{#}を使用。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "사용자 지정 텍스트, 최대 10자.\n스페이스 번호에는 {#} 사용."
+            "value" : "사용자 지정 텍스트, 최대 %lld자.\n스페이스 번호에는 {#} 사용."
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Прилагоден текст, до 10 знаци.\nКористи {#} за бројот на Просторот."
+            "value" : "Прилагоден текст, до %lld знаци.\nКористи {#} за бројот на Просторот."
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Teks tersuai, sehingga 10 aksara.\nGunakan {#} untuk nombor Ruang."
+            "value" : "Teks tersuai, sehingga %lld aksara.\nGunakan {#} untuk nombor Ruang."
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Egendefinert tekst, opptil 10 tegn.\nBruk {#} for Space-nummeret."
+            "value" : "Egendefinert tekst, opptil %lld tegn.\nBruk {#} for Space-nummeret."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aangepaste tekst, tot 10 tekens.\nGebruik {#} voor het Space-nummer."
+            "value" : "Aangepaste tekst, tot %lld tekens.\nGebruik {#} voor het Space-nummer."
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eigendefinert tekst, opptil 10 teikn.\nBruk {#} for Space-nummeret."
+            "value" : "Eigendefinert tekst, opptil %lld teikn.\nBruk {#} for Space-nummeret."
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "حسبِ منشا ٹیکسٹ، زیادہ سے زیادہ 10 حروف۔\nسپیس نمبر لئی {#} ورتو۔"
+            "value" : "حسبِ منشا ٹیکسٹ، زیادہ سے زیادہ %lld حروف۔\nسپیس نمبر لئی {#} ورتو۔"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Niestandardowy tekst, do 10 znaków.\nUżyj {#} dla numeru Space."
+            "value" : "Niestandardowy tekst, do %lld znaków.\nUżyj {#} dla numeru Space."
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ځانګړی متن، تر ۱۰ تورو پورې.\nد سپېس شمېرې لپاره {#} وکاروئ."
+            "value" : "ځانګړی متن، تر %lld تورو پورې.\nد سپېس شمېرې لپاره {#} وکاروئ."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Texto personalizado, até 10 caracteres.\nUse {#} para o número do Espaço."
+            "value" : "Texto personalizado, até %lld caracteres.\nUse {#} para o número do Espaço."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Texto personalizado, até 10 caracteres.\nUse {#} para o número do Espaço."
+            "value" : "Texto personalizado, até %lld caracteres.\nUse {#} para o número do Espaço."
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Text personalizat, până la 10 caractere.\nFolosiți {#} pentru numărul Spațiului."
+            "value" : "Text personalizat, până la %lld de caractere.\nFolosiți {#} pentru numărul Spațiului."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Произвольный текст, до 10 символов.\nИспользуйте {#} для номера Пространства."
+            "value" : "Произвольный текст, до %lld символов.\nИспользуйте {#} для номера Пространства."
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vlastný text, až 10 znakov.\nPoužite {#} pre číslo Priestoru."
+            "value" : "Vlastný text, až %lld znakov.\nPoužite {#} pre číslo Priestoru."
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prilagođeni tekst, do 10 znakova.\nKoristite {#} za broj Prostora."
+            "value" : "Prilagođeni tekst, do %lld znakova.\nKoristite {#} za broj Prostora."
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Anpassad text, upp till 10 tecken.\nAnvänd {#} för Space-numret."
+            "value" : "Anpassad text, upp till %lld tecken.\nAnvänd {#} för Space-numret."
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ข้อความกำหนดเอง สูงสุด 10 ตัวอักษร\nใช้ {#} สำหรับหมายเลข Space"
+            "value" : "ข้อความกำหนดเอง สูงสุด %lld ตัวอักษร\nใช้ {#} สำหรับหมายเลข Space"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Özel metin, en fazla 10 karakter.\nAlan numarası için {#} kullanın."
+            "value" : "Özel metin, en fazla %lld karakter.\nAlan numarası için {#} kullanın."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Довільний текст, до 10 символів.\nВикористовуйте {#} для номера Простору."
+            "value" : "Довільний текст, до %lld символів.\nВикористовуйте {#} для номера Простору."
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "حسبِ منشا متن، زیادہ سے زیادہ 10 حروف۔\nاسپیس نمبر کے لیے {#} استعمال کریں۔"
+            "value" : "حسبِ منشا متن، زیادہ سے زیادہ %lld حروف۔\nاسپیس نمبر کے لیے {#} استعمال کریں۔"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Văn bản tùy chỉnh, tối đa 10 ký tự.\nDùng {#} cho số Không gian."
+            "value" : "Văn bản tùy chỉnh, tối đa %lld ký tự.\nDùng {#} cho số Không gian."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "自定义文本，最多 10 个字符。\n用 {#} 表示空间编号。"
+            "value" : "自定义文本，最多 %lld 个字符。\n用 {#} 表示空间编号。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "自訂文字，最多 10 個字元。\n用 {#} 代表空間編號。"
+            "value" : "自訂文字，最多 %lld 個字元。\n用 {#} 代表空間編號。"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "自訂文字，最多 10 個字元。\n用 {#} 代表空間編號。"
+            "value" : "自訂文字，最多 %lld 個字元。\n用 {#} 代表空間編號。"
           }
         }
       }

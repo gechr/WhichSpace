@@ -339,7 +339,9 @@ enum Localization {
     static let tipHideFullscreenApps = String(localized: "tip_hide_fullscreen_apps")
     static let tipHideSingleSpace = String(localized: "tip_hide_single_space")
     static let tipInvertColors = String(localized: "tip_invert_colors")
-    static let tipLabelInput = String(localized: "tip_label_input")
+    static let tipLabelInput = String(
+        format: String(localized: "tip_label_input"), LabelTemplate.maxContentLength
+    )
     static let tipLaunchAtLogin = String(localized: "tip_launch_at_login")
     static let tipLocalSpaceNumbers = String(localized: "tip_local_space_numbers")
     static let tipQuit = String(localized: "tip_quit")

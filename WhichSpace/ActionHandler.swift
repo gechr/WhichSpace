@@ -165,7 +165,7 @@ final class ActionHandler: NSObject {
     ) {
         let alert = NSAlert()
         alert.messageText = Localization.alertAccessibilityRequired
-        alert.informativeText = Localization.alertAccessibilityDetail
+        alert.informativeText = String(format: Localization.alertAccessibilityDetail, AppInfo.appName)
         alert.alertStyle = .informational
         alert.addButton(withTitle: Localization.buttonContinue)
         alert.addButton(withTitle: Localization.buttonCancel)

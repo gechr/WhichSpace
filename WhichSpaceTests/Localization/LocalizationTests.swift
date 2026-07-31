@@ -93,7 +93,66 @@ struct LocalizationTests {
         )
     }
 
+    /// A value the code already knows belongs in the string, spelled out in
+    /// every locale, goes stale the moment the code changes it.
+    @Test("no hardcoded app name in translations")
+    func noHardcodedAppName() throws {
+        let catalog = try loadCatalog()
+        var failures: [String] = []
+
+        for (key, entry) in catalog.strings {
+            let languages = entry.localizations
+                .filter { $0.value.stringUnit?.value?.contains("WhichSpace") == true }
+                .keys
+            if !languages.isEmpty {
+                failures.append("\(key): \(languages.sorted().joined(separator: ", "))")
+            }
+        }
+
+        #expect(
+            failures.isEmpty,
+            "Use a %@ specifier fed by AppInfo.appName instead:\n\(failures.sorted().joined(separator: "\n"))"
+        )
+    }
+
+    /// A translation that drops a specifier renders the wrong text, so every
+    /// locale has to carry the same set the source language does.
+    @Test("format specifiers match the source language")
+    func formatSpecifiersMatchSourceLanguage() throws {
+        let catalog = try loadCatalog()
+        var failures: [String] = []
+
+        for (key, entry) in catalog.strings {
+            guard let source = entry.localizations[catalog.sourceLanguage]?.stringUnit?.value else {
+                continue
+            }
+            let expected = Self.formatSpecifiers(in: source)
+            for (language, localization) in entry.localizations {
+                guard let value = localization.stringUnit?.value else {
+                    continue
+                }
+                let actual = Self.formatSpecifiers(in: value)
+                if actual != expected {
+                    failures.append(
+                        "\(key) (\(language)): expected \(expected.joined(separator: " ")), " +
+                            "found \(actual.joined(separator: " "))"
+                    )
+                }
+            }
+        }
+
+        #expect(
+            failures.isEmpty,
+            "Translations with mismatched format specifiers:\n\(failures.sorted().joined(separator: "\n"))"
+        )
+    }
+
     // MARK: - Helpers
+
+    private static func formatSpecifiers(in value: String) -> [String] {
+        let pattern = /%(?:\d+\$)?(?:ll|l|hh|h|z|t|q)?[@diouxXeEfFgGaAcsp%]/
+        return value.matches(of: pattern).map { String($0.output) }.sorted()
+    }
 
     private func loadCatalog() throws -> StringCatalog {
         let data = try Data(contentsOf: Self.catalogURL)

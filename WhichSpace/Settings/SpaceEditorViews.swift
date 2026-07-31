@@ -70,7 +70,8 @@ struct SpaceEditorView: View {
                     placeholder: LabelTemplate.spaceToken,
                     initialValue: model.label ?? "",
                     clearHelp: Localization.tipClearLabel,
-                    fieldWidth: 140
+                    fieldWidth: 140,
+                    clamp: { LabelTemplate.truncate($0) }
                 ) { model.setLabel($0) }
             }
             .id("label-\(entryIdentity)")
@@ -598,6 +599,7 @@ struct CommittingTextField: View {
     let clearHelp: String
     let fieldWidth: Double
     let centered: Bool
+    let clamp: ((String) -> String)?
     let onChange: (String) -> Void
 
     @State private var text: String
@@ -608,6 +610,7 @@ struct CommittingTextField: View {
         clearHelp: String,
         fieldWidth: Double,
         centered: Bool = false,
+        clamp: ((String) -> String)? = nil,
         onChange: @escaping (String) -> Void
     ) {
         self.placeholder = placeholder
@@ -615,6 +618,7 @@ struct CommittingTextField: View {
         self.clearHelp = clearHelp
         self.fieldWidth = fieldWidth
         self.centered = centered
+        self.clamp = clamp
         self.onChange = onChange
         _text = State(initialValue: initialValue)
     }
@@ -642,7 +646,15 @@ struct CommittingTextField: View {
             .opacity(text.isEmpty ? 0 : 1)
             .disabled(text.isEmpty)
         }
+        // Rejecting over-limit input here keeps the visible text equal to
+        // what the model stores, which truncates on its own. The assignment
+        // re-enters this handler with the clamped value, which then commits.
         .onChange(of: text) { _, newValue in
+            let clamped = clamp?(newValue) ?? newValue
+            guard clamped == newValue else {
+                text = clamped
+                return
+            }
             onChange(newValue)
         }
     }
