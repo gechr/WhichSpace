@@ -23,6 +23,9 @@ struct SpacesPane: View {
         .padding(Layout.settingsPanePadding)
         .toggleStyle(.switch)
         .font(.system(size: Layout.settingsRowFontSize))
+        // The list sizes itself to its rows, so the window has to follow it
+        // rather than keep the width it was given when the pane opened
+        .fitsSettingsWindow(measuring: listMetrics)
         .onAppear {
             model.normalizeSelection()
         }
@@ -74,6 +77,13 @@ struct SpacesPane: View {
             }
             .frame(height: min(listContentHeight, Layout.settingsSpaceListMaxHeight))
         }
+    }
+
+    /// The list dimensions that move while the pane is open: the icon column
+    /// widens as a label is typed, and rows grow taller with the icon. Row
+    /// titles are fixed for a given set of Spaces, so they need no watching.
+    private var listMetrics: CGSize {
+        CGSize(width: listIconColumnWidth, height: listContentHeight)
     }
 
     private var listOverflows: Bool {
@@ -278,10 +288,7 @@ struct SpacesPane: View {
     /// The card's spare width carries the copy/save/reset actions.
     private var previewRow: some View {
         HStack(spacing: 10) {
-            // Leading-anchored in whatever width the action buttons leave
-            // over, so a wide icon can never run underneath them
-            Image(nsImage: model.icon(sizeScale: Layout.settingsSpacesPreviewScale))
-                .frame(maxWidth: .infinity, alignment: .leading)
+            previewImage
             VStack(alignment: .trailing, spacing: 6) {
                 if !model.isEditingDefaultStyle {
                     Button(Localization.actionSetAsDefault) {
@@ -295,6 +302,19 @@ struct SpacesPane: View {
         }
         .padding(.horizontal, Layout.settingsRowHorizontalPadding)
         .frame(height: Layout.settingsSpacesPreviewHeight)
+    }
+
+    /// Leading-anchored in whatever width the action buttons leave over. The
+    /// enlargement is a ceiling rather than a fixed size: a label wide enough
+    /// to outgrow the card scales back down to fit instead of drawing across
+    /// the buttons and out of the pane.
+    private var previewImage: some View {
+        let icon = model.icon(sizeScale: Layout.settingsSpacesPreviewScale)
+        return Image(nsImage: icon)
+            .resizable()
+            .scaledToFit()
+            .frame(maxWidth: icon.size.width, maxHeight: icon.size.height)
+            .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     /// Both items confirm through the model before clearing anything. The
@@ -328,5 +348,73 @@ struct SpacesPane: View {
         }
         .fixedSize()
         .help(Localization.tipCopyTo)
+    }
+}
+
+// MARK: - Live Window Fitting
+
+/// Resizes the settings window around its pane whenever `measured` changes.
+///
+/// The window is sized to the pane it shows only while a tab is activated, so
+/// a pane that grows once it is on screen - the Space list widening as a label
+/// is typed - spills out of the window it was measured into, and only looks
+/// right again after a tab switch.
+private struct SettingsWindowFitter: NSViewRepresentable {
+    /// Any value that moves when the pane's ideal size does
+    let measured: CGSize
+
+    func makeNSView(context _: Context) -> NSView {
+        NSView()
+    }
+
+    func updateNSView(_ view: NSView, context _: Context) {
+        // The pane reports its new fitting size only once SwiftUI has
+        // finished the update that changed it
+        Task { @MainActor in
+            fit(view)
+        }
+    }
+
+    /// Grows or shrinks the window from its top-left corner, the same corner
+    /// a tab switch sizes around, so the list the user is looking at stays put
+    /// while the editor beside it moves.
+    private func fit(_ view: NSView) {
+        guard let window = view.window, let pane = paneView(containing: view) else {
+            return
+        }
+        let content = CGRect(origin: .zero, size: pane.fittingSize)
+        let size = window.frameRect(forContentRect: content).size
+        guard size.width > 0, size.height > 0 else {
+            return
+        }
+        var frame = window.frame
+        guard abs(frame.width - size.width) > 0.5 || abs(frame.height - size.height) > 0.5 else {
+            return
+        }
+        frame.origin.y += frame.height - size.height
+        frame.size = size
+        window.setFrame(frame, display: true)
+    }
+
+    /// The pane's own root view - the content view's child this view descends
+    /// from - measured rather than the content view so a pane fading out of a
+    /// tab transition cannot widen the result.
+    private func paneView(containing view: NSView) -> NSView? {
+        guard let contentView = view.window?.contentView else {
+            return nil
+        }
+        var candidate = view
+        while let parent = candidate.superview, parent != contentView {
+            candidate = parent
+        }
+        return candidate.superview == contentView ? candidate : nil
+    }
+}
+
+private extension View {
+    /// Keeps the settings window fitted to this pane as its ideal size
+    /// changes, with `measured` naming the values that change it.
+    func fitsSettingsWindow(measuring measured: CGSize) -> some View {
+        background(SettingsWindowFitter(measured: measured))
     }
 }

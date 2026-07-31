@@ -73,7 +73,7 @@ struct StyleGridView: View {
             onSelect(style)
         } label: {
             VStack(spacing: 3) {
-                Image(nsImage: icon(for: style))
+                iconImage(for: style)
                 Text(title(for: style))
                     .font(.system(size: 10))
                     .foregroundStyle(isSelected ? .primary : .secondary)
@@ -94,6 +94,17 @@ struct StyleGridView: View {
             )
         }
         .buttonStyle(.plain)
+    }
+
+    /// Rendered size is a ceiling rather than a fixed size: cells share the
+    /// row equally, so a label too wide for its column scales down to fit
+    /// instead of pushing the grid out past the card.
+    private func iconImage(for style: IconStyle) -> some View {
+        let icon = icon(for: style)
+        return Image(nsImage: icon)
+            .resizable()
+            .scaledToFit()
+            .frame(maxWidth: icon.size.width, maxHeight: icon.size.height)
     }
 
     private func title(for style: IconStyle) -> String {
