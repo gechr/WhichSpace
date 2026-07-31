@@ -17,6 +17,7 @@ Have you ever forgotten _which space_ is currently active on macOS and wanted a 
 - [**Emojis**](#symbols) - Use emojis to get even more creative
 - [**Badges**](#badges) - Add a small character of your choice next to the Space number
 - [**Size**](#size) - Scale icons to your preference
+- [**Fonts**](#fonts) - Choose a custom font per Space
 - [**Sound**](#sounds) - Play a sound when switching Spaces
 - [**Shortcuts**](#shortcuts) - Native actions for the Shortcuts app
 - [**AppleScript**](#scripting) - Automate with scripting support
@@ -71,25 +72,29 @@ brew install --cask whichspace
 
 #### Choose foreground and background colors for each Space, or apply one color to all Spaces
 
-<img src="Screenshots/ColorsMenu.png" width="60%">
+<img src="Screenshots/SectionColor.png" width="60%">
 
 ### Icons
 
 #### Choose from a variety of icons for each Space, or apply one icon to all Spaces
 
-<img src="Screenshots/NumberMenu.png" width="60%">
+<img src="Screenshots/SectionNumber.png" width="60%">
 
 ### Symbols
 
 #### Use custom symbols instead of numbers for a more personalised look
 
-<img src="Screenshots/SymbolsMenu.png" width="60%">
+<img src="Screenshots/PickerSymbol.png" width="60%">
+
+#### Or pick an emoji instead
+
+<img src="Screenshots/PickerEmoji.png" width="60%">
 
 ### Badges
 
 #### Add a small character next to the Space number
 
-<img src="Screenshots/BadgesMenu.png" width="60%">
+<img src="Screenshots/SectionBadge.png" width="60%">
 
 > [!NOTE]
 > Use `#` as the badge character to insert the current Space number.
@@ -98,7 +103,7 @@ brew install --cask whichspace
 
 #### Replace Space numbers with custom text labels
 
-<img src="Screenshots/LabelsMenu.png" width="60%">
+<img src="Screenshots/SectionLabel.png" width="60%">
 
 > [!NOTE]
 > Use `{#}` in a label to insert the current Space number, e.g. `{#} - Work` → `3 - Work`.
@@ -107,11 +112,19 @@ brew install --cask whichspace
 
 #### Adjust the scale and padding of the icons in the menu bar
 
-<img src="Screenshots/SizeMenu.png" width="60%">
+<img src="Screenshots/SectionSize.png" width="60%">
+
+### Fonts
+
+#### Choose a custom font for each Space, or apply one font to all Spaces
+
+<img src="Screenshots/SectionFont.png" width="60%">
 
 ### Sounds
 
 #### Play a sound when switching Spaces
+
+<img src="Screenshots/SectionSound.png" width="60%">
 
 Choose from built-in macOS system sounds, or add your own custom sounds.
 
