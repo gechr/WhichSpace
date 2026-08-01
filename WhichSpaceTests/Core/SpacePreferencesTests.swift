@@ -27,6 +27,17 @@ struct SpacePreferencesTests {
         #expect(SpacePreferences.label(forSpace: 1, store: store) == "B")
     }
 
+    @Test("separatorColor survives invalidation and a cold read")
+    func separatorColor_survivesInvalidation() {
+        store.separatorColor = .red
+        store.invalidateCachedValues()
+        #expect(store.separatorColor == .red)
+
+        // A fresh store over the same suite reads the persisted value
+        let cold = DefaultsStore(suite: testSuite.suite)
+        #expect(cold.separatorColor == .red)
+    }
+
     // MARK: - Colors Tests
 
     @Test("colors get returns nil when not set")

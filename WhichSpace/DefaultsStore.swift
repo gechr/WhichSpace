@@ -258,16 +258,23 @@ final class DefaultsStore {
     /// values so repeated reads don't re-deserialize the whole value.
     private subscript<V>(spec: TypedKeySpec<V>) -> V {
         get {
-            if let cached = cachedValues[spec.name] as? V {
+            // Presence decides the hit: casting an absent entry to an
+            // optional V succeeds as nil, which would shadow the stored
+            // value with a phantom nil. Values are boxed via `as Any` on
+            // insert so a nil optional stays in the dictionary instead of
+            // removing its key.
+            if let index = cachedValues.index(forKey: spec.name),
+               let cached = cachedValues[index].value as? V
+            {
                 return cached
             }
             let value = Defaults[spec.key(suite: suite)]
-            cachedValues[spec.name] = value
+            cachedValues[spec.name] = value as Any
             return value
         }
         set {
             Defaults[spec.key(suite: suite)] = newValue
-            cachedValues[spec.name] = newValue
+            cachedValues[spec.name] = newValue as Any
             mutationCount += 1
         }
     }
