@@ -4,6 +4,12 @@ import Cocoa
 /// exactly as it would appear in the status bar.
 struct SpacePickerEntry {
     let icon: NSImage
+    /// The menu item title: a localized "Desktop N" name, or the owning
+    /// app's name for fullscreen apps (empty when the owner is unknown)
+    let title: String
+    /// The bare digit that picks this Space while the menu is open, or
+    /// empty when the Space number is not a single digit
+    let keyEquivalent: String
     let isActive: Bool
     /// The numeric space to activate (nil for fullscreen apps - use spaceID instead)
     let targetSpace: Int?
@@ -181,6 +187,12 @@ final class StatusBarRenderer {
         renderedCurrentDisplayIcons(darkMode: appState.darkModeEnabled, includeHidden: true).map { rendered in
             SpacePickerEntry(
                 icon: rendered.icon,
+                title: rendered.slot.isFullscreen
+                    ? (fullscreenAppName(forSpaceID: rendered.slot.spaceID) ?? "")
+                    : String(format: Localization.labelDesktopNumber, rendered.slot.displayNumber),
+                keyEquivalent: !rendered.slot.isFullscreen && (1 ... 9).contains(rendered.slot.displayNumber)
+                    ? String(rendered.slot.displayNumber)
+                    : "",
                 isActive: rendered.slot.isActive,
                 targetSpace: rendered.slot.isFullscreen ? nil : rendered.slot.globalIndex,
                 spaceID: rendered.slot.spaceID
@@ -304,13 +316,20 @@ final class StatusBarRenderer {
         )
     }
 
-    /// Returns the owning app PID for each fullscreen space, scanning at most
-    /// once per snapshot: fullscreen membership only changes with topology,
-    /// which routes through `spaceSnapshotDidChange()`.
+    /// The owner PIDs when the fullscreen icon style needs them, empty
+    /// otherwise so the icon cache key does not churn on owner changes the
+    /// rendering never reads.
     private func fullscreenOwners() -> [Int: pid_t] {
         guard store.fullscreenIconStyle == .appIcon else {
             return [:]
         }
+        return scanFullscreenOwners()
+    }
+
+    /// Returns the owning app PID for each fullscreen space, scanning at most
+    /// once per snapshot: fullscreen membership only changes with topology,
+    /// which routes through `spaceSnapshotDidChange()`.
+    private func scanFullscreenOwners() -> [Int: pid_t] {
         if !cachedFullscreenOwnersPopulated {
             var fullscreenSpaceIDs = appState.allDisplaysSpaceInfo
                 .flatMap(\.entries)
@@ -336,6 +355,17 @@ final class StatusBarRenderer {
             return nil
         }
         return NSRunningApplication(processIdentifier: pid)?.icon
+    }
+
+    /// The localized name of the app occupying a fullscreen space, or nil
+    /// when the owner is unknown or no longer running. Unlike the icon this
+    /// ignores the fullscreen icon style: the picker names the app even when
+    /// the bar shows the glyph.
+    private func fullscreenAppName(forSpaceID spaceID: Int) -> String? {
+        guard let pid = scanFullscreenOwners()[spaceID] else {
+            return nil
+        }
+        return NSRunningApplication(processIdentifier: pid)?.localizedName
     }
 
     /// Picks the rendering for the mode the user chose, narrowed by how far

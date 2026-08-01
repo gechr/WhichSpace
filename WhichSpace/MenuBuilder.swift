@@ -23,22 +23,25 @@ enum MenuBuilder {
     // MARK: - Space Picker Menu
 
     /// Builds the transient menu shown on left-click in single-icon mode: one
-    /// item per Space, rendered exactly like its status bar icon, with a
-    /// checkmark on the active Space.
+    /// item per Space, rendered exactly like its status bar icon, titled with
+    /// its Desktop name, with a checkmark on the active Space.
     static func buildSpacePickerMenu(entries: [SpacePickerEntry], target: AnyObject) -> NSMenu {
         let menu = NSMenu()
         for entry in entries {
             let item = NSMenuItem(
-                title: "",
+                title: entry.title,
                 action: #selector(ActionHandler.switchToPickedSpace(_:)),
-                keyEquivalent: ""
+                keyEquivalent: entry.keyEquivalent
             )
+            // Bare digits: the initializer defaults the mask to Command
+            item.keyEquivalentModifierMask = []
             item.target = target
             item.image = entry.icon
             item.state = entry.isActive ? .on : .off
             item.representedObject = entry
             menu.addItem(item)
         }
+        addBottomSpacer(to: menu)
         return menu
     }
 
@@ -105,8 +108,14 @@ enum MenuBuilder {
         quitItem.toolTip = String(format: Localization.tipQuit, AppInfo.appName)
         menu.addItem(quitItem)
 
-        // The popped-up menu clips its bottom padding, cutting into the last
-        // item; an invisible spacer restores the inset.
+        addBottomSpacer(to: menu)
+    }
+
+    // MARK: - Spacer
+
+    /// The popped-up menu clips its bottom padding, cutting into the last
+    /// item; an invisible spacer restores the inset.
+    private static func addBottomSpacer(to menu: NSMenu) {
         let spacer = NSMenuItem()
         spacer.isEnabled = false
         spacer.view = NSView(frame: NSRect(x: 0, y: 0, width: 1, height: 5))

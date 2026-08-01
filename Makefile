@@ -9,6 +9,14 @@ ifdef RELEASE
 BUILD_CONFIGURATION := Release
 endif
 
+# Dedicated DerivedData so rebuilding via `make build`/`make test` never
+# rewrites the bundle the running app was launched from
+RUN_DERIVED_DATA := build/run
+RUN_APP          := $(RUN_DERIVED_DATA)/Build/Products/Debug/WhichSpace.app
+
+# Dev version stamp from git describe, e.g. 1.2.0-18-g6d9e2c7-dirty
+RUN_VERSION ?= $(patsubst v%,%,$(shell git describe --tags --dirty 2>/dev/null || echo v0.0.0-dev))
+
 .PHONY: all
 all: clean fmt lint test
 
@@ -48,14 +56,6 @@ fmt:
 lint:
 	@swiftlint lint --strict
 	@xmllint --noout --nonet --valid WhichSpace/WhichSpace.sdef
-
-# Dedicated DerivedData so rebuilding via `make build`/`make test` never
-# rewrites the bundle the running app was launched from
-RUN_DERIVED_DATA := build/run
-RUN_APP          := $(RUN_DERIVED_DATA)/Build/Products/Debug/WhichSpace.app
-
-# Dev version stamp from git describe, e.g. 1.2.0-18-g6d9e2c7-dirty
-RUN_VERSION = $(patsubst v%,%,$(shell git describe --tags --dirty 2>/dev/null || echo v0.0.0-dev))
 
 .PHONY: run
 run:

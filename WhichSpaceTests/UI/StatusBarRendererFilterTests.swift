@@ -1,3 +1,4 @@
+import AppKit
 import Testing
 @testable import WhichSpace
 
@@ -521,6 +522,10 @@ struct SpacePickerTests {
         #expect(entries.map(\.isActive) == [false, true, false])
         #expect(entries.map(\.targetSpace) == [1, 2, 3])
         #expect(entries.map(\.spaceID) == [100, 101, 102])
+        #expect(entries.map(\.title) == (1 ... 3).map {
+            String(format: Localization.labelDesktopNumber, $0)
+        })
+        #expect(entries.map(\.keyEquivalent) == ["1", "2", "3"])
     }
 
     @Test("picker ignores hide filters so hidden spaces stay reachable")
@@ -543,8 +548,10 @@ struct SpacePickerTests {
         #expect(entries.map(\.spaceID) == [100, 101, 102])
     }
 
-    @Test("fullscreen spaces have no target space")
+    @Test("fullscreen spaces have no target space and take the owning app's name")
     func fullscreenEntryHasNoTargetSpace() {
+        let pid = ProcessInfo.processInfo.processIdentifier
+        stub.fullscreenOwnerPIDsMap = [101: pid]
         let appState = makeAppState(
             spaces: [
                 (id: 100, isFullscreen: false),
@@ -557,9 +564,26 @@ struct SpacePickerTests {
 
         #expect(entries.count == 2)
         #expect(entries[1].targetSpace == nil)
+        #expect(entries[1].title == (NSRunningApplication.current.localizedName ?? ""))
+        #expect(entries[1].keyEquivalent.isEmpty)
     }
 
-    @Test("built menu carries icons, checkmark, and entries for the action")
+    @Test("fullscreen spaces with no known owner stay untitled")
+    func fullscreenEntryWithoutOwnerHasNoTitle() {
+        let appState = makeAppState(
+            spaces: [
+                (id: 100, isFullscreen: false),
+                (id: 101, isFullscreen: true),
+            ],
+            activeSpaceID: 100
+        )
+
+        let entries = appState.spacePickerEntries()
+
+        #expect(entries[1].title.isEmpty)
+    }
+
+    @Test("built menu carries icons, titles, checkmark, and entries for the action")
     func builtMenuMatchesEntries() {
         let appState = makeAppState(
             spaces: [
@@ -573,13 +597,22 @@ struct SpacePickerTests {
 
         let menu = MenuBuilder.buildSpacePickerMenu(entries: entries, target: target)
 
-        #expect(menu.items.count == 2)
-        #expect(menu.items.map(\.state) == [.off, .on])
-        #expect(menu.items.allSatisfy { $0.image != nil })
-        #expect(menu.items.allSatisfy { $0.target === target })
-        #expect(menu.items.allSatisfy {
+        #expect(menu.items.count == 3)
+        let spaceItems = Array(menu.items.prefix(2))
+        #expect(spaceItems.map(\.state) == [.off, .on])
+        #expect(spaceItems.map(\.title) == (1 ... 2).map {
+            String(format: Localization.labelDesktopNumber, $0)
+        })
+        #expect(spaceItems.map(\.keyEquivalent) == ["1", "2"])
+        #expect(spaceItems.allSatisfy { $0.keyEquivalentModifierMask.rawValue == 0 })
+        #expect(spaceItems.allSatisfy { $0.image != nil })
+        #expect(spaceItems.allSatisfy { $0.target === target })
+        #expect(spaceItems.allSatisfy {
             $0.action == #selector(ActionHandler.switchToPickedSpace(_:))
         })
-        #expect(menu.items.compactMap { ($0.representedObject as? SpacePickerEntry)?.spaceID } == [100, 101])
+        #expect(spaceItems.compactMap { ($0.representedObject as? SpacePickerEntry)?.spaceID } == [100, 101])
+        // The trailing item is the invisible spacer restoring the bottom inset
+        #expect(menu.items.last?.view != nil)
+        #expect(menu.items.last?.representedObject == nil)
     }
 }
