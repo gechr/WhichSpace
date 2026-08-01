@@ -346,4 +346,29 @@ struct SpaceEditorModelTests {
         model.saveAsDefaultStyle()
         #expect(SpacePreferences.label(forSpace: 0, display: nil, store: store) == "Tmpl")
     }
+
+    // MARK: - Current Space Marker
+
+    @Test("the current Space is marked by Space ID, not by position")
+    func currentSpaceMarker() {
+        let model = makeModel()
+        let marked = model.spaceEntries.filter { model.isCurrentSpace($0) }
+        #expect(marked.count == 1)
+        #expect(marked.first?.entry?.id == 100)
+    }
+
+    @Test("placeholder rows are never the current Space")
+    func placeholdersAreNotCurrent() {
+        let model = makeModel()
+        let placeholders = model.spaceEntries.filter { $0.entry == nil }
+        #expect(!placeholders.isEmpty)
+        #expect(placeholders.allSatisfy { !model.isCurrentSpace($0) })
+    }
+
+    @Test("a display CGS never names has no system name to show")
+    func unknownDisplayHasNoName() {
+        let model = makeModel()
+        #expect(model.displayName(for: nil) == nil)
+        #expect(model.displayName(for: "not-a-display-uuid") == nil)
+    }
 }

@@ -107,6 +107,41 @@ final class SpaceEditorModel {
         return (info?.entries ?? appState.allSpaceEntries).count
     }
 
+    /// Whether a list entry is the Space the user is on right now. Matched by
+    /// CGS Space ID, which is unique across displays, so the marker follows
+    /// the Space rather than a position and reads false throughout while
+    /// another display is selected.
+    func isCurrentSpace(_ candidate: (number: Int, entry: SpaceEntry?)) -> Bool {
+        _ = tick
+        return candidate.entry?.id == appState.currentSpaceID
+    }
+
+    /// The system name of a display, for example "Built-in Retina Display".
+    /// CGS identifies displays by UUID string and `NSScreen` publishes only a
+    /// CoreGraphics display ID, so the screens are matched through the UUID
+    /// derived from theirs. Nil when no attached screen claims the UUID,
+    /// leaving the picker's numbers to stand on their own.
+    func displayName(for displayID: String?) -> String? {
+        guard let displayID else {
+            return nil
+        }
+        for screen in NSScreen.screens {
+            guard let number = screen.deviceDescription[
+                NSDeviceDescriptionKey("NSScreenNumber")
+            ] as? NSNumber,
+                let uuid = CGDisplayCreateUUIDFromDisplayID(
+                    CGDirectDisplayID(number.uint32Value)
+                )?.takeRetainedValue()
+            else {
+                continue
+            }
+            if CFUUIDCreateString(nil, uuid) as String == displayID {
+                return screen.localizedName
+            }
+        }
+        return nil
+    }
+
     /// Keeps the selection valid when the display changes or Spaces close.
     func normalizeSelection() {
         if selectedDisplayID == nil || !displays.contains(where: { $0.displayID == selectedDisplayID }) {

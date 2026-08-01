@@ -46,7 +46,10 @@ struct SpacesPane: View {
         VStack(alignment: .leading, spacing: Layout.settingsSectionSpacing) {
             if model.displays.count > 1 {
                 listHeader(Localization.labelDisplays)
-                displayPicker
+                VStack(alignment: .leading, spacing: 4) {
+                    displayPicker
+                    displayNameCaption
+                }
             }
             listHeader(Localization.paneSpaces)
             ScrollView {
@@ -60,7 +63,8 @@ struct SpacesPane: View {
                         listRow(
                             for: .space(candidate.number),
                             title: model.spaceName(for: candidate),
-                            dimmed: candidate.entry == nil
+                            dimmed: candidate.entry == nil,
+                            isCurrent: model.isCurrentSpace(candidate)
                         )
                     }
                 }
@@ -132,6 +136,22 @@ struct SpacesPane: View {
         .focusable(false)
     }
 
+    /// Names the display the numbered picker has selected. The width is
+    /// capped at the list's own so a long product name truncates rather than
+    /// widening the pane around it.
+    @ViewBuilder
+    private var displayNameCaption: some View {
+        if let name = model.displayName(for: model.selectedDisplayID) {
+            Text(name)
+                .font(.system(size: Layout.settingsRowSubtitleFontSize))
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .truncationMode(.tail)
+                .frame(maxWidth: Layout.settingsSpaceListWidth, alignment: .leading)
+                .padding(.leading, 4)
+        }
+    }
+
     private var displayBinding: Binding<String?> {
         Binding(
             get: { model.selectedDisplayID },
@@ -146,7 +166,10 @@ struct SpacesPane: View {
     /// stylable ahead of time but not real Spaces. The template row renders
     /// bold instead to stand apart from the numbered rows.
     private func listRow(
-        for selection: SpaceEditorModel.Selection, title: String?, dimmed: Bool = false
+        for selection: SpaceEditorModel.Selection,
+        title: String?,
+        dimmed: Bool = false,
+        isCurrent: Bool = false
     ) -> some View {
         let isSelected = model.selection == selection
         let icon = model.listIcon(for: selection)
@@ -167,6 +190,17 @@ struct SpacesPane: View {
                         )
                 }
                 Spacer(minLength: 0)
+                // Marks where the user is right now. The slot is reserved on
+                // every row so the list width does not shift as the marker
+                // moves between Spaces with the window open.
+                ZStack {
+                    if isCurrent {
+                        Image(systemName: "circle.fill")
+                            .font(.system(size: 6))
+                            .foregroundStyle(.tint)
+                    }
+                }
+                .frame(width: 8)
                 // Rows with their own style carry a revert button; resetSpace
                 // confirms through the model before clearing anything. The
                 // slot is reserved on every row so the list width does not
@@ -204,6 +238,17 @@ struct SpacesPane: View {
         }
         .buttonStyle(.plain)
         .focusable(false)
+        .help(rowHelp(dimmed: dimmed, isCurrent: isCurrent))
+    }
+
+    /// Says what a row's appearance means. A dimmed row is the only clue that
+    /// a Space can be styled before it exists, and the marker dot needs
+    /// naming; an empty string leaves an ordinary row without a tooltip.
+    private func rowHelp(dimmed: Bool, isCurrent: Bool) -> String {
+        if dimmed {
+            return Localization.tipSpacePlaceholder
+        }
+        return isCurrent ? Localization.tipCurrentSpace : ""
     }
 
     // MARK: - Editor
