@@ -705,4 +705,34 @@ final class AppDelegateActionsTests: XCTestCase {
         }
         XCTAssertEqual(store.scrollSensitivity, external)
     }
+
+    // MARK: - Settings Reset
+
+    func testResetAllSettings_restoresDefaultsAndTurnsOffLaunchAtLogin() {
+        store.showAllSpaces = true
+        store.sizeScale = Layout.defaultSizeScale + 25
+        SpacePreferences.setLabel("Work", forSpace: 1, store: store)
+        launchAtLoginStub.isEnabled = true
+        confirmStub.shouldConfirm = true
+
+        sut.actionHandler.resetAllSettings()
+
+        XCTAssertFalse(store.showAllSpaces)
+        XCTAssertEqual(store.sizeScale, Layout.defaultSizeScale)
+        XCTAssertTrue(store.spaceLabels.isEmpty)
+        XCTAssertFalse(launchAtLoginStub.isEnabled)
+        XCTAssertEqual(confirmStub.alertsShown.count, 1)
+        XCTAssertTrue(confirmStub.alertsShown[0].isDestructive)
+    }
+
+    func testResetAllSettings_declinedLeavesEverythingAlone() {
+        store.showAllSpaces = true
+        launchAtLoginStub.isEnabled = true
+        confirmStub.shouldConfirm = false
+
+        sut.actionHandler.resetAllSettings()
+
+        XCTAssertTrue(store.showAllSpaces)
+        XCTAssertTrue(launchAtLoginStub.isEnabled)
+    }
 }

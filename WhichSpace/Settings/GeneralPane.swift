@@ -13,6 +13,7 @@ struct GeneralPane: View {
     let onCheckForUpdates: () -> Void
     let onImportSettings: () -> Void
     let onExportSettings: () -> Void
+    let onResetAllSettings: () -> Void
 
     /// Sparkle state is not observable; bumped when the check toggle flips
     /// so dependent rows re-read the updater
@@ -74,6 +75,21 @@ struct GeneralPane: View {
                     }
                     Button(Localization.actionExportSettings) {
                         onExportSettings()
+                    }
+                }
+            }
+            // Below the backup card, so the export that would preserve the
+            // current setup is the nearer of the two
+            SettingsSection {
+                SettingsRow(
+                    icon: "arrow.counterclockwise",
+                    subtitle: Localization.tipResetSettings,
+                    anchor: .resetSettings
+                ) {
+                    Text(Localization.labelResetSettings)
+                } control: {
+                    Button(Localization.actionReset) {
+                        onResetAllSettings()
                     }
                 }
             }

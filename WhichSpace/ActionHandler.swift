@@ -10,6 +10,7 @@ final class ActionHandler: NSObject {
 
     private let appState: AppState
     private var launchAtLogin: LaunchAtLoginProvider
+    private let confirmAction: ConfirmAction
 
     /// Callback invoked whenever an action needs the status-bar icon refreshed.
     let onStatusBarIconNeedsUpdate: (() -> Void)?
@@ -30,12 +31,16 @@ final class ActionHandler: NSObject {
     init(
         appState: AppState,
         launchAtLogin: LaunchAtLoginProvider,
+        confirmAction: @escaping ConfirmAction = {
+            ConfirmationAlert(message: $0, detail: $1, confirmTitle: $2, isDestructive: $3).runModal()
+        },
         onStatusBarIconNeedsUpdate: (() -> Void)? = nil,
         onCheckForUpdates: (() -> Void)? = nil,
         onOpenSettings: (() -> Void)? = nil
     ) {
         self.appState = appState
         self.launchAtLogin = launchAtLogin
+        self.confirmAction = confirmAction
         self.onStatusBarIconNeedsUpdate = onStatusBarIconNeedsUpdate
         self.onCheckForUpdates = onCheckForUpdates
         self.onOpenSettings = onOpenSettings
@@ -110,6 +115,26 @@ final class ActionHandler: NSObject {
         } catch {
             showExportFailedAlert(detail: error.localizedDescription)
         }
+    }
+
+    // MARK: - Settings Reset
+
+    /// Returns every preference to the value it ships with, per-Space styling
+    /// and Launch at Login included, so the app is left as it was on a fresh
+    /// install. Launch at Login is not a defaults key, so it is turned off
+    /// alongside the store rather than by it.
+    @objc func resetAllSettings() {
+        guard confirmAction(
+            Localization.confirmResetSettings,
+            Localization.detailResetSettings,
+            Localization.buttonResetAll,
+            true
+        ) else {
+            return
+        }
+        store.resetAll()
+        launchAtLogin.isEnabled = false
+        onStatusBarIconNeedsUpdate?()
     }
 
     private func showImportFailedAlert(detail: String? = nil) {

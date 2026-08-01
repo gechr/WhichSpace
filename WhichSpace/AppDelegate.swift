@@ -129,6 +129,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         actionHandler = ActionHandler(
             appState: appState,
             launchAtLogin: launchAtLogin,
+            confirmAction: confirmAction,
             onStatusBarIconNeedsUpdate: { [weak self] in
                 self?.updateStatusBarIcon()
             },
@@ -161,7 +162,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
                     updater: updaterController?.updater,
                     onCheckForUpdates: { [weak self] in self?.actionHandler.checkForUpdates() },
                     onImportSettings: { [weak self] in self?.actionHandler.importSettings() },
-                    onExportSettings: { [weak self] in self?.actionHandler.exportSettings() }
+                    onExportSettings: { [weak self] in self?.actionHandler.exportSettings() },
+                    onResetAllSettings: { [weak self] in self?.actionHandler.resetAllSettings() }
                 )
                 .environment(highlighter)
             })
