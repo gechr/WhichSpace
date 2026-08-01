@@ -468,12 +468,13 @@ final class StatusBarRenderer {
         let dimInactive = store.dimInactiveSpaces
         let separatorColor = store.separatorColor
             ?? IconColors.defaultSeparator(darkMode: darkMode)
+        let separatorStyle = store.separatorStyle
         return Self.drawDeferred(size: imageSize) {
             var xOffset: Double = 0
 
             for (displayIndex, displayIcons) in renderedDisplays.enumerated() {
                 if displayIndex > 0 {
-                    Self.drawDisplaySeparator(at: xOffset, color: separatorColor)
+                    Self.drawDisplaySeparator(at: xOffset, color: separatorColor, style: separatorStyle)
                     xOffset += Layout.displaySeparatorWidth
                 }
 
@@ -714,16 +715,31 @@ final class StatusBarRenderer {
         }
     }
 
-    /// Draws a vertical separator line between displays
-    private static func drawDisplaySeparator(at xOffset: Double, color: NSColor) {
-        color.setStroke()
+    /// Draws the separator between displays: a stroked vertical line for
+    /// `.line`, otherwise the style's glyph centered in the separator slot.
+    private static func drawDisplaySeparator(at xOffset: Double, color: NSColor, style: SeparatorStyle) {
+        guard let glyph = style.glyph else {
+            color.setStroke()
 
-        let centerX = xOffset + Layout.displaySeparatorWidth / 2
-        let path = NSBezierPath()
-        path.move(to: NSPoint(x: centerX, y: 3))
-        path.line(to: NSPoint(x: centerX, y: Layout.statusItemHeight - 3))
-        path.lineWidth = 1.0
-        path.stroke()
+            let centerX = xOffset + Layout.displaySeparatorWidth / 2
+            let path = NSBezierPath()
+            path.move(to: NSPoint(x: centerX, y: 3))
+            path.line(to: NSPoint(x: centerX, y: Layout.statusItemHeight - 3))
+            path.lineWidth = 1.0
+            path.stroke()
+            return
+        }
+
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: NSFont.systemFont(ofSize: Layout.separatorGlyphFontSize),
+            .foregroundColor: color,
+        ]
+        let size = (glyph as NSString).size(withAttributes: attributes)
+        let origin = NSPoint(
+            x: xOffset + (Layout.displaySeparatorWidth - size.width) / 2,
+            y: (Layout.statusItemHeight - size.height) / 2
+        )
+        (glyph as NSString).draw(at: origin, withAttributes: attributes)
     }
 
     // MARK: - Filtering Helpers

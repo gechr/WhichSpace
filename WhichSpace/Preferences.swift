@@ -38,6 +38,56 @@ enum FullscreenIconStyle: String, CaseIterable, Defaults.Serializable {
     case letter
 }
 
+// MARK: - SeparatorStyle
+
+/// The separator drawn between display groups in the status bar.
+/// String-backed so future styles can be added without a key migration;
+/// an absent key resolves to `.line`.
+enum SeparatorStyle: String, CaseIterable, Defaults.Serializable {
+    /// A stroked vertical line, the pipe look
+    case line
+    /// A middle dot glyph
+    case middleDot
+    /// A bullet glyph
+    case bullet
+    /// A slash glyph
+    case slash
+
+    /// The drawn character; nil for the stroked line.
+    var glyph: String? {
+        switch self {
+        case .line:
+            nil
+        case .middleDot:
+            "·"
+        case .bullet:
+            "•"
+        case .slash:
+            "/"
+        }
+    }
+
+    /// The style's character as shown in the settings dropdown; the line
+    /// style reads as a pipe there.
+    var pickerGlyph: String {
+        glyph ?? "|"
+    }
+
+    /// The localized name shown beside the glyph in the settings dropdown.
+    var localizedName: String {
+        switch self {
+        case .line:
+            Localization.labelSeparatorLine
+        case .middleDot:
+            Localization.labelSeparatorDot
+        case .bullet:
+            Localization.labelSeparatorBullet
+        case .slash:
+            Localization.labelSeparatorSlash
+        }
+    }
+}
+
 // MARK: - SpaceFont
 
 struct SpaceFont: Equatable, Defaults.Serializable {

@@ -36,6 +36,7 @@ enum SettingsAnchor: String, CaseIterable {
     case displays
     case localSpaceNumbers = "local-space-numbers"
     case separatorColor = "separator-color"
+    case separatorStyle = "separator-style"
     case showAllDisplays = "show-all-displays"
     case showAllSpaces = "show-all-spaces"
     case dimInactiveSpaces = "dim-inactive-spaces"
@@ -95,7 +96,7 @@ enum SettingsAnchor: String, CaseIterable {
         case .launchAtLogin, .autoCheckUpdates, .autoInstallUpdates, .checkForUpdates, .backup,
              .resetSettings:
             .general
-        case .iconSize, .iconPadding, .localSpaceNumbers, .separatorColor,
+        case .iconSize, .iconPadding, .localSpaceNumbers, .separatorColor, .separatorStyle,
              .showAllDisplays, .showAllSpaces, .dimInactiveSpaces, .hideEmptySpaces,
              .hideSingleSpace, .hideFullscreenApps, .fullscreenLetter:
             .menuBar

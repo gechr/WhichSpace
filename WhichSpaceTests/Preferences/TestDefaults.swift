@@ -225,6 +225,7 @@ struct DefaultsIsolationGuardTests {
             "scrollSensitivity",
             "scrollWrapAround",
             "separatorColor",
+            "separatorStyle",
             "showAllDisplays",
             "showAllSpaces",
             "sizeScale",

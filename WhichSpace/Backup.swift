@@ -79,6 +79,7 @@ struct BackupSettings: Codable {
     var scrollSensitivity: Double
     var scrollWrapAround: Bool
     var separatorColor: CodableColor?
+    var separatorStyle: String?
     var showAllDisplays: Bool
     var showAllSpaces: Bool
     var sizeScale: Double
@@ -95,7 +96,7 @@ struct BackupSettings: Codable {
         case hideFullscreenApps, hideSingleSpace, horizontalScrollEnabled
         case invertHorizontalScroll, invertVerticalScroll, launchAtLogin, localSpaceNumbers, paddingScale
         case scrollHapticFeedback, scrollHapticIntensity, scrollSensitivity, scrollWrapAround
-        case separatorColor, showAllDisplays, showAllSpaces
+        case separatorColor, separatorStyle, showAllDisplays, showAllSpaces
         case sizeScale, soundName, uniqueIconsPerDisplay
         case verticalScrollEnabled
     }
@@ -124,6 +125,7 @@ struct BackupSettings: Codable {
             ?? Layout.defaultScrollSensitivity
         scrollWrapAround = try container.decodeIfPresent(Bool.self, forKey: .scrollWrapAround) ?? false
         separatorColor = try container.decodeIfPresent(CodableColor.self, forKey: .separatorColor)
+        separatorStyle = try container.decodeIfPresent(String.self, forKey: .separatorStyle)
         showAllDisplays = try container.decodeIfPresent(Bool.self, forKey: .showAllDisplays) ?? false
         showAllSpaces = try container.decodeIfPresent(Bool.self, forKey: .showAllSpaces) ?? false
         sizeScale = try container.decodeIfPresent(Double.self, forKey: .sizeScale) ?? Layout.defaultSizeScale
@@ -151,6 +153,7 @@ struct BackupSettings: Codable {
         scrollSensitivity: Double,
         scrollWrapAround: Bool,
         separatorColor: CodableColor?,
+        separatorStyle: String?,
         showAllDisplays: Bool,
         showAllSpaces: Bool,
         sizeScale: Double,
@@ -175,6 +178,7 @@ struct BackupSettings: Codable {
         self.scrollSensitivity = scrollSensitivity
         self.scrollWrapAround = scrollWrapAround
         self.separatorColor = separatorColor
+        self.separatorStyle = separatorStyle
         self.showAllDisplays = showAllDisplays
         self.showAllSpaces = showAllSpaces
         self.sizeScale = sizeScale
@@ -528,6 +532,7 @@ enum BackupManager {
             scrollSensitivity: store.scrollSensitivity,
             scrollWrapAround: store.scrollWrapAround,
             separatorColor: store.separatorColor.map { CodableColor(from: $0) },
+            separatorStyle: store.separatorStyle.rawValue,
             showAllDisplays: store.showAllDisplays,
             showAllSpaces: store.showAllSpaces,
             sizeScale: store.sizeScale,
@@ -664,6 +669,8 @@ enum BackupManager {
         store.scrollSensitivity = backup.settings.scrollSensitivity.clamped(to: Layout.scrollSensitivityRange)
         store.scrollWrapAround = backup.settings.scrollWrapAround
         store.separatorColor = backup.settings.separatorColor?.toNSColor()
+        store.separatorStyle = backup.settings.separatorStyle
+            .flatMap { SeparatorStyle(rawValue: $0) } ?? .line
         // Route through SettingsConstraints so a hand-edited backup can't enable both
         SettingsConstraints.setShowAllDisplays(backup.settings.showAllDisplays, store: store)
         SettingsConstraints.setShowAllSpaces(backup.settings.showAllSpaces, store: store)

@@ -112,6 +112,7 @@ enum KeySpecs {
     static let scrollWrapAround = TypedKeySpec(name: "scrollWrapAround", defaultValue: false)
     static let verticalScrollEnabled = TypedKeySpec(name: "verticalScrollEnabled", defaultValue: false)
     static let separatorColor = TypedKeySpec(name: "separatorColor", defaultValue: Data?.none)
+    static let separatorStyle = TypedKeySpec(name: "separatorStyle", defaultValue: SeparatorStyle.line)
     static let showAllDisplays = TypedKeySpec(name: "showAllDisplays", defaultValue: false)
     static let showAllSpaces = TypedKeySpec(name: "showAllSpaces", defaultValue: false)
     static let sizeScale = TypedKeySpec(name: "sizeScale", defaultValue: Layout.defaultSizeScale)
@@ -166,6 +167,7 @@ enum KeySpecs {
         scrollSensitivity,
         scrollWrapAround,
         separatorColor,
+        separatorStyle,
         showAllDisplays,
         showAllSpaces,
         sizeScale,
@@ -489,6 +491,11 @@ final class DefaultsStore {
                 self[KeySpecs.separatorColor] = nil
             }
         }
+    }
+
+    var separatorStyle: SeparatorStyle {
+        get { self[KeySpecs.separatorStyle] }
+        set { self[KeySpecs.separatorStyle] = newValue }
     }
 
     var showAllDisplays: Bool {

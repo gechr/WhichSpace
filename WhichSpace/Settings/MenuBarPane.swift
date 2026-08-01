@@ -121,6 +121,8 @@ struct MenuBarPane: View {
             )
             SettingsRowDivider()
             separatorColorRow
+            SettingsRowDivider()
+            separatorStyleRow
         }
     }
 
@@ -147,6 +149,30 @@ struct MenuBarPane: View {
             .buttonStyle(.borderless)
             .disabled(model.value(\.separatorColor) == nil)
             .help(Localization.buttonReset)
+        }
+    }
+
+    /// The glyph drawn between display groups, indented under the colour
+    /// row it modifies and gated the same way.
+    private var separatorStyleRow: some View {
+        let disabled = !model.value(\.showAllDisplays)
+        return SettingsRow(
+            icon: "ellipsis",
+            disabled: disabled,
+            indented: true,
+            anchor: .separatorStyle
+        ) {
+            Text(Localization.labelSeparatorStyle)
+                .foregroundStyle(disabled ? .tertiary : .primary)
+        } control: {
+            Picker(Localization.labelSeparatorStyle, selection: model.binding(\.separatorStyle)) {
+                ForEach(SeparatorStyle.allCases, id: \.self) { style in
+                    Text("\(style.pickerGlyph)  \(style.localizedName)").tag(style)
+                }
+            }
+            .pickerStyle(.menu)
+            .labelsHidden()
+            .fixedSize()
         }
     }
 

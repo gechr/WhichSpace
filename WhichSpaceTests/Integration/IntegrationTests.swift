@@ -151,6 +151,35 @@ struct IntegrationTests {
         #expect(abs(icon.size.width - expectedWidth) <= 0.1)
     }
 
+    @Test("full flow: separator glyph styles change the rendering")
+    func fullFlow_separatorStyle_changesRendering() {
+        stub.activeDisplayIdentifier = "DisplayA"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "DisplayA",
+                spaces: [(id: 100, isFullscreen: false)],
+                activeSpaceID: 100
+            ),
+            CGSStub.makeDisplay(
+                displayID: "DisplayB",
+                spaces: [(id: 200, isFullscreen: false)],
+                activeSpaceID: 200
+            ),
+        ]
+        store.showAllDisplays = true
+
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+
+        let line = appState.statusBarIcon.tiffRepresentation
+        store.separatorStyle = .middleDot
+        let dot = appState.statusBarIcon.tiffRepresentation
+        #expect(line != dot)
+
+        store.separatorStyle = .slash
+        let slash = appState.statusBarIcon.tiffRepresentation
+        #expect(slash != dot)
+    }
+
     // MARK: - Preference Combinations
 
     @Test("icon generation: custom colors produces valid icon")

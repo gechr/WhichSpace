@@ -793,6 +793,18 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
 
     // MARK: - File Operations Tests
 
+    func testSeparatorStyleRoundTrip() throws {
+        store.separatorStyle = .middleDot
+
+        let json = try BackupManager.encode(store: store)
+        store.resetAll()
+        XCTAssertEqual(store.separatorStyle, .line)
+
+        let backup = try BackupManager.decode(jsonString: json)
+        BackupManager.apply(backup, to: store)
+        XCTAssertEqual(store.separatorStyle, .middleDot)
+    }
+
     func testExportAndLoadRoundTrip() throws {
         // Set up some settings
         store.showAllSpaces = true

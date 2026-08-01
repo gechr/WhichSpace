@@ -144,6 +144,7 @@ enum Layout {
     static let statusItemHeight = 22.0
     static let statusItemSize = CGSize(width: statusItemWidth, height: statusItemHeight)
     static let displaySeparatorWidth = 12.0
+    static let separatorGlyphFontSize = 12.0
 
     enum Icon {
         static let cornerRadius = 4.0
@@ -302,6 +303,11 @@ enum Localization {
     static let labelRight = String(localized: "label_right")
     static let labelSensitivity = String(localized: "label_sensitivity")
     static let labelSeparator = String(localized: "label_separator")
+    static let labelSeparatorBullet = String(localized: "label_separator_bullet")
+    static let labelSeparatorDot = String(localized: "label_separator_dot")
+    static let labelSeparatorLine = String(localized: "label_separator_line")
+    static let labelSeparatorSlash = String(localized: "label_separator_slash")
+    static let labelSeparatorStyle = String(localized: "label_separator_style")
     static let labelSymbol = String(localized: "label_symbol")
     static let labelSymbolBackground = String(localized: "label_symbol_background")
     static let labelSymbolForeground = String(localized: "label_symbol_foreground")
