@@ -37,12 +37,20 @@ struct SpaceEditorModelTests {
 
     // MARK: - Selection
 
-    @Test("initial selection is the current Space on the current display")
+    @Test("initial selection is the current Space, shared scope on one display")
     func initialSelection() {
         let model = makeModel()
         #expect(model.selection == .space(1))
-        #expect(model.selectedDisplayID == "Main")
+        #expect(model.selectedDisplayID == nil)
         #expect(model.editingSpace == 1)
+        #expect(model.editingDisplay == nil)
+    }
+
+    @Test("initial selection keeps the current display with several connected")
+    func initialSelectionMultiDisplay() {
+        configureTwoDisplays()
+        let model = makeModel()
+        #expect(model.selectedDisplayID == "Main")
         #expect(model.editingDisplay == "Main")
     }
 
@@ -156,7 +164,7 @@ struct SpaceEditorModelTests {
 
     // MARK: - Key Routing
 
-    @Test("writes use shared storage while uniqueIconsPerDisplay is off")
+    @Test("writes use shared storage on a single display")
     func sharedRouting() {
         let model = makeModel()
         model.selection = .space(2)
@@ -165,20 +173,33 @@ struct SpaceEditorModelTests {
         #expect(store.displaySpaceSymbols.isEmpty)
     }
 
-    @Test("writes use per-display storage while uniqueIconsPerDisplay is on")
-    func perDisplayRouting() {
-        store.uniqueIconsPerDisplay = true
+    @Test("the All scope writes shared storage with several displays")
+    func allScopeRouting() {
+        configureTwoDisplays()
         let model = makeModel()
+        model.selectedDisplayID = nil
         model.selection = .space(2)
         model.setSymbol("star.fill")
-        #expect(store.displaySpaceSymbols["Main"]?[2] == "star.fill")
+        #expect(store.spaceSymbols[2] == "star.fill")
+        #expect(store.displaySpaceSymbols.isEmpty)
+    }
+
+    @Test("writes land in the selected display's overrides")
+    func perDisplayRouting() {
+        configureTwoDisplays()
+        let model = makeModel()
+        model.selectedDisplayID = "Second"
+        model.selection = .space(1)
+        model.setSymbol("star.fill")
+        #expect(store.displaySpaceSymbols["Second"]?[1] == "star.fill")
         #expect(store.spaceSymbols.isEmpty)
     }
 
-    @Test("the template stays in shared storage even per-display")
+    @Test("the template stays in shared storage from any scope")
     func templateRoutingPerDisplay() {
-        store.uniqueIconsPerDisplay = true
+        configureTwoDisplays()
         let model = makeModel()
+        model.selectedDisplayID = "Second"
         model.selection = .defaultStyle
         model.setLabel("New")
         #expect(store.spaceLabels[0] == "New")
@@ -251,7 +272,7 @@ struct SpaceEditorModelTests {
         #expect(model.badge == nil)
     }
 
-    @Test("space sound writes route shared or per-display")
+    @Test("space sound writes follow the edited scope")
     func spaceSoundRouting() {
         let model = makeModel()
         model.selection = .space(2)
@@ -261,10 +282,16 @@ struct SpaceEditorModelTests {
 
         model.setSpaceSound(nil)
         #expect(model.spaceSound == nil)
+    }
 
-        store.uniqueIconsPerDisplay = true
+    @Test("space sound writes land in a selected display's overrides")
+    func spaceSoundPerDisplayRouting() {
+        configureTwoDisplays()
+        let model = makeModel()
+        model.selectedDisplayID = "Second"
+        model.selection = .space(1)
         model.setSpaceSound("Blow")
-        #expect(store.displaySpaceSounds["Main"]?[2] == "Blow")
+        #expect(store.displaySpaceSounds["Second"]?[1] == "Blow")
         #expect(store.spaceSounds.isEmpty)
     }
 
@@ -321,7 +348,6 @@ struct SpaceEditorModelTests {
 
     @Test("copy to all displays covers every display's Spaces")
     func copyToAllDisplays() {
-        store.uniqueIconsPerDisplay = true
         stub.displays = [
             CGSStub.makeDisplay(
                 displayID: "Main",

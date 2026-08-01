@@ -67,7 +67,6 @@ struct SettingsIconTests {
 
     @Test("space 0 renders the default-style template from shared storage")
     func rendersTemplate() {
-        store.uniqueIconsPerDisplay = true
         let appState = makeAppState()
         let plain = appState.renderer.settingsIcon(forSpace: 0, display: nil)
         SpacePreferences.setColors(
@@ -78,6 +77,21 @@ struct SettingsIconTests {
         )
         let styled = appState.renderer.settingsIcon(forSpace: 0, display: nil)
         #expect(pixels(styled) != pixels(plain))
+    }
+
+    @Test("shared labels show through on displays without an override")
+    func sharedLabelShowsThroughOnDisplays() {
+        let appState = makeAppState()
+        let plain = appState.renderer.settingsIcon(forSpace: 2, display: "Main")
+        SpacePreferences.setLabel("S{#}", forSpace: 2, display: nil, store: store)
+        let labeled = appState.renderer.settingsIcon(forSpace: 2, display: "Main")
+        #expect(labeled.size.width > plain.size.width)
+
+        // An empty override is the "no label" sentinel and suppresses the
+        // shared label on that display alone
+        SpacePreferences.setLabel("", forSpace: 2, display: "Main", store: store)
+        let suppressed = appState.renderer.settingsIcon(forSpace: 2, display: "Main")
+        #expect(suppressed.size.width == plain.size.width)
     }
 
     @Test("the scale override multiplies the rendered size")

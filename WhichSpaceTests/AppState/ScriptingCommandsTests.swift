@@ -241,7 +241,6 @@ struct ScriptingCommandsTests {
     func clearAllLabels_removesSharedAndPerDisplayLabels() {
         let appState = makeAppState()
         SpacePreferences.setLabel("Shared", forSpace: 1, store: store)
-        store.uniqueIconsPerDisplay = true
         SpacePreferences.setLabel("Work", forSpace: 2, display: appState.currentDisplayID, store: store)
 
         SpacePreferences.clearAllLabels(store: store)
@@ -501,7 +500,6 @@ struct ScriptingCommandsTests {
     func clearAllBadges_removesSharedAndPerDisplayBadges() {
         let appState = makeAppState()
         SpacePreferences.setBadge(SpaceBadge(character: "A", position: .topLeft), forSpace: 1, store: store)
-        store.uniqueIconsPerDisplay = true
         SpacePreferences.setBadge(
             SpaceBadge(character: "B", position: .topRight),
             forSpace: 2,

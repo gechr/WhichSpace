@@ -114,7 +114,6 @@ struct SpaceDefaultStyleTests {
     @Test("per-display value wins, absent per-display falls back to the shared template")
     func perDisplay_fallsBackToSharedTemplate() {
         saveTemplate(style: .circle)
-        store.uniqueIconsPerDisplay = true
         SpacePreferences.setIconStyle(.hexagon, forSpace: 2, display: "Main", store: store)
 
         #expect(SpacePreferences.iconStyle(forSpace: 2, display: "Main", store: store) == .hexagon)
@@ -192,7 +191,7 @@ struct SpaceDefaultStyleTests {
     @Test("migration scans per-display copies regardless of the current storage mode")
     func migration_stripsPerDisplayCopies() {
         saveTemplate(style: .circle)
-        // A stamp written while uniqueIconsPerDisplay was on
+        // A stamp written while the per-display toggle was on
         store.displaySpaceIconStyles = ["Main": [2: .circle]]
 
         SpacePreferences.migrateStampedTemplateCopies(store: store)
@@ -239,5 +238,55 @@ struct SpaceDefaultStyleTests {
 
         #expect(snapshotCalls == 1)
         #expect(store.spaceIconStyles[2] == nil)
+    }
+
+    // MARK: - Scope Migration
+
+    @Test("scope migration purges per-display data when the toggle was off")
+    func scopeMigration_toggleOff() {
+        store.spaceStyleMigrationVersion = 1
+        store.suite.set(false, forKey: "uniqueIconsPerDisplay")
+        store.displaySpaceIconStyles = ["Main": [2: .circle]]
+        var snapshotCalls = 0
+
+        SpacePreferences.migrateDisplayScopeOverrides(store: store) {
+            snapshotCalls += 1
+        }
+
+        #expect(store.displaySpaceIconStyles.isEmpty)
+        #expect(store.spaceStyleMigrationVersion == 2)
+        #expect(store.suite.object(forKey: "uniqueIconsPerDisplay") == nil)
+        #expect(snapshotCalls == 1)
+    }
+
+    @Test("scope migration purges shared per-space data when the toggle was on")
+    func scopeMigration_toggleOn() {
+        store.spaceStyleMigrationVersion = 1
+        store.suite.set(true, forKey: "uniqueIconsPerDisplay")
+        store.spaceIconStyles = [0: .circle, 2: .hexagon]
+        store.displaySpaceIconStyles = ["Main": [2: .square]]
+
+        SpacePreferences.migrateDisplayScopeOverrides(store: store)
+
+        // The live template survives; the invisible shared entry is gone
+        #expect(store.spaceIconStyles == [0: .circle])
+        #expect(store.displaySpaceIconStyles["Main"]?[2] == .square)
+        #expect(store.spaceStyleMigrationVersion == 2)
+    }
+
+    @Test("scope migration runs once and skips the snapshot when clean")
+    func scopeMigration_runsOnce() {
+        store.spaceStyleMigrationVersion = 1
+        var snapshotCalls = 0
+
+        SpacePreferences.migrateDisplayScopeOverrides(store: store) {
+            snapshotCalls += 1
+        }
+        #expect(store.spaceStyleMigrationVersion == 2)
+        #expect(snapshotCalls == 0)
+
+        store.displaySpaceIconStyles = ["Main": [2: .circle]]
+        SpacePreferences.migrateDisplayScopeOverrides(store: store)
+        #expect(store.displaySpaceIconStyles["Main"]?[2] == .circle)
     }
 }

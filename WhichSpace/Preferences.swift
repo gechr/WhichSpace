@@ -250,9 +250,9 @@ enum SymbolWrap: String, CaseIterable, Codable, Defaults.Serializable {
 /// All methods accept an optional `DefaultsStore` parameter. In production the
 /// default is `AppEnvironment.shared.store`. In tests, pass a per-test store for isolation.
 ///
-/// When `uniqueIconsPerDisplay` is enabled, preferences are stored per-display
-/// using the display identifier. When disabled, shared preferences are used.
-/// Both sets of preferences are stored separately for backwards compatibility.
+/// Preferences resolve through a scope cascade: a display's override map
+/// (keyed by display identifier) wins over the shared maps, which win over
+/// the default style template (space 0, always shared).
 @MainActor
 enum SpacePreferences {
     // MARK: - Generic Accessor
@@ -261,15 +261,20 @@ enum SpacePreferences {
         let shared: ReferenceWritableKeyPath<DefaultsStore, [Int: T]>
         let perDisplay: ReferenceWritableKeyPath<DefaultsStore, [String: [Int: T]]>
 
+        /// The value in effect at the given scope: a per-display override
+        /// when one exists, otherwise the shared value.
         func get(forSpace spaceNumber: Int, display: String?, store: DefaultsStore) -> T? {
-            if store.uniqueIconsPerDisplay, let display {
-                return store[keyPath: perDisplay][display]?[spaceNumber]
+            if let display, let override = store[keyPath: perDisplay][display]?[spaceNumber] {
+                return override
             }
             return store[keyPath: shared][spaceNumber]
         }
 
+        /// Writes to the exact scope: the display's override map when
+        /// `display` is set, else the shared map. A nil value removes the
+        /// entry - clearing an override reveals the shared value again.
         func set(_ value: T?, forSpace spaceNumber: Int, display: String?, store: DefaultsStore) {
-            if store.uniqueIconsPerDisplay, let display {
+            if let display {
                 var perDisplayMap = store[keyPath: perDisplay]
                 var spaceMap = perDisplayMap[display] ?? [:]
                 if let value {
@@ -288,10 +293,11 @@ enum SpacePreferences {
             }
         }
 
-        /// The value the space renders with: its own stored value when
-        /// present, otherwise the default style template (space 0, shared
-        /// storage). An own value always wins, so a stored empty-string
-        /// sentinel stops the cascade before the template is consulted.
+        /// The value the space renders with: the effective value at its
+        /// scope (override, then shared) when present, otherwise the
+        /// default style template (space 0, shared storage). An own value
+        /// always wins, so a stored empty-string sentinel stops the
+        /// cascade before the template is consulted.
         func resolve(forSpace spaceNumber: Int, display: String?, store: DefaultsStore) -> T? {
             if let own = get(forSpace: spaceNumber, display: display, store: store) {
                 return own
@@ -303,7 +309,7 @@ enum SpacePreferences {
         }
 
         /// Reads directly from one storage family (shared when `context` is
-        /// nil, else that display's map), ignoring `uniqueIconsPerDisplay`.
+        /// nil, else that display's map), bypassing the override cascade.
         /// Migration uses this to inspect stamped copies wherever they live.
         func raw(forSpace spaceNumber: Int, context display: String?, store: DefaultsStore) -> T? {
             if let display {
@@ -312,8 +318,8 @@ enum SpacePreferences {
             return store[keyPath: shared][spaceNumber]
         }
 
-        /// Removes a value from one storage family, ignoring
-        /// `uniqueIconsPerDisplay`.
+        /// Removes a value from one storage family, bypassing the
+        /// override cascade.
         func removeRaw(forSpace spaceNumber: Int, context display: String?, store: DefaultsStore) {
             if let display {
                 var perDisplayMap = store[keyPath: perDisplay]
@@ -803,6 +809,29 @@ enum SpacePreferences {
             || sounds.get(forSpace: spaceNumber, display: display, store: store) != nil
     }
 
+    /// Returns true if the space has any preference stored at exactly the
+    /// given scope (shared when `context` is nil, else that display's
+    /// overrides), without the cascade - what `clearPreferences` for the
+    /// same scope would remove.
+    static func hasAnyScopedPreference(
+        forSpace spaceNumber: Int,
+        context display: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) -> Bool {
+        colorsAccessor.raw(forSpace: spaceNumber, context: display, store: store) != nil
+            || iconStyles.raw(forSpace: spaceNumber, context: display, store: store) != nil
+            || fonts.raw(forSpace: spaceNumber, context: display, store: store) != nil
+            || symbols.raw(forSpace: spaceNumber, context: display, store: store) != nil
+            || badges.raw(forSpace: spaceNumber, context: display, store: store) != nil
+            || labels.raw(forSpace: spaceNumber, context: display, store: store) != nil
+            || labelStyles.raw(forSpace: spaceNumber, context: display, store: store) != nil
+            || skinTones.raw(forSpace: spaceNumber, context: display, store: store) != nil
+            || symbolGaps.raw(forSpace: spaceNumber, context: display, store: store) != nil
+            || symbolPositions.raw(forSpace: spaceNumber, context: display, store: store) != nil
+            || symbolWraps.raw(forSpace: spaceNumber, context: display, store: store) != nil
+            || sounds.raw(forSpace: spaceNumber, context: display, store: store) != nil
+    }
+
     /// Copies all per-space preferences from one space to another.
     /// Only copies preferences that exist on the source; does not clear existing target preferences.
     static func copyPreferences(
@@ -933,7 +962,7 @@ enum SpacePreferences {
     /// values - loses its copies and becomes a live inheritor, rendering
     /// identically. Any difference leaves the Space untouched, and sound is
     /// never compared or removed. Both storage families are scanned, since
-    /// stamps landed wherever `uniqueIconsPerDisplay` pointed at the time.
+    /// stamps landed wherever the per-display toggle pointed at the time.
     /// `snapshot` runs once before anything is stripped.
     static func migrateStampedTemplateCopies(
         store: DefaultsStore = AppEnvironment.shared.store,
@@ -965,6 +994,86 @@ enum SpacePreferences {
                     accessor.removeRaw(space, context, store)
                 }
             }
+        }
+    }
+
+    /// One-time upgrade from the "Separate icons per Display" toggle to
+    /// the scope cascade, where per-display entries always override the
+    /// shared maps. Purges whichever storage family the toggle kept
+    /// invisible, so every install renders identically after the switch:
+    /// with the toggle off the per-display maps were dead data; with it
+    /// on, the shared per-space entries were. The template (space 0) was
+    /// live either way and stays. `snapshot` runs once before anything is
+    /// purged.
+    static func migrateDisplayScopeOverrides(
+        store: DefaultsStore = AppEnvironment.shared.store,
+        snapshot: () -> Void = {}
+    ) {
+        guard store.spaceStyleMigrationVersion < 2 else {
+            return
+        }
+        defer {
+            store.spaceStyleMigrationVersion = 2
+        }
+        let legacyKey = "uniqueIconsPerDisplay"
+        let wasPerDisplay = store.suite.bool(forKey: legacyKey)
+        defer {
+            store.suite.removeObject(forKey: legacyKey)
+        }
+        let needsPurge = wasPerDisplay
+            ? [
+                Array(store.spaceBadges.keys), Array(store.spaceColors.keys),
+                Array(store.spaceIconStyles.keys), Array(store.spaceLabels.keys),
+                Array(store.spaceLabelStyles.keys), Array(store.spaceSymbols.keys),
+                Array(store.spaceSymbolGaps.keys), Array(store.spaceSymbolPositions.keys),
+                Array(store.spaceSymbolWraps.keys), Array(store.spaceFonts.keys),
+                Array(store.spaceSkinTones.keys), Array(store.spaceSounds.keys),
+            ].contains { $0.contains { $0 != defaultStyleSpace } }
+            : ![
+                store.displaySpaceBadges.isEmpty, store.displaySpaceColors.isEmpty,
+                store.displaySpaceIconStyles.isEmpty, store.displaySpaceLabels.isEmpty,
+                store.displaySpaceLabelStyles.isEmpty, store.displaySpaceSymbols.isEmpty,
+                store.displaySpaceSymbolGaps.isEmpty, store.displaySpaceSymbolPositions.isEmpty,
+                store.displaySpaceSymbolWraps.isEmpty, store.displaySpaceFonts.isEmpty,
+                store.displaySpaceSkinTones.isEmpty, store.displaySpaceSounds.isEmpty,
+            ].allSatisfy(\.self)
+        guard needsPurge else {
+            return
+        }
+        snapshot()
+        purgeHiddenScopeData(perDisplayWasEnabled: wasPerDisplay, store: store)
+    }
+
+    /// Removes the storage family the retired per-display toggle kept
+    /// invisible, so the scope cascade renders exactly what the toggle
+    /// state did. Backup restore uses this too for legacy backup files.
+    static func purgeHiddenScopeData(perDisplayWasEnabled: Bool, store: DefaultsStore) {
+        if perDisplayWasEnabled {
+            store.spaceBadges = store.spaceBadges.filter { $0.key == defaultStyleSpace }
+            store.spaceColors = store.spaceColors.filter { $0.key == defaultStyleSpace }
+            store.spaceIconStyles = store.spaceIconStyles.filter { $0.key == defaultStyleSpace }
+            store.spaceLabels = store.spaceLabels.filter { $0.key == defaultStyleSpace }
+            store.spaceLabelStyles = store.spaceLabelStyles.filter { $0.key == defaultStyleSpace }
+            store.spaceSymbols = store.spaceSymbols.filter { $0.key == defaultStyleSpace }
+            store.spaceSymbolGaps = store.spaceSymbolGaps.filter { $0.key == defaultStyleSpace }
+            store.spaceSymbolPositions = store.spaceSymbolPositions.filter { $0.key == defaultStyleSpace }
+            store.spaceSymbolWraps = store.spaceSymbolWraps.filter { $0.key == defaultStyleSpace }
+            store.spaceFonts = store.spaceFonts.filter { $0.key == defaultStyleSpace }
+            store.spaceSkinTones = store.spaceSkinTones.filter { $0.key == defaultStyleSpace }
+            store.spaceSounds = store.spaceSounds.filter { $0.key == defaultStyleSpace }
+        } else {
+            store.displaySpaceBadges = [:]
+            store.displaySpaceColors = [:]
+            store.displaySpaceIconStyles = [:]
+            store.displaySpaceLabels = [:]
+            store.displaySpaceLabelStyles = [:]
+            store.displaySpaceSymbols = [:]
+            store.displaySpaceSymbolGaps = [:]
+            store.displaySpaceSymbolPositions = [:]
+            store.displaySpaceSymbolWraps = [:]
+            store.displaySpaceFonts = [:]
+            store.displaySpaceSkinTones = [:]
+            store.displaySpaceSounds = [:]
         }
     }
 

@@ -78,14 +78,12 @@ struct InputValidationTests {
 
     @Test("empty display ID stores icon style")
     func emptyDisplayID() {
-        store.uniqueIconsPerDisplay = true
         SpacePreferences.setIconStyle(.hexagon, forSpace: 1, display: "", store: store)
         #expect(SpacePreferences.iconStyle(forSpace: 1, display: "", store: store) == .hexagon)
     }
 
     @Test("display ID with special characters stores icon style")
     func displayIDWithSpecialCharacters() {
-        store.uniqueIconsPerDisplay = true
         let specialID = "Display<>\"'&\n\t"
         SpacePreferences.setIconStyle(.circle, forSpace: 1, display: specialID, store: store)
         #expect(SpacePreferences.iconStyle(forSpace: 1, display: specialID, store: store) == .circle)

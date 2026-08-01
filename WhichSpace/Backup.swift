@@ -83,7 +83,11 @@ struct BackupSettings: Codable {
     var showAllSpaces: Bool
     var sizeScale: Double
     var soundName: String
-    var uniqueIconsPerDisplay: Bool
+    /// Present only in backups from versions with the per-display toggle;
+    /// nil means both preference families are live data. Never encoded -
+    /// the synthesized encoder omits nil optionals.
+    // swiftlint:disable:next discouraged_optional_boolean
+    var uniqueIconsPerDisplay: Bool?
     var verticalScrollEnabled: Bool
 
     private enum CodingKeys: String, CodingKey {
@@ -124,7 +128,7 @@ struct BackupSettings: Codable {
         showAllSpaces = try container.decodeIfPresent(Bool.self, forKey: .showAllSpaces) ?? false
         sizeScale = try container.decodeIfPresent(Double.self, forKey: .sizeScale) ?? Layout.defaultSizeScale
         soundName = try container.decodeIfPresent(String.self, forKey: .soundName) ?? ""
-        uniqueIconsPerDisplay = try container.decodeIfPresent(Bool.self, forKey: .uniqueIconsPerDisplay) ?? false
+        uniqueIconsPerDisplay = try container.decodeIfPresent(Bool.self, forKey: .uniqueIconsPerDisplay)
         verticalScrollEnabled = try container.decodeIfPresent(Bool.self, forKey: .verticalScrollEnabled) ?? false
     }
 
@@ -151,7 +155,6 @@ struct BackupSettings: Codable {
         showAllSpaces: Bool,
         sizeScale: Double,
         soundName: String,
-        uniqueIconsPerDisplay: Bool,
         verticalScrollEnabled: Bool
     ) {
         self.clickToSwitchSpaces = clickToSwitchSpaces
@@ -176,7 +179,6 @@ struct BackupSettings: Codable {
         self.showAllSpaces = showAllSpaces
         self.sizeScale = sizeScale
         self.soundName = soundName
-        self.uniqueIconsPerDisplay = uniqueIconsPerDisplay
         self.verticalScrollEnabled = verticalScrollEnabled
     }
 }
@@ -530,7 +532,6 @@ enum BackupManager {
             showAllSpaces: store.showAllSpaces,
             sizeScale: store.sizeScale,
             soundName: store.soundName,
-            uniqueIconsPerDisplay: store.uniqueIconsPerDisplay,
             verticalScrollEnabled: store.verticalScrollEnabled
         )
 
@@ -668,7 +669,6 @@ enum BackupManager {
         SettingsConstraints.setShowAllSpaces(backup.settings.showAllSpaces, store: store)
         store.sizeScale = backup.settings.sizeScale.clamped(to: Layout.sizeScaleRange)
         store.soundName = backup.settings.soundName
-        store.uniqueIconsPerDisplay = backup.settings.uniqueIconsPerDisplay
         store.verticalScrollEnabled = backup.settings.verticalScrollEnabled
 
         // Apply shared space preferences
@@ -726,6 +726,13 @@ enum BackupManager {
         store.displaySpaceSymbolPositions = displaySymbolPositions
         store.displaySpaceSymbols = displaySymbols
         store.displaySpaceSymbolWraps = displaySymbolWraps
+
+        // Legacy backups carried the per-display toggle; whichever family
+        // it hid was dead data at export time, so purging it makes the
+        // restore render exactly as the backup's install did.
+        if let legacyPerDisplay = backup.settings.uniqueIconsPerDisplay {
+            SpacePreferences.purgeHiddenScopeData(perDisplayWasEnabled: legacyPerDisplay, store: store)
+        }
 
         NotificationCenter.default.post(name: .backupImported, object: nil)
     }

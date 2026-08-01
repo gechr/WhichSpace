@@ -30,7 +30,10 @@ enum SettingsAnchor: String, CaseIterable {
 
     case iconSize = "icon-size"
     case iconPadding = "icon-padding"
+    /// Retired toggle; kept because raw values are published, redirecting
+    /// to the Displays picker that replaced it.
     case uniqueIconsPerDisplay = "unique-icons-per-display"
+    case displays
     case localSpaceNumbers = "local-space-numbers"
     case separatorColor = "separator-color"
     case showAllDisplays = "show-all-displays"
@@ -76,7 +79,14 @@ enum SettingsAnchor: String, CaseIterable {
     /// section's own anchor fixed stops its identity churning as the catalog
     /// picker flips.
     var target: Self {
-        self == .emoji ? .symbol : self
+        switch self {
+        case .emoji:
+            .symbol
+        case .uniqueIconsPerDisplay:
+            .displays
+        default:
+            self
+        }
     }
 
     /// The pane the row lives on, letting a link name the setting alone.
@@ -85,13 +95,14 @@ enum SettingsAnchor: String, CaseIterable {
         case .launchAtLogin, .autoCheckUpdates, .autoInstallUpdates, .checkForUpdates, .backup,
              .resetSettings:
             .general
-        case .iconSize, .iconPadding, .uniqueIconsPerDisplay, .localSpaceNumbers, .separatorColor,
+        case .iconSize, .iconPadding, .localSpaceNumbers, .separatorColor,
              .showAllDisplays, .showAllSpaces, .dimInactiveSpaces, .hideEmptySpaces,
              .hideSingleSpace, .hideFullscreenApps, .fullscreenLetter:
             .menuBar
-        case .preview, .spaceLabel, .numberStyle, .symbol, .emoji, .symbolPosition, .symbolWrap,
-             .symbolGap, .skinTone, .symbolColor, .symbolBackground, .foregroundColor,
-             .backgroundColor, .invertColors, .badge, .badgePosition, .font, .sound, .customSounds:
+        case .preview, .uniqueIconsPerDisplay, .displays, .spaceLabel, .numberStyle, .symbol,
+             .emoji, .symbolPosition, .symbolWrap, .symbolGap, .skinTone, .symbolColor,
+             .symbolBackground, .foregroundColor, .backgroundColor, .invertColors, .badge,
+             .badgePosition, .font, .sound, .customSounds:
             .spaces
         case .accessibility, .clickToSwitch, .verticalScroll, .invertVerticalScroll,
              .horizontalScroll, .invertHorizontalScroll, .scrollWrapAround, .scrollSensitivity,

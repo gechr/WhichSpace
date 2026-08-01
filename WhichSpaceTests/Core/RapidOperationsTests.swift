@@ -56,20 +56,14 @@ struct RapidOperationsTests {
 
     // MARK: - Rapid Toggle Operations
 
-    @Test("rapid uniqueIconsPerDisplay toggle persists both storage paths")
-    func rapidUniqueIconsPerDisplayToggle() {
+    @Test("rapid alternating scope writes persist both storage paths")
+    func rapidScopeAlternation() {
         for _ in 0 ..< 100 {
-            store.uniqueIconsPerDisplay = true
             SpacePreferences.setIconStyle(.circle, forSpace: 1, display: "Display1", store: store)
-
-            store.uniqueIconsPerDisplay = false
             SpacePreferences.setIconStyle(.square, forSpace: 1, store: store)
         }
 
-        store.uniqueIconsPerDisplay = true
         #expect(SpacePreferences.iconStyle(forSpace: 1, display: "Display1", store: store) == .circle)
-
-        store.uniqueIconsPerDisplay = false
         #expect(SpacePreferences.iconStyle(forSpace: 1, store: store) == .square)
     }
 
@@ -96,8 +90,6 @@ struct RapidOperationsTests {
 
     @Test("setting preferences for many displays at once")
     func manyDisplaysSimultaneously() {
-        store.uniqueIconsPerDisplay = true
-
         for displayNum in 1 ... 20 {
             let displayID = "Display\(displayNum)"
             for space in 1 ... 10 {
@@ -127,7 +119,6 @@ struct RapidOperationsTests {
             )
         }
 
-        store.uniqueIconsPerDisplay = true
         for displayNum in 1 ... 5 {
             let displayID = "Display\(displayNum)"
             for space in 1 ... 10 {

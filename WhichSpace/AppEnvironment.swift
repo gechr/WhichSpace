@@ -15,10 +15,18 @@ struct AppEnvironment {
     static let shared: AppEnvironment = {
         let store = DefaultsStore(suite: .standard)
         // Runs before AppState builds its first snapshot, so no icon is ever
-        // rendered from unmigrated preferences.
-        SpacePreferences.migrateStampedTemplateCopies(store: store) {
+        // rendered from unmigrated preferences. The snapshot is written at
+        // most once even when both migrations run.
+        var snapshotTaken = false
+        let snapshot = {
+            guard !snapshotTaken else {
+                return
+            }
+            snapshotTaken = true
             Self.writePreMigrationBackup(store: store)
         }
+        SpacePreferences.migrateStampedTemplateCopies(store: store, snapshot: snapshot)
+        SpacePreferences.migrateDisplayScopeOverrides(store: store, snapshot: snapshot)
         return Self(appState: AppState(store: store), store: store)
     }()
 

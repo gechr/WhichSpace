@@ -113,14 +113,6 @@ struct MenuBarPane: View {
     private var displaySection: some View {
         SettingsSection {
             SettingsToggleRow(
-                title: Localization.toggleUniqueIconsPerDisplay,
-                isOn: model.binding(\.uniqueIconsPerDisplay),
-                icon: "theatermasks",
-                subtitle: Localization.tipUniqueIconsPerDisplay,
-                anchor: .uniqueIconsPerDisplay
-            )
-            SettingsRowDivider()
-            SettingsToggleRow(
                 title: Localization.toggleLocalSpaceNumbers,
                 isOn: model.binding(\.localSpaceNumbers),
                 icon: "1.square",

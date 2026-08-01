@@ -405,7 +405,7 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         XCTAssertFalse(backup.settings.invertHorizontalScroll)
         XCTAssertFalse(backup.settings.invertVerticalScroll)
         XCTAssertEqual(backup.settings.scrollSensitivity, Layout.defaultScrollSensitivity)
-        XCTAssertFalse(backup.settings.uniqueIconsPerDisplay)
+        XCTAssertNil(backup.settings.uniqueIconsPerDisplay)
         XCTAssertFalse(backup.settings.verticalScrollEnabled)
         XCTAssertEqual(backup.settings.soundName, "")
     }
@@ -519,7 +519,6 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         XCTAssertEqual(store.sizeScale, 75.0)
         XCTAssertEqual(store.scrollSensitivity, 175.0)
         XCTAssertEqual(store.soundName, "Blow")
-        XCTAssertTrue(store.uniqueIconsPerDisplay)
         XCTAssertTrue(store.verticalScrollEnabled)
     }
 
@@ -641,6 +640,79 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         XCTAssertEqual(store.displaySpaceIconStyles["Display1"]?[1], .triangle)
         XCTAssertEqual(store.displaySpaceSymbols["Display1"]?[1], "moon.fill")
         XCTAssertEqual(store.displaySpaceIconStyles["Display2"]?[1], .square)
+    }
+
+    func testApplyLegacyBackupWithToggleOffDiscardsPerDisplayData() throws {
+        // The legacy flag marks the backup's per-display maps as dead data
+        let json = """
+        {
+            "bundleId": "com.test.app",
+            "version": "1.0.0",
+            "settings": {
+                "sizeScale": 100.0,
+                "soundName": "",
+                "uniqueIconsPerDisplay": false
+            },
+            "spacePreferences": {
+                "colors": {},
+                "fonts": {},
+                "iconStyles": {"2": "hexagon"},
+                "skinTones": {},
+                "symbols": {}
+            },
+            "displaySpacePreferences": {
+                "Display1": {
+                    "colors": {},
+                    "fonts": {},
+                    "iconStyles": {"1": "triangle"},
+                    "skinTones": {},
+                    "symbols": {}
+                }
+            }
+        }
+        """
+
+        let backup = try BackupManager.decode(jsonString: json)
+        BackupManager.apply(backup, to: store)
+
+        XCTAssertTrue(store.displaySpaceIconStyles.isEmpty)
+        XCTAssertEqual(store.spaceIconStyles[2], .hexagon)
+    }
+
+    func testApplyLegacyBackupWithToggleOnKeepsTemplateSharedDataOnly() throws {
+        let json = """
+        {
+            "bundleId": "com.test.app",
+            "version": "1.0.0",
+            "settings": {
+                "sizeScale": 100.0,
+                "soundName": "",
+                "uniqueIconsPerDisplay": true
+            },
+            "spacePreferences": {
+                "colors": {},
+                "fonts": {},
+                "iconStyles": {"0": "circle", "2": "hexagon"},
+                "skinTones": {},
+                "symbols": {}
+            },
+            "displaySpacePreferences": {
+                "Display1": {
+                    "colors": {},
+                    "fonts": {},
+                    "iconStyles": {"1": "triangle"},
+                    "skinTones": {},
+                    "symbols": {}
+                }
+            }
+        }
+        """
+
+        let backup = try BackupManager.decode(jsonString: json)
+        BackupManager.apply(backup, to: store)
+
+        XCTAssertEqual(store.spaceIconStyles, [0: .circle])
+        XCTAssertEqual(store.displaySpaceIconStyles["Display1"]?[1], .triangle)
     }
 
     func testApplyPostsNotification() throws {

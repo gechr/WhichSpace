@@ -220,10 +220,8 @@ struct SpacePreferencesTests {
         #expect(SpacePreferences.badge(forSpace: 2, store: store)?.character == "2")
     }
 
-    @Test("badge per-display when enabled")
-    func badgePerDisplayWhenEnabled() {
-        store.uniqueIconsPerDisplay = true
-
+    @Test("badges scoped per display")
+    func badgePerDisplay() {
         let display1 = "Display1"
         let display2 = "Display2"
 
@@ -263,36 +261,35 @@ struct SpacePreferencesTests {
 
     // MARK: - Per-Display Tests
 
-    @Test("shared preferences when unique icons disabled")
-    func sharedPreferencesWhenUniqueIconsDisabled() {
-        // Default: uniqueIconsPerDisplay is false
-        #expect(!store.uniqueIconsPerDisplay)
+    @Test("display overrides win over shared values")
+    func overrideWinsOverShared() {
+        SpacePreferences.setSymbol("shared", forSpace: 1, store: store)
+        SpacePreferences.setSymbol("override", forSpace: 1, display: "Display1", store: store)
 
-        // Set preferences with a display ID - should use shared storage
-        SpacePreferences.setColors(
-            SpaceColors(foreground: .red, background: .blue),
-            forSpace: 1,
-            display: "Display1",
-            store: store
-        )
-        SpacePreferences.setIconStyle(.circle, forSpace: 1, display: "Display1", store: store)
-        SpacePreferences.setSymbol("star", forSpace: 1, display: "Display1", store: store)
+        #expect(SpacePreferences.symbol(forSpace: 1, store: store) == "shared")
+        #expect(SpacePreferences.symbol(forSpace: 1, display: "Display1", store: store) == "override")
 
-        // Should be stored in shared storage, accessible without display ID
-        #expect(SpacePreferences.colors(forSpace: 1, store: store) != nil)
-        #expect(SpacePreferences.iconStyle(forSpace: 1, store: store) == .circle)
-        #expect(SpacePreferences.symbol(forSpace: 1, store: store) == "star")
+        // A display without an override shows the shared value through
+        #expect(SpacePreferences.symbol(forSpace: 1, display: "Display2", store: store) == "shared")
 
-        // Same values accessible with any display ID (still uses shared storage)
-        #expect(SpacePreferences.colors(forSpace: 1, display: "Display2", store: store) != nil)
-        #expect(SpacePreferences.iconStyle(forSpace: 1, display: "Display2", store: store) == .circle)
-        #expect(SpacePreferences.symbol(forSpace: 1, display: "Display2", store: store) == "star")
+        // Clearing the override reveals the shared value again
+        SpacePreferences.setSymbol(nil, forSpace: 1, display: "Display1", store: store)
+        #expect(SpacePreferences.symbol(forSpace: 1, display: "Display1", store: store) == "shared")
     }
 
-    @Test("per-display preferences when enabled")
-    func perDisplayPreferencesWhenEnabled() {
-        store.uniqueIconsPerDisplay = true
+    @Test("scoped writes land in their own storage family")
+    func scopedWritesAreIndependent() {
+        SpacePreferences.setIconStyle(.square, forSpace: 1, store: store)
+        SpacePreferences.setIconStyle(.circle, forSpace: 1, display: "Display1", store: store)
 
+        #expect(store.spaceIconStyles[1] == .square)
+        #expect(store.displaySpaceIconStyles["Display1"]?[1] == .circle)
+        #expect(SpacePreferences.iconStyle(forSpace: 1, store: store) == .square)
+        #expect(SpacePreferences.iconStyle(forSpace: 1, display: "Display1", store: store) == .circle)
+    }
+
+    @Test("displays hold independent overrides")
+    func perDisplayPreferences() {
         let display1 = "Display1"
         let display2 = "Display2"
 
@@ -324,48 +321,32 @@ struct SpacePreferencesTests {
         #expect(SpacePreferences.iconStyle(forSpace: 1, display: display2, store: store) == .hexagon)
     }
 
-    @Test("toggling preserves settings")
-    func togglingPreservesSettings() {
-        // Set shared preferences
-        store.uniqueIconsPerDisplay = false
-        SpacePreferences.setIconStyle(.square, forSpace: 1, store: store)
+    @Test("empty-string override blocks shared and template values")
+    func emptyOverrideBlocksCascade() {
+        SpacePreferences.setLabel("T", forSpace: SpacePreferences.defaultStyleSpace, store: store)
+        SpacePreferences.setLabel("Shared", forSpace: 1, store: store)
+        SpacePreferences.setLabel("", forSpace: 1, display: "Display1", store: store)
 
-        // Enable per-display and set display-specific preferences
-        store.uniqueIconsPerDisplay = true
-        SpacePreferences.setIconStyle(.circle, forSpace: 1, display: "Display1", store: store)
-
-        // Verify per-display setting
-        #expect(SpacePreferences.iconStyle(forSpace: 1, display: "Display1", store: store) == .circle)
-
-        // Toggle back to shared - should get original shared value
-        store.uniqueIconsPerDisplay = false
-        #expect(SpacePreferences.iconStyle(forSpace: 1, store: store) == .square)
-
-        // Toggle to per-display again - should get per-display value back
-        store.uniqueIconsPerDisplay = true
-        #expect(SpacePreferences.iconStyle(forSpace: 1, display: "Display1", store: store) == .circle)
+        // The label getter maps the empty sentinel to nil instead of
+        // falling through to the shared or template value
+        #expect(SpacePreferences.label(forSpace: 1, display: "Display1", store: store) == nil)
+        #expect(SpacePreferences.label(forSpace: 1, display: "Display2", store: store) == "Shared")
+        #expect(SpacePreferences.label(forSpace: 2, display: "Display1", store: store) == "T")
     }
 
     @Test("clear all clears everything")
     func clearAllClearsEverything() {
         // Set up both shared and per-display preferences
-        store.uniqueIconsPerDisplay = false
         SpacePreferences.setIconStyle(.square, forSpace: 1, store: store)
         SpacePreferences.setColors(SpaceColors(foreground: .red, background: .blue), forSpace: 1, store: store)
-
-        store.uniqueIconsPerDisplay = true
         SpacePreferences.setIconStyle(.circle, forSpace: 1, display: "Display1", store: store)
         SpacePreferences.setIconStyle(.triangle, forSpace: 1, display: "Display2", store: store)
 
         // Clear everything
         SpacePreferences.clearAll(store: store)
 
-        // All per-display settings should be cleared
         #expect(SpacePreferences.iconStyle(forSpace: 1, display: "Display1", store: store) == nil)
         #expect(SpacePreferences.iconStyle(forSpace: 1, display: "Display2", store: store) == nil)
-
-        // All shared settings should be cleared
-        store.uniqueIconsPerDisplay = false
         #expect(SpacePreferences.iconStyle(forSpace: 1, store: store) == nil)
         #expect(SpacePreferences.colors(forSpace: 1, store: store) == nil)
     }
@@ -407,9 +388,8 @@ struct SpacePreferencesTests {
         #expect(SpacePreferences.hasAnyPreference(forSpace: 1, store: store))
     }
 
-    @Test("hasAnyPreference checks per-display when enabled")
+    @Test("hasAnyPreference sees overrides on their own display only")
     func hasAnyPreferenceChecksPerDisplay() {
-        store.uniqueIconsPerDisplay = true
         SpacePreferences.setIconStyle(.circle, forSpace: 1, display: "Display1", store: store)
 
         #expect(SpacePreferences.hasAnyPreference(forSpace: 1, display: "Display1", store: store))
@@ -467,10 +447,8 @@ struct SpacePreferencesTests {
         #expect(SpacePreferences.colors(forSpace: 2, store: store)?.foreground == .red)
     }
 
-    @Test("copyPreferences respects per-display mode")
+    @Test("copyPreferences copies within a display scope")
     func copyPreferencesRespectsPerDisplay() {
-        store.uniqueIconsPerDisplay = true
-
         SpacePreferences.setIconStyle(.circle, forSpace: 1, display: "Display1", store: store)
         SpacePreferences.copyPreferences(from: 1, to: 2, display: "Display1", store: store)
 
@@ -479,15 +457,10 @@ struct SpacePreferencesTests {
         #expect(SpacePreferences.iconStyle(forSpace: 2, display: "Display2", store: store) == nil)
     }
 
-    @Test("per-display with nil display falls back to shared")
+    @Test("nil display reads and writes shared storage")
     func perDisplayWithNilDisplayFallsBackToShared() {
-        store.uniqueIconsPerDisplay = true
-
-        // Set shared preference (by passing nil display when enabled)
-        // This should still use shared storage when display is nil
         SpacePreferences.setIconStyle(.square, forSpace: 1, display: nil, store: store)
 
-        // Since display is nil even with uniqueIconsPerDisplay=true, should use shared
         #expect(SpacePreferences.iconStyle(forSpace: 1, display: nil, store: store) == .square)
 
         // Per-display storage should be empty
@@ -538,10 +511,8 @@ struct SpacePreferencesTests {
         #expect(SpacePreferences.symbolGap(forSpace: 2, store: store) == nil)
     }
 
-    @Test("symbol layout preferences respect per-display mode")
+    @Test("symbol layout preferences scope per display")
     func symbolLayoutRespectsPerDisplay() {
-        store.uniqueIconsPerDisplay = true
-
         SpacePreferences.setSymbolPosition(.right, forSpace: 1, display: "Display1", store: store)
         SpacePreferences.setSymbolWrap(.outside, forSpace: 1, display: "Display1", store: store)
         SpacePreferences.setSymbolGap(8.0, forSpace: 1, display: "Display1", store: store)
@@ -636,10 +607,8 @@ struct SpacePreferencesTests {
         #expect(SpacePreferences.sound(forSpace: 2, store: store) == nil)
     }
 
-    @Test("sound per-display when enabled")
+    @Test("sounds scope per display")
     func soundPerDisplayWhenEnabled() {
-        store.uniqueIconsPerDisplay = true
-
         SpacePreferences.setSound("Pop", forSpace: 1, display: "Display1", store: store)
         SpacePreferences.setSound("Blow", forSpace: 1, display: "Display2", store: store)
 
@@ -647,8 +616,7 @@ struct SpacePreferencesTests {
         #expect(SpacePreferences.sound(forSpace: 1, display: "Display2", store: store) == "Blow")
 
         // Shared storage stays untouched
-        store.uniqueIconsPerDisplay = false
-        #expect(SpacePreferences.sound(forSpace: 1, store: store) == nil)
+        #expect(store.spaceSounds[1] == nil)
     }
 
     @Test("hasAnyPreference returns true when sound set")
@@ -678,13 +646,11 @@ struct SpacePreferencesTests {
     @Test("clearAll removes shared and per-display sounds")
     func clearAllRemovesSounds() {
         SpacePreferences.setSound("Pop", forSpace: 1, store: store)
-        store.uniqueIconsPerDisplay = true
         SpacePreferences.setSound("Blow", forSpace: 1, display: "Display1", store: store)
 
         SpacePreferences.clearAll(store: store)
 
         #expect(SpacePreferences.sound(forSpace: 1, display: "Display1", store: store) == nil)
-        store.uniqueIconsPerDisplay = false
         #expect(SpacePreferences.sound(forSpace: 1, store: store) == nil)
     }
 
@@ -736,7 +702,6 @@ struct SpacePreferencesTests {
     @Test("resolvedSoundName respects per-display override")
     func resolvedSoundNameRespectsPerDisplay() {
         store.soundName = "Glass"
-        store.uniqueIconsPerDisplay = true
         SpacePreferences.setSound("Pop", forSpace: 1, display: "Display1", store: store)
 
         #expect(SpacePreferences.resolvedSoundName(forSpace: 1, display: "Display1", store: store) == "Pop")

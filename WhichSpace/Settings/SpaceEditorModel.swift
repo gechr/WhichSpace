@@ -5,10 +5,11 @@ import Defaults
 ///
 /// Holds the edited (space, display) selection so any Space on any display
 /// can be styled without switching to it; every read and write routes
-/// through the existing `forSpace:display:` accessors, which decide between
-/// shared and per-display storage from `uniqueIconsPerDisplay`. The pinned
-/// "Default Style" entry edits the space-0 template with `display: nil`,
-/// matching how `saveDefaultStyle` stores it.
+/// through the existing `forSpace:display:` accessors. A nil
+/// `selectedDisplayID` is the "All" scope: edits land in the shared maps
+/// and apply everywhere a display holds no override. The pinned "Default
+/// Style" entry edits the space-0 template with `display: nil`, matching
+/// how `saveDefaultStyle` stores it.
 ///
 /// Follows the `SettingsModel` freshness pattern: reads register a SwiftUI
 /// dependency on `tick`, writes go through the store (bumping
@@ -30,6 +31,8 @@ final class SpaceEditorModel {
     /// it to register a SwiftUI observation dependency
     private(set) var tick = 0
 
+    /// The display whose overrides are edited; nil selects the "All"
+    /// segment, editing the shared styles every display inherits.
     var selectedDisplayID: String?
     var selection: Selection
 
@@ -55,6 +58,7 @@ final class SpaceEditorModel {
         self.customNamesURL = customNamesURL
         selectedDisplayID = appState.currentDisplayID
         selection = .space(max(appState.currentSpace, 1))
+        normalizeSelection()
     }
 
     // MARK: - Editing Coordinates
@@ -69,8 +73,8 @@ final class SpaceEditorModel {
         }
     }
 
-    /// The display the edited entry belongs to. The template is display-less
-    /// so it stays in the shared maps regardless of `uniqueIconsPerDisplay`.
+    /// The display the edited entry belongs to. The template is
+    /// display-less so it always stays in the shared maps.
     var editingDisplay: String? {
         selection == .defaultStyle ? nil : selectedDisplayID
     }
@@ -85,12 +89,21 @@ final class SpaceEditorModel {
         appState.allDisplaysSpaceInfo
     }
 
-    /// Entries of the selected display, as (1-based position, entry) pairs,
+    /// The display whose Spaces the list shows: the selected one, or the
+    /// primary display while "All" is selected, so the rows reflect one
+    /// real arrangement rather than a cross-display concatenation.
+    private var selectedDisplayInfo: DisplaySpaceInfo? {
+        guard let selectedDisplayID else {
+            return displays.first
+        }
+        return displays.first { $0.displayID == selectedDisplayID }
+    }
+
+    /// Entries of the shown display, as (1-based position, entry) pairs,
     /// padded with nil entries up to the per-display Space limit so Spaces
     /// can be styled before they are created.
     var spaceEntries: [(number: Int, entry: SpaceEntry?)] {
-        let info = displays.first { $0.displayID == selectedDisplayID }
-        let entries = info?.entries ?? appState.allSpaceEntries
+        let entries = selectedDisplayInfo?.entries ?? appState.allSpaceEntries
         let real = entries.enumerated().map { (number: $0.offset + 1, entry: SpaceEntry?($0.element)) }
         guard entries.count < Layout.maxSpacesPerDisplay else {
             return real
@@ -100,11 +113,10 @@ final class SpaceEditorModel {
         return real + placeholders
     }
 
-    /// The number of Spaces that exist right now on the selected display;
+    /// The number of Spaces that exist right now on the shown display;
     /// list entries beyond it are placeholders for future Spaces.
     var existingSpaceCount: Int {
-        let info = displays.first { $0.displayID == selectedDisplayID }
-        return (info?.entries ?? appState.allSpaceEntries).count
+        (selectedDisplayInfo?.entries ?? appState.allSpaceEntries).count
     }
 
     /// Whether a list entry is the Space the user is on right now. Matched by
@@ -143,9 +155,15 @@ final class SpaceEditorModel {
     }
 
     /// Keeps the selection valid when the display changes or Spaces close.
+    /// A single display always edits the shared "All" scope - the picker is
+    /// hidden, so a display-scoped override could never be told apart.
     func normalizeSelection() {
-        if selectedDisplayID == nil || !displays.contains(where: { $0.displayID == selectedDisplayID }) {
-            selectedDisplayID = appState.currentDisplayID
+        if displays.count <= 1 {
+            selectedDisplayID = nil
+        } else if let selectedDisplayID,
+                  !displays.contains(where: { $0.displayID == selectedDisplayID })
+        {
+            self.selectedDisplayID = appState.currentDisplayID
         }
         if case let .space(number) = selection, !spaceEntries.contains(where: { $0.number == number }) {
             selection = .space(1)
@@ -157,7 +175,7 @@ final class SpaceEditorModel {
         guard case let .space(number) = selection else {
             return 1
         }
-        guard let info = displays.first(where: { $0.displayID == selectedDisplayID }) else {
+        guard let info = selectedDisplayInfo else {
             return number
         }
         guard info.entries.indices.contains(number - 1) else {
@@ -185,8 +203,7 @@ final class SpaceEditorModel {
     func spaceName(for candidate: (number: Int, entry: SpaceEntry?)) -> String? {
         _ = tick
         guard let entry = candidate.entry else {
-            let info = displays.first { $0.displayID == selectedDisplayID }
-            let entries = info?.entries ?? appState.allSpaceEntries
+            let entries = selectedDisplayInfo?.entries ?? appState.allSpaceEntries
             let regularCount = entries.compactMap(\.regularIndex).max() ?? 0
             let number = regularCount + candidate.number - entries.count
             return String(format: Localization.labelDesktopNumber, number)
@@ -352,15 +369,17 @@ final class SpaceEditorModel {
         return SpacePreferences.hasDefaultStyle(store: store)
     }
 
-    /// Whether a Space list entry carries any style of its own instead of
-    /// following the default style template. Drives the list's indicator dot.
+    /// Whether a Space list entry carries any style at the edited scope -
+    /// shared values under "All", that display's overrides otherwise.
+    /// Drives the list's indicator dot and its revert button, which clears
+    /// exactly this scope.
     func hasOwnStyle(for selection: Selection) -> Bool {
         _ = tick
         guard case let .space(number) = selection else {
             return false
         }
-        return SpacePreferences.hasAnyPreference(
-            forSpace: number, display: selectedDisplayID, store: store
+        return SpacePreferences.hasAnyScopedPreference(
+            forSpace: number, context: selectedDisplayID, store: store
         )
     }
 
@@ -581,8 +600,8 @@ final class SpaceEditorModel {
     }
 
     /// Copies the edited entry's preferences onto every Space of every
-    /// display. Meaningful with per-display icons; shared storage collapses
-    /// the display dimension on write.
+    /// display as per-display overrides. Offered only while a display is
+    /// selected - shared "All" edits already apply everywhere.
     func copyToAllDisplays() {
         guard confirmAction(
             Localization.confirmCopyToAllDisplays,

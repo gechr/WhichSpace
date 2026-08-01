@@ -268,6 +268,7 @@ enum Localization {
     static let errorScriptingNoSpaces = String(localized: "error_scripting_no_spaces")
     static let errorScriptingSpaceOutOfRange = String(localized: "error_scripting_space_out_of_range")
 
+    static let labelAllDisplays = String(localized: "label_all_displays")
     static let labelAllSpacesAllDisplays = String(localized: "label_all_spaces_all_displays")
     static let labelAllSpacesThisDisplay = String(localized: "label_all_spaces_this_display")
     static let labelBackup = String(localized: "label_backup")
@@ -370,7 +371,6 @@ enum Localization {
     static let tipSound = String(localized: "tip_sound")
     static let tipSoundSpace = String(localized: "tip_sound_space")
     static let tipSpacePlaceholder = String(localized: "tip_space_placeholder")
-    static let tipUniqueIconsPerDisplay = String(localized: "tip_unique_icons_per_display")
     static let tipUseFForFullscreenApps = String(localized: "tip_use_f_for_fullscreen_apps")
     static let toggleAutoCheckUpdates = String(localized: "toggle_auto_check_updates")
     static let toggleAutoInstallUpdates = String(localized: "toggle_auto_install_updates")
@@ -386,7 +386,6 @@ enum Localization {
     static let toggleScrollWrapAround = String(localized: "toggle_scroll_wrap_around")
     static let toggleShowAllDisplays = String(localized: "toggle_show_all_displays")
     static let toggleShowAllSpaces = String(localized: "toggle_show_all_spaces")
-    static let toggleUniqueIconsPerDisplay = String(localized: "toggle_unique_icons_per_display")
     static let toggleUseFForFullscreenApps = String(localized: "toggle_use_f_for_fullscreen_apps")
 }
 

@@ -132,7 +132,6 @@ enum KeySpecs {
     )
     static let spaceSymbols = TypedKeySpec(name: "spaceSymbols", defaultValue: [Int: String]())
     static let spaceSymbolWraps = TypedKeySpec(name: "spaceSymbolWraps", defaultValue: [Int: SymbolWrap]())
-    static let uniqueIconsPerDisplay = TypedKeySpec(name: "uniqueIconsPerDisplay", defaultValue: false)
 
     /// The single key registry: reset, test enumeration, and icon-change
     /// observation all derive from it, so a new key only needs an entry
@@ -184,7 +183,6 @@ enum KeySpecs {
         spaceSymbolPositions,
         spaceSymbols,
         spaceSymbolWraps,
-        uniqueIconsPerDisplay,
         verticalScrollEnabled,
     ]
 
@@ -576,11 +574,6 @@ final class DefaultsStore {
     var spaceSymbolWraps: [Int: SymbolWrap] {
         get { self[KeySpecs.spaceSymbolWraps] }
         set { self[KeySpecs.spaceSymbolWraps] = newValue }
-    }
-
-    var uniqueIconsPerDisplay: Bool {
-        get { self[KeySpecs.uniqueIconsPerDisplay] }
-        set { self[KeySpecs.uniqueIconsPerDisplay] = newValue }
     }
 
     var verticalScrollEnabled: Bool {

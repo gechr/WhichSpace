@@ -242,7 +242,6 @@ struct DefaultsIsolationGuardTests {
             "spaceSymbolPositions",
             "spaceSymbols",
             "spaceSymbolWraps",
-            "uniqueIconsPerDisplay",
             "verticalScrollEnabled",
         ]
 

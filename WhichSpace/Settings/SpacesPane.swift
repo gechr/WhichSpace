@@ -125,11 +125,14 @@ struct SpacesPane: View {
             .padding(.leading, 4)
     }
 
+    /// A numbered segment edits that display's overrides; the trailing "All"
+    /// segment edits the shared styles every display inherits.
     private var displayPicker: some View {
         Picker(Localization.labelDisplays, selection: displayBinding) {
             ForEach(Array(model.displays.enumerated()), id: \.element.displayID) { index, display in
                 Text(String(index + 1)).tag(display.displayID as String?)
             }
+            Text(Localization.labelAllDisplays).tag(nil as String?)
         }
         .pickerStyle(.segmented)
         .labelsHidden()
@@ -381,14 +384,22 @@ struct SpacesPane: View {
         .help(Localization.tipResetSpaceToDefault)
     }
 
-    /// Both targets confirm through the model before writing anything.
+    /// Both targets confirm through the model before writing anything. The
+    /// all-displays item disappears under the "All" scope, whose edits
+    /// already apply to every display.
     private var copyToMenu: some View {
         Menu(Localization.actionCopyTo) {
-            Button(Localization.labelAllSpacesThisDisplay) {
+            Button(
+                model.selectedDisplayID == nil
+                    ? Localization.labelAllSpacesAllDisplays
+                    : Localization.labelAllSpacesThisDisplay
+            ) {
                 model.copyToAllSpaces()
             }
-            Button(Localization.labelAllSpacesAllDisplays) {
-                model.copyToAllDisplays()
+            if model.selectedDisplayID != nil {
+                Button(Localization.labelAllSpacesAllDisplays) {
+                    model.copyToAllDisplays()
+                }
             }
         }
         .fixedSize()

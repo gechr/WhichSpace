@@ -184,7 +184,9 @@ final class StatusBarRenderer {
 
     /// Renders the icon for any (space, display) pair for the settings
     /// window. Space 0 renders the default-style template, whose
-    /// preferences always live in the shared maps.
+    /// preferences always live in the shared maps. A nil display renders
+    /// the shared "All" scope, numbered like the primary display so the
+    /// rows mirror one real arrangement.
     ///
     /// `sizeScale` is a percentage of the status bar rendering; the returned
     /// image is handler-backed, so enlarged copies re-render their content at
@@ -192,7 +194,9 @@ final class StatusBarRenderer {
     func settingsIcon(forSpace space: Int, display displayID: String?, sizeScale: Double = 100) -> NSImage {
         let isTemplate = space == SpacePreferences.defaultStyleSpace
         let labels = isTemplate ? store.spaceLabels : fetchLabels(displayID: displayID ?? "")
-        let displayInfo = appState.allDisplaysSpaceInfo.first { $0.displayID == displayID }
+        let displayInfo = displayID == nil
+            ? appState.allDisplaysSpaceInfo.first
+            : appState.allDisplaysSpaceInfo.first { $0.displayID == displayID }
         let entry: SpaceEntry? = displayInfo.flatMap {
             $0.entries.indices.contains(space - 1) ? $0.entries[space - 1] : nil
         }
@@ -945,14 +949,15 @@ final class StatusBarRenderer {
         return localNumbers ? regularPosition : display.globalStartIndex + regularPosition - 1
     }
 
-    /// Fetches all custom labels for a display in a single read, overlaying
-    /// the default style template: a space with no label of its own inherits
-    /// the template's (stored under space 0 in the shared map), and a stored
-    /// empty string - the explicit "no label" sentinel - drops out.
+    /// Fetches all custom labels for a display in a single read, following
+    /// the scope cascade: the display's overrides win over shared labels,
+    /// and a space with no label at either scope inherits the template's
+    /// (stored under space 0 in the shared map). A stored empty string -
+    /// the explicit "no label" sentinel - drops out at any scope.
     private func fetchLabels(displayID: String) -> [Int: String] {
-        var labels = store.uniqueIconsPerDisplay
-            ? store.displaySpaceLabels[displayID] ?? [:]
-            : store.spaceLabels
+        var labels = store.spaceLabels.merging(
+            store.displaySpaceLabels[displayID] ?? [:]
+        ) { _, override in override }
         let template = store.spaceLabels[SpacePreferences.defaultStyleSpace]
         for space in 1 ... Layout.maxSpacesPerDisplay where labels[space] == nil {
             labels[space] = template
