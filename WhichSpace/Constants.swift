@@ -214,6 +214,7 @@ enum IconColors {
 // MARK: - Localization
 
 enum Localization {
+    static let accessibilityCurrentSpace = String(localized: "accessibility_current_space")
     static let actionCopyTo = String(localized: "action_copy_to")
     static let actionCheckForUpdates = String(localized: "action_check_for_updates")
     static let actionExportSettings = String(localized: "action_export_settings")

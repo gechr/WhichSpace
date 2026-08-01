@@ -643,6 +643,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         guard let statusBarItem else {
             return
         }
+        // Ahead of the unchanged-icon check: the same icon can outlive a
+        // change of Space, and the announced label has to follow the Space
+        updateStatusBarAccessibilityLabel()
         let icon = appState.statusBarIcon
         // Skip the assignment and forced redraw when the cached icon is
         // already installed (e.g. every submenu open triggers an update)
@@ -661,6 +664,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         // starved and drawn frames reach the WindowServer late.
         CATransaction.flush()
         updateStatusBarVisibility()
+    }
+
+    /// Names the current Space for VoiceOver. The icon is a drawn bitmap, so
+    /// without a label the item announces only the app name. The tooltip is
+    /// left naming the app: an explicit accessibility label takes precedence
+    /// over the one AppKit would otherwise derive from the tooltip, so the
+    /// two can say different things. The text matches what AppleScript
+    /// reports for `current space label`.
+    func updateStatusBarAccessibilityLabel() {
+        guard let button = statusBarItem?.button else {
+            return
+        }
+        let label = ScriptingHelpers.resolveCurrentLabel(appState: appState, store: store)
+        button.setAccessibilityLabel(
+            String(format: Localization.accessibilityCurrentSpace, label)
+        )
     }
 
     private func updateStatusBarVisibility() {
