@@ -56,6 +56,7 @@ final class StatusBarRenderer {
         let currentSpaceID: Int
         let fullscreenOwners: [Int: pid_t]
         let isDarkMode: Bool
+        let shrinkLevel: IconShrinkLevel
         let spacesWithWindows: Set<Int>
         let storeMutationCount: Int
     }
@@ -99,23 +100,23 @@ final class StatusBarRenderer {
         store.showAllDisplays
     }
 
-    var statusBarIcon: NSImage {
-        let key = buildIconCacheKey()
+    func statusBarIcon(level: IconShrinkLevel) -> NSImage {
+        let key = buildIconCacheKey(level: level)
 
         if let cachedIcon, cachedIconKey == key {
             return cachedIcon
         }
 
-        let icon = generateStatusBarIcon(isDark: key.isDarkMode)
+        let icon = generateStatusBarIcon(isDark: key.isDarkMode, level: level)
         cachedIcon = icon
         cachedIconKey = key
         return icon
     }
 
     /// Returns the layout of visible icons in the status bar for the current mode
-    func statusBarLayout() -> StatusBarLayout {
-        if showAllDisplays {
-            let renderedDisplays = renderedCrossDisplayIcons(darkMode: appState.darkModeEnabled)
+    func statusBarLayout(level: IconShrinkLevel) -> StatusBarLayout {
+        if showAllDisplays, level.showsOtherDisplays {
+            let renderedDisplays = renderedCrossDisplayIcons(darkMode: appState.darkModeEnabled, level: level)
             guard !renderedDisplays.isEmpty else {
                 return .empty
             }
@@ -142,8 +143,13 @@ final class StatusBarRenderer {
             return StatusBarLayout(slots: iconSlots)
         }
 
-        if showAllSpaces {
-            let renderedIcons = renderedCurrentDisplayIcons(darkMode: appState.darkModeEnabled)
+        // Once shrinking has taken the per-Space slots away the icon is a
+        // single glyph with nothing to hit test. Reporting no slots routes a
+        // left click to the Space picker menu, the same fallback single-icon
+        // mode uses, so every Space stays reachable without growing the icon
+        // back under a menu bar that had no room for it.
+        if showAllSpaces, level.showsInactiveSpaces {
+            let renderedIcons = renderedCurrentDisplayIcons(darkMode: appState.darkModeEnabled, level: level)
             guard !renderedIcons.isEmpty else {
                 return .empty
             }
@@ -283,7 +289,7 @@ final class StatusBarRenderer {
 
     // MARK: - Icon Cache Helpers
 
-    private func buildIconCacheKey() -> IconCacheKey {
+    private func buildIconCacheKey(level: IconShrinkLevel) -> IconCacheKey {
         IconCacheKey(
             allDisplaysSpaceInfo: appState.allDisplaysSpaceInfo,
             allSpaceEntries: appState.allSpaceEntries,
@@ -292,6 +298,7 @@ final class StatusBarRenderer {
             currentSpaceID: appState.currentSpaceID,
             fullscreenOwners: fullscreenOwners(),
             isDarkMode: appState.darkModeEnabled,
+            shrinkLevel: level,
             spacesWithWindows: cachedSpacesWithWindows,
             storeMutationCount: store.mutationCount
         )
@@ -331,28 +338,33 @@ final class StatusBarRenderer {
         return NSRunningApplication(processIdentifier: pid)?.icon
     }
 
-    private func generateStatusBarIcon(isDark: Bool) -> NSImage {
+    /// Picks the rendering for the mode the user chose, narrowed by how far
+    /// the icon has had to shrink. Each level gives up one thing: first the
+    /// custom styling, then the inactive Spaces, then the other displays.
+    private func generateStatusBarIcon(isDark: Bool, level: IconShrinkLevel) -> NSImage {
         // Show all displays mode takes precedence (shows spaces from all displays with separators)
-        if showAllDisplays, !appState.allDisplaysSpaceInfo.isEmpty {
-            return generateCrossDisplayIcon(darkMode: isDark)
+        if showAllDisplays, level.showsOtherDisplays, !appState.allDisplaysSpaceInfo.isEmpty {
+            return generateCrossDisplayIcon(darkMode: isDark, level: level)
         }
 
         // Show all spaces mode (shows all spaces from current display only)
-        if showAllSpaces, !appState.allSpaceEntries.isEmpty {
-            return generateCombinedIcon(darkMode: isDark)
+        if showAllSpaces, level.showsInactiveSpaces, !appState.allSpaceEntries.isEmpty {
+            return generateCombinedIcon(darkMode: isDark, level: level)
         }
 
-        return generateCurrentSpaceIcon(darkMode: isDark)
+        return generateCurrentSpaceIcon(darkMode: isDark, level: level)
     }
 
     // MARK: - Icon Generation
 
     /// Renders the single icon for the current space, resolving any custom
     /// label template with the user-visible space number
-    private func generateCurrentSpaceIcon(darkMode: Bool) -> NSImage {
+    private func generateCurrentSpaceIcon(darkMode: Bool, level: IconShrinkLevel) -> NSImage {
         let labels = fetchLabels(displayID: appState.currentDisplayID ?? "")
         let displayNumber = appState.currentSpaceDisplayNumber
-        let rawLabel = labels[appState.currentSpace].flatMap { $0.isEmpty ? nil : $0 }
+        let rawLabel = level.usesCustomStyling
+            ? labels[appState.currentSpace].flatMap { $0.isEmpty ? nil : $0 }
+            : nil
         let label = rawLabel.map { LabelTemplate.resolve($0, space: displayNumber) }
             ?? appState.currentSpaceLabel
         return generateSingleIcon(
@@ -361,12 +373,19 @@ final class StatusBarRenderer {
             displayNumber: displayNumber,
             label: label,
             labels: labels,
-            darkMode: darkMode
+            darkMode: darkMode,
+            level: level
         )
     }
 
     private func generateSingleIcon(
-        for space: Int, spaceID: Int, displayNumber: Int, label: String, labels: [Int: String], darkMode: Bool
+        for space: Int,
+        spaceID: Int,
+        displayNumber: Int,
+        label: String,
+        labels: [Int: String],
+        darkMode: Bool,
+        level: IconShrinkLevel
     ) -> NSImage {
         generateIcon(
             forSpace: space,
@@ -375,13 +394,18 @@ final class StatusBarRenderer {
             label: label,
             labels: labels,
             displayID: appState.currentDisplayID,
-            darkMode: darkMode
+            darkMode: darkMode,
+            level: level
         )
     }
 
-    private func renderedCurrentDisplayIcons(darkMode: Bool, includeHidden: Bool = false) -> [RenderedSlotIcon] {
+    private func renderedCurrentDisplayIcons(
+        darkMode: Bool,
+        includeHidden: Bool = false,
+        level: IconShrinkLevel = .full
+    ) -> [RenderedSlotIcon] {
         let labels = fetchLabels(displayID: appState.currentDisplayID ?? "")
-        return resolveCurrentDisplaySlots(includeHidden: includeHidden).map { slot in
+        return resolveCurrentDisplaySlots(includeHidden: includeHidden, level: level).map { slot in
             RenderedSlotIcon(
                 slot: slot,
                 icon: generateSingleIcon(
@@ -390,14 +414,15 @@ final class StatusBarRenderer {
                     displayNumber: slot.displayNumber,
                     label: slot.displayLabel,
                     labels: labels,
-                    darkMode: darkMode
+                    darkMode: darkMode,
+                    level: level
                 )
             )
         }
     }
 
-    private func renderedCrossDisplayIcons(darkMode: Bool) -> [[RenderedSlotIcon]] {
-        resolveCrossDisplaySlots().map { displaySlots in
+    private func renderedCrossDisplayIcons(darkMode: Bool, level: IconShrinkLevel) -> [[RenderedSlotIcon]] {
+        resolveCrossDisplaySlots(level: level).map { displaySlots in
             let labels = displaySlots.first.map { fetchLabels(displayID: $0.displayID) } ?? [:]
             return displaySlots.map { slot in
                 RenderedSlotIcon(
@@ -409,19 +434,20 @@ final class StatusBarRenderer {
                         localIndex: slot.localIndex,
                         spaceID: slot.spaceID,
                         displayNumber: slot.displayNumber,
-                        darkMode: darkMode
+                        darkMode: darkMode,
+                        level: level
                     )
                 )
             }
         }
     }
 
-    private func generateCombinedIcon(darkMode: Bool) -> NSImage {
-        let renderedIcons = renderedCurrentDisplayIcons(darkMode: darkMode)
+    private func generateCombinedIcon(darkMode: Bool, level: IconShrinkLevel) -> NSImage {
+        let renderedIcons = renderedCurrentDisplayIcons(darkMode: darkMode, level: level)
 
         // If no spaces to show, show just the current space
         guard !renderedIcons.isEmpty else {
-            return generateCurrentSpaceIcon(darkMode: darkMode)
+            return generateCurrentSpaceIcon(darkMode: darkMode, level: level)
         }
 
         let totalWidth = renderedIcons.reduce(0) { $0 + $1.icon.size.width }
@@ -449,12 +475,12 @@ final class StatusBarRenderer {
         }
     }
 
-    private func generateCrossDisplayIcon(darkMode: Bool) -> NSImage {
-        let renderedDisplays = renderedCrossDisplayIcons(darkMode: darkMode)
+    private func generateCrossDisplayIcon(darkMode: Bool, level: IconShrinkLevel) -> NSImage {
+        let renderedDisplays = renderedCrossDisplayIcons(darkMode: darkMode, level: level)
 
         // If no spaces to show at all, return single icon
         guard !renderedDisplays.isEmpty else {
-            return generateCurrentSpaceIcon(darkMode: darkMode)
+            return generateCurrentSpaceIcon(darkMode: darkMode, level: level)
         }
 
         // Calculate total width: spaces + separators between displays
@@ -508,7 +534,8 @@ final class StatusBarRenderer {
         localIndex: Int,
         spaceID: Int,
         displayNumber: Int,
-        darkMode: Bool
+        darkMode: Bool,
+        level: IconShrinkLevel
     ) -> NSImage {
         generateIcon(
             forSpace: localIndex,
@@ -517,7 +544,8 @@ final class StatusBarRenderer {
             label: label,
             labels: labels,
             displayID: displayID,
-            darkMode: darkMode
+            darkMode: darkMode,
+            level: level
         )
     }
 
@@ -541,6 +569,9 @@ final class StatusBarRenderer {
         let symbolWrap: SymbolWrap
         /// Gap between symbol and label in points at 100% scale
         let symbolGap: Double
+        /// Horizontal padding percentage; a shrunk icon gives up its padding
+        /// before it gives up a Space
+        let paddingScale: Double
     }
 
     /// Shared icon generation: resolves preferences into an IconSpec, then
@@ -552,7 +583,8 @@ final class StatusBarRenderer {
         label: String,
         labels: [Int: String],
         displayID: String?,
-        darkMode: Bool
+        darkMode: Bool,
+        level: IconShrinkLevel
     ) -> NSImage {
         render(resolveIconSpec(
             forSpace: space,
@@ -561,12 +593,19 @@ final class StatusBarRenderer {
             label: label,
             labels: labels,
             displayID: displayID,
-            darkMode: darkMode
+            darkMode: darkMode,
+            level: level
         ))
     }
 
     /// Resolves preferences into final rendering inputs, so drawing needs
     /// no further preference reads.
+    ///
+    /// A shrunk level drops the per-Space label, symbol and badge and renders
+    /// the Space number alone. That is both narrower and cheaper: the
+    /// preference lookups behind those values are never made. Style and colors
+    /// are kept, because a one-character icon is the same width whatever its
+    /// shape, so dropping them would cost recognisability and save nothing.
     private func resolveIconSpec(
         forSpace space: Int,
         spaceID: Int,
@@ -574,8 +613,11 @@ final class StatusBarRenderer {
         label: String,
         labels: [Int: String],
         displayID: String?,
-        darkMode: Bool
+        darkMode: Bool,
+        level: IconShrinkLevel = .full
     ) -> IconSpec {
+        let labels = level.usesCustomStyling ? labels : [:]
+        let paddingScale = level.paddingScaleOverride ?? store.paddingScale
         let hasCustomLabel = labels[space]?.isEmpty == false
         let symbolPosition = SpacePreferences.symbolPosition(
             forSpace: space, display: displayID, store: store
@@ -624,12 +666,17 @@ final class StatusBarRenderer {
                 hasCustomLabel: false,
                 symbolPosition: symbolPosition,
                 symbolWrap: symbolWrap,
-                symbolGap: symbolGap
+                symbolGap: symbolGap,
+                paddingScale: paddingScale
             )
         }
 
-        let symbol = SpacePreferences.symbol(forSpace: space, display: displayID, store: store)
-        let rawBadge = SpacePreferences.badge(forSpace: space, display: displayID, store: store)
+        let symbol = level.usesCustomStyling
+            ? SpacePreferences.symbol(forSpace: space, display: displayID, store: store)
+            : nil
+        let rawBadge = level.usesCustomStyling
+            ? SpacePreferences.badge(forSpace: space, display: displayID, store: store)
+            : nil
         let badge = rawBadge.map { Self.resolveBadge($0, space: displayNumber) }
 
         let skinTone = symbol == nil
@@ -649,7 +696,8 @@ final class StatusBarRenderer {
             hasCustomLabel: hasCustomLabel,
             symbolPosition: symbolPosition,
             symbolWrap: symbolWrap,
-            symbolGap: symbolGap
+            symbolGap: symbolGap,
+            paddingScale: paddingScale
         )
     }
 
@@ -659,7 +707,7 @@ final class StatusBarRenderer {
             return SpaceIconGenerator.generateAppIcon(
                 appIcon,
                 sizeScale: store.sizeScale,
-                paddingScale: store.paddingScale
+                paddingScale: spec.paddingScale
             )
         }
         if let symbol = spec.symbol {
@@ -676,7 +724,7 @@ final class StatusBarRenderer {
                     style: spec.style,
                     skinTone: spec.skinTone,
                     sizeScale: store.sizeScale,
-                    paddingScale: store.paddingScale,
+                    paddingScale: spec.paddingScale,
                     badge: spec.badge
                 )
             }
@@ -686,7 +734,7 @@ final class StatusBarRenderer {
                 customColors: spec.colors,
                 skinTone: spec.skinTone,
                 sizeScale: store.sizeScale,
-                paddingScale: store.paddingScale
+                paddingScale: spec.paddingScale
             )
         }
         return SpaceIconGenerator.generateIcon(
@@ -696,7 +744,7 @@ final class StatusBarRenderer {
             customFont: spec.font,
             style: spec.style,
             sizeScale: store.sizeScale,
-            paddingScale: store.paddingScale,
+            paddingScale: spec.paddingScale,
             badge: spec.badge
         )
     }
@@ -820,7 +868,18 @@ final class StatusBarRenderer {
     }
 
     /// Determines if a space should be shown based on filtering settings
-    private func shouldShowSpace(label: String, spaceID: Int, nonEmptySpaceIDs: Set<Int>) -> Bool {
+    private func shouldShowSpace(
+        label: String,
+        spaceID: Int,
+        nonEmptySpaceIDs: Set<Int>,
+        level: IconShrinkLevel
+    ) -> Bool {
+        // A shrunk icon gives up fullscreen Spaces first: their slot carries an
+        // app icon or a letter rather than a number, so it is the widest thing
+        // a numbers-only rendering can drop
+        if !level.showsFullscreenSpaces, label == Labels.fullscreen {
+            return false
+        }
         // Hide full-screen applications if enabled
         if store.hideFullscreenApps, label == Labels.fullscreen {
             return false
@@ -833,7 +892,10 @@ final class StatusBarRenderer {
     }
 
     /// Resolves visible spaces for the current display into fully computed slots.
-    private func resolveCurrentDisplaySlots(includeHidden: Bool = false) -> [ResolvedSlot] {
+    private func resolveCurrentDisplaySlots(
+        includeHidden: Bool = false,
+        level: IconShrinkLevel = .full
+    ) -> [ResolvedSlot] {
         let globalStartIndex = appState.allDisplaysSpaceInfo
             .first { $0.displayID == appState.currentDisplayID }?.globalStartIndex ?? 1
         let displayID = appState.currentDisplayID ?? ""
@@ -853,7 +915,12 @@ final class StatusBarRenderer {
             let isFullscreen = entry.label == Labels.fullscreen
 
             if !includeHidden, !isActive,
-               !shouldShowSpace(label: entry.label, spaceID: entry.id, nonEmptySpaceIDs: nonEmptySpaceIDs)
+               !shouldShowSpace(
+                   label: entry.label,
+                   spaceID: entry.id,
+                   nonEmptySpaceIDs: nonEmptySpaceIDs,
+                   level: level
+               )
             {
                 continue
             }
@@ -865,7 +932,8 @@ final class StatusBarRenderer {
                 displayNumber: displayNumber,
                 localIndex: localIndex,
                 labels: labels,
-                isFullscreen: isFullscreen
+                isFullscreen: isFullscreen,
+                level: level
             )
 
             slots.append(ResolvedSlot(
@@ -886,7 +954,7 @@ final class StatusBarRenderer {
     /// Resolves visible spaces across all displays into fully computed slots grouped by display.
     /// Each display contributes only its active Space unless Show all Spaces
     /// is also enabled, in which case every display contributes all of its Spaces.
-    private func resolveCrossDisplaySlots() -> [[ResolvedSlot]] {
+    private func resolveCrossDisplaySlots(level: IconShrinkLevel) -> [[ResolvedSlot]] {
         let allSpaceIDsAcrossDisplays = appState.allDisplaysSpaceInfo.flatMap { $0.entries.map(\.id) }
         let nonEmptySpaceIDs: Set<Int> = if store.hideEmptySpaces {
             getCachedSpacesWithWindows(forSpaceIDs: allSpaceIDsAcrossDisplays)
@@ -903,7 +971,10 @@ final class StatusBarRenderer {
             let activeSpaceID = displayInfo.activeSpaceID ?? (isCurrentDisplay ? appState.currentSpaceID : nil)
 
             for (arrayIndex, entry) in displayInfo.entries.enumerated() {
-                if !showAllSpaces, entry.id != activeSpaceID {
+                // Shrinking past `compact` leaves each display showing only the
+                // Space it is on, the same shape as single-icon mode but with
+                // every display still represented
+                if !showAllSpaces || !level.showsInactiveSpaces, entry.id != activeSpaceID {
                     continue
                 }
 
@@ -913,8 +984,10 @@ final class StatusBarRenderer {
                 let isActive = entry.id == appState.currentSpaceID
                 let isFullscreen = entry.label == Labels.fullscreen
 
+                // Each display keeps its active Space whatever the level, so a
+                // display is never left without a slot
                 guard isDisplayActiveSpace || shouldShowSpace(
-                    label: entry.label, spaceID: entry.id, nonEmptySpaceIDs: nonEmptySpaceIDs
+                    label: entry.label, spaceID: entry.id, nonEmptySpaceIDs: nonEmptySpaceIDs, level: level
                 )
                 else {
                     continue
@@ -926,7 +999,8 @@ final class StatusBarRenderer {
                     displayNumber: displayNumber,
                     localIndex: localIndex,
                     labels: labels,
-                    isFullscreen: isFullscreen
+                    isFullscreen: isFullscreen,
+                    level: level
                 )
 
                 displaySlots.append(ResolvedSlot(
@@ -1014,12 +1088,13 @@ final class StatusBarRenderer {
         displayNumber: Int,
         localIndex: Int,
         labels: [Int: String],
-        isFullscreen: Bool
+        isFullscreen: Bool,
+        level: IconShrinkLevel = .full
     ) -> String {
         if isFullscreen {
             return entry.label
         }
-        if let label = labels[localIndex], !label.isEmpty {
+        if level.usesCustomStyling, let label = labels[localIndex], !label.isEmpty {
             return LabelTemplate.resolve(label, space: displayNumber)
         }
         return store.localSpaceNumbers ? entry.label : String(displayNumber)

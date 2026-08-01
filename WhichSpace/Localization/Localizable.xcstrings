@@ -30063,259 +30063,259 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "فاصل"
+            "value" : "لون الفاصل"
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Разделител"
+            "value" : "Цвят на разделителя"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Separador"
+            "value" : "Color del separador"
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oddělovač"
+            "value" : "Barva oddělovače"
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Skillelinje"
+            "value" : "Skillelinjens farve"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trenner"
+            "value" : "Trennerfarbe"
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Διαχωριστικό"
+            "value" : "Χρώμα διαχωριστικού"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Separator"
+            "value" : "Separator color"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Separator"
+            "value" : "Separator colour"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Separador"
+            "value" : "Color del separador"
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "جداکننده"
+            "value" : "رنگ جداکننده"
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erotin"
+            "value" : "Erottimen väri"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Séparateur"
+            "value" : "Couleur du séparateur"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "מפריד"
+            "value" : "צבע המפריד"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "विभाजक"
+            "value" : "विभाजक का रंग"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elválasztó"
+            "value" : "Elválasztó színe"
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pemisah"
+            "value" : "Warna pemisah"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Separatore"
+            "value" : "Colore del separatore"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "区切り線"
+            "value" : "区切り線の色"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "구분선"
+            "value" : "구분선 색상"
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Разделник"
+            "value" : "Боја на разделникот"
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pemisah"
+            "value" : "Warna pemisah"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Skillelinje"
+            "value" : "Skillelinjens farge"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scheidingslijn"
+            "value" : "Kleur scheidingslijn"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Skiljelinje"
+            "value" : "Farge på skiljelinja"
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "جداکار"
+            "value" : "جداکار دا رنگ"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Separator"
+            "value" : "Kolor separatora"
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "بېلکوونکی"
+            "value" : "د بېلکوونکي رنګ"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Separador"
+            "value" : "Cor do separador"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Separador"
+            "value" : "Cor do separador"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Separator"
+            "value" : "Culoarea separatorului"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Разделитель"
+            "value" : "Цвет разделителя"
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oddeľovač"
+            "value" : "Farba oddeľovača"
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Razdelnik"
+            "value" : "Boja razdelnika"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avgränsare"
+            "value" : "Avgränsarens färg"
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ตัวคั่น"
+            "value" : "สีตัวคั่น"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ayırıcı"
+            "value" : "Ayırıcı rengi"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Роздільник"
+            "value" : "Колір роздільника"
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "جداکار"
+            "value" : "جداکار کا رنگ"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dấu phân tách"
+            "value" : "Màu dấu phân tách"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "分隔线"
+            "value" : "分隔线颜色"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "分隔線"
+            "value" : "分隔線顏色"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "分隔線"
+            "value" : "分隔線顏色"
           }
         }
       }
@@ -31106,6 +31106,268 @@
         }
       }
     },
+    "label_separator_none" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "بدون"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Няма"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cap"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Žádný"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ingen"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ohne"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Κανένα"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ninguno"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "هیچ‌کدام"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ei mitään"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ללא"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "कोई नहीं"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nincs"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tidak ada"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessuno"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "なし"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "없음"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ништо"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tiada"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ingen"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geen"
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ingen"
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "کجھ نہیں"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brak"
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "هیڅ"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nenhum"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nenhum"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Niciunul"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нет"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Žiadny"
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ništa"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ingen"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ไม่มี"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yok"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Немає"
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "کوئی نہیں"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Không có"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "無"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "無"
+          }
+        }
+      }
+    },
     "label_separator_slash" : {
       "localizations" : {
         "ar" : {
@@ -31373,259 +31635,259 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "النمط"
+            "value" : "نمط الفاصل"
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Стил"
+            "value" : "Стил на разделителя"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estil"
+            "value" : "Estil del separador"
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Styl"
+            "value" : "Styl oddělovače"
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stil"
+            "value" : "Skillelinjens stil"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stil"
+            "value" : "Trennerstil"
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Στυλ"
+            "value" : "Στιλ διαχωριστικού"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Style"
+            "value" : "Separator style"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Style"
+            "value" : "Separator style"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estilo"
+            "value" : "Estilo del separador"
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "سبک"
+            "value" : "سبک جداکننده"
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tyyli"
+            "value" : "Erottimen tyyli"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Style"
+            "value" : "Style du séparateur"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "סגנון"
+            "value" : "סגנון המפריד"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "शैली"
+            "value" : "विभाजक की शैली"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stílus"
+            "value" : "Elválasztó stílusa"
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gaya"
+            "value" : "Gaya pemisah"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stile"
+            "value" : "Stile del separatore"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "スタイル"
+            "value" : "区切り線のスタイル"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "스타일"
+            "value" : "구분선 스타일"
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Стил"
+            "value" : "Стил на разделникот"
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gaya"
+            "value" : "Gaya pemisah"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stil"
+            "value" : "Skillelinjens stil"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stijl"
+            "value" : "Stijl scheidingslijn"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stil"
+            "value" : "Stil på skiljelinja"
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "سٹائل"
+            "value" : "جداکار دا سٹائل"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Styl"
+            "value" : "Styl separatora"
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "سټایل"
+            "value" : "د بېلکوونکي سټایل"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estilo"
+            "value" : "Estilo do separador"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estilo"
+            "value" : "Estilo do separador"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stil"
+            "value" : "Stilul separatorului"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Стиль"
+            "value" : "Стиль разделителя"
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Štýl"
+            "value" : "Štýl oddeľovača"
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stil"
+            "value" : "Stil razdelnika"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stil"
+            "value" : "Avgränsarens stil"
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "สไตล์"
+            "value" : "สไตล์ตัวคั่น"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stil"
+            "value" : "Ayırıcı stili"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Стиль"
+            "value" : "Стиль роздільника"
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "اسٹائل"
+            "value" : "جداکار کا اسٹائل"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kiểu"
+            "value" : "Kiểu dấu phân tách"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "样式"
+            "value" : "分隔线样式"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "樣式"
+            "value" : "分隔線樣式"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "樣式"
+            "value" : "分隔線樣式"
           }
         }
       }
@@ -43703,259 +43965,259 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "تنطبق التغييرات على جميع الشاشات"
+            "value" : "جميع الشاشات"
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Промените се прилагат за всички дисплеи"
+            "value" : "Всички дисплеи"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Els canvis s'apliquen a totes les pantalles"
+            "value" : "Totes les pantalles"
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Změny se použijí na všechny displeje"
+            "value" : "Všechny displeje"
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ændringer gælder for alle skærme"
+            "value" : "Alle skærme"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Änderungen gelten für alle Displays"
+            "value" : "Alle Displays"
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Οι αλλαγές ισχύουν για όλες τις οθόνες"
+            "value" : "Όλες οι οθόνες"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Changes apply to all Displays"
+            "value" : "All displays"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Changes apply to all Displays"
+            "value" : "All displays"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Los cambios se aplican a todas las pantallas"
+            "value" : "Todas las pantallas"
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "تغییرات روی همه نمایشگرها اعمال می‌شود"
+            "value" : "همه نمایشگرها"
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Muutokset koskevat kaikkia näyttöjä"
+            "value" : "Kaikki näytöt"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les modifications s'appliquent à tous les écrans"
+            "value" : "Tous les écrans"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "השינויים חלים על כל התצוגות"
+            "value" : "כל התצוגות"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "बदलाव सभी डिस्प्ले पर लागू होते हैं"
+            "value" : "सभी डिस्प्ले"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A módosítások az összes kijelzőre érvényesek"
+            "value" : "Az összes kijelző"
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Perubahan berlaku untuk semua layar"
+            "value" : "Semua layar"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le modifiche si applicano a tutti i monitor"
+            "value" : "Tutti i monitor"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "変更はすべてのディスプレイに適用されます"
+            "value" : "すべてのディスプレイ"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "변경 사항은 모든 디스플레이에 적용됩니다"
+            "value" : "모든 디스플레이"
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Промените се применуваат на сите дисплеи"
+            "value" : "Сите дисплеи"
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Perubahan terpakai pada semua paparan"
+            "value" : "Semua paparan"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Endringer gjelder alle skjermer"
+            "value" : "Alle skjermer"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wijzigingen gelden voor alle schermen"
+            "value" : "Alle schermen"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Endringar gjeld alle skjermar"
+            "value" : "Alle skjermar"
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "تبدیلیاں تمام ڈسپلے تے لاگو ہوندیاں نیں"
+            "value" : "تمام ڈسپلے"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zmiany dotyczą wszystkich ekranów"
+            "value" : "Wszystkie ekrany"
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "بدلونونه په ټولو ډیسپلېونو پلي کېږي"
+            "value" : "ټولې ډیسپلېګانې"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "As alterações aplicam-se a todos os monitores"
+            "value" : "Todos os monitores"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "As alterações se aplicam a todas as telas"
+            "value" : "Todas as telas"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Modificările se aplică tuturor ecranelor"
+            "value" : "Toate ecranele"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Изменения применяются ко всем дисплеям"
+            "value" : "Все дисплеи"
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zmeny sa použijú na všetky displeje"
+            "value" : "Všetky displeje"
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Promene se primenjuju na sve ekrane"
+            "value" : "Svi ekrani"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ändringar gäller alla skärmar"
+            "value" : "Alla skärmar"
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "การเปลี่ยนแปลงมีผลกับทุกจอภาพ"
+            "value" : "ทุกจอภาพ"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Değişiklikler tüm ekranlara uygulanır"
+            "value" : "Tüm ekranlar"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Зміни застосовуються до всіх дисплеїв"
+            "value" : "Усі дисплеї"
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "تبدیلیاں تمام ڈسپلے پر لاگو ہوتی ہیں"
+            "value" : "تمام ڈسپلے"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Các thay đổi áp dụng cho mọi màn hình"
+            "value" : "Mọi màn hình"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "更改应用于所有显示器"
+            "value" : "所有显示器"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "變更套用於所有顯示器"
+            "value" : "所有顯示器"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "變更套用於所有顯示器"
+            "value" : "所有顯示器"
           }
         }
       }
@@ -46585,259 +46847,259 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "اختيار خط مخصص لنص المساحة الحالية"
+            "value" : "خط مخصص لنص المساحة الحالية"
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Избери персонализиран шрифт за текста на текущото Пространство"
+            "value" : "Персонализиран шрифт за текста на текущото Пространство"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escull una lletra personalitzada per al text de l'Espai actual"
+            "value" : "Lletra personalitzada per al text de l'Espai actual"
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vyberte vlastní písmo pro text aktuálního Space"
+            "value" : "Vlastní písmo pro text aktuálního Space"
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vælg en brugerdefineret skrifttype til teksten for det aktuelle Space"
+            "value" : "Brugerdefineret skrifttype til teksten for det aktuelle Space"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Benutzerdefinierte Schriftart für den Text des aktuellen Spaces wählen"
+            "value" : "Benutzerdefinierte Schriftart für den Text des aktuellen Spaces"
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Επιλέξτε προσαρμοσμένη γραμματοσειρά για το κείμενο του τρέχοντος Χώρου"
+            "value" : "Προσαρμοσμένη γραμματοσειρά για το κείμενο του τρέχοντος Χώρου"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choose a custom font for the current Space's text"
+            "value" : "Custom font for the current Space's text"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choose a custom font for the current Space's text"
+            "value" : "Custom font for the current Space's text"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elegir una fuente personalizada para el texto del Espacio actual"
+            "value" : "Fuente personalizada para el texto del Espacio actual"
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "فونت سفارشی برای متن فضای فعلی انتخاب کنید"
+            "value" : "فونت سفارشی برای متن فضای فعلی"
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Valitse mukautettu fontti nykyisen Spacen tekstille"
+            "value" : "Mukautettu fontti nykyisen Spacen tekstille"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisir une police personnalisée pour le texte de l'Espace actuel"
+            "value" : "Police personnalisée pour le texte de l'Espace actuel"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "בחר גופן מותאם לטקסט של המרחב הנוכחי"
+            "value" : "גופן מותאם לטקסט של המרחב הנוכחי"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "मौजूदा स्पेस के टेक्स्ट के लिए कस्टम फ़ॉन्ट चुनें"
+            "value" : "मौजूदा स्पेस के टेक्स्ट के लिए कस्टम फ़ॉन्ट"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Egyedi betűtípus kiválasztása az aktuális Space szövegéhez"
+            "value" : "Egyedi betűtípus az aktuális Space szövegéhez"
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pilih font kustom untuk teks Space saat ini"
+            "value" : "Font kustom untuk teks Space saat ini"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scegli un font personalizzato per il testo dello Spazio corrente"
+            "value" : "Font personalizzato per il testo dello Spazio corrente"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "このスペースのテキスト用にカスタムフォントを選択"
+            "value" : "このスペースのテキスト用のカスタムフォント"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "현재 스페이스 텍스트에 사용할 사용자 지정 글꼴 선택"
+            "value" : "현재 스페이스 텍스트에 사용할 사용자 지정 글꼴"
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Избери прилагоден фонт за текстот на тековниот Простор"
+            "value" : "Прилагоден фонт за текстот на тековниот Простор"
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pilih fon tersuai untuk teks Ruang semasa"
+            "value" : "Fon tersuai untuk teks Ruang semasa"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Velg en egendefinert skrifttype for teksten til gjeldende Space"
+            "value" : "Egendefinert skrifttype for teksten til gjeldende Space"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kies een aangepast lettertype voor de tekst van de huidige Space"
+            "value" : "Aangepast lettertype voor de tekst van de huidige Space"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vel ein eigendefinert skrifttype for teksten til gjeldande Space"
+            "value" : "Eigendefinert skrifttype for teksten til gjeldande Space"
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "موجودہ سپیس دے ٹیکسٹ لئی حسبِ منشا فونٹ چُن لو"
+            "value" : "موجودہ سپیس دے ٹیکسٹ لئی حسبِ منشا فونٹ"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wybierz niestandardową czcionkę dla tekstu bieżącego Space"
+            "value" : "Niestandardowa czcionka dla tekstu bieżącego Space"
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "د روان سپېس د متن لپاره ځانګړی فانټ وټاکئ"
+            "value" : "د روان سپېس د متن لپاره ځانګړی فانټ"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escolher um tipo de letra personalizado para o texto do Espaço atual"
+            "value" : "Tipo de letra personalizado para o texto do Espaço atual"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escolher uma fonte personalizada para o texto do Espaço atual"
+            "value" : "Fonte personalizada para o texto do Espaço atual"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alege un font personalizat pentru textul Spațiului curent"
+            "value" : "Font personalizat pentru textul Spațiului curent"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Выбрать пользовательский шрифт для текста текущего Пространства"
+            "value" : "Пользовательский шрифт для текста текущего Пространства"
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vybrať vlastné písmo pre text aktuálneho Priestoru"
+            "value" : "Vlastné písmo pre text aktuálneho Priestoru"
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Izaberi prilagođeni font za tekst tekućeg Prostora"
+            "value" : "Prilagođeni font za tekst tekućeg Prostora"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Välj ett anpassat teckensnitt för texten för aktuellt Space"
+            "value" : "Anpassat teckensnitt för texten för aktuellt Space"
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "เลือกแบบอักษรที่กำหนดเองสำหรับข้อความของ Space ปัจจุบัน"
+            "value" : "แบบอักษรที่กำหนดเองสำหรับข้อความของ Space ปัจจุบัน"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Geçerli Alanın metni için özel yazı tipi seç"
+            "value" : "Geçerli Alanın metni için özel yazı tipi"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Вибрати власний шрифт для тексту поточного Простору"
+            "value" : "Власний шрифт для тексту поточного Простору"
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "موجودہ اسپیس کے ٹیکسٹ کے لیے حسبِ منشا فونٹ چُنیں"
+            "value" : "موجودہ اسپیس کے ٹیکسٹ کے لیے حسبِ منشا فونٹ"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chọn phông chữ tùy chỉnh cho văn bản của Không gian hiện tại"
+            "value" : "Phông chữ tùy chỉnh cho văn bản của Không gian hiện tại"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "为当前空间的文字选择自定义字体"
+            "value" : "用于当前空间文字的自定义字体"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "為目前空間的文字選擇自訂字體"
+            "value" : "用於目前空間文字的自訂字體"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "為目前空間的文字選擇自訂字體"
+            "value" : "用於目前空間文字的自訂字體"
           }
         }
       }
@@ -51564,259 +51826,521 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "لون الخط الفاصل بين مساحات كل شاشة"
+            "value" : "لون الفاصل المرسوم بين مساحات كل شاشة"
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Цветът на разделителната линия между Пространствата на всеки дисплей"
+            "value" : "Цвят на разделителя между Пространствата на всеки дисплей"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El color de la línia que separa els Espais de cada pantalla"
+            "value" : "Color del separador entre els Espais de cada pantalla"
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Barva oddělovací čáry mezi Spaces jednotlivých displejů"
+            "value" : "Barva oddělovače mezi Spaces jednotlivých displejů"
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Farven på skillelinjen mellem hver skærms Spaces"
+            "value" : "Farve på separatoren mellem hver skærms Spaces"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Farbe des Trenners zwischen den Spaces der einzelnen Displays"
+            "value" : "Farbe des Trenners zwischen den Spaces der einzelnen Displays"
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Το χρώμα της διαχωριστικής γραμμής μεταξύ των Χώρων κάθε οθόνης"
+            "value" : "Χρώμα του διαχωριστικού μεταξύ των Χώρων κάθε οθόνης"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The color of the line drawn between each display's Spaces"
+            "value" : "Color of the separator drawn between each display's Spaces"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The colour of the line drawn between each display's Spaces"
+            "value" : "Colour of the separator drawn between each display's Spaces"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El color de la línea que separa los Espacios de cada pantalla"
+            "value" : "Color del separador entre los Espacios de cada pantalla"
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "رنگ خط جداکننده بین فضاهای هر نمایشگر"
+            "value" : "رنگ جداکننده بین فضاهای هر نمایشگر"
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kunkin näytön Spacet erottavan viivan väri"
+            "value" : "Kunkin näytön Spacejen välisen erottimen väri"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La couleur de la ligne séparant les Espaces de chaque écran"
+            "value" : "Couleur du séparateur entre les Espaces de chaque écran"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "צבע הקו המפריד בין המרחבים של כל תצוגה"
+            "value" : "צבע המפריד בין המרחבים של כל תצוגה"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "प्रत्येक डिस्प्ले के स्पेसेस के बीच खींची गई रेखा का रंग"
+            "value" : "प्रत्येक डिस्प्ले के स्पेसेस के बीच खींचे गए विभाजक का रंग"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Az egyes kijelzők Space-eit elválasztó vonal színe"
+            "value" : "Az egyes kijelzők Space-eit elválasztó jel színe"
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Warna garis pemisah antara Space setiap layar"
+            "value" : "Warna pemisah antara Space setiap layar"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il colore della linea che separa gli Spazi di ogni monitor"
+            "value" : "Colore del separatore tra gli Spazi di ogni monitor"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "各ディスプレイのスペースの間に表示される線の色"
+            "value" : "各ディスプレイのスペースの間に表示される区切り記号の色"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "각 디스플레이의 스페이스 사이에 그려지는 구분선 색상"
+            "value" : "각 디스플레이의 스페이스 사이에 그려지는 구분 기호 색상"
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Бојата на разделната линија меѓу Просторите на секој дисплеј"
+            "value" : "Боја на разделникот меѓу Просторите на секој дисплеј"
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Warna garis pemisah antara Ruang setiap paparan"
+            "value" : "Warna pemisah antara Ruang setiap paparan"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fargen på skillelinjen mellom hver skjerms Spaces"
+            "value" : "Farge på skilletegnet mellom hver skjerms Spaces"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "De kleur van de scheidingslijn tussen de Spaces van elk scherm"
+            "value" : "Kleur van het scheidingsteken tussen de Spaces van elk scherm"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fargen på skiljelinja mellom kvar skjerm sine Spaces"
+            "value" : "Farge på skiljeteiknet mellom kvar skjerm sine Spaces"
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ہر ڈسپلے دیاں سپیسز وچکار کھچی گئی لکیر دا رنگ"
+            "value" : "ہر ڈسپلے دیاں سپیسز وچکار کھچے گئے وکھ کرن والے نشان دا رنگ"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kolor linii oddzielającej Spaces poszczególnych ekranów"
+            "value" : "Kolor separatora oddzielającego Spaces poszczególnych ekranów"
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "د هرې ډیسپلې د سپېسونو ترمنځ د کښل شوې کرښې رنګ"
+            "value" : "د هرې ډیسپلې د سپېسونو ترمنځ د کښل شوي بېلوونکي رنګ"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A cor da linha que separa os Espaços de cada monitor"
+            "value" : "Cor do separador entre os Espaços de cada monitor"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A cor da linha que separa os Espaços de cada tela"
+            "value" : "Cor do separador entre os Espaços de cada tela"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Culoarea liniei care separă Spațiile fiecărui ecran"
+            "value" : "Culoare pentru separatorul dintre Spațiile fiecărui ecran"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Цвет линии, разделяющей Пространства каждого дисплея"
+            "value" : "Цвет разделителя между Пространствами каждого дисплея"
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Farba oddeľovacej čiary medzi Priestormi jednotlivých displejov"
+            "value" : "Farba oddeľovača medzi Priestormi jednotlivých displejov"
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Boja linije koja razdvaja Prostore svakog ekrana"
+            "value" : "Boja razdvajača između Prostora svakog ekrana"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Färgen på avgränsaren mellan varje skärms Spaces"
+            "value" : "Färg på avgränsaren mellan varje skärms Spaces"
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "สีของเส้นคั่นระหว่าง Space ของแต่ละจอภาพ"
+            "value" : "สีของตัวคั่นระหว่าง Space ของแต่ละจอภาพ"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Her ekranın Alanları arasına çizilen çizginin rengi"
+            "value" : "Her ekranın Alanları arasına çizilen ayıracın rengi"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Колір лінії, що розділяє Простори кожного дисплея"
+            "value" : "Колір роздільника між Просторами кожного дисплея"
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ہر ڈسپلے کے اسپیسز کے درمیان کھینچی گئی لکیر کا رنگ"
+            "value" : "ہر ڈسپلے کے اسپیسز کے درمیان کھینچے گئے علیحدہ کار کا رنگ"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Màu của đường kẻ giữa các Không gian của mỗi màn hình"
+            "value" : "Màu của dấu phân cách giữa các Không gian của mỗi màn hình"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "每个显示器的空间之间分隔线的颜色"
+            "value" : "每个显示器的空间之间分隔符的颜色"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "每個顯示器的空間之間分隔線的顏色"
+            "value" : "每個顯示器的空間之間分隔符號的顏色"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "每個顯示器的空間之間分隔線的顏色"
+            "value" : "每個顯示器的空間之間分隔符號的顏色"
+          }
+        }
+      }
+    },
+    "tip_separator_style" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "شكل الفاصل المرسوم بين مساحات كل شاشة"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Форма на разделителя между Пространствата на всеки дисплей"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forma del separador entre els Espais de cada pantalla"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tvar oddělovače mezi Spaces jednotlivých displejů"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Form på separatoren mellem hver skærms Spaces"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Form des Trenners zwischen den Spaces der einzelnen Displays"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Σχήμα του διαχωριστικού μεταξύ των Χώρων κάθε οθόνης"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shape of the separator drawn between each display's Spaces"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shape of the separator drawn between each display's Spaces"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forma del separador entre los Espacios de cada pantalla"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "شکل جداکننده بین فضاهای هر نمایشگر"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kunkin näytön Spacejen välisen erottimen muoto"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forme du séparateur entre les Espaces de chaque écran"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "צורת המפריד בין המרחבים של כל תצוגה"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "प्रत्येक डिस्प्ले के स्पेसेस के बीच खींचे गए विभाजक का आकार"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Az egyes kijelzők Space-eit elválasztó jel alakja"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bentuk pemisah antara Space setiap layar"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forma del separatore tra gli Spazi di ogni monitor"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "各ディスプレイのスペースの間に表示される区切り記号の形"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "각 디스플레이의 스페이스 사이에 그려지는 구분선 모양"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Облик на разделникот меѓу Просторите на секој дисплеј"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bentuk pemisah antara Ruang setiap paparan"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Form på skilletegnet mellom hver skjerms Spaces"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vorm van het scheidingsteken tussen de Spaces van elk scherm"
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Form på skiljeteiknet mellom kvar skjerm sine Spaces"
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ہر ڈسپلے دیاں سپیسز وچکار کھچے گئے وکھ کرن والے نشان دی شکل"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kształt separatora oddzielającego Spaces poszczególnych ekranów"
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "د هرې ډیسپلې د سپېسونو ترمنځ د کښل شوي بېلوونکي بڼه"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forma do separador entre os Espaços de cada monitor"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forma do separador entre os Espaços de cada tela"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Formă pentru separatorul dintre Spațiile fiecărui ecran"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Форма разделителя между Пространствами каждого дисплея"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tvar oddeľovača medzi Priestormi jednotlivých displejov"
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oblik razdvajača između Prostora svakog ekrana"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Form på avgränsaren mellan varje skärms Spaces"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "รูปร่างของตัวคั่นระหว่าง Space ของแต่ละจอภาพ"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Her ekranın Alanları arasına çizilen ayıracın şekli"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Форма роздільника між Просторами кожного дисплея"
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ہر ڈسپلے کے اسپیسز کے درمیان کھینچے گئے علیحدہ کار کی شکل"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hình dạng của dấu phân cách giữa các Không gian của mỗi màn hình"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每个显示器的空间之间分隔符的形状"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每個顯示器的空間之間分隔符號的形狀"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每個顯示器的空間之間分隔符號的形狀"
           }
         }
       }
@@ -52869,24 +53393,286 @@
         }
       }
     },
-    "tip_sound" : {
+    "tip_shrink_to_fit" : {
       "localizations" : {
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "الصوت الذي يتم تشغيله عند تغيّر المساحة الحالية"
+            "value" : "تصغير %@ في شريط القوائم عند عدم توفر مساحة كافية"
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Звукът, който се възпроизвежда при смяна на текущото Пространство"
+            "value" : "Свий %@ в лентата с менюта, когато вече не се побира"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El so que es reprodueix quan canvia l'Espai actual"
+            "value" : "Compacta %@ a la barra de menús quan ja no hi càpiga"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zmenšit %@ v řádku nabídek, když se už nevejde"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Formindsk %@ på menulinjen, når der ikke længere er plads"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ in der Menüleiste verkleinern, wenn es nicht mehr passt"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Σμίκρυνση του %@ στη γραμμή μενού όταν δεν χωράει πλέον"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compact %@ in the menu bar when it no longer fits"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compact %@ in the menu bar when it no longer fits"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compactar %@ en la barra de menús cuando ya no quepa"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "فشرده کردن %@ در نوار منو وقتی دیگر جا نمی‌شود"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tiivistä %@ valikkorivillä, kun se ei enää mahdu"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compacter %@ dans la barre des menus quand il ne tient plus"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "כווץ את %@ בשורת התפריטים כשהוא כבר לא נכנס"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "जब %@ मेनू बार में फ़िट न हो तो उसे छोटा करें"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A %@ kicsinyítése a menüsorban, ha már nem fér el"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perkecil %@ di bilah menu saat tidak lagi muat"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Riduci %@ nella barra dei menu quando non trova più spazio"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メニューバーに収まらなくなったら %@ を縮小"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@가 메뉴 막대에 더 이상 들어가지 않으면 축소"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Намали го %@ во лентата со менија кога повеќе не се собира"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kecilkan %@ dalam bar menu apabila tidak lagi muat"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Krymp %@ på menylinjen når det ikke lenger er plass"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ in de menubalk verkleinen wanneer het niet meer past"
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Krymp %@ på menylinja når det ikkje lenger er plass"
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "جدوں %@ مینیو بار وچ فٹ نہ ہووے تاں اوہنوں چھوٹا کرو"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zmniejsz %@ na pasku menu, gdy przestanie się mieścić"
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "کله چې %@ په مېنو پټه کې نور نه ځاییږي، کوچنی یې کړئ"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compactar %@ na barra de menus quando deixar de caber"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compactar %@ na barra de menus quando não couber mais"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compactează %@ în bara de meniu când nu mai încape"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Уменьшать %@ в строке меню, когда перестаёт хватать места"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zmenšiť %@ v lište ponúk, keď sa už nezmestí"
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Smanji %@ u traci menija kada više ne staje"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Krymp %@ i menyraden när det inte längre får plats"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ย่อ %@ ในแถบเมนูเมื่อไม่พอดีอีกต่อไป"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ menü çubuğuna artık sığmadığında küçült"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Зменшувати %@ у смузі меню, коли перестає вистачати місця"
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "جب %@ مینو بار میں فٹ نہ ہو تو اسے چھوٹا کریں"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thu nhỏ %@ trên thanh menu khi không còn vừa"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当 %@ 在菜单栏中放不下时将其缩小"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "當 %@ 在選單列中放不下時將其縮小"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "當 %@ 在選單列中放不下時將其縮小"
+          }
+        }
+      }
+    },
+    "tip_sound" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "صوت يُشغَّل عند تغيّر المساحة الحالية"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Звук, който се възпроизвежда при смяна на текущото Пространство"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "So que es reprodueix quan canvia l'Espai actual"
           }
         },
         "cs" : {
@@ -52898,37 +53684,37 @@
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lyden der afspilles, når det aktuelle Space skifter"
+            "value" : "Lyd der afspilles, når det aktuelle Space skifter"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der Ton, der beim Wechsel des aktuellen Space abgespielt wird"
+            "value" : "Ton, der beim Wechsel des aktuellen Space abgespielt wird"
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ο ήχος που αναπαράγεται όταν αλλάζει ο τρέχων Χώρος"
+            "value" : "Ήχος που αναπαράγεται όταν αλλάζει ο τρέχων Χώρος"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The sound played when the current Space changes"
+            "value" : "Sound played when the current Space changes"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The sound played when the current Space changes"
+            "value" : "Sound played when the current Space changes"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El sonido que se reproduce cuando cambia el Espacio actual"
+            "value" : "Sonido que se reproduce cuando cambia el Espacio actual"
           }
         },
         "fa" : {
@@ -52946,13 +53732,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le son joué lorsque l'Espace actuel change"
+            "value" : "Son joué lorsque l'Espace actuel change"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "הצליל המושמע כאשר המרחב הנוכחי משתנה"
+            "value" : "צליל שמושמע כאשר המרחב הנוכחי משתנה"
           }
         },
         "hi" : {
@@ -52964,7 +53750,7 @@
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A jelenlegi Space váltásakor lejátszott hang"
+            "value" : "Jelenlegi Space váltásakor lejátszott hang"
           }
         },
         "id" : {
@@ -52976,7 +53762,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il suono riprodotto quando cambia lo Spazio attuale"
+            "value" : "Suono riprodotto quando cambia lo Spazio attuale"
           }
         },
         "ja" : {
@@ -52994,7 +53780,7 @@
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Звукот што се пушта кога се менува тековниот Простор"
+            "value" : "Звук што се пушта кога се менува тековниот Простор"
           }
         },
         "ms" : {
@@ -53006,19 +53792,19 @@
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lyden som spilles av når gjeldende Space endres"
+            "value" : "Lyd som spilles av når gjeldende Space endres"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Het geluid dat wordt afgespeeld wanneer de huidige Space verandert"
+            "value" : "Geluid dat wordt afgespeeld wanneer de huidige Space verandert"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lyden som vert spela av når gjeldande Space endrar seg"
+            "value" : "Lyd som vert spela av når gjeldande Space endrar seg"
           }
         },
         "pa" : {
@@ -53042,19 +53828,19 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O som reproduzido quando o Espaço atual muda"
+            "value" : "Som reproduzido quando o Espaço atual muda"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O som reproduzido quando o Espaço atual muda"
+            "value" : "Som reproduzido quando o Espaço atual muda"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sunetul redat când Spațiul curent se schimbă"
+            "value" : "Sunet redat când Spațiul curent se schimbă"
           }
         },
         "ru" : {
@@ -53078,7 +53864,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ljudet som spelas upp när aktuellt Space ändras"
+            "value" : "Ljud som spelas upp när aktuellt Space ändras"
           }
         },
         "th" : {
@@ -53136,19 +53922,19 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "الصوت الذي يتم تشغيله عند الانتقال إلى هذه المساحة"
+            "value" : "صوت يُشغَّل عند الانتقال إلى هذه المساحة"
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Звукът, който се възпроизвежда при превключване към това Пространство"
+            "value" : "Звук, който се възпроизвежда при превключване към това Пространство"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El so que es reprodueix en canviar a aquest Espai"
+            "value" : "So que es reprodueix en canviar a aquest Espai"
           }
         },
         "cs" : {
@@ -53160,37 +53946,37 @@
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lyden der afspilles, når der skiftes til dette Space"
+            "value" : "Lyd der afspilles, når der skiftes til dette Space"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der Ton, der beim Wechsel zu diesem Space abgespielt wird"
+            "value" : "Ton, der beim Wechsel zu diesem Space abgespielt wird"
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ο ήχος που αναπαράγεται κατά τη μετάβαση σε αυτόν τον Χώρο"
+            "value" : "Ήχος που αναπαράγεται κατά τη μετάβαση σε αυτόν τον Χώρο"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The sound played when switching to this Space"
+            "value" : "Sound played when switching to this Space"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The sound played when switching to this Space"
+            "value" : "Sound played when switching to this Space"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El sonido que se reproduce al cambiar a este Espacio"
+            "value" : "Sonido que se reproduce al cambiar a este Espacio"
           }
         },
         "fa" : {
@@ -53208,13 +53994,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le son joué lors du passage à cet Espace"
+            "value" : "Son joué lors du passage à cet Espace"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "הצליל המושמע במעבר למרחב הזה"
+            "value" : "צליל שמושמע במעבר למרחב הזה"
           }
         },
         "hi" : {
@@ -53226,7 +54012,7 @@
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Az erre a Space-re váltáskor lejátszott hang"
+            "value" : "Erre a Space-re váltáskor lejátszott hang"
           }
         },
         "id" : {
@@ -53238,7 +54024,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il suono riprodotto quando si passa a questo Spazio"
+            "value" : "Suono riprodotto quando si passa a questo Spazio"
           }
         },
         "ja" : {
@@ -53256,7 +54042,7 @@
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Звукот што се пушта при префрлање на овој Простор"
+            "value" : "Звук што се пушта при префрлање на овој Простор"
           }
         },
         "ms" : {
@@ -53268,19 +54054,19 @@
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lyden som spilles av når du bytter til dette Space"
+            "value" : "Lyd som spilles av når du bytter til dette Space"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Het geluid dat wordt afgespeeld bij het wisselen naar deze Space"
+            "value" : "Geluid dat wordt afgespeeld bij het wisselen naar deze Space"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lyden som vert spela av når du byter til dette Space"
+            "value" : "Lyd som vert spela av når du byter til dette Space"
           }
         },
         "pa" : {
@@ -53304,19 +54090,19 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O som reproduzido ao mudar para este Espaço"
+            "value" : "Som reproduzido ao mudar para este Espaço"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O som reproduzido ao mudar para este Espaço"
+            "value" : "Som reproduzido ao mudar para este Espaço"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sunetul redat la comutarea pe acest Spațiu"
+            "value" : "Sunet redat la comutarea pe acest Spațiu"
           }
         },
         "ru" : {
@@ -53340,7 +54126,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ljudet som spelas upp när du byter till detta Space"
+            "value" : "Ljud som spelas upp när du byter till detta Space"
           }
         },
         "th" : {
@@ -57581,6 +58367,268 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "顯示每個空間"
+          }
+        }
+      }
+    },
+    "toggle_shrink_to_fit" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تصغير ليتناسب"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Намали, за да се побере"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Redueix perquè hi càpiga"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zmenšit, aby se vešlo"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Formindsk, så det passer"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verkleinern, damit es passt"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Σμίκρυνση ώστε να χωράει"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shrink to fit"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shrink to fit"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reducir para que quepa"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "کوچک کردن برای جا شدن"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pienennä, jotta se mahtuu"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réduire pour que ça tienne"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הקטן כדי שייכנס"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "फ़िट होने के लिए छोटा करें"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kicsinyítés, hogy elférjen"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perkecil agar muat"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Riduci perché ci stia"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "収まるように縮小"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "메뉴 막대에 맞게 축소"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Намали за да се собере"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kecilkan supaya muat"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Krymp så det får plass"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verkleinen zodat het past"
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Krymp så det får plass"
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "فٹ ہون لئی چھوٹا کرو"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zmniejsz, aby się zmieściło"
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "کوچنی یې کړئ چې ځای شي"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reduzir para caber"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reduzir para caber"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Micșorează pentru a încăpea"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Уменьшать до доступной ширины"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zmenšiť, aby sa zmestilo"
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Smanji da stane"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Krymp så att det får plats"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ย่อให้พอดี"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sığacak şekilde küçült"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Зменшувати до доступної ширини"
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "فٹ ہونے کے لیے چھوٹا کریں"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thu nhỏ cho vừa"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "缩小以适应菜单栏宽度"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "縮小以符合選單列寬度"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "縮小以符合選單列寬度"
           }
         }
       }

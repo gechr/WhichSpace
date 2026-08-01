@@ -30,6 +30,7 @@ enum SettingsAnchor: String, CaseIterable {
 
     case iconSize = "icon-size"
     case iconPadding = "icon-padding"
+    case shrinkToFit = "shrink-to-fit"
     /// Retired toggle; kept because raw values are published, redirecting
     /// to the Displays picker that replaced it.
     case uniqueIconsPerDisplay = "unique-icons-per-display"
@@ -96,9 +97,9 @@ enum SettingsAnchor: String, CaseIterable {
         case .launchAtLogin, .autoCheckUpdates, .autoInstallUpdates, .checkForUpdates, .backup,
              .resetSettings:
             .general
-        case .iconSize, .iconPadding, .localSpaceNumbers, .separatorColor, .separatorStyle,
-             .showAllDisplays, .showAllSpaces, .dimInactiveSpaces, .hideEmptySpaces,
-             .hideSingleSpace, .hideFullscreenApps, .fullscreenLetter:
+        case .iconSize, .iconPadding, .shrinkToFit, .localSpaceNumbers, .separatorColor,
+             .separatorStyle, .showAllDisplays, .showAllSpaces, .dimInactiveSpaces,
+             .hideEmptySpaces, .hideSingleSpace, .hideFullscreenApps, .fullscreenLetter:
             .menuBar
         case .preview, .uniqueIconsPerDisplay, .displays, .spaceLabel, .numberStyle, .symbol,
              .emoji, .symbolPosition, .symbolWrap, .symbolGap, .skinTone, .symbolColor,

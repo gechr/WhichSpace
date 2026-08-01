@@ -154,6 +154,15 @@ final class AppState {
     private var snapshot: SpaceSnapshot = .empty
     private(set) var darkModeEnabled = false
 
+    /// How far the status item is currently degraded to keep it on the menu
+    /// bar. Observed through `statusBarIcon`, so setting it re-renders.
+    var shrinkLevel: IconShrinkLevel = .full
+
+    /// Invoked when a new snapshot lands, meaning the Space, its display, or
+    /// the display arrangement changed. Drives the status item back to full
+    /// size so a layout that has room again gets it back.
+    @ObservationIgnored var onSnapshotDidChange: (() -> Void)?
+
     /// Space info for all displays (used when showAllDisplays is enabled)
     var allDisplaysSpaceInfo: [DisplaySpaceInfo] {
         snapshot.allDisplaysSpaceInfo
@@ -478,6 +487,10 @@ final class AppState {
         snapshot = newSnapshot
         lastUpdateTime = Date()
         renderer.spaceSnapshotDidChange()
+        // Equal snapshots returned above, so this is a real Space or topology
+        // change and not one of the notification bursts that arrive on every
+        // app activation
+        onSnapshotDidChange?()
 
         // Real CGS state for the active space has landed - stale switch
         // predictions are now wrong. Topology-only snapshot changes keep
@@ -613,12 +626,12 @@ final class AppState {
     // MARK: - Icon Generation (delegates to StatusBarRenderer)
 
     var statusBarIcon: NSImage {
-        renderer.statusBarIcon
+        renderer.statusBarIcon(level: shrinkLevel)
     }
 
     /// Returns the layout of visible icons in the status bar for the current mode
     func statusBarLayout() -> StatusBarLayout {
-        renderer.statusBarLayout()
+        renderer.statusBarLayout(level: shrinkLevel)
     }
 
     /// Returns one entry per Space for the left-click picker menu (single-icon mode)

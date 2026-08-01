@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 private extension View {
@@ -42,20 +43,35 @@ struct SettingsForm<Content: View>: View {
 struct SettingsSection<Content: View>: View {
     private let title: String?
     private let anchor: SettingsAnchor?
+    private let emphasized: Bool
     private let content: Content
 
     @Environment(SettingsHighlighter.self) private var highlighter: SettingsHighlighter?
 
     /// `anchor` identifies sections whose content is a grid rather than rows,
-    /// so a deep link can point at the section as a whole.
-    init(_ title: String? = nil, anchor: SettingsAnchor? = nil, @ViewBuilder content: () -> Content) {
+    /// so a deep link can point at the section as a whole. `emphasized` marks
+    /// a card that sits outside the scrolling stack, which needs a stronger
+    /// fill and an edge to read as separate from the cards scrolling past it.
+    init(
+        _ title: String? = nil,
+        anchor: SettingsAnchor? = nil,
+        emphasized: Bool = false,
+        @ViewBuilder content: () -> Content
+    ) {
         self.title = title
         self.anchor = anchor
+        self.emphasized = emphasized
         self.content = content()
     }
 
     private var isHighlighted: Bool {
         highlighter?.isEmphasizing(anchor) == true
+    }
+
+    /// One fill step above the regular cards when emphasized, which reads as
+    /// raised beside them without competing with the accent-tinted banner
+    private var fill: NSColor {
+        emphasized ? .tertiarySystemFill : .quaternarySystemFill
     }
 
     var body: some View {
@@ -75,9 +91,17 @@ struct SettingsSection<Content: View>: View {
                     .fill(
                         isHighlighted
                             ? AnyShapeStyle(Color.accentColor.opacity(0.25))
-                            : AnyShapeStyle(Color(nsColor: .quaternarySystemFill))
+                            : AnyShapeStyle(Color(nsColor: fill))
                     )
             )
+            // A hairline separator is too faint to carry the card on its own,
+            // so the edge is drawn in a label colour at a point and a half
+            .overlay {
+                if emphasized {
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .strokeBorder(Color(nsColor: .tertiaryLabelColor), lineWidth: 1.5)
+                }
+            }
             .animation(.easeInOut(duration: 0.25), value: isHighlighted)
         }
         .settingsScrollAnchor(anchor)
@@ -122,11 +146,19 @@ struct SettingsRow<Label: View, Control: View>: View {
     var icon: String?
     var subtitle: String?
     var disabled = false
+    /// Fades the row like a disabled one while leaving it live. Marks a
+    /// setting that still applies but has next to nothing to act on in the
+    /// current arrangement.
+    var dimmed = false
     var indented = false
     /// Identifies the row to `whichspace://settings?highlight=` deep links
     var anchor: SettingsAnchor?
     @ViewBuilder var label: Label
     @ViewBuilder var control: Control
+
+    private var faded: Bool {
+        disabled || dimmed
+    }
 
     var body: some View {
         HStack {
@@ -136,7 +168,7 @@ struct SettingsRow<Label: View, Control: View>: View {
                 HStack(alignment: .firstTextBaseline, spacing: 5) {
                     if let icon {
                         Image(systemName: icon)
-                            .foregroundStyle(disabled ? .tertiary : .secondary)
+                            .foregroundStyle(faded ? .tertiary : .secondary)
                             .frame(width: Layout.settingsRowIconWidth)
                     }
                     VStack(alignment: .leading, spacing: 2) {
@@ -144,7 +176,7 @@ struct SettingsRow<Label: View, Control: View>: View {
                         if let subtitle {
                             Text(subtitle)
                                 .font(.system(size: Layout.settingsRowSubtitleFontSize))
-                                .foregroundStyle(disabled ? .tertiary : .secondary)
+                                .foregroundStyle(faded ? .tertiary : .secondary)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
                     }
@@ -153,7 +185,7 @@ struct SettingsRow<Label: View, Control: View>: View {
                 // The mini switch does not visibly dim when disabled, so
                 // fade the control explicitly
                 control
-                    .opacity(disabled ? 0.5 : 1)
+                    .opacity(faded ? 0.5 : 1)
             }
             .disabled(disabled)
         }
@@ -188,6 +220,8 @@ struct SettingsToggleRow: View {
     var icon: String?
     var indented = false
     var disabled = false
+    /// Fades the row while leaving the switch live, matching `SettingsRow`
+    var dimmed = false
     var subtitle: String?
     var anchor: SettingsAnchor?
 
@@ -196,11 +230,12 @@ struct SettingsToggleRow: View {
             icon: icon,
             subtitle: subtitle,
             disabled: disabled,
+            dimmed: dimmed,
             indented: indented,
             anchor: anchor
         ) {
             Text(title)
-                .foregroundStyle(disabled ? .tertiary : .primary)
+                .foregroundStyle(disabled || dimmed ? .tertiary : .primary)
         } control: {
             Toggle(title, isOn: isOn)
                 .labelsHidden()

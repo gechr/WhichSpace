@@ -32,16 +32,22 @@ struct MenuBarPane: View {
                     anchor: .iconPadding
                 )
             }
-            displaySection
+            iconSection
+            displaysSection
             visibilitySection
         }
     }
 
-    /// Which Spaces get an icon. The dim/hide rows only apply when more than
-    /// the current Space is shown.
-    private var visibilitySection: some View {
-        let dependentDisabled = !(model.value(\.showAllSpaces) || model.value(\.showAllDisplays))
-        return SettingsSection {
+    /// Whether the status item comes down to one icon for the current Space on
+    /// the current display, leaving nothing beside it to give up.
+    private var showsCurrentSpaceOnly: Bool {
+        !(model.value(\.showAllSpaces) || model.value(\.showAllDisplays))
+    }
+
+    /// Whether other displays' Spaces are shown, and how the groups they form
+    /// are told apart. The separator rows only apply while they are shown.
+    private var displaysSection: some View {
+        SettingsSection {
             SettingsToggleRow(
                 title: Localization.toggleShowAllDisplays,
                 isOn: model.showAllDisplaysBinding,
@@ -50,6 +56,17 @@ struct MenuBarPane: View {
                 anchor: .showAllDisplays
             )
             SettingsRowDivider()
+            separatorColorRow
+            SettingsRowDivider()
+            separatorStyleRow
+        }
+    }
+
+    /// Which Spaces get an icon. The dim/hide rows only apply when more than
+    /// the current Space is shown.
+    private var visibilitySection: some View {
+        let dependentDisabled = showsCurrentSpaceOnly
+        return SettingsSection {
             SettingsToggleRow(
                 title: Localization.toggleShowAllSpaces,
                 isOn: model.showAllSpacesBinding,
@@ -97,6 +114,34 @@ struct MenuBarPane: View {
                 subtitle: Localization.tipHideFullscreenApps,
                 anchor: .hideFullscreenApps
             )
+        }
+    }
+
+    /// How much the icon gives up when the menu bar runs out of room, and what
+    /// each icon is labelled with: the numbering, which applies to every
+    /// display whether or not their Spaces are shown, and what stands in for
+    /// the number on a full-screen Space.
+    private var iconSection: some View {
+        SettingsSection {
+            SettingsToggleRow(
+                title: Localization.toggleShrinkToFit,
+                isOn: model.binding(\.shrinkIconToFit),
+                icon: "arrow.down.right.and.arrow.up.left",
+                // A single icon has no Spaces or displays to drop, leaving
+                // only its own padding and styling to give up, so the row
+                // fades while staying live
+                dimmed: showsCurrentSpaceOnly,
+                subtitle: String(format: Localization.tipShrinkToFit, AppInfo.appName),
+                anchor: .shrinkToFit
+            )
+            SettingsRowDivider()
+            SettingsToggleRow(
+                title: Localization.toggleLocalSpaceNumbers,
+                isOn: model.binding(\.localSpaceNumbers),
+                icon: "1.square",
+                subtitle: Localization.tipLocalSpaceNumbers,
+                anchor: .localSpaceNumbers
+            )
             SettingsRowDivider()
             SettingsToggleRow(
                 title: Localization.toggleUseFForFullscreenApps,
@@ -110,23 +155,7 @@ struct MenuBarPane: View {
         }
     }
 
-    private var displaySection: some View {
-        SettingsSection {
-            SettingsToggleRow(
-                title: Localization.toggleLocalSpaceNumbers,
-                isOn: model.binding(\.localSpaceNumbers),
-                icon: "1.square",
-                subtitle: Localization.tipLocalSpaceNumbers,
-                anchor: .localSpaceNumbers
-            )
-            SettingsRowDivider()
-            separatorColorRow
-            SettingsRowDivider()
-            separatorStyleRow
-        }
-    }
-
-    /// Separators only render between displays, so the row follows the
+    /// Separators only render between displays, so the row nests under the
     /// `showAllDisplays` toggle.
     private var separatorColorRow: some View {
         let disabled = !model.value(\.showAllDisplays)
@@ -134,6 +163,7 @@ struct MenuBarPane: View {
             icon: "poweron",
             subtitle: Localization.tipSeparator,
             disabled: disabled,
+            indented: true,
             anchor: .separatorColor
         ) {
             Text(Localization.labelSeparator)
@@ -152,12 +182,13 @@ struct MenuBarPane: View {
         }
     }
 
-    /// The glyph drawn between display groups, indented under the colour
-    /// row it modifies and gated the same way.
+    /// The glyph drawn between display groups, sitting beside the colour row
+    /// it accompanies and gated the same way.
     private var separatorStyleRow: some View {
         let disabled = !model.value(\.showAllDisplays)
         return SettingsRow(
             icon: "ellipsis",
+            subtitle: Localization.tipSeparatorStyle,
             disabled: disabled,
             indented: true,
             anchor: .separatorStyle
@@ -166,7 +197,11 @@ struct MenuBarPane: View {
                 .foregroundStyle(disabled ? .tertiary : .primary)
         } control: {
             Picker(Localization.labelSeparatorStyle, selection: model.binding(\.separatorStyle)) {
-                ForEach(SeparatorStyle.allCases, id: \.self) { style in
+                // Drawing nothing is set apart from the glyphs that draw
+                // something, the same way the sound picker sets None apart
+                Text(SeparatorStyle.blank.localizedName).tag(SeparatorStyle.blank)
+                Divider()
+                ForEach(SeparatorStyle.allCases.filter { $0 != .blank }, id: \.self) { style in
                     Text("\(style.pickerGlyph)  \(style.localizedName)").tag(style)
                 }
             }

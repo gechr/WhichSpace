@@ -44,6 +44,8 @@ enum FullscreenIconStyle: String, CaseIterable, Defaults.Serializable {
 /// String-backed so future styles can be added without a key migration;
 /// an absent key resolves to `.line`.
 enum SeparatorStyle: String, CaseIterable, Defaults.Serializable {
+    /// A space, keeping displays apart without drawing anything between them
+    case blank
     /// A stroked vertical line, the pipe look
     case line
     /// A middle dot glyph
@@ -56,6 +58,8 @@ enum SeparatorStyle: String, CaseIterable, Defaults.Serializable {
     /// The drawn character; nil for the stroked line.
     var glyph: String? {
         switch self {
+        case .blank:
+            " "
         case .line:
             nil
         case .middleDot:
@@ -76,6 +80,8 @@ enum SeparatorStyle: String, CaseIterable, Defaults.Serializable {
     /// The localized name shown beside the glyph in the settings dropdown.
     var localizedName: String {
         switch self {
+        case .blank:
+            Localization.labelSeparatorNone
         case .line:
             Localization.labelSeparatorLine
         case .middleDot:

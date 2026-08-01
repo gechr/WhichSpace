@@ -274,7 +274,9 @@ struct SpacesPane: View {
                 if model.isEditingDefaultStyle {
                     defaultStyleBanner
                 }
-                SettingsSection(Localization.labelPreview, anchor: .preview) {
+                // Emphasized so the pinned card reads as its own thing rather
+                // than the first of the cards scrolling beneath it
+                SettingsSection(Localization.labelPreview, anchor: .preview, emphasized: true) {
                     previewRow
                 }
             }

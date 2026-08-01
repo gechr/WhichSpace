@@ -76,6 +76,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     private var scrollAccumulator = 0.0
     private var lastScrollSwitchTimestamp: TimeInterval = -.infinity
 
+    /// Reads whether anyone else's status items are still drawn
+    private let menuBarVisibilityProbe: MenuBarVisibilityProbe
+    private var evictionDetector = MenuBarEvictionDetector()
+    private var pendingEvictionCheck: Task<Void, Never>?
+    private var evictionObservationTasks: [Task<Void, Never>] = []
+    /// The display the status item was last seen drawn on. `NSWindow.screen`
+    /// can go nil once the window is hidden, which is exactly when the display
+    /// needs naming, so the last good answer is kept.
+    private var lastKnownStatusDisplay: CGRect?
+    /// Whether the screen is showing the desktop rather than the lock screen,
+    /// the screensaver, or a sleeping display.
+    private var sessionIsActive = true
+
     private var launchAtLogin: LaunchAtLoginProvider
     private var preferenceObservationTasks: [Task<Void, Never>] = []
     private var settingsCoordinator: SettingsWindowCoordinator?
@@ -111,6 +124,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
         scrollHapticAction = HapticActuator.actuate
         isProcessTrusted = { AXIsProcessTrusted() }
+        menuBarVisibilityProbe = CGMenuBarVisibilityProbe()
         super.init()
         configureActionHandler()
     }
@@ -130,7 +144,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             return SpaceSwitcher.switchRelative(goRight: goRight, wrap: wrap)
         },
         scrollHapticAction: @escaping @MainActor (Int) -> Void = HapticActuator.actuate,
-        isProcessTrusted: @escaping () -> Bool = { AXIsProcessTrusted() }
+        isProcessTrusted: @escaping () -> Bool = { AXIsProcessTrusted() },
+        menuBarVisibilityProbe: MenuBarVisibilityProbe = CGMenuBarVisibilityProbe()
     ) {
         self.appState = appState
         self.confirmAction = confirmAction
@@ -139,6 +154,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         self.relativeSpaceSwitchAction = relativeSpaceSwitchAction
         self.scrollHapticAction = scrollHapticAction
         self.isProcessTrusted = isProcessTrusted
+        self.menuBarVisibilityProbe = menuBarVisibilityProbe
         super.init()
         configureActionHandler()
     }
@@ -259,6 +275,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         appState.renderer.onIconNeedsUpdate = { [weak self] in
             self?.updateStatusBarIcon()
         }
+        // A Space change only earns another attempt at full size once the
+        // crowding that caused the shrink has eased
+        appState.onSnapshotDidChange = { [weak self] in
+            self?.retryFullSizeIfRoomAppeared()
+        }
+        startObservingIconVisibility()
 
         // Begin observing app state, Space changes, and preference edits
         startObservingAppState()
@@ -363,6 +385,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     func stopObservingAppState() {
         observationTask?.cancel()
         observationTask = nil
+        pendingEvictionCheck?.cancel()
+        pendingEvictionCheck = nil
+        for task in evictionObservationTasks {
+            task.cancel()
+        }
+        evictionObservationTasks.removeAll()
         stopObservingPreferences()
     }
 
@@ -417,8 +445,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
                 else { return }
                 // Covers defaults changes that bypass DefaultsStore (and its mutation
                 // counter), e.g. external `defaults write`
+                // A setting that changes how wide the item draws earns another
+                // attempt at full size. One that only changes how it looks -
+                // a colour, a separator glyph - must not, or every cosmetic
+                // edit would widen the item and reflow the whole menu bar.
+                let previousWidth = self?.appState.statusBarIcon.size.width
                 self?.store.invalidateCachedValues()
                 self?.appState.renderer.invalidateIconCache()
+                if self?.appState.statusBarIcon.size.width != previousWidth {
+                    self?.resetShrinkLevel()
+                }
                 self?.updateStatusBarIcon()
             }
         })
@@ -641,13 +677,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             return
         }
 
+        // A collapsed icon reports no slots, so it lands on the picker here
+        // alongside single-icon mode rather than expanding: growing the icon
+        // back under a full menu bar would just have macOS drop it again
         let layout = appState.statusBarLayout()
         // Single-icon mode draws one icon per display rather than one per
         // Space, so a click has no Space of its own to land on even when the
         // display row gives the layout slots. Offer the picker in both cases,
         // and whenever the layout came back empty, so a left click can always
         // reach another Space.
-        guard store.showAllSpaces, !layout.slots.isEmpty else {
+        //
+        // A shrunk icon that has given up its per-Space slots is the same
+        // picture arrived at a different way, so it routes the same way. Keying
+        // this off the preference alone would leave a click on the current
+        // display's icon selecting the Space it is already on.
+        let showsSpaces = store.showAllSpaces && appState.shrinkLevel.showsInactiveSpaces
+        guard showsSpaces, !layout.slots.isEmpty else {
             let allSpaces = store.showAllSpaces
             let slotCount = layout.slots.count
             Self.logger.info("picker fallback: showAllSpaces \(allSpaces), slots \(slotCount)")
@@ -672,6 +717,213 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
 
         SpaceSwitcher.switchToSpace(id: slot.spaceID)
+    }
+
+    // MARK: - Auto Shrink
+
+    /// Schedules the reading that decides whether the menu bar dropped the
+    /// status item for lack of room.
+    ///
+    /// Assigning an image relayouts the bar and the item reads as off screen
+    /// while that happens, so the reading waits for it to settle. Each render
+    /// replaces any pending reading, and the reading itself renders when it
+    /// shrinks, so the levels cascade until one fits.
+    private func scheduleEvictionCheck() {
+        pendingEvictionCheck?.cancel()
+        pendingEvictionCheck = nil
+        // Nothing to schedule once the icon is as small as it goes
+        guard store.shrinkIconToFit, appState.shrinkLevel.next != nil else {
+            return
+        }
+        evictionDetector.beginSettling(now: Date())
+        pendingEvictionCheck = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(MenuBarEvictionDetector.checkDelay))
+            guard !Task.isCancelled else {
+                return
+            }
+            self?.pendingEvictionCheck = nil
+            self?.shrinkIfEvicted()
+        }
+    }
+
+    /// Shrinks the icon a step when the menu bar has dropped it.
+    ///
+    /// The reading that matters is a relative one. Running out of room takes
+    /// this app's item off screen and leaves its neighbours behind, so the
+    /// menu bar going dark altogether - a fullscreen Space, auto-hide,
+    /// Mission Control, the lock screen, display sleep - reads as no eviction
+    /// at all and leaves the icon alone.
+    ///
+    /// The two halves come from different sources because neither can answer
+    /// both. The WindowServer does not attribute a status item to the app that
+    /// created it, so this app's own status window never appears in the window
+    /// list and its absence there says nothing; occlusion answers for it
+    /// instead, and is only observable for windows this process owns.
+    private func shrinkIfEvicted() {
+        guard store.shrinkIconToFit,
+              let statusBarItem, statusBarItem.isVisible,
+              let window = statusBarItem.button?.window
+        else {
+            return
+        }
+        let ownIsOnScreen = window.occlusionState.contains(.visible)
+        if ownIsOnScreen, let bounds = window.screen.flatMap(Self.displayBounds) {
+            lastKnownStatusDisplay = bounds
+        }
+        guard let bounds = lastKnownStatusDisplay ?? window.screen.flatMap(Self.displayBounds) else {
+            return
+        }
+
+        let snapshot = StatusWindowSnapshot(
+            ownWindowIsOnScreen: ownIsOnScreen,
+            otherStatusWindowCount: menuBarVisibilityProbe.otherStatusWindowCount(onDisplay: bounds),
+            sessionIsActive: sessionIsActive
+        )
+        guard let level = evictionDetector.apply(snapshot, now: Date()) else {
+            return
+        }
+        Self.logger.info("menu bar dropped the icon, shrinking to level \(level.rawValue)")
+        appState.shrinkLevel = level
+    }
+
+    /// The display a screen occupies, in the coordinate system the window list
+    /// reports bounds in.
+    private static func displayBounds(of screen: NSScreen) -> CGRect? {
+        guard let number = screen.deviceDescription[
+            NSDeviceDescriptionKey("NSScreenNumber")
+        ] as? NSNumber else {
+            return nil
+        }
+        return CGDisplayBounds(CGDirectDisplayID(number.uint32Value))
+    }
+
+    /// Returns the icon to full size so a layout with room again gets it back.
+    private func resetShrinkLevel() {
+        evictionDetector.reset()
+        appState.shrinkLevel = .full
+    }
+
+    /// Grows the icon back only once a status item has gone away.
+    ///
+    /// Widening the item reflows every icon to its left, so the whole menu bar
+    /// repaints. Doing that on every Space switch costs a visible flicker each
+    /// time and almost always ends where it started, because switching Space
+    /// does not change what the menu bar is holding. A neighbouring status item
+    /// disappearing does change it, and is the case worth spending a repaint
+    /// on.
+    private func retryFullSizeIfRoomAppeared() {
+        guard store.shrinkIconToFit, appState.shrinkLevel != .full else {
+            return
+        }
+        guard let bounds = lastKnownStatusDisplay else {
+            return
+        }
+        let count = menuBarVisibilityProbe.otherStatusWindowCount(onDisplay: bounds)
+        guard evictionDetector.shouldRetryFullSize(otherStatusWindowCount: count) else {
+            return
+        }
+        Self.logger.info("menu bar has room again, restoring the icon")
+        resetShrinkLevel()
+    }
+
+    /// Watches for the icon being dropped by something other than this app.
+    ///
+    /// Eviction is usually somebody else's doing: another app adds a status
+    /// item, or the frontmost app's menus grow wider. Neither changes anything
+    /// WhichSpace draws, so neither produces a render, and a check scheduled
+    /// only from `updateStatusBarIcon` would not run until the next Space
+    /// switch. The status window posts an occlusion change in both cases.
+    ///
+    /// Screen parameter changes get their own reset: they alter the room
+    /// available without necessarily changing the Space snapshot, which
+    /// `AppState.applySnapshot` drops when equal.
+    private func startObservingIconVisibility() {
+        for task in evictionObservationTasks {
+            task.cancel()
+        }
+        evictionObservationTasks.removeAll()
+
+        if let window = statusBarItem?.button?.window {
+            let occlusionChanges = Self.notifications(
+                named: NSWindow.didChangeOcclusionStateNotification, object: window
+            )
+            evictionObservationTasks.append(Task { [weak self] in
+                for await _ in occlusionChanges {
+                    self?.scheduleEvictionCheck()
+                }
+            })
+        }
+
+        evictionObservationTasks.append(Task { [weak self] in
+            for await _ in NotificationCenter.default.notifications(
+                named: NSApplication.didChangeScreenParametersNotification
+            ) {
+                self?.lastKnownStatusDisplay = nil
+                self?.resetShrinkLevel()
+            }
+        })
+
+        // The lock screen, the screensaver and a sleeping display are the one
+        // case the neighbour count cannot rule out: measured on a locked
+        // screen the display keeps 4 to 20 status windows drawn while this
+        // app's occlusion drops, which reads exactly like running out of room.
+        for (name, active) in Self.sessionActivityNotifications {
+            evictionObservationTasks.append(Task { [weak self] in
+                for await _ in Self.distributedNotifications(named: name) {
+                    self?.sessionIsActive = active
+                }
+            })
+        }
+        let workspaceCenter = NSWorkspace.shared.notificationCenter
+        for (name, active) in [
+            (NSWorkspace.screensDidSleepNotification, false),
+            (NSWorkspace.screensDidWakeNotification, true),
+        ] {
+            evictionObservationTasks.append(Task { [weak self] in
+                for await _ in workspaceCenter.notifications(named: name) {
+                    self?.sessionIsActive = active
+                }
+            })
+        }
+    }
+
+    /// Distributed notifications naming a session state the icon must not be
+    /// judged in, paired with the state they announce.
+    private static let sessionActivityNotifications: [(String, Bool)] = [
+        ("com.apple.screenIsLocked", false),
+        ("com.apple.screenIsUnlocked", true),
+        ("com.apple.screensaver.didstart", false),
+        ("com.apple.screensaver.didstop", true),
+    ]
+
+    /// Bridges a distributed notification into an async sequence; there is no
+    /// native async API for that centre.
+    private static func distributedNotifications(named name: String) -> AsyncStream<Void> {
+        AsyncStream { continuation in
+            nonisolated(unsafe) let observer = DistributedNotificationCenter.default().addObserver(
+                forName: Notification.Name(name), object: nil, queue: .main
+            ) { _ in
+                continuation.yield()
+            }
+            continuation.onTermination = { @Sendable _ in
+                DistributedNotificationCenter.default().removeObserver(observer)
+            }
+        }
+    }
+
+    /// Bridges a notification for a specific non-Sendable object into an async
+    /// sequence, matching how `AppState` observes its distributed notifications.
+    private static func notifications(named name: Notification.Name, object: NSWindow) -> AsyncStream<Void> {
+        AsyncStream { continuation in
+            nonisolated(unsafe) let observer = NotificationCenter.default.addObserver(
+                forName: name, object: object, queue: .main
+            ) { _ in
+                continuation.yield()
+            }
+            continuation.onTermination = { @Sendable _ in
+                NotificationCenter.default.removeObserver(observer)
+            }
+        }
     }
 
     /// Pops up a menu listing every Space on the current display, each item
@@ -700,6 +952,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         guard let statusBarItem else {
             return
         }
+        // Every refresh re-arms the reading, including the unchanged-icon path
+        // below: the room around the item can change without the icon doing so
+        scheduleEvictionCheck()
         // Ahead of the unchanged-icon check: the same icon can outlive a
         // change of Space, and the announced label has to follow the Space
         updateStatusBarAccessibilityLabel()

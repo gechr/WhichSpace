@@ -228,6 +228,7 @@ struct DefaultsIsolationGuardTests {
             "separatorStyle",
             "showAllDisplays",
             "showAllSpaces",
+            "shrinkIconToFit",
             "sizeScale",
             "soundName",
             "spaceBadges",

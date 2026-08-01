@@ -306,6 +306,7 @@ enum Localization {
     static let labelSeparatorBullet = String(localized: "label_separator_bullet")
     static let labelSeparatorDot = String(localized: "label_separator_dot")
     static let labelSeparatorLine = String(localized: "label_separator_line")
+    static let labelSeparatorNone = String(localized: "label_separator_none")
     static let labelSeparatorSlash = String(localized: "label_separator_slash")
     static let labelSeparatorStyle = String(localized: "label_separator_style")
     static let labelSymbol = String(localized: "label_symbol")
@@ -371,9 +372,11 @@ enum Localization {
     static let tipScrollWrapAround = String(localized: "tip_scroll_wrap_around")
     static let tipSensitivity = String(localized: "tip_sensitivity")
     static let tipSeparator = String(localized: "tip_separator")
+    static let tipSeparatorStyle = String(localized: "tip_separator_style")
     static let tipSetDefaultStyle = String(localized: "tip_set_default_style")
     static let tipSettingsWindow = String(localized: "tip_settings_window")
     static let tipShowAllDisplays = String(localized: "tip_show_all_displays")
+    static let tipShrinkToFit = String(localized: "tip_shrink_to_fit")
     static let tipShowAllSpaces = String(localized: "tip_show_all_spaces")
     static let tipSound = String(localized: "tip_sound")
     static let tipSoundSpace = String(localized: "tip_sound_space")
@@ -393,6 +396,7 @@ enum Localization {
     static let toggleScrollWrapAround = String(localized: "toggle_scroll_wrap_around")
     static let toggleShowAllDisplays = String(localized: "toggle_show_all_displays")
     static let toggleShowAllSpaces = String(localized: "toggle_show_all_spaces")
+    static let toggleShrinkToFit = String(localized: "toggle_shrink_to_fit")
     static let toggleUseFForFullscreenApps = String(localized: "toggle_use_f_for_fullscreen_apps")
 }
 

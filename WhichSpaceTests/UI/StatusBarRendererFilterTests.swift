@@ -290,6 +290,197 @@ struct StatusBarRendererFilterTests {
     }
 }
 
+// MARK: - Shrink Levels
+
+@MainActor
+struct StatusBarShrinkLevelTests {
+    private let store: DefaultsStore
+    private let testSuite: TestSuite
+    private let stub: CGSStub
+
+    init() {
+        testSuite = TestSuiteFactory.createSuite()
+        store = DefaultsStore(suite: testSuite.suite)
+        stub = CGSStub()
+    }
+
+    private func makeAppState(
+        spaces: [(id: Int, isFullscreen: Bool)], activeSpaceID: Int
+    ) -> AppState {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [
+            CGSStub.makeDisplay(displayID: "Main", spaces: spaces, activeSpaceID: activeSpaceID),
+        ]
+        return AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+    }
+
+    private static let plainSpaces: [(id: Int, isFullscreen: Bool)] = [
+        (id: 100, isFullscreen: false),
+        (id: 101, isFullscreen: false),
+        (id: 102, isFullscreen: false),
+    ]
+
+    @Test("shrinking drops custom labels for the plain Space number")
+    func compact_dropsCustomLabels() {
+        store.showAllSpaces = true
+        store.spaceLabels = [2: "Work"]
+        let appState = makeAppState(spaces: Self.plainSpaces, activeSpaceID: 100)
+
+        #expect(appState.statusBarLayout().slots.map(\.label) == ["1", "Work", "3"])
+
+        appState.shrinkLevel = .compact
+        #expect(appState.statusBarLayout().slots.map(\.label) == ["1", "2", "3"])
+    }
+
+    @Test("every level of the ladder narrows the icon again")
+    func levels_narrowTheIconMonotonically() {
+        store.showAllDisplays = true
+        store.showAllSpaces = true
+        store.spaceLabels = [2: "Work"]
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [
+            CGSStub.makeDisplay(displayID: "Main", spaces: Self.plainSpaces, activeSpaceID: 100),
+            CGSStub.makeDisplay(
+                displayID: "Second",
+                spaces: [(id: 200, isFullscreen: false), (id: 201, isFullscreen: false)],
+                activeSpaceID: 200
+            ),
+        ]
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+
+        let widths = IconShrinkLevel.allCases.map { level -> Double in
+            appState.shrinkLevel = level
+            return appState.statusBarIcon.size.width
+        }
+
+        #expect(widths == widths.sorted(by: >), "each level should be strictly narrower: \(widths)")
+        #expect(Set(widths).count == widths.count, "no level should be a no-op: \(widths)")
+    }
+
+    @Test("giving up the inactive Spaces leaves one icon per display")
+    func activePerDisplay_keepsEveryDisplay() {
+        store.showAllDisplays = true
+        store.showAllSpaces = true
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [
+            CGSStub.makeDisplay(displayID: "Main", spaces: Self.plainSpaces, activeSpaceID: 101),
+            CGSStub.makeDisplay(
+                displayID: "Second",
+                spaces: [(id: 200, isFullscreen: false), (id: 201, isFullscreen: false)],
+                activeSpaceID: 201
+            ),
+        ]
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+
+        appState.shrinkLevel = .activePerDisplay
+
+        // One slot per display, each naming the Space that display is on
+        let slots = appState.statusBarLayout().slots
+        #expect(slots.count == 2)
+        #expect(slots.map(\.spaceID) == [101, 201])
+    }
+
+    @Test("shrinking drops padding but keeps every Space")
+    func compact_keepsEverySpace() {
+        store.showAllSpaces = true
+        let appState = makeAppState(spaces: Self.plainSpaces, activeSpaceID: 100)
+        let full = appState.statusBarIcon.size.width
+
+        appState.shrinkLevel = .compact
+
+        #expect(appState.statusBarLayout().slots.count == 3)
+        #expect(appState.statusBarIcon.size.width < full)
+    }
+
+    @Test("shrinking drops inactive fullscreen Spaces")
+    func compact_dropsInactiveFullscreenSpaces() {
+        store.showAllSpaces = true
+        let appState = makeAppState(
+            spaces: [
+                (id: 100, isFullscreen: false),
+                (id: 101, isFullscreen: true),
+                (id: 102, isFullscreen: false),
+            ],
+            activeSpaceID: 100
+        )
+
+        #expect(appState.statusBarLayout().slots.map(\.label) == ["1", "F", "2"])
+
+        appState.shrinkLevel = .compact
+        #expect(appState.statusBarLayout().slots.map(\.label) == ["1", "2"])
+    }
+
+    @Test("an active fullscreen Space survives shrinking")
+    func compact_keepsActiveFullscreenSpace() {
+        store.showAllSpaces = true
+        let appState = makeAppState(
+            spaces: [
+                (id: 100, isFullscreen: false),
+                (id: 101, isFullscreen: true),
+            ],
+            activeSpaceID: 101
+        )
+
+        appState.shrinkLevel = .compact
+
+        #expect(appState.statusBarLayout().slots.map(\.label).contains("F"))
+    }
+
+    @Test("collapsing to the current Space reports no slots so the picker takes over")
+    func currentOnly_reportsNoSlots() {
+        store.showAllSpaces = true
+        let appState = makeAppState(spaces: Self.plainSpaces, activeSpaceID: 101)
+
+        #expect(!appState.statusBarLayout().slots.isEmpty)
+
+        appState.shrinkLevel = .currentOnly
+
+        // An empty layout is what routes a left click to showSpacePickerMenu,
+        // which is the only way to reach the other Spaces while collapsed
+        #expect(appState.statusBarLayout().slots.isEmpty)
+        #expect(appState.spacePickerEntries().count == 3)
+    }
+
+    @Test("collapsing gives up the other displays last")
+    func currentOnly_collapsesAcrossDisplays() {
+        store.showAllDisplays = true
+        store.showAllSpaces = true
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [(id: 100, isFullscreen: false), (id: 101, isFullscreen: false)],
+                activeSpaceID: 100
+            ),
+            CGSStub.makeDisplay(
+                displayID: "Second",
+                spaces: [(id: 200, isFullscreen: false), (id: 201, isFullscreen: false)],
+                activeSpaceID: 200
+            ),
+        ]
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let full = appState.statusBarIcon.size.width
+
+        appState.shrinkLevel = .currentOnly
+
+        #expect(appState.statusBarLayout().slots.isEmpty)
+        #expect(appState.statusBarIcon.size.width < full)
+    }
+
+    @Test("the icon cache serves each level separately")
+    func levels_cacheIndependently() {
+        store.showAllSpaces = true
+        let appState = makeAppState(spaces: Self.plainSpaces, activeSpaceID: 100)
+
+        let full = appState.statusBarIcon
+        appState.shrinkLevel = .compact
+        _ = appState.statusBarIcon
+        appState.shrinkLevel = .full
+
+        #expect(appState.statusBarIcon.size.width == full.size.width)
+    }
+}
+
 // MARK: - Space Picker Menu
 
 @MainActor

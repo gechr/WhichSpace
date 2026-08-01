@@ -82,6 +82,7 @@ struct BackupSettings: Codable {
     var separatorStyle: String?
     var showAllDisplays: Bool
     var showAllSpaces: Bool
+    var shrinkIconToFit: Bool
     var sizeScale: Double
     var soundName: String
     /// Present only in backups from versions with the per-display toggle;
@@ -96,7 +97,7 @@ struct BackupSettings: Codable {
         case hideFullscreenApps, hideSingleSpace, horizontalScrollEnabled
         case invertHorizontalScroll, invertVerticalScroll, launchAtLogin, localSpaceNumbers, paddingScale
         case scrollHapticFeedback, scrollHapticIntensity, scrollSensitivity, scrollWrapAround
-        case separatorColor, separatorStyle, showAllDisplays, showAllSpaces
+        case separatorColor, separatorStyle, showAllDisplays, showAllSpaces, shrinkIconToFit
         case sizeScale, soundName, uniqueIconsPerDisplay
         case verticalScrollEnabled
     }
@@ -128,6 +129,7 @@ struct BackupSettings: Codable {
         separatorStyle = try container.decodeIfPresent(String.self, forKey: .separatorStyle)
         showAllDisplays = try container.decodeIfPresent(Bool.self, forKey: .showAllDisplays) ?? false
         showAllSpaces = try container.decodeIfPresent(Bool.self, forKey: .showAllSpaces) ?? false
+        shrinkIconToFit = try container.decodeIfPresent(Bool.self, forKey: .shrinkIconToFit) ?? true
         sizeScale = try container.decodeIfPresent(Double.self, forKey: .sizeScale) ?? Layout.defaultSizeScale
         soundName = try container.decodeIfPresent(String.self, forKey: .soundName) ?? ""
         uniqueIconsPerDisplay = try container.decodeIfPresent(Bool.self, forKey: .uniqueIconsPerDisplay)
@@ -156,6 +158,7 @@ struct BackupSettings: Codable {
         separatorStyle: String?,
         showAllDisplays: Bool,
         showAllSpaces: Bool,
+        shrinkIconToFit: Bool,
         sizeScale: Double,
         soundName: String,
         verticalScrollEnabled: Bool
@@ -181,6 +184,7 @@ struct BackupSettings: Codable {
         self.separatorStyle = separatorStyle
         self.showAllDisplays = showAllDisplays
         self.showAllSpaces = showAllSpaces
+        self.shrinkIconToFit = shrinkIconToFit
         self.sizeScale = sizeScale
         self.soundName = soundName
         self.verticalScrollEnabled = verticalScrollEnabled
@@ -535,6 +539,7 @@ enum BackupManager {
             separatorStyle: store.separatorStyle.rawValue,
             showAllDisplays: store.showAllDisplays,
             showAllSpaces: store.showAllSpaces,
+            shrinkIconToFit: store.shrinkIconToFit,
             sizeScale: store.sizeScale,
             soundName: store.soundName,
             verticalScrollEnabled: store.verticalScrollEnabled
@@ -674,6 +679,7 @@ enum BackupManager {
         // Route through SettingsConstraints so a hand-edited backup can't enable both
         SettingsConstraints.setShowAllDisplays(backup.settings.showAllDisplays, store: store)
         SettingsConstraints.setShowAllSpaces(backup.settings.showAllSpaces, store: store)
+        store.shrinkIconToFit = backup.settings.shrinkIconToFit
         store.sizeScale = backup.settings.sizeScale.clamped(to: Layout.sizeScaleRange)
         store.soundName = backup.settings.soundName
         store.verticalScrollEnabled = backup.settings.verticalScrollEnabled

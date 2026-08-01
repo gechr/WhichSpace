@@ -21,6 +21,7 @@
 		C94204F22B0647EEA70C0CAB /* SpaceUpdateCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0621BB91706643C2B80B3FB2 /* SpaceUpdateCoordinator.swift */; };
 		5EB457D72EEDE8C00021C6BD /* DefaultsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB457CC2EEDE8C00021C6BD /* DefaultsStore.swift */; };
 		D91E604932D44F33863FB9A6 /* HapticActuator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9FEF98C20749E19B4CA885 /* HapticActuator.swift */; };
+		A46FE3B79717482B886EB47D /* IconShrink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E19623F420946E39C6ABF24 /* IconShrink.swift */; };
 		5EB457D82EEDE8C00021C6BD /* ItemData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB457CE2EEDE8C00021C6BD /* ItemData.swift */; };
 		5EB457D92EEDE8C00021C6BD /* Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB457CA2EEDE8C00021C6BD /* Alerts.swift */; };
 		5EB457DC2EEDE8C00021C6BD /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB457CB2EEDE8C00021C6BD /* Constants.swift */; };
@@ -37,6 +38,7 @@
 		5EB458502EEDE9690021C6BD /* AppDelegateActionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB458422EEDE9690021C6BD /* AppDelegateActionsTests.swift */; };
 		5EB458512EEDE9690021C6BD /* SpacePreferencesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB4583E2EEDE9690021C6BD /* SpacePreferencesTests.swift */; };
 		5EB458532EEDE9690021C6BD /* IconColorsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB4583B2EEDE9690021C6BD /* IconColorsTests.swift */; };
+		AF2B251688E040BFBEA04768 /* IconShrinkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 626BBFFA7C544C6187C3BE01 /* IconShrinkTests.swift */; };
 		73FAA1ED7C2DED2E7295E6FB /* DynamicDisplayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB446EE552B31E1415C66B7 /* DynamicDisplayTests.swift */; };
 		70599A3318D24A70B89C5DDF /* SkinToneSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95472826A5194C68A05C210F /* SkinToneSwiftTests.swift */; };
 		7F97118A9292E9AE61C94CC7 /* SkinToneTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D97E397B395ABA84D3E5BDA3 /* SkinToneTests.swift */; };
@@ -137,6 +139,7 @@
 		5EB457CD2EEDE8C00021C6BD /* SpaceIconGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceIconGenerator.swift; sourceTree = "<group>"; };
 		26FDEA134CE245FD99C0FA05 /* SpaceIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceIntents.swift; sourceTree = "<group>"; };
 		4B9FEF98C20749E19B4CA885 /* HapticActuator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticActuator.swift; sourceTree = "<group>"; };
+		4E19623F420946E39C6ABF24 /* IconShrink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconShrink.swift; sourceTree = "<group>"; };
 		5EB457CE2EEDE8C00021C6BD /* ItemData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemData.swift; sourceTree = "<group>"; };
 		5EB457D02EEDE8C00021C6BD /* Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
 		5EB457F22EEDE8C00021C6BD /* SpaceMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceMonitor.swift; sourceTree = "<group>"; };
@@ -145,6 +148,7 @@
 		362B58BC4F194B83889B0E5C /* SpaceDefaultStyleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceDefaultStyleTests.swift; sourceTree = "<group>"; };
 		5EB458392EEDE9690021C6BD /* CGSStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGSStub.swift; sourceTree = "<group>"; };
 		5EB4583B2EEDE9690021C6BD /* IconColorsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconColorsTests.swift; sourceTree = "<group>"; };
+		626BBFFA7C544C6187C3BE01 /* IconShrinkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconShrinkTests.swift; sourceTree = "<group>"; };
 		5EB4583C2EEDE9690021C6BD /* SpaceColorsBridgeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceColorsBridgeTests.swift; sourceTree = "<group>"; };
 		5EB4583D2EEDE9690021C6BD /* SpaceIconGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceIconGeneratorTests.swift; sourceTree = "<group>"; };
 		5EB4583E2EEDE9690021C6BD /* SpacePreferencesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpacePreferencesTests.swift; sourceTree = "<group>"; };
@@ -277,6 +281,7 @@
 				5EB457CD2EEDE8C00021C6BD /* SpaceIconGenerator.swift */,
 				26FDEA134CE245FD99C0FA05 /* SpaceIntents.swift */,
 				4B9FEF98C20749E19B4CA885 /* HapticActuator.swift */,
+				4E19623F420946E39C6ABF24 /* IconShrink.swift */,
 				5EB457CE2EEDE8C00021C6BD /* ItemData.swift */,
 				B7C030C19840D638AEC463CE /* MenuBuilder.swift */,
 				5EB457D02EEDE8C00021C6BD /* Preferences.swift */,
@@ -316,6 +321,7 @@
 				860F2F6428234559874C54BF /* URLCommandsTests.swift */,
 				B166782E5DC04625A4473365 /* RapidOperationsTests.swift */,
 				5EB4583B2EEDE9690021C6BD /* IconColorsTests.swift */,
+				626BBFFA7C544C6187C3BE01 /* IconShrinkTests.swift */,
 				5EB4583C2EEDE9690021C6BD /* SpaceColorsBridgeTests.swift */,
 				5EB4583D2EEDE9690021C6BD /* SpaceIconGeneratorTests.swift */,
 				5EB4583E2EEDE9690021C6BD /* SpacePreferencesTests.swift */,
@@ -582,6 +588,7 @@
 				5EB457D72EEDE8C00021C6BD /* DefaultsStore.swift in Sources */,
 				BA5B89440132B31951EAF51B /* DisplaySpaceProvider.swift in Sources */,
 				D91E604932D44F33863FB9A6 /* HapticActuator.swift in Sources */,
+				A46FE3B79717482B886EB47D /* IconShrink.swift in Sources */,
 				5EB457D82EEDE8C00021C6BD /* ItemData.swift in Sources */,
 				5EB457D92EEDE8C00021C6BD /* Alerts.swift in Sources */,
 				D2D70ADA82964EB7A70A43FE /* Backup.swift in Sources */,
@@ -639,6 +646,7 @@
 				5EB458502EEDE9690021C6BD /* AppDelegateActionsTests.swift in Sources */,
 				5EB458512EEDE9690021C6BD /* SpacePreferencesTests.swift in Sources */,
 				5EB458532EEDE9690021C6BD /* IconColorsTests.swift in Sources */,
+				AF2B251688E040BFBEA04768 /* IconShrinkTests.swift in Sources */,
 				CB61E710EE0AA61181E63F29 /* EmojiRenderTests.swift in Sources */,
 				7F97118A9292E9AE61C94CC7 /* SkinToneTests.swift in Sources */,
 				70599A3318D24A70B89C5DDF /* SkinToneSwiftTests.swift in Sources */,

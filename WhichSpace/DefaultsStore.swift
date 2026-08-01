@@ -115,6 +115,7 @@ enum KeySpecs {
     static let separatorStyle = TypedKeySpec(name: "separatorStyle", defaultValue: SeparatorStyle.line)
     static let showAllDisplays = TypedKeySpec(name: "showAllDisplays", defaultValue: false)
     static let showAllSpaces = TypedKeySpec(name: "showAllSpaces", defaultValue: false)
+    static let shrinkIconToFit = TypedKeySpec(name: "shrinkIconToFit", defaultValue: true)
     static let sizeScale = TypedKeySpec(name: "sizeScale", defaultValue: Layout.defaultSizeScale)
     static let soundName = TypedKeySpec(name: "soundName", defaultValue: "")
     static let spaceBadges = TypedKeySpec(name: "spaceBadges", defaultValue: [Int: SpaceBadge]())
@@ -170,6 +171,7 @@ enum KeySpecs {
         separatorStyle,
         showAllDisplays,
         showAllSpaces,
+        shrinkIconToFit,
         sizeScale,
         soundName,
         spaceBadges,
@@ -506,6 +508,11 @@ final class DefaultsStore {
     var showAllSpaces: Bool {
         get { self[KeySpecs.showAllSpaces] }
         set { self[KeySpecs.showAllSpaces] = newValue }
+    }
+
+    var shrinkIconToFit: Bool {
+        get { self[KeySpecs.shrinkIconToFit] }
+        set { self[KeySpecs.shrinkIconToFit] = newValue }
     }
 
     var sizeScale: Double {
