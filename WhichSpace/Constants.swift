@@ -270,6 +270,7 @@ enum Localization {
     static let errorScriptingSpaceOutOfRange = String(localized: "error_scripting_space_out_of_range")
 
     static let labelAllDisplays = String(localized: "label_all_displays")
+    static let labelAppearance = String(localized: "label_appearance")
     static let labelAllSpacesAllDisplays = String(localized: "label_all_spaces_all_displays")
     static let labelAllSpacesThisDisplay = String(localized: "label_all_spaces_this_display")
     static let labelBackup = String(localized: "label_backup")
@@ -309,6 +310,7 @@ enum Localization {
     static let labelSeparatorNone = String(localized: "label_separator_none")
     static let labelSeparatorSlash = String(localized: "label_separator_slash")
     static let labelSeparatorStyle = String(localized: "label_separator_style")
+    static let labelSpaces = String(localized: "label_spaces")
     static let labelSymbol = String(localized: "label_symbol")
     static let labelSymbolBackground = String(localized: "label_symbol_background")
     static let labelSymbolForeground = String(localized: "label_symbol_foreground")

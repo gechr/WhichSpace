@@ -231,7 +231,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             })
             settingsCoordinator = SettingsWindowCoordinator(
                 models: [model, editorModel],
-                panes: [generalPane, spacesPane, switchingPane, menuBarPane],
+                panes: [generalPane, menuBarPane, spacesPane, switchingPane],
                 highlighter: highlighter
             )
         }

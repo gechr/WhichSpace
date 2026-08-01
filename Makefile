@@ -49,12 +49,20 @@ lint:
 	@swiftlint lint --strict
 	@xmllint --noout --nonet --valid WhichSpace/WhichSpace.sdef
 
+# Dedicated DerivedData so rebuilding via `make build`/`make test` never
+# rewrites the bundle the running app was launched from
+RUN_DERIVED_DATA := build/run
+RUN_APP          := $(RUN_DERIVED_DATA)/Build/Products/Debug/WhichSpace.app
+
+# Dev version stamp from git describe, e.g. 1.2.0-18-g6d9e2c7-dirty
+RUN_VERSION = $(patsubst v%,%,$(shell git describe --tags --dirty 2>/dev/null || echo v0.0.0-dev))
+
 .PHONY: run
 run:
 	@pkill -x WhichSpace || :
-	@rm -rf ~/Library/Developer/Xcode/DerivedData/WhichSpace-*/Build/Products/Debug/WhichSpace.app
-	@xcodebuild -scheme WhichSpace -configuration Debug build $(SIGNING_FLAGS)
-	@open ~/Library/Developer/Xcode/DerivedData/WhichSpace-*/Build/Products/Debug/WhichSpace.app $(if $(LANGUAGE),--args -AppleLanguages "($(LANGUAGE))")
+	@rm -rf $(RUN_APP)
+	@xcodebuild -scheme WhichSpace -configuration Debug -derivedDataPath $(RUN_DERIVED_DATA) build $(SIGNING_FLAGS) MARKETING_VERSION=$(RUN_VERSION)
+	@open $(RUN_APP) $(if $(LANGUAGE),--args -AppleLanguages "($(LANGUAGE))")
 
 .PHONY: test
 test:

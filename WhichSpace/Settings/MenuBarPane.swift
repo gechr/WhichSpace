@@ -1,9 +1,14 @@
 import AppKit
 import SwiftUI
 
-/// The Menu Bar settings pane: icon sizing, which Spaces appear in the
-/// status item, and per-display presentation. Container-agnostic - it knows
-/// nothing about the window chrome hosting it.
+/// The Menu Bar settings pane: which Spaces appear in the status item, how
+/// each icon is drawn, and how the item as a whole behaves. Container-agnostic
+/// - it knows nothing about the window chrome hosting it.
+///
+/// The sections are ordered so that a row always appears below the toggles
+/// that gate it. Both visibility masters lead the pane, which puts the rows
+/// they dim - the fullscreen letter, and shrinking to fit - in reading order
+/// after the settings that explain the dimming.
 struct MenuBarPane: View {
     let model: SettingsModel
 
@@ -11,30 +16,9 @@ struct MenuBarPane: View {
 
     var body: some View {
         SettingsForm {
-            SettingsSection {
-                SettingsSliderRow(
-                    title: Localization.menuIcon,
-                    value: model.binding(\.sizeScale),
-                    range: Layout.sizeScaleRange,
-                    defaultValue: Layout.defaultSizeScale,
-                    icon: "arrow.up.left.and.down.right.and.arrow.up.right.and.down.left",
-                    subtitle: Localization.tipIconSize,
-                    anchor: .iconSize
-                )
-                SettingsRowDivider()
-                SettingsSliderRow(
-                    title: Localization.menuPadding,
-                    value: model.binding(\.paddingScale),
-                    range: Layout.paddingScaleRange,
-                    defaultValue: Layout.defaultPaddingScale,
-                    icon: "arrow.left.and.right",
-                    subtitle: Localization.tipIconPadding,
-                    anchor: .iconPadding
-                )
-            }
-            iconSection
-            displaysSection
-            visibilitySection
+            spacesSection
+            appearanceSection
+            behaviorSection
         }
     }
 
@@ -44,95 +28,106 @@ struct MenuBarPane: View {
         !(model.value(\.showAllSpaces) || model.value(\.showAllDisplays))
     }
 
+    // MARK: - Spaces
+
+    /// Which Spaces get an icon: the two masters that decide it, each leading
+    /// the rows that only apply while it is on.
+    private var spacesSection: some View {
+        SettingsSection(Localization.labelSpaces) {
+            spaceVisibilityRows
+            // Full-width and undimmed, unlike SettingsRowDivider, so the two
+            // masters read as groups of their own rather than one long list
+            Divider()
+                .padding(.vertical, 3)
+            displayVisibilityRows
+        }
+    }
+
+    /// Which of this display's Spaces get an icon. The dim/hide rows only
+    /// apply when more than the current Space is shown.
+    @ViewBuilder
+    private var spaceVisibilityRows: some View {
+        SettingsToggleRow(
+            title: Localization.toggleShowAllSpaces,
+            isOn: model.showAllSpacesBinding,
+            icon: "square.grid.3x1.below.line.grid.1x2",
+            subtitle: Localization.tipShowAllSpaces,
+            anchor: .showAllSpaces
+        )
+        SettingsRowDivider()
+        SettingsToggleRow(
+            title: Localization.toggleDimInactiveSpaces,
+            isOn: model.binding(\.dimInactiveSpaces),
+            icon: "aqi.low",
+            indented: true,
+            disabled: showsCurrentSpaceOnly,
+            subtitle: Localization.tipDimInactiveSpaces,
+            anchor: .dimInactiveSpaces
+        )
+        SettingsRowDivider()
+        SettingsToggleRow(
+            title: Localization.toggleHideEmptySpaces,
+            isOn: model.binding(\.hideEmptySpaces),
+            icon: "eye.slash.fill",
+            indented: true,
+            disabled: showsCurrentSpaceOnly,
+            subtitle: Localization.tipHideEmptySpaces,
+            anchor: .hideEmptySpaces
+        )
+        SettingsRowDivider()
+        SettingsToggleRow(
+            title: Localization.toggleHideFullscreenApps,
+            isOn: model.binding(\.hideFullscreenApps),
+            icon: "eye.slash.fill",
+            indented: true,
+            disabled: showsCurrentSpaceOnly,
+            subtitle: Localization.tipHideFullscreenApps,
+            anchor: .hideFullscreenApps
+        )
+    }
+
     /// Whether other displays' Spaces are shown, and how the groups they form
     /// are told apart. The separator rows only apply while they are shown.
-    private var displaysSection: some View {
-        SettingsSection {
-            SettingsToggleRow(
-                title: Localization.toggleShowAllDisplays,
-                isOn: model.showAllDisplaysBinding,
-                icon: "display.2",
-                subtitle: Localization.tipShowAllDisplays,
-                anchor: .showAllDisplays
-            )
-            SettingsRowDivider()
-            separatorColorRow
-            SettingsRowDivider()
-            separatorStyleRow
-        }
+    @ViewBuilder
+    private var displayVisibilityRows: some View {
+        SettingsToggleRow(
+            title: Localization.toggleShowAllDisplays,
+            isOn: model.showAllDisplaysBinding,
+            icon: "display.2",
+            subtitle: Localization.tipShowAllDisplays,
+            anchor: .showAllDisplays
+        )
+        SettingsRowDivider()
+        separatorColorRow
+        SettingsRowDivider()
+        separatorStyleRow
     }
 
-    /// Which Spaces get an icon. The dim/hide rows only apply when more than
-    /// the current Space is shown.
-    private var visibilitySection: some View {
-        let dependentDisabled = showsCurrentSpaceOnly
-        return SettingsSection {
-            SettingsToggleRow(
-                title: Localization.toggleShowAllSpaces,
-                isOn: model.showAllSpacesBinding,
-                icon: "square.grid.3x1.below.line.grid.1x2",
-                subtitle: Localization.tipShowAllSpaces,
-                anchor: .showAllSpaces
-            )
-            SettingsRowDivider()
-            SettingsToggleRow(
-                title: Localization.toggleDimInactiveSpaces,
-                isOn: model.binding(\.dimInactiveSpaces),
-                icon: "aqi.low",
-                indented: true,
-                disabled: dependentDisabled,
-                subtitle: Localization.tipDimInactiveSpaces,
-                anchor: .dimInactiveSpaces
-            )
-            SettingsRowDivider()
-            SettingsToggleRow(
-                title: Localization.toggleHideEmptySpaces,
-                isOn: model.binding(\.hideEmptySpaces),
-                icon: "eye.slash.fill",
-                indented: true,
-                disabled: dependentDisabled,
-                subtitle: Localization.tipHideEmptySpaces,
-                anchor: .hideEmptySpaces
-            )
-            SettingsRowDivider()
-            SettingsToggleRow(
-                title: Localization.toggleHideSingleSpace,
-                isOn: model.binding(\.hideSingleSpace),
-                icon: "eye.slash.fill",
-                indented: true,
-                disabled: dependentDisabled,
-                subtitle: Localization.tipHideSingleSpace,
-                anchor: .hideSingleSpace
-            )
-            SettingsRowDivider()
-            SettingsToggleRow(
-                title: Localization.toggleHideFullscreenApps,
-                isOn: model.binding(\.hideFullscreenApps),
-                icon: "eye.slash.fill",
-                indented: true,
-                disabled: dependentDisabled,
-                subtitle: Localization.tipHideFullscreenApps,
-                anchor: .hideFullscreenApps
-            )
-        }
-    }
+    // MARK: - Appearance
 
-    /// How much the icon gives up when the menu bar runs out of room, and what
-    /// each icon is labelled with: the numbering, which applies to every
-    /// display whether or not their Spaces are shown, and what stands in for
-    /// the number on a full-screen Space.
-    private var iconSection: some View {
-        SettingsSection {
-            SettingsToggleRow(
-                title: Localization.toggleShrinkToFit,
-                isOn: model.binding(\.shrinkIconToFit),
-                icon: "arrow.down.right.and.arrow.up.left",
-                // A single icon has no Spaces or displays to drop, leaving
-                // only its own padding and styling to give up, so the row
-                // fades while staying live
-                dimmed: showsCurrentSpaceOnly,
-                subtitle: String(format: Localization.tipShrinkToFit, AppInfo.appName),
-                anchor: .shrinkToFit
+    /// How big each icon is drawn and what it is labelled with: the numbering,
+    /// which applies to every display whether or not their Spaces are shown,
+    /// and what stands in for the number on a full-screen Space.
+    private var appearanceSection: some View {
+        SettingsSection(Localization.labelAppearance) {
+            SettingsSliderRow(
+                title: Localization.menuIcon,
+                value: model.binding(\.sizeScale),
+                range: Layout.sizeScaleRange,
+                defaultValue: Layout.defaultSizeScale,
+                icon: "arrow.up.left.and.down.right.and.arrow.up.right.and.down.left",
+                subtitle: Localization.tipIconSize,
+                anchor: .iconSize
+            )
+            SettingsRowDivider()
+            SettingsSliderRow(
+                title: Localization.menuPadding,
+                value: model.binding(\.paddingScale),
+                range: Layout.paddingScaleRange,
+                defaultValue: Layout.defaultPaddingScale,
+                icon: "arrow.left.and.right",
+                subtitle: Localization.tipIconPadding,
+                anchor: .iconPadding
             )
             SettingsRowDivider()
             SettingsToggleRow(
@@ -154,6 +149,36 @@ struct MenuBarPane: View {
             )
         }
     }
+
+    // MARK: - Behavior
+
+    /// What the status item as a whole does: how much it gives up when the
+    /// menu bar runs out of room, and when it stands down altogether.
+    private var behaviorSection: some View {
+        SettingsSection(Localization.labelBehavior) {
+            SettingsToggleRow(
+                title: Localization.toggleShrinkToFit,
+                isOn: model.binding(\.shrinkIconToFit),
+                icon: "arrow.down.right.and.arrow.up.left",
+                // A single icon has no Spaces or displays to drop, leaving
+                // only its own padding and styling to give up, so the row
+                // fades while staying live
+                dimmed: showsCurrentSpaceOnly,
+                subtitle: String(format: Localization.tipShrinkToFit, AppInfo.appName),
+                anchor: .shrinkToFit
+            )
+            SettingsRowDivider()
+            SettingsToggleRow(
+                title: Localization.toggleHideSingleSpace,
+                isOn: model.binding(\.hideSingleSpace),
+                icon: "eye.slash.fill",
+                subtitle: Localization.tipHideSingleSpace,
+                anchor: .hideSingleSpace
+            )
+        }
+    }
+
+    // MARK: - Separator Rows
 
     /// Separators only render between displays, so the row nests under the
     /// `showAllDisplays` toggle.
@@ -210,6 +235,8 @@ struct MenuBarPane: View {
             .fixedSize()
         }
     }
+
+    // MARK: - Bindings
 
     private var separatorColorBinding: Binding<Color> {
         let stored = model.binding(\.separatorColor)

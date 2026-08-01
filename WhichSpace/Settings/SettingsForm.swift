@@ -68,10 +68,13 @@ struct SettingsSection<Content: View>: View {
         highlighter?.isEmphasizing(anchor) == true
     }
 
-    /// One fill step above the regular cards when emphasized, which reads as
-    /// raised beside them without competing with the accent-tinted banner
-    private var fill: NSColor {
-        emphasized ? .tertiarySystemFill : .quaternarySystemFill
+    /// An emphasized card carries a border of its own, so its fill only has to
+    /// lift it a little. Half the system fill lands it at 0.024 alpha against
+    /// the regular cards' 0.027, leaving the icon it carries the brightest
+    /// thing on it.
+    private var fill: Color {
+        let base = Color(nsColor: emphasized ? .tertiarySystemFill : .quaternarySystemFill)
+        return emphasized ? base.opacity(0.5) : base
     }
 
     var body: some View {
@@ -91,7 +94,7 @@ struct SettingsSection<Content: View>: View {
                     .fill(
                         isHighlighted
                             ? AnyShapeStyle(Color.accentColor.opacity(0.25))
-                            : AnyShapeStyle(Color(nsColor: fill))
+                            : AnyShapeStyle(fill)
                     )
             )
             // A hairline separator is too faint to carry the card on its own,
