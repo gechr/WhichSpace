@@ -171,6 +171,53 @@ final class AppDelegateActionsTests: XCTestCase {
         XCTAssertFalse(event?.isRightClick ?? true)
     }
 
+    // MARK: - Click Permission Tests
+
+    private func makeDelegate(trusted: Bool) -> AppDelegate {
+        // Bound to a local first: a trailing closure here would bind to
+        // `missionControlNotificationSender`, the initializer's first closure
+        // parameter.
+        let isProcessTrusted: () -> Bool = { trusted }
+        return AppDelegate(
+            appState: appState,
+            confirmAction: confirmStub.callAsFunction,
+            launchAtLogin: launchAtLoginStub,
+            isProcessTrusted: isProcessTrusted
+        )
+    }
+
+    func testResolveClickPermission_untrustedWithSettingOn_turnsSettingOffAndAsks() {
+        store.clickToSwitchSpaces = true
+        let localSut = makeDelegate(trusted: false)
+
+        XCTAssertEqual(localSut.resolveClickPermission(), .needsRequest)
+        XCTAssertFalse(store.clickToSwitchSpaces, "A grant that went away should leave the setting off")
+    }
+
+    func testResolveClickPermission_untrustedWithSettingOff_leavesSettingOffAndAsks() {
+        store.clickToSwitchSpaces = false
+        let localSut = makeDelegate(trusted: false)
+
+        XCTAssertEqual(localSut.resolveClickPermission(), .needsRequest)
+        XCTAssertFalse(store.clickToSwitchSpaces)
+    }
+
+    func testResolveClickPermission_trustedWithSettingOff_enablesSetting() {
+        store.clickToSwitchSpaces = false
+        let localSut = makeDelegate(trusted: true)
+
+        XCTAssertEqual(localSut.resolveClickPermission(), .granted)
+        XCTAssertTrue(store.clickToSwitchSpaces, "The first click should enable click-to-switch")
+    }
+
+    func testResolveClickPermission_trustedWithSettingOn_grants() {
+        store.clickToSwitchSpaces = true
+        let localSut = makeDelegate(trusted: true)
+
+        XCTAssertEqual(localSut.resolveClickPermission(), .granted)
+        XCTAssertTrue(store.clickToSwitchSpaces)
+    }
+
     func testHandleMiddleClickEvent_consumesMiddleClickInsideButtonAndSendsNotification() throws {
         var notifications: [String] = []
         let sender: (CFString) -> Void = { notifications.append($0 as String) }

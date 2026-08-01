@@ -2,6 +2,7 @@ import AppKit
 import Defaults
 import LaunchAtLogin
 import Observation
+import os.log
 import QuartzCore
 import Settings
 @preconcurrency import Sparkle
@@ -36,6 +37,14 @@ typealias ConfirmAction = (
     _ message: String, _ detail: String, _ confirmTitle: String, _ isDestructive: Bool
 ) -> Bool
 
+// MARK: - Click Permission
+
+/// Whether a left click may switch Spaces, or has to ask for permission first.
+enum ClickPermission {
+    case granted
+    case needsRequest
+}
+
 // MARK: - App Delegate
 
 @MainActor
@@ -54,6 +63,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     private let relativeSpaceSwitchAction: (_ goRight: Bool, _ wrap: Bool) -> Bool
     /// Plays scroll haptics; injectable so gesture classification can be tested.
     private let scrollHapticAction: @MainActor (Int) -> Void
+    /// Reports Accessibility trust; injectable so click tests don't depend on the host's TCC state
+    private let isProcessTrusted: () -> Bool
+
+    /// Records why a click produced no switch; the early returns below leave
+    /// no other trace.
+    private static let logger = Logger(subsystem: "io.gechr.WhichSpace", category: "Click")
     /// Accumulated precise scroll delta at 100% sensitivity; a switch fires on crossing
     private static let scrollSpaceBaseThreshold = 50.0
     /// Minimum interval between scroll-triggered switches, so a flick lands one Space over
@@ -95,6 +110,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             return SpaceSwitcher.switchRelative(goRight: goRight, wrap: wrap)
         }
         scrollHapticAction = HapticActuator.actuate
+        isProcessTrusted = { AXIsProcessTrusted() }
         super.init()
         configureActionHandler()
     }
@@ -113,7 +129,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             }
             return SpaceSwitcher.switchRelative(goRight: goRight, wrap: wrap)
         },
-        scrollHapticAction: @escaping @MainActor (Int) -> Void = HapticActuator.actuate
+        scrollHapticAction: @escaping @MainActor (Int) -> Void = HapticActuator.actuate,
+        isProcessTrusted: @escaping () -> Bool = { AXIsProcessTrusted() }
     ) {
         self.appState = appState
         self.confirmAction = confirmAction
@@ -121,6 +138,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         self.missionControlNotificationSender = missionControlNotificationSender
         self.relativeSpaceSwitchAction = relativeSpaceSwitchAction
         self.scrollHapticAction = scrollHapticAction
+        self.isProcessTrusted = isProcessTrusted
         super.init()
         configureActionHandler()
     }
@@ -217,8 +235,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         UserDefaults.standard.register(defaults: ["NSInitialToolTipDelay": 500])
 
         // Offer to move to /Applications when launched from elsewhere (e.g. Downloads)
-        // - running translocated would break Sparkle updates
-        AppMover.moveIfNecessary(appName: AppInfo.appName)
+        // - running translocated would break Sparkle updates.
+        // A debug build lives in DerivedData, which is never an Applications
+        // folder, so it would offer to replace the installed copy and trash
+        // the build product out from under the running process.
+        #if !DEBUG
+            AppMover.moveIfNecessary(appName: AppInfo.appName)
+        #endif
 
         // Menu bar only - no Dock icon or app-switcher entry
         NSApp.setActivationPolicy(.accessory)
@@ -243,7 +266,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         startObservingPreferences()
 
         // Disable switching gestures if accessibility permission was revoked
-        if !AXIsProcessTrusted() {
+        if !isProcessTrusted() {
+            let hadGestures = store.clickToSwitchSpaces || store.horizontalScrollEnabled || store.verticalScrollEnabled
             if store.clickToSwitchSpaces {
                 SettingsConstraints.setClickToSwitchSpaces(false, store: store)
             }
@@ -252,6 +276,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             }
             if store.verticalScrollEnabled {
                 SettingsConstraints.setScrollSwitching(false, axis: \.verticalScrollEnabled, store: store)
+            }
+            if hadGestures {
+                Self.logger.info("not trusted at launch; switching gestures turned off")
             }
         }
 
@@ -565,6 +592,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
     @objc private func statusBarButtonClicked(_ button: NSStatusBarButton) {
         guard let event = NSApp.currentEvent else {
+            Self.logger.info("click ignored: no current event")
             return
         }
 
@@ -579,19 +607,37 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
     }
 
-    private func handleLeftClick(_ event: NSEvent, button: NSStatusBarButton) {
+    /// Resolves what a left click is allowed to do, enabling click-to-switch on
+    /// the first click and turning it back off if the grant has gone away.
+    ///
+    /// Permission can disappear after the setting was enabled - a revoked
+    /// grant, a TCC reset, or a rebuilt bundle the system no longer
+    /// recognises - so both states end in a permission request rather than a
+    /// click that does nothing and says nothing.
+    func resolveClickPermission() -> ClickPermission {
         // Auto-enable click-to-switch on first left click
-        if !store.clickToSwitchSpaces {
-            if !SettingsConstraints.setClickToSwitchSpaces(true, store: store) {
-                // Accessibility permission not granted - trigger the permission flow
-                actionHandler.requestAccessibilityForClickToSwitch()
-                return
+        guard store.clickToSwitchSpaces else {
+            let enabled = SettingsConstraints.setClickToSwitchSpaces(
+                true, store: store, isProcessTrusted: isProcessTrusted
+            )
+            if !enabled {
+                Self.logger.info("click ignored: not trusted, so click-to-switch stays off")
             }
+            return enabled ? .granted : .needsRequest
         }
 
-        // If user denied accessibility permission, disable the setting
-        guard AXIsProcessTrusted() else {
+        guard isProcessTrusted() else {
+            Self.logger.info("click ignored: not trusted; turning click-to-switch off")
             SettingsConstraints.setClickToSwitchSpaces(false, store: store)
+            return .needsRequest
+        }
+
+        return .granted
+    }
+
+    private func handleLeftClick(_ event: NSEvent, button: NSStatusBarButton) {
+        guard resolveClickPermission() == .granted else {
+            actionHandler.requestAccessibilityForClickToSwitch()
             return
         }
 
@@ -602,6 +648,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         // and whenever the layout came back empty, so a left click can always
         // reach another Space.
         guard store.showAllSpaces, !layout.slots.isEmpty else {
+            let allSpaces = store.showAllSpaces
+            let slotCount = layout.slots.count
+            Self.logger.info("picker fallback: showAllSpaces \(allSpaces), slots \(slotCount)")
             showSpacePickerMenu(from: button)
             return
         }
@@ -611,6 +660,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
         // Use StatusBarLayout hit testing
         guard let slot = layout.slot(at: clickX) else {
+            let width = layout.totalWidth
+            Self.logger.info("click ignored: no slot at x \(clickX) of width \(width)")
             return
         }
 
@@ -629,6 +680,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         let entries = appState.spacePickerEntries()
         // A single Space leaves nothing to switch to
         guard entries.count > 1 else {
+            Self.logger.info("no picker: \(entries.count) Space(s) available")
             return
         }
         let menu = MenuBuilder.buildSpacePickerMenu(entries: entries, target: actionHandler)
