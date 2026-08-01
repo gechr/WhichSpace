@@ -43,6 +43,13 @@ extension SettingsPaneID {
 protocol SettingsObservingModel: AnyObject {
     func startObserving()
     func stopObserving()
+    /// Called when the window comes on screen after being closed, before
+    /// the panes render, so a model can reorient around the current state.
+    func prepareForShow()
+}
+
+extension SettingsObservingModel {
+    func prepareForShow() {}
 }
 
 extension SettingsModel: SettingsObservingModel {}
@@ -72,6 +79,7 @@ final class SettingsWindowCoordinator {
     /// brings one row into view, for links that point at a single setting,
     /// and briefly highlights it when the link asked for emphasis.
     func show(pane: SettingsPaneID? = nil, focus: SettingsFocus? = nil) {
+        let wasVisible = windowController?.window?.isVisible ?? false
         var isFirstShow = false
         if windowController == nil {
             isFirstShow = true
@@ -103,6 +111,11 @@ final class SettingsWindowCoordinator {
         }
         for model in models {
             model.startObserving()
+        }
+        if !wasVisible {
+            for model in models {
+                model.prepareForShow()
+            }
         }
         windowController?.show(pane: pane?.identifier)
         if isFirstShow, let window = windowController?.window {

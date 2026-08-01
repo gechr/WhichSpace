@@ -170,6 +170,14 @@ final class SpaceEditorModel {
         }
     }
 
+    /// Re-points the pane at the Space the user is on, so an opening window
+    /// starts where they are rather than where they last edited.
+    func prepareForShow() {
+        selectedDisplayID = appState.currentDisplayID
+        selection = .space(max(appState.currentSpace, 1))
+        normalizeSelection()
+    }
+
     /// The user-visible number of the edited Space, used by style previews.
     var editingDisplayNumber: Int {
         guard case let .space(number) = selection else {

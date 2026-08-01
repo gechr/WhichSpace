@@ -195,6 +195,17 @@ struct SpaceEditorModelTests {
         #expect(store.spaceSymbols.isEmpty)
     }
 
+    @Test("prepareForShow points at the current display and Space")
+    func prepareForShowFocusesCurrent() {
+        configureTwoDisplays()
+        let model = makeModel()
+        model.selectedDisplayID = "Second"
+        model.selection = .space(3)
+        model.prepareForShow()
+        #expect(model.selectedDisplayID == "Main")
+        #expect(model.selection == .space(1))
+    }
+
     @Test("the template stays in shared storage from any scope")
     func templateRoutingPerDisplay() {
         configureTwoDisplays()
