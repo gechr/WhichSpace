@@ -596,9 +596,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
 
         let layout = appState.statusBarLayout()
-        // Single-icon mode has no per-Space slots: offer a picker menu so a
-        // left click can still switch Spaces
-        guard !layout.slots.isEmpty else {
+        // Single-icon mode draws one icon per display rather than one per
+        // Space, so a click has no Space of its own to land on even when the
+        // display row gives the layout slots. Offer the picker in both cases,
+        // and whenever the layout came back empty, so a left click can always
+        // reach another Space.
+        guard store.showAllSpaces, !layout.slots.isEmpty else {
             showSpacePickerMenu(from: button)
             return
         }
