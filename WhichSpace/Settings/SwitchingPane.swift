@@ -135,7 +135,9 @@ struct SwitchingPane: View {
                 defaultValue: 0,
                 icon: "waveform",
                 subtitle: Localization.tipScrollHapticFeedback,
-                anchor: .scrollHaptics
+                anchor: .scrollHaptics,
+                // The detents read as names rather than numbers
+                valueParser: nil
             ) {
                 HapticIntensityLabel.label(for: Int($0))
             }

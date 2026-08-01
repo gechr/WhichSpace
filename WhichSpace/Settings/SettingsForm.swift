@@ -221,7 +221,18 @@ struct SettingsSliderRow: View {
     var disabled = false
     var subtitle: String?
     var anchor: SettingsAnchor?
+    /// Reads a typed value back out of the formatted display, so the number
+    /// can be set exactly rather than dragged for. Rows whose display has no
+    /// numeric reading - the haptic detent names - pass nil and stay a label.
+    var valueParser: ((String) -> Double?)? = Self.parseNumber
     var valueFormatter: (Double) -> String = { String(format: "%.0f%%", $0) }
+
+    /// Takes the number out of a display string, discarding whatever unit the
+    /// formatter added and accepting either decimal separator.
+    nonisolated static func parseNumber(_ text: String) -> Double? {
+        let number = text.filter { $0.isNumber || $0 == "." || $0 == "," || $0 == "-" }
+        return Double(number.replacingOccurrences(of: ",", with: "."))
+    }
 
     var body: some View {
         SettingsRow(icon: icon, subtitle: subtitle, disabled: disabled, anchor: anchor) {
@@ -234,10 +245,7 @@ struct SettingsSliderRow: View {
             VStack(spacing: 2) {
                 slider
                     .labelsHidden()
-                Text(valueFormatter(value.wrappedValue))
-                    .font(.system(size: Layout.settingsSliderValueFontSize))
-                    .monospacedDigit()
-                    .foregroundStyle(.secondary)
+                valueDisplay
             }
             .frame(width: Layout.settingsSliderWidth)
             Button {
@@ -248,6 +256,23 @@ struct SettingsSliderRow: View {
             .buttonStyle(.borderless)
             .disabled(value.wrappedValue == defaultValue)
             .help(Localization.buttonReset)
+        }
+    }
+
+    @ViewBuilder
+    private var valueDisplay: some View {
+        if let valueParser {
+            SliderValueField(
+                value: value,
+                range: range,
+                formatter: valueFormatter,
+                parse: valueParser
+            )
+        } else {
+            Text(valueFormatter(value.wrappedValue))
+                .font(.system(size: Layout.settingsSliderValueFontSize))
+                .monospacedDigit()
+                .foregroundStyle(.secondary)
         }
     }
 
@@ -304,6 +329,74 @@ struct SettingsSliderRow: View {
             // reset still enabled
             value.wrappedValue = mapped.rounded()
         }
+    }
+}
+
+/// The slider's value, typed as well as dragged.
+///
+/// Reads as the same subtext label until it is clicked, so the row keeps its
+/// look and the field is found by aiming at the number. Editing shows the
+/// bare number, dropping the unit the formatter adds so the value can be
+/// replaced outright rather than typed around.
+private struct SliderValueField: View {
+    let value: Binding<Double>
+    let range: ClosedRange<Double>
+    let formatter: (Double) -> String
+    let parse: (String) -> Double?
+
+    @State private var text = ""
+    @FocusState private var isEditing: Bool
+
+    var body: some View {
+        TextField("", text: $text)
+            .textFieldStyle(.plain)
+            .multilineTextAlignment(.center)
+            .font(.system(size: Layout.settingsSliderValueFontSize))
+            .monospacedDigit()
+            .foregroundStyle(.secondary)
+            .focused($isEditing)
+            .background(
+                RoundedRectangle(cornerRadius: 4, style: .continuous)
+                    .fill(
+                        isEditing
+                            ? AnyShapeStyle(Color(nsColor: .quaternarySystemFill))
+                            : AnyShapeStyle(.clear)
+                    )
+            )
+            .onSubmit {
+                commit()
+            }
+            .onChange(of: isEditing) { _, editing in
+                if editing {
+                    text = String(format: "%.0f", value.wrappedValue)
+                } else {
+                    commit()
+                }
+            }
+            // A drag moves the setting underneath the field, which only shows
+            // its own buffer; leave the buffer alone while it is being typed in
+            .onChange(of: value.wrappedValue) { _, current in
+                guard !isEditing else {
+                    return
+                }
+                text = formatter(current)
+            }
+            .onAppear {
+                text = formatter(value.wrappedValue)
+            }
+    }
+
+    /// Applies the typed number, or puts the current value back when it does
+    /// not read as one. Rounding matches the slider, which moves the setting
+    /// in whole units.
+    private func commit() {
+        defer {
+            text = formatter(value.wrappedValue)
+        }
+        guard let parsed = parse(text) else {
+            return
+        }
+        value.wrappedValue = parsed.rounded().clamped(to: range)
     }
 }
 

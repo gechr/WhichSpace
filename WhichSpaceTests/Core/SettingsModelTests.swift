@@ -146,3 +146,26 @@ struct SettingsModelTests {
         #expect(store.showAllDisplays)
     }
 }
+
+struct SliderValueParsingTests {
+    @Test("the formatted value round trips back to a number")
+    func parsesFormattedValue() {
+        #expect(SettingsSliderRow.parseNumber("125%") == 125)
+        #expect(SettingsSliderRow.parseNumber("125") == 125)
+        #expect(SettingsSliderRow.parseNumber("100 %") == 100)
+    }
+
+    @Test("either decimal separator reads as a number")
+    func parsesBothDecimalSeparators() {
+        #expect(SettingsSliderRow.parseNumber("12.5%") == 12.5)
+        #expect(SettingsSliderRow.parseNumber("12,5%") == 12.5)
+    }
+
+    @Test("input with no number in it is rejected")
+    func rejectsNonNumericInput() {
+        #expect(SettingsSliderRow.parseNumber("") == nil)
+        #expect(SettingsSliderRow.parseNumber("%") == nil)
+        // The haptic detent names are why this row opts out of typing
+        #expect(SettingsSliderRow.parseNumber("Light") == nil)
+    }
+}
