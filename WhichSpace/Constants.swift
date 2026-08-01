@@ -126,7 +126,7 @@ enum Layout {
     static let settingsSpaceListScrollerWidth = 16.0
     static let settingsSpaceNameMaxLength = 10
     static let settingsSpacesEditorGutter = 10.0
-    static let settingsSpacesEditorHeight = 480.0
+    static let settingsSpacesEditorBaseHeight = 480.0
     static let settingsSpacesPaneWidth = 680.0
     static let settingsSpacesPreviewHeight = 96.0
     static let settingsSpacesPreviewScale = 300.0

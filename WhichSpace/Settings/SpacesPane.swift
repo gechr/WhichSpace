@@ -292,7 +292,16 @@ struct SpacesPane: View {
                     // stop short of it rather than running up against it
                     .padding(.trailing, Layout.settingsSpacesEditorGutter)
                 }
-                .frame(height: Layout.settingsSpacesEditorHeight)
+                // The Space list can make the pane taller than this column
+                // needs, so the editor takes the leftover height rather than
+                // leaving the pane blank beneath it. Stating the ideal keeps
+                // the window measuring this column at the base height: a
+                // scroll view without one reports its whole card stack.
+                .frame(
+                    minHeight: Layout.settingsSpacesEditorBaseHeight,
+                    idealHeight: Layout.settingsSpacesEditorBaseHeight,
+                    maxHeight: .infinity
+                )
                 // onAppear covers a link that opens the window on this pane,
                 // where the anchor is already set before the editor exists
                 .onAppear {
