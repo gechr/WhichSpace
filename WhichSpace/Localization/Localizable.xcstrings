@@ -49206,259 +49206,259 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "عرض أرقام المساحات لكل شاشة بدلاً من الأرقام الشاملة"
+            "value" : "تبدأ كل شاشة من المساحة 1، بدلاً من الترقيم المتواصل"
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Показвай номера на Пространствата за всеки дисплей вместо глобални номера"
+            "value" : "Всеки дисплей започва от Пространство 1 вместо непрекъснато номериране"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostra els números d'Espai per pantalla en comptes dels números globals"
+            "value" : "Cada pantalla comença per l'Espai 1, en comptes d'una numeració contínua"
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zobrazovat čísla Spaces pro jednotlivé displeje místo globálních čísel"
+            "value" : "Každý displej začíná Spacem 1 místo průběžného číslování"
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vis Space-numre pr. skærm i stedet for globale numre"
+            "value" : "Hver skærm starter ved Space 1 i stedet for fortløbende nummerering"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Space-Nummern pro Display statt globaler Nummern anzeigen"
+            "value" : "Jedes Display beginnt bei Space 1 statt durchgehender Nummerierung"
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Εμφάνιση αριθμών Χώρων ανά οθόνη αντί για καθολικούς αριθμούς"
+            "value" : "Κάθε οθόνη ξεκινά από τον Χώρο 1 αντί για συνεχόμενη αρίθμηση"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Show per-display Space numbers instead of global numbers"
+            "value" : "Each display starts at Space 1, instead of numbering continuously"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Show per-display Space numbers instead of global numbers"
+            "value" : "Each display starts at Space 1, instead of numbering continuously"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostrar los números de Espacio por pantalla en lugar de los números globales"
+            "value" : "Cada pantalla empieza por el Espacio 1, en lugar de una numeración continua"
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "شماره‌های فضای محلی را برای هر نمایشگر نشان دهید، به‌جای شماره‌های سراسری"
+            "value" : "هر نمایشگر از فضای 1 شروع می‌شود، به‌جای شماره‌گذاری پیوسته"
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Näytä näyttökohtaiset Space-numerot globaalien numeroiden sijaan"
+            "value" : "Jokainen näyttö alkaa Spacesta 1 jatkuvan numeroinnin sijaan"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Afficher les numéros d'Espace par écran au lieu des numéros globaux"
+            "value" : "Chaque écran commence à l'Espace 1, au lieu d'une numérotation continue"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "הצג מספרי מרחבים לכל תצוגה במקום מספרים גלובליים"
+            "value" : "כל תצוגה מתחילה במרחב 1, במקום מספור רציף"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "प्रति डिस्प्ले स्पेस नंबर दिखाएँ, वैश्विक नंबरों की बजाय"
+            "value" : "लगातार नंबरिंग की बजाय हर डिस्प्ले स्पेस 1 से शुरू होता है"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Space-számok megjelenítése kijelzőnként a globális számok helyett"
+            "value" : "Minden kijelző a Space 1-gyel kezdődik a folyamatos számozás helyett"
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tampilkan nomor Space per layar, bukan nomor global"
+            "value" : "Setiap layar dimulai dari Space 1, bukan penomoran berlanjut"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostra i numeri degli Spazi per monitor invece dei numeri globali"
+            "value" : "Ogni monitor inizia dallo Spazio 1, invece di una numerazione continua"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "グローバル番号ではなく、ディスプレイごとのスペース番号を表示"
+            "value" : "連番ではなく、各ディスプレイがスペース 1 から始まります"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "글로벌 번호 대신 디스플레이별 스페이스 번호를 표시"
+            "value" : "연속 번호 대신 각 디스플레이가 스페이스 1부터 시작"
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Прикажи броеви на Простори по дисплеј наместо глобални броеви"
+            "value" : "Секој дисплеј започнува од Простор 1 наместо непрекинато нумерирање"
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tunjukkan nombor Ruang setiap paparan dan bukannya nombor global"
+            "value" : "Setiap paparan bermula dari Ruang 1, bukan penomboran berterusan"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vis Space-nummer per skjerm i stedet for globale nummer"
+            "value" : "Hver skjerm starter på Space 1 i stedet for fortløpende nummerering"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toon Space-nummers per scherm in plaats van globale nummers"
+            "value" : "Elk scherm begint bij Space 1 in plaats van doorlopende nummering"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vis Space-nummer per skjerm i staden for globale nummer"
+            "value" : "Kvar skjerm startar på Space 1 i staden for fortløpande nummerering"
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ہر ڈسپلے لئی عالمی نمبراں دی بجائے مقامی سپیس نمبر دکھاؤ"
+            "value" : "لگاتار نمبرنگ دی بجائے ہر ڈسپلے سپیس 1 توں شروع ہوندا اے"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pokazuj numery Spaces dla każdego ekranu zamiast numerów globalnych"
+            "value" : "Każdy ekran zaczyna od Space 1 zamiast ciągłej numeracji"
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "د هر ډیسپلې محلي د سپېس شمېرې وښایئ، د عمومي شمېرو پر ځای"
+            "value" : "د پرله پسې شمېرنې پر ځای هر ډیسپلې د سپېس 1 څخه پیل کوي"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostrar números de Espaço por monitor em vez de números globais"
+            "value" : "Cada monitor começa no Espaço 1, em vez de uma numeração contínua"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostrar números de Espaço por tela em vez de números globais"
+            "value" : "Cada tela começa no Espaço 1, em vez de uma numeração contínua"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Afișează numerele Spațiilor pe fiecare ecran în locul numerelor globale"
+            "value" : "Fiecare ecran începe de la Spațiul 1, în loc de o numerotare continuă"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Показывать номера Пространств для каждого дисплея вместо глобальных номеров"
+            "value" : "На каждом дисплее отсчёт начинается с Пространства 1 вместо сквозной нумерации"
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zobrazovať čísla Priestorov pre každý displej namiesto globálnych čísel"
+            "value" : "Každý displej začína Priestorom 1 namiesto priebežného číslovania"
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prikaži brojeve Prostora po ekranu umesto globalnih brojeva"
+            "value" : "Svaki ekran počinje od Prostora 1 umesto neprekidnog numerisanja"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Visa Space-nummer per skärm i stället för globala nummer"
+            "value" : "Varje skärm börjar på Space 1 i stället för löpande numrering"
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "แสดงหมายเลข Space ตามจอภาพแทนหมายเลขแบบรวม"
+            "value" : "แต่ละจอภาพเริ่มที่ Space 1 แทนการนับต่อเนื่อง"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Global numaralar yerine ekran başına Alan numaralarını göster"
+            "value" : "Sürekli numaralandırma yerine her ekran Alan 1 ile başlar"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Показувати номери Просторів для кожного дисплея замість глобальних номерів"
+            "value" : "На кожному дисплеї відлік починається з Простору 1 замість наскрізної нумерації"
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ہر ڈسپلے کے مقامی اسپیس نمبر دکھائیں، مجموعی نمبروں کی بجائے"
+            "value" : "مسلسل نمبرنگ کی بجائے ہر ڈسپلے اسپیس 1 سے شروع ہوتا ہے"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hiển thị số Không gian theo từng màn hình thay vì số toàn cục"
+            "value" : "Mỗi màn hình bắt đầu từ Không gian 1, thay vì đánh số liên tục"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "显示每个显示器的空间编号，而不是全局编号"
+            "value" : "每个显示器都从空间 1 开始，而不是连续编号"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "顯示每個顯示器的空間編號，而不是全域編號"
+            "value" : "每個顯示器都從空間 1 開始，而不是連續編號"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "顯示每個顯示器的空間編號，而非全域編號"
+            "value" : "每個顯示器都從空間 1 開始，而非連續編號"
           }
         }
       }
@@ -52350,259 +52350,259 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "عرض المساحات من جميع الشاشات مع ترقيم شامل وفواصل"
+            "value" : "تضمين المساحات من كل شاشة، بدلاً من الشاشة النشطة فقط"
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Покажи Пространства от всички дисплеи с глобално номериране и разделители"
+            "value" : "Включва Пространствата от всеки дисплей вместо само от активния"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostra els Espais de totes les pantalles amb numeració global i separadors"
+            "value" : "Inclou els Espais de cada pantalla, en comptes de només l'activa"
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zobrazte Spaces ze všech displejů s globálním číslováním a oddělovači"
+            "value" : "Zahrne Spaces z každého displeje místo pouze aktivního"
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vis Spaces fra alle skærme med global nummerering og skillelinjer"
+            "value" : "Inkluderer Spaces fra hver skærm i stedet for kun den aktive"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spaces aller Displays mit globaler Nummerierung und Trennern anzeigen"
+            "value" : "Bezieht Spaces von allen Displays ein statt nur vom aktiven Display"
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Εμφάνιση Χώρων από όλες τις οθόνες με καθολική αρίθμηση και διαχωριστικά"
+            "value" : "Συμπεριλαμβάνει Χώρους από κάθε οθόνη αντί μόνο από την ενεργή"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Show Spaces from all displays with global numbering and separators"
+            "value" : "Include Spaces from every Display, instead of only the active one"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Show Spaces from all displays with global numbering and separators"
+            "value" : "Include Spaces from every Display, instead of only the active one"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostrar los Espacios de todas las pantallas con numeración global y separadores"
+            "value" : "Incluye los Espacios de cada pantalla, en lugar de solo la activa"
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "نمایش فضاهای همه نمایشگرها با شماره‌گذاری سراسری و جداکننده‌ها"
+            "value" : "فضاهای هر نمایشگر را در بر می‌گیرد، به‌جای فقط نمایشگر فعال"
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Näytä kaikkien näyttöjen Spacet globaalilla numeroinnilla ja erottimilla"
+            "value" : "Sisältää kaikkien näyttöjen Spacet pelkän aktiivisen näytön sijaan"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Afficher les Espaces de tous les écrans avec numérotation globale et séparateurs"
+            "value" : "Inclut les Espaces de chaque écran, au lieu du seul écran actif"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "הצג מרחבים מכל התצוגות עם מספור גלובלי ומפרידים"
+            "value" : "כולל מרחבים מכל תצוגה במקום מהתצוגה הפעילה בלבד"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "सभी डिस्प्ले से स्पेसेस दिखाएँ, वैश्विक नंबरिंग और सेपरेटर के साथ"
+            "value" : "सिर्फ़ सक्रिय डिस्प्ले की बजाय हर डिस्प्ले के स्पेसेस शामिल करता है"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Az összes kijelző Space-einek megjelenítése globális számozással és elválasztókkal"
+            "value" : "Minden kijelző Space-eit tartalmazza, nem csak az aktívét"
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tampilkan Space dari semua layar dengan penomoran global dan pemisah"
+            "value" : "Menyertakan Space dari setiap layar, bukan hanya yang aktif"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostra gli Spazi di tutti i monitor con numerazione e separatori globali"
+            "value" : "Include gli Spazi di ogni monitor, invece del solo monitor attivo"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "すべてのディスプレイのスペースをグローバルな番号と区切り線付きで表示"
+            "value" : "アクティブなディスプレイだけでなく、すべてのディスプレイのスペースを含める"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "모든 디스플레이의 스페이스를 전역 번호와 구분선과 함께 표시"
+            "value" : "활성 디스플레이만이 아니라 모든 디스플레이의 스페이스 포함"
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Прикажи Простори од сите дисплеи со глобално нумерирање и разделници"
+            "value" : "Ги вклучува Просторите од секој дисплеј наместо само од активниот"
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tunjukkan Ruang dari semua paparan dengan penomboran global dan pemisah"
+            "value" : "Menyertakan Ruang dari setiap paparan, bukan hanya yang aktif"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vis Spaces fra alle skjermer med global nummerering og skillelinjer"
+            "value" : "Inkluderer Spaces fra hver skjerm i stedet for bare den aktive"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spaces van alle schermen tonen met globale nummering en scheidingslijnen"
+            "value" : "Neemt Spaces van elk scherm op in plaats van alleen het actieve"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vis Spaces frå alle skjermar med global nummerering og skiljelinjer"
+            "value" : "Inkluderer Spaces frå kvar skjerm i staden for berre den aktive"
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "تمام ڈسپلے توں سپیسز نوں عالمی نمبرنگ تے جداکار نال دکھاؤ"
+            "value" : "صرف چالو ڈسپلے دی بجائے ہر ڈسپلے دے سپیسز شامل کردا اے"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pokaż Spaces ze wszystkich ekranów z globalną numeracją i separatorami"
+            "value" : "Uwzględnia Spaces z każdego ekranu zamiast tylko z aktywnego"
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "د ټولو ډیسپلېونو سپېسونه د عمومي شمېرې او بېلکوونکو سره وښایئ"
+            "value" : "یوازې د فعال ډیسپلې پر ځای د هر ډیسپلې سپېسونه شاملوي"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostrar os Espaços de todos os monitores com numeração global e separadores"
+            "value" : "Inclui os Espaços de cada monitor, em vez de apenas o ativo"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostrar os Espaços de todas as telas com numeração global e separadores"
+            "value" : "Inclui os Espaços de cada tela, em vez de apenas a ativa"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Afișează Spațiile de pe toate ecranele cu numerotare globală și separatoare"
+            "value" : "Include Spațiile de pe fiecare ecran, în loc de doar cel activ"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Показать Пространства всех дисплеев с глобальной нумерацией и разделителями"
+            "value" : "Включает Пространства со всех дисплеев, а не только с активного"
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zobraziť Priestory zo všetkých displejov s globálnym číslovaním a oddeľovačmi"
+            "value" : "Zahrnie Priestory z každého displeja namiesto iba aktívneho"
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prikaži Prostore sa svih ekrana sa globalnim numerisanjem i razdelnicima"
+            "value" : "Uključuje Prostore sa svakog ekrana umesto samo sa aktivnog"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Visa Spaces från alla skärmar med global numrering och avgränsare"
+            "value" : "Inkluderar Spaces från varje skärm i stället för bara den aktiva"
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "แสดง Space จากทุกจอภาพพร้อมหมายเลขแบบรวมและตัวคั่น"
+            "value" : "รวม Space จากทุกจอภาพ แทนที่จะมีเฉพาะจอภาพที่ใช้งานอยู่"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tüm ekranlardaki Alanları global numaralandırma ve ayırıcılarla göster"
+            "value" : "Tüm ekranlardaki Alanları dahil eder, yalnızca etkin ekrandakileri değil"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Показувати Простори з усіх дисплеїв із глобальною нумерацією та роздільниками"
+            "value" : "Включає Простори з усіх дисплеїв, а не лише з активного"
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "تمام ڈسپلے کے اسپیسز کو مجموعی نمبرنگ اور جداکار کے ساتھ دکھائیں"
+            "value" : "صرف فعال ڈسپلے کی بجائے ہر ڈسپلے کے اسپیسز شامل کرتا ہے"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hiển thị các Không gian từ mọi màn hình với đánh số toàn cục và dấu phân tách"
+            "value" : "Bao gồm Không gian của mọi màn hình, thay vì chỉ màn hình đang hoạt động"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "显示所有显示器的空间，使用全局编号和分隔线"
+            "value" : "包含所有显示器的空间，而不只是当前显示器的空间"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "顯示所有顯示器的空間，使用全域編號與分隔線"
+            "value" : "包含所有顯示器的空間，而不只是目前顯示器的空間"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "顯示所有顯示器的空間，並使用全域編號與分隔線"
+            "value" : "包含所有顯示器的空間，而非只有目前顯示器的空間"
           }
         }
       }
@@ -52612,259 +52612,259 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "عرض أيقونة لكل مساحة في شريط القوائم"
+            "value" : "أيقونة لكل مساحة، بدلاً من المساحة النشطة فقط"
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Покажи икона за всяко Пространство в лентата с менюта"
+            "value" : "Икона за всяко Пространство вместо само за активното"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostra una icona per a cada Espai a la barra de menús"
+            "value" : "Una icona per a cada Espai, en comptes de només l'actiu"
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zobrazte ikonu pro každý Space v řádku nabídek"
+            "value" : "Ikona pro každý Space místo pouze aktivního"
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vis et ikon for hvert Space i menulinjen"
+            "value" : "Et ikon for hvert Space i stedet for kun det aktive"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Icon für jeden Space in der Menüleiste anzeigen"
+            "value" : "Ein Icon für jeden Space statt nur für den aktiven"
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Εμφάνιση εικονιδίου για κάθε Χώρο στη γραμμή μενού"
+            "value" : "Ένα εικονίδιο για κάθε Χώρο αντί μόνο για τον ενεργό"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Show an icon for every Space in the menu bar"
+            "value" : "An icon for every Space, instead of only the active one"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Show an icon for every Space in the menu bar"
+            "value" : "An icon for every Space, instead of only the active one"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostrar un icono para cada Espacio en la barra de menús"
+            "value" : "Un icono para cada Espacio, en lugar de solo el activo"
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "نمایش آیکون برای هر فضا در نوار منو"
+            "value" : "یک آیکون برای هر فضا، به‌جای فقط فضای فعال"
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Näytä kuvake jokaiselle Spacelle valikkorivillä"
+            "value" : "Kuvake jokaiselle Spacelle vain aktiivisen sijaan"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Afficher une icône pour chaque Espace dans la barre de menus"
+            "value" : "Une icône pour chaque Espace, au lieu du seul Espace actif"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "הצג סמל לכל מרחב בשורת התפריטים"
+            "value" : "סמל לכל מרחב במקום למרחב הפעיל בלבד"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "मेनू बार में हर स्पेस के लिए आइकन दिखाएँ"
+            "value" : "सिर्फ़ सक्रिय स्पेस की बजाय हर स्पेस के लिए आइकन"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ikon megjelenítése minden Space-hez a menüsorban"
+            "value" : "Ikon minden Space-hez, nem csak az aktívhoz"
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tampilkan ikon untuk setiap Space di bar menu"
+            "value" : "Ikon untuk setiap Space, bukan hanya yang aktif"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostra un'icona per ogni Spazio nella barra dei menu"
+            "value" : "Un'icona per ogni Spazio, invece del solo Spazio attivo"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "メニューバーにすべてのスペースのアイコンを表示"
+            "value" : "アクティブなスペースだけでなく、すべてのスペースのアイコンを表示"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "메뉴 막대에 모든 스페이스의 아이콘 표시"
+            "value" : "활성 스페이스만이 아니라 모든 스페이스의 아이콘 표시"
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Прикажи икона за секој Простор во лентата со менија"
+            "value" : "Икона за секој Простор наместо само за активниот"
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tunjukkan ikon untuk setiap Ruang pada bar menu"
+            "value" : "Ikon untuk setiap Ruang, bukan hanya yang aktif"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vis et ikon for hvert Space i menylinjen"
+            "value" : "Et ikon for hvert Space i stedet for bare det aktive"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Een pictogram voor elke Space in de menubalk tonen"
+            "value" : "Een pictogram voor elke Space in plaats van alleen de actieve"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vis eit ikon for kvar Space i menylinja"
+            "value" : "Eit ikon for kvar Space i staden for berre den aktive"
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "مینو بار وچ ہر سپیس دا آئیکن دکھاؤ"
+            "value" : "صرف چالو سپیس دی بجائے ہر سپیس دا آئیکن"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pokaż ikonę dla każdego Space na pasku menu"
+            "value" : "Ikona dla każdego Space zamiast tylko dla aktywnego"
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "په مېنو پټه کې د هر سپېس لپاره نښه وښایئ"
+            "value" : "یوازې د فعال سپېس پر ځای د هر سپېس لپاره یوه نښه"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostrar um ícone para cada Espaço na barra de menus"
+            "value" : "Um ícone para cada Espaço, em vez de apenas o ativo"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostrar um ícone para cada Espaço na barra de menus"
+            "value" : "Um ícone para cada Espaço, em vez de apenas o ativo"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Afișează o pictogramă pentru fiecare Spațiu în bara de meniu"
+            "value" : "O pictogramă pentru fiecare Spațiu, în loc de doar cel activ"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Показывать значок каждого Пространства в строке меню"
+            "value" : "Значок для каждого Пространства вместо только активного"
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zobraziť ikonu pre každý Priestor v lište ponúk"
+            "value" : "Ikona pre každý Priestor namiesto iba aktívneho"
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prikaži ikonu za svaki Prostor u traci menija"
+            "value" : "Ikona za svaki Prostor umesto samo za aktivni"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Visa en ikon för varje Space i menyraden"
+            "value" : "En ikon för varje Space i stället för bara det aktiva"
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "แสดงไอคอนสำหรับทุก Space บนแถบเมนู"
+            "value" : "ไอคอนสำหรับทุก Space แทนที่จะมีเฉพาะ Space ที่ใช้งานอยู่"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Menü çubuğunda her Alan için bir simge göster"
+            "value" : "Yalnızca etkin Alan yerine her Alan için bir simge"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Показувати значок для кожного Простору у смузі меню"
+            "value" : "Значок для кожного Простору замість лише активного"
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ہر اسپیس کا آئیکن مینو بار میں دکھائیں"
+            "value" : "صرف فعال اسپیس کی بجائے ہر اسپیس کا آئیکن"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hiển thị biểu tượng cho từng Không gian trên thanh menu"
+            "value" : "Biểu tượng cho từng Không gian, thay vì chỉ Không gian đang hoạt động"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在菜单栏显示每个空间的图标"
+            "value" : "为每个空间显示图标，而不是仅显示当前空间"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在選單列顯示每個空間的圖示"
+            "value" : "為每個空間顯示圖示，而不是僅顯示目前空間"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在選單列中顯示每個空間的圖示"
+            "value" : "為每個空間顯示圖示，而非只顯示目前空間"
           }
         }
       }
@@ -56018,259 +56018,259 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "استخدام أرقام المساحات المحلية"
+            "value" : "إعادة الترقيم لكل شاشة"
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Използвай локални номера на Пространствата"
+            "value" : "Започвай номерирането отново за всеки дисплей"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Utilitza números locals d'Espai"
+            "value" : "Reinicia la numeració per pantalla"
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Používat lokální čísla Spaces"
+            "value" : "Číslovat od začátku na každém displeji"
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Brug lokale Space-numre"
+            "value" : "Start nummerering forfra på hver skærm"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lokale Space-Nummern verwenden"
+            "value" : "Nummerierung pro Display neu beginnen"
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Χρήση τοπικών αριθμών Χώρων"
+            "value" : "Επανεκκίνηση αρίθμησης ανά οθόνη"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Use local Space numbers"
+            "value" : "Restart numbering per Display"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Use local Space numbers"
+            "value" : "Restart numbering per Display"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Usar números locales de Espacio"
+            "value" : "Reiniciar la numeración en cada pantalla"
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "استفاده از شماره‌های محلی فضا"
+            "value" : "شروع دوباره شماره‌گذاری برای هر نمایشگر"
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Käytä paikallisia Space-numeroita"
+            "value" : "Aloita numerointi alusta joka näytöllä"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Utiliser des numéros d'Espace locaux"
+            "value" : "Recommencer la numérotation sur chaque écran"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "השתמש במספרי מרחבים מקומיים"
+            "value" : "התחל מספור מחדש בכל תצוגה"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "स्थानीय स्पेस नंबर इस्तेमाल करें"
+            "value" : "हर डिस्प्ले पर नंबरिंग फिर से शुरू करें"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Helyi Space-számok használata"
+            "value" : "Számozás újrakezdése kijelzőnként"
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gunakan nomor Space lokal"
+            "value" : "Mulai ulang penomoran di tiap layar"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Usa numeri locali degli Spazi"
+            "value" : "Ricomincia la numerazione su ogni monitor"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ローカルのスペース番号を使用"
+            "value" : "ディスプレイごとに番号を振り直す"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "로컬 스페이스 번호 사용"
+            "value" : "디스플레이마다 번호를 다시 시작"
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Користи локални броеви на Простори"
+            "value" : "Започни го нумерирањето одново по дисплеј"
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Guna nombor Ruang tempatan"
+            "value" : "Mulakan semula penomboran pada setiap paparan"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bruk lokale Space-nummer"
+            "value" : "Start nummerering på nytt per skjerm"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gebruik lokale Space-nummers"
+            "value" : "Nummering per scherm opnieuw beginnen"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bruk lokale Space-nummer"
+            "value" : "Start nummerering på nytt per skjerm"
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "مقامی سپیس نمبر ورتو"
+            "value" : "ہر ڈسپلے تے نمبرنگ مُڑ شروع کرو"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Używaj lokalnych numerów Spaces"
+            "value" : "Zacznij numerację od nowa na każdym ekranie"
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "د سپېس محلي شمېرې وکاروئ"
+            "value" : "په هر ډیسپلې کې شمېرنه له سره پیل کړئ"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Usar números locais de Espaço"
+            "value" : "Reiniciar a numeração em cada monitor"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Usar números locais de Espaço"
+            "value" : "Reiniciar a numeração em cada tela"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Folosește numere locale ale Spațiilor"
+            "value" : "Reîncepe numerotarea pe fiecare ecran"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Использовать локальные номера Пространств"
+            "value" : "Начинать нумерацию заново на каждом дисплее"
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Používať lokálne čísla Priestorov"
+            "value" : "Číslovať od začiatku na každom displeji"
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Koristi lokalne brojeve Prostora"
+            "value" : "Počni numerisanje ispočetka po ekranu"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Använd lokala Space-nummer"
+            "value" : "Börja om numreringen på varje skärm"
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ใช้หมายเลข Space แบบแยกจอภาพ"
+            "value" : "เริ่มนับหมายเลขใหม่ในแต่ละจอภาพ"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Yerel Alan numaralarını kullan"
+            "value" : "Numaralandırmayı her ekranda yeniden başlat"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Використовувати локальні номери Просторів"
+            "value" : "Починати нумерацію заново на кожному дисплеї"
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "مقامی اسپیس نمبر استعمال کریں"
+            "value" : "ہر ڈسپلے پر نمبرنگ دوبارہ شروع کریں"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dùng số Không gian cục bộ"
+            "value" : "Đánh số lại từ đầu trên mỗi màn hình"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "使用本地空间编号"
+            "value" : "每个显示器重新开始编号"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "使用本地空間編號"
+            "value" : "每個顯示器重新開始編號"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "使用本地空間編號"
+            "value" : "每個顯示器重新開始編號"
           }
         }
       }
@@ -57066,259 +57066,259 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "إظهار جميع الشاشات"
+            "value" : "عرض المساحات من الشاشات الأخرى"
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Покажи всички дисплеи"
+            "value" : "Показвай Пространствата от други дисплеи"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostra totes les pantalles"
+            "value" : "Mostra els Espais d'altres pantalles"
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zobrazit všechny displeje"
+            "value" : "Zobrazit Spaces z ostatních displejů"
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vis alle skærme"
+            "value" : "Vis Spaces fra andre skærme"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alle Displays anzeigen"
+            "value" : "Spaces anderer Displays anzeigen"
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Εμφάνιση όλων των οθονών"
+            "value" : "Εμφάνιση Χώρων από άλλες οθόνες"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Show all Displays"
+            "value" : "Show Spaces from other Displays"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Show all Displays"
+            "value" : "Show Spaces from other Displays"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostrar todas las pantallas"
+            "value" : "Mostrar Espacios de otras pantallas"
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "نمایش همه نمایشگرها"
+            "value" : "نمایش فضاهای نمایشگرهای دیگر"
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Näytä kaikki näytöt"
+            "value" : "Näytä muiden näyttöjen Spacet"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Afficher tous les écrans"
+            "value" : "Afficher les Espaces des autres écrans"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "הצג את כל התצוגות"
+            "value" : "הצג מרחבים מתצוגות אחרות"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "सभी डिस्प्ले दिखाएँ"
+            "value" : "अन्य डिस्प्ले के स्पेसेस दिखाएँ"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Összes kijelző megjelenítése"
+            "value" : "Más kijelzők Space-einek megjelenítése"
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tampilkan semua layar"
+            "value" : "Tampilkan Space dari layar lain"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostra tutti i monitor"
+            "value" : "Mostra gli Spazi di altri monitor"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "すべてのディスプレイを表示"
+            "value" : "他のディスプレイのスペースを表示"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "모든 디스플레이 표시"
+            "value" : "다른 디스플레이의 스페이스 표시"
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Прикажи ги сите дисплеи"
+            "value" : "Прикажи Простори од други дисплеи"
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tunjukkan semua paparan"
+            "value" : "Tunjukkan Ruang dari paparan lain"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vis alle skjermer"
+            "value" : "Vis Spaces fra andre skjermer"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alle schermen tonen"
+            "value" : "Spaces van andere schermen tonen"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vis alle skjermar"
+            "value" : "Vis Spaces frå andre skjermar"
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "تمام ڈسپلے دکھاؤ"
+            "value" : "دوجے ڈسپلے دے سپیسز وکھاؤ"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pokaż wszystkie ekrany"
+            "value" : "Pokaż Spaces z innych ekranów"
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ټول ډیسپلېونه وښایئ"
+            "value" : "د نورو ډیسپلېونو سپېسونه ښکاره کړئ"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostrar todos os monitores"
+            "value" : "Mostrar Espaços de outros monitores"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostrar todas as telas"
+            "value" : "Mostrar Espaços de outras telas"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Afișează toate ecranele"
+            "value" : "Afișează Spațiile de pe alte ecrane"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Показывать все дисплеи"
+            "value" : "Показывать Пространства других дисплеев"
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zobraziť všetky displeje"
+            "value" : "Zobraziť Priestory z iných displejov"
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prikaži sve ekrane"
+            "value" : "Prikaži Prostore sa drugih ekrana"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Visa alla skärmar"
+            "value" : "Visa Spaces från andra skärmar"
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "แสดงทุกจอภาพ"
+            "value" : "แสดง Space จากจอภาพอื่น"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tüm ekranları göster"
+            "value" : "Diğer ekranlardaki Alanları göster"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Показувати всі дисплеї"
+            "value" : "Показувати Простори з інших дисплеїв"
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "تمام ڈسپلے دکھائیں"
+            "value" : "دیگر ڈسپلے کے اسپیسز دکھائیں"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hiển thị mọi màn hình"
+            "value" : "Hiển thị Không gian của các màn hình khác"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "显示所有显示器"
+            "value" : "显示其他显示器的空间"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "顯示所有顯示器"
+            "value" : "顯示其他顯示器的空間"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "顯示所有顯示器"
+            "value" : "顯示其他顯示器的空間"
           }
         }
       }
@@ -57328,109 +57328,109 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "إظهار جميع المساحات"
+            "value" : "إظهار كل المساحات"
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Покажи всички Пространства"
+            "value" : "Покажи всяко Пространство"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostra tots els Espais"
+            "value" : "Mostra cada Espai"
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zobrazit všechny Spaces"
+            "value" : "Zobrazit každý Space"
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vis alle Spaces"
+            "value" : "Vis hvert Space"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alle Spaces anzeigen"
+            "value" : "Jeden Space anzeigen"
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Εμφάνιση όλων των Χώρων"
+            "value" : "Εμφάνιση κάθε Χώρου"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Show all Spaces"
+            "value" : "Show every Space"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Show all Spaces"
+            "value" : "Show every Space"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostrar todos los Espacios"
+            "value" : "Mostrar cada Espacio"
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "نمایش همه فضاها"
+            "value" : "نمایش هر فضا"
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Näytä kaikki Spacet"
+            "value" : "Näytä jokainen Space"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Afficher tous les Espaces"
+            "value" : "Afficher chaque Espace"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "הצג את כל המרחבים"
+            "value" : "הצג כל מרחב"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "सभी स्पेसेस दिखाएँ"
+            "value" : "हर स्पेस दिखाएँ"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Összes Space megjelenítése"
+            "value" : "Minden Space megjelenítése"
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tampilkan semua Space"
+            "value" : "Tampilkan setiap Space"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostra tutti gli Spazi"
+            "value" : "Mostra ogni Spazio"
           }
         },
         "ja" : {
@@ -57448,91 +57448,91 @@
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Прикажи ги сите Простори"
+            "value" : "Прикажи го секој Простор"
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tunjukkan semua Ruang"
+            "value" : "Tunjukkan setiap Ruang"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vis alle Spaces"
+            "value" : "Vis hvert Space"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alle Spaces tonen"
+            "value" : "Elke Space tonen"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vis alle Spaces"
+            "value" : "Vis kvar Space"
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "تمام سپیسز دکھاؤ"
+            "value" : "ہر سپیس دکھاؤ"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pokaż wszystkie Spaces"
+            "value" : "Pokaż każdy Space"
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ټول سپېسونه وښایئ"
+            "value" : "هر سپېس وښایئ"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostrar todos os Espaços"
+            "value" : "Mostrar cada Espaço"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostrar todos os Espaços"
+            "value" : "Mostrar cada Espaço"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Afișează toate Spațiile"
+            "value" : "Afișează fiecare Spațiu"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Показывать все Пространства"
+            "value" : "Показывать каждое Пространство"
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zobraziť všetky Priestory"
+            "value" : "Zobraziť každý Priestor"
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prikaži sve Prostore"
+            "value" : "Prikaži svaki Prostor"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Visa alla Spaces"
+            "value" : "Visa varje Space"
           }
         },
         "th" : {
@@ -57544,19 +57544,19 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tüm Alanları göster"
+            "value" : "Her Alanı göster"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Показувати всі Простори"
+            "value" : "Показувати кожен Простір"
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "تمام اسپیسز دکھائیں"
+            "value" : "ہر اسپیس دکھائیں"
           }
         },
         "vi" : {
@@ -57568,19 +57568,19 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "显示所有空间"
+            "value" : "显示每个空间"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "顯示所有空間"
+            "value" : "顯示每個空間"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "顯示所有空間"
+            "value" : "顯示每個空間"
           }
         }
       }

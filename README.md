@@ -7,7 +7,7 @@ Have you ever forgotten _which space_ is currently active on macOS and wanted a 
 ## Overview
 
 - [**Multiple Spaces**](#spaces) - Show current Space only, or all Spaces at once
-- [**Multiple Displays**](#displays) - Show Spaces across multiple monitors
+- [**Multiple Displays**](#displays) - Include Spaces from every display in the menu bar icon
 - [**Click-to-Switch**](#click-on-a-space-to-switch-to-it) - Jump to any Space directly from the menu bar
 - [**Scroll-to-Switch**](#click-on-a-space-to-switch-to-it) - Cycle through Spaces by scrolling over the menu bar icon
 - [**Colors**](#colors) - Set foreground and background colors per Space
@@ -44,7 +44,7 @@ brew install --cask whichspace
 
 ### Spaces
 
-#### Show the current Space only, or choose to show all Spaces
+#### Show only the active Space, or every Space
 
 <img src="Screenshots/ShowAllSpaces.png">
 
@@ -59,11 +59,13 @@ brew install --cask whichspace
 
 ### Displays
 
-#### Show the current Display only, or choose to show all Displays
+#### Include Spaces from your other Displays, or just the current one
 
 <img src="Screenshots/ShowAllDisplays.png">
 
 > [!NOTE]
+> macOS allows an app only one menu bar icon, mirrored on every display, so WhichSpace cannot show a different number on each monitor. This setting draws every display's Spaces into that one icon.
+>
 > A vertical separator is shown between Displays.
 >
 > Full-screen apps are shown as their app icon (or **F**) and can be hidden entirely.
