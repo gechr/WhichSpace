@@ -139,20 +139,30 @@ struct SpacesPane: View {
         .focusable(false)
     }
 
-    /// Names the display the numbered picker has selected. The width is
-    /// capped at the list's own so a long product name truncates rather than
-    /// widening the pane around it.
+    /// Names the display the numbered picker has selected, or says what the
+    /// "All" scope does while it is selected. The width is capped at the
+    /// list's own so a long product name truncates rather than widening the
+    /// pane around it.
     @ViewBuilder
     private var displayNameCaption: some View {
-        if let name = model.displayName(for: model.selectedDisplayID) {
-            Text(name)
-                .font(.system(size: Layout.settingsRowSubtitleFontSize))
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
-                .truncationMode(.tail)
-                .frame(maxWidth: Layout.settingsSpaceListWidth, alignment: .leading)
-                .padding(.leading, 4)
+        if model.selectedDisplayID == nil {
+            // The explanation may not fit one line, so it wraps instead of
+            // truncating like a display name does
+            caption(Localization.tipAllDisplays, lines: 2)
+        } else if let name = model.displayName(for: model.selectedDisplayID) {
+            caption(name)
         }
+    }
+
+    private func caption(_ text: String, lines: Int = 1) -> some View {
+        Text(text)
+            .font(.system(size: Layout.settingsRowSubtitleFontSize))
+            .foregroundStyle(.secondary)
+            .lineLimit(lines)
+            .truncationMode(.tail)
+            .fixedSize(horizontal: false, vertical: true)
+            .frame(maxWidth: Layout.settingsSpaceListWidth, alignment: .leading)
+            .padding(.leading, 4)
     }
 
     private var displayBinding: Binding<String?> {
