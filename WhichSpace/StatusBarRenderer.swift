@@ -199,10 +199,14 @@ final class StatusBarRenderer {
 
         let displayNumber: Int = if isTemplate {
             1
-        } else if let entry, let displayInfo {
-            store.localSpaceNumbers
-                ? (entry.regularIndex ?? space)
-                : Self.globalIndex(entry: entry, globalStartIndex: displayInfo.globalStartIndex)
+        } else if let displayInfo {
+            if let entry {
+                store.localSpaceNumbers
+                    ? (entry.regularIndex ?? space)
+                    : Self.globalIndex(entry: entry, globalStartIndex: displayInfo.globalStartIndex)
+            } else {
+                Self.placeholderNumber(atPosition: space, on: displayInfo, localNumbers: store.localSpaceNumbers)
+            }
         } else {
             space
         }
@@ -930,6 +934,15 @@ final class StatusBarRenderer {
     static func globalIndex(entry: SpaceEntry, globalStartIndex: Int) -> Int {
         let localRegularIndex = entry.regularIndex ?? 0
         return globalStartIndex + max(localRegularIndex - 1, 0)
+    }
+
+    /// The number a Space created at 1-based list position `position` would
+    /// take on `display`. Mission Control appends new desktops after the
+    /// existing ones, so a placeholder extrapolates past the display's last
+    /// regular Space - offset by `globalStartIndex` in global numbering.
+    static func placeholderNumber(atPosition position: Int, on display: DisplaySpaceInfo, localNumbers: Bool) -> Int {
+        let regularPosition = display.regularSpaceCount + position - display.entries.count
+        return localNumbers ? regularPosition : display.globalStartIndex + regularPosition - 1
     }
 
     /// Fetches all custom labels for a display in a single read, overlaying

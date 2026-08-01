@@ -92,6 +92,68 @@ struct SpaceEditorModelTests {
             == String(format: Localization.labelDesktopNumber, 4))
     }
 
+    // MARK: - Placeholder Numbering
+
+    /// Four Spaces on Main and one on Second, so Second's first
+    /// placeholder sits at global position 6.
+    private func configureTwoDisplays() {
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [
+                    (id: 100, isFullscreen: false),
+                    (id: 101, isFullscreen: false),
+                    (id: 102, isFullscreen: false),
+                    (id: 103, isFullscreen: false),
+                ],
+                activeSpaceID: 100
+            ),
+            CGSStub.makeDisplay(
+                displayID: "Second",
+                spaces: [(id: 200, isFullscreen: false)],
+                activeSpaceID: 200
+            ),
+        ]
+    }
+
+    @Test("placeholders on a second display continue global numbering")
+    func placeholderGlobalNumber() {
+        configureTwoDisplays()
+        let model = makeModel()
+        model.selectedDisplayID = "Second"
+        model.selection = .space(1)
+        #expect(model.editingDisplayNumber == 5)
+        model.selection = .space(2)
+        #expect(model.editingDisplayNumber == 6)
+    }
+
+    @Test("placeholders on a second display restart in local numbering")
+    func placeholderLocalNumber() {
+        configureTwoDisplays()
+        store.localSpaceNumbers = true
+        let model = makeModel()
+        model.selectedDisplayID = "Second"
+        model.selection = .space(2)
+        #expect(model.editingDisplayNumber == 2)
+    }
+
+    @Test("placeholders skip fullscreen entries when extrapolating")
+    func placeholderAfterFullscreen() {
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [
+                    (id: 100, isFullscreen: false),
+                    (id: 101, isFullscreen: true),
+                ],
+                activeSpaceID: 100
+            ),
+        ]
+        let model = makeModel()
+        model.selection = .space(3)
+        #expect(model.editingDisplayNumber == 2)
+    }
+
     // MARK: - Key Routing
 
     @Test("writes use shared storage while uniqueIconsPerDisplay is off")

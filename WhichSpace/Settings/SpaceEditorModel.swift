@@ -157,10 +157,15 @@ final class SpaceEditorModel {
         guard case let .space(number) = selection else {
             return 1
         }
-        guard let info = displays.first(where: { $0.displayID == selectedDisplayID }),
-              info.entries.indices.contains(number - 1)
-        else {
+        guard let info = displays.first(where: { $0.displayID == selectedDisplayID }) else {
             return number
+        }
+        guard info.entries.indices.contains(number - 1) else {
+            return StatusBarRenderer.placeholderNumber(
+                atPosition: number,
+                on: info,
+                localNumbers: store.localSpaceNumbers
+            )
         }
         let entry = info.entries[number - 1]
         if store.localSpaceNumbers {
