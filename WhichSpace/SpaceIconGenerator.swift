@@ -60,6 +60,18 @@ extension IconStyle {
         }
     }
 
+    /// True when the shape's border is stroked rather than filled. The
+    /// stroke is centered on the path, so half of it extends beyond the
+    /// shape rect and the canvas needs allowance for it.
+    var strokesBorder: Bool {
+        switch shapeType {
+        case .stroke, .transparent:
+            false
+        default:
+            !isFilled
+        }
+    }
+
     /// Resolves the user's wrap preference to the layout the renderer will
     /// actually use. Styles without a stretchable shape always render the
     /// symbol outside the label.
@@ -91,13 +103,17 @@ enum SpaceIconGenerator {
     private static func effectiveStatusItemSize(
         contentWidth: Double,
         sizeScale: Double,
-        paddingScale: Double
+        paddingScale: Double,
+        outlined: Bool = false
     ) -> CGSize {
         let baseWidth = Layout.statusItemWidth * sizeScale
         let defaultWidth = contentWidth > baseWidth
             ? contentWidth + Layout.defaultHorizontalPadding * sizeScale
             : baseWidth
-        let minimumWidth = contentWidth + Layout.Icon.outlineWidth
+        // An outlined shape's stroke straddles the shape rect, so the canvas
+        // keeps allowance for it; filled shapes collapse to exactly their
+        // content width at 0% padding
+        let minimumWidth = outlined ? contentWidth + Layout.Icon.outlineWidth : contentWidth
         let effectiveWidth = contentWidth + (defaultWidth - contentWidth) * paddingScale / 100.0
         return CGSize(width: max(effectiveWidth, minimumWidth), height: Layout.statusItemHeight)
     }
@@ -221,7 +237,8 @@ enum SpaceIconGenerator {
         let canvasSize = effectiveStatusItemSize(
             contentWidth: contentWidth,
             sizeScale: scale,
-            paddingScale: paddingScale
+            paddingScale: paddingScale,
+            outlined: style.strokesBorder
         )
 
         switch style.shapeType {
@@ -629,7 +646,8 @@ enum SpaceIconGenerator {
         let canvasSize = effectiveStatusItemSize(
             contentWidth: shapeSize.width,
             sizeScale: scale,
-            paddingScale: paddingScale
+            paddingScale: paddingScale,
+            outlined: style.strokesBorder
         )
 
         return NSImage(size: canvasSize, flipped: false) { rect in
