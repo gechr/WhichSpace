@@ -168,14 +168,17 @@ struct SystemFrontWindowLocator: FrontWindowLocating {
 /// nothing, so membership is the only trustworthy signal.
 @MainActor
 struct SpaceWindowMover {
-    private let mover: any WindowMoving
-    private let locator: any FrontWindowLocating
-    private let raiser: any WindowRaising
-    private let isProcessTrusted: () -> Bool
-    private let followAction: @MainActor (Int, pid_t) -> Void
-    private let permitted: [WindowMoveBackend]
-    private let confirmationTimeout: Duration
+    private let activateApp: @MainActor (pid_t) -> Void
+    private let arrivalInterval: Duration
+    private let arrivalTimeout: Duration
     private let confirmationInterval: Duration
+    private let confirmationTimeout: Duration
+    private let followAction: @MainActor (Int, pid_t) -> Void
+    private let isProcessTrusted: () -> Bool
+    private let locator: any FrontWindowLocating
+    private let mover: any WindowMoving
+    private let permitted: [WindowMoveBackend]
+    private let raiser: any WindowRaising
 
     init(
         mover: any WindowMoving = SkyLightWindowMover(),
@@ -186,21 +189,31 @@ struct SpaceWindowMover {
             SpaceSwitcher.switchToSpace(id: spaceID)
             NSRunningApplication(processIdentifier: ownerPID)?.activate()
         },
+        activateApp: @escaping @MainActor (pid_t) -> Void = { ownerPID in
+            NSRunningApplication(processIdentifier: ownerPID)?.activate()
+        },
         // Injected so the ladder is testable: which backends a host permits
         // depends on its macOS version, so tests could not otherwise reach the
         // fall-through path
         permitted: [WindowMoveBackend] = Self.permittedBackends,
         confirmationTimeout: Duration = .milliseconds(400),
-        confirmationInterval: Duration = .milliseconds(10)
+        confirmationInterval: Duration = .milliseconds(10),
+        // Generous enough for a multi-Space swipe plus the snapshot debounce
+        // that feeds the current-Space reading
+        arrivalTimeout: Duration = .seconds(2),
+        arrivalInterval: Duration = .milliseconds(50)
     ) {
         self.mover = mover
         self.locator = locator
         self.raiser = raiser
         self.isProcessTrusted = isProcessTrusted
         self.followAction = followAction
+        self.activateApp = activateApp
         self.permitted = permitted
         self.confirmationTimeout = confirmationTimeout
         self.confirmationInterval = confirmationInterval
+        self.arrivalTimeout = arrivalTimeout
+        self.arrivalInterval = arrivalInterval
     }
 
     /// Moves the front window to the Space at the given 1-based number, which
@@ -217,7 +230,7 @@ struct SpaceWindowMover {
         guard entry.regularIndex != nil else {
             throw .spaceIsFullscreen(requested: number)
         }
-        try await move(toSpaceID: entry.id, requested: number, follow: follow, entries: entries)
+        try await move(toSpaceID: entry.id, requested: number, follow: follow, entries: entries, appState: appState)
     }
 
     /// Moves the front window one Space left or right, skipping fullscreen
@@ -236,14 +249,21 @@ struct SpaceWindowMover {
         guard entries.indices.contains(index - 1) else {
             throw .spaceOutOfRange(requested: index, max: entries.count)
         }
-        try await move(toSpaceID: entries[index - 1].id, requested: index, follow: follow, entries: entries)
+        try await move(
+            toSpaceID: entries[index - 1].id,
+            requested: index,
+            follow: follow,
+            entries: entries,
+            appState: appState
+        )
     }
 
     private func move(
         toSpaceID spaceID: Int,
         requested: Int,
         follow: Bool,
-        entries: [SpaceEntry]
+        entries: [SpaceEntry],
+        appState: AppState
     ) async throws(MoveError) {
         // Checked before any move is issued, so a permission failure never
         // leaves the window relocated
@@ -260,7 +280,7 @@ struct SpaceWindowMover {
         // A sticky window is already everywhere, so treat it as moved
         if source.contains(spaceID) {
             raiseIfTrusted(window)
-            switchIfFollowing(follow, toSpaceID: spaceID, window: window)
+            await switchIfFollowing(follow, toSpaceID: spaceID, window: window, appState: appState)
             return
         }
 
@@ -287,7 +307,7 @@ struct SpaceWindowMover {
             }
             if await confirm(window: window, spaceID: spaceID, leaving: source) {
                 raiseIfTrusted(window)
-                switchIfFollowing(follow, toSpaceID: spaceID, window: window)
+                await switchIfFollowing(follow, toSpaceID: spaceID, window: window, appState: appState)
                 return
             }
         }
@@ -306,11 +326,40 @@ struct SpaceWindowMover {
         raiser.raise(window)
     }
 
-    private func switchIfFollowing(_ follow: Bool, toSpaceID spaceID: Int, window: FrontWindow) {
+    /// Follows the window, then re-asserts its focus once the switch lands.
+    /// The pre-switch raise targets a window on an inactive Space, which AX
+    /// honours only empirically, so the raise and activation are repeated on
+    /// arrival where both are ordinary same-Space operations.
+    private func switchIfFollowing(
+        _ follow: Bool,
+        toSpaceID spaceID: Int,
+        window: FrontWindow,
+        appState: AppState
+    ) async {
         guard follow else {
             return
         }
         followAction(spaceID, window.ownerPID)
+        guard await arrived(atSpaceID: spaceID, appState: appState) else {
+            return
+        }
+        raiser.raise(window)
+        activateApp(window.ownerPID)
+    }
+
+    /// Waits for the switch to land on the target Space. The swipe gestures
+    /// complete asynchronously, so arrival is polled the same way membership
+    /// is confirmed.
+    private func arrived(atSpaceID spaceID: Int, appState: AppState) async -> Bool {
+        var waited = Duration.zero
+        while appState.currentSpaceID != spaceID {
+            guard waited < arrivalTimeout else {
+                return false
+            }
+            try? await Task.sleep(for: arrivalInterval)
+            waited += arrivalInterval
+        }
+        return true
     }
 
     /// A move is only confirmed once the window is on the target *and* has left

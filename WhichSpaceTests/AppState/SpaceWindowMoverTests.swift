@@ -98,6 +98,7 @@ struct SpaceWindowMoverTests {
         raiser: FakeRaiser = FakeRaiser(),
         isProcessTrusted: Bool = true,
         followed: FollowRecorder = FollowRecorder(),
+        activateApp: @escaping @MainActor (pid_t) -> Void = { _ in },
         permitted: [WindowMoveBackend] = WindowMoveBackend.allCases
     ) -> SpaceWindowMover {
         SpaceWindowMover(
@@ -106,9 +107,12 @@ struct SpaceWindowMoverTests {
             raiser: raiser,
             isProcessTrusted: { isProcessTrusted },
             followAction: { spaceID, ownerPID in followed.record(spaceID: spaceID, ownerPID: ownerPID) },
+            activateApp: activateApp,
             permitted: permitted,
             confirmationTimeout: .milliseconds(30),
-            confirmationInterval: .milliseconds(1)
+            confirmationInterval: .milliseconds(1),
+            arrivalTimeout: .milliseconds(30),
+            arrivalInterval: .milliseconds(1)
         )
     }
 
@@ -317,6 +321,44 @@ struct SpaceWindowMoverTests {
         #expect(raiser.raised.count == 1, "An incumbent can cover a sticky window as much as a moved one")
     }
 
+    @Test("arrival re-asserts the raise and activation")
+    func move_arrival_reRaises() async throws {
+        let raiser = FakeRaiser()
+        let events = EventLog()
+        let mover = makeMover(FakeWindowMover(), raiser: raiser) { _ in events.record("activate") }
+
+        // The stub already reports the target Space as current, so the switch
+        // is seen to land immediately
+        try await mover.move(toSpaceNumber: 2, follow: true, appState: makeAppState(activeSpaceID: 101))
+
+        #expect(raiser.raised.count == 2, "Once before the switch and once on arrival")
+        #expect(events.events == ["activate"])
+    }
+
+    @Test("a switch that never lands keeps the pre-switch raise only")
+    func move_neverArrives_skipsReRaise() async throws {
+        let raiser = FakeRaiser()
+        let events = EventLog()
+        let mover = makeMover(FakeWindowMover(), raiser: raiser) { _ in events.record("activate") }
+
+        try await mover.move(toSpaceNumber: 2, follow: true, appState: makeAppState())
+
+        #expect(raiser.raised.count == 1, "Arrival cannot be confirmed, so the raise is not repeated")
+        #expect(events.events.isEmpty)
+    }
+
+    @Test("send never waits for arrival or re-raises")
+    func move_send_skipsArrival() async throws {
+        let raiser = FakeRaiser()
+        let events = EventLog()
+        let mover = makeMover(FakeWindowMover(), raiser: raiser) { _ in events.record("activate") }
+
+        try await mover.move(toSpaceNumber: 2, follow: false, appState: makeAppState(activeSpaceID: 101))
+
+        #expect(raiser.raised.count == 1)
+        #expect(events.events.isEmpty)
+    }
+
     @Test("the raise lands before the follow switch")
     func move_raisesBeforeFollowing() async throws {
         // Raising after the switch would race the arrival, so the order is the
@@ -330,9 +372,12 @@ struct SpaceWindowMoverTests {
             raiser: raiser,
             isProcessTrusted: { true },
             followAction: { _, _ in events.record("follow") },
+            activateApp: { _ in },
             permitted: WindowMoveBackend.allCases,
             confirmationTimeout: .milliseconds(30),
-            confirmationInterval: .milliseconds(1)
+            confirmationInterval: .milliseconds(1),
+            arrivalTimeout: .milliseconds(30),
+            arrivalInterval: .milliseconds(1)
         )
 
         try await mover.move(toSpaceNumber: 2, follow: true, appState: makeAppState())
