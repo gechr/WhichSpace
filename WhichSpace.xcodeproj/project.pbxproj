@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2AC6B73F32A349A282BF76F7 /* Localization/AppMover.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = AF0AF4972C51445493EFBEFE /* Localization/AppMover.xcstrings */; };
+		3B7D9F1A4E2C48D5A6B0C1E2 /* Localization/AppShortcuts.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 5C8E0A2B6F3D49E6B7C1D2F3 /* Localization/AppShortcuts.xcstrings */; };
 		5E13C88D1BE03A6F00FF4305 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E13C88C1BE03A6F00FF4305 /* Assets.xcassets */; };
 		5E342D5E2E650D570003F863 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 5E342D5D2E650D570003F863 /* Sparkle */; };
 		5E4C3D012F890A230003F864 /* LaunchAtLogin in Frameworks */ = {isa = PBXBuildFile; productRef = 5E4C3D032F890A230003F866 /* LaunchAtLogin */; };
@@ -193,6 +194,7 @@
 		B0D99EF6E6DA48ED856CC9AE /* SymbolGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SymbolGridView.swift; sourceTree = "<group>"; };
 		ACE10FC5B04340818E50E9C5 /* SpaceSwitcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceSwitcher.swift; sourceTree = "<group>"; };
 		DDC11C93D956453C9E3D186D /* SpaceWindowMover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceWindowMover.swift; sourceTree = "<group>"; };
+		5C8E0A2B6F3D49E6B7C1D2F3 /* Localization/AppShortcuts.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localization/AppShortcuts.xcstrings; sourceTree = "<group>"; };
 		AF0AF4972C51445493EFBEFE /* Localization/AppMover.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localization/AppMover.xcstrings; sourceTree = "<group>"; };
 		B166782E5DC04625A4473365 /* RapidOperationsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RapidOperationsTests.swift; sourceTree = "<group>"; };
 		BBF87F4927A14FB9AB7B91DB /* ComplexUnicodeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComplexUnicodeTests.swift; sourceTree = "<group>"; };
@@ -314,6 +316,7 @@
 				5E13C8911BE03A6F00FF4305 /* Info.plist */,
 				9E2F7B4B45454315A483BD4D /* Localization/Localizable.xcstrings */,
 				AF0AF4972C51445493EFBEFE /* Localization/AppMover.xcstrings */,
+				5C8E0A2B6F3D49E6B7C1D2F3 /* Localization/AppShortcuts.xcstrings */,
 				035A09D63D8844FCA079A1C0 /* ScriptingCommands.swift */,
 				E133A52EB82B44829E4C3FFC /* URLCommands.swift */,
 				B27F1B6A56284EC7A38483EF /* WhichSpace.sdef */,
@@ -594,6 +597,7 @@
 				5E13C88D1BE03A6F00FF4305 /* Assets.xcassets in Resources */,
 				A1E2D3C41B2F4A5B6C7D8E93 /* Localization/Localizable.xcstrings in Resources */,
 				2AC6B73F32A349A282BF76F7 /* Localization/AppMover.xcstrings in Resources */,
+				3B7D9F1A4E2C48D5A6B0C1E2 /* Localization/AppShortcuts.xcstrings in Resources */,
 				E73A40E4FB4441B3A2156727 /* WhichSpace.sdef in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1034,7 +1038,7 @@
 			repositoryURL = "https://github.com/sindresorhus/KeyboardShortcuts";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.0;
+				minimumVersion = 3.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

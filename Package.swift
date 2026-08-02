@@ -14,6 +14,7 @@ let package = Package(
         // EmojiKit 3.x requires macOS 15, so pin it <3.x while macOS 14.0 is still supported
         .package(url: "https://github.com/danielsaidi/EmojiKit", "2.2.0" ..< "3.0.0"),
         .package(url: "https://github.com/sindresorhus/Defaults", from: "9.0.0"),
+        .package(url: "https://github.com/sindresorhus/KeyboardShortcuts", from: "3.0.0"),
         .package(url: "https://github.com/sindresorhus/LaunchAtLogin-Modern", from: "1.0.0"),
         // Pinned to a main revision: the fix keeping the settings window from
         // becoming the main window (#125) is not in any tagged release yet

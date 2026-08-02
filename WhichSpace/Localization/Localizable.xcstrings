@@ -10492,7 +10492,7 @@
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Провери за обновления..."
+            "value" : "Провери за актуализации..."
           }
         },
         "ca" : {
@@ -11064,7 +11064,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Copiar en..."
+            "value" : "Copiar a..."
           }
         },
         "fa" : {
@@ -12994,7 +12994,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ساریاں سپیسز نوں ڈیفالٹ تے ری سیٹ کرو"
+            "value" : "ساریاں سپیسز ڈیفالٹ تے"
           }
         },
         "pl" : {
@@ -13006,7 +13006,7 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ټول سپېسونه ډیفالټ ته وګرځوئ"
+            "value" : "ټول سپېسونه ډیفالټ ته"
           }
         },
         "pt" : {
@@ -13256,7 +13256,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "موجودہ سپیس نوں ڈیفالٹ تے ری سیٹ کرو"
+            "value" : "موجودہ سپیس ڈیفالٹ تے"
           }
         },
         "pl" : {
@@ -13696,7 +13696,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spaces-tilojen vaihtaminen vaatii Käyttöapu-luvan.\n\nKun napsautat Jatka, macOS pyytää lupaa. Napsauta \"Avaa Järjestelmäasetukset\", etsi %@ luettelosta ja ota se käyttöön."
+            "value" : "Spacejen vaihtaminen vaatii Käyttöapu-luvan.\n\nKun napsautat Jatka, macOS pyytää lupaa. Napsauta \"Avaa Järjestelmäasetukset\", etsi %@ luettelosta ja ota se käyttöön."
           }
         },
         "fr" : {
@@ -15197,269 +15197,6 @@
         }
       }
     },
-    "alert_import_success" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "تم استيراد الإعدادات بنجاح"
-          }
-        },
-        "bg" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Настройките са импортирани успешно"
-          }
-        },
-        "ca" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Configuració importada correctament"
-          }
-        },
-        "cs" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nastavení bylo úspěšně importováno"
-          }
-        },
-        "da" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Indstillinger importeret"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Einstellungen erfolgreich importiert"
-          }
-        },
-        "el" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Οι ρυθμίσεις εισήχθησαν επιτυχώς"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Settings imported successfully"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Settings imported successfully"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ajustes importados correctamente"
-          }
-        },
-        "fa" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "تنظیمات با موفقیت وارد شد"
-          }
-        },
-        "fi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Asetukset tuotu onnistuneesti"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Réglages importés avec succès"
-          }
-        },
-        "he" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ההגדרות יובאו בהצלחה"
-          }
-        },
-        "hi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "सेटिंग्स सफलतापूर्वक आयात की गईं"
-          }
-        },
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Beállítások sikeresen importálva"
-          }
-        },
-        "id" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pengaturan berhasil diimpor"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Impostazioni importate con successo"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "設定を読み込みました"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "설정을 성공적으로 가져왔습니다"
-          }
-        },
-        "mk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Поставките се успешно увезени"
-          }
-        },
-        "ms" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tetapan berjaya diimport"
-          }
-        },
-        "nb" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Innstillinger importert"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Instellingen succesvol geïmporteerd"
-          }
-        },
-        "nn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Innstillingar importerte"
-          }
-        },
-        "pa" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ترتیبات کامیابی نال امپورٹ ہو گئیاں"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ustawienia zaimportowane pomyślnie"
-          }
-        },
-        "ps" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "تنظیمات په بریالیتوب سره وارد شول"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Definições importadas com sucesso"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ajustes importados com sucesso"
-          }
-        },
-        "ro" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Setările au fost importate cu succes"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Настройки успешно импортированы"
-          }
-        },
-        "sk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nastavenia boli úspešne importované"
-          }
-        },
-        "sr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Podešavanja uspešno uvezena"
-          }
-        },
-        "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inställningar importerades"
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "นำเข้าการตั้งค่าสำเร็จ"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ayarlar başarıyla içe aktarıldı"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Налаштування успішно імпортовано"
-          }
-        },
-        "ur" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ترتیبات کامیابی سے درآمد ہو گئیں"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Đã nhập cài đặt thành công"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "设置已成功导入"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "設定已成功匯入"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "設定已成功匯入"
-          }
-        }
-      }
-    },
     "banner_accessibility_detail" : {
       "localizations" : {
         "ar" : {
@@ -15531,7 +15268,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spaces-tilojen vaihtaminen vaatii Käyttöapu-luvan."
+            "value" : "Spacejen vaihtaminen vaatii Käyttöapu-luvan."
           }
         },
         "fr" : {
@@ -20397,7 +20134,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Saydam"
+            "value" : "Şeffaf"
           }
         },
         "uk" : {
@@ -21283,7 +21020,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Copiar en todos los Espacios de todas las pantallas?"
+            "value" : "¿Copiar a todos los Espacios de todas las pantallas?"
           }
         },
         "fa" : {
@@ -22069,7 +21806,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Copiar en todos los Espacios de esta pantalla?"
+            "value" : "¿Copiar a todos los Espacios de esta pantalla?"
           }
         },
         "fa" : {
@@ -23855,7 +23592,7 @@
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Това ще обнови всички Пространства на всички дисплеи да съвпадат с цвета, стила, символа и шрифта на това Пространство."
+            "value" : "Това ще актуализира всички Пространства на всички дисплеи така, че да съответстват на цвета, стила, символа и шрифта на това Пространство."
           }
         },
         "ca" : {
@@ -23879,7 +23616,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dies aktualisiert alle Spaces auf allen Displays auf die Farbe, den Stil, das Symbol und die Schriftart dieses Spaces."
+            "value" : "Dies passt alle Spaces auf allen Displays an die Farbe, den Stil, das Symbol und die Schriftart dieses Spaces an."
           }
         },
         "el" : {
@@ -24117,7 +23854,7 @@
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Това ще обнови всички други Пространства, така че да съответстват на цвета, стила, символа и шрифта на това Пространство."
+            "value" : "Това ще актуализира всички други Пространства така, че да съответстват на цвета, стила, символа и шрифта на това Пространство."
           }
         },
         "ca" : {
@@ -24141,7 +23878,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dies aktualisiert alle anderen Spaces auf die Farbe, den Stil, das Symbol und die Schriftart dieses Spaces."
+            "value" : "Dies passt alle anderen Spaces an die Farbe, den Stil, das Symbol und die Schriftart dieses Spaces an."
           }
         },
         "el" : {
@@ -24373,13 +24110,13 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "سيُحدّث هذا المساحة المحددة لتطابق لون هذه المساحة ونمطها ورمزها وخطها."
+            "value" : "سيؤدي ذلك إلى تحديث المساحة المحددة لتطابق لون هذه المساحة ونمطها ورمزها وخطها."
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Това ще обнови избраното Пространство да съвпада с цвета, стила, символа и шрифта на това Пространство."
+            "value" : "Това ще актуализира избраното Пространство така, че да съответства на цвета, стила, символа и шрифта на това Пространство."
           }
         },
         "ca" : {
@@ -24641,7 +24378,7 @@
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Това ще обнови всички други Пространства на този дисплей да съвпадат с цвета, стила, символа и шрифта на това Пространство."
+            "value" : "Това ще актуализира всички други Пространства на този дисплей така, че да съответстват на цвета, стила, символа и шрифта на това Пространство."
           }
         },
         "ca" : {
@@ -24665,7 +24402,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dies aktualisiert alle anderen Spaces auf diesem Display auf die Farbe, den Stil, das Symbol und die Schriftart dieses Spaces."
+            "value" : "Dies passt alle anderen Spaces auf diesem Display an die Farbe, den Stil, das Symbol und die Schriftart dieses Spaces an."
           }
         },
         "el" : {
@@ -26207,7 +25944,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "فشل فك تشفير الإعدادات: %@"
+            "value" : "تعذّر فك ترميز الإعدادات: %@"
           }
         },
         "bg" : {
@@ -26469,7 +26206,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "فشل تشفير الإعدادات"
+            "value" : "تعذّر ترميز الإعدادات"
           }
         },
         "bg" : {
@@ -29417,7 +29154,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Space %d on koko näytön Space eikä voi vastaanottaa ikkunoita."
+            "value" : "Space %d on koko näytön tilassa, eikä siihen voi siirtää ikkunoita."
           }
         },
         "fr" : {
@@ -38265,7 +38002,7 @@
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Извън"
+            "value" : "Отвън"
           }
         },
         "ca" : {
@@ -38575,7 +38312,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Previsualización"
+            "value" : "Vista previa"
           }
         },
         "fa" : {
@@ -39593,7 +39330,7 @@
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Skillelinjens farve"
+            "value" : "Separatorens farve"
           }
         },
         "de" : {
@@ -39677,13 +39414,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "区切り線の色"
+            "value" : "区切り記号の色"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "구분선 색상"
+            "value" : "구분 기호 색상"
           }
         },
         "mk" : {
@@ -39701,19 +39438,19 @@
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Skillelinjens farge"
+            "value" : "Skilletegnets farge"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kleur scheidingslijn"
+            "value" : "Kleur scheidingsteken"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Farge på skiljelinja"
+            "value" : "Farge på skiljeteiknet"
           }
         },
         "pa" : {
@@ -39731,7 +39468,7 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "د بېلکوونکي رنګ"
+            "value" : "د بېلوونکي رنګ"
           }
         },
         "pt" : {
@@ -39809,19 +39546,19 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "分隔线颜色"
+            "value" : "分隔符颜色"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "分隔線顏色"
+            "value" : "分隔符號顏色"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "分隔線顏色"
+            "value" : "分隔符號顏色"
           }
         }
       }
@@ -40891,7 +40628,7 @@
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Barra"
+            "value" : "Barra inclinada"
           }
         },
         "cs" : {
@@ -41165,7 +40902,7 @@
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Skillelinjens stil"
+            "value" : "Separatorens stil"
           }
         },
         "de" : {
@@ -41249,13 +40986,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "区切り線のスタイル"
+            "value" : "区切り記号のスタイル"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "구분선 스타일"
+            "value" : "구분 기호 스타일"
           }
         },
         "mk" : {
@@ -41273,19 +41010,19 @@
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Skillelinjens stil"
+            "value" : "Skilletegnets stil"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stijl scheidingslijn"
+            "value" : "Stijl scheidingsteken"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stil på skiljelinja"
+            "value" : "Stil på skiljeteiknet"
           }
         },
         "pa" : {
@@ -41303,7 +41040,7 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "د بېلکوونکي سټایل"
+            "value" : "د بېلوونکي سټایل"
           }
         },
         "pt" : {
@@ -41381,19 +41118,19 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "分隔线样式"
+            "value" : "分隔符样式"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "分隔線樣式"
+            "value" : "分隔符號樣式"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "分隔線樣式"
+            "value" : "分隔符號樣式"
           }
         }
       }
@@ -42731,19 +42468,19 @@
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pilulka"
+            "value" : "Kapsle"
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pille"
+            "value" : "Kapsel"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pille"
+            "value" : "Kapsel"
           }
         },
         "el" : {
@@ -42779,7 +42516,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pilleri"
+            "value" : "Kapseli"
           }
         },
         "fr" : {
@@ -42815,19 +42552,19 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pillola"
+            "value" : "Capsula"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ピル"
+            "value" : "カプセル"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "알약"
+            "value" : "캡슐"
           }
         },
         "mk" : {
@@ -42845,19 +42582,19 @@
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pille"
+            "value" : "Kapsel"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pil"
+            "value" : "Capsule"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pille"
+            "value" : "Kapsel"
           }
         },
         "pa" : {
@@ -42869,7 +42606,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pigułka"
+            "value" : "Kapsułka"
           }
         },
         "ps" : {
@@ -42905,7 +42642,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pilulka"
+            "value" : "Kapsula"
           }
         },
         "sr" : {
@@ -42917,7 +42654,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Piller"
+            "value" : "Kapsel"
           }
         },
         "th" : {
@@ -42993,19 +42730,19 @@
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pilulka (Obrys)"
+            "value" : "Kapsle (Obrys)"
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pille (Omrids)"
+            "value" : "Kapsel (Omrids)"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pille (Umriss)"
+            "value" : "Kapsel (Umriss)"
           }
         },
         "el" : {
@@ -43041,7 +42778,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pilleri (Ääriviiva)"
+            "value" : "Kapseli (Ääriviiva)"
           }
         },
         "fr" : {
@@ -43077,19 +42814,19 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pillola (Contorno)"
+            "value" : "Capsula (Contorno)"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ピル（アウトライン）"
+            "value" : "カプセル（アウトライン）"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "알약 (윤곽)"
+            "value" : "캡슐 (윤곽)"
           }
         },
         "mk" : {
@@ -43107,19 +42844,19 @@
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pille (Omriss)"
+            "value" : "Kapsel (Omriss)"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pil (Contour)"
+            "value" : "Capsule (Contour)"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pille (Kontur)"
+            "value" : "Kapsel (Kontur)"
           }
         },
         "pa" : {
@@ -43131,7 +42868,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pigułka (Obrys)"
+            "value" : "Kapsułka (Obrys)"
           }
         },
         "ps" : {
@@ -43167,7 +42904,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pilulka (obrys)"
+            "value" : "Kapsula (obrys)"
           }
         },
         "sr" : {
@@ -43179,7 +42916,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Piller (Kontur)"
+            "value" : "Kapsel (Kontur)"
           }
         },
         "th" : {
@@ -46655,7 +46392,7 @@
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Farciment"
+            "value" : "Marge interior"
           }
         },
         "cs" : {
@@ -46667,13 +46404,13 @@
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Margen"
+            "value" : "Indvendig afstand"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abstand"
+            "value" : "Innenabstand"
           }
         },
         "el" : {
@@ -52170,19 +51907,19 @@
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pilulka"
+            "value" : "Kapsle"
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pille"
+            "value" : "Kapsel"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pille"
+            "value" : "Kapsel"
           }
         },
         "el" : {
@@ -52218,7 +51955,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pilleri"
+            "value" : "Kapseli"
           }
         },
         "fr" : {
@@ -52254,19 +51991,19 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pillola"
+            "value" : "Capsula"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ピル"
+            "value" : "カプセル"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "알약"
+            "value" : "캡슐"
           }
         },
         "mk" : {
@@ -52284,19 +52021,19 @@
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pille"
+            "value" : "Kapsel"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pil"
+            "value" : "Capsule"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pille"
+            "value" : "Kapsel"
           }
         },
         "pa" : {
@@ -52308,7 +52045,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pigułka"
+            "value" : "Kapsułka"
           }
         },
         "ps" : {
@@ -52344,7 +52081,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pilulka"
+            "value" : "Kapsula"
           }
         },
         "sr" : {
@@ -52356,7 +52093,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Piller"
+            "value" : "Kapsel"
           }
         },
         "th" : {
@@ -52433,19 +52170,19 @@
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pilulka (Obrys)"
+            "value" : "Kapsle (Obrys)"
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pille (Omrids)"
+            "value" : "Kapsel (Omrids)"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pille (Umriss)"
+            "value" : "Kapsel (Umriss)"
           }
         },
         "el" : {
@@ -52481,7 +52218,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pilleri (Ääriviiva)"
+            "value" : "Kapseli (Ääriviiva)"
           }
         },
         "fr" : {
@@ -52517,19 +52254,19 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pillola (Contorno)"
+            "value" : "Capsula (Contorno)"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ピル（アウトライン）"
+            "value" : "カプセル（アウトライン）"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "알약 (윤곽)"
+            "value" : "캡슐 (윤곽)"
           }
         },
         "mk" : {
@@ -52547,19 +52284,19 @@
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pille (Omriss)"
+            "value" : "Kapsel (Omriss)"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pil (Contour)"
+            "value" : "Capsule (Contour)"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pille (Kontur)"
+            "value" : "Kapsel (Kontur)"
           }
         },
         "pa" : {
@@ -52571,7 +52308,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pigułka (Obrys)"
+            "value" : "Kapsułka (Obrys)"
           }
         },
         "ps" : {
@@ -52607,7 +52344,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pilulka (obrys)"
+            "value" : "Kapsula (obrys)"
           }
         },
         "sr" : {
@@ -52619,7 +52356,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Piller (Kontur)"
+            "value" : "Kapsel (Kontur)"
           }
         },
         "th" : {
@@ -54113,7 +53850,7 @@
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Транспарентно"
+            "value" : "Проѕирен"
           }
         },
         "ms" : {
@@ -54191,13 +53928,13 @@
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Providno"
+            "value" : "Providan"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Transparent"
+            "value" : "Genomskinlig"
           }
         },
         "th" : {
@@ -55579,7 +55316,7 @@
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Posició de la insígnia respecte al text"
+            "value" : "Posició del distintiu respecte al text"
           }
         },
         "cs" : {
@@ -55591,13 +55328,13 @@
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Badgens placering i forhold til teksten"
+            "value" : "Mærkets placering i forhold til teksten"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Position des Badges relativ zum Text"
+            "value" : "Position des Abzeichens relativ zum Text"
           }
         },
         "el" : {
@@ -55621,7 +55358,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Posición de la insignia respecto al texto"
+            "value" : "Posición del distintivo respecto al texto"
           }
         },
         "fa" : {
@@ -55723,25 +55460,25 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Położenie plakietki względem tekstu"
+            "value" : "Położenie znaczka względem tekstu"
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "د متن په پرتله د بیج موقعیت"
+            "value" : "د متن په پرتله د بېج موقعیت"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Posição do emblema em relação ao texto"
+            "value" : "Posição do distintivo em relação ao texto"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Posição do emblema em relação ao texto"
+            "value" : "Posição do distintivo em relação ao texto"
           }
         },
         "ro" : {
@@ -55765,7 +55502,7 @@
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Položaj bedža u odnosu na tekst"
+            "value" : "Položaj značke u odnosu na tekst"
           }
         },
         "sv" : {
@@ -55777,7 +55514,7 @@
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ตำแหน่งของป้ายเทียบกับข้อความ"
+            "value" : "ตำแหน่งของตราเทียบกับข้อความ"
           }
         },
         "tr" : {
@@ -56907,7 +56644,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Links auf ein Space-Icon klicken, um zu wechseln"
+            "value" : "Durch Linksklick auf ein Space-Icon zu diesem Space wechseln"
           }
         },
         "el" : {
@@ -57455,7 +57192,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Copiar el color, estilo, símbolo y fuente de este Espacio en otros Espacios"
+            "value" : "Copiar el color, estilo, símbolo y fuente de este Espacio a otros Espacios"
           }
         },
         "fa" : {
@@ -57723,7 +57460,7 @@
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "فضای فعال فعلی"
+            "value" : "فضای فعال"
           }
         },
         "fi" : {
@@ -58503,7 +58240,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tiene un estilo propio - haz clic para volver al estilo predeterminado"
+            "value" : "Tiene un estilo propio - haga clic para volver al estilo predeterminado"
           }
         },
         "fa" : {
@@ -59235,7 +58972,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "إخفاء أيقونة شريط القوائم عندما يوجد مساحة واحدة فقط"
+            "value" : "إخفاء أيقونة شريط القوائم عندما توجد مساحة واحدة فقط"
           }
         },
         "bg" : {
@@ -59521,7 +59258,7 @@
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Skifter til Spacet til venstre"
+            "value" : "Skifter til det Space, der ligger til venstre"
           }
         },
         "de" : {
@@ -59783,7 +59520,7 @@
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Skifter til Spacet til højre"
+            "value" : "Skifter til det Space, der ligger til højre"
           }
         },
         "de" : {
@@ -60021,7 +59758,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "تحترم اختصارات لوحة المفاتيح إعدادات [%1$@](%2$@)"
+            "value" : "تلتزم اختصارات لوحة المفاتيح بإعدادات [%1$@](%2$@)"
           }
         },
         "bg" : {
@@ -60295,7 +60032,7 @@
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Farciment horitzontal al voltant del contingut de cada icona"
+            "value" : "Marge interior horitzontal al voltant del contingut de cada icona"
           }
         },
         "cs" : {
@@ -60307,13 +60044,13 @@
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vandret margen omkring hvert ikons indhold"
+            "value" : "Vandret indvendig afstand omkring hvert ikons indhold"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Horizontaler Abstand um den Inhalt jedes Icons"
+            "value" : "Horizontaler Innenabstand um den Inhalt jedes Icons"
           }
         },
         "el" : {
@@ -60813,7 +60550,7 @@
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Размени преден и заден план"
+            "value" : "Размени цветовете на предния и задния план"
           }
         },
         "ca" : {
@@ -61874,7 +61611,7 @@
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Každý displej začíná Spacem 1 místo průběžného číslování"
+            "value" : "Každý displej začíná u Space 1 místo průběžného číslování"
           }
         },
         "da" : {
@@ -63690,7 +63427,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "التمرير بعد المساحة الأولى أو الأخيرة يلتف إلى الطرف الآخر"
+            "value" : "يؤدي التمرير بعد المساحة الأولى أو الأخيرة إلى الانتقال إلى الطرف الآخر"
           }
         },
         "bg" : {
@@ -64220,7 +63957,7 @@
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "По-висока чувствителност превключва Пространствата с по-малко превъртане"
+            "value" : "При по-висока чувствителност Пространствата се превключват с по-малко превъртане"
           }
         },
         "ca" : {
@@ -64232,19 +63969,19 @@
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vyšší citlivost přepíná Spaces s menším posouváním"
+            "value" : "Vyšší citlivost umožňuje přepínat Spaces s menším posouváním"
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Højere følsomhed skifter Space med mindre rulning"
+            "value" : "Med højere følsomhed skiftes Spaces med mindre rulning"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Höhere Empfindlichkeit wechselt Spaces mit weniger Scrollen"
+            "value" : "Mit höherer Empfindlichkeit lassen sich Spaces mit weniger Scrollen wechseln"
           }
         },
         "el" : {
@@ -64626,7 +64363,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ہر ڈسپلے دیاں سپیسز وچکار کھچے گئے وکھ کرن والے نشان دا رنگ"
+            "value" : "ہر ڈسپلے دیاں سپیسز وچکار کھچے گئے جداکار دا رنگ"
           }
         },
         "pl" : {
@@ -64674,7 +64411,7 @@
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Boja razdvajača između Prostora svakog ekrana"
+            "value" : "Boja razdelnika između Prostora svakog ekrana"
           }
         },
         "sv" : {
@@ -64692,7 +64429,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Her ekranın Alanları arasına çizilen ayıracın rengi"
+            "value" : "Her ekranın Alanları arasına çizilen ayırıcının rengi"
           }
         },
         "uk" : {
@@ -64704,13 +64441,13 @@
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ہر ڈسپلے کے اسپیسز کے درمیان کھینچے گئے علیحدہ کار کا رنگ"
+            "value" : "ہر ڈسپلے کے اسپیسز کے درمیان کھینچے گئے جداکار کا رنگ"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Màu của dấu phân cách giữa các Không gian của mỗi màn hình"
+            "value" : "Màu của dấu phân tách giữa các Không gian của mỗi màn hình"
           }
         },
         "zh-Hans" : {
@@ -64852,7 +64589,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "각 디스플레이의 스페이스 사이에 그려지는 구분선 모양"
+            "value" : "각 디스플레이의 스페이스 사이에 그려지는 구분 기호 모양"
           }
         },
         "mk" : {
@@ -64888,7 +64625,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ہر ڈسپلے دیاں سپیسز وچکار کھچے گئے وکھ کرن والے نشان دی شکل"
+            "value" : "ہر ڈسپلے دیاں سپیسز وچکار کھچے گئے جداکار دی شکل"
           }
         },
         "pl" : {
@@ -64936,7 +64673,7 @@
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oblik razdvajača između Prostora svakog ekrana"
+            "value" : "Oblik razdelnika između Prostora svakog ekrana"
           }
         },
         "sv" : {
@@ -64954,7 +64691,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Her ekranın Alanları arasına çizilen ayıracın şekli"
+            "value" : "Her ekranın Alanları arasına çizilen ayırıcının şekli"
           }
         },
         "uk" : {
@@ -64966,13 +64703,13 @@
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ہر ڈسپلے کے اسپیسز کے درمیان کھینچے گئے علیحدہ کار کی شکل"
+            "value" : "ہر ڈسپلے کے اسپیسز کے درمیان کھینچے گئے جداکار کی شکل"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hình dạng của dấu phân cách giữa các Không gian của mỗi màn hình"
+            "value" : "Hình dạng của dấu phân tách giữa các Không gian của mỗi màn hình"
           }
         },
         "zh-Hans" : {
@@ -65852,7 +65589,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kuvake jokaiselle Spacelle vain aktiivisen sijaan"
+            "value" : "Kuvake jokaiselle Spacelle, ei vain aktiiviselle"
           }
         },
         "fr" : {
@@ -66328,7 +66065,7 @@
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zvuk přehraný při změně aktuálního Space"
+            "value" : "Zvuk přehrávaný při změně aktuálního Space"
           }
         },
         "da" : {
@@ -66590,7 +66327,7 @@
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zvuk přehraný při přepnutí na tento Space"
+            "value" : "Zvuk přehrávaný při přepnutí na tento Space"
           }
         },
         "da" : {
@@ -67376,7 +67113,7 @@
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zobrazit \"F\" místo ikony aplikace u Spaces na celou obrazovku"
+            "value" : "Zobrazit \"F\" místo ikony aplikace u Spaces v režimu celé obrazovky"
           }
         },
         "da" : {
@@ -69514,7 +69251,7 @@
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "مخفی کردن فضای تنها"
+            "value" : "مخفی کردن تنها فضای موجود"
           }
         },
         "fi" : {
@@ -69788,7 +69525,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lancer à la connexion"
+            "value" : "Lancer à l'ouverture de session"
           }
         },
         "he" : {
@@ -71354,7 +71091,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Näytä jokainen Space"
+            "value" : "Näytä kaikki Spacet"
           }
         },
         "fr" : {
