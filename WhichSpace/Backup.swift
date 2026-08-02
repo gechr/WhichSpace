@@ -61,6 +61,7 @@ struct Backup: Codable {
 
 /// Global settings that apply to the entire app.
 struct BackupSettings: Codable {
+    var classicSpaceSwitching: Bool
     var clickToSwitchSpaces: Bool
     var dimInactiveSpaces: Bool
     var emojiPickerSkinTone: Int
@@ -93,6 +94,7 @@ struct BackupSettings: Codable {
     var verticalScrollEnabled: Bool
 
     private enum CodingKeys: String, CodingKey {
+        case classicSpaceSwitching
         case clickToSwitchSpaces, dimInactiveSpaces, emojiPickerSkinTone, fullscreenIconStyle, hideEmptySpaces
         case hideFullscreenApps, hideSingleSpace, horizontalScrollEnabled
         case invertHorizontalScroll, invertVerticalScroll, launchAtLogin, localSpaceNumbers, paddingScale
@@ -105,6 +107,7 @@ struct BackupSettings: Codable {
     /// Tolerates missing keys so backups exported by older app versions still import.
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        classicSpaceSwitching = try container.decodeIfPresent(Bool.self, forKey: .classicSpaceSwitching) ?? false
         clickToSwitchSpaces = try container.decodeIfPresent(Bool.self, forKey: .clickToSwitchSpaces) ?? false
         dimInactiveSpaces = try container.decodeIfPresent(Bool.self, forKey: .dimInactiveSpaces) ?? true
         emojiPickerSkinTone = try container.decodeIfPresent(Int.self, forKey: .emojiPickerSkinTone)
@@ -137,6 +140,7 @@ struct BackupSettings: Codable {
     }
 
     init(
+        classicSpaceSwitching: Bool,
         clickToSwitchSpaces: Bool,
         dimInactiveSpaces: Bool,
         emojiPickerSkinTone: Int,
@@ -163,6 +167,7 @@ struct BackupSettings: Codable {
         soundName: String,
         verticalScrollEnabled: Bool
     ) {
+        self.classicSpaceSwitching = classicSpaceSwitching
         self.clickToSwitchSpaces = clickToSwitchSpaces
         self.dimInactiveSpaces = dimInactiveSpaces
         self.emojiPickerSkinTone = emojiPickerSkinTone
@@ -518,6 +523,7 @@ enum BackupManager {
         }
 
         let settings = BackupSettings(
+            classicSpaceSwitching: store.classicSpaceSwitching,
             clickToSwitchSpaces: store.clickToSwitchSpaces,
             dimInactiveSpaces: store.dimInactiveSpaces,
             emojiPickerSkinTone: store.emojiPickerSkinTone.rawValue,
@@ -652,6 +658,7 @@ enum BackupManager {
         launchAtLogin: LaunchAtLoginProvider = DefaultLaunchAtLoginProvider()
     ) {
         // Apply global settings
+        store.classicSpaceSwitching = backup.settings.classicSpaceSwitching
         store.clickToSwitchSpaces = backup.settings.clickToSwitchSpaces
         store.dimInactiveSpaces = backup.settings.dimInactiveSpaces
         // Unrecognized values (from a newer app version or hand edit) keep the default

@@ -39,6 +39,18 @@ enum SpaceSwitcher {
     /// Horizontal motion constant.
     private static let horizontalMotion: Int64 = 1
 
+    /// CGS symbolic hotkey IDs used for classic switching.
+    private enum HotKey {
+        /// "Switch to Desktop 1"; Desktops 2-16 follow consecutively.
+        static let firstDesktop: CGSSymbolicHotKey = 118
+        /// Desktops beyond this have no "Switch to Desktop N" hotkey.
+        static let maxDesktops = 16
+        /// "Move left a space" (Ctrl+Left by default).
+        static let moveLeft: CGSSymbolicHotKey = 79
+        /// "Move right a space" (Ctrl+Right by default).
+        static let moveRight: CGSSymbolicHotKey = 81
+    }
+
     /// Base swipe velocity, scaled by step count so multi-Space jumps stay instant.
     private static let swipeVelocity = 2000.0
 
@@ -108,11 +120,17 @@ enum SpaceSwitcher {
 
         let steps = abs(targetIndex - currentIndex)
         let goRight = targetIndex > currentIndex
-        let velocity = swipeVelocity * Double(steps)
 
-        for _ in 0 ..< steps {
-            guard postSwipeGesture(goRight: goRight, velocity: velocity) else {
+        if usesClassicSwitching {
+            guard classicSwitch(toSpaceID: targetSpaceID, goRight: goRight, steps: steps, connection: conn) else {
                 return
+            }
+        } else {
+            let velocity = swipeVelocity * Double(steps)
+            for _ in 0 ..< steps {
+                guard postSwipeGesture(goRight: goRight, velocity: velocity) else {
+                    return
+                }
             }
         }
 
@@ -156,7 +174,7 @@ enum SpaceSwitcher {
             return false
         }
 
-        guard postSwipeGesture(goRight: goRight, velocity: swipeVelocity) else {
+        guard postStep(goRight: goRight, velocity: swipeVelocity) else {
             return false
         }
 
@@ -174,10 +192,18 @@ enum SpaceSwitcher {
             return false
         }
 
-        let velocity = swipeVelocity * Double(steps)
-        for _ in 0 ..< steps {
-            guard postSwipeGesture(goRight: !goRight, velocity: velocity) else {
+        if usesClassicSwitching {
+            let target = display.spaces[targetIndex].id
+            guard classicSwitch(toSpaceID: target, goRight: !goRight, steps: steps, connection: _CGSDefaultConnection())
+            else {
                 return false
+            }
+        } else {
+            let velocity = swipeVelocity * Double(steps)
+            for _ in 0 ..< steps {
+                guard postSwipeGesture(goRight: !goRight, velocity: velocity) else {
+                    return false
+                }
             }
         }
 
@@ -190,12 +216,14 @@ enum SpaceSwitcher {
     /// Typed view of a single space returned by `CGSCopyManagedDisplaySpaces`.
     private struct ManagedSpace {
         let id: Int
+        let isFullscreen: Bool
 
         init?(dict: [String: Any]) {
             guard let id = dict["ManagedSpaceID"] as? Int else {
                 return nil
             }
             self.id = id
+            isFullscreen = dict["TileLayoutManager"] is [String: Any]
         }
     }
 
@@ -227,6 +255,98 @@ enum SpaceSwitcher {
             return []
         }
         return raw.compactMap(ManagedDisplay.init(dict:))
+    }
+
+    // MARK: - Classic Switching
+
+    /// Whether the user prefers classic hotkey switching over instant gestures.
+    /// Classic switching simulates the Mission Control keyboard shortcuts, so
+    /// it keeps the slide animation and works while a mouse button is held
+    /// down, which swallows synthetic swipe gestures.
+    @MainActor private static var usesClassicSwitching: Bool {
+        AppEnvironment.shared.store.classicSpaceSwitching
+    }
+
+    /// Posts one switch step left or right using the active mechanism.
+    @MainActor private static func postStep(goRight: Bool, velocity: Double) -> Bool {
+        if usesClassicSwitching {
+            return postHotKey(goRight ? HotKey.moveRight : HotKey.moveLeft)
+        }
+        return postSwipeGesture(goRight: goRight, velocity: velocity)
+    }
+
+    /// Switches via the "Switch to Desktop N" shortcut when the target has
+    /// one, stepping with the arrow shortcuts otherwise (fullscreen Spaces
+    /// and Desktops beyond 16 have no numbered shortcut).
+    private static func classicSwitch(
+        toSpaceID targetSpaceID: Int,
+        goRight: Bool,
+        steps: Int,
+        connection: Int32
+    ) -> Bool {
+        if let number = desktopNumber(forSpaceID: targetSpaceID, connection: connection),
+           number <= HotKey.maxDesktops
+        {
+            return postHotKey(HotKey.firstDesktop + CGSSymbolicHotKey(number - 1))
+        }
+        for _ in 0 ..< steps {
+            guard postHotKey(goRight ? HotKey.moveRight : HotKey.moveLeft) else {
+                return false
+            }
+        }
+        return true
+    }
+
+    /// The 1-based Mission Control Desktop number for a space ID, counting
+    /// regular Spaces across every display, or nil for fullscreen Spaces.
+    private static func desktopNumber(forSpaceID spaceID: Int, connection: Int32) -> Int? {
+        var number = 0
+        for display in managedDisplays(connection: connection) {
+            for space in display.spaces {
+                if space.isFullscreen {
+                    if space.id == spaceID {
+                        return nil
+                    }
+                    continue
+                }
+                number += 1
+                if space.id == spaceID {
+                    return number
+                }
+            }
+        }
+        return nil
+    }
+
+    /// Posts the key event pair for a symbolic hotkey, enabling the hotkey
+    /// first if the user has it switched off in System Settings.
+    private static func postHotKey(_ hotKey: CGSSymbolicHotKey) -> Bool {
+        var keyCode: CGKeyCode = 0
+        var flags: CGSModifierFlags = 0
+        guard CGSGetSymbolicHotKeyValue(hotKey, nil, &keyCode, &flags) == .success else {
+            NSLog("SpaceSwitcher: failed to get hot key value for %d", Int(hotKey))
+            return false
+        }
+
+        if !CGSIsSymbolicHotKeyEnabled(hotKey) {
+            guard CGSSetSymbolicHotKeyEnabled(hotKey, true) == .success else {
+                NSLog("SpaceSwitcher: failed to enable hot key %d", Int(hotKey))
+                return false
+            }
+        }
+
+        guard let keyDown = CGEvent(keyboardEventSource: nil, virtualKey: keyCode, keyDown: true),
+              let keyUp = CGEvent(keyboardEventSource: nil, virtualKey: keyCode, keyDown: false)
+        else {
+            NSLog("SpaceSwitcher: failed to create key events for hot key %d", Int(hotKey))
+            return false
+        }
+
+        keyDown.flags = CGEventFlags(rawValue: UInt64(flags))
+        keyDown.post(tap: .cghidEventTap)
+        keyUp.flags = []
+        keyUp.post(tap: .cghidEventTap)
+        return true
     }
 
     // MARK: - Gesture Posting

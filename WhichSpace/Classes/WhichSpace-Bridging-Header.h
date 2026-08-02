@@ -29,4 +29,14 @@ CFArrayRef SLSCopySpacesForWindows(int conn, int selector, CFArrayRef windowIDs)
 typedef void (*CGSConnectionNotifyProc)(uint32_t event, void *data, size_t dataLength, void *context, int cid);
 CGError SLSRegisterConnectionNotifyProc(int cid, CGSConnectionNotifyProc proc, uint32_t event, void *context);
 
+// Private CGS symbolic hotkey APIs for classic Space switching. The hotkey
+// and modifier types are 32-bit in the private ABI; wider types only work
+// by accident of zero-initialization on little-endian machines.
+typedef int CGSSymbolicHotKey;
+typedef unsigned int CGSModifierFlags;
+
+CGError CGSGetSymbolicHotKeyValue(CGSSymbolicHotKey hotKey, UniChar *outCharCode, CGKeyCode *keyCode, CGSModifierFlags *flags);
+Boolean CGSIsSymbolicHotKeyEnabled(CGSSymbolicHotKey hotKey);
+CGError CGSSetSymbolicHotKeyEnabled(CGSSymbolicHotKey hotKey, Boolean enabled);
+
 #endif

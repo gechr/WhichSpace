@@ -67,6 +67,7 @@ enum SettingsAnchor: String, CaseIterable {
     case customSounds = "custom-sounds"
 
     case accessibility
+    case classicSwitching = "classic-switching"
     case clickToSwitch = "click-to-switch"
     case verticalScroll = "vertical-scroll"
     case invertVerticalScroll = "invert-vertical-scroll"
@@ -106,7 +107,7 @@ enum SettingsAnchor: String, CaseIterable {
              .symbolBackground, .foregroundColor, .backgroundColor, .invertColors, .badge,
              .badgePosition, .font, .sound, .customSounds:
             .spaces
-        case .accessibility, .clickToSwitch, .verticalScroll, .invertVerticalScroll,
+        case .accessibility, .classicSwitching, .clickToSwitch, .verticalScroll, .invertVerticalScroll,
              .horizontalScroll, .invertHorizontalScroll, .scrollWrapAround, .scrollSensitivity,
              .scrollHaptics:
             .switching

@@ -110,6 +110,14 @@ struct SwitchingPane: View {
     private var behaviorSection: some View {
         SettingsSection(Localization.labelBehavior) {
             SettingsToggleRow(
+                title: Localization.toggleClassicSwitching,
+                isOn: model.binding(\.classicSpaceSwitching),
+                icon: "keyboard",
+                subtitle: Localization.tipClassicSwitching,
+                anchor: .classicSwitching
+            )
+            SettingsRowDivider()
+            SettingsToggleRow(
                 title: Localization.toggleScrollWrapAround,
                 isOn: model.binding(\.scrollWrapAround),
                 icon: "repeat",

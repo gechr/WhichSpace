@@ -196,6 +196,7 @@ struct DefaultsIsolationGuardTests {
     @Test("KeySpecs.allKeyNames matches Defaults.Keys")
     func keySpecsMatchDefaultsKeys() {
         let expectedKeyNames: Set = [
+            "classicSpaceSwitching",
             "clickToSwitchSpaces",
             "dimInactiveSpaces",
             "displaySpaceBadges",

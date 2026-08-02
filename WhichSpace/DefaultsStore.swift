@@ -34,6 +34,7 @@ extension TypedKeySpec: AnyKeySpec {
 /// 2. Add the corresponding property in `DefaultsStore`
 /// 3. Tests will automatically pick up the new key
 enum KeySpecs {
+    static let classicSpaceSwitching = TypedKeySpec(name: "classicSpaceSwitching", defaultValue: false)
     static let clickToSwitchSpaces = TypedKeySpec(name: "clickToSwitchSpaces", defaultValue: false)
     static let dimInactiveSpaces = TypedKeySpec(name: "dimInactiveSpaces", defaultValue: true)
     static let displaySpaceBadges = TypedKeySpec(
@@ -139,6 +140,7 @@ enum KeySpecs {
     /// observation all derive from it, so a new key only needs an entry
     /// here and a `DefaultsStore` accessor.
     static let allSpecs: [any AnyKeySpec] = [
+        classicSpaceSwitching,
         clickToSwitchSpaces,
         dimInactiveSpaces,
         displaySpaceBadges,
@@ -194,6 +196,7 @@ enum KeySpecs {
     /// observed for external defaults writes, so a newly added key is
     /// icon-affecting by default - the safe direction for cache invalidation.
     static let nonIconKeyNames: Set<String> = [
+        classicSpaceSwitching.name,
         clickToSwitchSpaces.name,
         displaySpaceSounds.name,
         horizontalScrollEnabled.name,
@@ -318,6 +321,11 @@ final class DefaultsStore {
     }
 
     // MARK: - Property Accessors
+
+    var classicSpaceSwitching: Bool {
+        get { self[KeySpecs.classicSpaceSwitching] }
+        set { self[KeySpecs.classicSpaceSwitching] = newValue }
+    }
 
     var clickToSwitchSpaces: Bool {
         get { self[KeySpecs.clickToSwitchSpaces] }
