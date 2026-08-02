@@ -50,6 +50,55 @@ struct SkyLightWindowMover: WindowMoving {
     }
 }
 
+// MARK: - Window Raising
+
+/// Abstracts the Accessibility raise used after a move, so tests never message
+/// another process's AX server.
+protocol WindowRaising: Sendable {
+    @discardableResult
+    func raise(_ window: FrontWindow) -> Bool
+}
+
+/// Attempts to make a moved window frontmost on its new Space. The private
+/// moves change Space membership but not z-order, so without a raise an
+/// incumbent window on the target Space would keep focus over the arrival.
+/// Cross-Space AX behavior is empirical rather than documented, hence the
+/// attempt is best-effort.
+struct AXWindowRaiser: WindowRaising {
+    /// Cap on each AX round-trip. The calls message the owning process
+    /// synchronously from the main actor, so a hung app must not stall
+    /// WhichSpace for a nicety.
+    private static let messagingTimeout: Float = 0.25
+
+    @discardableResult
+    func raise(_ window: FrontWindow) -> Bool {
+        let application = AXUIElementCreateApplication(window.ownerPID)
+        // The timeout binds to the exact element it is set on, not to elements
+        // derived from it, so each element gets its own
+        AXUIElementSetMessagingTimeout(application, Self.messagingTimeout)
+
+        var value: CFTypeRef?
+        guard AXUIElementCopyAttributeValue(application, kAXWindowsAttribute as CFString, &value) == .success,
+              let windows = value as? [AXUIElement]
+        else {
+            return false
+        }
+
+        for element in windows {
+            var windowID = CGWindowID(0)
+            guard _AXUIElementGetWindow(element, &windowID) == .success, windowID == window.id else {
+                continue
+            }
+            AXUIElementSetMessagingTimeout(element, Self.messagingTimeout)
+            // Main marks which window a later activation should focus; the
+            // raise is what reorders, so only its result counts
+            AXUIElementSetAttributeValue(element, kAXMainAttribute as CFString, kCFBooleanTrue)
+            return AXUIElementPerformAction(element, kAXRaiseAction as CFString) == .success
+        }
+        return false
+    }
+}
+
 // MARK: - Front Window
 
 struct FrontWindow: Equatable {
@@ -121,6 +170,7 @@ struct SystemFrontWindowLocator: FrontWindowLocating {
 struct SpaceWindowMover {
     private let mover: any WindowMoving
     private let locator: any FrontWindowLocating
+    private let raiser: any WindowRaising
     private let isProcessTrusted: () -> Bool
     private let followAction: @MainActor (Int, pid_t) -> Void
     private let permitted: [WindowMoveBackend]
@@ -130,6 +180,7 @@ struct SpaceWindowMover {
     init(
         mover: any WindowMoving = SkyLightWindowMover(),
         locator: any FrontWindowLocating = SystemFrontWindowLocator(),
+        raiser: any WindowRaising = AXWindowRaiser(),
         isProcessTrusted: @escaping () -> Bool = { AXIsProcessTrusted() },
         followAction: @escaping @MainActor (Int, pid_t) -> Void = { spaceID, ownerPID in
             SpaceSwitcher.switchToSpace(id: spaceID)
@@ -144,6 +195,7 @@ struct SpaceWindowMover {
     ) {
         self.mover = mover
         self.locator = locator
+        self.raiser = raiser
         self.isProcessTrusted = isProcessTrusted
         self.followAction = followAction
         self.permitted = permitted
@@ -207,6 +259,7 @@ struct SpaceWindowMover {
 
         // A sticky window is already everywhere, so treat it as moved
         if source.contains(spaceID) {
+            raiseIfTrusted(window)
             switchIfFollowing(follow, toSpaceID: spaceID, window: window)
             return
         }
@@ -233,12 +286,24 @@ struct SpaceWindowMover {
                 continue
             }
             if await confirm(window: window, spaceID: spaceID, leaving: source) {
+                raiseIfTrusted(window)
                 switchIfFollowing(follow, toSpaceID: spaceID, window: window)
                 return
             }
         }
 
         throw .moveFailed(requested: requested)
+    }
+
+    /// Raised before any follow switch, so the window is already frontmost on
+    /// the target Space when the switch arrives. Sending needs no permission of
+    /// its own, so without Accessibility the raise is skipped silently, and a
+    /// failed raise never fails the move.
+    private func raiseIfTrusted(_ window: FrontWindow) {
+        guard isProcessTrusted() else {
+            return
+        }
+        raiser.raise(window)
     }
 
     private func switchIfFollowing(_ follow: Bool, toSpaceID spaceID: Int, window: FrontWindow) {

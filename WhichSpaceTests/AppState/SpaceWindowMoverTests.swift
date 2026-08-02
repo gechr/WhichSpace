@@ -54,6 +54,21 @@ private struct FakeLocator: FrontWindowLocating {
     }
 }
 
+/// Records raised windows and reports a configurable result, so tests cover
+/// the raise ladder without messaging a real AX server.
+private final class FakeRaiser: WindowRaising, @unchecked Sendable {
+    var result = true
+    var onRaise: (() -> Void)?
+    private(set) var raised: [FrontWindow] = []
+
+    @discardableResult
+    func raise(_ window: FrontWindow) -> Bool {
+        raised.append(window)
+        onRaise?()
+        return result
+    }
+}
+
 @MainActor
 struct SpaceWindowMoverTests {
     private let store: DefaultsStore
@@ -80,6 +95,7 @@ struct SpaceWindowMoverTests {
     private func makeMover(
         _ mover: FakeWindowMover,
         window: FrontWindow? = FrontWindow(id: 42, ownerPID: 99),
+        raiser: FakeRaiser = FakeRaiser(),
         isProcessTrusted: Bool = true,
         followed: FollowRecorder = FollowRecorder(),
         permitted: [WindowMoveBackend] = WindowMoveBackend.allCases
@@ -87,6 +103,7 @@ struct SpaceWindowMoverTests {
         SpaceWindowMover(
             mover: mover,
             locator: FakeLocator(window: window),
+            raiser: raiser,
             isProcessTrusted: { isProcessTrusted },
             followAction: { spaceID, ownerPID in followed.record(spaceID: spaceID, ownerPID: ownerPID) },
             permitted: permitted,
@@ -230,6 +247,105 @@ struct SpaceWindowMoverTests {
         try await mover.move(toSpaceNumber: 2, follow: false, appState: makeAppState())
 
         #expect(fake.spaces == [101])
+    }
+
+    // MARK: - Raising
+
+    @Test("a confirmed move raises the moved window")
+    func move_confirmed_raisesWindow() async throws {
+        let raiser = FakeRaiser()
+        let mover = makeMover(FakeWindowMover(), raiser: raiser)
+
+        try await mover.move(toSpaceNumber: 2, follow: true, appState: makeAppState())
+
+        #expect(raiser.raised == [FrontWindow(id: 42, ownerPID: 99)])
+    }
+
+    @Test("a trusted send raises so the window is frontmost when visited")
+    func move_sendTrusted_raisesWindow() async throws {
+        let raiser = FakeRaiser()
+        let mover = makeMover(FakeWindowMover(), raiser: raiser)
+
+        try await mover.move(toSpaceNumber: 2, follow: false, appState: makeAppState())
+
+        #expect(raiser.raised.count == 1)
+    }
+
+    @Test("an untrusted send skips the raise and still succeeds")
+    func move_sendUntrusted_skipsRaise() async throws {
+        let fake = FakeWindowMover()
+        let raiser = FakeRaiser()
+        let mover = makeMover(fake, raiser: raiser, isProcessTrusted: false)
+
+        try await mover.move(toSpaceNumber: 2, follow: false, appState: makeAppState())
+
+        #expect(raiser.raised.isEmpty, "Sending must stay permission-free, so the raise is best-effort")
+        #expect(fake.spaces == [101])
+    }
+
+    @Test("a failed raise does not fail the move")
+    func move_raiseFails_moveStillSucceeds() async throws {
+        let fake = FakeWindowMover()
+        let raiser = FakeRaiser()
+        raiser.result = false
+        let mover = makeMover(fake, raiser: raiser)
+
+        try await mover.move(toSpaceNumber: 2, follow: false, appState: makeAppState())
+
+        #expect(fake.spaces == [101])
+    }
+
+    @Test("a failed move never raises")
+    func move_unconfirmed_doesNotRaise() async {
+        let raiser = FakeRaiser()
+        let mover = makeMover(FakeWindowMover(available: [.bridged], effective: []), raiser: raiser)
+        let appState = makeAppState()
+
+        await #expect(throws: MoveError.self) {
+            try await mover.move(toSpaceNumber: 2, follow: false, appState: appState)
+        }
+        #expect(raiser.raised.isEmpty)
+    }
+
+    @Test("the sticky path raises too")
+    func move_alreadyOnTarget_raises() async throws {
+        let raiser = FakeRaiser()
+        let mover = makeMover(FakeWindowMover(spaces: [101]), raiser: raiser)
+
+        try await mover.move(toSpaceNumber: 2, follow: true, appState: makeAppState())
+
+        #expect(raiser.raised.count == 1, "An incumbent can cover a sticky window as much as a moved one")
+    }
+
+    @Test("the raise lands before the follow switch")
+    func move_raisesBeforeFollowing() async throws {
+        // Raising after the switch would race the arrival, so the order is the
+        // crux of the focus fix
+        let events = EventLog()
+        let raiser = FakeRaiser()
+        raiser.onRaise = { events.record("raise") }
+        let mover = SpaceWindowMover(
+            mover: FakeWindowMover(),
+            locator: FakeLocator(window: FrontWindow(id: 42, ownerPID: 99)),
+            raiser: raiser,
+            isProcessTrusted: { true },
+            followAction: { _, _ in events.record("follow") },
+            permitted: WindowMoveBackend.allCases,
+            confirmationTimeout: .milliseconds(30),
+            confirmationInterval: .milliseconds(1)
+        )
+
+        try await mover.move(toSpaceNumber: 2, follow: true, appState: makeAppState())
+
+        #expect(events.events == ["raise", "follow"])
+    }
+
+    final class EventLog: @unchecked Sendable {
+        private(set) var events: [String] = []
+
+        func record(_ event: String) {
+            events.append(event)
+        }
     }
 
     // MARK: - Backend Ladder

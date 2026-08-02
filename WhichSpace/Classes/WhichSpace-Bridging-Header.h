@@ -23,6 +23,10 @@ CFArrayRef CGSCopyManagedDisplaySpaces(int conn);
 CFStringRef CGSCopyActiveMenuBarDisplayIdentifier(int conn);
 CFArrayRef SLSCopySpacesForWindows(int conn, int selector, CFArrayRef windowIDs);
 
+// Private AX API for resolving the CGWindowID behind an AX window element
+// (no public alternative exists)
+AXError _AXUIElementGetWindow(AXUIElementRef element, CGWindowID *windowID);
+
 // Private SLS API for push notifications from the WindowServer. The proc is
 // invoked on whichever thread receives the datagram, so implementations must
 // hop to their own queue before touching shared state.
