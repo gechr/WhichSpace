@@ -32,7 +32,11 @@ struct SpaceEditorModelTests {
     }
 
     private func makeModel(confirmed: Bool = true) -> SpaceEditorModel {
-        SpaceEditorModel(appState: makeAppState()) { _, _, _, _ in confirmed }
+        SpaceEditorModel(
+            appState: makeAppState(),
+            confirmAction: { _, _, _, _ in confirmed },
+            previewApplyDelay: .milliseconds(1)
+        )
     }
 
     // MARK: - Selection
@@ -628,7 +632,30 @@ struct SpaceEditorModelTests {
         await applied(model)
         #expect(model.hoverPreview == IconPreviewOverrides(foreground: .red))
         model.previewForegroundColor(.red, hovering: false)
+        // Removal waits out the same debounce as an apply, so the preview
+        // holds until no newer hover supersedes the exit
+        #expect(model.hoverPreview == IconPreviewOverrides(foreground: .red))
+        await applied(model)
         #expect(model.hoverPreview == nil)
+    }
+
+    @Test("cells scrolling under a resting pointer never mutate the preview")
+    func scrollUnderPointerCoalesces() async {
+        let model = makeModel()
+        model.previewForegroundColor(.red, hovering: true)
+        await applied(model)
+        // Scrolling fires exit-then-enter per cell crossed; none of the
+        // intermediate events may touch the applied preview
+        let crossed: [NSColor] = [.green, .blue, .cyan]
+        var current = NSColor.red
+        for color in crossed {
+            model.previewForegroundColor(current, hovering: false)
+            model.previewForegroundColor(color, hovering: true)
+            #expect(model.hoverPreview == IconPreviewOverrides(foreground: .red))
+            current = color
+        }
+        await applied(model)
+        #expect(model.hoverPreview == IconPreviewOverrides(foreground: .cyan))
     }
 
     @Test("an exit before the debounce fires cancels the pending apply")
@@ -742,6 +769,7 @@ struct SpaceEditorModelTests {
         #expect(model.icon().tiffRepresentation != baseCard)
         #expect(model.listIcon(for: .space(1)).tiffRepresentation == baseList)
         model.previewBackgroundColor(.orange, hovering: false)
+        await applied(model)
         #expect(model.icon().tiffRepresentation == baseCard)
     }
 }

@@ -56,8 +56,15 @@ final class SpaceEditorModel {
     /// is hovered; nil while no hover preview is active
     private(set) var hoverPreview: IconPreviewOverrides?
 
-    /// Overrides waiting out the apply debounce; the latest hover wins
-    @ObservationIgnored private var pendingPreview: IconPreviewOverrides?
+    /// A preview change waiting out the debounce: apply new overrides or
+    /// restore the committed icon.
+    private enum PendingPreview: Equatable {
+        case apply(IconPreviewOverrides)
+        case remove
+    }
+
+    /// The change waiting out the debounce; the latest hover event wins
+    @ObservationIgnored private var pendingPreview: PendingPreview?
     @ObservationIgnored private(set) var previewApplyTask: Task<Void, Never>?
     @ObservationIgnored private let previewApplyDelay: Duration
 
@@ -74,7 +81,7 @@ final class SpaceEditorModel {
         confirmAction: @escaping ConfirmAction = {
             ConfirmationAlert(message: $0, detail: $1, confirmTitle: $2, isDestructive: $3).runModal()
         },
-        previewApplyDelay: Duration = .milliseconds(5),
+        previewApplyDelay: Duration = .milliseconds(50),
         customNamesURL: URL = FileManager.default.homeDirectoryForCurrentUser
             .appendingPathComponent("Library/Containers/com.alexbeals.spacesrenamer/com.alexbeals.spacesrenamer.plist")
     ) {
@@ -311,19 +318,30 @@ final class SpaceEditorModel {
 
     /// Applies or removes the hover preview for one candidate value. Each
     /// control passes its overrides with `hovering` from its hover events.
+    /// Both directions go through the same debounce: a sweep across a grid,
+    /// or content scrolling under a resting pointer, fires an enter/exit
+    /// pair per cell crossed, and each event cancels the previous pending
+    /// change. Only the cell the pointer settles on renders; every icon
+    /// render in between would be a full uncached settings render.
+    ///
+    /// Every hover source shares the one pending slot, which assumes hover
+    /// regions never overlap: at most one control is hovered at a time, so
+    /// an exit always belongs to the current or a superseded hover. A
+    /// nested or overlapping hover source would break that assumption -
+    /// leaving and re-entering an inner region could remove the outer
+    /// region's still-hovered preview.
     private func setPreview(_ overrides: IconPreviewOverrides, hovering: Bool) {
         if hovering {
-            schedulePreview(overrides)
+            schedulePreview(.apply(overrides))
         } else {
             removePreview(overrides)
         }
     }
 
-    /// Debounces applies so a fast sweep across a grid renders only the
-    /// cell the pointer settles on, not every cell it crossed. The latest
-    /// hover replaces a pending one; only the survivor renders.
-    private func schedulePreview(_ overrides: IconPreviewOverrides) {
-        pendingPreview = overrides
+    /// Debounces a preview change; the latest hover event replaces a
+    /// pending one and only the survivor mutates `hoverPreview`.
+    private func schedulePreview(_ change: PendingPreview) {
+        pendingPreview = change
         previewApplyTask?.cancel()
         let delay = previewApplyDelay
         previewApplyTask = Task { [weak self] in
@@ -332,26 +350,38 @@ final class SpaceEditorModel {
                 return
             }
             pendingPreview = nil
-            hoverPreview = pending
+            switch pending {
+            case let .apply(overrides):
+                hoverPreview = overrides
+            case .remove:
+                hoverPreview = nil
+            }
             previewApplyTask = nil
         }
     }
 
-    /// Removes on hover exit, immediately. A stale exit from a superseded
-    /// cell is ignored: SwiftUI does not guarantee exit/enter ordering
-    /// between neighboring cells. An exit of the applied preview while a
-    /// newer hover is pending is also ignored, so a sweep never flashes
-    /// the committed icon between two cells.
+    /// Handles a hover exit. A stale exit from a superseded cell is
+    /// ignored: SwiftUI does not guarantee exit/enter ordering between
+    /// neighboring cells. A removal is debounced like an apply, so an
+    /// enter that follows within the delay supersedes it and the committed
+    /// icon never flashes between two cells.
     private func removePreview(_ overrides: IconPreviewOverrides) {
-        if pendingPreview == overrides {
-            // The pointer left before the debounce fired; whatever preview
-            // that hover superseded is stale too
+        switch pendingPreview {
+        case let .apply(pending) where pending == overrides:
+            // The pointer left before the debounce fired; nothing applied
+            // for this hover, so there is nothing to restore unless an
+            // earlier preview is still showing
             cancelPendingPreview()
             if hoverPreview != nil {
-                hoverPreview = nil
+                schedulePreview(.remove)
             }
-        } else if hoverPreview == overrides, pendingPreview == nil {
-            hoverPreview = nil
+        case .apply, .remove:
+            // A newer hover or removal owns the pending slot
+            break
+        case nil:
+            if hoverPreview == overrides {
+                schedulePreview(.remove)
+            }
         }
     }
 
