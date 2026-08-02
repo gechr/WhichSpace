@@ -201,7 +201,9 @@ struct SpaceWindowMover {
         // Generous enough for a multi-Space swipe plus the snapshot debounce
         // that feeds the current-Space reading
         arrivalTimeout: Duration = .seconds(2),
-        arrivalInterval: Duration = .milliseconds(50)
+        // Fine-grained so the re-raise lands within a frame of arrival: the
+        // interval bounds how long an incumbent window stays visibly on top
+        arrivalInterval: Duration = .milliseconds(10)
     ) {
         self.mover = mover
         self.locator = locator
