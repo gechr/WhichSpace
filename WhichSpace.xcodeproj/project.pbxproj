@@ -14,6 +14,7 @@
 		5E4C3D042F890A230003F867 /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = 5E4C3D062F890A230003F869 /* Defaults */; };
 		5E4C3D0A2F890A230003F86C /* EmojiKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5E4C3D092F890A230003F86B /* EmojiKit */; };
 		F2FD7A5EB5A34621A9DE9737 /* Settings in Frameworks */ = {isa = PBXBuildFile; productRef = A269B1CFED06451BBDCA0F59 /* Settings */; };
+		72439C326ADB4DD3B62943F5 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = E728704D47F646A69EFD161F /* KeyboardShortcuts */; };
 		5E51B7851E7EE7BF009395E6 /* (null) in CopyFiles */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5EB457D42EEDE8C00021C6BD /* SpaceIconGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB457CD2EEDE8C00021C6BD /* SpaceIconGenerator.swift */; };
 		A4DBB5AA21394887AEABA90A /* SpaceIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26FDEA134CE245FD99C0FA05 /* SpaceIntents.swift */; };
@@ -21,6 +22,8 @@
 		C94204F22B0647EEA70C0CAB /* SpaceUpdateCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0621BB91706643C2B80B3FB2 /* SpaceUpdateCoordinator.swift */; };
 		5EB457D72EEDE8C00021C6BD /* DefaultsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB457CC2EEDE8C00021C6BD /* DefaultsStore.swift */; };
 		D91E604932D44F33863FB9A6 /* HapticActuator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9FEF98C20749E19B4CA885 /* HapticActuator.swift */; };
+		FE68D7CA6CC2450EA34C878B /* Hotkeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E507DAE8B78419EA021604F /* Hotkeys.swift */; };
+		C7981A374B3345E383AEC71F /* KeyboardPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AAC3DE5CA1A44EBABFDAED1 /* KeyboardPane.swift */; };
 		69112F89073343068978BC56 /* IconPreviewOverrides.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDA2D223BEF4EEAA22EA0A5 /* IconPreviewOverrides.swift */; };
 		A46FE3B79717482B886EB47D /* IconShrink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E19623F420946E39C6ABF24 /* IconShrink.swift */; };
 		5EB457D82EEDE8C00021C6BD /* ItemData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB457CE2EEDE8C00021C6BD /* ItemData.swift */; };
@@ -57,7 +60,7 @@
 		8976D687BBC24BFF9A222E05 /* SettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6241577D589844078C9013D5 /* SettingsModel.swift */; };
 		9993B4CD8B3B4EB6ACC8E0F1 /* GeneralPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3704DA229A9A4AD382D4EAE3 /* GeneralPane.swift */; };
 		52840BDABB8046F182D6E070 /* MenuBarPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 670259493A4A468DA2AEF2F5 /* MenuBarPane.swift */; };
-		32524A4E9AFA4C15AC5ECA06 /* SwitchingPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 898C17D652A047DAB402245A /* SwitchingPane.swift */; };
+		32524A4E9AFA4C15AC5ECA06 /* MousePane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 898C17D652A047DAB402245A /* MousePane.swift */; };
 		DB9AE51A0FC740C3934ED35F /* SettingsWindowCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC23E2C9B32B4A6D8727DB7C /* SettingsWindowCoordinator.swift */; };
 		04E6412D4806450180BB1178 /* SettingsForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = B83EF1992DCF490596AD2E33 /* SettingsForm.swift */; };
 		0C395699903E4956BA979400 /* SettingsLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5025AE756CE44D34B07C6D7F /* SettingsLink.swift */; };
@@ -148,6 +151,8 @@
 		5EB457CD2EEDE8C00021C6BD /* SpaceIconGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceIconGenerator.swift; sourceTree = "<group>"; };
 		26FDEA134CE245FD99C0FA05 /* SpaceIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceIntents.swift; sourceTree = "<group>"; };
 		4B9FEF98C20749E19B4CA885 /* HapticActuator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticActuator.swift; sourceTree = "<group>"; };
+		1E507DAE8B78419EA021604F /* Hotkeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hotkeys.swift; sourceTree = "<group>"; };
+		1AAC3DE5CA1A44EBABFDAED1 /* KeyboardPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardPane.swift; sourceTree = "<group>"; };
 		9FDA2D223BEF4EEAA22EA0A5 /* IconPreviewOverrides.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconPreviewOverrides.swift; sourceTree = "<group>"; };
 		4E19623F420946E39C6ABF24 /* IconShrink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconShrink.swift; sourceTree = "<group>"; };
 		5EB457CE2EEDE8C00021C6BD /* ItemData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemData.swift; sourceTree = "<group>"; };
@@ -172,7 +177,7 @@
 		6241577D589844078C9013D5 /* SettingsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsModel.swift; sourceTree = "<group>"; };
 		3704DA229A9A4AD382D4EAE3 /* GeneralPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralPane.swift; sourceTree = "<group>"; };
 		670259493A4A468DA2AEF2F5 /* MenuBarPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarPane.swift; sourceTree = "<group>"; };
-		898C17D652A047DAB402245A /* SwitchingPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchingPane.swift; sourceTree = "<group>"; };
+		898C17D652A047DAB402245A /* MousePane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MousePane.swift; sourceTree = "<group>"; };
 		BC23E2C9B32B4A6D8727DB7C /* SettingsWindowCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowCoordinator.swift; sourceTree = "<group>"; };
 		B83EF1992DCF490596AD2E33 /* SettingsForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsForm.swift; sourceTree = "<group>"; };
 		5025AE756CE44D34B07C6D7F /* SettingsLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsLink.swift; sourceTree = "<group>"; };
@@ -237,6 +242,7 @@
 				5E4C3D042F890A230003F867 /* Defaults in Frameworks */,
 				5E4C3D0A2F890A230003F86C /* EmojiKit in Frameworks */,
 				F2FD7A5EB5A34621A9DE9737 /* Settings in Frameworks */,
+				72439C326ADB4DD3B62943F5 /* KeyboardShortcuts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -297,6 +303,7 @@
 				5EB457CD2EEDE8C00021C6BD /* SpaceIconGenerator.swift */,
 				26FDEA134CE245FD99C0FA05 /* SpaceIntents.swift */,
 				4B9FEF98C20749E19B4CA885 /* HapticActuator.swift */,
+				1E507DAE8B78419EA021604F /* Hotkeys.swift */,
 				9FDA2D223BEF4EEAA22EA0A5 /* IconPreviewOverrides.swift */,
 				4E19623F420946E39C6ABF24 /* IconShrink.swift */,
 				5EB457CE2EEDE8C00021C6BD /* ItemData.swift */,
@@ -360,6 +367,7 @@
 			children = (
 				2C05CF03E51F4C2098379928 /* ClearCellRules.swift */,
 				3704DA229A9A4AD382D4EAE3 /* GeneralPane.swift */,
+				1AAC3DE5CA1A44EBABFDAED1 /* KeyboardPane.swift */,
 				670259493A4A468DA2AEF2F5 /* MenuBarPane.swift */,
 				7E8A92F68BA74F77896B96BE /* PanelCoordinators.swift */,
 				B83EF1992DCF490596AD2E33 /* SettingsForm.swift */,
@@ -373,7 +381,7 @@
 				299671B2BE544425BF45A379 /* SpacesPane.swift */,
 				5BA23CE7564443B780D895AE /* StyleGridView.swift */,
 				C9656A0125DB4B6DB1BA6973 /* SwatchRow.swift */,
-				898C17D652A047DAB402245A /* SwitchingPane.swift */,
+				898C17D652A047DAB402245A /* MousePane.swift */,
 				B0D99EF6E6DA48ED856CC9AE /* SymbolGridView.swift */,
 			);
 			path = Settings;
@@ -566,6 +574,7 @@
 				5E4C3D052F890A230003F868 /* XCRemoteSwiftPackageReference "Defaults" */,
 				5E4C3D082F890A230003F86A /* XCRemoteSwiftPackageReference "EmojiKit" */,
 				60A8BCFFA24A458AABBE2B4C /* XCRemoteSwiftPackageReference "Settings" */,
+				76CDD311E63E49148190CFA1 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
 			);
 			productRefGroup = 5E13C8881BE03A6F00FF4305 /* Products */;
 			projectDirPath = "";
@@ -611,6 +620,8 @@
 				5EB457D72EEDE8C00021C6BD /* DefaultsStore.swift in Sources */,
 				BA5B89440132B31951EAF51B /* DisplaySpaceProvider.swift in Sources */,
 				D91E604932D44F33863FB9A6 /* HapticActuator.swift in Sources */,
+				FE68D7CA6CC2450EA34C878B /* Hotkeys.swift in Sources */,
+				C7981A374B3345E383AEC71F /* KeyboardPane.swift in Sources */,
 				69112F89073343068978BC56 /* IconPreviewOverrides.swift in Sources */,
 				A46FE3B79717482B886EB47D /* IconShrink.swift in Sources */,
 				5EB457D82EEDE8C00021C6BD /* ItemData.swift in Sources */,
@@ -624,7 +635,7 @@
 				8976D687BBC24BFF9A222E05 /* SettingsModel.swift in Sources */,
 				9993B4CD8B3B4EB6ACC8E0F1 /* GeneralPane.swift in Sources */,
 				52840BDABB8046F182D6E070 /* MenuBarPane.swift in Sources */,
-				32524A4E9AFA4C15AC5ECA06 /* SwitchingPane.swift in Sources */,
+				32524A4E9AFA4C15AC5ECA06 /* MousePane.swift in Sources */,
 				DB9AE51A0FC740C3934ED35F /* SettingsWindowCoordinator.swift in Sources */,
 				04E6412D4806450180BB1178 /* SettingsForm.swift in Sources */,
 				0C395699903E4956BA979400 /* SettingsLink.swift in Sources */,
@@ -1018,6 +1029,14 @@
 				revision = f41475771f65379ca10852c95119a7f53f0de5a5;
 			};
 		};
+		76CDD311E63E49148190CFA1 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/KeyboardShortcuts";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1045,6 +1064,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 60A8BCFFA24A458AABBE2B4C /* XCRemoteSwiftPackageReference "Settings" */;
 			productName = Settings;
+		};
+		E728704D47F646A69EFD161F /* KeyboardShortcuts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 76CDD311E63E49148190CFA1 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */;
+			productName = KeyboardShortcuts;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -1,9 +1,9 @@
 import SwiftUI
 
-/// The Switching settings pane: click and scroll Space switching, scroll
+/// The Mouse settings pane: click and scroll Space switching, scroll
 /// behavior, and the accessibility permission both require.
 /// Container-agnostic - it knows nothing about the window chrome hosting it.
-struct SwitchingPane: View {
+struct MousePane: View {
     let model: SettingsModel
     /// Plays a haptic sample at the given intensity so slider changes can be
     /// felt while dragging, matching the status menu's slider
@@ -12,9 +12,9 @@ struct SwitchingPane: View {
     var body: some View {
         SettingsForm {
             if !model.accessibilityGranted {
-                accessibilityBanner
+                AccessibilityBannerSection(model: model)
             }
-            SettingsSection(Localization.labelClick) {
+            SettingsSection(Localization.labelClick, anchor: .click) {
                 SettingsToggleRow(
                     title: Localization.toggleClickToSwitchSpaces,
                     isOn: model.clickToSwitchSpacesBinding,
@@ -28,34 +28,8 @@ struct SwitchingPane: View {
         }
     }
 
-    /// Shown until accessibility permission is granted; switching cannot
-    /// work without it. The button both opens the Accessibility pane and
-    /// registers a grant watch so the banner clears live.
-    private var accessibilityBanner: some View {
-        SettingsSection {
-            SettingsRow(anchor: .accessibility) {
-                HStack(spacing: 10) {
-                    Image(systemName: "lock.shield.fill")
-                        .font(.system(size: 22))
-                        .foregroundStyle(.orange)
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(Localization.alertAccessibilityRequired)
-                            .fontWeight(.semibold)
-                        Text(Localization.bannerAccessibilityDetail)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            } control: {
-                Button(Localization.actionOpenSystemSettings) {
-                    model.requestAccessibility()
-                    Accessibility.openSettingsPane()
-                }
-            }
-        }
-    }
-
     private var scrollSection: some View {
-        SettingsSection(Localization.menuScroll) {
+        SettingsSection(Localization.menuScroll, anchor: .scroll) {
             scrollAxisRows(
                 Localization.labelVertical,
                 axis: \.verticalScrollEnabled,
@@ -108,7 +82,9 @@ struct SwitchingPane: View {
     }
 
     private var behaviorSection: some View {
-        SettingsSection(Localization.labelBehavior) {
+        // The section-level anchor lets the Keyboard pane's note point at
+        // the whole card rather than one of its rows
+        SettingsSection(Localization.labelBehavior, anchor: .behavior) {
             SettingsToggleRow(
                 title: Localization.toggleClassicSwitching,
                 isOn: model.binding(\.classicSpaceSwitching),

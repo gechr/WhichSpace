@@ -123,6 +123,7 @@ enum Layout {
     static let settingsSliderDefaultPosition = 0.5
     static let settingsSpaceListWidth = 140.0
     static let settingsSpaceListMaxHeight = 800.0
+    static let settingsJumpListMaxHeight = 420.0
     static let settingsSpaceListScrollerWidth = 16.0
     static let settingsSpaceNameMaxLength = 10
     static let settingsSpacesEditorGutter = 10.0
@@ -321,6 +322,7 @@ enum Localization {
     static let labelHapticVeryStrong = String(localized: "label_haptic_very_strong")
     static let labelHorizontal = String(localized: "label_horizontal")
     static let labelInside = String(localized: "label_inside")
+    static let labelJump = String(localized: "label_jump")
     static let labelLabelBackground = String(localized: "label_label_background")
     static let labelLabelForeground = String(localized: "label_label_foreground")
     static let labelLeft = String(localized: "label_left")
@@ -340,7 +342,9 @@ enum Localization {
     static let labelSeparatorNone = String(localized: "label_separator_none")
     static let labelSeparatorSlash = String(localized: "label_separator_slash")
     static let labelSeparatorStyle = String(localized: "label_separator_style")
+    static let labelSpaceNumber = String(localized: "label_space_number")
     static let labelSpaces = String(localized: "label_spaces")
+    static let labelSwitch = String(localized: "label_switch")
     static let labelSymbol = String(localized: "label_symbol")
     static let labelSymbolBackground = String(localized: "label_symbol_background")
     static let labelSymbolForeground = String(localized: "label_symbol_foreground")
@@ -363,9 +367,10 @@ enum Localization {
     static let menuSound = String(localized: "menu_sound")
     static let menuSymbol = String(localized: "menu_symbol")
     static let paneGeneral = String(localized: "pane_general")
+    static let paneKeyboard = String(localized: "pane_keyboard")
     static let paneMenuBar = String(localized: "pane_menu_bar")
+    static let paneMouse = String(localized: "pane_mouse")
     static let paneSpaces = String(localized: "pane_spaces")
-    static let paneSwitching = String(localized: "pane_switching")
     static let search = String(localized: "search")
     static let soundCustom = String(localized: "sound_custom")
     static let soundNone = String(localized: "sound_none")
@@ -386,6 +391,9 @@ enum Localization {
     static let tipFont = String(localized: "tip_font")
     static let tipHasOwnStyle = String(localized: "tip_has_own_style")
     static let tipHideEmptySpaces = String(localized: "tip_hide_empty_spaces")
+    static let tipHotkeySwitchLeft = String(localized: "tip_hotkey_switch_left")
+    static let tipHotkeySwitchRight = String(localized: "tip_hotkey_switch_right")
+    static let tipHotkeysBehavior = String(localized: "tip_hotkeys_behavior")
     static let tipHideFullscreenApps = String(localized: "tip_hide_fullscreen_apps")
     static let tipHideSingleSpace = String(localized: "tip_hide_single_space")
     static let tipIconPadding = String(localized: "tip_icon_padding")
@@ -417,6 +425,7 @@ enum Localization {
     static let tipSound = String(localized: "tip_sound")
     static let tipSoundSpace = String(localized: "tip_sound_space")
     static let tipSpacePlaceholder = String(localized: "tip_space_placeholder")
+    static let tipSpacePlaceholderHotkey = String(localized: "tip_space_placeholder_hotkey")
     static let tipUseFForFullscreenApps = String(localized: "tip_use_f_for_fullscreen_apps")
     static let toggleAutoCheckUpdates = String(localized: "toggle_auto_check_updates")
     static let toggleAutoInstallUpdates = String(localized: "toggle_auto_install_updates")

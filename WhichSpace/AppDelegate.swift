@@ -66,6 +66,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     /// Reports Accessibility trust; injectable so click tests don't depend on the host's TCC state
     private let isProcessTrusted: () -> Bool
 
+    /// Clears recorded hotkeys on a full settings reset; a no-op in tests
+    private let resetHotkeysAction: () -> Void
+
     /// Records why a click produced no switch; the early returns below leave
     /// no other trace.
     private static let logger = Logger(subsystem: "io.gechr.WhichSpace", category: "Click")
@@ -93,6 +96,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     private var preferenceObservationTasks: [Task<Void, Never>] = []
     private var settingsCoordinator: SettingsWindowCoordinator?
     private var updaterController: SPUStandardUpdaterController!
+    private var hotkeyCenter: HotkeyCenter?
 
     private(set) var observationTask: Task<Void, Never>?
     private(set) var statusBarIconUpdateCount = 0
@@ -125,6 +129,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         scrollHapticAction = HapticActuator.actuate
         isProcessTrusted = { AXIsProcessTrusted() }
         menuBarVisibilityProbe = CGMenuBarVisibilityProbe()
+        resetHotkeysAction = { HotkeyCenter.resetBindings() }
         super.init()
         configureActionHandler()
     }
@@ -145,7 +150,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         },
         scrollHapticAction: @escaping @MainActor (Int) -> Void = HapticActuator.actuate,
         isProcessTrusted: @escaping () -> Bool = { AXIsProcessTrusted() },
-        menuBarVisibilityProbe: MenuBarVisibilityProbe = CGMenuBarVisibilityProbe()
+        menuBarVisibilityProbe: MenuBarVisibilityProbe = CGMenuBarVisibilityProbe(),
+        // Defaults to a no-op: the hotkey library stores bindings in the host
+        // app's standard defaults domain, so a test resetting through the
+        // real action would wipe the developer's recorded hotkeys
+        resetHotkeysAction: @escaping () -> Void = {}
     ) {
         self.appState = appState
         self.confirmAction = confirmAction
@@ -155,6 +164,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         self.scrollHapticAction = scrollHapticAction
         self.isProcessTrusted = isProcessTrusted
         self.menuBarVisibilityProbe = menuBarVisibilityProbe
+        self.resetHotkeysAction = resetHotkeysAction
         super.init()
         configureActionHandler()
     }
@@ -173,6 +183,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             },
             onOpenSettings: { [weak self] in
                 self?.showSettingsWindow()
+            },
+            onResetHotkeys: { [weak self] in
+                self?.resetHotkeysAction()
             }
         )
     }
@@ -219,19 +232,29 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
                 MenuBarPane(model: model)
                     .environment(highlighter)
             })
-            let switchingPane = Settings.PaneHostingController(pane: Settings.Pane(
-                identifier: .switching,
-                title: Localization.paneSwitching,
+            let mousePane = Settings.PaneHostingController(pane: Settings.Pane(
+                identifier: .mouse,
+                title: Localization.paneMouse,
                 toolbarIcon: NSImage(systemSymbolName: "computermouse", accessibilityDescription: nil)!
             ) {
-                SwitchingPane(model: model) { [weak self] intensity in
+                MousePane(model: model) { [weak self] intensity in
                     self?.scrollHapticAction(intensity)
+                }
+                .environment(highlighter)
+            })
+            let keyboardPane = Settings.PaneHostingController(pane: Settings.Pane(
+                identifier: .keyboard,
+                title: Localization.paneKeyboard,
+                toolbarIcon: NSImage(systemSymbolName: "command", accessibilityDescription: nil)!
+            ) {
+                KeyboardPane(model: model, editorModel: editorModel, appState: appState) { [weak self] in
+                    self?.showSettingsWindow(pane: .mouse, focus: .highlight(.behavior))
                 }
                 .environment(highlighter)
             })
             settingsCoordinator = SettingsWindowCoordinator(
                 models: [model, editorModel],
-                panes: [generalPane, menuBarPane, spacesPane, switchingPane],
+                panes: [generalPane, menuBarPane, spacesPane, mousePane, keyboardPane],
                 highlighter: highlighter
             )
         }
@@ -261,6 +284,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
 
         // Menu bar only - no Dock icon or app-switcher entry
         NSApp.setActivationPolicy(.accessory)
+
+        // Register recorded global hotkeys; inert until the user records one
+        hotkeyCenter = HotkeyCenter(appState: appState, store: store)
 
         // Start Sparkle so scheduled update checks run
         updaterController = SPUStandardUpdaterController(

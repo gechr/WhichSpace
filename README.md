@@ -20,6 +20,7 @@ Have you ever forgotten _which space_ is currently active on macOS and wanted a 
 - [**Size**](#size) - Scale icons to your preference
 - [**Fonts**](#fonts) - Choose a custom font per Space
 - [**Sound**](#sounds) - Play a sound when switching Spaces
+- [**Keybinds**](#keybinds) - Global keyboard shortcuts to switch to any Space
 - [**Shortcuts**](#shortcuts) - Native actions for the Shortcuts app
 - [**AppleScript**](#scripting) - Automate with scripting support
 - [**URL Scheme**](#url-scheme) - Control via `whichspace://` links
@@ -137,6 +138,12 @@ To add a custom sound:
 2. Copy your sound file into the directory
 3. The sound will appear under the **User** section in the Sound menu
 
+### Keybinds
+
+#### Switch Spaces with global keyboard shortcuts
+
+<img src="Screenshots/SectionKeybinds.png" width="60%">
+
 ### Shortcuts
 
 #### Automate WhichSpace with Shortcuts
@@ -193,8 +200,6 @@ osascript -e 'tell application "WhichSpace" to move front window right'
 
 > [!NOTE]
 > Requires macOS Sonoma, or Tahoe 26.4 and later. Unsupported on Sequoia.
->
-> Only `move` needs Accessibility permission.
 
 ##### Spaces
 

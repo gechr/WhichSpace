@@ -9,8 +9,18 @@ import Observation
 enum SettingsPaneID: String, CaseIterable {
     case general
     case spaces
-    case switching
+    case mouse
+    case keyboard
     case menuBar = "menubar"
+
+    /// Resolves a URL pane name, accepting retired names from links already
+    /// published: "switching" predates the Mouse rename.
+    static func named(_ raw: String) -> Self? {
+        if raw == "switching" {
+            return .mouse
+        }
+        return Self(rawValue: raw)
+    }
 
     /// The pane's toolbar title, for naming where a searched setting lives.
     var localizedName: String {
@@ -19,8 +29,10 @@ enum SettingsPaneID: String, CaseIterable {
             Localization.paneGeneral
         case .spaces:
             Localization.paneSpaces
-        case .switching:
-            Localization.paneSwitching
+        case .mouse:
+            Localization.paneMouse
+        case .keyboard:
+            Localization.paneKeyboard
         case .menuBar:
             Localization.paneMenuBar
         }
@@ -81,6 +93,9 @@ enum SettingsAnchor: String, CaseIterable {
     case customSounds = "custom-sounds"
 
     case accessibility
+    case behavior
+    case click
+    case scroll
     case classicSwitching = "classic-switching"
     case clickToSwitch = "click-to-switch"
     case verticalScroll = "vertical-scroll"
@@ -90,6 +105,10 @@ enum SettingsAnchor: String, CaseIterable {
     case scrollWrapAround = "scroll-wrap-around"
     case scrollSensitivity = "scroll-sensitivity"
     case scrollHaptics = "scroll-haptics"
+
+    case hotkeySwitchLeft = "switch-left"
+    case hotkeySwitchRight = "switch-right"
+    case jump
 
     /// The anchor owning the row or section a link lands on. Emoji shares the
     /// Glyph section with symbol, so both point at the same place; keeping the
@@ -121,10 +140,12 @@ enum SettingsAnchor: String, CaseIterable {
              .symbolBackground, .foregroundColor, .backgroundColor, .invertColors, .badge,
              .badgePosition, .font, .sound, .customSounds:
             .spaces
-        case .accessibility, .classicSwitching, .clickToSwitch, .verticalScroll, .invertVerticalScroll,
-             .horizontalScroll, .invertHorizontalScroll, .scrollWrapAround, .scrollSensitivity,
-             .scrollHaptics:
-            .switching
+        case .accessibility, .behavior, .click, .scroll, .classicSwitching, .clickToSwitch,
+             .verticalScroll, .invertVerticalScroll, .horizontalScroll, .invertHorizontalScroll,
+             .scrollWrapAround, .scrollSensitivity, .scrollHaptics:
+            .mouse
+        case .hotkeySwitchLeft, .hotkeySwitchRight, .jump:
+            .keyboard
         }
     }
 }

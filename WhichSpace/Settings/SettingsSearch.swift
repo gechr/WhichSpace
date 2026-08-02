@@ -63,15 +63,19 @@ struct SettingsSearchEntry: Identifiable, Equatable {
 enum SettingsSearchIndex {
     /// Anchors a search never offers, because landing on them shows nothing:
     /// `uniqueIconsPerDisplay` is a retired raw value redirecting elsewhere,
-    /// and `displays` names the Spaces pane's display picker, which registers
-    /// no anchor of its own and appears only with several displays attached.
-    static let unlisted: Set<SettingsAnchor> = [.uniqueIconsPerDisplay, .displays]
+    /// `displays` names the Spaces pane's display picker, which registers
+    /// no anchor of its own and appears only with several displays attached,
+    /// and the section anchors name whole cards whose rows are each listed
+    /// already.
+    static let unlisted: Set<SettingsAnchor> = [
+        .uniqueIconsPerDisplay, .displays, .behavior, .click, .scroll,
+    ]
 
     /// How many results the field offers at once. Past this the list stops
     /// being scannable, and a query that vague is better narrowed.
     static let resultLimit = 8
 
-    static let entries: [SettingsSearchEntry] = general + menuBar + spaces + switching
+    static let entries: [SettingsSearchEntry] = general + menuBar + spaces + mouse + keyboard
 
     // MARK: - General
 
@@ -316,9 +320,9 @@ enum SettingsSearchIndex {
         ),
     ]
 
-    // MARK: - Switching
+    // MARK: - Mouse
 
-    private static let switching: [SettingsSearchEntry] = [
+    private static let mouse: [SettingsSearchEntry] = [
         SettingsSearchEntry(
             anchor: .accessibility,
             section: nil,
@@ -380,6 +384,31 @@ enum SettingsSearchIndex {
             section: Localization.labelBehavior,
             title: Localization.toggleScrollHapticFeedback,
             subtitle: Localization.tipScrollHapticFeedback
+        ),
+    ]
+
+    // MARK: - Keyboard
+
+    private static let keyboard: [SettingsSearchEntry] = [
+        // The two direction rows share bare Left/Right titles, so each takes
+        // the switch card as its section, mirroring the scroll invert rows
+        SettingsSearchEntry(
+            anchor: .hotkeySwitchLeft,
+            section: Localization.labelSwitch,
+            title: Localization.labelLeft,
+            subtitle: Localization.tipHotkeySwitchLeft
+        ),
+        SettingsSearchEntry(
+            anchor: .hotkeySwitchRight,
+            section: Localization.labelSwitch,
+            title: Localization.labelRight,
+            subtitle: Localization.tipHotkeySwitchRight
+        ),
+        SettingsSearchEntry(
+            anchor: .jump,
+            section: nil,
+            title: Localization.labelJump,
+            subtitle: nil
         ),
     ]
 

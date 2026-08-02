@@ -10,9 +10,12 @@ struct Backup: Codable {
     let settings: BackupSettings
     let spacePreferences: BackupSpacePreferences
     let displaySpacePreferences: [String: BackupSpacePreferences]
+    /// Recorded hotkeys as name to encoded shortcut; empty when none were
+    /// recorded, and omitted from the JSON in that case
+    let hotkeys: [String: String]
 
     private enum CodingKeys: String, CodingKey {
-        case bundleId, version, settings, spacePreferences, displaySpacePreferences
+        case bundleId, version, settings, spacePreferences, displaySpacePreferences, hotkeys
     }
 
     func encode(to encoder: Encoder) throws {
@@ -27,6 +30,9 @@ struct Backup: Codable {
         if !nonEmpty.isEmpty {
             try container.encode(nonEmpty, forKey: .displaySpacePreferences)
         }
+        if !hotkeys.isEmpty {
+            try container.encode(hotkeys, forKey: .hotkeys)
+        }
     }
 
     init(from decoder: Decoder) throws {
@@ -40,6 +46,7 @@ struct Backup: Codable {
             [String: BackupSpacePreferences].self,
             forKey: .displaySpacePreferences
         ) ?? [:]
+        hotkeys = try container.decodeIfPresent([String: String].self, forKey: .hotkeys) ?? [:]
     }
 
     init(
@@ -47,13 +54,15 @@ struct Backup: Codable {
         version: String,
         settings: BackupSettings,
         spacePreferences: BackupSpacePreferences,
-        displaySpacePreferences: [String: BackupSpacePreferences]
+        displaySpacePreferences: [String: BackupSpacePreferences],
+        hotkeys: [String: String] = [:]
     ) {
         self.bundleId = bundleId
         self.version = version
         self.settings = settings
         self.spacePreferences = spacePreferences
         self.displaySpacePreferences = displaySpacePreferences
+        self.hotkeys = hotkeys
     }
 }
 
@@ -513,10 +522,14 @@ enum BackupManager {
     /// Default filename for exported backup.
     static let defaultFilename = "WhichSpaceSettings.json"
 
-    /// Encodes the current settings to a JSON string.
+    /// Encodes the current settings to a JSON string. Hotkeys are passed in
+    /// rather than read here: the hotkey library stores bindings in the host
+    /// app's standard defaults domain, which keeps this function pure for
+    /// tests running inside the real app.
     static func encode(
         store: DefaultsStore = AppEnvironment.shared.store,
-        launchAtLogin: LaunchAtLoginProvider = DefaultLaunchAtLoginProvider()
+        launchAtLogin: LaunchAtLoginProvider = DefaultLaunchAtLoginProvider(),
+        hotkeys: [String: String] = [:]
     ) throws -> String {
         guard let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String else {
             throw BackupError.encodingFailed
@@ -603,7 +616,8 @@ enum BackupManager {
             version: version,
             settings: settings,
             spacePreferences: spacePreferences,
-            displaySpacePreferences: displaySpacePreferences
+            displaySpacePreferences: displaySpacePreferences,
+            hotkeys: hotkeys
         )
 
         let encoder = JSONEncoder()
@@ -635,10 +649,14 @@ enum BackupManager {
     }
 
     /// Loads configuration from a file URL and applies it to the store.
+    /// `applyHotkeys` receives the backup's recorded bindings (empty when it
+    /// carried none) and stays nil in tests, which must not touch the live
+    /// bindings in the app's standard defaults domain.
     static func load(
         from url: URL,
         store: DefaultsStore = AppEnvironment.shared.store,
-        launchAtLogin: LaunchAtLoginProvider = DefaultLaunchAtLoginProvider()
+        launchAtLogin: LaunchAtLoginProvider = DefaultLaunchAtLoginProvider(),
+        applyHotkeys: (([String: String]) -> Void)? = nil
     ) throws {
         let jsonString: String
         do {
@@ -648,14 +666,15 @@ enum BackupManager {
         }
 
         let config = try decode(jsonString: jsonString)
-        apply(config, to: store, launchAtLogin: launchAtLogin)
+        apply(config, to: store, launchAtLogin: launchAtLogin, applyHotkeys: applyHotkeys)
     }
 
     /// Applies a config to the defaults store.
     static func apply(
         _ backup: Backup,
         to store: DefaultsStore,
-        launchAtLogin: LaunchAtLoginProvider = DefaultLaunchAtLoginProvider()
+        launchAtLogin: LaunchAtLoginProvider = DefaultLaunchAtLoginProvider(),
+        applyHotkeys: (([String: String]) -> Void)? = nil
     ) {
         // Apply global settings
         store.classicSpaceSwitching = backup.settings.classicSpaceSwitching
@@ -754,6 +773,8 @@ enum BackupManager {
             SpacePreferences.purgeHiddenScopeData(perDisplayWasEnabled: legacyPerDisplay, store: store)
         }
 
+        applyHotkeys?(backup.hotkeys)
+
         NotificationCenter.default.post(name: .backupImported, object: nil)
     }
 
@@ -761,9 +782,10 @@ enum BackupManager {
     static func export(
         to url: URL,
         store: DefaultsStore = AppEnvironment.shared.store,
-        launchAtLogin: LaunchAtLoginProvider = DefaultLaunchAtLoginProvider()
+        launchAtLogin: LaunchAtLoginProvider = DefaultLaunchAtLoginProvider(),
+        hotkeys: [String: String] = [:]
     ) throws {
-        let jsonString = try encode(store: store, launchAtLogin: launchAtLogin)
+        let jsonString = try encode(store: store, launchAtLogin: launchAtLogin, hotkeys: hotkeys)
         do {
             try jsonString.write(to: url, atomically: true, encoding: .utf8)
         } catch {

@@ -438,6 +438,37 @@ private struct SliderValueField: View {
     }
 }
 
+/// Shown until accessibility permission is granted; switching cannot work
+/// without it, so every pane offering a switching surface leads with it.
+/// The button both opens the Accessibility pane and registers a grant watch
+/// so the banner clears live.
+struct AccessibilityBannerSection: View {
+    let model: SettingsModel
+
+    var body: some View {
+        SettingsSection {
+            SettingsRow(anchor: .accessibility) {
+                HStack(spacing: 10) {
+                    Image(systemName: "lock.shield.fill")
+                        .font(.system(size: 22))
+                        .foregroundStyle(.orange)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(Localization.alertAccessibilityRequired)
+                            .fontWeight(.semibold)
+                        Text(Localization.bannerAccessibilityDetail)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            } control: {
+                Button(Localization.actionOpenSystemSettings) {
+                    model.requestAccessibility()
+                    Accessibility.openSettingsPane()
+                }
+            }
+        }
+    }
+}
+
 /// Hairline between card rows: thinner and lower-contrast than a plain
 /// `Divider`, matching the native grouped-form separator.
 struct SettingsRowDivider: View {

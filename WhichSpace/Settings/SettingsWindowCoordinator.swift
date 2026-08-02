@@ -16,8 +16,12 @@ extension Settings.PaneIdentifier {
         Self("spaces")
     }
 
-    static var switching: Self {
-        Self("switching")
+    static var mouse: Self {
+        Self("mouse")
+    }
+
+    static var keyboard: Self {
+        Self("keyboard")
     }
 }
 
@@ -31,8 +35,10 @@ extension SettingsPaneID {
             .menuBar
         case .spaces:
             .spaces
-        case .switching:
-            .switching
+        case .mouse:
+            .mouse
+        case .keyboard:
+            .keyboard
         }
     }
 }
@@ -121,6 +127,7 @@ final class SettingsWindowCoordinator {
             }
         }
         windowController?.show(pane: pane?.identifier)
+        restorePaneVisibility()
         if isFirstShow, let window = windowController?.window {
             positionAboveCenter(window)
         }
@@ -131,6 +138,20 @@ final class SettingsWindowCoordinator {
         windowController?.window?.makeFirstResponder(nil)
         // Set last so the fade runs against a pane that is already on screen
         highlighter.point(at: focus)
+    }
+
+    /// An animated toolbar switch crossfades the outgoing pane's view to
+    /// alpha 0 and AppKit never restores it; the programmatic switch back is
+    /// not animated, so the view would come back invisible while the window
+    /// keeps its old frame. Restoring alpha after every programmatic switch
+    /// makes the two paths composable in any order.
+    private func restorePaneVisibility() {
+        guard let container = windowController?.window?.contentViewController?.view else {
+            return
+        }
+        for subview in container.subviews where subview.alphaValue < 1 {
+            subview.alphaValue = 1
+        }
     }
 
     /// Wires up the toolbar's search field. A hit goes back through `show`,

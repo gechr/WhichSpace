@@ -95,7 +95,7 @@ enum URLCommand: Equatable {
         case 0:
             break
         case 1:
-            guard let named = SettingsPaneID(rawValue: components[0].lowercased()) else {
+            guard let named = SettingsPaneID.named(components[0].lowercased()) else {
                 return nil
             }
             pane = named

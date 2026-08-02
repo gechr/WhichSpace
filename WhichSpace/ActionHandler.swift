@@ -21,6 +21,11 @@ final class ActionHandler: NSObject {
     /// Callback invoked to open the settings window (handled by AppDelegate's coordinator).
     let onOpenSettings: (() -> Void)?
 
+    /// Callback invoked by a full reset to clear recorded hotkeys. Injected
+    /// so tests never touch the live bindings, which the hotkey library
+    /// stores in the host app's standard defaults domain.
+    let onResetHotkeys: (() -> Void)?
+
     /// Convenience accessor for the store via appState.
     private var store: DefaultsStore {
         appState.store
@@ -36,7 +41,8 @@ final class ActionHandler: NSObject {
         },
         onStatusBarIconNeedsUpdate: (() -> Void)? = nil,
         onCheckForUpdates: (() -> Void)? = nil,
-        onOpenSettings: (() -> Void)? = nil
+        onOpenSettings: (() -> Void)? = nil,
+        onResetHotkeys: (() -> Void)? = nil
     ) {
         self.appState = appState
         self.launchAtLogin = launchAtLogin
@@ -44,6 +50,7 @@ final class ActionHandler: NSObject {
         self.onStatusBarIconNeedsUpdate = onStatusBarIconNeedsUpdate
         self.onCheckForUpdates = onCheckForUpdates
         self.onOpenSettings = onOpenSettings
+        self.onResetHotkeys = onResetHotkeys
         super.init()
     }
 
@@ -91,7 +98,9 @@ final class ActionHandler: NSObject {
         }
 
         do {
-            try BackupManager.load(from: url, store: store, launchAtLogin: launchAtLogin)
+            try BackupManager.load(from: url, store: store, launchAtLogin: launchAtLogin) {
+                HotkeyCenter.importBindings($0)
+            }
             onStatusBarIconNeedsUpdate?()
         } catch {
             showImportFailedAlert(detail: error.localizedDescription)
@@ -111,7 +120,12 @@ final class ActionHandler: NSObject {
         }
 
         do {
-            try BackupManager.export(to: url, store: store, launchAtLogin: launchAtLogin)
+            try BackupManager.export(
+                to: url,
+                store: store,
+                launchAtLogin: launchAtLogin,
+                hotkeys: HotkeyCenter.exportBindings()
+            )
         } catch {
             showExportFailedAlert(detail: error.localizedDescription)
         }
@@ -134,6 +148,7 @@ final class ActionHandler: NSObject {
         }
         store.resetAll()
         launchAtLogin.isEnabled = false
+        onResetHotkeys?()
         onStatusBarIconNeedsUpdate?()
     }
 

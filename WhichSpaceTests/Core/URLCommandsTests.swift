@@ -130,12 +130,24 @@ struct URLCommandsTests {
     @Test("a pane naming one of its own settings is accepted")
     func matchingPaneAndAnchorParse() {
         #expect(
-            parse("whichspace://settings/switching?highlight=scroll-sensitivity")
-                == .openSettings(pane: .switching, focus: .highlight(.scrollSensitivity))
+            parse("whichspace://settings/mouse?highlight=scroll-sensitivity")
+                == .openSettings(pane: .mouse, focus: .highlight(.scrollSensitivity))
         )
         #expect(
-            parse("whichspace://settings/switching?navigate=scroll-sensitivity")
-                == .openSettings(pane: .switching, focus: .navigate(.scrollSensitivity))
+            parse("whichspace://settings/mouse?navigate=scroll-sensitivity")
+                == .openSettings(pane: .mouse, focus: .navigate(.scrollSensitivity))
+        )
+    }
+
+    @Test("the retired switching pane name still reaches the Mouse pane")
+    func retiredSwitchingNameParses() {
+        #expect(
+            parse("whichspace://settings/switching")
+                == .openSettings(pane: .mouse, focus: nil)
+        )
+        #expect(
+            parse("whichspace://settings/switching?highlight=scroll-sensitivity")
+                == .openSettings(pane: .mouse, focus: .highlight(.scrollSensitivity))
         )
     }
 

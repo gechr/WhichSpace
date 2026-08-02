@@ -408,6 +408,35 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         XCTAssertNil(backup.settings.uniqueIconsPerDisplay)
         XCTAssertFalse(backup.settings.verticalScrollEnabled)
         XCTAssertEqual(backup.settings.soundName, "")
+        XCTAssertTrue(backup.hotkeys.isEmpty)
+    }
+
+    func testHotkeysRoundTripAndAreOmittedWhenEmpty() throws {
+        // Opaque strings here: the backup stores whatever the hotkey layer
+        // hands it, so these tests need no real shortcut encoding
+        let bindings = ["switchLeft": "encoded-left", "switchToSpace3": "encoded-3"]
+
+        let json = try BackupManager.encode(store: store, hotkeys: bindings)
+        let backup = try BackupManager.decode(jsonString: json)
+        XCTAssertEqual(backup.hotkeys, bindings)
+
+        let emptyJson = try BackupManager.encode(store: store)
+        XCTAssertFalse(emptyJson.contains("\"hotkeys\""))
+        let emptyBackup = try BackupManager.decode(jsonString: emptyJson)
+        XCTAssertTrue(emptyBackup.hotkeys.isEmpty)
+    }
+
+    func testApplyForwardsHotkeysToInjectedApplier() throws {
+        let bindings = ["switchRight": "encoded-right"]
+        let json = try BackupManager.encode(store: store, hotkeys: bindings)
+        let backup = try BackupManager.decode(jsonString: json)
+
+        var received = [String: String]()
+        BackupManager.apply(backup, to: store) {
+            received = $0
+        }
+
+        XCTAssertEqual(received, bindings)
     }
 
     func testEncodeCoversEveryScalarDefaultsKey() throws {

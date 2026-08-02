@@ -782,4 +782,32 @@ final class AppDelegateActionsTests: XCTestCase {
         XCTAssertTrue(store.showAllSpaces)
         XCTAssertTrue(launchAtLoginStub.isEnabled)
     }
+
+    /// The default reset action is a no-op precisely so these tests cannot
+    /// wipe the developer's recorded hotkeys; the spy proves the seam fires
+    /// only on a confirmed reset.
+    func testResetAllSettings_invokesInjectedHotkeyReset() {
+        var resetCount = 0
+        // Bound to a local first: a trailing closure here would bind to
+        // `missionControlNotificationSender`, the initializer's first
+        // closure parameter.
+        let resetHotkeysAction: () -> Void = { resetCount += 1 }
+        let localSut = AppDelegate(
+            appState: appState,
+            confirmAction: confirmStub.callAsFunction,
+            launchAtLogin: launchAtLoginStub,
+            resetHotkeysAction: resetHotkeysAction
+        )
+        defer {
+            localSut.stopObservingAppState()
+        }
+
+        confirmStub.shouldConfirm = false
+        localSut.actionHandler.resetAllSettings()
+        XCTAssertEqual(resetCount, 0)
+
+        confirmStub.shouldConfirm = true
+        localSut.actionHandler.resetAllSettings()
+        XCTAssertEqual(resetCount, 1)
+    }
 }

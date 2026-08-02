@@ -136,7 +136,7 @@ struct SettingsSearchIndexTests {
             title: Localization.labelSensitivity,
             subtitle: nil
         )
-        #expect(entry.breadcrumb == "\(Localization.paneSwitching) › \(Localization.labelBehavior)")
+        #expect(entry.breadcrumb == "\(Localization.paneMouse) › \(Localization.labelBehavior)")
 
         let bare = SettingsSearchEntry(
             anchor: .backup, section: nil, title: Localization.labelBackup, subtitle: nil
