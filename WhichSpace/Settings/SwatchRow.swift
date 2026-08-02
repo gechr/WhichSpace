@@ -5,15 +5,21 @@ import SwiftUI
 /// custom colors and an optional clear ("no color") cell. The current color
 /// is marked with a ring around its preset cell rather than a separate well.
 struct SwatchRow: View {
-    static let presetColors: [NSColor] = [
-        .black,
-        .white,
-        .systemRed,
-        .systemOrange,
-        .systemYellow,
-        .systemGreen,
-        .systemBlue,
-        .systemPurple,
+    /// A preset cell and the name shown in its tooltip
+    struct Preset {
+        let color: NSColor
+        let name: String
+    }
+
+    static let presets: [Preset] = [
+        Preset(color: .black, name: Localization.colorBlack),
+        Preset(color: .white, name: Localization.colorWhite),
+        Preset(color: .systemRed, name: Localization.colorRed),
+        Preset(color: .systemOrange, name: Localization.colorOrange),
+        Preset(color: .systemYellow, name: Localization.colorYellow),
+        Preset(color: .systemGreen, name: Localization.colorGreen),
+        Preset(color: .systemBlue, name: Localization.colorBlue),
+        Preset(color: .systemPurple, name: Localization.colorPurple),
     ]
 
     /// The stored color; the matching preset cell gets a selection ring
@@ -25,6 +31,10 @@ struct SwatchRow: View {
     var onClear: (() -> Void)?
     /// Opens the shared color panel for colors outside the presets
     let onCustom: () -> Void
+    /// Hover preview callbacks for the preset and clear cells; the custom
+    /// cell has none because its color is unknown until the panel opens
+    var onHoverSelect: ((NSColor, Bool) -> Void)?
+    var onHoverClear: ((Bool) -> Void)?
 
     private static let swatchSize = 16.0
 
@@ -37,20 +47,27 @@ struct SwatchRow: View {
                     clearCell
                 }
                 .buttonStyle(.plain)
-                .help(Localization.buttonReset)
+                .help(Localization.colorTransparent)
+                .onHover { hovering in
+                    onHoverClear?(hovering)
+                }
             }
-            ForEach(0 ..< Self.presetColors.count, id: \.self) { index in
-                let color = Self.presetColors[index]
+            ForEach(0 ..< Self.presets.count, id: \.self) { index in
+                let preset = Self.presets[index]
                 Button {
-                    onSelect(color)
+                    onSelect(preset.color)
                 } label: {
                     Circle()
-                        .fill(Color(nsColor: color))
+                        .fill(Color(nsColor: preset.color))
                         .overlay(Circle().strokeBorder(.gray.opacity(0.5)))
-                        .overlay(ring(active: matches(color)))
+                        .overlay(ring(active: matches(preset.color)))
                         .frame(width: Self.swatchSize, height: Self.swatchSize)
                 }
                 .buttonStyle(.plain)
+                .help(preset.name)
+                .onHover { hovering in
+                    onHoverSelect?(preset.color, hovering)
+                }
             }
             Button {
                 onCustom()
@@ -58,6 +75,7 @@ struct SwatchRow: View {
                 customCell
             }
             .buttonStyle(.plain)
+            .help(Localization.colorPicker)
         }
     }
 

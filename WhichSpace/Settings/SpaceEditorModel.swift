@@ -28,13 +28,38 @@ final class SpaceEditorModel {
     }
 
     /// Bumped on every write and on observed external changes; reads touch
-    /// it to register a SwiftUI observation dependency
-    private(set) var tick = 0
+    /// it to register a SwiftUI observation dependency. Every bump also
+    /// drops the hover preview: the committed state just changed, so a
+    /// preview built against the old state is stale, and after a click on
+    /// the hovered value the clear is visually a no-op anyway.
+    private(set) var tick = 0 {
+        didSet {
+            clearPreview()
+        }
+    }
 
     /// The display whose overrides are edited; nil selects the "All"
     /// segment, editing the shared styles every display inherits.
-    var selectedDisplayID: String?
-    var selection: Selection
+    var selectedDisplayID: String? {
+        didSet {
+            clearPreview()
+        }
+    }
+
+    var selection: Selection {
+        didSet {
+            clearPreview()
+        }
+    }
+
+    /// Overrides applied to the pinned preview card while a candidate value
+    /// is hovered; nil while no hover preview is active
+    private(set) var hoverPreview: IconPreviewOverrides?
+
+    /// Overrides waiting out the apply debounce; the latest hover wins
+    @ObservationIgnored private var pendingPreview: IconPreviewOverrides?
+    @ObservationIgnored private(set) var previewApplyTask: Task<Void, Never>?
+    @ObservationIgnored private let previewApplyDelay: Duration
 
     @ObservationIgnored private let appState: AppState
     @ObservationIgnored private let store: DefaultsStore
@@ -49,12 +74,14 @@ final class SpaceEditorModel {
         confirmAction: @escaping ConfirmAction = {
             ConfirmationAlert(message: $0, detail: $1, confirmTitle: $2, isDestructive: $3).runModal()
         },
+        previewApplyDelay: Duration = .milliseconds(5),
         customNamesURL: URL = FileManager.default.homeDirectoryForCurrentUser
             .appendingPathComponent("Library/Containers/com.alexbeals.spacesrenamer/com.alexbeals.spacesrenamer.plist")
     ) {
         self.appState = appState
         store = appState.store
         self.confirmAction = confirmAction
+        self.previewApplyDelay = previewApplyDelay
         self.customNamesURL = customNamesURL
         selectedDisplayID = appState.currentDisplayID
         selection = .space(max(appState.currentSpace, 1))
@@ -254,11 +281,16 @@ final class SpaceEditorModel {
 
     // MARK: - Icons
 
-    /// The edited entry's icon, rendered exactly as the status bar would.
+    /// The edited entry's icon, rendered exactly as the status bar would,
+    /// with any active hover preview applied. Only this render sees the
+    /// preview; list icons keep showing committed state.
     func icon(sizeScale: Double = 100) -> NSImage {
         _ = tick
         return appState.renderer.settingsIcon(
-            forSpace: editingSpace, display: editingDisplay, sizeScale: sizeScale
+            forSpace: editingSpace,
+            display: editingDisplay,
+            sizeScale: sizeScale,
+            overrides: hoverPreview
         )
     }
 
@@ -273,6 +305,150 @@ final class SpaceEditorModel {
         case let .space(number):
             return appState.renderer.settingsIcon(forSpace: number, display: selectedDisplayID)
         }
+    }
+
+    // MARK: - Hover Preview
+
+    /// Applies or removes the hover preview for one candidate value. Each
+    /// control passes its overrides with `hovering` from its hover events.
+    private func setPreview(_ overrides: IconPreviewOverrides, hovering: Bool) {
+        if hovering {
+            schedulePreview(overrides)
+        } else {
+            removePreview(overrides)
+        }
+    }
+
+    /// Debounces applies so a fast sweep across a grid renders only the
+    /// cell the pointer settles on, not every cell it crossed. The latest
+    /// hover replaces a pending one; only the survivor renders.
+    private func schedulePreview(_ overrides: IconPreviewOverrides) {
+        pendingPreview = overrides
+        previewApplyTask?.cancel()
+        let delay = previewApplyDelay
+        previewApplyTask = Task { [weak self] in
+            try? await Task.sleep(for: delay)
+            guard !Task.isCancelled, let self, let pending = pendingPreview else {
+                return
+            }
+            pendingPreview = nil
+            hoverPreview = pending
+            previewApplyTask = nil
+        }
+    }
+
+    /// Removes on hover exit, immediately. A stale exit from a superseded
+    /// cell is ignored: SwiftUI does not guarantee exit/enter ordering
+    /// between neighboring cells. An exit of the applied preview while a
+    /// newer hover is pending is also ignored, so a sweep never flashes
+    /// the committed icon between two cells.
+    private func removePreview(_ overrides: IconPreviewOverrides) {
+        if pendingPreview == overrides {
+            // The pointer left before the debounce fired; whatever preview
+            // that hover superseded is stale too
+            cancelPendingPreview()
+            if hoverPreview != nil {
+                hoverPreview = nil
+            }
+        } else if hoverPreview == overrides, pendingPreview == nil {
+            hoverPreview = nil
+        }
+    }
+
+    /// Drops any active or pending hover preview, restoring the committed
+    /// icon.
+    func clearPreview() {
+        cancelPendingPreview()
+        if hoverPreview != nil {
+            hoverPreview = nil
+        }
+    }
+
+    private func cancelPendingPreview() {
+        previewApplyTask?.cancel()
+        previewApplyTask = nil
+        pendingPreview = nil
+    }
+
+    func previewIconStyle(_ style: IconStyle, hovering: Bool) {
+        setPreview(IconPreviewOverrides(style: style), hovering: hovering)
+    }
+
+    func previewLabelStyle(_ style: IconStyle, hovering: Bool) {
+        setPreview(IconPreviewOverrides(labelStyle: style), hovering: hovering)
+    }
+
+    /// Previews an emoji with the picker skin tone, as `setSymbol` records it.
+    func previewSymbol(_ symbol: String, hovering: Bool) {
+        setPreview(
+            IconPreviewOverrides(
+                skinTone: symbol.containsEmoji ? store.emojiPickerSkinTone : nil,
+                symbol: symbol
+            ),
+            hovering: hovering
+        )
+    }
+
+    func previewSkinTone(_ tone: SkinTone, hovering: Bool) {
+        setPreview(IconPreviewOverrides(skinTone: tone), hovering: hovering)
+    }
+
+    /// Previews removing the symbol, which clicking the selected symbol
+    /// cell commits.
+    func previewSymbolClear(hovering: Bool) {
+        setPreview(IconPreviewOverrides(clearSymbol: true), hovering: hovering)
+    }
+
+    /// Position previews apply only while a badge character exists,
+    /// matching `setBadgePosition`.
+    func previewBadgePosition(_ position: BadgePosition, hovering: Bool) {
+        guard !(badge?.character ?? "").isEmpty else {
+            return
+        }
+        setPreview(IconPreviewOverrides(badgePosition: position), hovering: hovering)
+    }
+
+    func previewSymbolPosition(_ position: SymbolPosition, hovering: Bool) {
+        setPreview(IconPreviewOverrides(symbolPosition: position), hovering: hovering)
+    }
+
+    func previewSymbolWrap(_ wrap: SymbolWrap, hovering: Bool) {
+        setPreview(IconPreviewOverrides(symbolWrap: wrap), hovering: hovering)
+    }
+
+    func previewForegroundColor(_ color: NSColor, hovering: Bool) {
+        setPreview(IconPreviewOverrides(foreground: color), hovering: hovering)
+    }
+
+    func previewBackgroundColor(_ color: NSColor, hovering: Bool) {
+        setPreview(IconPreviewOverrides(background: color), hovering: hovering)
+    }
+
+    func previewSymbolColor(_ color: NSColor, hovering: Bool) {
+        setPreview(IconPreviewOverrides(symbolColor: color), hovering: hovering)
+    }
+
+    func previewSymbolBackgroundColor(_ color: NSColor, hovering: Bool) {
+        setPreview(IconPreviewOverrides(symbolBackground: color), hovering: hovering)
+    }
+
+    func previewSymbolBackgroundClear(hovering: Bool) {
+        setPreview(IconPreviewOverrides(clearSymbolBackground: true), hovering: hovering)
+    }
+
+    /// Previews the swap the invert button would commit.
+    func previewInvertedColors(hovering: Bool) {
+        let current = colors ?? SpaceColors(
+            foreground: defaultColors.foreground, background: defaultColors.background
+        )
+        setPreview(
+            IconPreviewOverrides(colors: current.inverted(for: combinedSymbolLayout)),
+            hovering: hovering
+        )
+    }
+
+    func previewFont(_ font: NSFont, hovering: Bool) {
+        setPreview(IconPreviewOverrides(font: font), hovering: hovering)
     }
 
     // MARK: - Reads
@@ -427,6 +603,15 @@ final class SpaceEditorModel {
                 store.emojiPickerSkinTone, forSpace: editingSpace, display: editingDisplay, store: store
             )
         }
+        tick += 1
+    }
+
+    /// Toggling the selected symbol off returns the entry to its label or
+    /// number. The empty string is the explicit "none" sentinel, as
+    /// `setIconStyle` writes: a plain clear would let a default-style
+    /// template symbol bleed back through.
+    func removeSymbol() {
+        SpacePreferences.setSymbol("", forSpace: editingSpace, display: editingDisplay, store: store)
         tick += 1
     }
 
@@ -793,5 +978,6 @@ final class SpaceEditorModel {
     func stopObserving() {
         observationTask?.cancel()
         observationTask = nil
+        clearPreview()
     }
 }

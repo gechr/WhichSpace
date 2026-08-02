@@ -87,7 +87,8 @@ struct SpaceEditorView: View {
                     previewFont: model.font,
                     customColors: model.colors,
                     darkMode: model.darkMode,
-                    usesLabelTitles: true
+                    usesLabelTitles: true,
+                    onHover: { model.previewLabelStyle($0, hovering: $1) }
                 ) { model.setLabelStyle($0) }
                     .padding(.horizontal, Layout.settingsRowHorizontalPadding)
                     .padding(.vertical, Layout.settingsRowVerticalPadding)
@@ -112,6 +113,9 @@ struct SpaceEditorView: View {
             .pickerStyle(.segmented)
             .labelsHidden()
             .fixedSize()
+            .segmentHover(count: 2) { index, hovering in
+                model.previewSymbolPosition(index == 0 ? .left : .right, hovering: hovering)
+            }
         }
         // Wrap only applies when the label shape can stretch around the
         // symbol; other shapes always render the side-by-side layout
@@ -127,6 +131,9 @@ struct SpaceEditorView: View {
                 .pickerStyle(.segmented)
                 .labelsHidden()
                 .fixedSize()
+                .segmentHover(count: 2) { index, hovering in
+                    model.previewSymbolWrap(index == 0 ? .inside : .outside, hovering: hovering)
+                }
             }
         }
         SettingsRowDivider()
@@ -163,7 +170,8 @@ struct SpaceEditorView: View {
                 selected: rules.symbolIsActive ? nil : model.iconStyle,
                 previewNumber: previewNumber,
                 customColors: model.colors,
-                darkMode: model.darkMode
+                darkMode: model.darkMode,
+                onHover: { model.previewIconStyle($0, hovering: $1) }
             ) { model.setIconStyle($0) }
                 .padding(.horizontal, Layout.settingsRowHorizontalPadding)
                 .padding(.vertical, Layout.settingsRowVerticalPadding)
@@ -187,15 +195,39 @@ struct SpaceEditorView: View {
                 SymbolGridView(
                     catalog: symbolCatalog,
                     selected: model.symbol,
-                    pickerSkinTone: model.pickerSkinTone
-                ) { model.setSymbol($0) }
+                    pickerSkinTone: model.pickerSkinTone,
+                    // Clicking the selected cell toggles the symbol off, so
+                    // its hover previews the removal, not the symbol
+                    onHover: { item, hovering in
+                        if model.symbol == item {
+                            model.previewSymbolClear(hovering: hovering)
+                        } else {
+                            model.previewSymbol(item, hovering: hovering)
+                        }
+                    }
+                ) { symbol in
+                    // Toggle-off writes the "none" sentinel rather than a
+                    // clear, so a template symbol cannot bleed back through
+                    if let symbol {
+                        model.setSymbol(symbol)
+                    } else {
+                        model.removeSymbol()
+                    }
+                }
             }
             .padding(.horizontal, Layout.settingsRowHorizontalPadding)
             .padding(.vertical, Layout.settingsRowVerticalPadding)
             if symbolCatalog == .emojis || rules.symbolIsEmoji {
                 SettingsRowDivider()
                 SettingsControlRow(anchor: .skinTone) {
-                    SkinToneRow(selected: rules.symbolIsEmoji ? model.skinTone : model.pickerSkinTone) { tone in
+                    SkinToneRow(
+                        selected: rules.symbolIsEmoji ? model.skinTone : model.pickerSkinTone,
+                        // Without an emoji set, a tone changes no icon, so
+                        // there is nothing to preview, matching the click path
+                        onHover: rules.symbolIsEmoji
+                            ? { model.previewSkinTone($0, hovering: $1) }
+                            : nil
+                    ) { tone in
                         model.setPickerSkinTone(tone)
                         if rules.symbolIsEmoji {
                             model.setSkinTone(tone)
@@ -248,7 +280,9 @@ struct SpaceEditorView: View {
                             colorPanel.show(
                                 currentColor: model.colors?.symbol ?? defaults.foreground
                             ) { model.setSymbolColor($0) }
-                        }
+                        },
+                        onHoverSelect: { model.previewSymbolColor($0, hovering: $1) },
+                        onHoverClear: { model.previewSymbolColor(.clear, hovering: $0) }
                     )
                 }
                 SettingsRowDivider()
@@ -266,7 +300,9 @@ struct SpaceEditorView: View {
                             colorPanel.show(
                                 currentColor: model.colors?.symbolBackground ?? defaults.background
                             ) { model.setSymbolBackgroundColor($0) }
-                        }
+                        },
+                        onHoverSelect: { model.previewSymbolBackgroundColor($0, hovering: $1) },
+                        onHoverClear: { model.previewSymbolBackgroundClear(hovering: $0) }
                     )
                 }
                 SettingsRowDivider()
@@ -284,7 +320,9 @@ struct SpaceEditorView: View {
                             colorPanel.show(
                                 currentColor: model.colors?.foreground ?? defaults.foreground
                             ) { model.setForegroundColor($0) }
-                        }
+                        },
+                        onHoverSelect: { model.previewForegroundColor($0, hovering: $1) },
+                        onHoverClear: { model.previewForegroundColor(.clear, hovering: $0) }
                     )
                 }
                 // Transparent styles have no background to color
@@ -306,7 +344,9 @@ struct SpaceEditorView: View {
                                 colorPanel.show(
                                     currentColor: model.colors?.background ?? defaults.background
                                 ) { model.setBackgroundColor($0) }
-                            }
+                            },
+                            onHoverSelect: { model.previewBackgroundColor($0, hovering: $1) },
+                            onHoverClear: { model.previewBackgroundColor(.clear, hovering: $0) }
                         )
                     }
                 }
@@ -320,6 +360,9 @@ struct SpaceEditorView: View {
                 } control: {
                     Button(Localization.buttonSwap) {
                         model.invertColors()
+                    }
+                    .onHover { hovering in
+                        model.previewInvertedColors(hovering: hovering)
                     }
                 }
             }
@@ -377,8 +420,16 @@ struct SpaceEditorView: View {
             .pickerStyle(.segmented)
             .labelsHidden()
             .fixedSize()
+            .segmentHover(count: 4) { index, hovering in
+                model.previewBadgePosition(Self.badgePositions[index], hovering: hovering)
+            }
         }
     }
+
+    /// Segment order of the badge position picker.
+    private static let badgePositions: [BadgePosition] = [
+        .topLeft, .topRight, .bottomLeft, .bottomRight,
+    ]
 
     private var badgePositionBinding: Binding<BadgePosition> {
         Binding(
@@ -394,7 +445,11 @@ struct SpaceEditorView: View {
             SettingsRow(icon: "textformat", subtitle: Localization.tipFont, anchor: .font) {
                 Text(Localization.labelFont)
             } control: {
-                FontPickerButton(current: model.font) { model.setFont($0) }
+                FontPickerButton(
+                    current: model.font,
+                    onHover: { model.previewFont($0, hovering: $1) },
+                    onDismiss: { model.clearPreview() }
+                ) { model.setFont($0) }
                 Button {
                     model.clearFont()
                 } label: {
@@ -495,6 +550,12 @@ struct SpaceEditorView: View {
 /// the installed families with each name rendered in its own typeface.
 private struct FontPickerButton: View {
     let current: NSFont?
+    /// Hover preview callback: the hovered family converted like a
+    /// selection, and whether the pointer entered (true) or left (false)
+    var onHover: ((NSFont, Bool) -> Void)?
+    /// Called when the popover closes; a closing popover can swallow the
+    /// hovered row's exit event, so the preview is dropped here instead
+    var onDismiss: (() -> Void)?
     let onSelect: (NSFont) -> Void
 
     @State private var isPresented = false
@@ -516,6 +577,11 @@ private struct FontPickerButton: View {
         }
         .popover(isPresented: $isPresented, arrowEdge: .bottom) {
             familyList
+        }
+        .onChange(of: isPresented) { _, presented in
+            if !presented {
+                onDismiss?()
+            }
         }
     }
 
@@ -557,13 +623,16 @@ private struct FontPickerButton: View {
         .frame(width: 260, height: 320)
     }
 
+    /// The family as selecting it would store it: converted from the
+    /// current font so size and traits carry over.
+    private func convertedFont(for family: String) -> NSFont {
+        NSFontManager.shared.convert(current ?? Self.systemFont, toFamily: family)
+    }
+
     private func familyRow(_ family: String) -> some View {
         let isSelected = family == currentFamily
         return Button {
-            // Converting preserves the current size and traits, so picking
-            // a family never resets a chosen weight
-            let base = current ?? Self.systemFont
-            onSelect(NSFontManager.shared.convert(base, toFamily: family))
+            onSelect(convertedFont(for: family))
             isPresented = false
         } label: {
             HStack {
@@ -585,6 +654,9 @@ private struct FontPickerButton: View {
             )
         }
         .buttonStyle(.plain)
+        .onHover { hovering in
+            onHover?(convertedFont(for: family), hovering)
+        }
     }
 }
 
@@ -668,6 +740,99 @@ extension View {
     /// field, which would otherwise keep the field's I-beam cursor.
     func arrowCursorOnHover() -> some View {
         overlay(ArrowCursorArea())
+    }
+
+    /// Reports hover per segment of an equal-width segmented control.
+    /// `onHover` receives the segment index and whether the pointer just
+    /// entered (true) or left (false) it.
+    func segmentHover(count: Int, _ onHover: @escaping (Int, Bool) -> Void) -> some View {
+        overlay(SegmentHoverArea(count: count, onHover: onHover))
+    }
+}
+
+/// A segmented `Picker` bridges to one `NSSegmentedControl`, so its segments
+/// are not SwiftUI views and `.onHover` cannot see them. Tracking-area
+/// events are delivered geometrically, independent of hit testing, so this
+/// overlay divides its own bounds into equal segments and reports which one
+/// the pointer is over while staying transparent to clicks.
+private struct SegmentHoverArea: NSViewRepresentable {
+    let count: Int
+    let onHover: (Int, Bool) -> Void
+
+    private final class HoverView: NSView {
+        var count = 1
+        var onHover: ((Int, Bool) -> Void)?
+        private var hoveredIndex: Int?
+
+        override func updateTrackingAreas() {
+            super.updateTrackingAreas()
+            trackingAreas.forEach(removeTrackingArea)
+            addTrackingArea(NSTrackingArea(
+                rect: .zero,
+                options: [.mouseEnteredAndExited, .mouseMoved, .activeInKeyWindow, .inVisibleRect],
+                owner: self
+            ))
+        }
+
+        override func hitTest(_: CGPoint) -> NSView? {
+            nil
+        }
+
+        override func mouseEntered(with event: NSEvent) {
+            update(with: event)
+        }
+
+        override func mouseMoved(with event: NSEvent) {
+            update(with: event)
+        }
+
+        override func mouseExited(with _: NSEvent) {
+            setHovered(nil)
+        }
+
+        private func update(with event: NSEvent) {
+            guard bounds.width > 0, count >= 1 else {
+                return
+            }
+            let x = convert(event.locationInWindow, from: nil).x
+            var index = min(max(Int(x / (bounds.width / Double(count))), 0), count - 1)
+            if userInterfaceLayoutDirection == .rightToLeft {
+                index = count - 1 - index
+            }
+            setHovered(index)
+        }
+
+        /// Enter for the new segment goes out before exit for the old one,
+        /// so the model's match gate treats the old exit as stale and the
+        /// preview never drops between two segments.
+        private func setHovered(_ index: Int?) {
+            guard index != hoveredIndex else {
+                return
+            }
+            let previous = hoveredIndex
+            hoveredIndex = index
+            if let index {
+                onHover?(index, true)
+            }
+            if let previous {
+                onHover?(previous, false)
+            }
+        }
+    }
+
+    func makeNSView(context _: Context) -> NSView {
+        let view = HoverView()
+        view.count = count
+        view.onHover = onHover
+        return view
+    }
+
+    func updateNSView(_ view: NSView, context _: Context) {
+        guard let view = view as? HoverView else {
+            return
+        }
+        view.count = count
+        view.onHover = onHover
     }
 }
 

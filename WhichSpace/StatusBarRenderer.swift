@@ -206,10 +206,18 @@ final class StatusBarRenderer {
     /// the shared "All" scope, numbered like the primary display so the
     /// rows mirror one real arrangement.
     ///
+    /// `overrides` replaces individual preference reads for the hover
+    /// preview; the status bar render path never passes them.
+    ///
     /// `sizeScale` is a percentage of the status bar rendering; the returned
     /// image is handler-backed, so enlarged copies re-render their content at
     /// the destination scale instead of interpolating a small bitmap.
-    func settingsIcon(forSpace space: Int, display displayID: String?, sizeScale: Double = 100) -> NSImage {
+    func settingsIcon(
+        forSpace space: Int,
+        display displayID: String?,
+        sizeScale: Double = 100,
+        overrides: IconPreviewOverrides? = nil
+    ) -> NSImage {
         let isTemplate = space == SpacePreferences.defaultStyleSpace
         let labels = isTemplate ? store.spaceLabels : fetchLabels(displayID: displayID ?? "")
         let displayInfo = displayID == nil
@@ -257,7 +265,8 @@ final class StatusBarRenderer {
             label: label,
             labels: labels,
             displayID: isTemplate ? nil : displayID,
-            darkMode: appState.darkModeEnabled
+            darkMode: appState.darkModeEnabled,
+            overrides: overrides
         )
         let base = render(spec)
         guard sizeScale != 100 else {
@@ -628,8 +637,8 @@ final class StatusBarRenderer {
         ))
     }
 
-    /// Resolves preferences into final rendering inputs, so drawing needs
-    /// no further preference reads.
+    /// Resolves preferences and preview overrides into final rendering
+    /// inputs, so drawing needs no further preference reads.
     ///
     /// A shrunk level drops the per-Space label, symbol and badge and renders
     /// the Space number alone. That is both narrower and cheaper: the
@@ -644,15 +653,19 @@ final class StatusBarRenderer {
         labels: [Int: String],
         displayID: String?,
         darkMode: Bool,
-        level: IconShrinkLevel = .full
+        level: IconShrinkLevel = .full,
+        overrides: IconPreviewOverrides? = nil
     ) -> IconSpec {
         let labels = level.usesCustomStyling ? labels : [:]
         let paddingScale = level.paddingScaleOverride ?? store.paddingScale
-        let hasCustomLabel = labels[space]?.isEmpty == false
-        let symbolPosition = SpacePreferences.symbolPosition(
+        // A number style preview forces the plain number, which never
+        // combines with a label or symbol; committing the style clears both
+        let isStylePreview = overrides?.style != nil
+        let hasCustomLabel = !isStylePreview && labels[space]?.isEmpty == false
+        let symbolPosition = overrides?.symbolPosition ?? SpacePreferences.symbolPosition(
             forSpace: space, display: displayID, store: store
         ) ?? .left
-        let symbolWrap = SpacePreferences.symbolWrap(
+        let symbolWrap = overrides?.symbolWrap ?? SpacePreferences.symbolWrap(
             forSpace: space, display: displayID, store: store
         ) ?? .inside
         let symbolGapScale = SpacePreferences.symbolGap(
@@ -660,23 +673,88 @@ final class StatusBarRenderer {
         ) ?? Layout.defaultSymbolGapScale
         let symbolGap = Layout.maxSymbolGap * symbolGapScale / 100.0
 
-        let colors = SpacePreferences.colors(forSpace: space, display: displayID, store: store)
+        var colors = SpacePreferences.colors(forSpace: space, display: displayID, store: store)
         let style: IconStyle
         let font: NSFont?
-        let resolvedLabel = labels[space].flatMap { $0.isEmpty ? nil : $0 }
+        let resolvedLabel = isStylePreview
+            ? nil
+            : labels[space].flatMap { $0.isEmpty ? nil : $0 }
             .map { LabelTemplate.resolve($0, space: displayNumber) }
-        if let resolvedLabel {
+        if let overrideStyle = overrides?.style {
+            style = overrideStyle
+            font = overrides?.font
+                ?? SpacePreferences.font(forSpace: space, display: displayID, store: store)?.font
+        } else if let overrideLabelStyle = overrides?.labelStyle {
+            style = Self.renderStyle(for: overrideLabelStyle, labelLength: resolvedLabel?.count ?? 1)
+            let userFont = overrides?.font
+                ?? SpacePreferences.font(forSpace: space, display: displayID, store: store)?.font
+            font = (resolvedLabel?.count ?? 0) > 1 && userFont == nil
+                ? NSFont.boldSystemFont(ofSize: Layout.baseFontSizeSmall)
+                : userFont
+        } else if let resolvedLabel {
             let labelStyle = SpacePreferences.labelStyle(
                 forSpace: space, display: displayID, store: store
             ) ?? .square
             style = Self.renderStyle(for: labelStyle, labelLength: resolvedLabel.count)
-            let userFont = SpacePreferences.font(forSpace: space, display: displayID, store: store)?.font
+            let userFont = overrides?.font
+                ?? SpacePreferences.font(forSpace: space, display: displayID, store: store)?.font
             font = resolvedLabel.count > 1 && userFont == nil
                 ? NSFont.boldSystemFont(ofSize: Layout.baseFontSizeSmall)
                 : userFont
         } else {
             style = SpacePreferences.iconStyle(forSpace: space, display: displayID, store: store) ?? .square
-            font = SpacePreferences.font(forSpace: space, display: displayID, store: store)?.font
+            font = overrides?.font
+                ?? SpacePreferences.font(forSpace: space, display: displayID, store: store)?.font
+        }
+
+        // Color overrides merge with the stored colors: one channel is
+        // replaced, missing channels fill from stored values or the defaults,
+        // matching what committing the hovered swatch would store
+        if let overrides {
+            let defaults = IconColors.filledColors(darkMode: darkMode)
+            if let full = overrides.colors {
+                colors = full
+            }
+            if let foreground = overrides.foreground {
+                colors = SpaceColors(
+                    foreground: foreground,
+                    background: colors?.background ?? defaults.background,
+                    symbol: colors?.symbol,
+                    symbolBackground: colors?.symbolBackground
+                )
+            }
+            if let background = overrides.background {
+                colors = SpaceColors(
+                    foreground: colors?.foreground ?? defaults.foreground,
+                    background: background,
+                    symbol: colors?.symbol,
+                    symbolBackground: colors?.symbolBackground
+                )
+            }
+            if let symbolColor = overrides.symbolColor {
+                colors = SpaceColors(
+                    foreground: colors?.foreground ?? defaults.foreground,
+                    background: colors?.background ?? defaults.background,
+                    symbol: symbolColor,
+                    symbolBackground: colors?.symbolBackground
+                )
+            }
+            if let symbolBackground = overrides.symbolBackground {
+                colors = SpaceColors(
+                    foreground: colors?.foreground ?? defaults.foreground,
+                    background: colors?.background ?? defaults.background,
+                    symbol: colors?.symbol,
+                    symbolBackground: symbolBackground
+                )
+            }
+            if overrides.clearSymbolBackground, let current = colors {
+                colors = SpaceColors(
+                    foreground: current.foreground,
+                    background: current.background,
+                    symbol: current.symbol,
+                    symbolBackground: nil
+                )
+            }
         }
 
         // Fullscreen spaces show the owning app's icon (or "F" when the
@@ -701,20 +779,33 @@ final class StatusBarRenderer {
             )
         }
 
-        let symbol = level.usesCustomStyling
+        // A number-style preview and a clear preview suppress the stored
+        // symbol, as committing them does. The badge is only suppressed by
+        // the shrink level: committing a number style keeps the badge, so
+        // its preview must too.
+        let readsStoredSymbol = level.usesCustomStyling
+            && !isStylePreview
+            && overrides?.clearSymbol != true
+        let symbol = overrides?.symbol ?? (readsStoredSymbol
             ? SpacePreferences.symbol(forSpace: space, display: displayID, store: store)
-            : nil
+            : nil)
         let rawBadge = level.usesCustomStyling
             ? SpacePreferences.badge(forSpace: space, display: displayID, store: store)
             : nil
-        let badge = rawBadge.map { Self.resolveBadge($0, space: displayNumber) }
+        var badge = rawBadge.map { Self.resolveBadge($0, space: displayNumber) }
+        // A position preview keeps the stored character; without one there
+        // is no badge to move, matching what committing the position does
+        if let position = overrides?.badgePosition, let current = badge {
+            badge = SpaceBadge(character: current.character, position: position)
+        }
 
         let skinTone = symbol == nil
             ? SkinTone.default
-            : SpacePreferences.skinTone(forSpace: space, display: displayID, store: store) ?? .default
+            : overrides?.skinTone
+            ?? SpacePreferences.skinTone(forSpace: space, display: displayID, store: store) ?? .default
 
         return IconSpec(
-            text: label,
+            text: isStylePreview ? String(displayNumber) : label,
             colors: colors,
             font: font,
             style: style,

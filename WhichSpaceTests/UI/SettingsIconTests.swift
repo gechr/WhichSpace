@@ -102,4 +102,215 @@ struct SettingsIconTests {
         #expect(enlarged.size.width == base.size.width * 3)
         #expect(enlarged.size.height == base.size.height * 3)
     }
+
+    // MARK: - Hover Preview Overrides
+
+    @Test("nil overrides render identically to no overrides")
+    func nilOverridesMatchBaseline() {
+        let appState = makeAppState()
+        let base = appState.renderer.settingsIcon(forSpace: 1, display: "Main")
+        let explicit = appState.renderer.settingsIcon(forSpace: 1, display: "Main", overrides: nil)
+        #expect(pixels(base) == pixels(explicit))
+    }
+
+    /// Pins the contract that a hover shows exactly what clicking commits:
+    /// the overridden render must match a fresh render after the same value
+    /// is stored.
+    @Test("a style override renders what committing the style renders")
+    func stylePreviewEqualsCommit() {
+        let appState = makeAppState()
+        let previewed = appState.renderer.settingsIcon(
+            forSpace: 2, display: "Main", overrides: IconPreviewOverrides(style: .circle)
+        )
+        SpacePreferences.setIconStyle(.circle, forSpace: 2, display: "Main", store: store)
+        let committed = appState.renderer.settingsIcon(forSpace: 2, display: "Main")
+        #expect(pixels(previewed) == pixels(committed))
+    }
+
+    @Test("a style override forces the plain number over a stored label")
+    func stylePreviewForcesPlainNumber() {
+        let appState = makeAppState()
+        SpacePreferences.setLabel("Work", forSpace: 2, display: "Main", store: store)
+        let previewed = appState.renderer.settingsIcon(
+            forSpace: 2, display: "Main", overrides: IconPreviewOverrides(style: .circle)
+        )
+        // Committing a number style clears the label and symbol sentinels
+        SpacePreferences.setSymbol("", forSpace: 2, display: "Main", store: store)
+        SpacePreferences.setLabel("", forSpace: 2, display: "Main", store: store)
+        SpacePreferences.setIconStyle(.circle, forSpace: 2, display: "Main", store: store)
+        let committed = appState.renderer.settingsIcon(forSpace: 2, display: "Main")
+        #expect(pixels(previewed) == pixels(committed))
+    }
+
+    @Test("a style override keeps the stored badge, as committing does")
+    func stylePreviewKeepsStoredBadge() {
+        let appState = makeAppState()
+        SpacePreferences.setBadge(
+            SpaceBadge(character: "!", position: .topRight), forSpace: 2, display: "Main", store: store
+        )
+        let previewed = appState.renderer.settingsIcon(
+            forSpace: 2, display: "Main", overrides: IconPreviewOverrides(style: .circle)
+        )
+        SpacePreferences.setSymbol("", forSpace: 2, display: "Main", store: store)
+        SpacePreferences.setLabel("", forSpace: 2, display: "Main", store: store)
+        SpacePreferences.setIconStyle(.circle, forSpace: 2, display: "Main", store: store)
+        let committed = appState.renderer.settingsIcon(forSpace: 2, display: "Main")
+        #expect(pixels(previewed) == pixels(committed))
+    }
+
+    @Test("a clear preview renders what toggling the symbol off renders")
+    func symbolClearPreviewEqualsToggleOff() {
+        let appState = makeAppState()
+        // A template symbol must not bleed through the toggle-off, so the
+        // commit writes the "none" sentinel rather than a clear
+        SpacePreferences.setSymbol(
+            "circle", forSpace: SpacePreferences.defaultStyleSpace, display: nil, store: store
+        )
+        SpacePreferences.setSymbol("star", forSpace: 2, display: "Main", store: store)
+        let previewed = appState.renderer.settingsIcon(
+            forSpace: 2, display: "Main", overrides: IconPreviewOverrides(clearSymbol: true)
+        )
+        SpacePreferences.setSymbol("", forSpace: 2, display: "Main", store: store)
+        let committed = appState.renderer.settingsIcon(forSpace: 2, display: "Main")
+        #expect(pixels(previewed) == pixels(committed))
+    }
+
+    @Test("a symbol wrap override renders what committing it renders")
+    func symbolWrapPreviewEqualsCommit() {
+        let appState = makeAppState()
+        SpacePreferences.setLabel("Work", forSpace: 2, display: "Main", store: store)
+        SpacePreferences.setSymbol("star", forSpace: 2, display: "Main", store: store)
+        let previewed = appState.renderer.settingsIcon(
+            forSpace: 2, display: "Main", overrides: IconPreviewOverrides(symbolWrap: .outside)
+        )
+        SpacePreferences.setSymbolWrap(.outside, forSpace: 2, display: "Main", store: store)
+        let committed = appState.renderer.settingsIcon(forSpace: 2, display: "Main")
+        #expect(pixels(previewed) == pixels(committed))
+    }
+
+    @Test("a symbol override renders what committing the symbol renders")
+    func symbolPreviewEqualsCommit() {
+        let appState = makeAppState()
+        let previewed = appState.renderer.settingsIcon(
+            forSpace: 2, display: "Main", overrides: IconPreviewOverrides(symbol: "star")
+        )
+        SpacePreferences.setSymbol("star", forSpace: 2, display: "Main", store: store)
+        let committed = appState.renderer.settingsIcon(forSpace: 2, display: "Main")
+        #expect(pixels(previewed) == pixels(committed))
+    }
+
+    @Test("an emoji override with a tone renders what committing renders")
+    func emojiPreviewEqualsCommit() {
+        let appState = makeAppState()
+        let previewed = appState.renderer.settingsIcon(
+            forSpace: 2,
+            display: "Main",
+            overrides: IconPreviewOverrides(skinTone: .dark, symbol: "\u{1F44B}")
+        )
+        SpacePreferences.setSymbol("\u{1F44B}", forSpace: 2, display: "Main", store: store)
+        SpacePreferences.setSkinTone(.dark, forSpace: 2, display: "Main", store: store)
+        let committed = appState.renderer.settingsIcon(forSpace: 2, display: "Main")
+        #expect(pixels(previewed) == pixels(committed))
+    }
+
+    @Test("a foreground override merges with the stored background")
+    func foregroundPreviewEqualsCommit() {
+        let appState = makeAppState()
+        SpacePreferences.setColors(
+            SpaceColors(foreground: .white, background: .blue),
+            forSpace: 2,
+            display: "Main",
+            store: store
+        )
+        let previewed = appState.renderer.settingsIcon(
+            forSpace: 2, display: "Main", overrides: IconPreviewOverrides(foreground: .red)
+        )
+        SpacePreferences.setColors(
+            SpaceColors(foreground: .red, background: .blue),
+            forSpace: 2,
+            display: "Main",
+            store: store
+        )
+        let committed = appState.renderer.settingsIcon(forSpace: 2, display: "Main")
+        #expect(pixels(previewed) == pixels(committed))
+    }
+
+    @Test("a full-colors override renders what committing the swap renders")
+    func invertPreviewEqualsCommit() {
+        let appState = makeAppState()
+        let colors = SpaceColors(foreground: .red, background: .blue)
+        SpacePreferences.setColors(colors, forSpace: 2, display: "Main", store: store)
+        let previewed = appState.renderer.settingsIcon(
+            forSpace: 2,
+            display: "Main",
+            overrides: IconPreviewOverrides(colors: colors.inverted(for: nil))
+        )
+        SpacePreferences.setColors(colors.inverted(for: nil), forSpace: 2, display: "Main", store: store)
+        let committed = appState.renderer.settingsIcon(forSpace: 2, display: "Main")
+        #expect(pixels(previewed) == pixels(committed))
+    }
+
+    @Test("clearSymbolBackground strips a stored symbol chip color")
+    func clearSymbolBackgroundOverride() {
+        let appState = makeAppState()
+        SpacePreferences.setLabel("Work", forSpace: 2, display: "Main", store: store)
+        SpacePreferences.setSymbol("star", forSpace: 2, display: "Main", store: store)
+        // The chip only draws in the outside-label layout
+        SpacePreferences.setSymbolWrap(.outside, forSpace: 2, display: "Main", store: store)
+        SpacePreferences.setColors(
+            SpaceColors(foreground: .white, background: .blue, symbol: .red, symbolBackground: .green),
+            forSpace: 2,
+            display: "Main",
+            store: store
+        )
+        let base = appState.renderer.settingsIcon(forSpace: 2, display: "Main")
+        let stripped = appState.renderer.settingsIcon(
+            forSpace: 2,
+            display: "Main",
+            overrides: IconPreviewOverrides(clearSymbolBackground: true)
+        )
+        #expect(pixels(stripped) != pixels(base))
+    }
+
+    @Test("a badge position override renders what committing it renders")
+    func badgePositionPreviewEqualsCommit() {
+        let appState = makeAppState()
+        SpacePreferences.setBadge(
+            SpaceBadge(character: "A", position: .topLeft), forSpace: 2, display: "Main", store: store
+        )
+        let previewed = appState.renderer.settingsIcon(
+            forSpace: 2, display: "Main", overrides: IconPreviewOverrides(badgePosition: .bottomRight)
+        )
+        SpacePreferences.setBadge(
+            SpaceBadge(character: "A", position: .bottomRight), forSpace: 2, display: "Main", store: store
+        )
+        let committed = appState.renderer.settingsIcon(forSpace: 2, display: "Main")
+        #expect(pixels(previewed) == pixels(committed))
+    }
+
+    @Test("a symbol position override renders what committing it renders")
+    func symbolPositionPreviewEqualsCommit() {
+        let appState = makeAppState()
+        SpacePreferences.setLabel("Work", forSpace: 2, display: "Main", store: store)
+        SpacePreferences.setSymbol("star", forSpace: 2, display: "Main", store: store)
+        let previewed = appState.renderer.settingsIcon(
+            forSpace: 2, display: "Main", overrides: IconPreviewOverrides(symbolPosition: .right)
+        )
+        SpacePreferences.setSymbolPosition(.right, forSpace: 2, display: "Main", store: store)
+        let committed = appState.renderer.settingsIcon(forSpace: 2, display: "Main")
+        #expect(pixels(previewed) == pixels(committed))
+    }
+
+    @Test("overrides never touch the status bar icon")
+    func overridesLeaveStatusBarAlone() {
+        let appState = makeAppState()
+        let barBefore = appState.renderer.statusBarIcon(level: .full)
+        _ = appState.renderer.settingsIcon(
+            forSpace: 1,
+            display: "Main",
+            overrides: IconPreviewOverrides(background: .orange)
+        )
+        let barAfter = appState.renderer.statusBarIcon(level: .full)
+        #expect(pixels(barBefore) == pixels(barAfter))
+    }
 }

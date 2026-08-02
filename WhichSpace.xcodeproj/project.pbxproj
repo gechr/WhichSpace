@@ -21,6 +21,7 @@
 		C94204F22B0647EEA70C0CAB /* SpaceUpdateCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0621BB91706643C2B80B3FB2 /* SpaceUpdateCoordinator.swift */; };
 		5EB457D72EEDE8C00021C6BD /* DefaultsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB457CC2EEDE8C00021C6BD /* DefaultsStore.swift */; };
 		D91E604932D44F33863FB9A6 /* HapticActuator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9FEF98C20749E19B4CA885 /* HapticActuator.swift */; };
+		69112F89073343068978BC56 /* IconPreviewOverrides.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDA2D223BEF4EEAA22EA0A5 /* IconPreviewOverrides.swift */; };
 		A46FE3B79717482B886EB47D /* IconShrink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E19623F420946E39C6ABF24 /* IconShrink.swift */; };
 		5EB457D82EEDE8C00021C6BD /* ItemData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB457CE2EEDE8C00021C6BD /* ItemData.swift */; };
 		5EB457D92EEDE8C00021C6BD /* Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB457CA2EEDE8C00021C6BD /* Alerts.swift */; };
@@ -147,6 +148,7 @@
 		5EB457CD2EEDE8C00021C6BD /* SpaceIconGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceIconGenerator.swift; sourceTree = "<group>"; };
 		26FDEA134CE245FD99C0FA05 /* SpaceIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceIntents.swift; sourceTree = "<group>"; };
 		4B9FEF98C20749E19B4CA885 /* HapticActuator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticActuator.swift; sourceTree = "<group>"; };
+		9FDA2D223BEF4EEAA22EA0A5 /* IconPreviewOverrides.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconPreviewOverrides.swift; sourceTree = "<group>"; };
 		4E19623F420946E39C6ABF24 /* IconShrink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconShrink.swift; sourceTree = "<group>"; };
 		5EB457CE2EEDE8C00021C6BD /* ItemData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemData.swift; sourceTree = "<group>"; };
 		5EB457D02EEDE8C00021C6BD /* Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
@@ -295,6 +297,7 @@
 				5EB457CD2EEDE8C00021C6BD /* SpaceIconGenerator.swift */,
 				26FDEA134CE245FD99C0FA05 /* SpaceIntents.swift */,
 				4B9FEF98C20749E19B4CA885 /* HapticActuator.swift */,
+				9FDA2D223BEF4EEAA22EA0A5 /* IconPreviewOverrides.swift */,
 				4E19623F420946E39C6ABF24 /* IconShrink.swift */,
 				5EB457CE2EEDE8C00021C6BD /* ItemData.swift */,
 				B7C030C19840D638AEC463CE /* MenuBuilder.swift */,
@@ -608,6 +611,7 @@
 				5EB457D72EEDE8C00021C6BD /* DefaultsStore.swift in Sources */,
 				BA5B89440132B31951EAF51B /* DisplaySpaceProvider.swift in Sources */,
 				D91E604932D44F33863FB9A6 /* HapticActuator.swift in Sources */,
+				69112F89073343068978BC56 /* IconPreviewOverrides.swift in Sources */,
 				A46FE3B79717482B886EB47D /* IconShrink.swift in Sources */,
 				5EB457D82EEDE8C00021C6BD /* ItemData.swift in Sources */,
 				5EB457D92EEDE8C00021C6BD /* Alerts.swift in Sources */,

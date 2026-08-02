@@ -29,6 +29,12 @@ struct SpacesPane: View {
         .onAppear {
             model.normalizeSelection()
         }
+        // Switching to another pane removes the hovered cell without a
+        // guaranteed final hover exit, which would strand a stale preview
+        // in the long-lived model
+        .onDisappear {
+            model.clearPreview()
+        }
     }
 
     /// The editor column keeps its base-configuration width, widened by the
@@ -357,7 +363,7 @@ struct SpacesPane: View {
     /// The card's spare width carries the copy/save/reset actions.
     private var previewRow: some View {
         HStack(spacing: 10) {
-            previewImage
+            PreviewCardIcon(model: model)
             VStack(alignment: .trailing, spacing: 6) {
                 if !model.isEditingDefaultStyle {
                     Button(Localization.actionSetAsDefault) {
@@ -380,13 +386,21 @@ struct SpacesPane: View {
     /// enlargement is a ceiling rather than a fixed size: a label wide enough
     /// to outgrow the card scales back down to fit instead of drawing across
     /// the buttons and out of the pane.
-    private var previewImage: some View {
-        let icon = model.icon(sizeScale: Layout.settingsSpacesPreviewScale)
-        return Image(nsImage: icon)
-            .resizable()
-            .scaledToFit()
-            .frame(maxWidth: icon.size.width, maxHeight: icon.size.height)
-            .frame(maxWidth: .infinity, alignment: .leading)
+    ///
+    /// A separate view so hover previews invalidate only this image; inlined
+    /// in the pane body, every hover would re-render the Space list icons
+    /// and re-measure the window.
+    private struct PreviewCardIcon: View {
+        let model: SpaceEditorModel
+
+        var body: some View {
+            let icon = model.icon(sizeScale: Layout.settingsSpacesPreviewScale)
+            Image(nsImage: icon)
+                .resizable()
+                .scaledToFit()
+                .frame(maxWidth: icon.size.width, maxHeight: icon.size.height)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
     }
 
     /// Both items confirm through the model before clearing anything. The

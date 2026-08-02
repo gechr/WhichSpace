@@ -613,4 +613,135 @@ struct SpaceEditorModelTests {
         #expect(model.displayName(for: nil) == nil)
         #expect(model.displayName(for: "not-a-display-uuid") == nil)
     }
+
+    // MARK: - Hover Preview
+
+    /// Waits out the apply debounce for the hover just scheduled.
+    private func applied(_ model: SpaceEditorModel) async {
+        await model.previewApplyTask?.value
+    }
+
+    @Test("hover enter applies the preview and hover exit clears it")
+    func hoverPreviewLifecycle() async {
+        let model = makeModel()
+        model.previewForegroundColor(.red, hovering: true)
+        await applied(model)
+        #expect(model.hoverPreview == IconPreviewOverrides(foreground: .red))
+        model.previewForegroundColor(.red, hovering: false)
+        #expect(model.hoverPreview == nil)
+    }
+
+    @Test("an exit before the debounce fires cancels the pending apply")
+    func exitCancelsPendingApply() async {
+        let model = makeModel()
+        model.previewForegroundColor(.red, hovering: true)
+        model.previewForegroundColor(.red, hovering: false)
+        await applied(model)
+        #expect(model.hoverPreview == nil)
+    }
+
+    @Test("a fast sweep applies only the last hovered value")
+    func sweepAppliesOnlyTheLastHover() async {
+        let model = makeModel()
+        model.previewForegroundColor(.red, hovering: true)
+        model.previewForegroundColor(.green, hovering: true)
+        model.previewForegroundColor(.blue, hovering: true)
+        await applied(model)
+        #expect(model.hoverPreview == IconPreviewOverrides(foreground: .blue))
+    }
+
+    @Test("a stale exit from a superseded cell keeps the live preview")
+    func stalePreviewExitIsIgnored() async {
+        let model = makeModel()
+        model.previewForegroundColor(.red, hovering: true)
+        await applied(model)
+        model.previewForegroundColor(.blue, hovering: true)
+        // SwiftUI does not guarantee exit before enter between neighboring
+        // cells; the red cell's late exit must not clear the blue preview
+        model.previewForegroundColor(.red, hovering: false)
+        await applied(model)
+        #expect(model.hoverPreview == IconPreviewOverrides(foreground: .blue))
+    }
+
+    @Test("an emoji preview carries the picker skin tone, a symbol none")
+    func symbolPreviewSkinTone() async {
+        let model = makeModel()
+        store.emojiPickerSkinTone = .dark
+        model.previewSymbol("\u{1F44B}", hovering: true)
+        await applied(model)
+        #expect(model.hoverPreview?.skinTone == .dark)
+        model.previewSymbol("star", hovering: true)
+        await applied(model)
+        #expect(model.hoverPreview == IconPreviewOverrides(symbol: "star"))
+    }
+
+    @Test("the invert preview swaps the stored colors without writing")
+    func invertPreviewMirrorsInvert() async {
+        let model = makeModel()
+        model.setForegroundColor(.red)
+        model.setBackgroundColor(.blue)
+        let stored = model.colors
+        model.previewInvertedColors(hovering: true)
+        await applied(model)
+        #expect(model.hoverPreview?.colors == stored?.inverted(for: nil))
+        #expect(model.colors == stored)
+    }
+
+    @Test("a badge position preview needs a badge character")
+    func badgePositionPreviewNeedsCharacter() async {
+        let model = makeModel()
+        model.previewBadgePosition(.bottomRight, hovering: true)
+        await applied(model)
+        #expect(model.hoverPreview == nil)
+
+        model.setBadgeCharacter("A")
+        model.previewBadgePosition(.bottomRight, hovering: true)
+        await applied(model)
+        #expect(model.hoverPreview == IconPreviewOverrides(badgePosition: .bottomRight))
+    }
+
+    @Test("any write clears the preview")
+    func writeClearsPreview() async {
+        let model = makeModel()
+        model.previewIconStyle(.circle, hovering: true)
+        await applied(model)
+        model.setForegroundColor(.red)
+        #expect(model.hoverPreview == nil)
+    }
+
+    @Test("selection and display changes clear the preview")
+    func selectionChangeClearsPreview() async {
+        let model = makeModel()
+        model.previewIconStyle(.circle, hovering: true)
+        await applied(model)
+        model.selection = .space(2)
+        #expect(model.hoverPreview == nil)
+
+        model.previewIconStyle(.circle, hovering: true)
+        await applied(model)
+        model.selectedDisplayID = "Main"
+        #expect(model.hoverPreview == nil)
+    }
+
+    @Test("stopObserving drops the preview with the window")
+    func stopObservingClearsPreview() async {
+        let model = makeModel()
+        model.previewIconStyle(.circle, hovering: true)
+        await applied(model)
+        model.stopObserving()
+        #expect(model.hoverPreview == nil)
+    }
+
+    @Test("the preview changes the card icon and leaves list icons alone")
+    func previewAffectsOnlyTheCardIcon() async {
+        let model = makeModel()
+        let baseCard = model.icon().tiffRepresentation
+        let baseList = model.listIcon(for: .space(1)).tiffRepresentation
+        model.previewBackgroundColor(.orange, hovering: true)
+        await applied(model)
+        #expect(model.icon().tiffRepresentation != baseCard)
+        #expect(model.listIcon(for: .space(1)).tiffRepresentation == baseList)
+        model.previewBackgroundColor(.orange, hovering: false)
+        #expect(model.icon().tiffRepresentation == baseCard)
+    }
 }

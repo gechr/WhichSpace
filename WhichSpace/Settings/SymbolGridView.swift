@@ -24,6 +24,9 @@ struct SymbolGridView: View {
     /// Tone applied to emoji cells for display; selections store the base
     /// emoji and the per-Space tone is applied at render time
     let pickerSkinTone: SkinTone
+    /// Hover preview callback: the hovered glyph and whether the pointer
+    /// just entered (true) or left (false) its cell
+    var onHover: ((String, Bool) -> Void)?
     let onSelect: (String?) -> Void
 
     @State private var searchText = ""
@@ -126,6 +129,9 @@ struct SymbolGridView: View {
         }
         .buttonStyle(.plain)
         .help(catalog == .symbols ? item : "")
+        .onHover { hovering in
+            onHover?(item, hovering)
+        }
     }
 }
 
@@ -145,6 +151,9 @@ struct SkinToneRow: View {
     }
 
     let selected: SkinTone
+    /// Hover preview callback: the hovered tone and whether the pointer
+    /// just entered (true) or left (false) its cell
+    var onHover: ((SkinTone, Bool) -> Void)?
     let onSelect: (SkinTone) -> Void
 
     var body: some View {
@@ -165,6 +174,9 @@ struct SkinToneRow: View {
                         )
                 }
                 .buttonStyle(.plain)
+                .onHover { hovering in
+                    onHover?(tone, hovering)
+                }
             }
         }
         .padding(.horizontal, 10)

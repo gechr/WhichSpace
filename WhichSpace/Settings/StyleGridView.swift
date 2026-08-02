@@ -43,6 +43,9 @@ struct StyleGridView: View {
     let customColors: SpaceColors?
     let darkMode: Bool
     var usesLabelTitles = false
+    /// Hover preview callback: the style under the pointer and whether the
+    /// pointer just entered (true) or left (false) its cell
+    var onHover: ((IconStyle, Bool) -> Void)?
     let onSelect: (IconStyle) -> Void
 
     private static let columnCount = 4
@@ -102,6 +105,9 @@ struct StyleGridView: View {
             )
         }
         .buttonStyle(.plain)
+        .onHover { hovering in
+            onHover?(style, hovering)
+        }
     }
 
     /// Rendered size is a ceiling rather than a fixed size: cells share the
