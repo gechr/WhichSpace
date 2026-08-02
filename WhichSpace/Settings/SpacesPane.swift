@@ -365,12 +365,15 @@ struct SpacesPane: View {
                     }
                     .help(Localization.tipSetDefaultStyle)
                 }
+                copyFromMenu
                 copyToMenu
                 resetMenu
             }
         }
-        .padding(.horizontal, Layout.settingsRowHorizontalPadding)
-        .frame(height: Layout.settingsSpacesPreviewHeight)
+        .padding(.leading, Layout.settingsRowHorizontalPadding)
+        .padding(.trailing, Layout.settingsSpacesPreviewTrailingPadding)
+        .padding(.vertical, Layout.settingsRowVerticalPadding)
+        .frame(minHeight: Layout.settingsSpacesPreviewMinHeight)
     }
 
     /// Leading-anchored in whatever width the action buttons leave over. The
@@ -405,6 +408,28 @@ struct SpacesPane: View {
         .help(Localization.tipResetSpaceToDefault)
     }
 
+    /// Replaces the edited entry's style with the chosen Space's, confirming
+    /// through the model first. No bulk item has a meaning here - a style can
+    /// come from one Space only - so the sources stand alone without the
+    /// divider the outbound menu needs.
+    private var copyFromMenu: some View {
+        Menu(Localization.actionCopyFrom) {
+            ForEach(copyCandidates, id: \.number) { candidate in
+                Button {
+                    model.copyFromSpace(candidate.number)
+                } label: {
+                    Label {
+                        Text(model.spaceName(for: candidate) ?? "")
+                    } icon: {
+                        Image(nsImage: model.listIcon(for: .space(candidate.number)))
+                    }
+                }
+            }
+        }
+        .fixedSize()
+        .help(Localization.tipCopyFrom)
+    }
+
     /// All targets confirm through the model before writing anything. The
     /// all-displays item disappears under the "All" scope, whose edits
     /// already apply to every display; below the bulk targets, each other
@@ -421,7 +446,7 @@ struct SpacesPane: View {
                 }
             }
             Divider()
-            ForEach(copyTargets, id: \.number) { candidate in
+            ForEach(copyCandidates, id: \.number) { candidate in
                 Button {
                     model.copyToSpace(candidate.number)
                 } label: {
@@ -439,9 +464,9 @@ struct SpacesPane: View {
         .help(Localization.tipCopyTo)
     }
 
-    /// Every list entry except the one being edited; the template edits
-    /// space 0, so it offers every Space.
-    private var copyTargets: [(number: Int, entry: SpaceEntry?)] {
+    /// Every list entry except the one being edited, serving both copy
+    /// directions; the template edits space 0, so it offers every Space.
+    private var copyCandidates: [(number: Int, entry: SpaceEntry?)] {
         model.spaceEntries.filter { model.selection != .space($0.number) }
     }
 

@@ -4,6 +4,14 @@ import SwiftUI
 /// A grid of icon-style choices, each cell showing the style rendered with
 /// the edited entry's number and colors.
 struct StyleGridView: View {
+    /// Every number style, led by the one a Space renders with by default so
+    /// the grid opens on it. Its outline twin comes next, keeping the
+    /// filled/outline pairing the rest of the grid reads in.
+    static let numberStyles: [IconStyle] = {
+        let lead: [IconStyle] = [.fallback, .squareOutline]
+        return lead + IconStyle.allCases.filter { !lead.contains($0) }
+    }()
+
     /// The label-shape subset offered for custom labels.
     static let labelStyles: [IconStyle] = [
         .pill, .pillOutline, .square, .squareOutline, .stroke, .transparent,

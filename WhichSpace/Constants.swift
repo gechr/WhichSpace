@@ -126,9 +126,15 @@ enum Layout {
     static let settingsSpaceListScrollerWidth = 16.0
     static let settingsSpaceNameMaxLength = 10
     static let settingsSpacesEditorGutter = 10.0
-    static let settingsSpacesEditorBaseHeight = 480.0
+    /// Ideal height of the editor's scrolling stack, measured against the
+    /// pinned preview card so the column's total holds steady as the card
+    /// grows and the Space list keeps deciding how tall the window is
+    static let settingsSpacesEditorBaseHeight = 576.0 - settingsSpacesPreviewMinHeight
     static let settingsSpacesPaneWidth = 680.0
-    static let settingsSpacesPreviewHeight = 96.0
+    /// Floor for the preview card, whose stack of actions is one shorter on
+    /// the Default Style entry; the card grows past it rather than clipping
+    static let settingsSpacesPreviewMinHeight = 132.0
+    static let settingsSpacesPreviewTrailingPadding = 10.0
     static let settingsSpacesPreviewScale = 300.0
     static let defaultHorizontalPadding = statusItemWidth - baseSquareSize // 4.0pt
 
@@ -216,6 +222,7 @@ enum IconColors {
 
 enum Localization {
     static let accessibilityCurrentSpace = String(localized: "accessibility_current_space")
+    static let actionCopyFrom = String(localized: "action_copy_from")
     static let actionCopyTo = String(localized: "action_copy_to")
     static let actionCheckForUpdates = String(localized: "action_check_for_updates")
     static let actionExportSettings = String(localized: "action_export_settings")
@@ -244,6 +251,7 @@ enum Localization {
     static let buttonReset = String(localized: "button_reset")
     static let buttonResetAll = String(localized: "button_reset_all")
     static let buttonSwap = String(localized: "button_swap")
+    static let confirmCopyFromSpace = String(localized: "confirm_copy_from_space")
     static let confirmCopyToAllDisplays = String(localized: "confirm_copy_to_all_displays")
     static let confirmCopyToAllSpaces = String(localized: "confirm_copy_to_all_spaces")
     static let confirmCopyToSpace = String(localized: "confirm_copy_to_space")
@@ -253,6 +261,7 @@ enum Localization {
     static let confirmResetDefault = String(localized: "confirm_reset_default")
     static let confirmResetSpace = String(localized: "confirm_reset_space")
     static let confirmResetSettings = String(localized: "confirm_reset_settings")
+    static let detailCopyFromSpace = String(localized: "detail_copy_from_space")
     static let detailCopyToAllDisplays = String(localized: "detail_copy_to_all_displays")
     static let detailCopyToAllSpaces = String(localized: "detail_copy_to_all_spaces")
     static let detailCopyToSpace = String(localized: "detail_copy_to_space")
@@ -358,6 +367,7 @@ enum Localization {
     static let tipBadgePosition = String(localized: "tip_badge_position")
     static let tipCheckForUpdates = String(localized: "tip_check_for_updates")
     static let tipClassicSwitching = String(localized: "tip_classic_switching")
+    static let tipCopyFrom = String(localized: "tip_copy_from")
     static let tipCopyTo = String(localized: "tip_copy_to")
     static let tipClearBadge = String(localized: "tip_clear_badge")
     static let tipClearLabel = String(localized: "tip_clear_label")

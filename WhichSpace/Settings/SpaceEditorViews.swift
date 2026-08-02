@@ -157,7 +157,7 @@ struct SpaceEditorView: View {
     private func numberSection(_ rules: ClearCellRules) -> some View {
         SettingsSection(Localization.menuNumber, anchor: .numberStyle) {
             StyleGridView(
-                styles: IconStyle.allCases,
+                styles: StyleGridView.numberStyles,
                 // A symbol replaces the number entirely, so no style reads
                 // as active while one is set
                 selected: rules.symbolIsActive ? nil : model.iconStyle,

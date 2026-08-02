@@ -673,6 +673,37 @@ final class SpaceEditorModel {
         tick += 1
     }
 
+    /// Replaces the edited entry's preferences with another Space's, read at
+    /// the shown display's scope and written at the edited one. The entry's
+    /// own preferences are cleared first, so it ends up matching the source
+    /// rather than blending with it: a copy alone carries only the keys the
+    /// source holds, leaving the rest of the edited entry standing.
+    func copyFromSpace(_ number: Int) {
+        guard number != editingSpace else {
+            return
+        }
+        guard confirmAction(
+            Localization.confirmCopyFromSpace,
+            Localization.detailCopyFromSpace,
+            Localization.buttonCopy,
+            false
+        ) else {
+            return
+        }
+        SpacePreferences.clearPreferences(forSpace: editingSpace, display: editingDisplay, store: store)
+        SpacePreferences.copyPreferences(
+            from: number,
+            to: editingSpace,
+            fromDisplay: selectedDisplayID,
+            toDisplay: editingDisplay,
+            // The template holds no sound; the Default Style row edits the
+            // global default instead, as saveDefaultStyle assumes
+            includeSound: !isEditingDefaultStyle,
+            store: store
+        )
+        tick += 1
+    }
+
     /// Clears the edited entry's preferences (or the saved template when
     /// the Default Style entry is selected, with its own wording - the
     /// template is not a Space).

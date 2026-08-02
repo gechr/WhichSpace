@@ -452,6 +452,71 @@ struct SpaceEditorModelTests {
         #expect(store.spaceLabels[2] == nil)
     }
 
+    @Test("copy from one Space takes that Space's style")
+    func copyFromOneSpace() {
+        let model = makeModel()
+        model.selection = .space(3)
+        model.setLabel("Work")
+        model.setSpaceSound("Pop")
+        model.selection = .space(1)
+        model.copyFromSpace(3)
+        #expect(store.spaceLabels[1] == "Work")
+        #expect(store.spaceSounds[1] == "Pop")
+        #expect(store.spaceLabels[2] == nil)
+    }
+
+    /// The edited Space is cleared before the copy, so it ends up matching
+    /// the source rather than keeping keys the source never set.
+    @Test("copy from replaces the edited Space's style rather than blending it")
+    func copyFromReplacesRatherThanMerges() {
+        let model = makeModel()
+        model.selection = .space(3)
+        model.setSymbol("star")
+        model.selection = .space(1)
+        model.setLabel("Work")
+        model.copyFromSpace(3)
+        #expect(store.spaceSymbols[1] == "star")
+        #expect(store.spaceLabels[1] == nil)
+    }
+
+    @Test("copy from one Space lands in a selected display's overrides")
+    func copyFromOneSpaceOnDisplay() {
+        configureTwoDisplays()
+        let model = makeModel()
+        model.selection = .space(2)
+        model.setLabel("Work")
+        model.selection = .space(1)
+        model.copyFromSpace(2)
+        #expect(store.displaySpaceLabels["Main"]?[1] == "Work")
+        #expect(store.spaceLabels[1] == nil)
+    }
+
+    @Test("copy from the edited Space itself asks for no confirmation")
+    func copyFromEditedSpace() {
+        var asked = false
+        let model = SpaceEditorModel(appState: makeAppState()) { _, _, _, _ in
+            asked = true
+            return true
+        }
+        model.copyFromSpace(model.editingSpace)
+        #expect(!asked)
+    }
+
+    /// Unlike save as default, this leaves the source Space's own style in
+    /// place - it is a copy, not a promotion. The template holds no sound.
+    @Test("copy onto the template takes no sound and leaves the source alone")
+    func copyFromOntoTemplate() {
+        let model = makeModel()
+        model.selection = .space(2)
+        model.setLabel("Work")
+        model.setSpaceSound("Pop")
+        model.selection = .defaultStyle
+        model.copyFromSpace(2)
+        #expect(store.spaceLabels[SpacePreferences.defaultStyleSpace] == "Work")
+        #expect(store.spaceSounds[SpacePreferences.defaultStyleSpace] == nil)
+        #expect(store.spaceLabels[2] == "Work")
+    }
+
     @Test("a declined confirmation leaves the store unchanged")
     func declinedConfirmation() {
         let model = makeModel(confirmed: false)
@@ -461,6 +526,11 @@ struct SpaceEditorModelTests {
 
         model.copyToSpace(2)
         #expect(SpacePreferences.label(forSpace: 2, display: "Main", store: store) == nil)
+
+        // Declining has to leave the edited Space intact, so the clear that
+        // precedes the copy cannot run ahead of the confirmation
+        model.copyFromSpace(2)
+        #expect(model.label == "Work")
 
         model.resetToDefault()
         #expect(model.label == "Work")

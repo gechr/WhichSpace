@@ -21,6 +21,10 @@ enum IconStyle: String, CaseIterable, Defaults.Serializable {
     case triangle
     case triangleOutline
 
+    /// What a Space renders with when it carries no style of its own, and
+    /// what the style grids lead with.
+    static let fallback = Self.square
+
     var localizedTitle: String {
         NSLocalizedString("style_\(rawValue)", comment: "")
     }

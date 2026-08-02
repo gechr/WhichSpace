@@ -531,7 +531,7 @@ final class AppState {
     }
 
     var currentIconStyle: IconStyle {
-        SpacePreferences.iconStyle(forSpace: currentSpace, display: currentDisplayID, store: store) ?? .square
+        SpacePreferences.iconStyle(forSpace: currentSpace, display: currentDisplayID, store: store) ?? .fallback
     }
 
     var currentSymbol: String? {
@@ -558,7 +558,7 @@ final class AppState {
             forSpace: currentSpace,
             display: currentDisplayID,
             store: store
-        ) ?? .square
+        ) ?? .fallback
         let wrap = SpacePreferences.symbolWrap(
             forSpace: currentSpace,
             display: currentDisplayID,
