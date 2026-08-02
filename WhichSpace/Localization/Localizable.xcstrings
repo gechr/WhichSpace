@@ -18342,6 +18342,268 @@
         }
       }
     },
+    "confirm_copy_to_space" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "نسخ إلى المساحة المحددة؟"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Да се копира ли към избраното Пространство?"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voleu copiar-ho a l'Espai seleccionat?"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zkopírovat do vybraného Space?"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kopiér til det valgte Space?"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auf den ausgewählten Space kopieren?"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Αντιγραφή στον επιλεγμένο Χώρο;"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy to the selected Space?"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy to the selected Space?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Copiar en el Espacio seleccionado?"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "به فضای انتخاب‌شده کپی شود؟"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kopioidaanko valittuun Spaceen?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copier sur l'Espace sélectionné ?"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "להעתיק למרחב שנבחר?"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "चयनित स्पेस पर कॉपी करें?"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Másolja a kiválasztott Space-re?"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salin ke Space yang dipilih?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copia nello Spazio selezionato?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選択したスペースにコピーしますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "선택한 스페이스에 복사할까요?"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Да се копира на избраниот Простор?"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salin ke Ruang yang dipilih?"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kopier til valgt Space?"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kopiëren naar de geselecteerde Space?"
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kopier til valt Space?"
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "چنی ہوئی سپیس 'تے کاپی کریے؟"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skopiować do wybranego Space?"
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "غوره شوي سپېس ته کاپي شي؟"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copiar para o Espaço selecionado?"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copiar para o Espaço selecionado?"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copiați în Spațiul selectat?"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Скопировать в выбранное Пространство?"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kopírovať do vybraného Priestoru?"
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kopirati na izabrani Prostor?"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kopiera till det valda Space?"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "คัดลอกไปยัง Space ที่เลือก?"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seçilen Alana kopyalansın mı?"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Скопіювати до вибраного Простору?"
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "منتخب اسپیس پر کاپی کریں؟"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sao chép cho Không gian đã chọn?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "复制到所选空间？"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "複製到所選空間？"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "複製到所選空間？"
+          }
+        }
+      }
+    },
     "confirm_copy_to_this_display" : {
       "localizations" : {
         "ar" : {
@@ -20172,6 +20434,268 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "這會將所有顯示器上的所有空間更新為此空間的顏色、樣式、符號與字體。"
+          }
+        }
+      }
+    },
+    "detail_copy_to_space" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سيُحدّث هذا المساحة المحددة لتطابق لون هذه المساحة ونمطها ورمزها وخطها."
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Това ще обнови избраното Пространство да съвпада с цвета, стила, символа и шрифта на това Пространство."
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Això actualitzarà l'Espai seleccionat per coincidir amb el color, l'estil, el símbol i el tipus de lletra d'aquest Espai."
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktualizuje vybraný Space, aby odpovídal barvě, stylu, symbolu a písmu tohoto Space."
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dette opdaterer det valgte Space, så det matcher farven, stilen, symbolet og skrifttypen for dette Space."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dies aktualisiert den ausgewählten Space auf die Farbe, den Stil, das Symbol und die Schriftart dieses Spaces."
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Θα ενημερώσει τον επιλεγμένο Χώρο ώστε να ταιριάζει με το χρώμα, το στιλ, το σύμβολο και τη γραμματοσειρά αυτού του Χώρου."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This will update the selected Space to match this Space's color, style, symbol, and font."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This will update the selected Space to match this Space's colour, style, symbol, and font."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esto actualizará el Espacio seleccionado para que coincida con el color, estilo, símbolo y fuente de este Espacio."
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "این کار فضای انتخاب‌شده را با رنگ، استایل، نماد و فونت این فضا هماهنگ می‌کند."
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tämä päivittää valitun Spacen vastaamaan tämän Spacen väriä, tyyliä, symbolia ja fonttia."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cela mettra à jour l'Espace sélectionné pour qu'il corresponde à la couleur, au style, au symbole et à la police de cet Espace."
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "זה יעדכן את המרחב שנבחר כך שיתאים לצבע, לסגנון, לסמל ולגופן של מרחב זה."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "यह चयनित स्पेस को इस स्पेस के रंग, स्टाइल, प्रतीक और फ़ॉन्ट से मिलाएगा।"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ez frissíti a kiválasztott Space-t, hogy megegyezzen ennek a Space-nek a színével, stílusával, szimbólumával és betűtípusával."
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ini akan memperbarui Space yang dipilih agar sesuai dengan warna, gaya, simbol, dan font Space ini."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questo aggiornerà lo Spazio selezionato per abbinare colore, stile, simbolo e font di questo Spazio."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選択したスペースを、このスペースの色、スタイル、シンボル、フォントに合わせて更新します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "선택한 스페이스를 이 스페이스의 색상, 스타일, 심볼, 글꼴로 업데이트합니다."
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ова ќе го ажурира избраниот Простор за да одговара на бојата, стилот, симболот и фонтот на овој Простор."
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ini akan mengemas kini Ruang yang dipilih agar sepadan dengan warna, gaya, simbol dan fon Ruang ini."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dette oppdaterer det valgte Space slik at det matcher fargen, stilen, symbolet og skrifttypen til dette Space."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dit werkt de geselecteerde Space bij zodat deze dezelfde kleur, stijl, symbool en hetzelfde lettertype heeft als deze Space."
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dette oppdaterer det valde Space slik at det matchar farge, stil, symbol og skrifttype til dette Space."
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ایہ چنی ہوئی سپیس نوں اس سپیس دے رنگ، سٹائل، نشان تے فونٹ نال میچ کرے گا۔"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zaktualizuje wybrany Space, aby pasował do koloru, stylu, symbolu i czcionki tego Space."
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "دا به غوره شوی سپېس د دې سپېس له رنګ، سټایل، سمبول او فانټ سره برابر کړي."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Isto irá atualizar o Espaço selecionado para corresponder à cor, ao estilo, ao símbolo e ao tipo de letra deste Espaço."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Isso atualizará o Espaço selecionado para corresponder à cor, ao estilo, ao símbolo e à fonte deste Espaço."
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aceasta va actualiza Spațiul selectat pentru a se potrivi cu culoarea, stilul, simbolul și fontul acestui Spațiu."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Это обновит выбранное Пространство, чтобы оно совпадало с цветом, стилем, символом и шрифтом этого Пространства."
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toto aktualizuje vybraný Priestor tak, aby zodpovedal farbe, štýlu, symbolu a písmu tohto Priestoru."
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ovo će ažurirati izabrani Prostor da odgovara boji, stilu, simbolu i fontu ovog Prostora."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Detta uppdaterar det valda Space så att det matchar färgen, stilen, symbolen och teckensnittet på det här Space."
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "การดำเนินการนี้จะอัปเดต Space ที่เลือกให้ตรงกับสี สไตล์ สัญลักษณ์ และแบบอักษรของ Space นี้"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu, seçilen Alanı bu Alanın rengi, stili, sembolü ve yazı tipiyle eşleşecek şekilde günceller."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Це оновить вибраний Простір, щоб він відповідав кольору, стилю, символу та шрифту цього Простору."
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "یہ منتخب اسپیس کو اس اسپیس کے رنگ، انداز، علامت اور فونٹ سے ملائے گا۔"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thao tác này sẽ cập nhật Không gian đã chọn để khớp với màu, kiểu, ký hiệu và phông chữ của Không gian này."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这会将所选空间更新为此空间的颜色、样式、符号和字体。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "這會將所選空間更新為此空間的顏色、樣式、符號和字體。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "這會將所選空間更新為此空間的顏色、樣式、符號與字體。"
           }
         }
       }

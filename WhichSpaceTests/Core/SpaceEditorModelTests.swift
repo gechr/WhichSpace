@@ -382,11 +382,57 @@ struct SpaceEditorModelTests {
         #expect(store.displaySpaceLabels["Side"]?[Layout.maxSpacesPerDisplay] == "Work")
     }
 
+    @Test("copy to one Space covers only that Space once confirmed")
+    func copyToOneSpace() {
+        let model = makeModel()
+        model.setLabel("Work")
+        model.setSpaceSound("Pop")
+        model.copyToSpace(3)
+        #expect(SpacePreferences.label(forSpace: 3, display: "Main", store: store) == "Work")
+        #expect(SpacePreferences.sound(forSpace: 3, display: "Main", store: store) == "Pop")
+        #expect(SpacePreferences.label(forSpace: 2, display: "Main", store: store) == nil)
+    }
+
+    @Test("copy to the edited Space itself asks for no confirmation")
+    func copyToEditedSpace() {
+        var asked = false
+        let model = SpaceEditorModel(appState: makeAppState()) { _, _, _, _ in
+            asked = true
+            return true
+        }
+        model.setLabel("Work")
+        model.copyToSpace(model.editingSpace)
+        #expect(!asked)
+    }
+
+    @Test("copy from the template targets one Space")
+    func copyTemplateToOneSpace() {
+        let model = makeModel()
+        model.selection = .defaultStyle
+        model.setLabel("Work")
+        model.copyToSpace(2)
+        #expect(SpacePreferences.label(forSpace: 2, display: "Main", store: store) == "Work")
+        #expect(SpacePreferences.label(forSpace: 3, display: "Main", store: store) == nil)
+    }
+
+    @Test("copy to one Space lands in a selected display's overrides")
+    func copyToOneSpaceOnDisplay() {
+        configureTwoDisplays()
+        let model = makeModel()
+        model.setLabel("Work")
+        model.copyToSpace(2)
+        #expect(store.displaySpaceLabels["Main"]?[2] == "Work")
+        #expect(store.spaceLabels[2] == nil)
+    }
+
     @Test("a declined confirmation leaves the store unchanged")
     func declinedConfirmation() {
         let model = makeModel(confirmed: false)
         model.setLabel("Work")
         model.copyToAllSpaces()
+        #expect(SpacePreferences.label(forSpace: 2, display: "Main", store: store) == nil)
+
+        model.copyToSpace(2)
         #expect(SpacePreferences.label(forSpace: 2, display: "Main", store: store) == nil)
 
         model.resetToDefault()

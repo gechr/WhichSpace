@@ -635,6 +635,30 @@ final class SpaceEditorModel {
         tick += 1
     }
 
+    /// Copies the edited entry's preferences onto one other Space at the
+    /// edited scope, replacing that Space's own style after confirming.
+    func copyToSpace(_ number: Int) {
+        guard number != editingSpace else {
+            return
+        }
+        guard confirmAction(
+            Localization.confirmCopyToSpace,
+            Localization.detailCopyToSpace,
+            Localization.buttonCopy,
+            false
+        ) else {
+            return
+        }
+        SpacePreferences.copyPreferences(
+            from: editingSpace,
+            to: number,
+            fromDisplay: editingDisplay,
+            toDisplay: selectedDisplayID,
+            store: store
+        )
+        tick += 1
+    }
+
     /// Clears the edited entry's preferences (or the saved template when
     /// the Default Style entry is selected, with its own wording - the
     /// template is not a Space).

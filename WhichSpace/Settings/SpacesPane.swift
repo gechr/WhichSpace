@@ -405,9 +405,11 @@ struct SpacesPane: View {
         .help(Localization.tipResetSpaceToDefault)
     }
 
-    /// Both targets confirm through the model before writing anything. The
+    /// All targets confirm through the model before writing anything. The
     /// all-displays item disappears under the "All" scope, whose edits
-    /// already apply to every display.
+    /// already apply to every display; below the bulk targets, each other
+    /// Space of the shown display is a single target, mirroring the list's
+    /// icon and title so both read the same.
     private var copyToMenu: some View {
         Menu(Localization.actionCopyTo) {
             Button(
@@ -422,9 +424,29 @@ struct SpacesPane: View {
                     model.copyToAllDisplays()
                 }
             }
+            Divider()
+            ForEach(copyTargets, id: \.number) { candidate in
+                Button {
+                    model.copyToSpace(candidate.number)
+                } label: {
+                    // Fullscreen entries have no name and show icon only,
+                    // matching their list rows
+                    Label {
+                        Text(model.spaceName(for: candidate) ?? "")
+                    } icon: {
+                        Image(nsImage: model.listIcon(for: .space(candidate.number)))
+                    }
+                }
+            }
         }
         .fixedSize()
         .help(Localization.tipCopyTo)
+    }
+
+    /// Every list entry except the one being edited; the template edits
+    /// space 0, so it offers every Space.
+    private var copyTargets: [(number: Int, entry: SpaceEntry?)] {
+        model.spaceEntries.filter { model.selection != .space($0.number) }
     }
 }
 
