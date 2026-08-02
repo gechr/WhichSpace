@@ -57,11 +57,12 @@ struct GeneralPane: View {
                     anchor: .autoInstallUpdates
                 )
                 SettingsRowDivider()
-                SettingsRow(anchor: .checkForUpdates) {
+                SettingsRow(subtitle: lastCheckedCaption, anchor: .checkForUpdates) {
                     EmptyView()
                 } control: {
                     Button(Localization.actionCheckForUpdates) {
                         onCheckForUpdates()
+                        refreshLastChecked()
                     }
                     .help(String(format: Localization.tipCheckForUpdates, AppInfo.appName))
                 }
@@ -94,6 +95,29 @@ struct GeneralPane: View {
                 }
             }
             footer
+        }
+    }
+
+    /// Nil until Sparkle has checked at least once, leaving the row bare
+    /// rather than spelling out a "never" state.
+    private var lastCheckedCaption: String? {
+        guard let date = updater?.lastUpdateCheckDate else {
+            return nil
+        }
+        return String(
+            format: Localization.tipLastChecked,
+            date.formatted(date: .abbreviated, time: .shortened)
+        )
+    }
+
+    /// Sparkle stamps the check date when the appcast fetch starts, not when
+    /// the button is clicked, so the caption re-reads shortly after as well
+    /// as immediately.
+    private func refreshLastChecked() {
+        updaterTick += 1
+        Task {
+            try? await Task.sleep(for: .seconds(2))
+            updaterTick += 1
         }
     }
 

@@ -368,6 +368,7 @@ enum Localization {
     static let tipLabelInput = String(
         format: String(localized: "tip_label_input"), LabelTemplate.maxContentLength
     )
+    static let tipLastChecked = String(localized: "tip_last_checked")
     static let tipLaunchAtLogin = String(localized: "tip_launch_at_login")
     static let tipLocalSpaceNumbers = String(localized: "tip_local_space_numbers")
     static let tipQuit = String(localized: "tip_quit")
