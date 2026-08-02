@@ -403,7 +403,7 @@ final class AppDelegateActionsTests: XCTestCase {
     func testHandleScrollEvent_horizontalScrollLeftSwitchesToNextSpace() throws {
         var switches: [Bool] = []
         let localSut = makeScrollSut { switches.append($0) }
-        // Fingers left = negative deltaX = next Space, matching the system swipe
+        // Fingers left = negative deltaX = Space on the right, matching the system swipe
         let event = try makeScrollEvent(deltaY: 0, deltaX: -60, precise: true)
 
         let result = localSut.handleScrollEvent(event, in: buttonContaining(event))

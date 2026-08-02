@@ -16,15 +16,38 @@ struct URLCommandsTests {
         #expect(parse("whichspace://switch/3") == .switchToSpace(number: 3, label: nil, badge: nil))
     }
 
-    @Test("switch next and previous parse")
-    func nextAndPreviousParse() {
-        #expect(parse("whichspace://switch/next") == .switchToNext)
-        #expect(parse("whichspace://switch/previous") == .switchToPrevious)
+    @Test("switch left and right parse")
+    func leftAndRightParse() {
+        #expect(parse("whichspace://switch/left") == .switchLeft)
+        #expect(parse("whichspace://switch/right") == .switchRight)
     }
 
     @Test("matching is case-insensitive")
     func matchingIsCaseInsensitive() {
-        #expect(parse("WHICHSPACE://Switch/NEXT") == .switchToNext)
+        #expect(parse("WHICHSPACE://Switch/LEFT") == .switchLeft)
+        #expect(parse("WHICHSPACE://Send/3") == .moveWindowToSpace(number: 3, follow: false))
+    }
+
+    @Test("move follows the window and send does not switch Space")
+    func moveAndSendDifferInFollowing() {
+        #expect(parse("whichspace://move/3") == .moveWindowToSpace(number: 3, follow: true))
+        #expect(parse("whichspace://send/3") == .moveWindowToSpace(number: 3, follow: false))
+    }
+
+    @Test("relative window moves parse")
+    func relativeWindowMovesParse() {
+        #expect(parse("whichspace://move/right") == .moveWindowRelative(goRight: true, follow: true))
+        #expect(parse("whichspace://move/left") == .moveWindowRelative(goRight: false, follow: true))
+        #expect(parse("whichspace://send/right") == .moveWindowRelative(goRight: true, follow: false))
+        #expect(parse("whichspace://send/left") == .moveWindowRelative(goRight: false, follow: false))
+    }
+
+    @Test("malformed window moves are rejected")
+    func malformedWindowMovesAreRejected() {
+        #expect(parse("whichspace://move") == nil)
+        #expect(parse("whichspace://move/") == nil)
+        #expect(parse("whichspace://move/abc") == nil)
+        #expect(parse("whichspace://send/3/4") == nil)
     }
 
     @Test("label and badge query items are captured")
@@ -47,6 +70,7 @@ struct URLCommandsTests {
     func unsupportedURLsAreRejected() {
         #expect(parse("whichspace://switch") == nil)
         #expect(parse("whichspace://switch/abc") == nil)
+        #expect(parse("whichspace://switch/next") == nil)
         #expect(parse("whichspace://switch/1/2") == nil)
         #expect(parse("whichspace://other/3") == nil)
         #expect(parse("otherscheme://switch/3") == nil)

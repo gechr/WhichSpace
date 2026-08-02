@@ -266,8 +266,13 @@ enum Localization {
     static let errorScriptingAccessibilityRequired = String(localized: "error_scripting_accessibility_required")
     static let errorScriptingBadgeSingleCharacter = String(localized: "error_scripting_badge_single_character")
     static let errorScriptingExpectedSpaceNumber = String(localized: "error_scripting_expected_space_number")
+    static let errorScriptingMoveFailed = String(localized: "error_scripting_move_failed")
+    static let errorScriptingMoveUnsupported = String(localized: "error_scripting_move_unsupported")
     static let errorScriptingNoSpaces = String(localized: "error_scripting_no_spaces")
+    static let errorScriptingNoWindowToMove = String(localized: "error_scripting_no_window_to_move")
+    static let errorScriptingSpaceIsFullscreen = String(localized: "error_scripting_space_is_fullscreen")
     static let errorScriptingSpaceOutOfRange = String(localized: "error_scripting_space_out_of_range")
+    static let errorScriptingWindowIsFullscreen = String(localized: "error_scripting_window_is_fullscreen")
 
     static let labelAllDisplays = String(localized: "label_all_displays")
     static let labelAppearance = String(localized: "label_appearance")

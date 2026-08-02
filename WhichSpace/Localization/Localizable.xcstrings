@@ -1049,6 +1049,268 @@
         }
       }
     },
+    "Follow Window" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "متابعة النافذة"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Следвай прозореца"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Segueix la finestra"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Následovat okno"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Følg vindue"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fenster folgen"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ακολούθηση παραθύρου"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Follow Window"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Follow Window"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seguir la ventana"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "دنبال کردن پنجره"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seuraa ikkunaa"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suivre la fenêtre"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "עקוב אחר החלון"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "विंडो का अनुसरण करें"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ablak követése"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ikuti Jendela"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Segui la finestra"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ウインドウを追う"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "윈도우 따라가기"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Следи го прозорецот"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ikut Tetingkap"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Følg vindu"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Venster volgen"
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Følg vindauge"
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ونڈو دے نال جاؤ"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Podążaj za oknem"
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "کړکۍ تعقیب کړئ"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seguir a janela"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seguir a janela"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Urmează fereastra"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Следовать за окном"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nasledovať okno"
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prati prozor"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Följ fönstret"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ตามหน้าต่างไป"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pencereyi İzle"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перейти за вікном"
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ونڈو کے ساتھ جائیں"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Đi theo cửa sổ"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跟随窗口"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跟隨視窗"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跟隨視窗"
+          }
+        }
+      }
+    },
     "Get Current Space Badge" : {
       "localizations" : {
         "ar" : {
@@ -2093,6 +2355,1840 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "標籤"
+          }
+        }
+      }
+    },
+    "Move Window Left" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "نقل النافذة إلى اليسار"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Премести прозореца наляво"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mou la finestra a l'esquerra"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Přesunout okno doleva"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flyt vindue til venstre"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fenster nach links bewegen"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Μετακίνηση παραθύρου αριστερά"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move Window Left"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move Window Left"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mover la ventana a la izquierda"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "انتقال پنجره به چپ"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siirrä ikkuna vasemmalle"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déplacer la fenêtre vers la gauche"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "העבר את החלון שמאלה"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "विंडो को बाएँ ले जाएँ"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ablak áthelyezése balra"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pindahkan jendela ke kiri"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sposta la finestra a sinistra"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ウインドウを左に移動"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "윈도우를 왼쪽으로 이동"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Премести го прозорецот налево"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pindahkan tetingkap ke kiri"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flytt vindu til venstre"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Venster naar links verplaatsen"
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flytt vindauge til venstre"
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ونڈو نوں کھبے پاسے لجاؤ"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przenieś okno w lewo"
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "کړکۍ کيڼ ته ولېږدوئ"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mover a janela para a esquerda"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mover a janela para a esquerda"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mută fereastra la stânga"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Переместить окно влево"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Presunúť okno doľava"
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Premesti prozor ulevo"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flytta fönstret till vänster"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ย้ายหน้าต่างไปทางซ้าย"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pencereyi Sola Taşı"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перемістити вікно ліворуч"
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ونڈو کو بائیں منتقل کریں"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Di chuyển cửa sổ sang trái"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将窗口左移"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "將視窗左移"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "將視窗左移"
+          }
+        }
+      }
+    },
+    "Move Window Right" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "نقل النافذة إلى اليمين"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Премести прозореца надясно"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mou la finestra a la dreta"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Přesunout okno doprava"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flyt vindue til højre"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fenster nach rechts bewegen"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Μετακίνηση παραθύρου δεξιά"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move Window Right"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move Window Right"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mover la ventana a la derecha"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "انتقال پنجره به راست"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siirrä ikkuna oikealle"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déplacer la fenêtre vers la droite"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "העבר את החלון ימינה"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "विंडो को दाएँ ले जाएँ"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ablak áthelyezése jobbra"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pindahkan jendela ke kanan"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sposta la finestra a destra"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ウインドウを右に移動"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "윈도우를 오른쪽으로 이동"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Премести го прозорецот надесно"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pindahkan tetingkap ke kanan"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flytt vindu til høyre"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Venster naar rechts verplaatsen"
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flytt vindauge til høgre"
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ونڈو نوں سجے پاسے لجاؤ"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przenieś okno w prawo"
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "کړکۍ ښي ته ولېږدوئ"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mover a janela para a direita"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mover a janela para a direita"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mută fereastra la dreapta"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Переместить окно вправо"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Presunúť okno doprava"
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Premesti prozor udesno"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flytta fönstret till höger"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ย้ายหน้าต่างไปทางขวา"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pencereyi Sağa Taşı"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перемістити вікно праворуч"
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ونڈو کو دائیں منتقل کریں"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Di chuyển cửa sổ sang phải"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将窗口右移"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "將視窗右移"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "將視窗右移"
+          }
+        }
+      }
+    },
+    "Move Window to Space" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "نقل النافذة إلى مساحة"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Премести прозореца в Пространство"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mou la finestra a un Espai"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Přesunout okno na Space"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flyt vindue til Space"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fenster zu Space bewegen"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Μετακίνηση παραθύρου σε Χώρο"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move Window to Space"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move Window to Space"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mover la ventana a un Espacio"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "انتقال پنجره به فضا"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siirrä ikkuna Spaceen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déplacer la fenêtre vers un Espace"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "העבר את החלון למרחב"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "विंडो को स्पेस पर ले जाएँ"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ablak áthelyezése Space-re"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pindahkan jendela ke Space"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sposta la finestra in uno Spazio"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ウインドウをスペースに移動"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "윈도우를 스페이스로 이동"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Премести го прозорецот на Простор"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pindahkan tetingkap ke Ruang"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flytt vindu til Space"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Venster naar Space verplaatsen"
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flytt vindauge til Space"
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ونڈو نوں سپیس تے لجاؤ"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przenieś okno na Space"
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "کړکۍ سپېس ته ولېږدوئ"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mover a janela para um Espaço"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mover a janela para um Espaço"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mută fereastra într-un Spațiu"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Переместить окно в Пространство"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Presunúť okno na Priestor"
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Premesti prozor na Prostor"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flytta fönstret till Space"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ย้ายหน้าต่างไปยัง Space"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pencereyi Alana Taşı"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перемістити вікно на Простір"
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ونڈو کو اسپیس پر منتقل کریں"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Di chuyển cửa sổ đến Không gian"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将窗口移到空间"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "將視窗移到空間"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "將視窗移到空間"
+          }
+        }
+      }
+    },
+    "Move the front window to Space ${spaceNumber}" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "نقل النافذة الأمامية إلى المساحة ${spaceNumber}"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Премести прозореца на преден план в Пространство ${spaceNumber}"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mou la finestra en primer pla a l'Espai ${spaceNumber}"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Přesunout okno v popředí na Space ${spaceNumber}"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flyt det forreste vindue til Space ${spaceNumber}"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vorderstes Fenster zu Space ${spaceNumber} bewegen"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Μετακίνηση του παραθύρου στο προσκήνιο στον Χώρο ${spaceNumber}"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move the front window to Space ${spaceNumber}"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move the front window to Space ${spaceNumber}"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mover la ventana en primer plano al Espacio ${spaceNumber}"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "انتقال پنجره پیش‌زمینه به فضای ${spaceNumber}"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siirrä etummainen ikkuna Spaceen ${spaceNumber}"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déplacer la fenêtre au premier plan vers l'Espace ${spaceNumber}"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "העבר את החלון שבחזית למרחב ${spaceNumber}"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सामने की विंडो को स्पेस ${spaceNumber} पर ले जाएँ"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Az előtérben lévő ablak áthelyezése a(z) ${spaceNumber}. Space-re"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pindahkan jendela terdepan ke Space ${spaceNumber}"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sposta la finestra in primo piano nello Spazio ${spaceNumber}"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最前面のウインドウをスペース ${spaceNumber} に移動"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "맨 앞 윈도우를 스페이스 ${spaceNumber}(으)로 이동"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Премести го прозорецот во преден план на Простор ${spaceNumber}"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pindahkan tetingkap hadapan ke Ruang ${spaceNumber}"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flytt det fremste vinduet til Space ${spaceNumber}"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verplaats het voorste venster naar Space ${spaceNumber}"
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flytt det fremste vindauget til Space ${spaceNumber}"
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سامنے والی ونڈو نوں سپیس ${spaceNumber} تے لجاؤ"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przenieś okno na pierwszym planie na Space ${spaceNumber}"
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "مخکینۍ کړکۍ سپېس ${spaceNumber} ته ولېږدوئ"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mover a janela em primeiro plano para o Espaço ${spaceNumber}"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mover a janela em primeiro plano para o Espaço ${spaceNumber}"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mută fereastra din față în Spațiul ${spaceNumber}"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Переместить окно на переднем плане в Пространство ${spaceNumber}"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Presunúť okno v popredí na Priestor ${spaceNumber}"
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Premesti prozor u prvom planu na Prostor ${spaceNumber}"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flytta det främsta fönstret till Space ${spaceNumber}"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ย้ายหน้าต่างด้านหน้าไปยัง Space ${spaceNumber}"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öndeki pencereyi Alan ${spaceNumber} konumuna taşı"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перемістити вікно на передньому плані на Простір ${spaceNumber}"
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سامنے والی ونڈو کو اسپیس ${spaceNumber} پر منتقل کریں"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Di chuyển cửa sổ phía trước đến Không gian ${spaceNumber}"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将最前面的窗口移到空间 ${spaceNumber}"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "將最前面的視窗移到空間 ${spaceNumber}"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "將最前面的視窗移到空間 ${spaceNumber}"
+          }
+        }
+      }
+    },
+    "Moves the frontmost window to a Space on the current display, optionally switching to it." : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ينقل النافذة الأمامية إلى مساحة على الشاشة الحالية، مع إمكانية الانتقال إليها."
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Премества прозореца на преден план в Пространство на текущия дисплей, по избор превключва към него."
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mou la finestra en primer pla a un Espai de la pantalla actual i, opcionalment, hi canvia."
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Přesune okno v popředí na Space na aktuálním displeji a volitelně na něj přepne."
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flytter det forreste vindue til et Space på den aktuelle skærm og skifter eventuelt til det."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bewegt das vorderste Fenster zu einem Space auf dem aktuellen Display und wechselt optional dorthin."
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Μετακινεί το παράθυρο στο προσκήνιο σε έναν Χώρο στην τρέχουσα οθόνη, μεταβαίνοντας προαιρετικά σε αυτόν."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moves the frontmost window to a Space on the current display, optionally switching to it."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moves the frontmost window to a Space on the current display, optionally switching to it."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mueve la ventana en primer plano a un Espacio de la pantalla actual y, opcionalmente, cambia a él."
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "پنجره پیش‌زمینه را به فضایی در نمایشگر فعلی منتقل می‌کند و در صورت تمایل به آن می‌رود."
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siirtää etummaisen ikkunan Spaceen nykyisellä näytöllä ja vaihtaa siihen haluttaessa."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déplace la fenêtre au premier plan vers un Espace de l'écran actuel, en y passant éventuellement."
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "מעביר את החלון שבחזית למרחב בצג הנוכחי, ועובר אליו אם נבחר."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सबसे आगे की विंडो को वर्तमान डिस्प्ले के किसी स्पेस पर ले जाता है, वैकल्पिक रूप से उस पर स्विच करता है।"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Áthelyezi a legelöl lévő ablakot egy Space-re az aktuális kijelzőn, és igény szerint át is vált rá."
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Memindahkan jendela terdepan ke Space di layar saat ini, dengan opsi beralih ke sana."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sposta la finestra in primo piano in uno Spazio dello schermo attuale, passando facoltativamente a esso."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最前面のウインドウを現在のディスプレイのスペースに移動し、必要に応じてそのスペースに切り替えます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "맨 앞 윈도우를 현재 디스플레이의 스페이스로 이동하며, 선택적으로 해당 스페이스로 전환합니다."
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Го преместува прозорецот во преден план на Простор на тековниот екран, по избор преминува на него."
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Memindahkan tetingkap terdepan ke Ruang pada paparan semasa, dengan pilihan bertukar kepadanya."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flytter det fremste vinduet til et Space på gjeldende skjerm og bytter eventuelt til det."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verplaatst het voorste venster naar een Space op het huidige beeldscherm en wisselt er optioneel naartoe."
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flyttar det fremste vindauget til eit Space på gjeldande skjerm og byter eventuelt til det."
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "موجودہ ڈسپلے اُتے سامنے والی ونڈو نوں کسے سپیس تے لجاندا اے، تے چاہو تے اوہدے تے وی جاندا اے۔"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przenosi okno na pierwszym planie na Space na bieżącym ekranie, opcjonalnie przełączając się na niego."
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "مخکینۍ کړکۍ په اوسني ډسپلې کې یو سپېس ته لېږدوي، او په خوښه هغه سپېس ته اوړي."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move a janela em primeiro plano para um Espaço do ecrã atual e, opcionalmente, muda para ele."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move a janela em primeiro plano para um Espaço da tela atual e, opcionalmente, troca para ele."
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mută fereastra din față într-un Spațiu de pe ecranul curent, comutând opțional la acesta."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перемещает окно на переднем плане в Пространство на текущем дисплее, при необходимости переключаясь на него."
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Presunie okno v popredí na Priestor na aktuálnom displeji a voliteľne naň prepne."
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Premešta prozor u prvom planu na Prostor na trenutnom ekranu, uz opciono prebacivanje na njega."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flyttar det främsta fönstret till ett Space på aktuell skärm och byter eventuellt till det."
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ย้ายหน้าต่างที่อยู่หน้าสุดไปยัง Space บนจอภาพปัจจุบัน โดยเลือกสลับไปยัง Space นั้นได้"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En öndeki pencereyi geçerli ekrandaki bir Alana taşır, isteğe bağlı olarak o Alana geçer."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Переміщує вікно на передньому плані на Простір на поточному дисплеї, за бажанням перемикаючись на нього."
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سامنے والی ونڈو کو موجودہ ڈسپلے کے کسی اسپیس پر منتقل کرتا ہے، اور اختیاری طور پر اسی اسپیس پر چلا جاتا ہے۔"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Di chuyển cửa sổ trên cùng đến một Không gian trên màn hình hiện tại, tùy chọn chuyển đến Không gian đó."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将最前面的窗口移到当前显示器上的某个空间，并可选择切换到该空间。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "將最前面的視窗移到目前顯示器上的某個空間，並可選擇切換到該空間。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "將最前面的視窗移到目前顯示器上的某個空間，並可選擇切換到該空間。"
+          }
+        }
+      }
+    },
+    "Moves the frontmost window to the Space on the left, optionally switching to it." : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ينقل النافذة الأمامية إلى المساحة الموجودة على اليسار، مع إمكانية الانتقال إليها."
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Премества прозореца на преден план в Пространството отляво, по избор превключва към него."
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mou la finestra en primer pla a l'Espai de l'esquerra i, opcionalment, hi canvia."
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Přesune okno v popředí na Space vlevo a volitelně na něj přepne."
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flytter det forreste vindue til det Space, der ligger til venstre, og skifter eventuelt til det."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bewegt das vorderste Fenster zum Space links und wechselt optional dorthin."
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Μετακινεί το παράθυρο στο προσκήνιο στον Χώρο στα αριστερά, μεταβαίνοντας προαιρετικά σε αυτόν."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moves the frontmost window to the Space on the left, optionally switching to it."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moves the frontmost window to the Space on the left, optionally switching to it."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mueve la ventana en primer plano al Espacio de la izquierda y, opcionalmente, cambia a él."
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "پنجره پیش‌زمینه را به فضای سمت چپ منتقل می‌کند و در صورت تمایل به آن می‌رود."
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siirtää etummaisen ikkunan vasemmalla olevaan Spaceen ja vaihtaa siihen haluttaessa."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déplace la fenêtre au premier plan vers l'Espace de gauche, en y passant éventuellement."
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "מעביר את החלון שבחזית למרחב שמשמאל, ועובר אליו אם נבחר."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सबसे आगे की विंडो को बाईं ओर के स्पेस पर ले जाता है, वैकल्पिक रूप से उस पर स्विच करता है।"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Áthelyezi a legelöl lévő ablakot a bal oldali Space-re, és igény szerint át is vált rá."
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Memindahkan jendela terdepan ke Space di sebelah kiri, dengan opsi beralih ke sana."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sposta la finestra in primo piano nello Spazio a sinistra, passando facoltativamente a esso."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最前面のウインドウを左のスペースに移動し、必要に応じてそのスペースに切り替えます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "맨 앞 윈도우를 왼쪽 스페이스로 이동하며, 선택적으로 해당 스페이스로 전환합니다."
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Го преместува прозорецот во преден план на Просторот лево, по избор преминува на него."
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Memindahkan tetingkap terdepan ke Ruang di sebelah kiri, dengan pilihan bertukar kepadanya."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flytter det fremste vinduet til Spacet til venstre og bytter eventuelt til det."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verplaatst het voorste venster naar de Space links en wisselt er optioneel naartoe."
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flyttar det fremste vindauget til Spacet til venstre og byter eventuelt til det."
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سامنے والی ونڈو نوں کھبے پاسے والی سپیس تے لجاندا اے، تے چاہو تے اوہدے تے وی جاندا اے۔"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przenosi okno na pierwszym planie na Space po lewej, opcjonalnie przełączając się na niego."
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "مخکینۍ کړکۍ کيڼ لوري سپېس ته لېږدوي، او په خوښه هغه سپېس ته اوړي."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move a janela em primeiro plano para o Espaço à esquerda e, opcionalmente, muda para ele."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move a janela em primeiro plano para o Espaço à esquerda e, opcionalmente, troca para ele."
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mută fereastra din față în Spațiul din stânga, comutând opțional la acesta."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перемещает окно на переднем плане в Пространство слева, при необходимости переключаясь на него."
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Presunie okno v popredí na Priestor vľavo a voliteľne naň prepne."
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Premešta prozor u prvom planu na Prostor levo, uz opciono prebacivanje na njega."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flyttar det främsta fönstret till Spacet till vänster och byter eventuellt till det."
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ย้ายหน้าต่างที่อยู่หน้าสุดไปยัง Space ทางซ้าย โดยเลือกสลับไปยัง Space นั้นได้"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En öndeki pencereyi soldaki Alana taşır, isteğe bağlı olarak o Alana geçer."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Переміщує вікно на передньому плані на Простір ліворуч, за бажанням перемикаючись на нього."
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سامنے والی ونڈو کو بائیں جانب کی اسپیس پر منتقل کرتا ہے، اور اختیاری طور پر اسی اسپیس پر چلا جاتا ہے۔"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Di chuyển cửa sổ trên cùng đến Không gian bên trái, tùy chọn chuyển đến Không gian đó."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将最前面的窗口移到左侧的空间，并可选择切换到该空间。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "將最前面的視窗移到左側的空間，並可選擇切換到該空間。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "將最前面的視窗移到左側的空間，並可選擇切換到該空間。"
+          }
+        }
+      }
+    },
+    "Moves the frontmost window to the Space on the right, optionally switching to it." : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ينقل النافذة الأمامية إلى المساحة الموجودة على اليمين، مع إمكانية الانتقال إليها."
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Премества прозореца на преден план в Пространството отдясно, по избор превключва към него."
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mou la finestra en primer pla a l'Espai de la dreta i, opcionalment, hi canvia."
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Přesune okno v popředí na Space vpravo a volitelně na něj přepne."
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flytter det forreste vindue til det Space, der ligger til højre, og skifter eventuelt til det."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bewegt das vorderste Fenster zum Space rechts und wechselt optional dorthin."
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Μετακινεί το παράθυρο στο προσκήνιο στον Χώρο στα δεξιά, μεταβαίνοντας προαιρετικά σε αυτόν."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moves the frontmost window to the Space on the right, optionally switching to it."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moves the frontmost window to the Space on the right, optionally switching to it."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mueve la ventana en primer plano al Espacio de la derecha y, opcionalmente, cambia a él."
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "پنجره پیش‌زمینه را به فضای سمت راست منتقل می‌کند و در صورت تمایل به آن می‌رود."
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siirtää etummaisen ikkunan oikealla olevaan Spaceen ja vaihtaa siihen haluttaessa."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déplace la fenêtre au premier plan vers l'Espace de droite, en y passant éventuellement."
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "מעביר את החלון שבחזית למרחב שמימין, ועובר אליו אם נבחר."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सबसे आगे की विंडो को दाईं ओर के स्पेस पर ले जाता है, वैकल्पिक रूप से उस पर स्विच करता है।"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Áthelyezi a legelöl lévő ablakot a jobb oldali Space-re, és igény szerint át is vált rá."
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Memindahkan jendela terdepan ke Space di sebelah kanan, dengan opsi beralih ke sana."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sposta la finestra in primo piano nello Spazio a destra, passando facoltativamente a esso."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最前面のウインドウを右のスペースに移動し、必要に応じてそのスペースに切り替えます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "맨 앞 윈도우를 오른쪽 스페이스로 이동하며, 선택적으로 해당 스페이스로 전환합니다."
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Го преместува прозорецот во преден план на Просторот десно, по избор преминува на него."
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Memindahkan tetingkap terdepan ke Ruang di sebelah kanan, dengan pilihan bertukar kepadanya."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flytter det fremste vinduet til Spacet til høyre og bytter eventuelt til det."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verplaatst het voorste venster naar de Space rechts en wisselt er optioneel naartoe."
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flyttar det fremste vindauget til Spacet til høgre og byter eventuelt til det."
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سامنے والی ونڈو نوں سجے پاسے والی سپیس تے لجاندا اے، تے چاہو تے اوہدے تے وی جاندا اے۔"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przenosi okno na pierwszym planie na Space po prawej, opcjonalnie przełączając się na niego."
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "مخکینۍ کړکۍ ښي لوري سپېس ته لېږدوي، او په خوښه هغه سپېس ته اوړي."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move a janela em primeiro plano para o Espaço à direita e, opcionalmente, muda para ele."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move a janela em primeiro plano para o Espaço à direita e, opcionalmente, troca para ele."
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mută fereastra din față în Spațiul din dreapta, comutând opțional la acesta."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перемещает окно на переднем плане в Пространство справа, при необходимости переключаясь на него."
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Presunie okno v popredí na Priestor vpravo a voliteľne naň prepne."
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Premešta prozor u prvom planu na Prostor desno, uz opciono prebacivanje na njega."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flyttar det främsta fönstret till Spacet till höger och byter eventuellt till det."
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ย้ายหน้าต่างที่อยู่หน้าสุดไปยัง Space ทางขวา โดยเลือกสลับไปยัง Space นั้นได้"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En öndeki pencereyi sağdaki Alana taşır, isteğe bağlı olarak o Alana geçer."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Переміщує вікно на передньому плані на Простір праворуч, за бажанням перемикаючись на нього."
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سامنے والی ونڈو کو دائیں جانب کی اسپیس پر منتقل کرتا ہے، اور اختیاری طور پر اسی اسپیس پر چلا جاتا ہے۔"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Di chuyển cửa sổ trên cùng đến Không gian bên phải, tùy chọn chuyển đến Không gian đó."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将最前面的窗口移到右侧的空间，并可选择切换到该空间。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "將最前面的視窗移到右側的空間，並可選擇切換到該空間。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "將最前面的視窗移到右側的空間，並可選擇切換到該空間。"
           }
         }
       }
@@ -6289,6 +8385,530 @@
         }
       }
     },
+    "Switch Left" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "التبديل إلى اليسار"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Превключи наляво"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Canvia a l'esquerra"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Přepnout doleva"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skift til venstre"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nach links wechseln"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Μετάβαση αριστερά"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Switch Left"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Switch Left"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambiar a la izquierda"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "رفتن به چپ"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vaihda vasemmalle"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passer à gauche"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "עבור שמאלה"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "बाएँ स्विच करें"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Váltás balra"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beralih ke kiri"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passa a sinistra"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左に切り替える"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "왼쪽으로 전환"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Премини налево"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tukar ke kiri"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bytt til venstre"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wissel naar links"
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Byt til venstre"
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "کھبے پاسے جاؤ"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przełącz w lewo"
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "کيڼ ته واوړئ"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mudar para a esquerda"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trocar para a esquerda"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comută la stânga"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Переключиться влево"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepnúť doľava"
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prebaci ulevo"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Byt till vänster"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "สลับไปทางซ้าย"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sola Geç"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перемкнутися ліворуч"
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "بائیں جائیں"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chuyển sang trái"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "向左切换"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "向左切換"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "向左切換"
+          }
+        }
+      }
+    },
+    "Switch Right" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "التبديل إلى اليمين"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Превключи надясно"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Canvia a la dreta"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Přepnout doprava"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skift til højre"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nach rechts wechseln"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Μετάβαση δεξιά"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Switch Right"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Switch Right"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambiar a la derecha"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "رفتن به راست"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vaihda oikealle"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passer à droite"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "עבור ימינה"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "दाएँ स्विच करें"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Váltás jobbra"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beralih ke kanan"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passa a destra"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "右に切り替える"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오른쪽으로 전환"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Премини надесно"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tukar ke kanan"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bytt til høyre"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wissel naar rechts"
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Byt til høgre"
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سجے پاسے جاؤ"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przełącz w prawo"
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ښي ته واوړئ"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mudar para a direita"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trocar para a direita"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comută la dreapta"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Переключиться вправо"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepnúť doprava"
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prebaci udesno"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Byt till höger"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "สลับไปทางขวา"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sağa Geç"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перемкнутися праворуч"
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "دائیں جائیں"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chuyển sang phải"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "向右切换"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "向右切換"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "向右切換"
+          }
+        }
+      }
+    },
     "Switch Space" : {
       "localizations" : {
         "ar" : {
@@ -6549,100 +9169,6 @@
             "value" : "切換空間"
           }
         }
-      }
-    },
-    "Switch to Next Space" : {
-      "localizations" : {
-        "ar" : { "stringUnit" : { "state" : "translated", "value" : "التبديل إلى المساحة التالية" } },
-        "bg" : { "stringUnit" : { "state" : "translated", "value" : "Превключи към следващото Пространство" } },
-        "ca" : { "stringUnit" : { "state" : "translated", "value" : "Canvia a l'Espai següent" } },
-        "cs" : { "stringUnit" : { "state" : "translated", "value" : "Přepnout na další Space" } },
-        "da" : { "stringUnit" : { "state" : "translated", "value" : "Skift til næste Space" } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Zum nächsten Space wechseln" } },
-        "el" : { "stringUnit" : { "state" : "translated", "value" : "Εναλλαγή στον επόμενο Χώρο" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Switch to Next Space" } },
-        "en-GB" : { "stringUnit" : { "state" : "translated", "value" : "Switch to Next Space" } },
-        "es" : { "stringUnit" : { "state" : "translated", "value" : "Cambiar al Espacio siguiente" } },
-        "fa" : { "stringUnit" : { "state" : "translated", "value" : "رفتن به فضای بعدی" } },
-        "fi" : { "stringUnit" : { "state" : "translated", "value" : "Vaihda seuraavaan Spaceen" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Passer à l'Espace suivant" } },
-        "he" : { "stringUnit" : { "state" : "translated", "value" : "עבור למרחב הבא" } },
-        "hi" : { "stringUnit" : { "state" : "translated", "value" : "अगले स्पेस पर स्विच करें" } },
-        "hu" : { "stringUnit" : { "state" : "translated", "value" : "Váltás a következő Space-re" } },
-        "id" : { "stringUnit" : { "state" : "translated", "value" : "Beralih ke Space berikutnya" } },
-        "it" : { "stringUnit" : { "state" : "translated", "value" : "Passa allo Spazio successivo" } },
-        "ja" : { "stringUnit" : { "state" : "translated", "value" : "次のスペースに切り替える" } },
-        "ko" : { "stringUnit" : { "state" : "translated", "value" : "다음 스페이스로 전환" } },
-        "mk" : { "stringUnit" : { "state" : "translated", "value" : "Премини на следниот Простор" } },
-        "ms" : { "stringUnit" : { "state" : "translated", "value" : "Tukar ke Ruang seterusnya" } },
-        "nb" : { "stringUnit" : { "state" : "translated", "value" : "Bytt til neste Space" } },
-        "nl" : { "stringUnit" : { "state" : "translated", "value" : "Wissel naar de volgende Space" } },
-        "nn" : { "stringUnit" : { "state" : "translated", "value" : "Byt til neste Space" } },
-        "pa" : { "stringUnit" : { "state" : "translated", "value" : "اگلی سپیس تے جاؤ" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Przełącz na następny Space" } },
-        "ps" : { "stringUnit" : { "state" : "translated", "value" : "راتلونکي سپېس ته واوړئ" } },
-        "pt" : { "stringUnit" : { "state" : "translated", "value" : "Mudar para o Espaço seguinte" } },
-        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Trocar para o Espaço seguinte" } },
-        "ro" : { "stringUnit" : { "state" : "translated", "value" : "Comută la Spațiul următor" } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Переключиться на следующее Пространство" } },
-        "sk" : { "stringUnit" : { "state" : "translated", "value" : "Prepnúť na ďalší Priestor" } },
-        "sr" : { "stringUnit" : { "state" : "translated", "value" : "Prebaci na sledeći Prostor" } },
-        "sv" : { "stringUnit" : { "state" : "translated", "value" : "Byt till nästa Space" } },
-        "th" : { "stringUnit" : { "state" : "translated", "value" : "สลับไปยัง Space ถัดไป" } },
-        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Sonraki Alana geç" } },
-        "uk" : { "stringUnit" : { "state" : "translated", "value" : "Перемкнутися на наступний Простір" } },
-        "ur" : { "stringUnit" : { "state" : "translated", "value" : "اگلی اسپیس پر جائیں" } },
-        "vi" : { "stringUnit" : { "state" : "translated", "value" : "Chuyển đến Không gian tiếp theo" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "切换到下一个空间" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "切換到下一個空間" } },
-        "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "切換到下一個空間" } }
-      }
-    },
-    "Switch to Previous Space" : {
-      "localizations" : {
-        "ar" : { "stringUnit" : { "state" : "translated", "value" : "التبديل إلى المساحة السابقة" } },
-        "bg" : { "stringUnit" : { "state" : "translated", "value" : "Превключи към предишното Пространство" } },
-        "ca" : { "stringUnit" : { "state" : "translated", "value" : "Canvia a l'Espai anterior" } },
-        "cs" : { "stringUnit" : { "state" : "translated", "value" : "Přepnout na předchozí Space" } },
-        "da" : { "stringUnit" : { "state" : "translated", "value" : "Skift til forrige Space" } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Zum vorherigen Space wechseln" } },
-        "el" : { "stringUnit" : { "state" : "translated", "value" : "Εναλλαγή στον προηγούμενο Χώρο" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Switch to Previous Space" } },
-        "en-GB" : { "stringUnit" : { "state" : "translated", "value" : "Switch to Previous Space" } },
-        "es" : { "stringUnit" : { "state" : "translated", "value" : "Cambiar al Espacio anterior" } },
-        "fa" : { "stringUnit" : { "state" : "translated", "value" : "رفتن به فضای قبلی" } },
-        "fi" : { "stringUnit" : { "state" : "translated", "value" : "Vaihda edelliseen Spaceen" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Passer à l'Espace précédent" } },
-        "he" : { "stringUnit" : { "state" : "translated", "value" : "עבור למרחב הקודם" } },
-        "hi" : { "stringUnit" : { "state" : "translated", "value" : "पिछले स्पेस पर स्विच करें" } },
-        "hu" : { "stringUnit" : { "state" : "translated", "value" : "Váltás az előző Space-re" } },
-        "id" : { "stringUnit" : { "state" : "translated", "value" : "Beralih ke Space sebelumnya" } },
-        "it" : { "stringUnit" : { "state" : "translated", "value" : "Passa allo Spazio precedente" } },
-        "ja" : { "stringUnit" : { "state" : "translated", "value" : "前のスペースに切り替える" } },
-        "ko" : { "stringUnit" : { "state" : "translated", "value" : "이전 스페이스로 전환" } },
-        "mk" : { "stringUnit" : { "state" : "translated", "value" : "Премини на претходниот Простор" } },
-        "ms" : { "stringUnit" : { "state" : "translated", "value" : "Tukar ke Ruang sebelumnya" } },
-        "nb" : { "stringUnit" : { "state" : "translated", "value" : "Bytt til forrige Space" } },
-        "nl" : { "stringUnit" : { "state" : "translated", "value" : "Wissel naar de vorige Space" } },
-        "nn" : { "stringUnit" : { "state" : "translated", "value" : "Byt til førre Space" } },
-        "pa" : { "stringUnit" : { "state" : "translated", "value" : "پچھلی سپیس تے جاؤ" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Przełącz na poprzedni Space" } },
-        "ps" : { "stringUnit" : { "state" : "translated", "value" : "مخکیني سپېس ته واوړئ" } },
-        "pt" : { "stringUnit" : { "state" : "translated", "value" : "Mudar para o Espaço anterior" } },
-        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Trocar para o Espaço anterior" } },
-        "ro" : { "stringUnit" : { "state" : "translated", "value" : "Comută la Spațiul anterior" } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Переключиться на предыдущее Пространство" } },
-        "sk" : { "stringUnit" : { "state" : "translated", "value" : "Prepnúť na predchádzajúci Priestor" } },
-        "sr" : { "stringUnit" : { "state" : "translated", "value" : "Prebaci na prethodni Prostor" } },
-        "sv" : { "stringUnit" : { "state" : "translated", "value" : "Byt till föregående Space" } },
-        "th" : { "stringUnit" : { "state" : "translated", "value" : "สลับไปยัง Space ก่อนหน้า" } },
-        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Önceki Alana geç" } },
-        "uk" : { "stringUnit" : { "state" : "translated", "value" : "Перемкнутися на попередній Простір" } },
-        "ur" : { "stringUnit" : { "state" : "translated", "value" : "پچھلی اسپیس پر جائیں" } },
-        "vi" : { "stringUnit" : { "state" : "translated", "value" : "Chuyển đến Không gian trước đó" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "切换到上一个空间" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "切換到上一個空間" } },
-        "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "切換到上一個空間" } }
       }
     },
     "Switch to Space ${spaceNumber}" : {
@@ -6978,7 +9504,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vaihtaa Spaceen nykyisellä näytöllä ja käyttää halutessa tunnistetta ja merkkiä."
+            "value" : "Vaihtaa Spaceen nykyisellä näytöllä ja käyttää haluttaessa tunnistetta ja merkkiä."
           }
         },
         "fr" : {
@@ -7169,98 +9695,528 @@
         }
       }
     },
-    "Switches to the next Space on the current display." : {
+    "Switches to the Space on the left." : {
       "localizations" : {
-        "ar" : { "stringUnit" : { "state" : "translated", "value" : "ينتقل إلى المساحة التالية على الشاشة الحالية." } },
-        "bg" : { "stringUnit" : { "state" : "translated", "value" : "Превключва към следващото Пространство на текущия дисплей." } },
-        "ca" : { "stringUnit" : { "state" : "translated", "value" : "Canvia a l'Espai següent de la pantalla actual." } },
-        "cs" : { "stringUnit" : { "state" : "translated", "value" : "Přepne na další Space na aktuálním displeji." } },
-        "da" : { "stringUnit" : { "state" : "translated", "value" : "Skifter til det næste Space på den aktuelle skærm." } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Wechselt zum nächsten Space auf dem aktuellen Display." } },
-        "el" : { "stringUnit" : { "state" : "translated", "value" : "Μεταβαίνει στον επόμενο Χώρο στην τρέχουσα οθόνη." } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Switches to the next Space on the current display." } },
-        "en-GB" : { "stringUnit" : { "state" : "translated", "value" : "Switches to the next Space on the current display." } },
-        "es" : { "stringUnit" : { "state" : "translated", "value" : "Cambia al siguiente Espacio de la pantalla actual." } },
-        "fa" : { "stringUnit" : { "state" : "translated", "value" : "به فضای بعدی در نمایشگر فعلی می‌رود." } },
-        "fi" : { "stringUnit" : { "state" : "translated", "value" : "Vaihtaa seuraavaan Spaceen nykyisellä näytöllä." } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Passe à l'Espace suivant de l'écran actuel." } },
-        "he" : { "stringUnit" : { "state" : "translated", "value" : "עובר למרחב הבא בצג הנוכחי." } },
-        "hi" : { "stringUnit" : { "state" : "translated", "value" : "वर्तमान डिस्प्ले के अगले स्पेस पर स्विच करता है।" } },
-        "hu" : { "stringUnit" : { "state" : "translated", "value" : "Átvált a következő Space-re az aktuális kijelzőn." } },
-        "id" : { "stringUnit" : { "state" : "translated", "value" : "Beralih ke Space berikutnya di layar saat ini." } },
-        "it" : { "stringUnit" : { "state" : "translated", "value" : "Passa allo Spazio successivo sul monitor attuale." } },
-        "ja" : { "stringUnit" : { "state" : "translated", "value" : "現在のディスプレイの次のスペースに切り替えます。" } },
-        "ko" : { "stringUnit" : { "state" : "translated", "value" : "현재 디스플레이의 다음 스페이스로 전환합니다." } },
-        "mk" : { "stringUnit" : { "state" : "translated", "value" : "Преминува на следниот Простор на тековниот екран." } },
-        "ms" : { "stringUnit" : { "state" : "translated", "value" : "Bertukar ke Ruang seterusnya pada paparan semasa." } },
-        "nb" : { "stringUnit" : { "state" : "translated", "value" : "Bytter til neste Space på gjeldende skjerm." } },
-        "nl" : { "stringUnit" : { "state" : "translated", "value" : "Wisselt naar de volgende Space op het huidige beeldscherm." } },
-        "nn" : { "stringUnit" : { "state" : "translated", "value" : "Byter til neste Space på gjeldande skjerm." } },
-        "pa" : { "stringUnit" : { "state" : "translated", "value" : "موجودہ ڈسپلے اُتے اگلی سپیس تے جاندا اے۔" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Przełącza na następny Space na bieżącym ekranie." } },
-        "ps" : { "stringUnit" : { "state" : "translated", "value" : "په اوسني ډسپلې کې راتلونکي سپېس ته اوړي." } },
-        "pt" : { "stringUnit" : { "state" : "translated", "value" : "Muda para o Espaço seguinte no ecrã atual." } },
-        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Troca para o Espaço seguinte na tela atual." } },
-        "ro" : { "stringUnit" : { "state" : "translated", "value" : "Comută la Spațiul următor de pe ecranul curent." } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Переключается на следующее Пространство на текущем дисплее." } },
-        "sk" : { "stringUnit" : { "state" : "translated", "value" : "Prepne na ďalší Priestor na aktuálnom displeji." } },
-        "sr" : { "stringUnit" : { "state" : "translated", "value" : "Prebacuje na sledeći Prostor na trenutnom ekranu." } },
-        "sv" : { "stringUnit" : { "state" : "translated", "value" : "Byter till nästa Space på aktuell skärm." } },
-        "th" : { "stringUnit" : { "state" : "translated", "value" : "สลับไปยัง Space ถัดไปบนจอภาพปัจจุบัน" } },
-        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Geçerli ekrandaki sonraki Alana geçer." } },
-        "uk" : { "stringUnit" : { "state" : "translated", "value" : "Перемикається на наступний Простір на поточному дисплеї." } },
-        "ur" : { "stringUnit" : { "state" : "translated", "value" : "موجودہ ڈسپلے کی اگلی اسپیس پر جاتا ہے۔" } },
-        "vi" : { "stringUnit" : { "state" : "translated", "value" : "Chuyển đến Không gian tiếp theo trên màn hình hiện tại." } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "切换到当前显示器上的下一个空间。" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "切換到目前顯示器上的下一個空間。" } },
-        "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "切換到目前顯示器上的下一個空間。" } }
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ينتقل إلى المساحة الموجودة على اليسار."
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Превключва към Пространството отляво."
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Canvia a l'Espai de l'esquerra."
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Přepne na Space vlevo."
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skifter til det Space, der ligger til venstre."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wechselt zum Space links."
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Μεταβαίνει στον Χώρο στα αριστερά."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Switches to the Space on the left."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Switches to the Space on the left."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambia al Espacio de la izquierda."
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "به فضای سمت چپ می‌رود."
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vaihtaa vasemmalla olevaan Spaceen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passe à l'Espace de gauche."
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "עובר למרחב שמשמאל."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "बाईं ओर के स्पेस पर स्विच करता है।"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Átvált a bal oldali Space-re."
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beralih ke Space di sebelah kiri."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passa allo Spazio a sinistra."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左のスペースに切り替えます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "왼쪽 스페이스로 전환합니다."
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Преминува на Просторот лево."
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bertukar ke Ruang di sebelah kiri."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bytter til Spacet til venstre."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wisselt naar de Space links."
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Byter til Spacet til venstre."
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "کھبے پاسے والی سپیس تے جاندا اے۔"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przełącza na Space po lewej."
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "کيڼ لوري سپېس ته اوړي."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muda para o Espaço à esquerda."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Troca para o Espaço à esquerda."
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comută la Spațiul din stânga."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Переключается на Пространство слева."
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepne na Priestor vľavo."
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prebacuje na Prostor levo."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Byter till Spacet till vänster."
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "สลับไปยัง Space ทางซ้าย"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Soldaki Alana geçer."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перемикається на Простір ліворуч."
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "بائیں جانب کی اسپیس پر جاتا ہے۔"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chuyển đến Không gian bên trái."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切换到左侧的空间。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切換到左側的空間。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切換到左側的空間。"
+          }
+        }
       }
     },
-    "Switches to the previous Space on the current display." : {
+    "Switches to the Space on the right." : {
       "localizations" : {
-        "ar" : { "stringUnit" : { "state" : "translated", "value" : "ينتقل إلى المساحة السابقة على الشاشة الحالية." } },
-        "bg" : { "stringUnit" : { "state" : "translated", "value" : "Превключва към предишното Пространство на текущия дисплей." } },
-        "ca" : { "stringUnit" : { "state" : "translated", "value" : "Canvia a l'Espai anterior de la pantalla actual." } },
-        "cs" : { "stringUnit" : { "state" : "translated", "value" : "Přepne na předchozí Space na aktuálním displeji." } },
-        "da" : { "stringUnit" : { "state" : "translated", "value" : "Skifter til det forrige Space på den aktuelle skærm." } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Wechselt zum vorherigen Space auf dem aktuellen Display." } },
-        "el" : { "stringUnit" : { "state" : "translated", "value" : "Μεταβαίνει στον προηγούμενο Χώρο στην τρέχουσα οθόνη." } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Switches to the previous Space on the current display." } },
-        "en-GB" : { "stringUnit" : { "state" : "translated", "value" : "Switches to the previous Space on the current display." } },
-        "es" : { "stringUnit" : { "state" : "translated", "value" : "Cambia al Espacio anterior de la pantalla actual." } },
-        "fa" : { "stringUnit" : { "state" : "translated", "value" : "به فضای قبلی در نمایشگر فعلی می‌رود." } },
-        "fi" : { "stringUnit" : { "state" : "translated", "value" : "Vaihtaa edelliseen Spaceen nykyisellä näytöllä." } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Passe à l'Espace précédent de l'écran actuel." } },
-        "he" : { "stringUnit" : { "state" : "translated", "value" : "עובר למרחב הקודם בצג הנוכחי." } },
-        "hi" : { "stringUnit" : { "state" : "translated", "value" : "वर्तमान डिस्प्ले के पिछले स्पेस पर स्विच करता है।" } },
-        "hu" : { "stringUnit" : { "state" : "translated", "value" : "Átvált az előző Space-re az aktuális kijelzőn." } },
-        "id" : { "stringUnit" : { "state" : "translated", "value" : "Beralih ke Space sebelumnya di layar saat ini." } },
-        "it" : { "stringUnit" : { "state" : "translated", "value" : "Passa allo Spazio precedente sul monitor attuale." } },
-        "ja" : { "stringUnit" : { "state" : "translated", "value" : "現在のディスプレイの前のスペースに切り替えます。" } },
-        "ko" : { "stringUnit" : { "state" : "translated", "value" : "현재 디스플레이의 이전 스페이스로 전환합니다." } },
-        "mk" : { "stringUnit" : { "state" : "translated", "value" : "Преминува на претходниот Простор на тековниот екран." } },
-        "ms" : { "stringUnit" : { "state" : "translated", "value" : "Bertukar ke Ruang sebelumnya pada paparan semasa." } },
-        "nb" : { "stringUnit" : { "state" : "translated", "value" : "Bytter til forrige Space på gjeldende skjerm." } },
-        "nl" : { "stringUnit" : { "state" : "translated", "value" : "Wisselt naar de vorige Space op het huidige beeldscherm." } },
-        "nn" : { "stringUnit" : { "state" : "translated", "value" : "Byter til førre Space på gjeldande skjerm." } },
-        "pa" : { "stringUnit" : { "state" : "translated", "value" : "موجودہ ڈسپلے اُتے پچھلی سپیس تے جاندا اے۔" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Przełącza na poprzedni Space na bieżącym ekranie." } },
-        "ps" : { "stringUnit" : { "state" : "translated", "value" : "په اوسني ډسپلې کې مخکیني سپېس ته اوړي." } },
-        "pt" : { "stringUnit" : { "state" : "translated", "value" : "Muda para o Espaço anterior no ecrã atual." } },
-        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Troca para o Espaço anterior na tela atual." } },
-        "ro" : { "stringUnit" : { "state" : "translated", "value" : "Comută la Spațiul anterior de pe ecranul curent." } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Переключается на предыдущее Пространство на текущем дисплее." } },
-        "sk" : { "stringUnit" : { "state" : "translated", "value" : "Prepne na predchádzajúci Priestor na aktuálnom displeji." } },
-        "sr" : { "stringUnit" : { "state" : "translated", "value" : "Prebacuje na prethodni Prostor na trenutnom ekranu." } },
-        "sv" : { "stringUnit" : { "state" : "translated", "value" : "Byter till föregående Space på aktuell skärm." } },
-        "th" : { "stringUnit" : { "state" : "translated", "value" : "สลับไปยัง Space ก่อนหน้าบนจอภาพปัจจุบัน" } },
-        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Geçerli ekrandaki önceki Alana geçer." } },
-        "uk" : { "stringUnit" : { "state" : "translated", "value" : "Перемикається на попередній Простір на поточному дисплеї." } },
-        "ur" : { "stringUnit" : { "state" : "translated", "value" : "موجودہ ڈسپلے کی پچھلی اسپیس پر جاتا ہے۔" } },
-        "vi" : { "stringUnit" : { "state" : "translated", "value" : "Chuyển đến Không gian trước đó trên màn hình hiện tại." } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "切换到当前显示器上的上一个空间。" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "切換到目前顯示器上的上一個空間。" } },
-        "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "切換到目前顯示器上的上一個空間。" } }
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ينتقل إلى المساحة الموجودة على اليمين."
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Превключва към Пространството отдясно."
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Canvia a l'Espai de la dreta."
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Přepne na Space vpravo."
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skifter til det Space, der ligger til højre."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wechselt zum Space rechts."
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Μεταβαίνει στον Χώρο στα δεξιά."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Switches to the Space on the right."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Switches to the Space on the right."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambia al Espacio de la derecha."
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "به فضای سمت راست می‌رود."
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vaihtaa oikealla olevaan Spaceen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passe à l'Espace de droite."
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "עובר למרחב שמימין."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "दाईं ओर के स्पेस पर स्विच करता है।"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Átvált a jobb oldali Space-re."
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beralih ke Space di sebelah kanan."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passa allo Spazio a destra."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "右のスペースに切り替えます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오른쪽 스페이스로 전환합니다."
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Преминува на Просторот десно."
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bertukar ke Ruang di sebelah kanan."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bytter til Spacet til høyre."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wisselt naar de Space rechts."
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Byter til Spacet til høgre."
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سجے پاسے والی سپیس تے جاندا اے۔"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przełącza na Space po prawej."
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ښي لوري سپېس ته اوړي."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muda para o Espaço à direita."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Troca para o Espaço à direita."
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comută la Spațiul din dreapta."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Переключается на Пространство справа."
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepne na Priestor vpravo."
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prebacuje na Prostor desno."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Byter till Spacet till höger."
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "สลับไปยัง Space ทางขวา"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sağdaki Alana geçer."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перемикається на Простір праворуч."
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "دائیں جانب کی اسپیس پر جاتا ہے۔"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chuyển đến Không gian bên phải."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切换到右侧的空间。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切換到右側的空間。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切換到右側的空間。"
+          }
+        }
       }
     },
     "accessibility_current_space" : {
@@ -20888,6 +23844,530 @@
         }
       }
     },
+    "error_scripting_move_failed" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تعذّر نقل النافذة إلى المساحة %d."
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Прозорецът не можа да бъде преместен в Пространство %d."
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No s'ha pogut moure la finestra a l'Espai %d."
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Okno se nepodařilo přesunout na Space %d."
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vinduet kunne ikke flyttes til Space %d."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Fenster konnte nicht zu Space %d bewegt werden."
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Δεν ήταν δυνατή η μετακίνηση του παραθύρου στον Χώρο %d."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The window could not be moved to Space %d."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The window could not be moved to Space %d."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se ha podido mover la ventana al Espacio %d."
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "پنجره به فضای %d منتقل نشد."
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ikkunaa ei voitu siirtää Spaceen %d."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de déplacer la fenêtre vers l'Espace %d."
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "לא ניתן היה להעביר את החלון למרחב %d."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "विंडो को स्पेस %d पर नहीं ले जाया जा सका।"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Az ablakot nem sikerült a(z) %d. Space-re áthelyezni."
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jendela tidak dapat dipindahkan ke Space %d."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è stato possibile spostare la finestra nello Spazio %d."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ウインドウをスペース %d に移動できませんでした。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "윈도우를 스페이스 %d(으)로 이동할 수 없습니다."
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Прозорецот не можеше да се премести на Простор %d."
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tetingkap tidak dapat dipindahkan ke Ruang %d."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vinduet kunne ikke flyttes til Space %d."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Het venster kon niet naar Space %d worden verplaatst."
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vindauget kunne ikkje flyttast til Space %d."
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ونڈو نوں سپیس %d تے نئیں لجایا جا سکیا۔"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie można było przenieść okna na Space %d."
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "کړکۍ سپېس %d ته ولېږدول نشوه."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível mover a janela para o Espaço %d."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível mover a janela para o Espaço %d."
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fereastra nu a putut fi mutată în Spațiul %d."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось переместить окно в Пространство %d."
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Okno sa nepodarilo presunúť na Priestor %d."
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prozor nije mogao da se premesti na Prostor %d."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fönstret kunde inte flyttas till Space %d."
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ไม่สามารถย้ายหน้าต่างไปยัง Space %d ได้"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pencere Alan %d konumuna taşınamadı."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не вдалося перемістити вікно на Простір %d."
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ونڈو کو اسپیس %d پر منتقل نہیں کیا جا سکا۔"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Không thể di chuyển cửa sổ đến Không gian %d."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法将窗口移到空间 %d。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "無法將視窗移到空間 %d。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "無法將視窗移到空間 %d。"
+          }
+        }
+      }
+    },
+    "error_scripting_move_unsupported" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "نقل النوافذ بين المساحات غير مدعوم في هذا الإصدار من macOS."
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Преместването на прозорци между Пространства не се поддържа в тази версия на macOS."
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moure finestres entre Espais no és compatible amb aquesta versió de macOS."
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Přesouvání oken mezi Spaces není v této verzi macOS podporováno."
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flytning af vinduer mellem Spaces understøttes ikke i denne version af macOS."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Bewegen von Fenstern zwischen Spaces wird von dieser macOS-Version nicht unterstützt."
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Η μετακίνηση παραθύρων μεταξύ Χώρων δεν υποστηρίζεται σε αυτήν την έκδοση του macOS."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moving windows between Spaces is not supported on this version of macOS."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moving windows between Spaces is not supported on this version of macOS."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mover ventanas entre Espacios no es compatible con esta versión de macOS."
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "جابه‌جایی پنجره‌ها بین فضاها در این نسخه از macOS پشتیبانی نمی‌شود."
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ikkunoiden siirtämistä Spacejen välillä ei tueta tässä macOS-versiossa."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le déplacement de fenêtres entre Espaces n'est pas pris en charge par cette version de macOS."
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "העברת חלונות בין מרחבים אינה נתמכת בגרסה זו של macOS."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इस macOS संस्करण में स्पेसेस के बीच विंडो ले जाना समर्थित नहीं है।"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Az ablakok Space-ek közötti áthelyezését ez a macOS-verzió nem támogatja."
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Memindahkan jendela antar-Space tidak didukung pada versi macOS ini."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo spostamento delle finestre tra Spazi non è supportato in questa versione di macOS."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このバージョンの macOS では、スペース間でウインドウを移動できません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 macOS 버전에서는 스페이스 간 윈도우 이동을 지원하지 않습니다."
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Преместувањето прозорци меѓу Простори не е поддржано на оваа верзија на macOS."
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pemindahan tetingkap antara Ruang tidak disokong pada versi macOS ini."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flytting av vinduer mellom Spaces støttes ikke i denne macOS-versjonen."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vensters verplaatsen tussen Spaces wordt niet ondersteund in deze versie van macOS."
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flytting av vindauge mellom Spaces er ikkje støtta i denne macOS-versjonen."
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ایس macOS ورژن وچ سپیسز وچکار ونڈو لجانا سپورٹ نئیں۔"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przenoszenie okien między Spaces nie jest obsługiwane w tej wersji macOS."
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "د macOS په دې نسخه کې د سپېسونو ترمنځ د کړکیو لېږدول ملاتړ نه کیږي."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mover janelas entre Espaços não é suportado nesta versão do macOS."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mover janelas entre Espaços não é compatível com esta versão do macOS."
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mutarea ferestrelor între Spații nu este acceptată în această versiune de macOS."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перемещение окон между Пространствами не поддерживается в этой версии macOS."
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Presúvanie okien medzi Priestormi nie je v tejto verzii macOS podporované."
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Premeštanje prozora između Prostora nije podržano u ovoj verziji macOS-a."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Att flytta fönster mellan Spaces stöds inte i den här versionen av macOS."
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "การย้ายหน้าต่างระหว่าง Space ไม่รองรับใน macOS เวอร์ชันนี้"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pencerelerin Alanlar arasında taşınması bu macOS sürümünde desteklenmiyor."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Переміщення вікон між Просторами не підтримується в цій версії macOS."
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "اس macOS ورژن میں اسپیسز کے درمیان ونڈو منتقل کرنا سپورٹ نہیں کیا جاتا۔"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Phiên bản macOS này không hỗ trợ di chuyển cửa sổ giữa các Không gian."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此版本的 macOS 不支持在空间之间移动窗口。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此版本的 macOS 不支援在空間之間移動視窗。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此版本的 macOS 不支援在空間之間移動視窗。"
+          }
+        }
+      }
+    },
     "error_scripting_no_spaces" : {
       "localizations" : {
         "ar" : {
@@ -21150,6 +24630,530 @@
         }
       }
     },
+    "error_scripting_no_window_to_move" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "لا توجد نافذة لنقلها."
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Няма прозорец за преместване."
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hi ha cap finestra per moure."
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Není žádné okno k přesunutí."
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der er ikke noget vindue at flytte."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Es ist kein Fenster zum Bewegen vorhanden."
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Δεν υπάρχει παράθυρο για μετακίνηση."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There is no window to move."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There is no window to move."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hay ninguna ventana que mover."
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "پنجره‌ای برای جابه‌جایی وجود ندارد."
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ei siirrettävää ikkunaa."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune fenêtre à déplacer."
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "אין חלון להעברה."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ले जाने के लिए कोई विंडो नहीं है।"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nincs áthelyezhető ablak."
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tidak ada jendela untuk dipindahkan."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non c'è nessuna finestra da spostare."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移動できるウインドウがありません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이동할 윈도우가 없습니다."
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нема прозорец за преместување."
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tiada tetingkap untuk dipindahkan."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Det er ingen vinduer å flytte."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Er is geen venster om te verplaatsen."
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Det finst ikkje noko vindauge å flytte."
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "لجان لئی کوئی ونڈو نئیں۔"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brak okna do przeniesienia."
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "د لېږدولو لپاره کومه کړکۍ نشته."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não há nenhuma janela para mover."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não há nenhuma janela para mover."
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nu există nicio fereastră de mutat."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нет окна для перемещения."
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie je žiadne okno na presunutie."
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nema prozora za premeštanje."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Det finns inget fönster att flytta."
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ไม่มีหน้าต่างที่จะย้าย"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Taşınacak pencere yok."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Немає вікна для переміщення."
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "منتقل کرنے کے لیے کوئی ونڈو نہیں ہے۔"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Không có cửa sổ nào để di chuyển."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有可移动的窗口。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "沒有可移動的視窗。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "沒有可移動的視窗。"
+          }
+        }
+      }
+    },
+    "error_scripting_space_is_fullscreen" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "المساحة %d مساحة ملء الشاشة ولا يمكنها استقبال النوافذ."
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пространство %d е Пространство на цял екран и не може да приема прозорци."
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'Espai %d és un Espai de pantalla completa i no pot rebre finestres."
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Space %d je celoobrazovkový Space a nemůže přijímat okna."
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Space %d er et fuldskærms-Space og kan ikke modtage vinduer."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Space %d ist ein Vollbild-Space und kann keine Fenster aufnehmen."
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ο Χώρος %d είναι Χώρος πλήρους οθόνης και δεν μπορεί να δεχτεί παράθυρα."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Space %d is a fullscreen Space and cannot receive windows."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Space %d is a fullscreen Space and cannot receive windows."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El Espacio %d es un Espacio en pantalla completa y no puede recibir ventanas."
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "فضای %d یک فضای تمام‌صفحه است و نمی‌تواند پنجره بپذیرد."
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Space %d on koko näytön Space eikä voi vastaanottaa ikkunoita."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'Espace %d est un Espace en plein écran et ne peut pas recevoir de fenêtres."
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "מרחב %d הוא מרחב במסך מלא ואינו יכול לקבל חלונות."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "स्पेस %d एक फ़ुलस्क्रीन स्पेस है और विंडो नहीं ले सकता।"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A(z) %d. Space teljes képernyős Space, és nem fogadhat ablakokat."
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Space %d adalah Space layar penuh dan tidak dapat menerima jendela."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo Spazio %d è uno Spazio a tutto schermo e non può ricevere finestre."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "スペース %d はフルスクリーンのスペースのため、ウインドウを受け入れられません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "스페이스 %d은(는) 전체 화면 스페이스이므로 윈도우를 받을 수 없습니다."
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Просторот %d е Простор на цел екран и не може да прима прозорци."
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ruang %d ialah Ruang skrin penuh dan tidak boleh menerima tetingkap."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Space %d er et fullskjerm-Space og kan ikke motta vinduer."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Space %d is een schermvullende Space en kan geen vensters ontvangen."
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Space %d er eit fullskjerm-Space og kan ikkje ta imot vindauge."
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سپیس %d اک فُل سکرین سپیس اے تے ونڈو نئیں لے سکدی۔"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Space %d jest pełnoekranowym Space i nie może przyjmować okien."
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سپېس %d د بشپړ پردې سپېس دی او کړکۍ نشي منلای."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O Espaço %d é um Espaço em ecrã completo e não pode receber janelas."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O Espaço %d é um Espaço em tela cheia e não pode receber janelas."
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spațiul %d este un Spațiu pe tot ecranul și nu poate primi ferestre."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пространство %d является полноэкранным Пространством и не может принимать окна."
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Priestor %d je celoobrazovkový Priestor a nemôže prijímať okná."
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prostor %d je Prostor preko celog ekrana i ne može da primi prozore."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Space %d är ett helskärms-Space och kan inte ta emot fönster."
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Space %d เป็น Space แบบเต็มหน้าจอและรับหน้าต่างไม่ได้"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alan %d tam ekran bir Alandır ve pencere alamaz."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Простір %d є повноекранним Простором і не може приймати вікна."
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "اسپیس %d ایک فل اسکرین اسپیس ہے اور ونڈو وصول نہیں کر سکتی۔"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Không gian %d là Không gian toàn màn hình và không thể nhận cửa sổ."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "空间 %d 是全屏空间，无法接收窗口。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "空間 %d 是全螢幕空間，無法接收視窗。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "空間 %d 是全螢幕空間，無法接收視窗。"
+          }
+        }
+      }
+    },
     "error_scripting_space_out_of_range" : {
       "localizations" : {
         "ar" : {
@@ -21408,6 +25412,268 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "空間 %1$d 不存在（1-%2$d）。"
+          }
+        }
+      }
+    },
+    "error_scripting_window_is_fullscreen" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "النافذة الأمامية في وضع ملء الشاشة ولا يمكن نقلها بين المساحات."
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Прозорецът на преден план е на цял екран и не може да бъде преместван между Пространства."
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La finestra en primer pla està en pantalla completa i no es pot moure entre Espais."
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Okno v popředí je v režimu celé obrazovky a nelze ho přesouvat mezi Spaces."
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Det forreste vindue er i fuld skærm og kan ikke flyttes mellem Spaces."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das vorderste Fenster ist im Vollbildmodus und kann nicht zwischen Spaces bewegt werden."
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Το παράθυρο στο προσκήνιο είναι σε πλήρη οθόνη και δεν μπορεί να μετακινηθεί μεταξύ Χώρων."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The frontmost window is fullscreen and cannot be moved between Spaces."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The frontmost window is fullscreen and cannot be moved between Spaces."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La ventana en primer plano está en pantalla completa y no se puede mover entre Espacios."
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "پنجره پیش‌زمینه تمام‌صفحه است و نمی‌توان آن را بین فضاها جابه‌جا کرد."
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Etummainen ikkuna on koko näytön tilassa eikä sitä voi siirtää Spacejen välillä."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La fenêtre au premier plan est en plein écran et ne peut pas être déplacée entre Espaces."
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "החלון שבחזית נמצא במסך מלא ולא ניתן להעביר אותו בין מרחבים."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सबसे आगे की विंडो फ़ुलस्क्रीन है और उसे स्पेसेस के बीच नहीं ले जाया जा सकता।"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A legelöl lévő ablak teljes képernyős, ezért nem helyezhető át Space-ek között."
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jendela terdepan sedang dalam mode layar penuh dan tidak dapat dipindahkan antar-Space."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La finestra in primo piano è a tutto schermo e non può essere spostata tra Spazi."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最前面のウインドウはフルスクリーンのため、スペース間で移動できません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "맨 앞 윈도우가 전체 화면 상태이므로 스페이스 간에 이동할 수 없습니다."
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Прозорецот во преден план е на цел екран и не може да се премести меѓу Простори."
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tetingkap terdepan sedang dalam skrin penuh dan tidak boleh dipindahkan antara Ruang."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Det fremste vinduet er i fullskjerm og kan ikke flyttes mellom Spaces."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Het voorste venster is schermvullend en kan niet tussen Spaces worden verplaatst."
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Det fremste vindauget er i fullskjerm og kan ikkje flyttast mellom Spaces."
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سامنے والی ونڈو فُل سکرین اے تے اوہنوں سپیسز وچکار نئیں لجایا جا سکدا۔"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Okno na pierwszym planie jest w trybie pełnoekranowym i nie można go przenosić między Spaces."
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "مخکینۍ کړکۍ په بشپړه پرده کې ده او د سپېسونو ترمنځ نشي لېږدول کېدای."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A janela em primeiro plano está em ecrã completo e não pode ser movida entre Espaços."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A janela em primeiro plano está em tela cheia e não pode ser movida entre Espaços."
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fereastra din față este pe tot ecranul și nu poate fi mutată între Spații."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Окно на переднем плане находится в полноэкранном режиме и не может быть перемещено между Пространствами."
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Okno v popredí je v režime celej obrazovky a nedá sa presúvať medzi Priestormi."
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prozor u prvom planu je preko celog ekrana i ne može da se premesti između Prostora."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Det främsta fönstret är i helskärm och kan inte flyttas mellan Spaces."
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "หน้าต่างที่อยู่หน้าสุดอยู่ในโหมดเต็มหน้าจอและย้ายระหว่าง Space ไม่ได้"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En öndeki pencere tam ekran olduğu için Alanlar arasında taşınamaz."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вікно на передньому плані перебуває в повноекранному режимі і не може бути переміщене між Просторами."
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سامنے والی ونڈو فل اسکرین ہے اور اسے اسپیسز کے درمیان منتقل نہیں کیا جا سکتا۔"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cửa sổ trên cùng đang ở chế độ toàn màn hình và không thể di chuyển giữa các Không gian."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最前面的窗口处于全屏状态，无法在空间之间移动。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最前面的視窗處於全螢幕狀態，無法在空間之間移動。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最前面的視窗處於全螢幕狀態，無法在空間之間移動。"
           }
         }
       }

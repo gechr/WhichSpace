@@ -2,6 +2,16 @@
 <!DOCTYPE dictionary SYSTEM "file://localhost/System/Library/DTDs/sdef.dtd">
 <dictionary title="WhichSpace Terminology">
     <suite name="WhichSpace Suite" code="WSpc" description="WhichSpace specific classes and commands.">
+        <command name="move front window left" code="WSpcmvlf" description="Move the frontmost window to the Space on the left, and switch to it.">
+            <cocoa class="WhichSpace.MoveWindowLeftCommand"/>
+        </command>
+        <command name="move front window right" code="WSpcmvrt" description="Move the frontmost window to the Space on the right, and switch to it.">
+            <cocoa class="WhichSpace.MoveWindowRightCommand"/>
+        </command>
+        <command name="move front window to space number" code="WSpcmvsp" description="Move the frontmost window to a Space by number on the current display, and switch to it.">
+            <cocoa class="WhichSpace.MoveWindowToSpaceCommand"/>
+            <direct-parameter type="integer" description="The Space number to move the window to (1-based)."/>
+        </command>
         <command name="reset all space badges" code="WSpcrsab" description="Reset the badges of all Spaces to their defaults.">
             <cocoa class="WhichSpace.ResetAllSpaceBadgesCommand"/>
         </command>
@@ -14,11 +24,21 @@
         <command name="reset current space label" code="WSpcrslb" description="Reset the current Space label to its default.">
             <cocoa class="WhichSpace.ResetCurrentSpaceLabelCommand"/>
         </command>
-        <command name="switch to next space" code="WSpcswnx" description="Switch to the next Space on the current display.">
-            <cocoa class="WhichSpace.SwitchToNextSpaceCommand"/>
+        <command name="send front window left" code="WSpcsdlf" description="Send the frontmost window to the Space on the left, without switching Space.">
+            <cocoa class="WhichSpace.SendWindowLeftCommand"/>
         </command>
-        <command name="switch to previous space" code="WSpcswpv" description="Switch to the previous Space on the current display.">
-            <cocoa class="WhichSpace.SwitchToPreviousSpaceCommand"/>
+        <command name="send front window right" code="WSpcsdrt" description="Send the frontmost window to the Space on the right, without switching Space.">
+            <cocoa class="WhichSpace.SendWindowRightCommand"/>
+        </command>
+        <command name="send front window to space number" code="WSpcsdsp" description="Send the frontmost window to a Space by number on the current display, without switching Space.">
+            <cocoa class="WhichSpace.SendWindowToSpaceCommand"/>
+            <direct-parameter type="integer" description="The Space number to send the window to (1-based)."/>
+        </command>
+        <command name="switch left" code="WSpcswlf" description="Switch to the Space on the left.">
+            <cocoa class="WhichSpace.SwitchLeftCommand"/>
+        </command>
+        <command name="switch right" code="WSpcswrt" description="Switch to the Space on the right.">
+            <cocoa class="WhichSpace.SwitchRightCommand"/>
         </command>
         <command name="switch to space number" code="WSpcswsp" description="Switch to a Space by number on the current display.">
             <cocoa class="WhichSpace.SwitchToSpaceCommand"/>

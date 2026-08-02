@@ -342,10 +342,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
                 if let badge {
                     try ScriptingHelpers.setBadge(badge, forSpace: number, appState: appState, store: store)
                 }
-            case .switchToNext:
-                try ScriptingHelpers.switchRelative(goRight: true)
-            case .switchToPrevious:
+            case .switchLeft:
                 try ScriptingHelpers.switchRelative(goRight: false)
+            case .switchRight:
+                try ScriptingHelpers.switchRelative(goRight: true)
+            case let .moveWindowToSpace(number, follow):
+                // A URL has no reply channel, so failures are only logged
+                Task {
+                    do {
+                        try await ScriptingHelpers.moveWindow(toSpace: number, follow: follow, appState: appState)
+                    } catch {
+                        NSLog("AppDelegate: URL command failed - %@", error.localizedDescription)
+                    }
+                }
+            case let .moveWindowRelative(goRight, follow):
+                Task {
+                    do {
+                        try await ScriptingHelpers.moveWindowRelative(
+                            goRight: goRight,
+                            follow: follow,
+                            appState: appState
+                        )
+                    } catch {
+                        NSLog("AppDelegate: URL command failed - %@", error.localizedDescription)
+                    }
+                }
             case let .openSettings(pane, focus):
                 showSettingsWindow(pane: pane, focus: focus)
             }
@@ -545,9 +566,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     }
 
     /// Handles scroll over the status bar item and switches at most one Space per
-    /// event: scroll up goes to the next Space, scroll down to the previous.
+    /// event: scroll up goes right, scroll down goes left.
     /// Horizontal scrolls follow the Mission Control swipe convention - fingers
-    /// left = next, fingers right = previous - and the dominant enabled axis of
+    /// left = right, fingers right = left - and the dominant enabled axis of
     /// each event wins. A cooldown between switches keeps flicks to a single hop.
     /// Returns nil when the event is consumed; otherwise returns the original event.
     func handleScrollEvent(_ event: NSEvent, in button: NSView?) -> NSEvent? {
@@ -575,9 +596,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             return nil
         }
 
-        // Normalize the dominant enabled axis into "positive = next Space":
-        // scroll up = next, and a leftward scroll (negative deltaX) pushes the
-        // Space strip left to reveal the next Space, matching the system swipe
+        // Normalize the dominant enabled axis into "positive = Space on the right":
+        // scroll up goes right, and a leftward scroll (negative deltaX) pushes
+        // the Space strip left to reveal it, matching the system swipe
         let precise = event.hasPreciseScrollingDeltas
         let rawVertical = (precise ? event.scrollingDeltaY : event.deltaY) * (verticalEnabled ? 1 : 0)
         let rawHorizontal = (precise ? event.scrollingDeltaX : event.deltaX) * (horizontalEnabled ? 1 : 0)

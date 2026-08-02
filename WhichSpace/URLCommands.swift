@@ -5,8 +5,11 @@ import Foundation
 /// Supported forms:
 /// - `whichspace://switch/3` - switch to a Space by number, with optional
 ///   `?label=...&badge=...` query items applied in one step
-/// - `whichspace://switch/next` - switch to the next Space
-/// - `whichspace://switch/previous` - switch to the previous Space
+/// - `whichspace://switch/left` - switch to the Space on the left
+/// - `whichspace://switch/right` - switch to the Space on the right
+/// - `whichspace://move/3` - move the front window to a Space by number and
+///   switch to it; `left` and `right` are also accepted
+/// - `whichspace://send/3` - the same, without switching Space
 /// - `whichspace://settings` - open settings on the last pane shown
 /// - `whichspace://settings/spaces` - open settings on a named pane
 /// - `whichspace://settings?highlight=icon-size` - open settings on whichever
@@ -15,8 +18,10 @@ import Foundation
 ///   the row up
 enum URLCommand: Equatable {
     case switchToSpace(number: Int, label: String?, badge: String?)
-    case switchToNext
-    case switchToPrevious
+    case switchLeft
+    case switchRight
+    case moveWindowToSpace(number: Int, follow: Bool)
+    case moveWindowRelative(goRight: Bool, follow: Bool)
     case openSettings(pane: SettingsPaneID?, focus: SettingsFocus?)
 
     /// Parses a `whichspace://` URL into a command, or nil when the URL
@@ -29,10 +34,34 @@ enum URLCommand: Equatable {
         switch url.host?.lowercased() {
         case "switch":
             return parseSwitch(url)
+        case "move":
+            return parseWindowMove(url, follow: true)
+        case "send":
+            return parseWindowMove(url, follow: false)
         case "settings":
             return parseSettings(url)
         default:
             return nil
+        }
+    }
+
+    /// `move` follows the window to its new Space, `send` does not switch Space,
+    /// mirroring the AppleScript commands of the same names.
+    private static func parseWindowMove(_ url: URL, follow: Bool) -> Self? {
+        guard url.pathComponents.count == 2 else {
+            return nil
+        }
+
+        switch url.pathComponents[1].lowercased() {
+        case "left":
+            return .moveWindowRelative(goRight: false, follow: follow)
+        case "right":
+            return .moveWindowRelative(goRight: true, follow: follow)
+        case let target:
+            guard let number = Int(target) else {
+                return nil
+            }
+            return .moveWindowToSpace(number: number, follow: follow)
         }
     }
 
@@ -42,10 +71,10 @@ enum URLCommand: Equatable {
         }
 
         switch url.pathComponents[1].lowercased() {
-        case "next":
-            return .switchToNext
-        case "previous":
-            return .switchToPrevious
+        case "left":
+            return .switchLeft
+        case "right":
+            return .switchRight
         case let target:
             guard let number = Int(target) else {
                 return nil

@@ -12,6 +12,8 @@
 #import <Foundation/Foundation.h>
 #import <ApplicationServices/ApplicationServices.h>
 
+#import "WindowSpaceMove.h"
+
 // Private CoreDock API for triggering Mission Control
 int CoreDockSendNotification(CFStringRef notification);
 

@@ -1,5 +1,97 @@
 import Cocoa
 
+/// Command handler for AppleScript "move front window left" command.
+/// Usage: `tell application "WhichSpace" to move front window left`
+final class MoveWindowLeftCommand: NSScriptCommand {
+    override func performDefaultImplementation() -> Any? {
+        performMove { try await ScriptingHelpers.moveWindowRelative(goRight: false, follow: true) }
+        return nil
+    }
+}
+
+/// Command handler for AppleScript "move front window right" command.
+/// Usage: `tell application "WhichSpace" to move front window right`
+final class MoveWindowRightCommand: NSScriptCommand {
+    override func performDefaultImplementation() -> Any? {
+        performMove { try await ScriptingHelpers.moveWindowRelative(goRight: true, follow: true) }
+        return nil
+    }
+}
+
+/// Command handler for AppleScript "move front window to space number" command.
+/// Usage: `tell application "WhichSpace" to move front window to space number 3`
+final class MoveWindowToSpaceCommand: NSScriptCommand {
+    override func performDefaultImplementation() -> Any? {
+        guard let spaceNumber = spaceNumberParameter() else {
+            return nil
+        }
+        performMove { try await ScriptingHelpers.moveWindow(toSpace: spaceNumber, follow: true) }
+        return nil
+    }
+}
+
+/// Command handler for AppleScript "send front window left" command.
+/// Usage: `tell application "WhichSpace" to send front window left`
+final class SendWindowLeftCommand: NSScriptCommand {
+    override func performDefaultImplementation() -> Any? {
+        performMove { try await ScriptingHelpers.moveWindowRelative(goRight: false, follow: false) }
+        return nil
+    }
+}
+
+/// Command handler for AppleScript "send front window right" command.
+/// Usage: `tell application "WhichSpace" to send front window right`
+final class SendWindowRightCommand: NSScriptCommand {
+    override func performDefaultImplementation() -> Any? {
+        performMove { try await ScriptingHelpers.moveWindowRelative(goRight: true, follow: false) }
+        return nil
+    }
+}
+
+/// Command handler for AppleScript "send front window to space number" command.
+/// Usage: `tell application "WhichSpace" to send front window to space number 3`
+final class SendWindowToSpaceCommand: NSScriptCommand {
+    override func performDefaultImplementation() -> Any? {
+        guard let spaceNumber = spaceNumberParameter() else {
+            return nil
+        }
+        performMove { try await ScriptingHelpers.moveWindow(toSpace: spaceNumber, follow: false) }
+        return nil
+    }
+}
+
+extension NSScriptCommand {
+    /// Reads the 1-based Space number, reporting a script error when it is
+    /// missing or not an integer.
+    fileprivate func spaceNumberParameter() -> Int? {
+        guard let spaceNumber = directParameter as? Int else {
+            scriptErrorNumber = errOSACantAssign
+            scriptErrorString = Localization.errorScriptingExpectedSpaceNumber
+            return nil
+        }
+        return spaceNumber
+    }
+
+    /// Runs an asynchronous move, suspending the script until the window has
+    /// actually landed so callers can act on the result. Moves are confirmed
+    /// against the window server, so they cannot report success early.
+    fileprivate func performMove(_ work: @escaping @MainActor () async throws -> Void) {
+        suspendExecution()
+        // Apple Events are delivered on the main thread and the work below runs
+        // on the main actor, so the command is never touched concurrently
+        nonisolated(unsafe) let command = self
+        Task { @MainActor in
+            do {
+                try await work()
+            } catch {
+                command.scriptErrorNumber = errOSACantAssign
+                command.scriptErrorString = error.localizedDescription
+            }
+            command.resumeExecution(withResult: nil)
+        }
+    }
+}
+
 /// Command handler for AppleScript "reset all space badges" command.
 /// Usage: `tell application "WhichSpace" to reset all space badges`
 final class ResetAllSpaceBadgesCommand: NSScriptCommand {
@@ -50,13 +142,13 @@ final class ResetCurrentSpaceLabelCommand: NSScriptCommand {
     }
 }
 
-/// Command handler for AppleScript "switch to next space" command.
-/// Usage: `tell application "WhichSpace" to switch to next space`
-final class SwitchToNextSpaceCommand: NSScriptCommand {
+/// Command handler for AppleScript "switch left" command.
+/// Usage: `tell application "WhichSpace" to switch left`
+final class SwitchLeftCommand: NSScriptCommand {
     override func performDefaultImplementation() -> Any? {
         do {
             try MainActor.assumeIsolated {
-                try ScriptingHelpers.switchRelative(goRight: true)
+                try ScriptingHelpers.switchRelative(goRight: false)
             }
         } catch {
             scriptErrorNumber = errOSACantAssign
@@ -66,13 +158,13 @@ final class SwitchToNextSpaceCommand: NSScriptCommand {
     }
 }
 
-/// Command handler for AppleScript "switch to previous space" command.
-/// Usage: `tell application "WhichSpace" to switch to previous space`
-final class SwitchToPreviousSpaceCommand: NSScriptCommand {
+/// Command handler for AppleScript "switch right" command.
+/// Usage: `tell application "WhichSpace" to switch right`
+final class SwitchRightCommand: NSScriptCommand {
     override func performDefaultImplementation() -> Any? {
         do {
             try MainActor.assumeIsolated {
-                try ScriptingHelpers.switchRelative(goRight: false)
+                try ScriptingHelpers.switchRelative(goRight: true)
             }
         } catch {
             scriptErrorNumber = errOSACantAssign
@@ -163,8 +255,65 @@ enum SwitchError: LocalizedError {
     }
 }
 
+/// Errors thrown by `ScriptingHelpers.moveWindow`.
+/// Surfaces to AppleScript callers via `NSScriptCommand.scriptErrorString`.
+enum MoveError: LocalizedError {
+    case accessibilityNotTrusted
+    case noSpacesAvailable
+    case spaceOutOfRange(requested: Int, max: Int)
+    case spaceIsFullscreen(requested: Int)
+    case noWindowToMove
+    case windowIsFullscreen
+    case unsupported
+    case moveFailed(requested: Int)
+
+    var errorDescription: String? {
+        switch self {
+        case .accessibilityNotTrusted:
+            Localization.errorScriptingAccessibilityRequired
+        case .noSpacesAvailable:
+            Localization.errorScriptingNoSpaces
+        case let .spaceOutOfRange(requested, max):
+            String(format: Localization.errorScriptingSpaceOutOfRange, requested, max)
+        case let .spaceIsFullscreen(requested):
+            String(format: Localization.errorScriptingSpaceIsFullscreen, requested)
+        case .noWindowToMove:
+            Localization.errorScriptingNoWindowToMove
+        case .windowIsFullscreen:
+            Localization.errorScriptingWindowIsFullscreen
+        case .unsupported:
+            Localization.errorScriptingMoveUnsupported
+        case let .moveFailed(requested):
+            String(format: Localization.errorScriptingMoveFailed, requested)
+        }
+    }
+}
+
 @MainActor
 enum ScriptingHelpers {
+    /// Moves the frontmost window to the Space at the given 1-based number.
+    /// `follow` switches to that Space afterwards, which is the difference
+    /// between the `move` and `send` commands.
+    static func moveWindow(
+        toSpace number: Int,
+        follow: Bool,
+        appState: AppState = AppEnvironment.shared.appState,
+        mover: SpaceWindowMover = SpaceWindowMover()
+    ) async throws(MoveError) {
+        try await mover.move(toSpaceNumber: number, follow: follow, appState: appState)
+    }
+
+    /// Moves the frontmost window one Space left or right, skipping fullscreen
+    /// Spaces. Either edge is an error rather than a silent no-op.
+    static func moveWindowRelative(
+        goRight: Bool,
+        follow: Bool,
+        appState: AppState = AppEnvironment.shared.appState,
+        mover: SpaceWindowMover = SpaceWindowMover()
+    ) async throws(MoveError) {
+        try await mover.moveRelative(goRight: goRight, follow: follow, appState: appState)
+    }
+
     static func switchToSpace(number: Int, appState: AppState) throws(SwitchError) {
         guard AXIsProcessTrusted() else {
             throw .accessibilityNotTrusted

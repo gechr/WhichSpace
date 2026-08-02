@@ -68,12 +68,31 @@ struct SwitchSpaceIntent: AppIntent {
     }
 }
 
-/// Switches to the next Space on the current display.
-/// Mirrors the AppleScript `switch to next space` command.
-struct SwitchToNextSpaceIntent: AppIntent {
-    static let title: LocalizedStringResource = "Switch to Next Space"
+/// Switches to the Space on the left.
+/// Mirrors the AppleScript `switch left` command.
+struct SwitchLeftIntent: AppIntent {
+    static let title: LocalizedStringResource = "Switch Left"
     static let description = IntentDescription(
-        "Switches to the next Space on the current display."
+        "Switches to the Space on the left."
+    )
+
+    @MainActor
+    func perform() async throws -> some IntentResult {
+        do {
+            try ScriptingHelpers.switchRelative(goRight: false)
+        } catch {
+            throw IntentError(message: error.localizedDescription)
+        }
+        return .result()
+    }
+}
+
+/// Switches to the Space on the right.
+/// Mirrors the AppleScript `switch right` command.
+struct SwitchRightIntent: AppIntent {
+    static let title: LocalizedStringResource = "Switch Right"
+    static let description = IntentDescription(
+        "Switches to the Space on the right."
     )
 
     @MainActor
@@ -87,18 +106,75 @@ struct SwitchToNextSpaceIntent: AppIntent {
     }
 }
 
-/// Switches to the previous Space on the current display.
-/// Mirrors the AppleScript `switch to previous space` command.
-struct SwitchToPreviousSpaceIntent: AppIntent {
-    static let title: LocalizedStringResource = "Switch to Previous Space"
+// MARK: - Moving Windows
+
+/// Moves the frontmost window to a Space by number.
+/// Mirrors the AppleScript `move front window to space number` and
+/// `send front window to space number` commands.
+struct MoveWindowToSpaceIntent: AppIntent {
+    static let title: LocalizedStringResource = "Move Window to Space"
     static let description = IntentDescription(
-        "Switches to the previous Space on the current display."
+        "Moves the frontmost window to a Space on the current display, optionally switching to it."
     )
+
+    @Parameter(title: "Space Number")
+    var spaceNumber: Int
+
+    @Parameter(title: "Follow Window", default: false)
+    var follow: Bool
+
+    static var parameterSummary: some ParameterSummary {
+        Summary("Move the front window to Space \(\.$spaceNumber)") {
+            \.$follow
+        }
+    }
 
     @MainActor
     func perform() async throws -> some IntentResult {
         do {
-            try ScriptingHelpers.switchRelative(goRight: false)
+            try await ScriptingHelpers.moveWindow(toSpace: spaceNumber, follow: follow)
+        } catch {
+            throw IntentError(message: error.localizedDescription)
+        }
+        return .result()
+    }
+}
+
+/// Moves the frontmost window to the Space on the left.
+struct MoveWindowLeftIntent: AppIntent {
+    static let title: LocalizedStringResource = "Move Window Left"
+    static let description = IntentDescription(
+        "Moves the frontmost window to the Space on the left, optionally switching to it."
+    )
+
+    @Parameter(title: "Follow Window", default: false)
+    var follow: Bool
+
+    @MainActor
+    func perform() async throws -> some IntentResult {
+        do {
+            try await ScriptingHelpers.moveWindowRelative(goRight: false, follow: follow)
+        } catch {
+            throw IntentError(message: error.localizedDescription)
+        }
+        return .result()
+    }
+}
+
+/// Moves the frontmost window to the Space on the right.
+struct MoveWindowRightIntent: AppIntent {
+    static let title: LocalizedStringResource = "Move Window Right"
+    static let description = IntentDescription(
+        "Moves the frontmost window to the Space on the right, optionally switching to it."
+    )
+
+    @Parameter(title: "Follow Window", default: false)
+    var follow: Bool
+
+    @MainActor
+    func perform() async throws -> some IntentResult {
+        do {
+            try await ScriptingHelpers.moveWindowRelative(goRight: true, follow: follow)
         } catch {
             throw IntentError(message: error.localizedDescription)
         }

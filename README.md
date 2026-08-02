@@ -9,6 +9,7 @@ Have you ever forgotten _which space_ is currently active on macOS and wanted a 
 - [**Multiple Spaces**](#spaces) - Show current Space only, or all Spaces at once
 - [**Multiple Displays**](#displays) - Include Spaces from every display in the menu bar icon
 - [**Click-to-Switch**](#click-on-a-space-to-switch-to-it) - Jump to any Space directly from the menu bar
+- [**Move Windows**](#moving-windows) - Send the front window to another Space, with or without following it
 - [**Scroll-to-Switch**](#click-on-a-space-to-switch-to-it) - Cycle through Spaces by scrolling over the menu bar icon
 - [**Colors**](#colors) - Set foreground and background colors per Space
 - [**Icons**](#icons) - Choose from multiple icon styles (square, circle, triangle, and more)
@@ -21,7 +22,7 @@ Have you ever forgotten _which space_ is currently active on macOS and wanted a 
 - [**Sound**](#sounds) - Play a sound when switching Spaces
 - [**Shortcuts**](#shortcuts) - Native actions for the Shortcuts app
 - [**AppleScript**](#scripting) - Automate with scripting support
-- [**URL Scheme**](#url-scheme) - Trigger Space switches from any launcher via `whichspace://` links
+- [**URL Scheme**](#url-scheme) - Switch Spaces and move windows from any launcher via `whichspace://` links
 - **Launch at Login** - Start automatically with macOS
 - **Auto-Updates** - Stay up-to-date with automatic updates
 - **Languages** - Translated into multiple languages
@@ -143,7 +144,9 @@ To add a custom sound:
 WhichSpace provides native actions in the [Shortcuts](https://support.apple.com/guide/shortcuts-mac/apdf22b0444c/mac) app - open Shortcuts, create a shortcut, and search for "WhichSpace":
 
 - **Switch Space** - switch to a Space by number, optionally applying a label and badge in one step
-- **Switch to Next Space** / **Previous Space** - move one Space left or right
+- **Switch Left** / **Switch Right** - switch one Space in either direction
+- **Move Window to Space** - move the front window to a Space by number, optionally following it there
+- **Move Window Left** / **Move Window Right** - move the front window one Space in either direction
 - **Get Current Space Number** / **Label** / **Badge** - read the current Space state into a shortcut
 - **Set Current Space Label** / **Badge** - apply a custom label or badge
 - **Reset Current Space Label** / **Badge** - revert the current Space to its default
@@ -167,10 +170,31 @@ osascript -e 'tell application "WhichSpace" to switch to space number 3 label "W
 # Switch to a Space and apply a badge in one step
 osascript -e 'tell application "WhichSpace" to switch to space number 3 badge "A"'
 
-# Switch to the next or previous Space on the current display
-osascript -e 'tell application "WhichSpace" to switch to next space'
-osascript -e 'tell application "WhichSpace" to switch to previous space'
+# Switch one Space to the left or right
+osascript -e 'tell application "WhichSpace" to switch left'
+osascript -e 'tell application "WhichSpace" to switch right'
 ```
+
+##### Moving windows
+
+`send` does not switch Space. `move` follows the window.
+
+```bash
+# Send the front window to a Space, without switching Space
+osascript -e 'tell application "WhichSpace" to send front window to space number 3'
+
+# Move the front window to a Space and switch to it
+osascript -e 'tell application "WhichSpace" to move front window to space number 3'
+
+# Send or move the front window one Space to the left or right
+osascript -e 'tell application "WhichSpace" to send front window left'
+osascript -e 'tell application "WhichSpace" to move front window right'
+```
+
+> [!NOTE]
+> Requires macOS Sonoma, or Tahoe 26.4 and later. Unsupported on Sequoia.
+>
+> Only `move` needs Accessibility permission.
 
 ##### Spaces
 
@@ -231,7 +255,17 @@ open "whichspace://switch/3"
 # Switch to a Space and apply a label and badge in one step
 open "whichspace://switch/3?label=Work&badge=A"
 
-# Switch to the next or previous Space on the current display
-open "whichspace://switch/next"
-open "whichspace://switch/previous"
+# Switch one Space to the left or right
+open "whichspace://switch/left"
+open "whichspace://switch/right"
+
+# Send the front window to a Space, without switching Space
+open "whichspace://send/3"
+
+# Move the front window to a Space and switch to it
+open "whichspace://move/3"
+
+# Send or move the front window one Space to the left or right
+open "whichspace://send/left"
+open "whichspace://move/right"
 ```
