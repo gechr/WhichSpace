@@ -22,7 +22,7 @@ Have you ever forgotten _which space_ is currently active on macOS and wanted a 
 - [**Sound**](#sounds) - Play a sound when switching Spaces
 - [**Shortcuts**](#shortcuts) - Native actions for the Shortcuts app
 - [**AppleScript**](#scripting) - Automate with scripting support
-- [**URL Scheme**](#url-scheme) - Switch Spaces and move windows from any launcher via `whichspace://` links
+- [**URL Scheme**](#url-scheme) - Control via `whichspace://` links
 - **Launch at Login** - Start automatically with macOS
 - **Auto-Updates** - Stay up-to-date with automatic updates
 - **Languages** - Translated into multiple languages
@@ -246,7 +246,7 @@ osascript -e 'tell application "WhichSpace" to reset all space badges'
 
 ### URL Scheme
 
-#### Automate WhichSpace from any launcher (Raycast, Alfred, and so on)
+#### Automate WhichSpace from anywhere
 
 ```bash
 # Switch to a specific Space on the current display

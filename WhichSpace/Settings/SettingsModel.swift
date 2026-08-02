@@ -176,9 +176,15 @@ final class SettingsModel {
     /// does not outlive the window.
     func startObserving() {
         stopObserving()
+        // Changes can land while the window is closed and observation is
+        // stopped, so reads start from the suite rather than the memo
+        store.invalidateCachedValues()
+        tick += 1
         let keys = store.allKeys
         observationTask = Task { [weak self] in
             for await _ in Defaults.updates(keys, initial: false) {
+                // Drop the memo cache so the re-render reads the new values
+                self?.store.invalidateCachedValues()
                 self?.tick += 1
             }
         }
