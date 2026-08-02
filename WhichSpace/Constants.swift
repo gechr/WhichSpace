@@ -245,6 +245,7 @@ enum Localization {
     static let buttonResetAll = String(localized: "button_reset_all")
     static let buttonSwap = String(localized: "button_swap")
     static let confirmCopyToAllDisplays = String(localized: "confirm_copy_to_all_displays")
+    static let confirmCopyToAllSpaces = String(localized: "confirm_copy_to_all_spaces")
     static let confirmCopyToSpace = String(localized: "confirm_copy_to_space")
     static let confirmCopyToThisDisplay = String(localized: "confirm_copy_to_this_display")
     static let confirmSetDefaultStyle = String(localized: "confirm_set_default_style")
@@ -253,6 +254,7 @@ enum Localization {
     static let confirmResetSpace = String(localized: "confirm_reset_space")
     static let confirmResetSettings = String(localized: "confirm_reset_settings")
     static let detailCopyToAllDisplays = String(localized: "detail_copy_to_all_displays")
+    static let detailCopyToAllSpaces = String(localized: "detail_copy_to_all_spaces")
     static let detailCopyToSpace = String(localized: "detail_copy_to_space")
     static let detailCopyToThisDisplay = String(localized: "detail_copy_to_this_display")
     static let detailSetDefaultStyle = String(localized: "detail_set_default_style")
@@ -278,6 +280,7 @@ enum Localization {
 
     static let labelAllDisplays = String(localized: "label_all_displays")
     static let labelAppearance = String(localized: "label_appearance")
+    static let labelAllSpaces = String(localized: "label_all_spaces")
     static let labelAllSpacesAllDisplays = String(localized: "label_all_spaces_all_displays")
     static let labelAllSpacesThisDisplay = String(localized: "label_all_spaces_this_display")
     static let labelBackup = String(localized: "label_backup")

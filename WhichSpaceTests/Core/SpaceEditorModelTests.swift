@@ -382,6 +382,30 @@ struct SpaceEditorModelTests {
         #expect(store.displaySpaceLabels["Side"]?[Layout.maxSpacesPerDisplay] == "Work")
     }
 
+    @Test("the bulk copy confirmation names the scope it reaches")
+    func bulkCopyConfirmationWording() {
+        var asked: String?
+        let single = SpaceEditorModel(appState: makeAppState()) { message, _, _, _ in
+            asked = message
+            return false
+        }
+        single.copyToAllSpaces()
+        #expect(asked == Localization.confirmCopyToAllSpaces)
+
+        configureTwoDisplays()
+        let shared = SpaceEditorModel(appState: makeAppState()) { message, _, _, _ in
+            asked = message
+            return false
+        }
+        shared.selectedDisplayID = nil
+        shared.copyToAllSpaces()
+        #expect(asked == Localization.confirmCopyToAllDisplays)
+
+        shared.selectedDisplayID = "Main"
+        shared.copyToAllSpaces()
+        #expect(asked == Localization.confirmCopyToThisDisplay)
+    }
+
     @Test("copy to one Space covers only that Space once confirmed")
     func copyToOneSpace() {
         let model = makeModel()
@@ -405,14 +429,17 @@ struct SpaceEditorModelTests {
         #expect(!asked)
     }
 
+    /// Asserted against stored values rather than resolved ones: every Space
+    /// without a style of its own inherits the template, so a resolved read
+    /// would report the label on Spaces the copy never touched.
     @Test("copy from the template targets one Space")
     func copyTemplateToOneSpace() {
         let model = makeModel()
         model.selection = .defaultStyle
         model.setLabel("Work")
         model.copyToSpace(2)
-        #expect(SpacePreferences.label(forSpace: 2, display: "Main", store: store) == "Work")
-        #expect(SpacePreferences.label(forSpace: 3, display: "Main", store: store) == nil)
+        #expect(store.spaceLabels[2] == "Work")
+        #expect(store.spaceLabels[3] == nil)
     }
 
     @Test("copy to one Space lands in a selected display's overrides")

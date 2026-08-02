@@ -586,10 +586,24 @@ final class SpaceEditorModel {
 
     // MARK: - Actions
 
+    /// The reach the confirmation describes, matching the menu item that
+    /// asked for it: a lone display has none to name, the shared "All" scope
+    /// reaches every display, and a selected display reaches only itself.
+    private var bulkCopyWording: (confirm: String, detail: String) {
+        if displays.count <= 1 {
+            (Localization.confirmCopyToAllSpaces, Localization.detailCopyToAllSpaces)
+        } else if selectedDisplayID == nil {
+            (Localization.confirmCopyToAllDisplays, Localization.detailCopyToAllDisplays)
+        } else {
+            (Localization.confirmCopyToThisDisplay, Localization.detailCopyToThisDisplay)
+        }
+    }
+
     func copyToAllSpaces() {
+        let wording = bulkCopyWording
         guard confirmAction(
-            Localization.confirmCopyToThisDisplay,
-            Localization.detailCopyToThisDisplay,
+            wording.confirm,
+            wording.detail,
             Localization.buttonCopy,
             false
         ) else {

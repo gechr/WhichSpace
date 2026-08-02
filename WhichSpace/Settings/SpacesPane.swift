@@ -412,11 +412,7 @@ struct SpacesPane: View {
     /// icon and title so both read the same.
     private var copyToMenu: some View {
         Menu(Localization.actionCopyTo) {
-            Button(
-                model.selectedDisplayID == nil
-                    ? Localization.labelAllSpacesAllDisplays
-                    : Localization.labelAllSpacesThisDisplay
-            ) {
+            Button(bulkCopyTitle) {
                 model.copyToAllSpaces()
             }
             if model.selectedDisplayID != nil {
@@ -447,6 +443,18 @@ struct SpacesPane: View {
     /// space 0, so it offers every Space.
     private var copyTargets: [(number: Int, entry: SpaceEntry?)] {
         model.spaceEntries.filter { model.selection != .space($0.number) }
+    }
+
+    /// What the bulk target is called. A lone display draws no distinction
+    /// worth naming, so it names the Spaces alone; the two-way wording only
+    /// earns its place alongside the display picker that explains it.
+    private var bulkCopyTitle: String {
+        guard model.displays.count > 1 else {
+            return Localization.labelAllSpaces
+        }
+        return model.selectedDisplayID == nil
+            ? Localization.labelAllSpacesAllDisplays
+            : Localization.labelAllSpacesThisDisplay
     }
 }
 
