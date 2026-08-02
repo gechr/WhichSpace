@@ -125,6 +125,17 @@ struct CodableSpaceFontTests {
         #expect(codable.size == 12)
     }
 
+    @Test("private system font names restore at the recorded size")
+    func privateSystemFontRestores() throws {
+        // Written by older exports; NSFont(name:size:) resolves the private
+        // name to the wrong size or not at all depending on system state
+        let json = #"{"name":".AppleSystemUIFont","size":14}"#
+        let codable = try JSONDecoder().decode(CodableSpaceFont.self, from: Data(json.utf8))
+        let restored = try #require(codable.toSpaceFont())
+
+        #expect(restored.font.pointSize == 14)
+    }
+
     @Test("JSON encode/decode round-trip")
     func jsonEncodeDecode() throws {
         let original = CodableSpaceFont(from: SpaceFont(font: NSFont.systemFont(ofSize: 16)))

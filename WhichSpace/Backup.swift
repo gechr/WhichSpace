@@ -482,10 +482,18 @@ struct CodableSpaceFont: Codable {
     }
 
     func toSpaceFont() -> SpaceFont? {
-        guard let font = NSFont(name: name, size: size) else {
+        // NSFont(name:size:) does not support private system font names
+        // (".AppleSystemUIFont", ".SFNS..."): the lookup sometimes returns
+        // a fallback at the default size rather than failing. A size
+        // mismatch marks that case, and the system font at the recorded
+        // size is what the backup meant.
+        if let font = NSFont(name: name, size: size), font.pointSize == size {
+            return SpaceFont(font: font)
+        }
+        guard name.hasPrefix(".") else {
             return nil
         }
-        return SpaceFont(font: font)
+        return SpaceFont(font: NSFont.systemFont(ofSize: size))
     }
 }
 
