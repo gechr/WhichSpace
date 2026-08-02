@@ -11,6 +11,20 @@ enum SettingsPaneID: String, CaseIterable {
     case spaces
     case switching
     case menuBar = "menubar"
+
+    /// The pane's toolbar title, for naming where a searched setting lives.
+    var localizedName: String {
+        switch self {
+        case .general:
+            Localization.paneGeneral
+        case .spaces:
+            Localization.paneSpaces
+        case .switching:
+            Localization.paneSwitching
+        case .menuBar:
+            Localization.paneMenuBar
+        }
+    }
 }
 
 // MARK: - SettingsAnchor

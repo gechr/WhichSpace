@@ -65,6 +65,8 @@
 		EA171A9D752C4E1AB555B1EF /* SpaceEditorModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08917A8992F645A19E36C693 /* SpaceEditorModel.swift */; };
 		C4A0C0EBA88E40EBB29F5281 /* SpaceEditorViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = D18ED4FF05A04FA18C192E5B /* SpaceEditorViews.swift */; };
 		BC5CF46B2F294041AD7D1D6C /* SpacesPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299671B2BE544425BF45A379 /* SpacesPane.swift */; };
+		16FBDB77A92848B0876C0C53 /* SettingsSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E4C9E062B045BB944A9520 /* SettingsSearch.swift */; };
+		01916B42BD1A40759B81A6D0 /* SettingsSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5FA2D44227C4A33B1B306BA /* SettingsSearchController.swift */; };
 		11B454B8FAB84DA5A4849D23 /* StyleGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA23CE7564443B780D895AE /* StyleGridView.swift */; };
 		4CA4926ECE74486383DD1509 /* SwatchRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9656A0125DB4B6DB1BA6973 /* SwatchRow.swift */; };
 		3595745297F741548BCB7DE6 /* SymbolGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0D99EF6E6DA48ED856CC9AE /* SymbolGridView.swift */; };
@@ -83,6 +85,7 @@
 		24942840EA374208999A691E /* SettingsModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C9B0B15D88D445C8BF528F3 /* SettingsModelTests.swift */; };
 		B28E5ED82D114D24B02542FA /* ClearCellRulesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 747AE99538E54D6D954CA079 /* ClearCellRulesTests.swift */; };
 		9CB829DE946D4BF4B81668D4 /* SpaceEditorModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA9F08A082F4C02AD55FBE4 /* SpaceEditorModelTests.swift */; };
+		662DF652B1944683B82AC635 /* SettingsSearchIndexTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4810A060A14F15A8084B36 /* SettingsSearchIndexTests.swift */; };
 		D602F17B25AD424CA34C3816 /* SettingsIconTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB62D1E02A1408E9073D218 /* SettingsIconTests.swift */; };
 		60A10359545448879C213924 /* IntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4082BFCDC5A54825AF80AF6F /* IntegrationTests.swift */; };
 		C9D290A3F9CA484EAFABF2E8 /* PerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08E5FE968EBE447E9C29ECB3 /* PerformanceTests.swift */; };
@@ -176,6 +179,8 @@
 		08917A8992F645A19E36C693 /* SpaceEditorModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceEditorModel.swift; sourceTree = "<group>"; };
 		D18ED4FF05A04FA18C192E5B /* SpaceEditorViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceEditorViews.swift; sourceTree = "<group>"; };
 		299671B2BE544425BF45A379 /* SpacesPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpacesPane.swift; sourceTree = "<group>"; };
+		D4E4C9E062B045BB944A9520 /* SettingsSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSearch.swift; sourceTree = "<group>"; };
+		F5FA2D44227C4A33B1B306BA /* SettingsSearchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSearchController.swift; sourceTree = "<group>"; };
 		5BA23CE7564443B780D895AE /* StyleGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StyleGridView.swift; sourceTree = "<group>"; };
 		C9656A0125DB4B6DB1BA6973 /* SwatchRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwatchRow.swift; sourceTree = "<group>"; };
 		B0D99EF6E6DA48ED856CC9AE /* SymbolGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SymbolGridView.swift; sourceTree = "<group>"; };
@@ -200,6 +205,7 @@
 		3C9B0B15D88D445C8BF528F3 /* SettingsModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsModelTests.swift; sourceTree = "<group>"; };
 		747AE99538E54D6D954CA079 /* ClearCellRulesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearCellRulesTests.swift; sourceTree = "<group>"; };
 		5FA9F08A082F4C02AD55FBE4 /* SpaceEditorModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceEditorModelTests.swift; sourceTree = "<group>"; };
+		0B4810A060A14F15A8084B36 /* SettingsSearchIndexTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSearchIndexTests.swift; sourceTree = "<group>"; };
 		ADB62D1E02A1408E9073D218 /* SettingsIconTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsIconTests.swift; sourceTree = "<group>"; };
 		AF09DFE5172F0C9088479C2E /* DisplaySpaceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySpaceProvider.swift; sourceTree = "<group>"; };
 		B7C030C19840D638AEC463CE /* MenuBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBuilder.swift; sourceTree = "<group>"; };
@@ -341,6 +347,7 @@
 				3C9B0B15D88D445C8BF528F3 /* SettingsModelTests.swift */,
 				747AE99538E54D6D954CA079 /* ClearCellRulesTests.swift */,
 				5FA9F08A082F4C02AD55FBE4 /* SpaceEditorModelTests.swift */,
+				0B4810A060A14F15A8084B36 /* SettingsSearchIndexTests.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -355,6 +362,8 @@
 				B83EF1992DCF490596AD2E33 /* SettingsForm.swift */,
 				5025AE756CE44D34B07C6D7F /* SettingsLink.swift */,
 				6241577D589844078C9013D5 /* SettingsModel.swift */,
+				D4E4C9E062B045BB944A9520 /* SettingsSearch.swift */,
+				F5FA2D44227C4A33B1B306BA /* SettingsSearchController.swift */,
 				BC23E2C9B32B4A6D8727DB7C /* SettingsWindowCoordinator.swift */,
 				08917A8992F645A19E36C693 /* SpaceEditorModel.swift */,
 				D18ED4FF05A04FA18C192E5B /* SpaceEditorViews.swift */,
@@ -615,6 +624,8 @@
 				DB9AE51A0FC740C3934ED35F /* SettingsWindowCoordinator.swift in Sources */,
 				04E6412D4806450180BB1178 /* SettingsForm.swift in Sources */,
 				0C395699903E4956BA979400 /* SettingsLink.swift in Sources */,
+				16FBDB77A92848B0876C0C53 /* SettingsSearch.swift in Sources */,
+				01916B42BD1A40759B81A6D0 /* SettingsSearchController.swift in Sources */,
 				F1A3BABB887343F4BFC019C0 /* ClearCellRules.swift in Sources */,
 				50E3F80C474448BCB600C246 /* PanelCoordinators.swift in Sources */,
 				EA171A9D752C4E1AB555B1EF /* SpaceEditorModel.swift in Sources */,
@@ -648,6 +659,7 @@
 				24942840EA374208999A691E /* SettingsModelTests.swift in Sources */,
 				B28E5ED82D114D24B02542FA /* ClearCellRulesTests.swift in Sources */,
 				9CB829DE946D4BF4B81668D4 /* SpaceEditorModelTests.swift in Sources */,
+				662DF652B1944683B82AC635 /* SettingsSearchIndexTests.swift in Sources */,
 				D602F17B25AD424CA34C3816 /* SettingsIconTests.swift in Sources */,
 				5EB4584A2EEDE9690021C6BD /* SpaceColorsBridgeTests.swift in Sources */,
 				5EB4584B2EEDE9690021C6BD /* TestDefaults.swift in Sources */,

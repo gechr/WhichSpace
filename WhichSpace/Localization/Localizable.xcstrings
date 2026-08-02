@@ -37730,6 +37730,268 @@
         }
       }
     },
+    "label_skin_tone" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "لون البشرة"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Тон на кожата"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To de pell"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odstín pleti"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hudfarve"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hautfarbe"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Απόχρωση δέρματος"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skin Tone"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skin Tone"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tono de piel"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "رنگ پوست"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ihonsävy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teinte de peau"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "גוון עור"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "त्वचा का रंग"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bőrtónus"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Warna kulit"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tonalità della pelle"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "肌の色"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "피부색"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Тон на кожата"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Warna kulit"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hudtone"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Huidskleur"
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hudtone"
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "چمڑی دا رنگ"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odcień skóry"
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "د پوستکي رنګ"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tom de pele"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tom de pele"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nuanță de piele"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Тон кожи"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odtieň pleti"
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton kože"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hudton"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "สีผิว"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ten rengi"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Відтінок шкіри"
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "جلد کا رنگ"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tông màu da"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "肤色"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "膚色"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "膚色"
+          }
+        }
+      }
+    },
     "label_spaces" : {
       "localizations" : {
         "ar" : {
@@ -58183,6 +58445,268 @@
         }
       }
     },
+    "tip_search" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "البحث في إعدادات %@"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Търсене в настройките на %@"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerca a la configuració de %@"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hledat v nastavení %@"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Søg i indstillinger for %@"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@-Einstellungen durchsuchen"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Αναζήτηση στις ρυθμίσεις του %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search %@ settings"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search %@ settings"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar en los ajustes de %@"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "جستجو در تنظیمات %@"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hae ohjelman %@ asetuksista"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rechercher dans les réglages de %@"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "חיפוש בהגדרות של %@"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ सेटिंग्स में खोजें"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keresés a(z) %@ beállításai között"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cari di pengaturan %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerca nelle impostazioni di %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@の設定を検索"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 설정 검색"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пребарување во поставките на %@"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cari dalam tetapan %@"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Søk i innstillingene for %@"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoeken in %@-instellingen"
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Søk i innstillingane for %@"
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ سیٹنگز وچ لبھو"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szukaj w ustawieniach %@"
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "د %@ په تنظیماتو کې لټون"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pesquisar nas definições do %@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pesquisar nos ajustes do %@"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Căutare în configurările %@"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Поиск в настройках %@"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hľadať v nastaveniach %@"
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pretraži podešavanja za %@"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sök i inställningarna för %@"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ค้นหาในการตั้งค่า %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ayarlarında ara"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пошук у налаштуваннях %@"
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ کی ترتیبات میں تلاش کریں"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tìm trong cài đặt %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "搜索 %@ 设置"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "搜尋 %@ 設定"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "搜尋 %@ 設定"
+          }
+        }
+      }
+    },
     "tip_sensitivity" : {
       "localizations" : {
         "ar" : {
@@ -62904,259 +63428,259 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "إخفاء المساحات التي تحتوي على تطبيقات بملء الشاشة"
+            "value" : "إخفاء التطبيقات بملء الشاشة"
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Скрий Пространствата с приложения на цял екран"
+            "value" : "Скрий приложенията на цял екран"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Amaga els Espais que contenen aplicacions a pantalla completa"
+            "value" : "Amaga les aplicacions a pantalla completa"
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Skrýt Spaces s aplikacemi na celou obrazovku"
+            "value" : "Skrýt aplikace na celou obrazovku"
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Skjul Spaces med fuldskærmsapps"
+            "value" : "Skjul fuldskærmsapps"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spaces mit Vollbild-Apps ausblenden"
+            "value" : "Vollbild-Apps ausblenden"
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Απόκρυψη Χώρων με εφαρμογές πλήρους οθόνης"
+            "value" : "Απόκρυψη εφαρμογών πλήρους οθόνης"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hide Spaces containing full-screen applications"
+            "value" : "Hide full-screen applications"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hide Spaces containing full-screen applications"
+            "value" : "Hide full-screen applications"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ocultar Espacios con aplicaciones a pantalla completa"
+            "value" : "Ocultar aplicaciones a pantalla completa"
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "فضاهای دارای برنامه تمام‌صفحه را مخفی کنید"
+            "value" : "مخفی کردن برنامه‌های تمام‌صفحه"
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Piilota Spacet, joissa on koko näytön sovelluksia"
+            "value" : "Piilota koko näytön sovellukset"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Masquer les Espaces contenant des applications en plein écran"
+            "value" : "Masquer les applications en plein écran"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "הסתר מרחבים עם יישומים במסך מלא"
+            "value" : "הסתר יישומים במסך מלא"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "फुल-स्क्रीन ऐप वाले स्पेसेस छिपाएँ"
+            "value" : "फुल-स्क्रीन ऐप्स छिपाएँ"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A teljes képernyős alkalmazásokat tartalmazó Space-ek elrejtése"
+            "value" : "A teljes képernyős alkalmazások elrejtése"
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sembunyikan Space yang berisi aplikasi layar penuh"
+            "value" : "Sembunyikan aplikasi layar penuh"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nascondi gli Spazi con app a schermo intero"
+            "value" : "Nascondi le app a schermo intero"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "フルスクリーンアプリがあるスペースを非表示"
+            "value" : "フルスクリーンアプリを非表示"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "전체 화면 앱이 있는 스페이스 숨기기"
+            "value" : "전체 화면 앱 숨기기"
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Сокриј Простори што содржат апликации на цел екран"
+            "value" : "Сокриј апликации на цел екран"
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sembunyikan Ruang yang mengandungi aplikasi skrin penuh"
+            "value" : "Sembunyikan aplikasi skrin penuh"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Skjul Spaces med fullskjermsapper"
+            "value" : "Skjul fullskjermsapper"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spaces met apps op volledig scherm verbergen"
+            "value" : "Apps op volledig scherm verbergen"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gøym Spaces med program i fullskjerm"
+            "value" : "Gøym program i fullskjerm"
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "فل اسکرین ایپس والے سپیسز لکاؤ"
+            "value" : "فل اسکرین ایپس لکاؤ"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ukryj Spaces z aplikacjami na pełnym ekranie"
+            "value" : "Ukryj aplikacje na pełnym ekranie"
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "هغه سپېسونه پټ کړئ چې بشپړ سکرین اپلېکېشنونه لري"
+            "value" : "بشپړ سکرین اپلېکېشنونه پټ کړئ"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ocultar Espaços com aplicações em ecrã inteiro"
+            "value" : "Ocultar aplicações em ecrã inteiro"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ocultar Espaços com aplicativos em tela cheia"
+            "value" : "Ocultar aplicativos em tela cheia"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ascunde Spațiile cu aplicații pe tot ecranul"
+            "value" : "Ascunde aplicațiile pe tot ecranul"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Скрывать Пространства с полноэкранными приложениями"
+            "value" : "Скрывать полноэкранные приложения"
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Skryť Priestory obsahujúce celoobrazovkové aplikácie"
+            "value" : "Skryť celoobrazovkové aplikácie"
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sakrij Prostore koji sadrže aplikacije preko celog ekrana"
+            "value" : "Sakrij aplikacije preko celog ekrana"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dölj Spaces med helskärmsappar"
+            "value" : "Dölj helskärmsappar"
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ซ่อน Space ที่มีแอปเต็มหน้าจอ"
+            "value" : "ซ่อนแอปเต็มหน้าจอ"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tam ekran uygulama içeren Alanları gizle"
+            "value" : "Tam ekran uygulamaları gizle"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Приховати Простори з повноекранними застосунками"
+            "value" : "Приховати повноекранні застосунки"
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "فل اسکرین ایپس والے سپیسز چھپائیں"
+            "value" : "فل اسکرین ایپس چھپائیں"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ẩn các Không gian chứa ứng dụng toàn màn hình"
+            "value" : "Ẩn ứng dụng toàn màn hình"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "隐藏包含全屏应用的空间"
+            "value" : "隐藏全屏应用"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "隱藏包含全螢幕應用程式的空間"
+            "value" : "隱藏全螢幕應用程式"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "隱藏包含全螢幕應用程式的空間"
+            "value" : "隱藏全螢幕應用程式"
           }
         }
       }

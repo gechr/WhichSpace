@@ -210,10 +210,11 @@ struct SpaceEditorView: View {
             }
         }
         // Emoji is not the default catalog, so a link naming it has to switch
-        // the picker over rather than only pointing at the section
+        // the picker over rather than only pointing at the section. Skin tone
+        // goes further: its row exists only while the emoji catalog is up.
         .onChange(of: highlighter?.anchor) { _, anchor in
             switch anchor {
-            case .emoji:
+            case .emoji, .skinTone:
                 symbolCatalog = .emojis
             case .symbol:
                 symbolCatalog = .symbols

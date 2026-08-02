@@ -64,6 +64,7 @@ final class SettingsWindowCoordinator {
     private let highlighter: SettingsHighlighter
     private var windowController: SettingsWindowController?
     private var closeObserver: NSObjectProtocol?
+    private var search: SettingsSearchController?
 
     init(models: [SettingsObservingModel], panes: [SettingsPane], highlighter: SettingsHighlighter) {
         self.models = models
@@ -92,6 +93,7 @@ final class SettingsWindowCoordinator {
             windowController = controller
             if let window = controller.window {
                 window.autorecalculatesKeyViewLoop = true
+                attachSearch(to: window)
                 // The external-change observation streams only need to run
                 // while the window can show their effects; the shared color
                 // panel must not outlive the selection it edits
@@ -104,6 +106,7 @@ final class SettingsWindowCoordinator {
                         for model in self?.models ?? [] {
                             model.stopObserving()
                         }
+                        self?.search?.reset()
                         ColorPanelCoordinator.closeSharedPanel()
                     }
                 }
@@ -128,6 +131,17 @@ final class SettingsWindowCoordinator {
         windowController?.window?.makeFirstResponder(nil)
         // Set last so the fade runs against a pane that is already on screen
         highlighter.point(at: focus)
+    }
+
+    /// Wires up the toolbar's search field. A hit goes back through `show`,
+    /// the same path a `whichspace://settings` link takes, so a searched
+    /// setting lands and lights up exactly like a linked one.
+    private func attachSearch(to window: NSWindow) {
+        let search = SettingsSearchController { [weak self] entry in
+            self?.show(pane: entry.pane, focus: .highlight(entry.anchor))
+        }
+        search.attach(to: window)
+        self.search = search
     }
 
     /// Opens the window above screen center so taller panes, which grow
