@@ -87,9 +87,14 @@ final class SettingsWindowCoordinator {
     /// and briefly highlights it when the link asked for emphasis.
     func show(pane: SettingsPaneID? = nil, focus: SettingsFocus? = nil) {
         let wasVisible = windowController?.window?.isVisible ?? false
-        var isFirstShow = false
+        // SettingsWindowController.show() restores its autosaved frame every
+        // time, even when a deep link is only switching the pane of an
+        // already-visible window. Preserve the live top-left corner so that
+        // programmatic navigation does not undo the user's latest drag.
+        let visibleTopLeft = windowController?.window.flatMap { window in
+            wasVisible ? NSPoint(x: window.frame.minX, y: window.frame.maxY) : nil
+        }
         if windowController == nil {
-            isFirstShow = true
             let controller = SettingsWindowController(
                 panes: panes,
                 style: .toolbarItems,
@@ -128,8 +133,11 @@ final class SettingsWindowCoordinator {
         }
         windowController?.show(pane: pane?.identifier)
         restorePaneVisibility()
-        if isFirstShow, let window = windowController?.window {
-            positionAboveCenter(window)
+        if let visibleTopLeft, let window = windowController?.window {
+            window.setFrameOrigin(NSPoint(
+                x: visibleTopLeft.x,
+                y: visibleTopLeft.y - window.frame.height
+            ))
         }
         windowController?.window?.orderFrontRegardless()
         NSApp.activate(ignoringOtherApps: true)
@@ -163,23 +171,5 @@ final class SettingsWindowCoordinator {
         }
         search.attach(to: window)
         self.search = search
-    }
-
-    /// Opens the window above screen center so taller panes, which grow
-    /// downward from a fixed top edge when switching tabs, stay on screen.
-    /// First show only - later shows respect wherever the user moved it.
-    private func positionAboveCenter(_ window: NSWindow) {
-        guard let screen = window.screen ?? NSScreen.main else {
-            return
-        }
-        let visible = screen.visibleFrame
-        let frame = window.frame
-        let slack = max(0, visible.height - frame.height)
-        let topMargin = min(slack * 0.25, 64)
-        let origin = NSPoint(
-            x: visible.midX - frame.width / 2,
-            y: visible.maxY - topMargin - frame.height
-        )
-        window.setFrameOrigin(origin)
     }
 }
