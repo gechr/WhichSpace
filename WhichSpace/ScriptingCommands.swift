@@ -174,6 +174,22 @@ final class SwitchRightCommand: NSScriptCommand {
     }
 }
 
+/// Command handler for AppleScript "switch to previous space" command.
+/// Usage: `tell application "WhichSpace" to switch to previous space`
+final class SwitchToPreviousSpaceCommand: NSScriptCommand {
+    override func performDefaultImplementation() -> Any? {
+        do {
+            try MainActor.assumeIsolated {
+                try ScriptingHelpers.switchToPreviousSpace(appState: AppEnvironment.shared.appState)
+            }
+        } catch {
+            scriptErrorNumber = errOSACantAssign
+            scriptErrorString = error.localizedDescription
+        }
+        return nil
+    }
+}
+
 /// Command handler for AppleScript "switch to space number" command.
 /// Usage: `tell application "WhichSpace" to switch to space number 3`
 /// Usage: `tell application "WhichSpace" to switch to space number 3 label "Work"`
@@ -241,6 +257,7 @@ enum BadgeError: LocalizedError {
 enum SwitchError: LocalizedError {
     case accessibilityNotTrusted
     case noSpacesAvailable
+    case noPreviousSpace
     case spaceOutOfRange(requested: Int, max: Int)
 
     var errorDescription: String? {
@@ -249,6 +266,8 @@ enum SwitchError: LocalizedError {
             Localization.errorScriptingAccessibilityRequired
         case .noSpacesAvailable:
             Localization.errorScriptingNoSpaces
+        case .noPreviousSpace:
+            Localization.errorScriptingNoPreviousSpace
         case let .spaceOutOfRange(requested, max):
             String(format: Localization.errorScriptingSpaceOutOfRange, requested, max)
         }
@@ -336,6 +355,19 @@ enum ScriptingHelpers {
         } else {
             _ = SpaceSwitcher.activateAppOnSpace(entry.id)
         }
+    }
+
+    /// Switches back to the Space last visited on the current display. The
+    /// switch records the Space being left, so issuing this repeatedly toggles
+    /// between the two.
+    static func switchToPreviousSpace(appState: AppState) throws(SwitchError) {
+        guard AXIsProcessTrusted() else {
+            throw .accessibilityNotTrusted
+        }
+        guard let number = appState.previousSpaceNumber else {
+            throw .noPreviousSpace
+        }
+        try switchToSpace(number: number, appState: appState)
     }
 
     /// Switches one Space left or right on the current display, clamped at the

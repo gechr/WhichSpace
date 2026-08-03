@@ -40,6 +40,9 @@
         <command name="switch right" code="WSpcswrt" description="Switch to the Space on the right.">
             <cocoa class="WhichSpace.SwitchRightCommand"/>
         </command>
+        <command name="switch to previous space" code="WSpcswpv" description="Switch back to the Space last visited on the current display.">
+            <cocoa class="WhichSpace.SwitchToPreviousSpaceCommand"/>
+        </command>
         <command name="switch to space number" code="WSpcswsp" description="Switch to a Space by number on the current display.">
             <cocoa class="WhichSpace.SwitchToSpaceCommand"/>
             <direct-parameter type="integer" description="The Space number to switch to (1-based)."/>

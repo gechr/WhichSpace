@@ -154,6 +154,13 @@ final class AppState {
     private var snapshot: SpaceSnapshot = .empty
     private(set) var darkModeEnabled = false
 
+    /// The Space left behind on each display, keyed by display identifier and
+    /// holding a CGS Space ID rather than a position, so the entry survives
+    /// Spaces being added or removed around it. Only written when the Space
+    /// changes while the same display stays active, so moving between displays
+    /// leaves either display's history alone.
+    private var lastVisitedSpaceID: [String: Int] = [:]
+
     /// How far the status item is currently degraded to keep it on the menu
     /// bar. Observed through `statusBarIcon`, so setting it re-renders.
     var shrinkLevel: IconShrinkLevel = .full
@@ -499,8 +506,39 @@ final class AppState {
             SpaceSwitcher.resetPredictions()
         }
 
+        recordLastVisitedSpace(oldSpaceID: oldSpaceID, oldDisplayID: oldDisplayID)
+
         // Post notification if space changed on the same display
         postCurrentDisplaySpaceChangeIfNeeded(oldSpaceID: oldSpaceID, oldDisplayID: oldDisplayID)
+    }
+
+    /// Remembers the Space just left, so `previousSpaceNumber` can offer it as
+    /// a switch target. A change of display is not a Space visit: the display
+    /// being left keeps its current Space, and the display arrived at was left
+    /// on the Space it is still showing, so neither history moves.
+    private func recordLastVisitedSpace(oldSpaceID: Int, oldDisplayID: String?) {
+        guard let oldDisplayID,
+              oldSpaceID != 0,
+              currentSpaceID != oldSpaceID,
+              currentDisplayID == oldDisplayID
+        else {
+            return
+        }
+        lastVisitedSpaceID[oldDisplayID] = oldSpaceID
+    }
+
+    /// The 1-based `allSpaceEntries` position of the Space last visited on the
+    /// current display, or nil when none has been recorded yet or the recorded
+    /// Space has since been removed. Switching records the Space being left, so
+    /// repeatedly switching here toggles between the two.
+    var previousSpaceNumber: Int? {
+        guard let currentDisplayID,
+              let spaceID = lastVisitedSpaceID[currentDisplayID],
+              let index = allSpaceEntries.firstIndex(where: { $0.id == spaceID })
+        else {
+            return nil
+        }
+        return index + 1
     }
 
     /// Posts currentDisplaySpaceDidChange when the space changes on the same display

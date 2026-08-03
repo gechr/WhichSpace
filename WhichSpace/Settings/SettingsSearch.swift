@@ -390,8 +390,8 @@ enum SettingsSearchIndex {
     // MARK: - Keyboard
 
     private static let keyboard: [SettingsSearchEntry] = [
-        // The two direction rows share bare Left/Right titles, so each takes
-        // the switch card as its section, mirroring the scroll invert rows
+        // The direction rows share bare Left/Right/Previous titles, so each
+        // takes the switch card as its section, mirroring the scroll invert rows
         SettingsSearchEntry(
             anchor: .hotkeySwitchLeft,
             section: Localization.labelSwitch,
@@ -403,6 +403,12 @@ enum SettingsSearchIndex {
             section: Localization.labelSwitch,
             title: Localization.labelRight,
             subtitle: Localization.tipHotkeySwitchRight
+        ),
+        SettingsSearchEntry(
+            anchor: .hotkeySwitchPrevious,
+            section: Localization.labelSwitch,
+            title: Localization.labelPrevious,
+            subtitle: Localization.tipHotkeySwitchPrevious
         ),
         SettingsSearchEntry(
             anchor: .hotkeySendLeft,

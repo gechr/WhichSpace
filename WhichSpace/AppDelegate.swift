@@ -372,6 +372,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
                 try ScriptingHelpers.switchRelative(goRight: false)
             case .switchRight:
                 try ScriptingHelpers.switchRelative(goRight: true)
+            case .switchPrevious:
+                try ScriptingHelpers.switchToPreviousSpace(appState: appState)
             case let .moveWindowToSpace(number, follow):
                 // A URL has no reply channel, so failures are only logged
                 Task {

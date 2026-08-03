@@ -106,6 +106,25 @@ struct SwitchRightIntent: AppIntent {
     }
 }
 
+/// Switches back to the Space last visited on the current display.
+/// Mirrors the AppleScript `switch to previous space` command.
+struct SwitchPreviousIntent: AppIntent {
+    static let title: LocalizedStringResource = "Switch to Previous Space"
+    static let description = IntentDescription(
+        "Switches back to the Space last visited on the current display."
+    )
+
+    @MainActor
+    func perform() async throws -> some IntentResult {
+        do {
+            try ScriptingHelpers.switchToPreviousSpace(appState: AppEnvironment.shared.appState)
+        } catch {
+            throw IntentError(message: error.localizedDescription)
+        }
+        return .result()
+    }
+}
+
 // MARK: - Moving Windows
 
 /// Moves the frontmost window to a Space by number.

@@ -22,6 +22,11 @@ struct URLCommandsTests {
         #expect(parse("whichspace://switch/right") == .switchRight)
     }
 
+    @Test("switch previous parses")
+    func previousParses() {
+        #expect(parse("whichspace://switch/previous") == .switchPrevious)
+    }
+
     @Test("matching is case-insensitive")
     func matchingIsCaseInsensitive() {
         #expect(parse("WHICHSPACE://Switch/LEFT") == .switchLeft)

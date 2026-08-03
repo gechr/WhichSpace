@@ -22,8 +22,8 @@ struct KeyboardPane: View {
             if !model.accessibilityGranted {
                 AccessibilityBannerSection(model: model)
             }
-            // Left/right rather than previous/next: "previous" is reserved
-            // for the last-visited Space
+            // Left/right rather than previous/next: "previous" names the
+            // last-visited Space, which is the third row here
             SettingsSection(Localization.labelSwitch) {
                 recorderRow(
                     title: Localization.labelLeft,
@@ -39,6 +39,14 @@ struct KeyboardPane: View {
                     subtitle: Localization.tipHotkeySwitchRight,
                     anchor: .hotkeySwitchRight,
                     name: .switchRight
+                )
+                SettingsRowDivider()
+                recorderRow(
+                    title: Localization.labelPrevious,
+                    icon: "arrow.uturn.backward",
+                    subtitle: Localization.tipHotkeySwitchPrevious,
+                    anchor: .hotkeySwitchPrevious,
+                    name: .switchPrevious
                 )
             }
             windowSection

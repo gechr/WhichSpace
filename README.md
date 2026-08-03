@@ -157,6 +157,7 @@ WhichSpace provides native actions in the [Shortcuts](https://support.apple.com/
 
 - **Switch Space** - switch to a Space by number, optionally applying a label and badge in one step
 - **Switch Left** / **Switch Right** - switch one Space in either direction
+- **Switch to Previous Space** - switch back to the last visited Space
 - **Move Window to Space** - move the front window to a Space by number, optionally following it there
 - **Move Window Left** / **Move Window Right** - move the front window one Space in either direction
 - **Get Current Space Number** / **Label** / **Badge** - read the current Space state into a shortcut
@@ -185,6 +186,9 @@ osascript -e 'tell application "WhichSpace" to switch to space number 3 badge "A
 # Switch one Space to the left or right
 osascript -e 'tell application "WhichSpace" to switch left'
 osascript -e 'tell application "WhichSpace" to switch right'
+
+# Switch back to the last visited Space
+osascript -e 'tell application "WhichSpace" to switch to previous space'
 ```
 
 ##### Moving windows
@@ -268,6 +272,9 @@ open "whichspace://switch/3?label=Work&badge=A"
 # Switch one Space to the left or right
 open "whichspace://switch/left"
 open "whichspace://switch/right"
+
+# Switch back to the last visited Space
+open "whichspace://switch/previous"
 
 # Send the front window to a Space, without switching Space
 open "whichspace://send/3"

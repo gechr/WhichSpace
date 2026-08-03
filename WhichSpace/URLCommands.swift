@@ -7,6 +7,7 @@ import Foundation
 ///   `?label=...&badge=...` query items applied in one step
 /// - `whichspace://switch/left` - switch to the Space on the left
 /// - `whichspace://switch/right` - switch to the Space on the right
+/// - `whichspace://switch/previous` - switch back to the last visited Space
 /// - `whichspace://move/3` - move the front window to a Space by number and
 ///   switch to it; `left` and `right` are also accepted
 /// - `whichspace://send/3` - the same, without switching Space
@@ -20,6 +21,7 @@ enum URLCommand: Equatable {
     case switchToSpace(number: Int, label: String?, badge: String?)
     case switchLeft
     case switchRight
+    case switchPrevious
     case moveWindowToSpace(number: Int, follow: Bool)
     case moveWindowRelative(goRight: Bool, follow: Bool)
     case openSettings(pane: SettingsPaneID?, focus: SettingsFocus?)
@@ -75,6 +77,8 @@ enum URLCommand: Equatable {
             return .switchLeft
         case "right":
             return .switchRight
+        case "previous":
+            return .switchPrevious
         case let target:
             guard let number = Int(target) else {
                 return nil

@@ -4,6 +4,7 @@ import KeyboardShortcuts
 extension KeyboardShortcuts.Name {
     static let switchLeft = Self("switchLeft")
     static let switchRight = Self("switchRight")
+    static let switchPrevious = Self("switchPrevious")
     static let sendLeft = Self("sendLeft")
     static let sendRight = Self("sendRight")
     static let moveLeft = Self("moveLeft")
@@ -28,7 +29,7 @@ final class HotkeyCenter {
 
     /// Every bindable name, for whole-surface operations like a full reset.
     static var allNames: [KeyboardShortcuts.Name] {
-        [.switchLeft, .switchRight, .sendLeft, .sendRight, .moveLeft, .moveRight]
+        [.switchLeft, .switchRight, .switchPrevious, .sendLeft, .sendRight, .moveLeft, .moveRight]
             + KeyboardShortcuts.Name.jumpToSpace
     }
 
@@ -89,6 +90,11 @@ final class HotkeyCenter {
                 self?.switchRelative(goRight: false)
             }
         }
+        KeyboardShortcuts.onKeyDown(for: .switchPrevious) { [weak self] in
+            Task { @MainActor in
+                self?.switchToPrevious()
+            }
+        }
         // Send leaves you where you are, move follows the window, matching the
         // two verbs the scripting surface uses
         KeyboardShortcuts.onKeyDown(for: .sendLeft) { [weak self] in
@@ -127,6 +133,12 @@ final class HotkeyCenter {
             return
         }
         _ = SpaceSwitcher.switchRelative(goRight: goRight, wrap: store.scrollWrapAround)
+    }
+
+    /// Nothing to go back to before the first Space change of the session, so
+    /// the binding is inert until then rather than picking a stand-in.
+    private func switchToPrevious() {
+        try? ScriptingHelpers.switchToPreviousSpace(appState: appState)
     }
 
     /// Out-of-range and permission failures stay silent: a hotkey has no

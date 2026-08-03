@@ -108,6 +108,7 @@ enum SettingsAnchor: String, CaseIterable {
 
     case hotkeySwitchLeft = "switch-left"
     case hotkeySwitchRight = "switch-right"
+    case hotkeySwitchPrevious = "switch-previous"
     case hotkeySendLeft = "send-left"
     case hotkeySendRight = "send-right"
     case hotkeyMoveLeft = "move-left"
@@ -148,8 +149,8 @@ enum SettingsAnchor: String, CaseIterable {
              .verticalScroll, .invertVerticalScroll, .horizontalScroll, .invertHorizontalScroll,
              .scrollWrapAround, .scrollSensitivity, .scrollHaptics:
             .mouse
-        case .hotkeySwitchLeft, .hotkeySwitchRight, .hotkeySendLeft, .hotkeySendRight,
-             .hotkeyMoveLeft, .hotkeyMoveRight, .jump:
+        case .hotkeySwitchLeft, .hotkeySwitchRight, .hotkeySwitchPrevious, .hotkeySendLeft,
+             .hotkeySendRight, .hotkeyMoveLeft, .hotkeyMoveRight, .jump:
             .keyboard
         }
     }

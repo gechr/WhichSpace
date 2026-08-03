@@ -279,6 +279,117 @@ struct AppStateTests {
         #expect(sut.allSpaceLabels == ["1", "2"])
     }
 
+    // MARK: - Previous Space Tests
+
+    /// Three regular Spaces on one display, with `activeSpaceID` the only
+    /// thing the previous-Space tests vary between snapshots.
+    private func mainDisplay(activeSpaceID: Int, spaceIDs: [Int] = [100, 101, 102]) -> [NSDictionary] {
+        [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: spaceIDs.map { (id: $0, isFullscreen: false) },
+                activeSpaceID: activeSpaceID
+            ),
+        ]
+    }
+
+    @Test("no previous Space before the first Space change")
+    func previousSpace_isNilBeforeFirstChange() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = mainDisplay(activeSpaceID: 100)
+
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+
+        #expect(appState.previousSpaceNumber == nil)
+    }
+
+    @Test("previous Space is the one just left")
+    func previousSpace_isTheSpaceJustLeft() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = mainDisplay(activeSpaceID: 100)
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+
+        stub.displays = mainDisplay(activeSpaceID: 102)
+        appState.forceSpaceUpdate()
+
+        #expect(appState.currentSpace == 3)
+        #expect(appState.previousSpaceNumber == 1)
+    }
+
+    @Test("previous Space tracks only the last hop, so switching there toggles")
+    func previousSpace_tracksOnlyTheLastHop() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = mainDisplay(activeSpaceID: 100)
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+
+        stub.displays = mainDisplay(activeSpaceID: 101)
+        appState.forceSpaceUpdate()
+        #expect(appState.previousSpaceNumber == 1)
+
+        stub.displays = mainDisplay(activeSpaceID: 102)
+        appState.forceSpaceUpdate()
+        #expect(appState.previousSpaceNumber == 2)
+
+        // Going back records the Space being left, which is what makes the
+        // hotkey toggle between two Spaces rather than walk a history
+        stub.displays = mainDisplay(activeSpaceID: 101)
+        appState.forceSpaceUpdate()
+        #expect(appState.previousSpaceNumber == 3)
+    }
+
+    @Test("a removed previous Space stops being offered")
+    func previousSpace_isNilOnceRemoved() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = mainDisplay(activeSpaceID: 100)
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+
+        stub.displays = mainDisplay(activeSpaceID: 101)
+        appState.forceSpaceUpdate()
+        #expect(appState.previousSpaceNumber == 1)
+
+        stub.displays = mainDisplay(activeSpaceID: 101, spaceIDs: [101, 102])
+        appState.forceSpaceUpdate()
+
+        #expect(appState.previousSpaceNumber == nil)
+    }
+
+    @Test("moving between displays records neither display's history")
+    func previousSpace_ignoresDisplayChanges() {
+        stub.activeDisplayIdentifier = "Main"
+        let both = { (mainActive: Int, externalActive: Int) in
+            [
+                CGSStub.makeDisplay(
+                    displayID: "Main",
+                    spaces: [(id: 100, isFullscreen: false), (id: 101, isFullscreen: false)],
+                    activeSpaceID: mainActive
+                ),
+                CGSStub.makeDisplay(
+                    displayID: "External",
+                    spaces: [(id: 200, isFullscreen: false), (id: 201, isFullscreen: false)],
+                    activeSpaceID: externalActive
+                ),
+            ]
+        }
+        stub.displays = both(100, 200)
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+
+        stub.displays = both(101, 200)
+        appState.forceSpaceUpdate()
+        #expect(appState.previousSpaceNumber == 1, "Main should remember the Space it left")
+
+        // The external display was never left mid-session, so arriving on it
+        // is not a Space visit and it has nothing to go back to
+        stub.activeDisplayIdentifier = "External"
+        appState.forceSpaceUpdate()
+        #expect(appState.currentDisplayID == "External")
+        #expect(appState.previousSpaceNumber == nil)
+
+        // Main's own history survived the trip
+        stub.activeDisplayIdentifier = "Main"
+        appState.forceSpaceUpdate()
+        #expect(appState.previousSpaceNumber == 1)
+    }
+
     // MARK: - showAllSpaces Rendering Tests
 
     @Test("showAllSpaces: icon width equals count times status item width")
