@@ -1,5 +1,84 @@
 import Foundation
 
+// MARK: - SettingsSearchKeyword
+
+/// A group of words a setting answers to that its own text never says.
+///
+/// Grouped by concept rather than written out per row, so one translated list
+/// serves every row it applies to: "monitor" reaches the display toggle and
+/// both separator rows without three near-identical strings to keep in step.
+///
+/// Each localized value is one space-separated list, matched as a single
+/// blob. Scoring gives a bonus at a word start, so a term buried in the list
+/// still ranks like a term at the front of it.
+enum SettingsSearchKeyword: CaseIterable {
+    case backup
+    case color
+    case display
+    case emoji
+    case font
+    case fullscreen
+    case haptics
+    case hide
+    case hotkey
+    case icon
+    case label
+    case permission
+    case pointer
+    case reset
+    case size
+    case sound
+    case space
+    case startup
+    case update
+    case window
+
+    var terms: String {
+        switch self {
+        case .backup:
+            Localization.searchKeywordsBackup
+        case .color:
+            Localization.searchKeywordsColor
+        case .display:
+            Localization.searchKeywordsDisplay
+        case .emoji:
+            Localization.searchKeywordsEmoji
+        case .font:
+            Localization.searchKeywordsFont
+        case .fullscreen:
+            Localization.searchKeywordsFullscreen
+        case .haptics:
+            Localization.searchKeywordsHaptics
+        case .hide:
+            Localization.searchKeywordsHide
+        case .hotkey:
+            Localization.searchKeywordsHotkey
+        case .icon:
+            Localization.searchKeywordsIcon
+        case .label:
+            Localization.searchKeywordsLabel
+        case .permission:
+            Localization.searchKeywordsPermission
+        case .pointer:
+            Localization.searchKeywordsPointer
+        case .reset:
+            Localization.searchKeywordsReset
+        case .size:
+            Localization.searchKeywordsSize
+        case .sound:
+            Localization.searchKeywordsSound
+        case .space:
+            Localization.searchKeywordsSpace
+        case .startup:
+            Localization.searchKeywordsStartup
+        case .update:
+            Localization.searchKeywordsUpdate
+        case .window:
+            Localization.searchKeywordsWindow
+        }
+    }
+}
+
 // MARK: - SettingsSearchEntry
 
 /// One searchable setting: the words a query is matched against, and the
@@ -15,6 +94,9 @@ struct SettingsSearchEntry: Identifiable, Equatable {
     let section: String?
     let title: String
     let subtitle: String?
+    /// What the row is about, beyond the words it happens to use, so a query
+    /// can name the thing rather than the setting.
+    var keywords: [SettingsSearchKeyword] = []
 
     var id: SettingsAnchor {
         anchor
@@ -36,6 +118,10 @@ struct SettingsSearchEntry: Identifiable, Equatable {
     /// so "scroll" finds the axis rows, whose own titles say only "Vertical"
     /// and "Horizontal".
     ///
+    /// Keywords rank below a description: a synonym is a guess at what the
+    /// user meant, so a row that says the word outright answers first. They
+    /// still outrank the pane name, which every row on a pane shares.
+    ///
     /// Weights are fixed per field rather than derived from position, so an
     /// entry that happens to carry a description is not scored above one that
     /// matched on the same field without one.
@@ -46,6 +132,9 @@ struct SettingsSearchEntry: Identifiable, Equatable {
         }
         if let subtitle {
             fields.append((text: subtitle, weight: 20))
+        }
+        if !keywords.isEmpty {
+            fields.append((text: keywords.map(\.terms).joined(separator: " "), weight: 15))
         }
         fields.append((text: pane.localizedName, weight: 10))
         return fields
@@ -77,6 +166,16 @@ enum SettingsSearchIndex {
 
     static let entries: [SettingsSearchEntry] = general + menuBar + spaces + mouse + keyboard
 
+    /// Every setting, in the order the toolbar arranges the panes, for the
+    /// field to offer before anything has been typed.
+    ///
+    /// Uncapped, unlike a query's results: this is an index to read down
+    /// rather than a set of guesses to choose between, so a long list scrolls
+    /// instead of stopping at the eight most promising rows.
+    static var browseEntries: [SettingsSearchEntry] {
+        entries
+    }
+
     // MARK: - General
 
     private static let general: [SettingsSearchEntry] = [
@@ -84,37 +183,43 @@ enum SettingsSearchIndex {
             anchor: .launchAtLogin,
             section: nil,
             title: Localization.toggleLaunchAtLogin,
-            subtitle: String(format: Localization.tipLaunchAtLogin, AppInfo.appName)
+            subtitle: String(format: Localization.tipLaunchAtLogin, AppInfo.appName),
+            keywords: [.startup]
         ),
         SettingsSearchEntry(
             anchor: .autoCheckUpdates,
             section: nil,
             title: Localization.toggleAutoCheckUpdates,
-            subtitle: nil
+            subtitle: nil,
+            keywords: [.update]
         ),
         SettingsSearchEntry(
             anchor: .autoInstallUpdates,
             section: nil,
             title: Localization.toggleAutoInstallUpdates,
-            subtitle: nil
+            subtitle: nil,
+            keywords: [.update]
         ),
         SettingsSearchEntry(
             anchor: .checkForUpdates,
             section: nil,
             title: Localization.actionCheckForUpdates,
-            subtitle: String(format: Localization.tipCheckForUpdates, AppInfo.appName)
+            subtitle: String(format: Localization.tipCheckForUpdates, AppInfo.appName),
+            keywords: [.update]
         ),
         SettingsSearchEntry(
             anchor: .backup,
             section: nil,
             title: Localization.labelBackup,
-            subtitle: Localization.tipBackup
+            subtitle: Localization.tipBackup,
+            keywords: [.backup]
         ),
         SettingsSearchEntry(
             anchor: .resetSettings,
             section: nil,
             title: Localization.labelResetSettings,
-            subtitle: Localization.tipResetSettings
+            subtitle: Localization.tipResetSettings,
+            keywords: [.reset, .backup]
         ),
     ]
 
@@ -125,79 +230,92 @@ enum SettingsSearchIndex {
             anchor: .showAllSpaces,
             section: Localization.labelSpaces,
             title: Localization.toggleShowAllSpaces,
-            subtitle: Localization.tipShowAllSpaces
+            subtitle: Localization.tipShowAllSpaces,
+            keywords: [.space, .hide]
         ),
         SettingsSearchEntry(
             anchor: .dimInactiveSpaces,
             section: Localization.labelSpaces,
             title: Localization.toggleDimInactiveSpaces,
-            subtitle: Localization.tipDimInactiveSpaces
+            subtitle: Localization.tipDimInactiveSpaces,
+            keywords: [.space, .color]
         ),
         SettingsSearchEntry(
             anchor: .hideEmptySpaces,
             section: Localization.labelSpaces,
             title: Localization.toggleHideEmptySpaces,
-            subtitle: Localization.tipHideEmptySpaces
+            subtitle: Localization.tipHideEmptySpaces,
+            keywords: [.space, .hide, .window]
         ),
         SettingsSearchEntry(
             anchor: .hideFullscreenApps,
             section: Localization.labelSpaces,
             title: Localization.toggleHideFullscreenApps,
-            subtitle: Localization.tipHideFullscreenApps
+            subtitle: Localization.tipHideFullscreenApps,
+            keywords: [.space, .hide, .fullscreen]
         ),
         SettingsSearchEntry(
             anchor: .showAllDisplays,
             section: Localization.labelSpaces,
             title: Localization.toggleShowAllDisplays,
-            subtitle: Localization.tipShowAllDisplays
+            subtitle: Localization.tipShowAllDisplays,
+            keywords: [.display, .space, .hide]
         ),
         SettingsSearchEntry(
             anchor: .separatorColor,
             section: Localization.labelSpaces,
             title: Localization.labelSeparator,
-            subtitle: Localization.tipSeparator
+            subtitle: Localization.tipSeparator,
+            keywords: [.display, .color]
         ),
         SettingsSearchEntry(
             anchor: .separatorStyle,
             section: Localization.labelSpaces,
             title: Localization.labelSeparatorStyle,
-            subtitle: Localization.tipSeparatorStyle
+            subtitle: Localization.tipSeparatorStyle,
+            keywords: [.display, .icon]
         ),
         SettingsSearchEntry(
             anchor: .iconSize,
             section: Localization.labelAppearance,
             title: Localization.menuIcon,
-            subtitle: Localization.tipIconSize
+            subtitle: Localization.tipIconSize,
+            keywords: [.size, .icon]
         ),
         SettingsSearchEntry(
             anchor: .iconPadding,
             section: Localization.labelAppearance,
             title: Localization.menuPadding,
-            subtitle: Localization.tipIconPadding
+            subtitle: Localization.tipIconPadding,
+            keywords: [.size]
         ),
         SettingsSearchEntry(
             anchor: .localSpaceNumbers,
             section: Localization.labelAppearance,
             title: Localization.toggleLocalSpaceNumbers,
-            subtitle: Localization.tipLocalSpaceNumbers
+            subtitle: Localization.tipLocalSpaceNumbers,
+            keywords: [.space, .display]
         ),
         SettingsSearchEntry(
             anchor: .fullscreenLetter,
             section: Localization.labelAppearance,
             title: Localization.toggleUseFForFullscreenApps,
-            subtitle: Localization.tipUseFForFullscreenApps
+            subtitle: Localization.tipUseFForFullscreenApps,
+            keywords: [.fullscreen, .icon]
         ),
         SettingsSearchEntry(
             anchor: .shrinkToFit,
             section: Localization.labelBehavior,
             title: Localization.toggleShrinkToFit,
-            subtitle: String(format: Localization.tipShrinkToFit, AppInfo.appName)
+            subtitle: String(format: Localization.tipShrinkToFit, AppInfo.appName),
+            keywords: [.size, .hide]
         ),
         SettingsSearchEntry(
             anchor: .hideSingleSpace,
             section: Localization.labelBehavior,
             title: Localization.toggleHideSingleSpace,
-            subtitle: Localization.tipHideSingleSpace
+            subtitle: Localization.tipHideSingleSpace,
+            keywords: [.hide, .space]
         ),
     ]
 
@@ -208,115 +326,134 @@ enum SettingsSearchIndex {
             anchor: .preview,
             section: nil,
             title: Localization.labelPreview,
-            subtitle: Localization.tipCopyTo
+            subtitle: Localization.tipCopyTo,
+            keywords: [.icon]
         ),
         SettingsSearchEntry(
             anchor: .symbolColor,
             section: Localization.menuColor,
             title: Localization.labelSymbolForeground,
-            subtitle: nil
+            subtitle: nil,
+            keywords: [.color, .icon]
         ),
         SettingsSearchEntry(
             anchor: .symbolBackground,
             section: Localization.menuColor,
             title: Localization.labelSymbolBackground,
-            subtitle: nil
+            subtitle: nil,
+            keywords: [.color, .icon]
         ),
         SettingsSearchEntry(
             anchor: .foregroundColor,
             section: Localization.menuColor,
             title: Localization.labelNumberForeground,
-            subtitle: nil
+            subtitle: nil,
+            keywords: [.color]
         ),
         SettingsSearchEntry(
             anchor: .backgroundColor,
             section: Localization.menuColor,
             title: Localization.labelNumberBackground,
-            subtitle: nil
+            subtitle: nil,
+            keywords: [.color]
         ),
         SettingsSearchEntry(
             anchor: .invertColors,
             section: Localization.menuColor,
             title: Localization.actionInvertColors,
-            subtitle: Localization.tipInvertColors
+            subtitle: Localization.tipInvertColors,
+            keywords: [.color]
         ),
         SettingsSearchEntry(
             anchor: .font,
             section: Localization.labelFont,
             title: Localization.labelFont,
-            subtitle: Localization.tipFont
+            subtitle: Localization.tipFont,
+            keywords: [.font, .size]
         ),
         SettingsSearchEntry(
             anchor: .numberStyle,
             section: Localization.menuNumber,
             title: Localization.menuNumber,
-            subtitle: nil
+            subtitle: nil,
+            keywords: [.icon, .space]
         ),
         SettingsSearchEntry(
             anchor: .spaceLabel,
             section: Localization.menuLabel,
             title: Localization.menuLabel,
-            subtitle: Localization.tipLabelInput
+            subtitle: Localization.tipLabelInput,
+            keywords: [.label, .space]
         ),
         SettingsSearchEntry(
             anchor: .symbolPosition,
             section: Localization.menuLabel,
             title: Localization.labelSymbolPosition,
-            subtitle: nil
+            subtitle: nil,
+            keywords: [.icon, .label]
         ),
         SettingsSearchEntry(
             anchor: .symbolWrap,
             section: Localization.menuLabel,
             title: Localization.labelSymbolWrap,
-            subtitle: nil
+            subtitle: nil,
+            keywords: [.icon, .label]
         ),
         SettingsSearchEntry(
             anchor: .symbolGap,
             section: Localization.menuLabel,
             title: Localization.menuPadding,
-            subtitle: nil
+            subtitle: nil,
+            keywords: [.size, .icon]
         ),
         SettingsSearchEntry(
             anchor: .badge,
             section: Localization.menuBadge,
             title: Localization.menuBadge,
-            subtitle: Localization.tipBadgeInput
+            subtitle: Localization.tipBadgeInput,
+            keywords: [.label, .icon]
         ),
         SettingsSearchEntry(
             anchor: .badgePosition,
             section: Localization.menuBadge,
             title: Localization.labelBadgePosition,
-            subtitle: Localization.tipBadgePosition
+            subtitle: Localization.tipBadgePosition,
+            keywords: [.icon]
         ),
         SettingsSearchEntry(
             anchor: .symbol,
             section: Localization.labelGlyph,
             title: Localization.menuSymbol,
-            subtitle: nil
+            subtitle: nil,
+            keywords: [.icon]
         ),
         SettingsSearchEntry(
             anchor: .emoji,
             section: Localization.labelGlyph,
             title: Localization.menuEmoji,
-            subtitle: nil
+            subtitle: nil,
+            keywords: [.emoji, .icon]
         ),
         SettingsSearchEntry(
             anchor: .skinTone,
             section: Localization.labelGlyph,
             title: Localization.labelSkinTone,
-            subtitle: nil
+            subtitle: nil,
+            keywords: [.emoji]
         ),
         SettingsSearchEntry(
             anchor: .sound,
             section: Localization.menuSound,
             title: Localization.menuSound,
-            subtitle: Localization.tipSound
+            subtitle: Localization.tipSound,
+            keywords: [.sound]
         ),
         SettingsSearchEntry(
             anchor: .customSounds,
             section: Localization.menuSound,
             title: Localization.soundCustom,
-            subtitle: nil
+            subtitle: nil,
+            keywords: [.sound]
         ),
     ]
 
@@ -327,19 +464,22 @@ enum SettingsSearchIndex {
             anchor: .accessibility,
             section: nil,
             title: Localization.alertAccessibilityRequired,
-            subtitle: Localization.bannerAccessibilityDetail
+            subtitle: Localization.bannerAccessibilityDetail,
+            keywords: [.permission]
         ),
         SettingsSearchEntry(
             anchor: .clickToSwitch,
             section: Localization.labelClick,
             title: Localization.toggleClickToSwitchSpaces,
-            subtitle: Localization.tipClickToSwitchSpaces
+            subtitle: Localization.tipClickToSwitchSpaces,
+            keywords: [.pointer, .space]
         ),
         SettingsSearchEntry(
             anchor: .verticalScroll,
             section: Localization.menuScroll,
             title: Localization.labelVertical,
-            subtitle: Localization.tipScrollEnabled
+            subtitle: Localization.tipScrollEnabled,
+            keywords: [.pointer]
         ),
         // The two invert rows share a title, so each takes its axis as the
         // section rather than the card they both sit on
@@ -347,43 +487,50 @@ enum SettingsSearchIndex {
             anchor: .invertVerticalScroll,
             section: Localization.labelVertical,
             title: Localization.toggleScrollInverted,
-            subtitle: Localization.tipScrollInverted
+            subtitle: Localization.tipScrollInverted,
+            keywords: [.pointer]
         ),
         SettingsSearchEntry(
             anchor: .horizontalScroll,
             section: Localization.menuScroll,
             title: Localization.labelHorizontal,
-            subtitle: Localization.tipScrollEnabled
+            subtitle: Localization.tipScrollEnabled,
+            keywords: [.pointer]
         ),
         SettingsSearchEntry(
             anchor: .invertHorizontalScroll,
             section: Localization.labelHorizontal,
             title: Localization.toggleScrollInverted,
-            subtitle: Localization.tipScrollInverted
+            subtitle: Localization.tipScrollInverted,
+            keywords: [.pointer]
         ),
         SettingsSearchEntry(
             anchor: .classicSwitching,
             section: Localization.labelBehavior,
             title: Localization.toggleClassicSwitching,
-            subtitle: Localization.tipClassicSwitching
+            subtitle: Localization.tipClassicSwitching,
+            keywords: [.space, .hotkey]
         ),
         SettingsSearchEntry(
             anchor: .scrollWrapAround,
             section: Localization.labelBehavior,
             title: Localization.toggleScrollWrapAround,
-            subtitle: Localization.tipScrollWrapAround
+            subtitle: Localization.tipScrollWrapAround,
+            keywords: [.pointer, .space]
         ),
         SettingsSearchEntry(
             anchor: .scrollSensitivity,
             section: Localization.labelBehavior,
             title: Localization.labelSensitivity,
-            subtitle: Localization.tipSensitivity
+            subtitle: Localization.tipSensitivity,
+            keywords: [.pointer]
         ),
         SettingsSearchEntry(
             anchor: .scrollHaptics,
             section: Localization.labelBehavior,
             title: Localization.toggleScrollHapticFeedback,
-            subtitle: Localization.tipScrollHapticFeedback
+            subtitle: Localization.tipScrollHapticFeedback,
+            keywords: [.haptics, .pointer]
         ),
     ]
 
@@ -396,49 +543,57 @@ enum SettingsSearchIndex {
             anchor: .hotkeySwitchLeft,
             section: Localization.labelSwitch,
             title: Localization.labelLeft,
-            subtitle: Localization.tipHotkeySwitchLeft
+            subtitle: Localization.tipHotkeySwitchLeft,
+            keywords: [.hotkey, .space]
         ),
         SettingsSearchEntry(
             anchor: .hotkeySwitchRight,
             section: Localization.labelSwitch,
             title: Localization.labelRight,
-            subtitle: Localization.tipHotkeySwitchRight
+            subtitle: Localization.tipHotkeySwitchRight,
+            keywords: [.hotkey, .space]
         ),
         SettingsSearchEntry(
             anchor: .hotkeySwitchPrevious,
             section: Localization.labelSwitch,
             title: Localization.labelPrevious,
-            subtitle: Localization.tipHotkeySwitchPrevious
+            subtitle: Localization.tipHotkeySwitchPrevious,
+            keywords: [.hotkey, .space]
         ),
         SettingsSearchEntry(
             anchor: .hotkeySendLeft,
             section: Localization.labelWindow,
             title: Localization.labelSendLeft,
-            subtitle: Localization.tipHotkeySendLeft
+            subtitle: Localization.tipHotkeySendLeft,
+            keywords: [.hotkey, .window, .space]
         ),
         SettingsSearchEntry(
             anchor: .hotkeySendRight,
             section: Localization.labelWindow,
             title: Localization.labelSendRight,
-            subtitle: Localization.tipHotkeySendRight
+            subtitle: Localization.tipHotkeySendRight,
+            keywords: [.hotkey, .window, .space]
         ),
         SettingsSearchEntry(
             anchor: .hotkeyMoveLeft,
             section: Localization.labelWindow,
             title: Localization.labelMoveLeft,
-            subtitle: Localization.tipHotkeyMoveLeft
+            subtitle: Localization.tipHotkeyMoveLeft,
+            keywords: [.hotkey, .window, .space]
         ),
         SettingsSearchEntry(
             anchor: .hotkeyMoveRight,
             section: Localization.labelWindow,
             title: Localization.labelMoveRight,
-            subtitle: Localization.tipHotkeyMoveRight
+            subtitle: Localization.tipHotkeyMoveRight,
+            keywords: [.hotkey, .window, .space]
         ),
         SettingsSearchEntry(
             anchor: .jump,
             section: nil,
             title: Localization.labelJump,
-            subtitle: nil
+            subtitle: nil,
+            keywords: [.hotkey, .space]
         ),
     ]
 
@@ -446,7 +601,8 @@ enum SettingsSearchIndex {
 
     /// The settings a query names, best match first, capped at
     /// `resultLimit`. An empty or whitespace-only query matches nothing:
-    /// the field offers suggestions only once there is something to go on.
+    /// there is nothing to rank, and the field offers `browseEntries`
+    /// instead of guessing.
     static func results(for query: String) -> [SettingsSearchEntry] {
         let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else {

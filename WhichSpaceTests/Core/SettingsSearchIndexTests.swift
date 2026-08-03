@@ -37,6 +37,38 @@ struct SettingsSearchIndexTests {
         }
     }
 
+    /// A keyword group nothing references is a translated string doing no
+    /// work, and an empty one silently stops answering in that language.
+    @Test("every keyword group carries terms and is used by an entry")
+    func keywordGroupsAreUsed() {
+        let used = Set(SettingsSearchIndex.entries.flatMap(\.keywords))
+        for keyword in SettingsSearchKeyword.allCases {
+            #expect(!keyword.terms.isEmpty, "\(keyword) has no terms")
+            #expect(used.contains(keyword), "\(keyword) is referenced by no entry")
+        }
+    }
+
+    /// The lists are space separated in every language. A translator reaching
+    /// for a comma would leave the neighbouring terms unmatchable, and the
+    /// mistake is invisible because the lists are never displayed.
+    @Test("keyword terms are separated by spaces alone")
+    func keywordTermsAreSpaceSeparated() {
+        for keyword in SettingsSearchKeyword.allCases {
+            #expect(!keyword.terms.contains(","), "\(keyword) separates terms with a comma")
+            #expect(keyword.terms.trimmingCharacters(in: .whitespaces) == keyword.terms)
+        }
+    }
+
+    // MARK: - Browsing
+
+    /// The field offers the whole index before anything is typed, so this is
+    /// deliberately uncapped where a query's results are not.
+    @Test("browsing offers every setting, past the result limit")
+    func browseListsEverything() {
+        #expect(SettingsSearchIndex.browseEntries.map(\.anchor) == SettingsSearchIndex.entries.map(\.anchor))
+        #expect(SettingsSearchIndex.browseEntries.count > SettingsSearchIndex.resultLimit)
+    }
+
     // MARK: - Matching
 
     @Test("an empty or blank query matches nothing")
@@ -101,6 +133,36 @@ struct SettingsSearchIndexTests {
         // whatever else the entries carry
         #expect(sparse.fields.first?.weight == full.fields.first?.weight)
         #expect(sparse.fields.count < full.fields.count)
+    }
+
+    /// The whole point of the keyword lists: a word the row's own wording
+    /// never uses still has to reach it. Haptics is the one group a single
+    /// row owns, so a hit can be attributed to the keywords rather than to
+    /// some other row's title.
+    @Test("a query matches a row by a keyword its wording never uses")
+    func matchesKeyword() {
+        let terms = SettingsSearchKeyword.haptics.terms.split(separator: " ")
+        guard let first = terms.first else {
+            Issue.record("the haptics keyword group is empty")
+            return
+        }
+        let results = SettingsSearchIndex.results(for: String(first))
+        #expect(results.contains { $0.anchor == .scrollHaptics })
+    }
+
+    /// A synonym is a guess at what was meant, so a row that says the word
+    /// outright answers first; the pane name, shared by every row on it,
+    /// stays weakest.
+    @Test("a keyword ranks below a description and above the pane name")
+    func keywordWeightSitsBetweenSubtitleAndPane() {
+        let entry = SettingsSearchEntry(
+            anchor: .scrollHaptics,
+            section: "Group",
+            title: "Alpha",
+            subtitle: "Beta",
+            keywords: [.haptics]
+        )
+        #expect(entry.fields.map(\.weight) == [40, 30, 20, 15, 10])
     }
 
     @Test("matching ignores diacritics")

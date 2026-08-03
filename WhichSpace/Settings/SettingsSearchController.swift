@@ -86,6 +86,10 @@ final class SettingsSearchController: NSObject {
 
     /// Focuses the field and selects whatever is in it, so a second
     /// Command-F starts a new query rather than appending to the old one.
+    ///
+    /// The list is opened here as well as on the field taking focus: a field
+    /// that already had focus begins no new editing session, so the delegate
+    /// callback never fires and a second Command-F would show nothing.
     private func focusField() {
         searchItem?.beginSearchInteraction()
         guard let field = searchField else {
@@ -93,6 +97,7 @@ final class SettingsSearchController: NSObject {
         }
         field.window?.makeFirstResponder(field)
         field.currentEditor()?.selectAll(nil)
+        updateResults(for: field.stringValue)
     }
 
     /// Empties the field and puts the results away. Called when the window
@@ -104,8 +109,15 @@ final class SettingsSearchController: NSObject {
 
     // MARK: - Results
 
+    /// Refreshes the list for whatever is in the field.
+    ///
+    /// An empty field offers the whole index rather than nothing, so the
+    /// field reads down the settings as well as finds one. The rows are the
+    /// same either way, so arrowing and Return need no separate handling.
     private func updateResults(for query: String) {
-        results = SettingsSearchIndex.results(for: query)
+        results = query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            ? SettingsSearchIndex.browseEntries
+            : SettingsSearchIndex.results(for: query)
         guard !results.isEmpty else {
             dismissResults()
             return
@@ -285,6 +297,24 @@ extension SettingsSearchController: NSPopoverDelegate {
 // MARK: - NSSearchFieldDelegate
 
 extension SettingsSearchController: NSSearchFieldDelegate {
+    /// Opens the list on the whole index when the field takes focus, so the
+    /// settings can be browsed by someone who does not know what to type.
+    ///
+    /// Deferred a turn: the field is still becoming first responder here, and
+    /// a popover presented mid-transition takes the focus it was about to get.
+    /// The guard drops the work if the field lost focus in the meantime.
+    func controlTextDidBeginEditing(_ notification: Notification) {
+        guard let field = notification.object as? NSSearchField else {
+            return
+        }
+        Task { @MainActor in
+            guard field.currentEditor() != nil else {
+                return
+            }
+            updateResults(for: field.stringValue)
+        }
+    }
+
     func controlTextDidChange(_ notification: Notification) {
         guard let field = notification.object as? NSSearchField else {
             return
