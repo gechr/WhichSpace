@@ -44,6 +44,7 @@ struct SettingsSection<Content: View>: View {
     private let title: String?
     private let anchor: SettingsAnchor?
     private let emphasized: Bool
+    private let tint: Color?
     private let content: Content
 
     @Environment(SettingsHighlighter.self) private var highlighter: SettingsHighlighter?
@@ -56,11 +57,13 @@ struct SettingsSection<Content: View>: View {
         _ title: String? = nil,
         anchor: SettingsAnchor? = nil,
         emphasized: Bool = false,
+        tint: Color? = nil,
         @ViewBuilder content: () -> Content
     ) {
         self.title = title
         self.anchor = anchor
         self.emphasized = emphasized
+        self.tint = tint
         self.content = content()
     }
 
@@ -73,6 +76,9 @@ struct SettingsSection<Content: View>: View {
     /// the regular cards' 0.027, leaving the icon it carries the brightest
     /// thing on it.
     private var fill: Color {
+        if let tint {
+            return tint.opacity(0.12)
+        }
         let base = Color(nsColor: emphasized ? .tertiarySystemFill : .quaternarySystemFill)
         return emphasized ? base.opacity(0.5) : base
     }
@@ -100,7 +106,10 @@ struct SettingsSection<Content: View>: View {
             // A hairline separator is too faint to carry the card on its own,
             // so the edge is drawn in a label colour at a point and a half
             .overlay {
-                if emphasized {
+                if let tint {
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .strokeBorder(tint.opacity(0.35), lineWidth: 1.5)
+                } else if emphasized {
                     RoundedRectangle(cornerRadius: 10, style: .continuous)
                         .strokeBorder(Color(nsColor: .tertiaryLabelColor), lineWidth: 1.5)
                 }
@@ -440,18 +449,18 @@ private struct SliderValueField: View {
 
 /// Shown until accessibility permission is granted; switching cannot work
 /// without it, so every pane offering a switching surface leads with it.
-/// The button both opens the Accessibility pane and registers a grant watch
-/// so the banner clears live.
+/// The button requests permission and registers a grant watch so the banner
+/// clears live.
 struct AccessibilityBannerSection: View {
     let model: SettingsModel
 
     var body: some View {
-        SettingsSection {
+        SettingsSection(tint: Color(nsColor: .systemRed)) {
             SettingsRow(anchor: .accessibility) {
                 HStack(spacing: 10) {
                     Image(systemName: "lock.shield.fill")
                         .font(.system(size: 22))
-                        .foregroundStyle(.orange)
+                        .foregroundStyle(.red)
                     VStack(alignment: .leading, spacing: 2) {
                         Text(Localization.alertAccessibilityRequired)
                             .fontWeight(.semibold)
@@ -462,7 +471,6 @@ struct AccessibilityBannerSection: View {
             } control: {
                 Button(Localization.actionOpenSystemSettings) {
                     model.requestAccessibility()
-                    Accessibility.openSettingsPane()
                 }
             }
         }
