@@ -522,6 +522,56 @@ struct SpaceWindowMoverTests {
         #expect(fake.attempted.isEmpty)
     }
 
+    @Test("wrapping carries the window round to the far end", arguments: [true, false])
+    func moveRelative_wrapsAtEdges(goRight: Bool) async throws {
+        // Sitting on the edge the requested direction runs off
+        let active = goRight ? 102 : 100
+        let appState = makeAppState(
+            spaces: [
+                (id: 100, isFullscreen: false),
+                (id: 101, isFullscreen: false),
+                (id: 102, isFullscreen: false),
+            ],
+            activeSpaceID: active
+        )
+        let fake = FakeWindowMover(spaces: [active])
+        let mover = makeMover(fake)
+
+        try await mover.moveRelative(goRight: goRight, follow: false, wrap: true, appState: appState)
+
+        #expect(fake.spaces == [goRight ? 100 : 102])
+    }
+
+    @Test("wrapping steps over a fullscreen Space at the far end")
+    func moveRelative_wrapSkipsFullscreen() async throws {
+        let appState = makeAppState(
+            spaces: [
+                (id: 100, isFullscreen: true),
+                (id: 101, isFullscreen: false),
+                (id: 102, isFullscreen: false),
+            ],
+            activeSpaceID: 102
+        )
+        let fake = FakeWindowMover(spaces: [102])
+        let mover = makeMover(fake)
+
+        try await mover.moveRelative(goRight: true, follow: false, wrap: true, appState: appState)
+
+        #expect(fake.spaces == [101], "Wrapping lands on the first Space that can hold a window")
+    }
+
+    @Test("wrapping onto the only regular Space is refused")
+    func moveRelative_wrapRefusesSelf() async {
+        let appState = makeAppState(spaces: [(id: 100, isFullscreen: false)], activeSpaceID: 100)
+        let fake = FakeWindowMover()
+        let mover = makeMover(fake)
+
+        await #expect(throws: MoveError.self) {
+            try await mover.moveRelative(goRight: true, follow: false, wrap: true, appState: appState)
+        }
+        #expect(fake.attempted.isEmpty)
+    }
+
     // MARK: - Front Window Resolution
 
     private func window(

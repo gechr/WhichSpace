@@ -405,6 +405,30 @@ enum SettingsSearchIndex {
             subtitle: Localization.tipHotkeySwitchRight
         ),
         SettingsSearchEntry(
+            anchor: .hotkeySendLeft,
+            section: Localization.labelWindow,
+            title: Localization.labelSendLeft,
+            subtitle: Localization.tipHotkeySendLeft
+        ),
+        SettingsSearchEntry(
+            anchor: .hotkeySendRight,
+            section: Localization.labelWindow,
+            title: Localization.labelSendRight,
+            subtitle: Localization.tipHotkeySendRight
+        ),
+        SettingsSearchEntry(
+            anchor: .hotkeyMoveLeft,
+            section: Localization.labelWindow,
+            title: Localization.labelMoveLeft,
+            subtitle: Localization.tipHotkeyMoveLeft
+        ),
+        SettingsSearchEntry(
+            anchor: .hotkeyMoveRight,
+            section: Localization.labelWindow,
+            title: Localization.labelMoveRight,
+            subtitle: Localization.tipHotkeyMoveRight
+        ),
+        SettingsSearchEntry(
             anchor: .jump,
             section: nil,
             title: Localization.labelJump,

@@ -236,17 +236,30 @@ struct SpaceWindowMover {
     }
 
     /// Moves the front window one Space left or right, skipping fullscreen
-    /// Spaces. Either edge is an error rather than a silent no-op, so a script
-    /// can tell a refusal from a move.
-    func moveRelative(goRight: Bool, follow: Bool, appState: AppState) async throws(MoveError) {
+    /// Spaces. Without `wrap` either edge is an error rather than a silent
+    /// no-op, so a script can tell a refusal from a move; the hotkeys pass the
+    /// same wrap preference the switch hotkeys use.
+    func moveRelative(
+        goRight: Bool,
+        follow: Bool,
+        wrap: Bool = false,
+        appState: AppState
+    ) async throws(MoveError) {
         let entries = appState.allSpaceEntries
         guard !entries.isEmpty else {
             throw .noSpacesAvailable
         }
         let step = goRight ? 1 : -1
         var index = appState.currentSpace + step
-        while entries.indices.contains(index - 1), entries[index - 1].regularIndex == nil {
-            index += step
+        index = skippingFullscreen(from: index, step: step, entries: entries)
+        if wrap, !entries.indices.contains(index - 1) {
+            // Resume from the far end and walk inward, so the fullscreen skip
+            // applies to the wrapped side too
+            index = skippingFullscreen(from: goRight ? 1 : entries.count, step: step, entries: entries)
+            // Landing back where the window already is is not a move
+            guard index != appState.currentSpace else {
+                throw .spaceOutOfRange(requested: index, max: entries.count)
+            }
         }
         guard entries.indices.contains(index - 1) else {
             throw .spaceOutOfRange(requested: index, max: entries.count)
@@ -258,6 +271,16 @@ struct SpaceWindowMover {
             entries: entries,
             appState: appState
         )
+    }
+
+    /// Advances a 1-based Space number past any fullscreen entries, stopping at
+    /// the first regular Space or at the edge it runs off.
+    private func skippingFullscreen(from start: Int, step: Int, entries: [SpaceEntry]) -> Int {
+        var index = start
+        while entries.indices.contains(index - 1), entries[index - 1].regularIndex == nil {
+            index += step
+        }
+        return index
     }
 
     private func move(
@@ -381,6 +404,14 @@ struct SpaceWindowMover {
             waited += confirmationInterval
         }
     }
+
+    /// Whether this host has a backend that can move a window at all, so the
+    /// settings pane can say why the hotkeys do nothing instead of leaving
+    /// them silent. Resolved once: capability does not change within a session.
+    static let isSupported: Bool = {
+        let mover = SkyLightWindowMover()
+        return permittedBackends.contains { mover.isAvailable($0) }
+    }()
 
     /// Backends this macOS release is known to honour. The legacy calls remain
     /// callable where Apple has neutered them, so availability alone would not

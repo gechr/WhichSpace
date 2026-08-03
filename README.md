@@ -20,7 +20,7 @@ Have you ever forgotten _which space_ is currently active on macOS and wanted a 
 - [**Size**](#size) - Scale icons to your preference
 - [**Fonts**](#fonts) - Choose a custom font per Space
 - [**Sound**](#sounds) - Play a sound when switching Spaces
-- [**Keybinds**](#keybinds) - Global keyboard shortcuts to switch to any Space
+- [**Keybinds**](#keybinds) - Global keyboard shortcuts to switch to any Space, and to move windows between them
 - [**Shortcuts**](#shortcuts) - Native actions for the Shortcuts app
 - [**AppleScript**](#scripting) - Automate with scripting support
 - [**URL Scheme**](#url-scheme) - Control via `whichspace://` links
@@ -143,6 +143,11 @@ To add a custom sound:
 #### Switch Spaces with global keyboard shortcuts
 
 <img src="Screenshots/SectionKeybinds.png" width="60%">
+
+> [!NOTE]
+> The **Window** shortcuts move the front window between Spaces.
+>
+> **Send** leaves you on the current Space, while **Move** follows the window there.
 
 ### Shortcuts
 

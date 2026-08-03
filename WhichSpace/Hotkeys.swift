@@ -4,6 +4,10 @@ import KeyboardShortcuts
 extension KeyboardShortcuts.Name {
     static let switchLeft = Self("switchLeft")
     static let switchRight = Self("switchRight")
+    static let sendLeft = Self("sendLeft")
+    static let sendRight = Self("sendRight")
+    static let moveLeft = Self("moveLeft")
+    static let moveRight = Self("moveRight")
 
     /// One bindable name per Space position on the current display. Positions
     /// past the current Space count stay recorded but inert, so a binding
@@ -24,7 +28,8 @@ final class HotkeyCenter {
 
     /// Every bindable name, for whole-surface operations like a full reset.
     static var allNames: [KeyboardShortcuts.Name] {
-        [.switchLeft, .switchRight] + KeyboardShortcuts.Name.jumpToSpace
+        [.switchLeft, .switchRight, .sendLeft, .sendRight, .moveLeft, .moveRight]
+            + KeyboardShortcuts.Name.jumpToSpace
     }
 
     /// Clears every recorded binding, returning the pane to its fresh state.
@@ -84,6 +89,28 @@ final class HotkeyCenter {
                 self?.switchRelative(goRight: false)
             }
         }
+        // Send leaves you where you are, move follows the window, matching the
+        // two verbs the scripting surface uses
+        KeyboardShortcuts.onKeyDown(for: .sendLeft) { [weak self] in
+            Task { @MainActor in
+                self?.moveWindow(goRight: false, follow: false)
+            }
+        }
+        KeyboardShortcuts.onKeyDown(for: .sendRight) { [weak self] in
+            Task { @MainActor in
+                self?.moveWindow(goRight: true, follow: false)
+            }
+        }
+        KeyboardShortcuts.onKeyDown(for: .moveLeft) { [weak self] in
+            Task { @MainActor in
+                self?.moveWindow(goRight: false, follow: true)
+            }
+        }
+        KeyboardShortcuts.onKeyDown(for: .moveRight) { [weak self] in
+            Task { @MainActor in
+                self?.moveWindow(goRight: true, follow: true)
+            }
+        }
         for (index, name) in KeyboardShortcuts.Name.jumpToSpace.enumerated() {
             KeyboardShortcuts.onKeyDown(for: name) { [weak self] in
                 Task { @MainActor in
@@ -107,5 +134,19 @@ final class HotkeyCenter {
     /// would punish leaving one recorded.
     private func switchTo(number: Int) {
         try? ScriptingHelpers.switchToSpace(number: number, appState: appState)
+    }
+
+    /// Wrapping follows the same preference as the switch hotkeys, so both
+    /// directions behave the same way at the edges. Failures stay silent for
+    /// the same reason `switchTo` swallows its own.
+    private func moveWindow(goRight: Bool, follow: Bool) {
+        Task { @MainActor in
+            try? await ScriptingHelpers.moveWindowRelative(
+                goRight: goRight,
+                follow: follow,
+                wrap: store.scrollWrapAround,
+                appState: appState
+            )
+        }
     }
 }

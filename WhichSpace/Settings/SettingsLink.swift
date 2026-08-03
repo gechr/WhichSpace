@@ -108,6 +108,10 @@ enum SettingsAnchor: String, CaseIterable {
 
     case hotkeySwitchLeft = "switch-left"
     case hotkeySwitchRight = "switch-right"
+    case hotkeySendLeft = "send-left"
+    case hotkeySendRight = "send-right"
+    case hotkeyMoveLeft = "move-left"
+    case hotkeyMoveRight = "move-right"
     case jump
 
     /// The anchor owning the row or section a link lands on. Emoji shares the
@@ -144,7 +148,8 @@ enum SettingsAnchor: String, CaseIterable {
              .verticalScroll, .invertVerticalScroll, .horizontalScroll, .invertHorizontalScroll,
              .scrollWrapAround, .scrollSensitivity, .scrollHaptics:
             .mouse
-        case .hotkeySwitchLeft, .hotkeySwitchRight, .jump:
+        case .hotkeySwitchLeft, .hotkeySwitchRight, .hotkeySendLeft, .hotkeySendRight,
+             .hotkeyMoveLeft, .hotkeyMoveRight, .jump:
             .keyboard
         }
     }

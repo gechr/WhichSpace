@@ -123,7 +123,7 @@ enum Layout {
     static let settingsSliderDefaultPosition = 0.5
     static let settingsSpaceListWidth = 140.0
     static let settingsSpaceListMaxHeight = 800.0
-    static let settingsJumpListMaxHeight = 420.0
+    static let settingsJumpListMaxHeight = 250.0
     static let settingsSpaceListScrollerWidth = 16.0
     static let settingsSpaceNameMaxLength = 10
     static let settingsSpacesEditorGutter = 10.0
@@ -326,6 +326,8 @@ enum Localization {
     static let labelLabelBackground = String(localized: "label_label_background")
     static let labelLabelForeground = String(localized: "label_label_foreground")
     static let labelLeft = String(localized: "label_left")
+    static let labelMoveLeft = String(localized: "label_move_left")
+    static let labelMoveRight = String(localized: "label_move_right")
     static let labelNumber = String(localized: "label_number")
     static let labelNumberBackground = String(localized: "label_number_background")
     static let labelNumberForeground = String(localized: "label_number_foreground")
@@ -333,6 +335,8 @@ enum Localization {
     static let labelPreview = String(localized: "label_preview")
     static let labelResetSettings = String(localized: "label_reset_settings")
     static let labelRight = String(localized: "label_right")
+    static let labelSendLeft = String(localized: "label_send_left")
+    static let labelSendRight = String(localized: "label_send_right")
     static let labelSensitivity = String(localized: "label_sensitivity")
     static let labelSkinTone = String(localized: "label_skin_tone")
     static let labelSeparator = String(localized: "label_separator")
@@ -355,6 +359,7 @@ enum Localization {
     static let labelStylePill = String(localized: "label_style_pill")
     static let labelStylePillOutline = String(localized: "label_style_pill_outline")
     static let labelVertical = String(localized: "label_vertical")
+    static let labelWindow = String(localized: "label_window")
     static let menuBadge = String(localized: "menu_badge")
     static let menuColor = String(localized: "menu_color")
     static let menuEmoji = String(localized: "menu_emoji")
@@ -391,6 +396,10 @@ enum Localization {
     static let tipFont = String(localized: "tip_font")
     static let tipHasOwnStyle = String(localized: "tip_has_own_style")
     static let tipHideEmptySpaces = String(localized: "tip_hide_empty_spaces")
+    static let tipHotkeyMoveLeft = String(localized: "tip_hotkey_move_left")
+    static let tipHotkeyMoveRight = String(localized: "tip_hotkey_move_right")
+    static let tipHotkeySendLeft = String(localized: "tip_hotkey_send_left")
+    static let tipHotkeySendRight = String(localized: "tip_hotkey_send_right")
     static let tipHotkeySwitchLeft = String(localized: "tip_hotkey_switch_left")
     static let tipHotkeySwitchRight = String(localized: "tip_hotkey_switch_right")
     static let tipHotkeysBehavior = String(localized: "tip_hotkeys_behavior")

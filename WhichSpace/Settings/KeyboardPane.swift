@@ -1,8 +1,9 @@
 import KeyboardShortcuts
 import SwiftUI
 
-/// The Keyboard settings pane: global hotkeys for relative switching and for
-/// jumping straight to a Space, plus the accessibility permission they need.
+/// The Keyboard settings pane: global hotkeys for relative switching, for
+/// moving the front window, and for jumping straight to a Space, plus the
+/// accessibility permission they need.
 /// Container-agnostic - it knows nothing about the window chrome hosting it.
 struct KeyboardPane: View {
     let model: SettingsModel
@@ -24,31 +25,102 @@ struct KeyboardPane: View {
             // Left/right rather than previous/next: "previous" is reserved
             // for the last-visited Space
             SettingsSection(Localization.labelSwitch) {
-                SettingsRow(
-                    icon: "arrow.left.square",
+                recorderRow(
+                    title: Localization.labelLeft,
+                    icon: "arrowshape.left.fill",
                     subtitle: Localization.tipHotkeySwitchLeft,
-                    anchor: .hotkeySwitchLeft
-                ) {
-                    Text(Localization.labelLeft)
-                } control: {
-                    KeyboardShortcuts.Recorder(for: .switchLeft)
-                }
-                .padding(.trailing, Layout.settingsSpaceListScrollerWidth)
+                    anchor: .hotkeySwitchLeft,
+                    name: .switchLeft
+                )
                 SettingsRowDivider()
-                SettingsRow(
-                    icon: "arrow.right.square",
+                recorderRow(
+                    title: Localization.labelRight,
+                    icon: "arrowshape.right.fill",
                     subtitle: Localization.tipHotkeySwitchRight,
-                    anchor: .hotkeySwitchRight
-                ) {
-                    Text(Localization.labelRight)
-                } control: {
-                    KeyboardShortcuts.Recorder(for: .switchRight)
-                }
-                .padding(.trailing, Layout.settingsSpaceListScrollerWidth)
+                    anchor: .hotkeySwitchRight,
+                    name: .switchRight
+                )
+            }
+            windowSection
+            if !SpaceWindowMover.isSupported {
+                unsupportedNote
             }
             jumpSection
             behaviorNote
         }
+    }
+
+    // MARK: - Window
+
+    /// Sending leaves you where you are and moving follows the window, so the
+    /// filled arrows mark the rows that switch Space too.
+    private var windowSection: some View {
+        SettingsSection(Localization.labelWindow) {
+            recorderRow(
+                title: Localization.labelSendLeft,
+                icon: "arrow.left.square",
+                subtitle: Localization.tipHotkeySendLeft,
+                anchor: .hotkeySendLeft,
+                name: .sendLeft
+            )
+            SettingsRowDivider()
+            recorderRow(
+                title: Localization.labelSendRight,
+                icon: "arrow.right.square",
+                subtitle: Localization.tipHotkeySendRight,
+                anchor: .hotkeySendRight,
+                name: .sendRight
+            )
+            SettingsRowDivider()
+            recorderRow(
+                title: Localization.labelMoveLeft,
+                icon: "arrow.left.square.fill",
+                subtitle: Localization.tipHotkeyMoveLeft,
+                anchor: .hotkeyMoveLeft,
+                name: .moveLeft
+            )
+            SettingsRowDivider()
+            recorderRow(
+                title: Localization.labelMoveRight,
+                icon: "arrow.right.square.fill",
+                subtitle: Localization.tipHotkeyMoveRight,
+                anchor: .hotkeyMoveRight,
+                name: .moveRight
+            )
+        }
+    }
+
+    /// No backend on this host can move a window, so a binding recorded above
+    /// would do nothing without saying why.
+    private var unsupportedNote: some View {
+        HStack(alignment: .firstTextBaseline, spacing: 5) {
+            Image(systemName: "exclamationmark.triangle")
+            Text(Localization.errorScriptingMoveUnsupported)
+        }
+        .font(.system(size: Layout.settingsRowSubtitleFontSize))
+        .foregroundStyle(.secondary)
+        .padding(.leading, 4)
+    }
+
+    // MARK: - Rows
+
+    /// The rows outside the Jump list, which differ only in what they say and
+    /// which binding they record.
+    private func recorderRow(
+        title: String,
+        icon: String,
+        subtitle: String,
+        anchor: SettingsAnchor,
+        name: KeyboardShortcuts.Name
+    ) -> some View {
+        SettingsRow(icon: icon, subtitle: subtitle, anchor: anchor) {
+            Text(title)
+        } control: {
+            KeyboardShortcuts.Recorder(for: name)
+        }
+        // The Jump list gives up this strip to its scroller, so the other
+        // cards give up the same width and all the recorders stay aligned
+        .padding(.trailing, Layout.settingsSpaceListScrollerWidth)
     }
 
     /// Wrap around and classic switching govern these hotkeys too - for
