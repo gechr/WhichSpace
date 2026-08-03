@@ -1051,7 +1051,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             statusBarItem.isVisible = true
             return
         }
-        // Hide if there's only one regular (non-fullscreen) space across all displays
-        statusBarItem.isVisible = appState.regularSpaceCount > 1
+        // A separate single Space on each display still leaves nothing to
+        // switch between on any one display.
+        statusBarItem.isVisible = appState.hasMultipleRegularSpacesOnAnyDisplay
     }
 }

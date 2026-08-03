@@ -213,6 +213,13 @@ final class AppState {
         allDisplaysSpaceInfo.reduce(0) { $0 + $1.regularSpaceCount }
     }
 
+    /// Whether any display has more than one regular Space. A collection of
+    /// single-Space displays still has nothing useful for the status item to
+    /// switch between on any individual display.
+    var hasMultipleRegularSpacesOnAnyDisplay: Bool {
+        allDisplaysSpaceInfo.contains { $0.regularSpaceCount > 1 }
+    }
+
     private let displaySpaceProvider: DisplaySpaceProvider
 
     let store: DefaultsStore

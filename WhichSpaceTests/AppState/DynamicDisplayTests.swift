@@ -404,6 +404,25 @@ struct RegularSpaceCountTests {
         let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
         #expect(sut.regularSpaceCount == 3)
+        #expect(sut.hasMultipleRegularSpacesOnAnyDisplay)
+    }
+
+    @Test("five displays with one Space each have no multi-Space display")
+    func multipleDisplaysWithOneSpaceEach() {
+        stub.activeDisplayIdentifier = "Display1"
+        stub.displays = (1 ... 5).map { displayNumber in
+            let spaceID = displayNumber * 100
+            return CGSStub.makeDisplay(
+                displayID: "Display\(displayNumber)",
+                spaces: [(id: spaceID, isFullscreen: false)],
+                activeSpaceID: spaceID
+            )
+        }
+
+        let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+
+        #expect(sut.regularSpaceCount == 5)
+        #expect(!sut.hasMultipleRegularSpacesOnAnyDisplay)
     }
 
     @Test("no spaces yields zero regular count")

@@ -60806,259 +60806,259 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "إخفاء أيقونة شريط القوائم عندما توجد مساحة واحدة فقط"
+            "value" : "إخفاء أيقونة شريط القوائم عندما توجد مساحة واحدة فقط على كل شاشة"
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Скрий иконата в лентата с менюта, когато има само едно Пространство"
+            "value" : "Скрий иконата в лентата с менюта, когато има само едно Пространство на всеки дисплей"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Amaga la icona de la barra de menús quan només hi ha un Espai"
+            "value" : "Amaga la icona de la barra de menús quan només hi ha un Espai per pantalla"
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Skrýt ikonu v řádku nabídek, když je pouze jeden Space"
+            "value" : "Skrýt ikonu v řádku nabídek, když je na každém displeji pouze jeden Space"
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Skjul menulinjeikon, når der kun er ét Space"
+            "value" : "Skjul menulinjeikon, når der kun er ét Space pr. skærm"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Menüleistensymbol ausblenden, wenn nur ein Space vorhanden ist"
+            "value" : "Menüleistensymbol ausblenden, wenn nur ein Space pro Display vorhanden ist"
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Απόκρυψη του εικονιδίου γραμμής μενού όταν υπάρχει μόνο ένας Χώρος"
+            "value" : "Απόκρυψη του εικονιδίου γραμμής μενού όταν υπάρχει μόνο ένας Χώρος ανά οθόνη"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hide the menu bar icon when there is only one Space"
+            "value" : "Hide the menu bar icon when there is only one Space per display"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hide the menu bar icon when there is only one Space"
+            "value" : "Hide the menu bar icon when there is only one Space per display"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ocultar el icono de la barra de menús cuando solo hay un Espacio"
+            "value" : "Ocultar el icono de la barra de menús cuando solo hay un Espacio por pantalla"
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "آیکون نوار منو را وقتی فقط یک فضا وجود دارد مخفی کنید"
+            "value" : "آیکون نوار منو را وقتی در هر نمایشگر فقط یک فضا وجود دارد مخفی کنید"
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Piilota valikkorivin kuvake, kun Spaceja on vain yksi"
+            "value" : "Piilota valikkorivin kuvake, kun Spaceja on vain yksi näyttöä kohden"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Masquer l'icône de la barre des menus quand il n'y a qu'un seul Espace"
+            "value" : "Masquer l'icône de la barre des menus quand il n'y a qu'un seul Espace par écran"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "הסתר את סמל שורת התפריטים כשיש רק מרחב אחד"
+            "value" : "הסתר את סמל שורת התפריטים כשיש רק מרחב אחד בכל צג"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "जब केवल एक स्पेस हो तो मेनू बार आइकन छिपाएँ"
+            "value" : "जब प्रति डिस्प्ले केवल एक स्पेस हो तो मेनू बार आइकन छिपाएँ"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A menüsor ikonjának elrejtése, ha csak egy Space van"
+            "value" : "A menüsor ikonjának elrejtése, ha kijelzőnként csak egy Space van"
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sembunyikan ikon bilah menu saat hanya ada satu Space"
+            "value" : "Sembunyikan ikon bilah menu saat hanya ada satu Space per layar"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nascondi l'icona della barra dei menu quando c'è un solo Spazio"
+            "value" : "Nascondi l'icona della barra dei menu quando c'è un solo Spazio per ogni schermo"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "スペースが1つだけの場合はメニューバーアイコンを隠す"
+            "value" : "ディスプレイごとにスペースが1つだけの場合はメニューバーアイコンを隠す"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "스페이스가 하나만 있을 때 메뉴 막대 아이콘 숨기기"
+            "value" : "디스플레이별로 스페이스가 하나만 있을 때 메뉴 막대 아이콘 숨기기"
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Сокриј ја иконата во лентата со менија кога има само еден Простор"
+            "value" : "Сокриј ја иконата во лентата со менија кога има само еден Простор на секој екран"
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sembunyikan ikon bar menu apabila hanya ada satu Ruang"
+            "value" : "Sembunyikan ikon bar menu apabila hanya ada satu Ruang bagi setiap paparan"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Skjul menylinjeikon når det bare er ett Space"
+            "value" : "Skjul menylinjeikon når det bare er ett Space per skjerm"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Het menubalkpictogram verbergen wanneer er maar één Space is"
+            "value" : "Het menubalkpictogram verbergen wanneer er maar één Space per beeldscherm is"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gøym menylinjeikon når det berre er eitt Space"
+            "value" : "Gøym menylinjeikon når det berre er eitt Space per skjerm"
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "جدوں صرف اک سپیس ہووے تاں مینیو بار آئیکن لکاؤ"
+            "value" : "جدوں ہر ڈسپلے تے صرف اک سپیس ہووے تاں مینیو بار آئیکن لکاؤ"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ukryj ikonę paska menu, gdy jest tylko jeden Space"
+            "value" : "Ukryj ikonę paska menu, gdy na każdym ekranie jest tylko jeden Space"
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "کله چې یوازې یو سپېس وي د مېنو پټې نښه پټه کړئ"
+            "value" : "کله چې پر هر ډیسپلې یوازې یو سپېس وي د مېنو پټې نښه پټه کړئ"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ocultar o ícone da barra de menus quando só há um Espaço"
+            "value" : "Ocultar o ícone da barra de menus quando só há um Espaço por ecrã"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ocultar o ícone da barra de menus quando há apenas um Espaço"
+            "value" : "Ocultar o ícone da barra de menus quando há apenas um Espaço por tela"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ascunde pictograma din bara de meniu când există un singur Spațiu"
+            "value" : "Ascunde pictograma din bara de meniu când există un singur Spațiu pe fiecare ecran"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Скрыть значок в строке меню, когда Пространство только одно"
+            "value" : "Скрыть значок в строке меню, когда на каждом дисплее только одно Пространство"
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Skryť ikonu v lište ponúk, keď je len jeden Priestor"
+            "value" : "Skryť ikonu v lište ponúk, keď je na každom displeji len jeden Priestor"
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sakrij ikonu trake menija kada postoji samo jedan Prostor"
+            "value" : "Sakrij ikonu trake menija kada postoji samo jedan Prostor na svakom ekranu"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dölj menyradsikonen när det bara finns ett Space"
+            "value" : "Dölj menyradsikonen när det bara finns ett Space per skärm"
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ซ่อนไอคอนแถบเมนูเมื่อมี Space เพียงหนึ่งเดียว"
+            "value" : "ซ่อนไอคอนแถบเมนูเมื่อมี Space เพียงหนึ่งเดียวต่อจอแสดงผล"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Yalnızca bir Alan olduğunda menü çubuğu simgesini gizle"
+            "value" : "Her ekranda yalnızca bir Alan olduğunda menü çubuğu simgesini gizle"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Приховати значок у смузі меню, коли є лише один Простір"
+            "value" : "Приховати значок у смузі меню, коли на кожному дисплеї є лише один Простір"
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "جب صرف ایک اسپیس ہو تو مینو بار آئیکن چھپائیں"
+            "value" : "جب ہر ڈسپلے پر صرف ایک اسپیس ہو تو مینو بار آئیکن چھپائیں"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ẩn biểu tượng thanh menu khi chỉ có một Không gian"
+            "value" : "Ẩn biểu tượng thanh menu khi chỉ có một Không gian trên mỗi màn hình"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "当只有一个空间时隐藏菜单栏图标"
+            "value" : "当每台显示器只有一个空间时隐藏菜单栏图标"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "當只有一個空間時隱藏選單列圖示"
+            "value" : "當每部顯示器只有一個空間時隱藏選單列圖示"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "當只有一個空間時隱藏選單列圖示"
+            "value" : "當每部顯示器只有一個空間時隱藏選單列圖示"
           }
         }
       }
