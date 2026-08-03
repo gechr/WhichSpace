@@ -52354,7 +52354,7 @@
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "แบบอักษร ตัวพิมพ์ ข้อความ ตระกูล ฟอนต์"
+            "value" : "แบบอักษร ตัวพิมพ์ ข้อความ ตระกูลฟอนต์"
           }
         },
         "tr" : {
@@ -52610,7 +52610,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "helskärm full skärm maximerad förstorad"
+            "value" : "helskärm fullskärm maximerad förstorad"
           }
         },
         "th" : {
@@ -52668,7 +52668,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "اهتزاز لمسي لوحة اللمس نقرة لمس القوة"
+            "value" : "اهتزاز الاستجابة اللمسية لوحة التعقب نقرة Force Touch"
           }
         },
         "bg" : {
@@ -52908,19 +52908,19 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "振动 触觉反馈 触控板 轻点 强力触控"
+            "value" : "振动 触感反馈 触控板 轻点 力度触控"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "震動 觸覺回饋 觸控式軌跡板 點按 強制觸碰"
+            "value" : "震動 觸覺回饋 觸控式軌跡板 點按 力度觸控"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "震動 觸覺回饋 觸控板 點按 力度觸控"
+            "value" : "震動 觸覺回報 觸控板 點按 力度觸控"
           }
         }
       }
@@ -53432,7 +53432,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "快捷键 键盘组合 热键 按键 keybind"
+            "value" : "键盘快捷键 组合键 热键 按键 keybind"
           }
         },
         "zh-Hant" : {
@@ -53444,7 +53444,7 @@
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "鍵盤捷徑 組合鍵 熱鍵 按鍵 keybind"
+            "value" : "鍵盤快捷鍵 組合鍵 熱鍵 按鍵 keybind"
           }
         }
       }
@@ -53776,7 +53776,7 @@
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "نام عنوان تغییرنام برچسب متن"
+            "value" : "نام عنوان تغییر نام برچسب متن"
           }
         },
         "fi" : {
@@ -53830,7 +53830,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이름 제목 이름변경 레이블 텍스트"
+            "value" : "이름 제목 이름 변경 레이블 텍스트"
           }
         },
         "mk" : {
@@ -53978,7 +53978,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "خصوصية أمان ثقة سماح منح تفويض إمكانية الوصول"
+            "value" : "خصوصية أمان ثقة سماح منح تفويض تسهيلات الاستخدام"
           }
         },
         "bg" : {
@@ -54240,7 +54240,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "فأرة لوحة لمس تمرير نقر إيماءة زر"
+            "value" : "فأرة لوحة التعقب تمرير نقر إيماءة زر"
           }
         },
         "bg" : {
@@ -54770,7 +54770,7 @@
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "мащаб уголемяване по голям по малък ширина разстояние поле"
+            "value" : "мащаб уголемяване по-голям по-малък ширина разстояние поле"
           }
         },
         "ca" : {
@@ -55324,7 +55324,7 @@
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "χώρος εργασίας επιφάνεια εικονική desktop mission control"
+            "value" : "χώρος εργασίας γραφείο εργασίας επιφάνεια εικονική desktop mission control"
           }
         },
         "en" : {
@@ -55366,7 +55366,7 @@
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "סביבת עבודה שולחן עבודה וירטואלי mission control"
+            "value" : "סביבת עבודה מכתבה שולחן עבודה וירטואלי mission control"
           }
         },
         "hi" : {
@@ -55378,7 +55378,7 @@
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "munkaterület asztal virtuális desktop mission control"
+            "value" : "munkaterület íróasztal virtuális desktop mission control"
           }
         },
         "id" : {
@@ -55402,7 +55402,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "작업공간 데스크톱 가상 데스크톱 mission control"
+            "value" : "작업공간 데스크톱 데스크탑 가상 데스크톱 mission control"
           }
         },
         "mk" : {
@@ -55444,7 +55444,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "obszar roboczy pulpit wirtualny desktop mission control"
+            "value" : "obszar roboczy pulpit biurko wirtualny desktop mission control"
           }
         },
         "ps" : {
@@ -55456,13 +55456,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "área de trabalho ambiente virtual mission control"
+            "value" : "área de trabalho secretária ambiente virtual mission control"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "espaço de trabalho desktop virtual mission control"
+            "value" : "espaço de trabalho mesa desktop virtual mission control"
           }
         },
         "ro" : {
@@ -55474,7 +55474,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "рабочее пространство виртуальный стол mission control"
+            "value" : "рабочее пространство виртуальный рабочий стол mission control"
           }
         },
         "sk" : {
@@ -55510,7 +55510,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "робочий простір віртуальний стіл mission control"
+            "value" : "робочий простір віртуальний робочий стіл mission control"
           }
         },
         "ur" : {
@@ -55522,7 +55522,7 @@
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "không gian làm việc desktop ảo mission control"
+            "value" : "không gian làm việc màn hình nền desktop ảo mission control"
           }
         },
         "zh-Hans" : {
