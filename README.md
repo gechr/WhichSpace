@@ -9,7 +9,7 @@ Have you ever forgotten _which space_ is currently active on macOS and wanted a 
 - [**Multiple Spaces**](#spaces) - Show current Space only, or all Spaces at once
 - [**Multiple Displays**](#displays) - Include Spaces from every display in the menu bar icon
 - [**Click-to-Switch**](#click-on-a-space-to-switch-to-it) - Jump to any Space directly from the menu bar
-- [**Move Windows**](#moving-windows) - Send the front window to another Space, with or without following it
+- [**Move Windows**](#moving-windows) - Send the front window to another Space
 - [**Scroll-to-Switch**](#click-on-a-space-to-switch-to-it) - Cycle through Spaces by scrolling over the menu bar icon
 - [**Colors**](#colors) - Set foreground and background colors per Space
 - [**Icons**](#icons) - Choose from multiple icon styles (square, circle, triangle, and more)
@@ -19,8 +19,8 @@ Have you ever forgotten _which space_ is currently active on macOS and wanted a 
 - [**Badges**](#badges) - Add a small character of your choice next to the Space number
 - [**Size**](#size) - Scale icons to your preference
 - [**Fonts**](#fonts) - Choose a custom font per Space
+- [**Keybinds**](#keybinds) - Global keyboard shortcuts to switch to any Space
 - [**Sound**](#sounds) - Play a sound when switching Spaces
-- [**Keybinds**](#keybinds) - Global keyboard shortcuts to switch to any Space, and to move windows between them
 - [**Shortcuts**](#shortcuts) - Native actions for the Shortcuts app
 - [**AppleScript**](#scripting) - Automate with scripting support
 - [**URL Scheme**](#url-scheme) - Control via `whichspace://` links
@@ -59,6 +59,8 @@ brew install --cask whichspace
 >
 > Empty Spaces can be hidden entirely.
 
+---
+
 ### Displays
 
 #### Include Spaces from your other Displays, or just the current one
@@ -72,17 +74,23 @@ brew install --cask whichspace
 >
 > Full-screen apps are shown as their app icon (or **F**) and can be hidden entirely.
 
+---
+
 ### Colors
 
 #### Choose foreground and background colors for each Space, or apply one color to all Spaces
 
 <img src="Screenshots/SectionColor.png" width="60%">
 
+---
+
 ### Icons
 
 #### Choose from a variety of icons for each Space, or apply one icon to all Spaces
 
 <img src="Screenshots/SectionNumber.png" width="60%">
+
+---
 
 ### Symbols
 
@@ -94,6 +102,8 @@ brew install --cask whichspace
 
 <img src="Screenshots/PickerEmoji.png" width="60%">
 
+---
+
 ### Badges
 
 #### Add a small character next to the Space number
@@ -102,6 +112,8 @@ brew install --cask whichspace
 
 > [!NOTE]
 > Use `#` as the badge character to insert the current Space number.
+
+---
 
 ### Labels
 
@@ -112,17 +124,36 @@ brew install --cask whichspace
 > [!NOTE]
 > Use `{#}` in a label to insert the current Space number, e.g. `{#} - Work` → `3 - Work`.
 
+---
+
 ### Size
 
 #### Adjust the scale and padding of the icons in the menu bar
 
 <img src="Screenshots/SectionSize.png" width="60%">
 
+---
+
 ### Fonts
 
 #### Choose a custom font for each Space, or apply one font to all Spaces
 
 <img src="Screenshots/SectionFont.png" width="60%">
+
+---
+
+### Keybinds
+
+#### Switch Spaces or move windows with global keyboard shortcuts
+
+<img src="Screenshots/SectionKeybinds.png" width="60%">
+
+> [!NOTE]
+> The **Window** shortcuts move the front window between Spaces.
+>
+> **Send** leaves you on the current Space, while **Move** follows the window there.
+
+---
 
 ### Sounds
 
@@ -138,16 +169,7 @@ To add a custom sound:
 2. Copy your sound file into the directory
 3. The sound will appear under the **User** section in the Sound menu
 
-### Keybinds
-
-#### Switch Spaces with global keyboard shortcuts
-
-<img src="Screenshots/SectionKeybinds.png" width="60%">
-
-> [!NOTE]
-> The **Window** shortcuts move the front window between Spaces.
->
-> **Send** leaves you on the current Space, while **Move** follows the window there.
+---
 
 ### Shortcuts
 
@@ -166,6 +188,8 @@ WhichSpace provides native actions in the [Shortcuts](https://support.apple.com/
 - **Reset All Space Labels** / **Badges** - revert every Space at once
 
 "Switch Space" and "Get Current Space Number" are also available directly from Spotlight and Siri.
+
+---
 
 ### Scripting
 
@@ -257,6 +281,8 @@ osascript -e 'tell application "WhichSpace" to reset current space badge'
 # Reset the badges of all Spaces to their defaults
 osascript -e 'tell application "WhichSpace" to reset all space badges'
 ```
+
+---
 
 ### URL Scheme
 
