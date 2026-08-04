@@ -251,6 +251,31 @@ struct DefaultsIsolationGuardTests {
         #expect(KeySpecs.allKeyNames == expectedKeyNames)
     }
 
+    /// The shrink ladder resets on a width-affecting edit and holds still for
+    /// a repaint, so the two groups must together cover every icon key exactly
+    /// once. A key missing from both is never observed at all.
+    @Test("width-affecting and width-neutral keys partition the icon keys")
+    func widthKeyGroupsPartitionIconKeys() {
+        let iconNames = KeySpecs.allKeyNames.subtracting(KeySpecs.nonIconKeyNames)
+
+        #expect(KeySpecs.widthNeutralKeyNames.isSubset(of: iconNames))
+        #expect(store.widthAffectingKeys.count + store.widthNeutralIconKeys.count == iconNames.count)
+        #expect(store.widthNeutralIconKeys.count == KeySpecs.widthNeutralKeyNames.count)
+    }
+
+    /// A new key is width-affecting until named otherwise: an unnecessary
+    /// reflow costs a repaint, a missed one strands the icon at a size it no
+    /// longer needs.
+    @Test("geometry keys are width-affecting and colors are not")
+    func widthKeyGroupsClassifyByGeometry() {
+        for spec in [KeySpecs.paddingScale.name, KeySpecs.sizeScale.name, KeySpecs.shrinkIconToFit.name] {
+            #expect(!KeySpecs.widthNeutralKeyNames.contains(spec))
+        }
+        for spec in [KeySpecs.spaceColors.name, KeySpecs.separatorColor.name] {
+            #expect(KeySpecs.widthNeutralKeyNames.contains(spec))
+        }
+    }
+
     /// Verifies that two tests get different suites.
     @Test("suite isolation A: setting a value should not affect other tests")
     func suiteIsolationFirstTest() {

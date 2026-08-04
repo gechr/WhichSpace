@@ -212,6 +212,25 @@ enum KeySpecs {
         verticalScrollEnabled.name,
     ]
 
+    /// Icon-affecting keys that change how the status item looks but never how
+    /// wide it draws. Growing a shrunk item back reflows every icon to its
+    /// left, so these are the edits not worth spending a reflow on; everything
+    /// else is treated as width-affecting, which is the safe direction - an
+    /// unnecessary reflow costs a repaint, a missed one leaves the shrink
+    /// ladder stuck at a level the new width no longer needs.
+    ///
+    /// Colors and skin tones repaint the same glyph, and a display separator
+    /// occupies `Layout.displaySeparatorWidth` whichever style draws it.
+    static let widthNeutralKeyNames: Set<String> = [
+        displaySpaceColors.name,
+        displaySpaceSkinTones.name,
+        emojiPickerSkinTone.name,
+        separatorColor.name,
+        separatorStyle.name,
+        spaceColors.name,
+        spaceSkinTones.name,
+    ]
+
     /// All key names for enumeration (e.g. in tests).
     static var allKeyNames: Set<String> {
         Set(allSpecs.map(\.name))
@@ -303,11 +322,23 @@ final class DefaultsStore {
         KeySpecs.allSpecs.map { $0.anyKey(suite: suite) }
     }
 
-    /// Suite-bound keys for every preference that can affect status bar
-    /// icon rendering, for observing external defaults writes.
-    var iconAffectingKeys: [Defaults._AnyKey] {
+    /// Suite-bound keys for every preference that can change how wide the
+    /// status item draws, and so earns the shrink ladder another attempt at
+    /// full size.
+    var widthAffectingKeys: [Defaults._AnyKey] {
         KeySpecs.allSpecs
-            .filter { !KeySpecs.nonIconKeyNames.contains($0.name) }
+            .filter {
+                !KeySpecs.nonIconKeyNames.contains($0.name)
+                    && !KeySpecs.widthNeutralKeyNames.contains($0.name)
+            }
+            .map { $0.anyKey(suite: suite) }
+    }
+
+    /// Suite-bound keys for every preference that repaints the icon at the
+    /// same width.
+    var widthNeutralIconKeys: [Defaults._AnyKey] {
+        KeySpecs.allSpecs
+            .filter { KeySpecs.widthNeutralKeyNames.contains($0.name) }
             .map { $0.anyKey(suite: suite) }
     }
 

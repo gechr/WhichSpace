@@ -483,30 +483,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         stopObservingPreferences()
 
         // Derived from the KeySpecs registry so newly added preferences are
-        // observed automatically
-        let iconKeys = store.iconAffectingKeys
-
-        preferenceObservationTasks.append(Task { [weak self] in
-            for await _ in Defaults.updates(iconKeys, initial: false) {
-                // 16ms ≈ one frame at 60 FPS; coalesces rapid changes into a single update
-                try? await Task.sleep(for: .milliseconds(16))
-                guard !Task.isCancelled
-                else { return }
-                // Covers defaults changes that bypass DefaultsStore (and its mutation
-                // counter), e.g. external `defaults write`
-                // A setting that changes how wide the item draws earns another
-                // attempt at full size. One that only changes how it looks -
-                // a colour, a separator glyph - must not, or every cosmetic
-                // edit would widen the item and reflow the whole menu bar.
-                let previousWidth = self?.appState.statusBarIcon.size.width
-                self?.store.invalidateCachedValues()
-                self?.appState.renderer.invalidateIconCache()
-                if self?.appState.statusBarIcon.size.width != previousWidth {
-                    self?.resetShrinkLevel()
-                }
-                self?.updateStatusBarIcon()
-            }
-        })
+        // observed automatically. The split decides which edits earn the
+        // shrink ladder another attempt at full size: one that changes how
+        // wide the item draws does, one that only repaints it does not, or
+        // every colour edit would widen the item and reflow the whole menu
+        // bar.
+        //
+        // The classification is by key rather than by measuring the rendered
+        // width either side of the change. A write through `DefaultsStore`
+        // updates both its memo and the mutation counter keying the icon
+        // cache before this observer runs, so both readings would be of the
+        // width the change already produced.
+        observePreferences(store.widthAffectingKeys, resettingShrinkLevel: true)
+        observePreferences(store.widthNeutralIconKeys, resettingShrinkLevel: false)
 
         let localSpaceNumbersKey = store.keyFor(KeySpecs.localSpaceNumbers)
         preferenceObservationTasks.append(Task { [weak self] in
@@ -529,6 +518,29 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
                 guard !Task.isCancelled
                 else { return }
                 self?.store.invalidateCachedValues()
+            }
+        })
+    }
+
+    /// Rebuilds the icon whenever one of `keys` changes, optionally returning
+    /// the shrink ladder to the top first.
+    ///
+    /// The invalidation covers writes that bypass `DefaultsStore` and its
+    /// memo - an external `defaults write` - and is harmless for the writes
+    /// that went through it.
+    private func observePreferences(_ keys: [Defaults._AnyKey], resettingShrinkLevel: Bool) {
+        preferenceObservationTasks.append(Task { [weak self] in
+            for await _ in Defaults.updates(keys, initial: false) {
+                // 16ms ≈ one frame at 60 FPS; coalesces rapid changes into a single update
+                try? await Task.sleep(for: .milliseconds(16))
+                guard !Task.isCancelled
+                else { return }
+                self?.store.invalidateCachedValues()
+                self?.appState.renderer.invalidateIconCache()
+                if resettingShrinkLevel {
+                    self?.resetShrinkLevel()
+                }
+                self?.updateStatusBarIcon()
             }
         })
     }

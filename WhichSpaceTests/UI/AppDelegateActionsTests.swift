@@ -753,6 +753,38 @@ final class AppDelegateActionsTests: XCTestCase {
         XCTAssertEqual(store.scrollSensitivity, external)
     }
 
+    func testPaddingEditWhileShrunkReturnsIconToFullSize() async throws {
+        sut.startObservingPreferences()
+        defer { sut.stopObservingPreferences() }
+        appState.shrinkLevel = .compact
+
+        // Written through the store, as every edit in Settings is: the memo
+        // and the icon cache counter both move before the observer runs, so
+        // the reset cannot depend on reading a width from either
+        let deadline = ContinuousClock.now.advanced(by: .seconds(2))
+        var padding = store.paddingScale
+        while appState.shrinkLevel != .full, ContinuousClock.now < deadline {
+            padding += 1
+            store.paddingScale = padding
+            try await Task.sleep(for: .milliseconds(25))
+        }
+
+        XCTAssertEqual(appState.shrinkLevel, .full)
+    }
+
+    func testColorEditWhileShrunkLeavesTheIconShrunk() async throws {
+        sut.startObservingPreferences()
+        defer { sut.stopObservingPreferences() }
+        appState.shrinkLevel = .compact
+
+        // Growing back reflows every icon to the left of ours, which a repaint
+        // has not earned
+        store.spaceColors = [1: SpaceColors(foreground: .red, background: .blue)]
+        try await Task.sleep(for: .milliseconds(250))
+
+        XCTAssertEqual(appState.shrinkLevel, .compact)
+    }
+
     // MARK: - Settings Reset
 
     func testResetAllSettings_restoresDefaultsAndTurnsOffLaunchAtLogin() {
