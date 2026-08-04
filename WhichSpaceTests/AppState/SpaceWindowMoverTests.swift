@@ -106,7 +106,7 @@ struct SpaceWindowMoverTests {
             locator: FakeLocator(window: window),
             raiser: raiser,
             isProcessTrusted: { isProcessTrusted },
-            followAction: { spaceID, ownerPID in followed.record(spaceID: spaceID, ownerPID: ownerPID) },
+            followAction: { target, ownerPID in followed.record(target: target, ownerPID: ownerPID) },
             activateApp: activateApp,
             permitted: permitted,
             confirmationTimeout: .milliseconds(30),
@@ -118,10 +118,10 @@ struct SpaceWindowMoverTests {
 
     @MainActor
     final class FollowRecorder {
-        private(set) var calls: [(spaceID: Int, ownerPID: pid_t)] = []
+        private(set) var calls: [(target: SpaceWindowMover.FollowTarget, ownerPID: pid_t)] = []
 
-        func record(spaceID: Int, ownerPID: pid_t) {
-            calls.append((spaceID, ownerPID))
+        func record(target: SpaceWindowMover.FollowTarget, ownerPID: pid_t) {
+            calls.append((target, ownerPID))
         }
     }
 
@@ -171,6 +171,81 @@ struct SpaceWindowMoverTests {
         #expect(fake.attempted.isEmpty, "A fullscreen target must be rejected before any move is issued")
     }
 
+    // MARK: - Global Desktop Moves
+
+    private func makeMultiDisplayAppState() -> AppState {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [(id: 100, isFullscreen: false), (id: 101, isFullscreen: false)],
+                activeSpaceID: 100
+            ),
+            CGSStub.makeDisplay(
+                displayID: "Side",
+                spaces: [
+                    (id: 200, isFullscreen: true),
+                    (id: 201, isFullscreen: false),
+                    (id: 202, isFullscreen: false),
+                ],
+                activeSpaceID: 201
+            ),
+        ]
+        return AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+    }
+
+    @Test("global Desktop numbers resolve across displays")
+    func moveGlobal_targetsOtherDisplaySpace() async throws {
+        let fake = FakeWindowMover()
+        let mover = makeMover(fake)
+
+        try await mover.move(toGlobalDesktop: 3, follow: false, appState: makeMultiDisplayAppState())
+
+        #expect(fake.spaces == [201], "Desktop 3 is the second display's first regular Space")
+    }
+
+    @Test("global Desktop numbering skips fullscreen Spaces")
+    func moveGlobal_skipsFullscreenSpaces() async throws {
+        let fake = FakeWindowMover()
+        let mover = makeMover(fake)
+
+        try await mover.move(toGlobalDesktop: 4, follow: false, appState: makeMultiDisplayAppState())
+
+        #expect(fake.spaces == [202], "The fullscreen Space consumes no Desktop number")
+    }
+
+    @Test("global Desktop move past the last Desktop throws")
+    func moveGlobal_outOfRange_throws() async {
+        let mover = makeMover(FakeWindowMover())
+        let appState = makeMultiDisplayAppState()
+
+        await #expect(throws: MoveError.self) {
+            try await mover.move(toGlobalDesktop: 5, follow: false, appState: appState)
+        }
+    }
+
+    @Test("global Desktop follow routes through the numbered Desktop")
+    func moveGlobal_followUsesDesktopRoute() async throws {
+        let fake = FakeWindowMover()
+        let followed = FollowRecorder()
+        let mover = makeMover(fake, followed: followed)
+
+        try await mover.move(toGlobalDesktop: 3, follow: true, appState: makeMultiDisplayAppState())
+
+        #expect(followed.calls.count == 1)
+        #expect(followed.calls.first?.target == .desktop(number: 3, spaceID: 201))
+    }
+
+    @Test("global Desktop move accepts a window on another display")
+    func moveGlobal_windowOnOtherDisplay_moves() async throws {
+        let fake = FakeWindowMover(spaces: [202])
+        let mover = makeMover(fake)
+
+        try await mover.move(toGlobalDesktop: 1, follow: false, appState: makeMultiDisplayAppState())
+
+        #expect(fake.spaces == [100], "Global numbering may move a window across displays")
+    }
+
     @Test("move without a front window throws")
     func move_withoutWindow_throws() async {
         let fake = FakeWindowMover()
@@ -217,7 +292,7 @@ struct SpaceWindowMoverTests {
         try await mover.move(toSpaceNumber: 2, follow: true, appState: makeAppState())
 
         #expect(followed.calls.count == 1)
-        #expect(followed.calls.first?.spaceID == 101)
+        #expect(followed.calls.first?.target == .space(id: 101))
         #expect(followed.calls.first?.ownerPID == 99)
     }
 

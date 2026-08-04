@@ -583,6 +583,9 @@ struct ScriptingCommandsTests {
 
     @Test("resolveAllLabels marks fullscreen Spaces with the default label")
     func resolveAllLabels_fullscreen() {
+        // Local numbering: fullscreen entries keep a position in the list.
+        // Global numbering drops them, covered by the global tests below.
+        store.localSpaceNumbers = true
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -649,5 +652,127 @@ struct ScriptingCommandsTests {
 
         #expect(ScriptingHelpers.resolveLabel(forSpace: 99, appState: appState, store: store).isEmpty)
         #expect(ScriptingHelpers.resolveBadge(forSpace: 99, appState: appState, store: store).isEmpty)
+    }
+
+    // MARK: - Global Numbering Tests
+
+    private func makeMultiDisplayAppState() -> AppState {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [(id: 100, isFullscreen: false), (id: 101, isFullscreen: false)],
+                activeSpaceID: 100
+            ),
+            CGSStub.makeDisplay(
+                displayID: "Side",
+                spaces: [
+                    (id: 200, isFullscreen: true),
+                    (id: 201, isFullscreen: false),
+                    (id: 202, isFullscreen: false),
+                ],
+                activeSpaceID: 201
+            ),
+        ]
+        return AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+    }
+
+    @Test("global numbering enumerates Desktops across displays")
+    func globalNumbering_enumeratesAcrossDisplays() {
+        store.localSpaceNumbers = false
+        let appState = makeMultiDisplayAppState()
+
+        #expect(ScriptingHelpers.spaceCount(appState: appState, store: store) == 4)
+        #expect(
+            ScriptingHelpers.resolveAllLabels(appState: appState, store: store)
+                == ["1", "2", "3", "4"],
+            "Fullscreen Spaces carry no global Desktop number"
+        )
+    }
+
+    @Test("global numbered labels write to the owning display")
+    func globalNumbering_labelsKeyTheOwningDisplay() {
+        store.localSpaceNumbers = false
+        let appState = makeMultiDisplayAppState()
+
+        ScriptingHelpers.setLabel("Mail", forSpace: 3, appState: appState, store: store)
+
+        // Desktop 3 is the second display's first regular Space, stored at
+        // its fullscreen-inclusive entry position
+        #expect(SpacePreferences.label(forSpace: 2, display: "Side", store: store) == "Mail")
+        #expect(ScriptingHelpers.resolveAllLabels(appState: appState, store: store)[2] == "Mail")
+    }
+
+    @Test("global numbered badges resolve the number token globally")
+    func globalNumbering_badgeTokenResolvesGlobally() throws {
+        store.localSpaceNumbers = false
+        let appState = makeMultiDisplayAppState()
+
+        try ScriptingHelpers.setBadge(
+            BadgeTemplate.spaceToken,
+            forSpace: 4,
+            appState: appState,
+            store: store
+        )
+
+        #expect(ScriptingHelpers.resolveAllBadges(appState: appState, store: store) == ["", "", "", "4"])
+    }
+
+    @Test("global numbered writes past the last Desktop are ignored")
+    func globalNumbering_writesPastLastDesktop_ignored() {
+        store.localSpaceNumbers = false
+        let appState = makeMultiDisplayAppState()
+
+        ScriptingHelpers.setLabel("Ghost", forSpace: 5, appState: appState, store: store)
+
+        #expect(ScriptingHelpers.resolveAllLabels(appState: appState, store: store) == ["1", "2", "3", "4"])
+    }
+
+    @Test("fullscreen current Space falls back to its entry position in global mode")
+    func globalNumbering_fullscreenCurrentSpace_fallsBackToPosition() {
+        store.localSpaceNumbers = false
+        stub.activeDisplayIdentifier = "Side"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [(id: 100, isFullscreen: false), (id: 101, isFullscreen: false)],
+                activeSpaceID: 100
+            ),
+            CGSStub.makeDisplay(
+                displayID: "Side",
+                spaces: [(id: 201, isFullscreen: false), (id: 202, isFullscreen: true)],
+                activeSpaceID: 202
+            ),
+        ]
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+
+        // The display's Desktops start at global number 3; borrowing that for
+        // the fullscreen Space would name an unrelated Desktop
+        #expect(appState.currentSpace == 2)
+        #expect(appState.currentSpaceDisplayNumber == 2)
+    }
+
+    @Test("global numbering caps at macOS's numbered Desktop range")
+    func globalNumbering_capsAtNumberedShortcutRange() {
+        store.localSpaceNumbers = false
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: (0 ..< 9).map { (id: 100 + $0, isFullscreen: false) },
+                activeSpaceID: 100
+            ),
+            CGSStub.makeDisplay(
+                displayID: "Side",
+                spaces: (0 ..< 8).map { (id: 200 + $0, isFullscreen: false) },
+                activeSpaceID: 200
+            ),
+        ]
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+
+        // 17 regular Spaces exist, but macOS's numbered shortcuts stop at 16,
+        // so Desktop 17 is not addressable by global number on any surface
+        #expect(ScriptingHelpers.spaceCount(appState: appState, store: store) == 16)
+        #expect(ScriptingHelpers.resolveAllLabels(appState: appState, store: store).count == 16)
     }
 }

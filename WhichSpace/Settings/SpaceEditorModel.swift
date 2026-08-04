@@ -250,16 +250,40 @@ final class SpaceEditorModel {
             let number = regularCount + candidate.number - entries.count
             return String(format: Localization.labelDesktopNumber, number)
         }
-        if let uuid = entry.uuid, let custom = customNames()[uuid] {
-            let trimmed = custom.trimmingCharacters(in: .whitespaces)
-            if !trimmed.isEmpty {
-                return Self.truncatedName(trimmed)
-            }
+        if let custom = customSpaceName(for: entry) {
+            return custom
         }
         guard let regularIndex = entry.regularIndex else {
             return nil
         }
         return String(format: Localization.labelDesktopNumber, regularIndex)
+    }
+
+    /// The Keyboard pane's globally numbered Desktop title. Regular Spaces
+    /// are flattened across displays in the same order Mission Control uses;
+    /// fullscreen Spaces do not consume a Desktop number.
+    func globalDesktopName(for number: Int) -> String {
+        _ = tick
+        let entries = appState.allDisplaysSpaceInfo
+            .flatMap(\.entries)
+            .filter { $0.regularIndex != nil }
+        if entries.indices.contains(number - 1),
+           let custom = customSpaceName(for: entries[number - 1])
+        {
+            return custom
+        }
+        return String(format: Localization.labelDesktopNumber, number)
+    }
+
+    private func customSpaceName(for entry: SpaceEntry) -> String? {
+        guard let uuid = entry.uuid, let custom = customNames()[uuid] else {
+            return nil
+        }
+        let trimmed = custom.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty else {
+            return nil
+        }
+        return Self.truncatedName(trimmed)
     }
 
     /// Custom names are capped so one long name cannot stretch the list.

@@ -8,7 +8,7 @@
         <command name="move front window right" code="WSpcmvrt" description="Move the frontmost window to the Space on the right, and switch to it.">
             <cocoa class="WhichSpace.MoveWindowRightCommand"/>
         </command>
-        <command name="move front window to space number" code="WSpcmvsp" description="Move the frontmost window to a Space by number on the current display, and switch to it.">
+        <command name="move front window to space number" code="WSpcmvsp" description="Move the frontmost window to a Space by number, and switch to it. Numbering follows the menu bar&apos;s local or global preference.">
             <cocoa class="WhichSpace.MoveWindowToSpaceCommand"/>
             <direct-parameter type="integer" description="The Space number to move the window to (1-based)."/>
         </command>
@@ -30,7 +30,7 @@
         <command name="send front window right" code="WSpcsdrt" description="Send the frontmost window to the Space on the right, without switching Space.">
             <cocoa class="WhichSpace.SendWindowRightCommand"/>
         </command>
-        <command name="send front window to space number" code="WSpcsdsp" description="Send the frontmost window to a Space by number on the current display, without switching Space.">
+        <command name="send front window to space number" code="WSpcsdsp" description="Send the frontmost window to a Space by number, without switching Space. Numbering follows the menu bar&apos;s local or global preference.">
             <cocoa class="WhichSpace.SendWindowToSpaceCommand"/>
             <direct-parameter type="integer" description="The Space number to send the window to (1-based)."/>
         </command>
@@ -43,7 +43,7 @@
         <command name="switch to previous space" code="WSpcswpv" description="Switch back to the Space last visited on the current display.">
             <cocoa class="WhichSpace.SwitchToPreviousSpaceCommand"/>
         </command>
-        <command name="switch to space number" code="WSpcswsp" description="Switch to a Space by number on the current display.">
+        <command name="switch to space number" code="WSpcswsp" description="Switch to a Space by number. Numbering follows the menu bar&apos;s local or global preference; global numbering addresses at most 16 Desktops, matching macOS&apos;s numbered Mission Control shortcuts.">
             <cocoa class="WhichSpace.SwitchToSpaceCommand"/>
             <direct-parameter type="integer" description="The Space number to switch to (1-based)."/>
             <parameter name="label" code="swlb" type="text" optional="yes" description="A custom label to apply to the Space.">
@@ -55,18 +55,18 @@
         </command>
         <class name="application" code="capp" description="The WhichSpace application.">
             <cocoa class="NSApplication"/>
-            <property name="space count" code="spct" type="integer" access="r" description="The number of Spaces on the current display. Bounds the numbers accepted by `switch to space number`.">
+            <property name="space count" code="spct" type="integer" access="r" description="The number of Spaces addressable by `switch to space number`.">
                 <cocoa key="spaceCount"/>
             </property>
-            <property name="space labels" code="splb" access="r" description="The labels of all Spaces on the current display, in order. Item N is the Space that `switch to space number N` targets.">
+            <property name="space labels" code="splb" access="r" description="The labels of all numbered Spaces, in order. Item N is the Space that `switch to space number N` targets.">
                 <cocoa key="spaceLabels"/>
                 <type type="text" list="yes"/>
             </property>
-            <property name="space badges" code="spbd" access="r" description="The badge characters of all Spaces on the current display, in the same order as `space labels`. Spaces without a badge yield an empty string.">
+            <property name="space badges" code="spbd" access="r" description="The badge characters of all numbered Spaces, in the same order as `space labels`. Spaces without a badge yield an empty string.">
                 <cocoa key="spaceBadges"/>
                 <type type="text" list="yes"/>
             </property>
-            <property name="current space number" code="cusn" type="integer" access="r" description="The current Space number.">
+            <property name="current space number" code="cusn" type="integer" access="r" description="The current Space number, following the local or global numbering preference.">
                 <cocoa key="currentSpaceNumber"/>
             </property>
             <property name="current space label" code="cusl" type="text" access="rw" description="The current Space label. Set to a non-empty string to apply a custom label to the current Space; use `reset current space label` to clear it.">

@@ -19,7 +19,7 @@ private struct IntentError: Error, CustomLocalizedStringResourceConvertible {
 struct SwitchSpaceIntent: AppIntent {
     static let title: LocalizedStringResource = "Switch Space"
     static let description = IntentDescription(
-        "Switches to a Space on the current display, optionally applying a label and badge."
+        "Switches to a Space by number, optionally applying a label and badge."
     )
 
     @Parameter(title: "Space Number")
@@ -133,7 +133,7 @@ struct SwitchPreviousIntent: AppIntent {
 struct MoveWindowToSpaceIntent: AppIntent {
     static let title: LocalizedStringResource = "Move Window to Space"
     static let description = IntentDescription(
-        "Moves the frontmost window to a Space on the current display, optionally switching to it."
+        "Moves the frontmost window to a Space by number, optionally switching to it."
     )
 
     @Parameter(title: "Space Number")
@@ -213,7 +213,7 @@ struct GetCurrentSpaceNumberIntent: AppIntent {
 
     @MainActor
     func perform() async throws -> some IntentResult & ReturnsValue<Int> {
-        .result(value: AppEnvironment.shared.appState.currentSpace)
+        .result(value: AppEnvironment.shared.appState.currentSpaceDisplayNumber)
     }
 }
 

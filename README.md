@@ -68,7 +68,7 @@ brew install --cask whichspace
 <img src="Screenshots/ShowAllDisplays.png">
 
 > [!NOTE]
-> macOS allows an app only one menu bar icon, mirrored on every display, so WhichSpace cannot show a different number on each monitor. This setting draws every display's Spaces into that one icon.
+> macOS allows an app only one menu bar item, mirrored on every display, so WhichSpace cannot show a different number on each monitor. This setting draws every display's Spaces into that one item.
 >
 > A vertical separator is shown between Displays.
 >
@@ -198,7 +198,7 @@ WhichSpace provides native actions in the [Shortcuts](https://support.apple.com/
 ##### Switching
 
 ```bash
-# Switch to a specific Space on the current display
+# Switch to a specific Space by number
 osascript -e 'tell application "WhichSpace" to switch to space number 3'
 
 # Switch to a Space and apply a label in one step
@@ -240,7 +240,7 @@ osascript -e 'tell application "WhichSpace" to move front window right'
 # Get the current Space number (1-based numeric index)
 osascript -e 'tell application "WhichSpace" to get current space number'
 
-# Get the number of Spaces on the current display
+# Get the number of Spaces addressable by number
 osascript -e 'tell application "WhichSpace" to get space count'
 
 # Get the labels of all Spaces, in order (item `N` is the target of `switch to space number N`)
@@ -289,7 +289,7 @@ osascript -e 'tell application "WhichSpace" to reset all space badges'
 #### Automate WhichSpace from anywhere
 
 ```bash
-# Switch to a specific Space on the current display
+# Switch to a specific Space by number
 open "whichspace://switch/3"
 
 # Switch to a Space and apply a label and badge in one step

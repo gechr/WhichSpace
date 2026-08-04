@@ -10,22 +10,27 @@ extension KeyboardShortcuts.Name {
     static let moveLeft = Self("moveLeft")
     static let moveRight = Self("moveRight")
 
-    /// One bindable name per Space position on the current display. Positions
-    /// past the current Space count stay recorded but inert, so a binding
-    /// survives the Space it targets being removed and re-added.
+    /// One bindable name per numbered Desktop. Positions past the current
+    /// Desktop count stay recorded but inert, so a binding survives the
+    /// Desktop it targets being removed and re-added.
     static let jumpToSpace: [Self] = (1 ... HotkeyCenter.maxJumpTargets).map {
         Self("switchToSpace\($0)")
     }
 }
 
-/// Routes recorded global hotkeys into the same switching helpers the
-/// scripting, URL, and Shortcuts surfaces use, so range validation and
-/// fullscreen handling stay identical across entry points.
+/// Routes recorded global hotkeys through the shared switching backends.
+/// Relative and locally numbered jumps match the scripting surfaces; globally
+/// numbered jumps can additionally cross display boundaries.
 @MainActor
 final class HotkeyCenter {
-    /// How many Spaces can carry a direct binding: the most Spaces a display
-    /// can hold, so the pane's recorder list and the Spaces sidebar agree.
+    /// How many Desktops can carry a direct binding, matching macOS's numbered
+    /// Mission Control shortcut range and the per-display Space limit.
     nonisolated static let maxJumpTargets = Layout.maxSpacesPerDisplay
+
+    /// Keep WhichSpace's Carbon registrations out of the way long enough for
+    /// a forwarded Mission Control key event to reach macOS instead of
+    /// recursively invoking another WhichSpace binding.
+    private static let forwardedHotKeySettleDelay: Duration = .milliseconds(20)
 
     /// Every bindable name, for whole-surface operations like a full reset.
     static var allNames: [KeyboardShortcuts.Name] {
@@ -126,10 +131,28 @@ final class HotkeyCenter {
         }
     }
 
+    /// Whether a press has already triggered the permission flow this launch.
+    private var promptedForAccessibility = false
+
+    /// Every hotkey needs the Accessibility permission to post its events, so
+    /// the first press without it starts the grant flow instead of leaving
+    /// the binding dead. Later presses stay silent until the grant lands
+    /// rather than stacking system dialogs.
+    private func ensureAccessibility() -> Bool {
+        if AXIsProcessTrusted() {
+            return true
+        }
+        if !promptedForAccessibility {
+            promptedForAccessibility = true
+            Accessibility.requestPermission {}
+        }
+        return false
+    }
+
     /// Wrapping follows the same preference as scroll switching, so the two
     /// relative surfaces agree about what happens at the edges.
     private func switchRelative(goRight: Bool) {
-        guard AXIsProcessTrusted() else {
+        guard ensureAccessibility() else {
             return
         }
         _ = SpaceSwitcher.switchRelative(goRight: goRight, wrap: store.scrollWrapAround)
@@ -138,20 +161,41 @@ final class HotkeyCenter {
     /// Nothing to go back to before the first Space change of the session, so
     /// the binding is inert until then rather than picking a stand-in.
     private func switchToPrevious() {
+        guard ensureAccessibility() else {
+            return
+        }
         try? ScriptingHelpers.switchToPreviousSpace(appState: appState)
     }
 
-    /// Out-of-range and permission failures stay silent: a hotkey has no
-    /// caller to report to, and beeping on every press of a stale binding
-    /// would punish leaving one recorded.
+    /// Out-of-range failures stay silent: a hotkey has no caller to report
+    /// to, and beeping on every press of a stale binding would punish
+    /// leaving one recorded.
     private func switchTo(number: Int) {
-        try? ScriptingHelpers.switchToSpace(number: number, appState: appState)
+        guard ensureAccessibility() else {
+            return
+        }
+        if store.localSpaceNumbers {
+            try? ScriptingHelpers.switchToSpace(number: number, appState: appState, store: store)
+        } else {
+            // The global route may forward a Mission Control key event, so
+            // the Carbon registrations step aside long enough for it to reach
+            // macOS instead of recursively invoking another binding.
+            KeyboardShortcuts.disable(Self.allNames)
+            try? ScriptingHelpers.switchToSpace(number: number, appState: appState, store: store)
+            Task { @MainActor in
+                try? await Task.sleep(for: Self.forwardedHotKeySettleDelay)
+                KeyboardShortcuts.enable(Self.allNames)
+            }
+        }
     }
 
     /// Wrapping follows the same preference as the switch hotkeys, so both
     /// directions behave the same way at the edges. Failures stay silent for
     /// the same reason `switchTo` swallows its own.
     private func moveWindow(goRight: Bool, follow: Bool) {
+        guard ensureAccessibility() else {
+            return
+        }
         Task { @MainActor in
             try? await ScriptingHelpers.moveWindowRelative(
                 goRight: goRight,

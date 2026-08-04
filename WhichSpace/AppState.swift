@@ -213,6 +213,21 @@ final class AppState {
         allDisplaysSpaceInfo.reduce(0) { $0 + $1.regularSpaceCount }
     }
 
+    /// Regular Spaces across every display in Mission Control order, so index
+    /// N-1 is the Space that global Desktop number N addresses. Each carries
+    /// the display and 1-based fullscreen-inclusive entry position that key
+    /// its stored label and badge. Fullscreen Spaces have no Desktop number,
+    /// and the list caps at the numbered Mission Control shortcut range:
+    /// Desktops past it are not addressable by global number on any surface.
+    var globalDesktopEntries: [(displayID: String, position: Int, entry: SpaceEntry)] {
+        let desktops = allDisplaysSpaceInfo.flatMap { display in
+            display.entries.enumerated().compactMap { index, entry in
+                entry.regularIndex == nil ? nil : (display.displayID, index + 1, entry)
+            }
+        }
+        return Array(desktops.prefix(Layout.maxSpacesPerDisplay))
+    }
+
     /// Whether any display has more than one regular Space. A collection of
     /// single-Space displays still has nothing useful for the status item to
     /// switch between on any individual display.
@@ -539,13 +554,25 @@ final class AppState {
     /// Space has since been removed. Switching records the Space being left, so
     /// repeatedly switching here toggles between the two.
     var previousSpaceNumber: Int? {
-        guard let currentDisplayID,
-              let spaceID = lastVisitedSpaceID[currentDisplayID],
-              let index = allSpaceEntries.firstIndex(where: { $0.id == spaceID })
+        guard let entry = previousSpaceEntry,
+              let index = allSpaceEntries.firstIndex(of: entry)
         else {
             return nil
         }
         return index + 1
+    }
+
+    /// The entry of the Space last visited on the current display, or nil
+    /// when none has been recorded yet or the recorded Space has since been
+    /// removed. Keyed by space ID, so switching to it is independent of the
+    /// local or global numbering preference.
+    var previousSpaceEntry: SpaceEntry? {
+        guard let currentDisplayID,
+              let spaceID = lastVisitedSpaceID[currentDisplayID]
+        else {
+            return nil
+        }
+        return allSpaceEntries.first { $0.id == spaceID }
     }
 
     /// Posts currentDisplaySpaceDidChange when the space changes on the same display
@@ -633,8 +660,14 @@ final class AppState {
         let regularIndex = allSpaceEntries.indices.contains(index)
             ? allSpaceEntries[index].regularIndex
             : nil
+        guard let regularIndex else {
+            // A fullscreen Space has no displayed number in either mode, so
+            // it falls back to its entry position on the current display
+            // rather than borrowing an unrelated Desktop's global number
+            return currentSpace
+        }
         if store.localSpaceNumbers {
-            return regularIndex ?? currentSpace
+            return regularIndex
         }
         return currentGlobalSpaceIndex > 0 ? currentGlobalSpaceIndex : currentSpace
     }

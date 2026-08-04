@@ -168,12 +168,30 @@ struct SystemFrontWindowLocator: FrontWindowLocating {
 /// nothing, so membership is the only trustworthy signal.
 @MainActor
 struct SpaceWindowMover {
+    /// How a follow switch addresses the target Space. Local numbered and
+    /// relative moves stay on the active display and switch by space ID; a
+    /// globally numbered move may land on another display, which only the
+    /// numbered Desktop route can reach.
+    enum FollowTarget: Equatable {
+        case space(id: Int)
+        case desktop(number: Int, spaceID: Int)
+
+        var spaceID: Int {
+            switch self {
+            case let .space(id):
+                id
+            case let .desktop(_, spaceID):
+                spaceID
+            }
+        }
+    }
+
     private let activateApp: @MainActor (pid_t) -> Void
     private let arrivalInterval: Duration
     private let arrivalTimeout: Duration
     private let confirmationInterval: Duration
     private let confirmationTimeout: Duration
-    private let followAction: @MainActor (Int, pid_t) -> Void
+    private let followAction: @MainActor (FollowTarget, pid_t) -> Void
     private let isProcessTrusted: () -> Bool
     private let locator: any FrontWindowLocating
     private let mover: any WindowMoving
@@ -185,8 +203,13 @@ struct SpaceWindowMover {
         locator: any FrontWindowLocating = SystemFrontWindowLocator(),
         raiser: any WindowRaising = AXWindowRaiser(),
         isProcessTrusted: @escaping () -> Bool = { AXIsProcessTrusted() },
-        followAction: @escaping @MainActor (Int, pid_t) -> Void = { spaceID, ownerPID in
-            SpaceSwitcher.switchToSpace(id: spaceID)
+        followAction: @escaping @MainActor (FollowTarget, pid_t) -> Void = { target, ownerPID in
+            switch target {
+            case let .space(id):
+                SpaceSwitcher.switchToSpace(id: id)
+            case let .desktop(number, _):
+                SpaceSwitcher.switchToDesktop(number: number)
+            }
             NSRunningApplication(processIdentifier: ownerPID)?.activate()
         },
         activateApp: @escaping @MainActor (pid_t) -> Void = { ownerPID in
@@ -218,8 +241,9 @@ struct SpaceWindowMover {
         self.arrivalInterval = arrivalInterval
     }
 
-    /// Moves the front window to the Space at the given 1-based number, which
-    /// indexes the same array `switchToSpace` uses.
+    /// Moves the front window to the Space at the given 1-based number on the
+    /// current display, which indexes the same array `switchToSpace` uses
+    /// with local numbering.
     func move(toSpaceNumber number: Int, follow: Bool, appState: AppState) async throws(MoveError) {
         let entries = appState.allSpaceEntries
         guard !entries.isEmpty else {
@@ -232,7 +256,35 @@ struct SpaceWindowMover {
         guard entry.regularIndex != nil else {
             throw .spaceIsFullscreen(requested: number)
         }
-        try await move(toSpaceID: entry.id, requested: number, follow: follow, entries: entries, appState: appState)
+        try await move(
+            target: .space(id: entry.id),
+            requested: number,
+            follow: follow,
+            entries: entries,
+            appState: appState
+        )
+    }
+
+    /// Moves the front window to the globally numbered Desktop, counting
+    /// regular Spaces across every display in Mission Control order. The
+    /// window may sit on any display, and following crosses the display
+    /// boundary when the target lives on another one. The target is regular
+    /// by construction: fullscreen Spaces carry no Desktop number.
+    func move(toGlobalDesktop number: Int, follow: Bool, appState: AppState) async throws(MoveError) {
+        let desktops = appState.globalDesktopEntries
+        guard !desktops.isEmpty else {
+            throw .noSpacesAvailable
+        }
+        guard number >= 1, number <= desktops.count else {
+            throw .spaceOutOfRange(requested: number, max: desktops.count)
+        }
+        try await move(
+            target: .desktop(number: number, spaceID: desktops[number - 1].entry.id),
+            requested: number,
+            follow: follow,
+            entries: appState.allDisplaysSpaceInfo.flatMap(\.entries),
+            appState: appState
+        )
     }
 
     /// Moves the front window one Space left or right, skipping fullscreen
@@ -265,7 +317,7 @@ struct SpaceWindowMover {
             throw .spaceOutOfRange(requested: index, max: entries.count)
         }
         try await move(
-            toSpaceID: entries[index - 1].id,
+            target: .space(id: entries[index - 1].id),
             requested: index,
             follow: follow,
             entries: entries,
@@ -284,12 +336,13 @@ struct SpaceWindowMover {
     }
 
     private func move(
-        toSpaceID spaceID: Int,
+        target: FollowTarget,
         requested: Int,
         follow: Bool,
         entries: [SpaceEntry],
         appState: AppState
     ) async throws(MoveError) {
+        let spaceID = target.spaceID
         // Checked before any move is issued, so a permission failure never
         // leaves the window relocated
         if follow, !isProcessTrusted() {
@@ -305,13 +358,14 @@ struct SpaceWindowMover {
         // A sticky window is already everywhere, so treat it as moved
         if source.contains(spaceID) {
             raiseIfTrusted(window)
-            await switchIfFollowing(follow, toSpaceID: spaceID, window: window, appState: appState)
+            await switchIfFollowing(follow, to: target, window: window, appState: appState)
             return
         }
 
-        // The numbered target belongs to the menu bar display, but the window
-        // list is global, so a window on another display would be moved across
-        // displays without the caller asking for it
+        // The window list is global, but the caller's numbering defines which
+        // Spaces are addressable: local numbering passes the menu bar
+        // display's entries so a window on another display is not moved
+        // across displays unasked, global numbering passes every display's
         guard source.contains(where: { id in entries.contains { $0.id == id } }) else {
             throw .noWindowToMove
         }
@@ -332,7 +386,7 @@ struct SpaceWindowMover {
             }
             if await confirm(window: window, spaceID: spaceID, leaving: source) {
                 raiseIfTrusted(window)
-                await switchIfFollowing(follow, toSpaceID: spaceID, window: window, appState: appState)
+                await switchIfFollowing(follow, to: target, window: window, appState: appState)
                 return
             }
         }
@@ -357,15 +411,15 @@ struct SpaceWindowMover {
     /// arrival where both are ordinary same-Space operations.
     private func switchIfFollowing(
         _ follow: Bool,
-        toSpaceID spaceID: Int,
+        to target: FollowTarget,
         window: FrontWindow,
         appState: AppState
     ) async {
         guard follow else {
             return
         }
-        followAction(spaceID, window.ownerPID)
-        guard await arrived(atSpaceID: spaceID, appState: appState) else {
+        followAction(target, window.ownerPID)
+        guard await arrived(atSpaceID: target.spaceID, appState: appState) else {
             return
         }
         raiser.raise(window)
@@ -374,7 +428,9 @@ struct SpaceWindowMover {
 
     /// Waits for the switch to land on the target Space. The swipe gestures
     /// complete asynchronously, so arrival is polled the same way membership
-    /// is confirmed.
+    /// is confirmed. A cross-display follow also converges here: the numbered
+    /// Desktop switch makes the target's display the active one, so the
+    /// current space ID becomes the target's.
     private func arrived(atSpaceID spaceID: Int, appState: AppState) async -> Bool {
         var waited = Duration.zero
         while appState.currentSpaceID != spaceID {

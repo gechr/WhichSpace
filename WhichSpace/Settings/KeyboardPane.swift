@@ -161,12 +161,11 @@ struct KeyboardPane: View {
         return (try? AttributedString(markdown: markdown)) ?? AttributedString(markdown)
     }
 
-    /// One recorder per bindable position, all shown regardless of the
-    /// current Space count so bindings can be recorded ahead of time.
-    /// Rows mirror the Spaces sidebar: titled with the Desktop name, dimmed
-    /// while the Space does not exist yet, live either way. The list scrolls
-    /// within a capped height so sixteen rows do not run the window off the
-    /// screen.
+    /// One recorder per bindable Desktop number, all shown regardless of the
+    /// current count so bindings can be recorded ahead of time. Global
+    /// numbering resolves across every display; local numbering follows the
+    /// active display. The list scrolls within a capped height so sixteen rows
+    /// do not run the window off the screen.
     private var jumpSection: some View {
         SettingsSection(Localization.labelJump, anchor: .jump) {
             ScrollView {
@@ -197,12 +196,17 @@ struct KeyboardPane: View {
     /// sidebar gives them; the recorder stays full strength because binding
     /// ahead of time is exactly what those rows are for.
     private func jumpRow(number: Int) -> some View {
-        let candidate = candidate(number)
-        let placeholder = candidate.entry == nil
+        let localNumbers = model.value(\.localSpaceNumbers)
+        let candidate = localCandidate(number)
+        let placeholder = localNumbers
+            ? candidate.entry == nil
+            : number > appState.regularSpaceCount
         return SettingsRow(icon: "\(number).square") {
             Text(
-                editorModel.spaceName(for: candidate)
+                localNumbers
+                    ? editorModel.spaceName(for: candidate)
                     ?? String(format: Localization.labelSpaceNumber, number)
+                    : editorModel.globalDesktopName(for: number)
             )
             .foregroundStyle(placeholder ? AnyShapeStyle(.tertiary) : AnyShapeStyle(.primary))
         } control: {
@@ -214,7 +218,7 @@ struct KeyboardPane: View {
     /// The same candidate shape the Spaces sidebar lists: the real entry
     /// while the Space exists, nil past the current count so the name
     /// extrapolates the Desktop number the Space would get.
-    private func candidate(_ number: Int) -> (number: Int, entry: SpaceEntry?) {
+    private func localCandidate(_ number: Int) -> (number: Int, entry: SpaceEntry?) {
         let entries = appState.allSpaceEntries
         return (number, number <= entries.count ? entries[number - 1] : nil)
     }

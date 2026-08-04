@@ -312,14 +312,20 @@ enum MoveError: LocalizedError {
 enum ScriptingHelpers {
     /// Moves the frontmost window to the Space at the given 1-based number.
     /// `follow` switches to that Space afterwards, which is the difference
-    /// between the `move` and `send` commands.
+    /// between the `move` and `send` commands. Numbering follows the menu bar
+    /// preference, the same way `switchToSpace(number:)` resolves it.
     static func moveWindow(
         toSpace number: Int,
         follow: Bool,
         appState: AppState = AppEnvironment.shared.appState,
+        store: DefaultsStore = AppEnvironment.shared.store,
         mover: SpaceWindowMover = SpaceWindowMover()
     ) async throws(MoveError) {
-        try await mover.move(toSpaceNumber: number, follow: follow, appState: appState)
+        if store.localSpaceNumbers {
+            try await mover.move(toSpaceNumber: number, follow: follow, appState: appState)
+        } else {
+            try await mover.move(toGlobalDesktop: number, follow: follow, appState: appState)
+        }
     }
 
     /// Moves the frontmost window one Space left or right, skipping fullscreen
@@ -335,9 +341,21 @@ enum ScriptingHelpers {
         try await mover.moveRelative(goRight: goRight, follow: follow, wrap: wrap, appState: appState)
     }
 
-    static func switchToSpace(number: Int, appState: AppState) throws(SwitchError) {
+    /// Switches to the Space at the given 1-based number. Numbering follows
+    /// the menu bar preference: the current display's Spaces with local
+    /// numbering, Desktops across every display otherwise, in which case the
+    /// switch can cross a display boundary.
+    static func switchToSpace(
+        number: Int,
+        appState: AppState,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) throws(SwitchError) {
         guard AXIsProcessTrusted() else {
             throw .accessibilityNotTrusted
+        }
+        guard store.localSpaceNumbers else {
+            try switchToGlobalDesktop(number: number, appState: appState)
+            return
         }
         let entries = appState.allSpaceEntries
         guard !entries.isEmpty else {
@@ -357,17 +375,36 @@ enum ScriptingHelpers {
         }
     }
 
+    /// Switches to a globally numbered Desktop, which may live on another
+    /// display. Fullscreen Spaces carry no Desktop number, so global
+    /// numbering cannot address them.
+    private static func switchToGlobalDesktop(number: Int, appState: AppState) throws(SwitchError) {
+        let desktops = appState.globalDesktopEntries
+        guard !desktops.isEmpty else {
+            throw .noSpacesAvailable
+        }
+        guard number >= 1, number <= desktops.count else {
+            throw .spaceOutOfRange(requested: number, max: desktops.count)
+        }
+        SpaceSwitcher.switchToDesktop(number: number)
+    }
+
     /// Switches back to the Space last visited on the current display. The
     /// switch records the Space being left, so issuing this repeatedly toggles
-    /// between the two.
+    /// between the two. Addressed by space ID rather than number, so the
+    /// toggle is unaffected by the numbering preference.
     static func switchToPreviousSpace(appState: AppState) throws(SwitchError) {
         guard AXIsProcessTrusted() else {
             throw .accessibilityNotTrusted
         }
-        guard let number = appState.previousSpaceNumber else {
+        guard let entry = appState.previousSpaceEntry else {
             throw .noPreviousSpace
         }
-        try switchToSpace(number: number, appState: appState)
+        if entry.regularIndex != nil {
+            SpaceSwitcher.switchToSpace(id: entry.id)
+        } else {
+            _ = SpaceSwitcher.activateAppOnSpace(entry.id)
+        }
     }
 
     /// Switches one Space left or right on the current display, clamped at the
@@ -379,27 +416,75 @@ enum ScriptingHelpers {
         SpaceSwitcher.switchRelative(goRight: goRight)
     }
 
-    /// Returns the number of Spaces on the current display, matching the
-    /// 1-based indexing accepted by `switchToSpace(number:appState:)`.
-    static func spaceCount(appState: AppState) -> Int {
-        appState.allSpaceEntries.count
+    /// Returns the number of Spaces addressable by `switch to space number`:
+    /// the current display's Spaces with local numbering, numbered Desktops
+    /// across every display otherwise.
+    static func spaceCount(
+        appState: AppState,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) -> Int {
+        store.localSpaceNumbers
+            ? appState.allSpaceEntries.count
+            : appState.globalDesktopEntries.count
     }
 
-    /// Returns the resolved label of every Space on the current display, in the
-    /// same order as `spaceCount`, so position N in the list is the Space that
+    /// Returns the resolved label of every numbered Space, in the same order
+    /// as `spaceCount`, so position N in the list is the Space that
     /// `switch to space number N` targets.
     static func resolveAllLabels(appState: AppState, store: DefaultsStore) -> [String] {
-        appState.allSpaceEntries.indices.map {
+        guard store.localSpaceNumbers else {
+            return appState.globalDesktopEntries.indices.map {
+                resolveGlobalLabel(number: $0 + 1, appState: appState, store: store)
+            }
+        }
+        return appState.allSpaceEntries.indices.map {
             resolveLabel(forSpace: $0 + 1, appState: appState, store: store)
         }
     }
 
-    /// Returns the badge of every Space on the current display, in the same
-    /// order as `resolveAllLabels`. Spaces without a badge yield "".
+    /// Returns the badge of every numbered Space, in the same order as
+    /// `resolveAllLabels`. Spaces without a badge yield "".
     static func resolveAllBadges(appState: AppState, store: DefaultsStore) -> [String] {
-        appState.allSpaceEntries.indices.map {
+        guard store.localSpaceNumbers else {
+            return appState.globalDesktopEntries.indices.map {
+                resolveGlobalBadge(number: $0 + 1, appState: appState, store: store)
+            }
+        }
+        return appState.allSpaceEntries.indices.map {
             resolveBadge(forSpace: $0 + 1, appState: appState, store: store)
         }
+    }
+
+    /// Returns the label shown for the globally numbered Desktop: its custom
+    /// label with space tokens resolved against the global number, otherwise
+    /// the number itself, matching the menu bar in global mode.
+    private static func resolveGlobalLabel(number: Int, appState: AppState, store: DefaultsStore) -> String {
+        let target = appState.globalDesktopEntries[number - 1]
+        if let customLabel = SpacePreferences.label(
+            forSpace: target.position,
+            display: target.displayID,
+            store: store
+        ), !customLabel.isEmpty {
+            return LabelTemplate.resolve(customLabel, space: number)
+        }
+        return String(number)
+    }
+
+    /// Returns the badge of the globally numbered Desktop, with the number
+    /// token resolved against the global number. Unbadged Desktops yield "".
+    private static func resolveGlobalBadge(number: Int, appState: AppState, store: DefaultsStore) -> String {
+        let target = appState.globalDesktopEntries[number - 1]
+        guard let badge = SpacePreferences.badge(
+            forSpace: target.position,
+            display: target.displayID,
+            store: store
+        ) else {
+            return ""
+        }
+        guard badge.character == BadgeTemplate.spaceToken else {
+            return badge.character
+        }
+        return String(number)
     }
 
     /// Returns the label shown for the given Space: its custom label when set,
@@ -433,20 +518,59 @@ enum ScriptingHelpers {
         return appState.currentSpaceLabel
     }
 
-    /// Applies a custom label to the given Space on the current display,
-    /// mirroring the menu-driven path in `ActionHandler.setLabel`.
+    /// Resolves a numbered Space to the display and 1-based entry position
+    /// that key its stored preferences. With local numbering the number is
+    /// already the current display's entry position, and positions past the
+    /// current count stay writable so labels can be recorded ahead of time.
+    /// With global numbering the number resolves to the owning display, so
+    /// it must address an existing Desktop.
+    private static func preferenceKey(
+        forSpace number: Int,
+        appState: AppState,
+        store: DefaultsStore
+    ) -> (position: Int, displayID: String?)? {
+        if store.localSpaceNumbers {
+            return number > 0 ? (number, appState.currentDisplayID) : nil
+        }
+        let desktops = appState.globalDesktopEntries
+        guard desktops.indices.contains(number - 1) else {
+            return nil
+        }
+        let target = desktops[number - 1]
+        return (target.position, target.displayID)
+    }
+
+    /// Applies a custom label to the given numbered Space, mirroring the
+    /// menu-driven path in `ActionHandler.setLabel`. Numbering follows the
+    /// menu bar preference, so a global number can address another display.
     /// Leading/trailing whitespace is ignored, and an empty string resets
     /// the label. The status bar icon re-renders automatically via the
     /// `displaySpaceLabels` defaults observer.
     static func setLabel(_ label: String, forSpace number: Int, appState: AppState, store: DefaultsStore) {
-        guard number > 0 else {
+        guard let key = preferenceKey(forSpace: number, appState: appState, store: store) else {
             return
         }
+        setLabel(label, at: key, store: store)
+    }
+
+    /// Applies a custom label to the current Space; see `setLabel(_:forSpace:)`.
+    static func setCurrentLabel(_ label: String, appState: AppState, store: DefaultsStore) {
+        guard appState.currentSpace > 0 else {
+            return
+        }
+        setLabel(label, at: (appState.currentSpace, appState.currentDisplayID), store: store)
+    }
+
+    private static func setLabel(
+        _ label: String,
+        at key: (position: Int, displayID: String?),
+        store: DefaultsStore
+    ) {
         let label = label.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !label.isEmpty else {
             SpacePreferences.clearLabel(
-                forSpace: number,
-                display: appState.currentDisplayID,
+                forSpace: key.position,
+                display: key.displayID,
                 store: store
             )
             return
@@ -456,15 +580,10 @@ enum ScriptingHelpers {
         // visible in the menu bar.
         SpacePreferences.setLabel(
             LabelTemplate.truncate(label, ellipsis: true),
-            forSpace: number,
-            display: appState.currentDisplayID,
+            forSpace: key.position,
+            display: key.displayID,
             store: store
         )
-    }
-
-    /// Applies a custom label to the current Space; see `setLabel(_:forSpace:)`.
-    static func setCurrentLabel(_ label: String, appState: AppState, store: DefaultsStore) {
-        setLabel(label, forSpace: appState.currentSpace, appState: appState, store: store)
     }
 
     /// Removes the custom label from the current Space so it reverts to its
@@ -504,24 +623,41 @@ enum ScriptingHelpers {
         return String(appState.displayNumber(forSpace: number))
     }
 
-    /// Applies a badge character to the given Space on the current display,
-    /// mirroring the menu-driven path in `ActionHandler.setBadgeCharacter`.
-    /// Leading/trailing whitespace is ignored, and an empty string resets
-    /// the badge.
+    /// Applies a badge character to the given numbered Space, mirroring the
+    /// menu-driven path in `ActionHandler.setBadgeCharacter`. Numbering
+    /// follows the menu bar preference, so a global number can address
+    /// another display. Leading/trailing whitespace is ignored, and an empty
+    /// string resets the badge.
     static func setBadge(
         _ character: String,
         forSpace number: Int,
         appState: AppState,
         store: DefaultsStore
     ) throws(BadgeError) {
-        guard number > 0 else {
+        guard let key = preferenceKey(forSpace: number, appState: appState, store: store) else {
             return
         }
+        try setBadge(character, at: key, store: store)
+    }
+
+    /// Applies a badge character to the current Space; see `setBadge(_:forSpace:)`.
+    static func setCurrentBadge(_ character: String, appState: AppState, store: DefaultsStore) throws(BadgeError) {
+        guard appState.currentSpace > 0 else {
+            return
+        }
+        try setBadge(character, at: (appState.currentSpace, appState.currentDisplayID), store: store)
+    }
+
+    private static func setBadge(
+        _ character: String,
+        at key: (position: Int, displayID: String?),
+        store: DefaultsStore
+    ) throws(BadgeError) {
         let character = character.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !character.isEmpty else {
             SpacePreferences.clearBadge(
-                forSpace: number,
-                display: appState.currentDisplayID,
+                forSpace: key.position,
+                display: key.displayID,
                 store: store
             )
             return
@@ -532,22 +668,17 @@ enum ScriptingHelpers {
             throw .notASingleCharacter
         }
         let currentBadge = SpacePreferences.badge(
-            forSpace: number,
-            display: appState.currentDisplayID,
+            forSpace: key.position,
+            display: key.displayID,
             store: store
         )
         // Preserve the existing position, matching the menu input field.
         SpacePreferences.setBadge(
             SpaceBadge(character: character, position: currentBadge?.position ?? .topLeft),
-            forSpace: number,
-            display: appState.currentDisplayID,
+            forSpace: key.position,
+            display: key.displayID,
             store: store
         )
-    }
-
-    /// Applies a badge character to the current Space; see `setBadge(_:forSpace:)`.
-    static func setCurrentBadge(_ character: String, appState: AppState, store: DefaultsStore) throws(BadgeError) {
-        try setBadge(character, forSpace: appState.currentSpace, appState: appState, store: store)
     }
 
     /// Removes the badge from the current Space.
@@ -565,21 +696,22 @@ enum ScriptingHelpers {
 
 /// Extension to make the application scriptable for property access.
 extension NSApplication {
-    /// Returns the current space number (1-based index).
+    /// Returns the current space number, following the local or global
+    /// numbering preference. Fullscreen Spaces have no displayed number, so
+    /// they yield their position among the current display's Spaces.
     /// Usage: `tell application "WhichSpace" to get current space number`
     @MainActor @objc var currentSpaceNumber: Int {
-        AppEnvironment.shared.appState.currentSpace
+        AppEnvironment.shared.appState.currentSpaceDisplayNumber
     }
 
-    /// Returns the number of Spaces on the current display.
-    /// The count bounds the numbers accepted by `switch to space number`.
+    /// Returns the number of Spaces addressable by `switch to space number`.
     /// Usage: `tell application "WhichSpace" to get space count`
     @MainActor @objc var spaceCount: Int {
         ScriptingHelpers.spaceCount(appState: AppEnvironment.shared.appState)
     }
 
-    /// Returns the label of every Space on the current display, in order, so
-    /// item N of the list is the Space that `switch to space number N` targets.
+    /// Returns the label of every numbered Space, in order, so item N of the
+    /// list is the Space that `switch to space number N` targets.
     /// Usage: `tell application "WhichSpace" to get space labels`
     @MainActor @objc var spaceLabels: [String] {
         ScriptingHelpers.resolveAllLabels(
@@ -588,8 +720,8 @@ extension NSApplication {
         )
     }
 
-    /// Returns the badge of every Space on the current display, in the same
-    /// order as `spaceLabels`. Spaces without a badge yield "".
+    /// Returns the badge of every numbered Space, in the same order as
+    /// `spaceLabels`. Spaces without a badge yield "".
     /// Usage: `tell application "WhichSpace" to get space badges`
     @MainActor @objc var spaceBadges: [String] {
         ScriptingHelpers.resolveAllBadges(
