@@ -90,6 +90,9 @@ enum Layout {
     // Padding scale (percentage)
     static let defaultPaddingScale = 100.0
     static let paddingScaleRange = 0.0 ... 200.0
+    /// Padding scale applied while the icon is shrunk to fit, leaving a point
+    /// between neighbouring icons rather than none
+    static let shrunkPaddingScale = 25.0
 
     /// Gap between a combined symbol and label at the 100% slider position, in points
     static let maxSymbolGap = 12.0

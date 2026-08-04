@@ -51,9 +51,11 @@ enum IconShrinkLevel: Int, CaseIterable, Comparable, Sendable {
     }
 
     /// The padding scale to render at, or nil to use the user's preference.
-    /// Shrunk icons give up their padding before they give up a Space.
+    /// Shrunk icons give up nearly all their padding before they give up a
+    /// Space, keeping the point that stops neighbouring icons merging into one
+    /// continuous block.
     var paddingScaleOverride: Double? {
-        self == .full ? nil : 0
+        self == .full ? nil : Layout.shrunkPaddingScale
     }
 }
 

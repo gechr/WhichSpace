@@ -50,7 +50,7 @@ struct IconShrinkTests {
         #expect(IconShrinkLevel.full.showsFullscreenSpaces)
         #expect(!IconShrinkLevel.compact.showsFullscreenSpaces)
         #expect(IconShrinkLevel.full.paddingScaleOverride == nil)
-        #expect(IconShrinkLevel.compact.paddingScaleOverride == 0)
+        #expect(IconShrinkLevel.compact.paddingScaleOverride == Layout.shrunkPaddingScale)
 
         // Then the inactive Spaces, leaving one icon per display
         #expect(IconShrinkLevel.compact.showsInactiveSpaces)
@@ -60,6 +60,17 @@ struct IconShrinkTests {
         // The other displays go last
         #expect(!IconShrinkLevel.currentOnly.showsInactiveSpaces)
         #expect(!IconShrinkLevel.currentOnly.showsOtherDisplays)
+    }
+
+    @Test("a shrunk icon keeps enough padding to stay separate from its neighbours")
+    func level_shrunkPaddingNeverCollapses() {
+        // Merging into one continuous block reads as a single wide icon
+        for level in IconShrinkLevel.allCases where level != .full {
+            let override = level.paddingScaleOverride
+            #expect(override != nil)
+            #expect((override ?? 0) > 0)
+            #expect((override ?? 0) < Layout.defaultPaddingScale)
+        }
     }
 
     // MARK: - Eviction Readings
