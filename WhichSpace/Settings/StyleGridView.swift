@@ -12,9 +12,11 @@ struct StyleGridView: View {
         return lead + IconStyle.allCases.filter { !lead.contains($0) }
     }()
 
-    /// The label-shape subset offered for custom labels.
+    /// The label-shape subset offered for custom labels, led by the style a
+    /// label renders with by default so the grid opens on it, matching how
+    /// the number grid is ordered.
     static let labelStyles: [IconStyle] = [
-        .pill, .pillOutline, .square, .squareOutline, .stroke, .transparent,
+        .fallback, .squareOutline, .pill, .pillOutline, .stroke, .transparent,
     ]
 
     /// Label shapes reuse the number-style artwork but describe the shape
