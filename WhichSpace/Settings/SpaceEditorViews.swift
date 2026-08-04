@@ -665,7 +665,8 @@ private struct FontPickerButton: View {
 /// A text field owning its edit buffer locally, pushing each change through
 /// the given commit handler. The parent resets it via `.id` when the edited
 /// entry changes, so normalization on write (trimming, truncation) never
-/// fights the user's in-progress typing.
+/// fights the user's in-progress typing. Writes from elsewhere are adopted
+/// while the field is unfocused, keeping the buffer in step with the store.
 struct CommittingTextField: View {
     let placeholder: String
     let initialValue: String
@@ -676,6 +677,7 @@ struct CommittingTextField: View {
     let onChange: (String) -> Void
 
     @State private var text: String
+    @FocusState private var isFocused: Bool
 
     init(
         placeholder: String,
@@ -707,6 +709,7 @@ struct CommittingTextField: View {
                 .textFieldStyle(.roundedBorder)
                 .multilineTextAlignment(centered ? .center : .leading)
                 .frame(width: fieldWidth)
+                .focused($isFocused)
             Button {
                 text = ""
             } label: {
@@ -728,7 +731,24 @@ struct CommittingTextField: View {
                 text = clamped
                 return
             }
+            // Adopting an external value assigns the buffer too, and the
+            // store already holds what it assigned. Skipping that write also
+            // keeps the adoption from echoing back as a change of its own.
+            guard newValue != initialValue else {
+                return
+            }
             onChange(newValue)
+        }
+        // A write from outside this field - a settings reset, a backup
+        // import, a scripting change - leaves the buffer holding text the
+        // store no longer has, which the next keystroke would commit straight
+        // back. Take the new value while the field is unfocused, so the swap
+        // never lands under the user's typing.
+        .onChange(of: initialValue) { _, newValue in
+            guard !isFocused, text != newValue else {
+                return
+            }
+            text = newValue
         }
     }
 }
