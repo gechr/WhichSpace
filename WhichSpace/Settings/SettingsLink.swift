@@ -195,10 +195,14 @@ enum SettingsFocus: Equatable {
 @MainActor
 @Observable
 final class SettingsHighlighter {
-    /// How long a highlight stays lit before fading on its own
-    static let duration: Duration = .seconds(3)
+    /// How long a highlight stays lit - pulses and hold - before it fades
+    static let duration: Duration = .seconds(2.5)
 
     private(set) var focus: SettingsFocus?
+
+    /// Bumped for every link pointed, so one landing on an already-lit row
+    /// still replays its pulse.
+    private(set) var pointCount = 0
 
     /// The row a link pointed at, whether or not it lights up.
     var anchor: SettingsAnchor? {
@@ -225,6 +229,7 @@ final class SettingsHighlighter {
         guard focus != nil else {
             return
         }
+        pointCount += 1
         clearTask = Task { [weak self] in
             try? await Task.sleep(for: Self.duration)
             guard !Task.isCancelled else {

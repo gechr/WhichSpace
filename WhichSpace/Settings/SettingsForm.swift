@@ -47,8 +47,6 @@ struct SettingsSection<Content: View>: View {
     private let tint: Color?
     private let content: Content
 
-    @Environment(SettingsHighlighter.self) private var highlighter: SettingsHighlighter?
-
     /// `anchor` identifies sections whose content is a grid rather than rows,
     /// so a deep link can point at the section as a whole. `emphasized` marks
     /// a card that sits outside the scrolling stack, which needs a stronger
@@ -65,10 +63,6 @@ struct SettingsSection<Content: View>: View {
         self.emphasized = emphasized
         self.tint = tint
         self.content = content()
-    }
-
-    private var isHighlighted: Bool {
-        highlighter?.isEmphasizing(anchor) == true
     }
 
     /// An emphasized card carries a border of its own, so its fill only has to
@@ -93,16 +87,15 @@ struct SettingsSection<Content: View>: View {
             VStack(alignment: .leading, spacing: 0) {
                 content
             }
-            // Tinting the card itself, rather than layering a second shape
-            // over it, keeps the grid content legible while lit
-            .background(
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(
-                        isHighlighted
-                            ? AnyShapeStyle(Color.accentColor.opacity(0.25))
-                            : AnyShapeStyle(fill)
-                    )
-            )
+            // The highlight sits over the card's fill and under its content,
+            // keeping a lit grid legible
+            .background {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .fill(fill)
+                    SettingsHighlightFill(anchor: anchor, cornerRadius: 10)
+                }
+            }
             // A hairline separator is too faint to carry the card on its own,
             // so the edge is drawn in a label colour at a point and a half
             .overlay {
@@ -114,36 +107,106 @@ struct SettingsSection<Content: View>: View {
                         .strokeBorder(Color(nsColor: .tertiaryLabelColor), lineWidth: 1.5)
                 }
             }
-            .animation(.easeInOut(duration: 0.25), value: isHighlighted)
         }
         .settingsScrollAnchor(anchor)
+    }
+}
+
+// MARK: - SettingsHighlightFill
+
+/// Paints the deep-link highlight: two pulses, a hold, then a fade once the
+/// highlighter lets go. The pulses announce a row on a pane that came up
+/// already scrolled to it, where a fill that simply appeared would read as
+/// part of the pane.
+private struct SettingsHighlightFill: View {
+    /// Top of each pulse, and the tint they settle onto
+    private static let peakOpacity = 0.4
+    private static let holdOpacity = 0.15
+    /// One up or down swing of a pulse
+    private static let swing = 0.25
+    private static let fade = 1.0
+
+    /// In, out, in, out, one swing per beat, resting on the hold
+    private static let opening = [peakOpacity, holdOpacity, peakOpacity, holdOpacity]
+
+    let anchor: SettingsAnchor?
+    let cornerRadius: Double
+    /// Insets the fill from the card edge, so a lit row does not read as a
+    /// second card stacked on the section
+    var inset = 0.0
+
+    @Environment(SettingsHighlighter.self) private var highlighter: SettingsHighlighter?
+
+    @State private var opacity = 0.0
+    @State private var beats: Task<Void, Never>?
+
+    private var isHighlighted: Bool {
+        highlighter?.isEmphasizing(anchor) == true
+    }
+
+    /// A fresh value for every link that lands here, so a repeat link replays
+    /// the pulse rather than leaving the row already lit
+    private var lit: Int? {
+        isHighlighted ? highlighter?.pointCount : nil
+    }
+
+    var body: some View {
+        // Opacity rather than the fill's own alpha: a shape's fill colour
+        // snaps between values where opacity interpolates
+        RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+            .fill(Color.accentColor)
+            .opacity(opacity)
+            .padding(.horizontal, inset)
+            // A row can come up already lit, so `initial` pulses that case too
+            .onChange(of: lit, initial: true) { _, lit in
+                if lit != nil {
+                    pulse()
+                } else if opacity > 0 {
+                    beats?.cancel()
+                    withAnimation(.easeOut(duration: Self.fade)) {
+                        opacity = 0
+                    }
+                }
+            }
+    }
+
+    /// Plays the beats in turn. Awaiting each one is what keeps them: several
+    /// animations of one value in a single pass leave only the last.
+    private func pulse() {
+        // A repeat link restarts the rhythm from the top rather than picking
+        // up wherever the run it interrupts had reached
+        beats?.cancel()
+        opacity = 0
+        // A row built already lit renders its first beat at the final value,
+        // so the rhythm starts a turn later, on screen and unlit
+        beats = Task { @MainActor in
+            for level in Self.opening {
+                // A link landing elsewhere mid-pulse leaves this row fading
+                // rather than finishing
+                guard isHighlighted, !Task.isCancelled else {
+                    return
+                }
+                withAnimation(.easeIn(duration: Self.swing)) {
+                    opacity = level
+                }
+                try? await Task.sleep(for: .seconds(Self.swing))
+            }
+        }
     }
 }
 
 // MARK: - SettingsRow
 
 /// Paints the deep-link highlight on a card row and registers its scroll
-/// target. The fill is inset from the card edge so the highlight reads as one
-/// row rather than a second card stacked on the section.
+/// target.
 private struct SettingsRowHighlight: ViewModifier {
     let anchor: SettingsAnchor?
-
-    @Environment(SettingsHighlighter.self) private var highlighter: SettingsHighlighter?
-
-    private var isHighlighted: Bool {
-        highlighter?.isEmphasizing(anchor) == true
-    }
 
     func body(content: Content) -> some View {
         content
             .background {
-                if isHighlighted {
-                    RoundedRectangle(cornerRadius: 6, style: .continuous)
-                        .fill(Color.accentColor.opacity(0.25))
-                        .padding(.horizontal, 4)
-                }
+                SettingsHighlightFill(anchor: anchor, cornerRadius: 6, inset: 4)
             }
-            .animation(.easeInOut(duration: 0.25), value: isHighlighted)
             .settingsScrollAnchor(anchor)
     }
 }
