@@ -152,10 +152,9 @@ struct SettingsSearchEntry: Identifiable, Equatable {
 enum SettingsSearchIndex {
     /// Anchors a search never offers, because landing on them shows nothing:
     /// `uniqueIconsPerDisplay` is a retired raw value redirecting elsewhere,
-    /// `displays` names the Spaces pane's display picker, which registers
-    /// no anchor of its own and appears only with several displays attached,
-    /// and the section anchors name whole cards whose rows are each listed
-    /// already.
+    /// `displays` names the Spaces pane's display picker, which appears only
+    /// with several displays attached, and the section anchors name whole
+    /// cards whose rows are each listed already.
     static let unlisted: Set<SettingsAnchor> = [
         .uniqueIconsPerDisplay, .displays, .behavior, .click, .scroll,
     ]

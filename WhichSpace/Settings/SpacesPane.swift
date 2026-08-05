@@ -57,6 +57,7 @@ struct SpacesPane: View {
                     displayPicker
                     displayNameCaption
                 }
+                .settingsHighlight(.displays)
             }
             listHeader(Localization.paneSpaces)
             ScrollView {

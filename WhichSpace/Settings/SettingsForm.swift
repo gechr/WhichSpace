@@ -22,6 +22,12 @@ func endFieldEditing() {
 }
 
 extension View {
+    /// Paints the deep-link highlight behind a control hosted outside a row
+    /// or section, and registers its scroll target.
+    func settingsHighlight(_ anchor: SettingsAnchor) -> some View {
+        modifier(SettingsRowHighlight(anchor: anchor))
+    }
+
     /// Commits a value field being typed in when the click lands off it.
     func endsFieldEditingOnTap() -> some View {
         contentShape(Rectangle())
