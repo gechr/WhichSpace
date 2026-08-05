@@ -238,6 +238,7 @@ enum Localization {
     static let actionReset = String(localized: "action_reset")
     static let actionResetAllSpaces = String(localized: "action_reset_all_spaces")
     static let actionResetCurrentSpace = String(localized: "action_reset_current_space")
+    static let actionRevealInactiveSpaces = String(localized: "action_reveal_inactive_spaces")
     static let actionSetAsDefault = String(localized: "action_set_as_default")
     static let alertAccessibilityDetail = String(localized: "alert_accessibility_detail")
     static let alertAccessibilityRequired = String(localized: "alert_accessibility_required")

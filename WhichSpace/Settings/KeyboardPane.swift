@@ -17,6 +17,10 @@ struct KeyboardPane: View {
     /// system would route the scheme to the installed copy, not this one
     let onOpenBehavior: () -> Void
 
+    /// Placeholder rows stay hidden until asked for, so the Jump card only
+    /// spends height on Spaces that exist
+    @State private var revealsInactiveSpaces = false
+
     var body: some View {
         SettingsForm {
             if !model.accessibilityGranted {
@@ -56,6 +60,9 @@ struct KeyboardPane: View {
             jumpSection
             behaviorNote
         }
+        // Revealing the hidden Jump rows grows the pane after the window was
+        // sized to it, so the window has to follow
+        .fitsSettingsWindow(measuring: CGSize(width: 0, height: Double(visibleJumpNumbers.count)))
     }
 
     // MARK: - Window
@@ -161,17 +168,19 @@ struct KeyboardPane: View {
         return (try? AttributedString(markdown: markdown)) ?? AttributedString(markdown)
     }
 
-    /// One recorder per bindable Desktop number, all shown regardless of the
-    /// current count so bindings can be recorded ahead of time. Global
+    /// One recorder per Desktop the current layout has, with the remaining
+    /// bindable numbers hidden behind a reveal button so the card does not
+    /// spend sixteen rows of height on Spaces that do not exist. Global
     /// numbering resolves across every display; local numbering follows the
-    /// active display. The list scrolls within a capped height so sixteen rows
-    /// do not run the window off the screen.
+    /// active display. The list scrolls within a capped height so a revealed
+    /// sixteen rows do not run the window off the screen.
     private var jumpSection: some View {
-        SettingsSection(Localization.labelJump, anchor: .jump) {
+        let visible = visibleJumpNumbers
+        return SettingsSection(Localization.labelJump, anchor: .jump) {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    ForEach(1 ... HotkeyCenter.maxJumpTargets, id: \.self) { number in
-                        if number > 1 {
+                    ForEach(Array(visible.enumerated()), id: \.element) { index, number in
+                        if index > 0 {
                             SettingsRowDivider()
                         }
                         jumpRow(number: number)
@@ -189,7 +198,63 @@ struct KeyboardPane: View {
                 )
             }
             .frame(maxHeight: Layout.settingsJumpListMaxHeight)
+            if visible.count < HotkeyCenter.maxJumpTargets {
+                SettingsRowDivider()
+                revealButton
+            }
         }
+        // A binding on a hidden row must stay visible, so the list starts
+        // revealed when any placeholder already has one recorded
+        .onAppear {
+            if !revealsInactiveSpaces, placeholderHasBinding {
+                revealsInactiveSpaces = true
+            }
+        }
+    }
+
+    /// Placeholder rows stand for Desktop numbers past the current count.
+    /// Local numbering resolves them against the active display, global
+    /// numbering against every display.
+    private func isPlaceholder(_ number: Int) -> Bool {
+        model.value(\.localSpaceNumbers)
+            ? localCandidate(number).entry == nil
+            : number > appState.regularSpaceCount
+    }
+
+    /// The rows on screen: every Space that exists, plus the placeholders
+    /// once revealed.
+    private var visibleJumpNumbers: [Int] {
+        let all = Array(1 ... HotkeyCenter.maxJumpTargets)
+        return revealsInactiveSpaces ? all : all.filter { !isPlaceholder($0) }
+    }
+
+    private var placeholderHasBinding: Bool {
+        (1 ... HotkeyCenter.maxJumpTargets).contains { number in
+            isPlaceholder(number)
+                && KeyboardShortcuts.getShortcut(for: KeyboardShortcuts.Name.jumpToSpace[number - 1]) != nil
+        }
+    }
+
+    private var revealButton: some View {
+        Button {
+            withAnimation {
+                revealsInactiveSpaces = true
+            }
+        } label: {
+            HStack(spacing: 5) {
+                Image(systemName: "chevron.down.2")
+                    .frame(width: Layout.settingsRowIconWidth)
+                Text(Localization.actionRevealInactiveSpaces)
+                Spacer(minLength: 0)
+            }
+            .font(.system(size: Layout.settingsRowFontSize))
+            .foregroundStyle(Color.accentColor.opacity(0.6))
+            .padding(.horizontal, Layout.settingsRowHorizontalPadding)
+            .padding(.vertical, Layout.settingsRowVerticalPadding)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .help(Localization.tipSpacePlaceholderHotkey)
     }
 
     /// Placeholder rows grey only the name, the same treatment the Spaces
@@ -198,9 +263,7 @@ struct KeyboardPane: View {
     private func jumpRow(number: Int) -> some View {
         let localNumbers = model.value(\.localSpaceNumbers)
         let candidate = localCandidate(number)
-        let placeholder = localNumbers
-            ? candidate.entry == nil
-            : number > appState.regularSpaceCount
+        let placeholder = isPlaceholder(number)
         return SettingsRow(icon: "\(number).square") {
             Text(
                 localNumbers
