@@ -75,11 +75,31 @@ enum SpaceSwitcher {
     /// Predicted space index per display for switches whose CGS state hasn't
     /// caught up yet. During rapid successive switches CGS still reports the
     /// pre-switch space, which would make step counts wrong.
-    @MainActor private static var predictedIndex: [String: Int] = [:]
+    @MainActor private static var predictions: [String: (index: Int, madeAt: Date)] = [:]
+
+    /// How long a prediction stays trusted. Rapid successive switches land
+    /// within milliseconds, so an older prediction that CGS still contradicts
+    /// means the posted events never took effect and trusting it would route
+    /// later switches from a space the user never reached.
+    private static let predictionLifetime: TimeInterval = 1
+
+    /// The trusted predicted index for a display, or nil once expired.
+    @MainActor private static func prediction(for display: String) -> Int? {
+        guard let prediction = predictions[display],
+              Date().timeIntervalSince(prediction.madeAt) < predictionLifetime
+        else {
+            return nil
+        }
+        return prediction.index
+    }
+
+    @MainActor private static func recordPrediction(_ index: Int, for display: String) {
+        predictions[display] = (index, Date())
+    }
 
     /// Clears switch predictions once a real space snapshot lands.
     @MainActor static func resetPredictions() {
-        predictedIndex.removeAll()
+        predictions.removeAll()
     }
 
     // MARK: - Public API
@@ -113,7 +133,7 @@ enum SpaceSwitcher {
             return false
         }
 
-        let currentIndex = predictedIndex[display.identifier] ?? cgsCurrentIndex
+        let currentIndex = prediction(for: display.identifier) ?? cgsCurrentIndex
 
         guard currentIndex != targetIndex else {
             return true
@@ -122,7 +142,7 @@ enum SpaceSwitcher {
         let steps = abs(targetIndex - currentIndex)
         let goRight = targetIndex > currentIndex
 
-        if usesClassicSwitching {
+        if requiresClassicPath {
             guard classicSwitch(toSpaceID: targetSpaceID, goRight: goRight, steps: steps, connection: conn) else {
                 return false
             }
@@ -135,7 +155,7 @@ enum SpaceSwitcher {
             }
         }
 
-        predictedIndex[display.identifier] = targetIndex
+        recordPrediction(targetIndex, for: display.identifier)
         return true
     }
 
@@ -203,7 +223,7 @@ enum SpaceSwitcher {
             return false
         }
 
-        let currentIndex = predictedIndex[display.identifier] ?? cgsCurrentIndex
+        let currentIndex = prediction(for: display.identifier) ?? cgsCurrentIndex
         let targetIndex = currentIndex + (goRight ? 1 : -1)
         guard display.spaces.indices.contains(targetIndex) else {
             if wrap {
@@ -216,7 +236,7 @@ enum SpaceSwitcher {
             return false
         }
 
-        predictedIndex[display.identifier] = targetIndex
+        recordPrediction(targetIndex, for: display.identifier)
         return true
     }
 
@@ -230,7 +250,7 @@ enum SpaceSwitcher {
             return false
         }
 
-        if usesClassicSwitching {
+        if requiresClassicPath {
             let target = display.spaces[targetIndex].id
             guard classicSwitch(toSpaceID: target, goRight: !goRight, steps: steps, connection: _CGSDefaultConnection())
             else {
@@ -245,7 +265,7 @@ enum SpaceSwitcher {
             }
         }
 
-        predictedIndex[display.identifier] = targetIndex
+        recordPrediction(targetIndex, for: display.identifier)
         return true
     }
 
@@ -334,15 +354,24 @@ enum SpaceSwitcher {
 
     /// Whether the user prefers classic hotkey switching over instant gestures.
     /// Classic switching simulates the Mission Control keyboard shortcuts, so
-    /// it keeps the slide animation and works while a mouse button is held
-    /// down, which swallows synthetic swipe gestures.
+    /// it keeps the slide animation.
     @MainActor private static var usesClassicSwitching: Bool {
         AppEnvironment.shared.store.classicSpaceSwitching
     }
 
+    /// Whether the next switch must take the classic hotkey route. A held
+    /// mouse button means the WindowServer is tracking a drag, which swallows
+    /// synthetic swipe gestures without any failure signal, so instant
+    /// switching falls back to the Mission Control shortcuts until the
+    /// button is released. Key events still get delivered during a drag,
+    /// and the switch carries the held window to the target Space.
+    @MainActor private static var requiresClassicPath: Bool {
+        usesClassicSwitching || NSEvent.pressedMouseButtons != 0
+    }
+
     /// Posts one switch step left or right using the active mechanism.
     @MainActor private static func postStep(goRight: Bool, velocity: Double) -> Bool {
-        if usesClassicSwitching {
+        if requiresClassicPath {
             return postHotKey(goRight ? HotKey.moveRight : HotKey.moveLeft)
         }
         return postSwipeGesture(goRight: goRight, velocity: velocity)

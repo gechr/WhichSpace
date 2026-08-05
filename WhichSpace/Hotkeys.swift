@@ -149,13 +149,38 @@ final class HotkeyCenter {
         return false
     }
 
+    /// Whether the next switch will post Mission Control key events: by
+    /// preference, or because a held mouse button forces the classic
+    /// fallback in SpaceSwitcher.
+    private var switchForwardsKeyEvents: Bool {
+        store.classicSpaceSwitching || NSEvent.pressedMouseButtons != 0
+    }
+
+    /// Runs a switch action. When the switch forwards Mission Control key
+    /// events, the Carbon registrations step aside long enough for them to
+    /// reach macOS instead of recursively invoking another binding.
+    private func performSwitch(forwardsKeyEvents: Bool, _ action: () -> Void) {
+        guard forwardsKeyEvents else {
+            action()
+            return
+        }
+        KeyboardShortcuts.disable(Self.allNames)
+        action()
+        Task { @MainActor in
+            try? await Task.sleep(for: Self.forwardedHotKeySettleDelay)
+            KeyboardShortcuts.enable(Self.allNames)
+        }
+    }
+
     /// Wrapping follows the same preference as scroll switching, so the two
     /// relative surfaces agree about what happens at the edges.
     private func switchRelative(goRight: Bool) {
         guard ensureAccessibility() else {
             return
         }
-        _ = SpaceSwitcher.switchRelative(goRight: goRight, wrap: store.scrollWrapAround)
+        performSwitch(forwardsKeyEvents: switchForwardsKeyEvents) {
+            _ = SpaceSwitcher.switchRelative(goRight: goRight, wrap: store.scrollWrapAround)
+        }
     }
 
     /// Nothing to go back to before the first Space change of the session, so
@@ -164,7 +189,9 @@ final class HotkeyCenter {
         guard ensureAccessibility() else {
             return
         }
-        try? ScriptingHelpers.switchToPreviousSpace(appState: appState)
+        performSwitch(forwardsKeyEvents: switchForwardsKeyEvents) {
+            try? ScriptingHelpers.switchToPreviousSpace(appState: appState)
+        }
     }
 
     /// Out-of-range failures stay silent: a hotkey has no caller to report
@@ -174,18 +201,10 @@ final class HotkeyCenter {
         guard ensureAccessibility() else {
             return
         }
-        if store.localSpaceNumbers {
+        // The global route may forward a numbered Mission Control key event
+        // even outside the classic path, so it always steps aside.
+        performSwitch(forwardsKeyEvents: !store.localSpaceNumbers || switchForwardsKeyEvents) {
             try? ScriptingHelpers.switchToSpace(number: number, appState: appState, store: store)
-        } else {
-            // The global route may forward a Mission Control key event, so
-            // the Carbon registrations step aside long enough for it to reach
-            // macOS instead of recursively invoking another binding.
-            KeyboardShortcuts.disable(Self.allNames)
-            try? ScriptingHelpers.switchToSpace(number: number, appState: appState, store: store)
-            Task { @MainActor in
-                try? await Task.sleep(for: Self.forwardedHotKeySettleDelay)
-                KeyboardShortcuts.enable(Self.allNames)
-            }
         }
     }
 
