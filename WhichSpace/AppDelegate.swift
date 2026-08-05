@@ -699,6 +699,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             }
             let position = NSPoint(x: 0, y: button.bounds.height + 5)
             statusMenu.popUp(positioning: nil, at: position, in: button)
+        } else if event.modifierFlags.contains(.option) {
+            actionHandler.openSettingsWindow()
         } else {
             handleLeftClick(event, button: button)
         }

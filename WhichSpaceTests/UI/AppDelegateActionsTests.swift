@@ -155,6 +155,22 @@ final class AppDelegateActionsTests: XCTestCase {
         XCTAssertTrue(event?.isRightClick ?? false)
     }
 
+    func testNSEventIsRightClick_falseForOptionClick() {
+        let event = NSEvent.mouseEvent(
+            with: .leftMouseUp,
+            location: .zero,
+            modifierFlags: .option,
+            timestamp: 0,
+            windowNumber: 0,
+            context: nil,
+            eventNumber: 0,
+            clickCount: 1,
+            pressure: 1
+        )
+
+        XCTAssertFalse(event?.isRightClick ?? true)
+    }
+
     func testNSEventIsRightClick_falseForPlainLeftClick() {
         let event = NSEvent.mouseEvent(
             with: .leftMouseUp,
