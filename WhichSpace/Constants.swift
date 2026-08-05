@@ -250,7 +250,6 @@ enum Localization {
     static let buttonCancel = String(localized: "button_cancel")
     static let buttonContinue = String(localized: "button_continue")
     static let buttonCopy = String(localized: "button_copy")
-    static let buttonLearnMore = String(localized: "button_learn_more")
     static let buttonOK = String(localized: "button_ok")
     static let buttonOpen = String(localized: "button_open")
     static let buttonReset = String(localized: "button_reset")
