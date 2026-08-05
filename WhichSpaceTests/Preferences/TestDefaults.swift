@@ -220,6 +220,7 @@ struct DefaultsIsolationGuardTests {
             "invertHorizontalScroll",
             "invertVerticalScroll",
             "localSpaceNumbers",
+            "moveToApplicationsFolderAlertSuppress",
             "paddingScale",
             "scrollHapticFeedback",
             "scrollHapticIntensity",

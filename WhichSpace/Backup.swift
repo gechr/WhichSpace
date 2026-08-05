@@ -83,6 +83,7 @@ struct BackupSettings: Codable {
     var invertVerticalScroll: Bool
     var launchAtLogin: Bool
     var localSpaceNumbers: Bool
+    var moveApplicationAlertSuppress: Bool
     var paddingScale: Double?
     var scrollHapticFeedback: Bool
     var scrollHapticIntensity: Int
@@ -106,7 +107,10 @@ struct BackupSettings: Codable {
         case classicSpaceSwitching
         case clickToSwitchSpaces, dimInactiveSpaces, emojiPickerSkinTone, fullscreenIconStyle, hideEmptySpaces
         case hideFullscreenApps, hideSingleSpace, horizontalScrollEnabled
-        case invertHorizontalScroll, invertVerticalScroll, launchAtLogin, localSpaceNumbers, paddingScale
+        case invertHorizontalScroll, invertVerticalScroll, launchAtLogin, localSpaceNumbers
+        // Raw value matches the legacy stored defaults key
+        case moveApplicationAlertSuppress = "moveToApplicationsFolderAlertSuppress"
+        case paddingScale
         case scrollHapticFeedback, scrollHapticIntensity, scrollSensitivity, scrollWrapAround
         case separatorColor, separatorStyle, showAllDisplays, showAllSpaces, shrinkIconToFit
         case sizeScale, soundName, uniqueIconsPerDisplay
@@ -130,6 +134,9 @@ struct BackupSettings: Codable {
         invertVerticalScroll = try container.decodeIfPresent(Bool.self, forKey: .invertVerticalScroll) ?? false
         launchAtLogin = try container.decodeIfPresent(Bool.self, forKey: .launchAtLogin) ?? false
         localSpaceNumbers = try container.decodeIfPresent(Bool.self, forKey: .localSpaceNumbers) ?? false
+        moveApplicationAlertSuppress = try container.decodeIfPresent(
+            Bool.self, forKey: .moveApplicationAlertSuppress
+        ) ?? false
         paddingScale = try container.decodeIfPresent(Double.self, forKey: .paddingScale)
         scrollHapticFeedback = try container.decodeIfPresent(Bool.self, forKey: .scrollHapticFeedback) ?? false
         scrollHapticIntensity = try container.decodeIfPresent(Int.self, forKey: .scrollHapticIntensity)
@@ -162,6 +169,7 @@ struct BackupSettings: Codable {
         invertVerticalScroll: Bool,
         launchAtLogin: Bool,
         localSpaceNumbers: Bool,
+        moveApplicationAlertSuppress: Bool,
         paddingScale: Double?,
         scrollHapticFeedback: Bool,
         scrollHapticIntensity: Int,
@@ -189,6 +197,7 @@ struct BackupSettings: Codable {
         self.invertVerticalScroll = invertVerticalScroll
         self.launchAtLogin = launchAtLogin
         self.localSpaceNumbers = localSpaceNumbers
+        self.moveApplicationAlertSuppress = moveApplicationAlertSuppress
         self.paddingScale = paddingScale
         self.scrollHapticFeedback = scrollHapticFeedback
         self.scrollHapticIntensity = scrollHapticIntensity
@@ -557,6 +566,7 @@ enum BackupManager {
             invertVerticalScroll: store.invertVerticalScroll,
             launchAtLogin: launchAtLogin.isEnabled,
             localSpaceNumbers: store.localSpaceNumbers,
+            moveApplicationAlertSuppress: store.moveApplicationAlertSuppress,
             paddingScale: store.paddingScale,
             scrollHapticFeedback: store.scrollHapticFeedback,
             scrollHapticIntensity: store.scrollHapticIntensity,
@@ -701,6 +711,7 @@ enum BackupManager {
         var launchAtLogin = launchAtLogin
         launchAtLogin.isEnabled = backup.settings.launchAtLogin
         store.localSpaceNumbers = backup.settings.localSpaceNumbers
+        store.moveApplicationAlertSuppress = backup.settings.moveApplicationAlertSuppress
         store.paddingScale = (backup.settings.paddingScale ?? Layout.defaultPaddingScale)
             .clamped(to: Layout.paddingScaleRange)
         store.scrollHapticFeedback = backup.settings.scrollHapticFeedback

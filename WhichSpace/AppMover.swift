@@ -1,12 +1,10 @@
 import AppKit
 
 enum AppMover {
-    private static let alertSuppressKey = "moveToApplicationsFolderAlertSuppress"
-
-    static func moveIfNecessary(appName: String) {
+    @MainActor
+    static func moveIfNecessary(appName: String, store: DefaultsStore = AppEnvironment.shared.store) {
         // Early-exit checks that don't require the run loop
-        let defaults = UserDefaults.standard
-        guard !defaults.bool(forKey: alertSuppressKey) else {
+        guard !store.moveApplicationAlertSuppress else {
             return
         }
 
@@ -54,7 +52,7 @@ enum AppMover {
             let response = alert.runModal()
             if response != .alertFirstButtonReturn {
                 if alert.suppressionButton?.state == .on {
-                    defaults.set(true, forKey: alertSuppressKey)
+                    store.moveApplicationAlertSuppress = true
                 }
                 return
             }
