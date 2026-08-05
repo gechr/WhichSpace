@@ -98,16 +98,13 @@ struct GeneralPane: View {
         }
     }
 
-    /// Nil until Sparkle has checked at least once, leaving the row bare
-    /// rather than spelling out a "never" state.
+    /// Says "never" until Sparkle has checked at least once, so a bare row
+    /// does not read as a broken caption.
     private var lastCheckedCaption: String? {
-        guard let date = updater?.lastUpdateCheckDate else {
-            return nil
-        }
-        return String(
-            format: Localization.tipLastChecked,
-            date.formatted(date: .abbreviated, time: .shortened)
-        )
+        let value = updater?.lastUpdateCheckDate
+            .map { $0.formatted(date: .abbreviated, time: .shortened) }
+            ?? Localization.labelNever
+        return String(format: Localization.tipLastChecked, value)
     }
 
     /// Sparkle stamps the check date when the appcast fetch starts, not when

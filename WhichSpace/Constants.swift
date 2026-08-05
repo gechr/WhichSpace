@@ -332,6 +332,7 @@ enum Localization {
     static let labelLeft = String(localized: "label_left")
     static let labelMoveLeft = String(localized: "label_move_left")
     static let labelMoveRight = String(localized: "label_move_right")
+    static let labelNever = String(localized: "label_never")
     static let labelNumber = String(localized: "label_number")
     static let labelNumberBackground = String(localized: "label_number_background")
     static let labelNumberForeground = String(localized: "label_number_foreground")
