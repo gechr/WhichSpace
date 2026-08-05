@@ -23,6 +23,7 @@ struct SpacesPane: View {
         .padding(Layout.settingsPanePadding)
         .toggleStyle(.switch)
         .font(.system(size: Layout.settingsRowFontSize))
+        .endsFieldEditingOnTap()
         // The list sizes itself to its rows, so the window has to follow it
         // rather than keep the width it was given when the pane opened
         .fitsSettingsWindow(measuring: listMetrics)

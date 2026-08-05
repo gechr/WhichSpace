@@ -121,6 +121,7 @@ enum Layout {
     static let settingsRowSubtitleFontSize = 11.0
     static let settingsSliderWidth = 140.0
     static let settingsSliderValueFontSize = 11.0
+    static let settingsSliderValueWidth = 56.0
     /// Fraction of the track where a slider's default value sits, so defaults
     /// line up across rows whose ranges differ
     static let settingsSliderDefaultPosition = 0.5

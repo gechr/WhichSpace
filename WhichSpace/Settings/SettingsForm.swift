@@ -14,6 +14,23 @@ private extension View {
     }
 }
 
+/// Commits a value field being typed in, by dropping the focus it holds on to
+/// until something else takes it.
+@MainActor
+func endFieldEditing() {
+    NSApp.keyWindow?.makeFirstResponder(nil)
+}
+
+extension View {
+    /// Commits a value field being typed in when the click lands off it.
+    func endsFieldEditingOnTap() -> some View {
+        contentShape(Rectangle())
+            .onTapGesture {
+                endFieldEditing()
+            }
+    }
+}
+
 // MARK: - SettingsForm
 
 /// Vertical stack of grouped-card sections for a settings pane.
@@ -33,6 +50,7 @@ struct SettingsForm<Content: View>: View {
         .frame(width: Layout.settingsPaneContentWidth)
         .toggleStyle(.switch)
         .font(.system(size: Layout.settingsRowFontSize))
+        .endsFieldEditingOnTap()
     }
 }
 
@@ -359,6 +377,9 @@ struct SettingsSliderRow: View {
             }
             .frame(width: Layout.settingsSliderWidth)
             Button {
+                // The button does not take focus, so a field being typed in
+                // keeps it and would commit over the reset on its way out
+                endFieldEditing()
                 value.wrappedValue = defaultValue
             } label: {
                 Image(systemName: "arrow.counterclockwise")
@@ -378,6 +399,7 @@ struct SettingsSliderRow: View {
                 formatter: valueFormatter,
                 parse: valueParser
             )
+            .frame(width: Layout.settingsSliderValueWidth)
         } else {
             Text(valueFormatter(value.wrappedValue))
                 .font(.system(size: Layout.settingsSliderValueFontSize))
@@ -444,69 +466,85 @@ struct SettingsSliderRow: View {
 
 /// The slider's value, typed as well as dragged.
 ///
-/// Reads as the same subtext label until it is clicked, so the row keeps its
-/// look and the field is found by aiming at the number. Editing shows the
-/// bare number, dropping the unit the formatter adds so the value can be
-/// replaced outright rather than typed around.
-private struct SliderValueField: View {
+/// An AppKit field rather than a SwiftUI one: it draws the standard editable
+/// bezel, keeps its text still when the field editor takes over, and leaves
+/// clicking, selecting, and Return and Escape to the platform.
+private struct SliderValueField: NSViewRepresentable {
     let value: Binding<Double>
     let range: ClosedRange<Double>
     let formatter: (Double) -> String
     let parse: (String) -> Double?
 
-    @State private var text = ""
-    @FocusState private var isEditing: Bool
+    func makeNSView(context: Context) -> NSTextField {
+        let field = NSTextField(string: formatter(value.wrappedValue))
+        field.delegate = context.coordinator
+        field.alignment = .center
+        field.controlSize = .small
+        field.font = .monospacedDigitSystemFont(
+            ofSize: Layout.settingsSliderValueFontSize,
+            weight: .regular
+        )
+        field.bezelStyle = .roundedBezel
+        return field
+    }
 
-    var body: some View {
-        TextField("", text: $text)
-            .textFieldStyle(.plain)
-            .multilineTextAlignment(.center)
-            .font(.system(size: Layout.settingsSliderValueFontSize))
-            .monospacedDigit()
-            .foregroundStyle(.secondary)
-            .focused($isEditing)
-            .background(
-                RoundedRectangle(cornerRadius: 4, style: .continuous)
-                    .fill(
-                        isEditing
-                            ? AnyShapeStyle(Color(nsColor: .quaternarySystemFill))
-                            : AnyShapeStyle(.clear)
-                    )
-            )
-            .onSubmit {
-                commit()
-            }
-            .onChange(of: isEditing) { _, editing in
-                if editing {
-                    text = String(format: "%.0f", value.wrappedValue)
-                } else {
-                    commit()
-                }
-            }
-            // A drag moves the setting underneath the field, which only shows
-            // its own buffer; leave the buffer alone while it is being typed in
-            .onChange(of: value.wrappedValue) { _, current in
-                guard !isEditing else {
-                    return
-                }
-                text = formatter(current)
-            }
-            .onAppear {
-                text = formatter(value.wrappedValue)
-            }
+    func updateNSView(_ field: NSTextField, context: Context) {
+        context.coordinator.field = self
+        // A drag moves the setting underneath the field, which shows what is
+        // being typed into it; leave that alone until the editor goes away
+        guard field.currentEditor() == nil else {
+            return
+        }
+        field.stringValue = formatter(value.wrappedValue)
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(field: self)
     }
 
     /// Applies the typed number, or puts the current value back when it does
     /// not read as one. Rounding matches the slider, which moves the setting
     /// in whole units.
-    private func commit() {
+    fileprivate func commit(_ field: NSTextField) {
         defer {
-            text = formatter(value.wrappedValue)
+            field.stringValue = formatter(value.wrappedValue)
         }
-        guard let parsed = parse(text) else {
+        guard let parsed = parse(field.stringValue) else {
             return
         }
         value.wrappedValue = parsed.rounded().clamped(to: range)
+    }
+
+    final class Coordinator: NSObject, NSTextFieldDelegate {
+        /// Reassigned on every update, so a commit reads the bindings the
+        /// pane holds now rather than the ones it was built with
+        var field: SliderValueField
+
+        init(field: SliderValueField) {
+            self.field = field
+        }
+
+        /// Covers Return, Tab, and the focus leaving for any other reason
+        func controlTextDidEndEditing(_ notification: Notification) {
+            guard let control = notification.object as? NSTextField else {
+                return
+            }
+            field.commit(control)
+        }
+
+        /// Escape puts the current value back rather than committing it
+        func control(
+            _ control: NSControl,
+            textView _: NSTextView,
+            doCommandBy selector: Selector
+        ) -> Bool {
+            guard selector == #selector(NSResponder.cancelOperation(_:)) else {
+                return false
+            }
+            control.stringValue = field.formatter(field.value.wrappedValue)
+            control.window?.makeFirstResponder(nil)
+            return true
+        }
     }
 }
 
