@@ -19,6 +19,7 @@ struct MousePane: View {
                     title: Localization.toggleClickToSwitchSpaces,
                     isOn: model.clickToSwitchSpacesBinding,
                     icon: "hand.tap.fill",
+                    tint: permissionTint,
                     subtitle: Localization.tipClickToSwitchSpaces,
                     anchor: .clickToSwitch
                 )
@@ -66,6 +67,7 @@ struct MousePane: View {
             title: title,
             isOn: model.scrollSwitchingBinding(axis: axis),
             icon: axisIcon,
+            tint: permissionTint,
             subtitle: Localization.tipScrollEnabled,
             anchor: axisAnchor
         )
@@ -126,6 +128,11 @@ struct MousePane: View {
                 HapticIntensityLabel.label(for: Int($0))
             }
         }
+    }
+
+    /// Echoes the banner's red while permission is missing.
+    private var permissionTint: Color? {
+        model.accessibilityGranted ? nil : Color(nsColor: .systemRed)
     }
 
     private var hapticIntensityBinding: Binding<Double> {

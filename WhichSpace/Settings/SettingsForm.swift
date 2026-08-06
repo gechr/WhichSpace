@@ -359,6 +359,8 @@ struct SettingsToggleRow: View {
     var disabled = false
     /// Fades the row while leaving the switch live, matching `SettingsRow`
     var dimmed = false
+    /// Overrides the switch accent - nil keeps the standard tint
+    var tint: Color?
     var subtitle: String?
     var anchor: SettingsAnchor?
 
@@ -372,11 +374,27 @@ struct SettingsToggleRow: View {
             anchor: anchor
         ) {
             Text(title)
-                .foregroundStyle(disabled || dimmed ? .tertiary : .primary)
+                .foregroundStyle(titleStyle)
         } control: {
             Toggle(title, isOn: isOn)
                 .labelsHidden()
                 .controlSize(.mini)
+                .tint(tint?.opacity(0.5))
+        }
+        // The row's hierarchical styles resolve against this, so a tinted
+        // row renders in shades of the tint rather than gray
+        .foregroundStyle(tint.map(AnyShapeStyle.init) ?? AnyShapeStyle(.foreground))
+    }
+
+    /// A tinted row dims its title to the subtitle's shade - the tint itself
+    /// carries the warning.
+    private var titleStyle: AnyShapeStyle {
+        if disabled || dimmed {
+            AnyShapeStyle(.tertiary)
+        } else if tint != nil {
+            AnyShapeStyle(.secondary)
+        } else {
+            AnyShapeStyle(.primary)
         }
     }
 }
