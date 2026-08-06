@@ -248,7 +248,7 @@ struct KeyboardPane: View {
                 Spacer(minLength: 0)
             }
             .font(.system(size: Layout.settingsRowFontSize))
-            .foregroundStyle(Color.accentColor.opacity(0.6))
+            .foregroundStyle(Color.accentColor.opacity(0.7))
             .padding(.horizontal, Layout.settingsRowHorizontalPadding)
             .padding(.vertical, Layout.settingsRowVerticalPadding)
             .contentShape(Rectangle())

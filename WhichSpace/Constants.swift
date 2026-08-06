@@ -118,6 +118,10 @@ enum Layout {
     // Settings window
     static let settingsPaneContentWidth = 540.0
     static let settingsPanePadding = 16.0
+    /// Share of the screen height a settings pane may take before it scrolls
+    static let settingsPaneMaxHeightRatio = 0.7
+    /// Pane height cap when no screen is available to measure
+    static let settingsPaneMaxHeightFallback = 800.0
     static let settingsSectionSpacing = 12.0
     static let settingsRowHorizontalPadding = 16.0
     static let settingsRowVerticalPadding = 8.0

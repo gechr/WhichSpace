@@ -46,18 +46,55 @@ extension View {
 /// panes. This VStack-based recreation of the same visual style sizes to its
 /// content, so the window fits each pane exactly.
 ///
+/// The stack sits in a scroll view capped at a share of the screen height,
+/// so a pane taller than that scrolls instead of running the window off the
+/// screen. A pane that fits reports its content height as the scroll view's
+/// ideal, keeping the window sized to the pane exactly as before.
 struct SettingsForm<Content: View>: View {
     @ViewBuilder var content: Content
 
+    @Environment(SettingsHighlighter.self) private var highlighter: SettingsHighlighter?
+
     var body: some View {
-        VStack(alignment: .leading, spacing: Layout.settingsSectionSpacing) {
-            content
+        ScrollViewReader { proxy in
+            ScrollView {
+                VStack(alignment: .leading, spacing: Layout.settingsSectionSpacing) {
+                    content
+                }
+                .padding(Layout.settingsPanePadding)
+                .frame(width: Layout.settingsPaneContentWidth)
+            }
+            .frame(maxHeight: maxPaneHeight)
+            // A deep link can point at a row the cap has scrolled out of
+            // view, so bring the anchor in rather than only highlighting it
+            .onAppear {
+                scroll(proxy, to: highlighter?.anchor)
+            }
+            .onChange(of: highlighter?.anchor) { _, anchor in
+                scroll(proxy, to: anchor)
+            }
         }
-        .padding(Layout.settingsPanePadding)
-        .frame(width: Layout.settingsPaneContentWidth)
         .toggleStyle(.switch)
         .font(.system(size: Layout.settingsRowFontSize))
         .endsFieldEditingOnTap()
+    }
+
+    /// The tallest a pane may grow before it scrolls: a fixed share of the
+    /// screen height.
+    private var maxPaneHeight: Double {
+        guard let screen = NSScreen.main else {
+            return Layout.settingsPaneMaxHeightFallback
+        }
+        return screen.frame.height * Layout.settingsPaneMaxHeightRatio
+    }
+
+    private func scroll(_ proxy: ScrollViewProxy, to anchor: SettingsAnchor?) {
+        guard let anchor else {
+            return
+        }
+        withAnimation {
+            proxy.scrollTo(anchor.target, anchor: .center)
+        }
     }
 }
 
