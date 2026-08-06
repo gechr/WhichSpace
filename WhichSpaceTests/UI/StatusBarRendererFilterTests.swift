@@ -595,10 +595,13 @@ struct SpacePickerTests {
         let entries = appState.spacePickerEntries()
         let target = NSObject()
 
-        let menu = MenuBuilder.buildSpacePickerMenu(entries: entries, target: target)
+        let menu = MenuBuilder.buildSpacePickerMenu(entries: entries, style: .both, target: target)
 
         #expect(menu.items.count == 3)
         let spaceItems = Array(menu.items.prefix(2))
+        // No occupancy configured, so the combined style stays on the plain
+        // titles the picker always had
+        #expect(spaceItems.allSatisfy { $0.attributedTitle == nil })
         #expect(spaceItems.map(\.state) == [.off, .on])
         #expect(spaceItems.map(\.title) == (1 ... 2).map {
             String(format: Localization.labelDesktopNumber, $0)
@@ -614,5 +617,222 @@ struct SpacePickerTests {
         // The trailing item is the invisible spacer restoring the bottom inset
         #expect(menu.items.last?.view != nil)
         #expect(menu.items.last?.representedObject == nil)
+    }
+
+    @Test("capped splits an ordered list at the app-icon limit")
+    func cappedSplitsAtLimit() {
+        let (under, underOverflow) = StatusBarRenderer.capped([1, 2], limit: 5)
+        #expect(under == [1, 2])
+        #expect(underOverflow == 0)
+
+        let (exact, exactOverflow) = StatusBarRenderer.capped([1, 2, 3], limit: 3)
+        #expect(exact == [1, 2, 3])
+        #expect(exactOverflow == 0)
+
+        let (over, overOverflow) = StatusBarRenderer.capped([1, 2, 3, 4, 5], limit: 2)
+        #expect(over == [1, 2])
+        #expect(overOverflow == 3)
+
+        let (empty, emptyOverflow) = StatusBarRenderer.capped([Int](), limit: 2)
+        #expect(empty.isEmpty)
+        #expect(emptyOverflow == 0)
+    }
+
+    @Test("entries carry app icons frontmost first, fullscreen rows stay empty")
+    func entriesCarryAppIcons() {
+        stub.windowOwnerPIDsMap = [100: [11, 22]]
+        let appState = makeAppState(
+            spaces: [
+                (id: 100, isFullscreen: false),
+                (id: 101, isFullscreen: true),
+            ],
+            activeSpaceID: 100
+        )
+        var resolvedPIDs: [pid_t] = []
+        appState.renderer.appIconResolver = { pid in
+            resolvedPIDs.append(pid)
+            return NSImage()
+        }
+
+        let entries = appState.spacePickerEntries()
+
+        #expect(resolvedPIDs == [11, 22])
+        #expect(entries[0].appIcons.count == 2)
+        #expect(entries[0].overflowCount == 0)
+        #expect(entries[1].appIcons.isEmpty)
+        #expect(entries[1].overflowCount == 0)
+    }
+
+    @Test("apps beyond the cap fold into the overflow count")
+    func overflowCountsBeyondCap() {
+        store.spacePickerMaxAppIcons = 2
+        stub.windowOwnerPIDsMap = [100: [1, 2, 3, 4, 5]]
+        let appState = makeAppState(spaces: [(id: 100, isFullscreen: false)], activeSpaceID: 100)
+        appState.renderer.appIconResolver = { _ in NSImage() }
+
+        let entries = appState.spacePickerEntries()
+
+        #expect(entries[0].appIcons.count == 2)
+        #expect(entries[0].overflowCount == 3)
+    }
+
+    @Test("apps without a resolvable icon do not burn cap slots")
+    func unresolvedIconsSkipCapSlots() {
+        store.spacePickerMaxAppIcons = 2
+        stub.windowOwnerPIDsMap = [100: [1, 2, 3]]
+        let appState = makeAppState(spaces: [(id: 100, isFullscreen: false)], activeSpaceID: 100)
+        appState.renderer.appIconResolver = { pid in pid == 1 ? nil : NSImage() }
+
+        let entries = appState.spacePickerEntries()
+
+        #expect(entries[0].appIcons.count == 2)
+        #expect(entries[0].overflowCount == 0)
+    }
+
+    @Test("a cap of zero and name mode both skip the window scan")
+    func capZeroAndNameModeSkipScan() {
+        stub.windowOwnerPIDsMap = [100: [1]]
+        let appState = makeAppState(spaces: [(id: 100, isFullscreen: false)], activeSpaceID: 100)
+
+        store.spacePickerMaxAppIcons = 0
+        _ = appState.spacePickerEntries()
+        #expect(stub.windowOwnerPIDsCallCount == 0)
+
+        store.spacePickerMaxAppIcons = 5
+        store.spacePickerStyle = .name
+        _ = appState.spacePickerEntries()
+        #expect(stub.windowOwnerPIDsCallCount == 0)
+
+        store.spacePickerStyle = .icons
+        _ = appState.spacePickerEntries()
+        #expect(stub.windowOwnerPIDsCallCount == 1)
+    }
+
+    @Test("a sticky window does not attribute its app to every Space")
+    func stickyWindowFiltering() {
+        // Window 50 sits on every Space, window 51 only on Space 2
+        let owners = CGSDisplaySpaceProvider.resolveWindowOwners(
+            appWindows: [(pid: 5, windowIDs: [50, 51])],
+            spaceIDs: [1, 2, 3]
+        ) { windows in
+            windows == [51] ? [2] : [1, 2, 3]
+        }
+
+        #expect(owners == [2: [5]])
+    }
+
+    @Test("an app with one window per Space keeps them all")
+    func everywhereAppSurvivesStickyFilter() {
+        let spacesByWindow = [61: [1], 62: [2], 63: [3]]
+        let owners = CGSDisplaySpaceProvider.resolveWindowOwners(
+            appWindows: [(pid: 7, windowIDs: [61, 62, 63])],
+            spaceIDs: [1, 2, 3]
+        ) { windows in
+            windows.count == 1 ? spacesByWindow[windows[0]] ?? [] : [1, 2, 3]
+        }
+
+        #expect(owners == [1: [7], 2: [7], 3: [7]])
+    }
+
+    @Test("a single requested Space skips the sticky filter")
+    func singleSpaceSkipsStickyFilter() {
+        var queries = 0
+        let owners = CGSDisplaySpaceProvider.resolveWindowOwners(
+            appWindows: [(pid: 5, windowIDs: [50])],
+            spaceIDs: [1]
+        ) { _ in
+            queries += 1
+            return [1, 2, 3]
+        }
+
+        #expect(owners == [1: [5]])
+        #expect(queries == 1)
+    }
+
+    @Test("owners keep the front-to-back app order per Space")
+    func ownersKeepAppOrder() {
+        let owners = CGSDisplaySpaceProvider.resolveWindowOwners(
+            appWindows: [(pid: 9, windowIDs: [90]), (pid: 8, windowIDs: [80])],
+            spaceIDs: [1, 2]
+        ) { _ in [1] }
+
+        #expect(owners == [1: [9, 8]])
+    }
+
+    private func makeEntry(
+        targetSpace: Int? = 1,
+        appIcons: [NSImage] = [],
+        overflowCount: Int = 0
+    ) -> SpacePickerEntry {
+        SpacePickerEntry(
+            icon: NSImage(),
+            title: "Desktop 1",
+            keyEquivalent: "1",
+            isActive: false,
+            targetSpace: targetSpace,
+            spaceID: 100,
+            appIcons: appIcons,
+            overflowCount: overflowCount
+        )
+    }
+
+    private func attachmentCount(_ string: NSAttributedString?) -> Int {
+        guard let string else {
+            return 0
+        }
+        var count = 0
+        string.enumerateAttribute(.attachment, in: NSRange(location: 0, length: string.length)) { value, _, _ in
+            if value != nil {
+                count += 1
+            }
+        }
+        return count
+    }
+
+    @Test("attributed titles follow the picker style")
+    func attributedTitlesFollowStyle() {
+        let entry = makeEntry(appIcons: [NSImage(), NSImage()])
+
+        #expect(MenuBuilder.attributedTitle(for: entry, style: .name) == nil)
+
+        let fullscreen = makeEntry(targetSpace: nil, appIcons: [NSImage()])
+        #expect(MenuBuilder.attributedTitle(for: fullscreen, style: .icons) == nil)
+        #expect(MenuBuilder.attributedTitle(for: fullscreen, style: .both) == nil)
+
+        let both = MenuBuilder.attributedTitle(for: entry, style: .both)
+        #expect(both?.string.hasPrefix("Desktop 1") == true)
+        #expect(attachmentCount(both) == 2)
+
+        let iconsOnly = MenuBuilder.attributedTitle(for: entry, style: .icons)
+        #expect(iconsOnly?.string.contains("Desktop") == false)
+        #expect(attachmentCount(iconsOnly) == 2)
+    }
+
+    @Test("empty Spaces blank in icons mode and stay plain in the combined mode")
+    func emptySpacesBlankInIconsMode() {
+        let empty = makeEntry()
+
+        let iconsOnly = MenuBuilder.attributedTitle(for: empty, style: .icons)
+        #expect(iconsOnly != nil)
+        #expect(iconsOnly?.string.isEmpty == true)
+
+        #expect(MenuBuilder.attributedTitle(for: empty, style: .both) == nil)
+
+        // AppKit falls back to the plain title when the attributed one is
+        // empty, so the built row blanks the title and keeps the name as a
+        // tooltip
+        let menu = MenuBuilder.buildSpacePickerMenu(entries: [empty], style: .icons, target: NSObject())
+        #expect(menu.items[0].title.isEmpty)
+        #expect(menu.items[0].attributedTitle == nil)
+        #expect(menu.items[0].toolTip == "Desktop 1")
+    }
+
+    @Test("overflow appends a +N suffix")
+    func overflowAppendsSuffix() {
+        let entry = makeEntry(appIcons: [NSImage()], overflowCount: 3)
+
+        let title = MenuBuilder.attributedTitle(for: entry, style: .both)
+
+        #expect(title?.string.hasSuffix(" +3") == true)
     }
 }

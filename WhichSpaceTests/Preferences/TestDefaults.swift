@@ -239,6 +239,8 @@ struct DefaultsIsolationGuardTests {
             "spaceIconStyles",
             "spaceLabels",
             "spaceLabelStyles",
+            "spacePickerMaxAppIcons",
+            "spacePickerStyle",
             "spaceSkinTones",
             "spaceSounds",
             "spaceStyleMigrationVersion",

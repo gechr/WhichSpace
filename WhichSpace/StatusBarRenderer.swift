@@ -15,6 +15,11 @@ struct SpacePickerEntry {
     let targetSpace: Int?
     /// The CGS space ID (used to find apps on fullscreen spaces)
     let spaceID: Int
+    /// One icon per app with windows on this Space, frontmost first, already
+    /// capped to the app-icon limit (empty for fullscreen rows)
+    let appIcons: [NSImage]
+    /// Apps beyond the cap, shown as a "+N" suffix
+    let overflowCount: Int
 }
 
 /// Renders status bar icons for the current space state.
@@ -73,6 +78,19 @@ final class StatusBarRenderer {
 
     /// Callback invoked when a background window scan completes and the icon should be refreshed.
     var onIconNeedsUpdate: (() -> Void)?
+
+    /// Resolves a PID to its app icon; replaced in tests, where arbitrary
+    /// PIDs have no running application to resolve against. Accessory apps
+    /// resolve to nil: a menu bar app's transient panels can pass the window
+    /// filter, but the app itself does not live on the Space.
+    var appIconResolver: (pid_t) -> NSImage? = { pid in
+        guard let app = NSRunningApplication(processIdentifier: pid),
+              app.activationPolicy == .regular
+        else {
+            return nil
+        }
+        return app.icon
+    }
 
     private static let spacesWithWindowsCacheTTL: TimeInterval = 0.2
 
@@ -184,8 +202,19 @@ final class StatusBarRenderer {
     /// are only offered in multi-space modes, and the picker exists to reach
     /// Spaces the bar isn't showing.
     func spacePickerEntries() -> [SpacePickerEntry] {
-        renderedCurrentDisplayIcons(darkMode: appState.darkModeEnabled, includeHidden: true).map { rendered in
-            SpacePickerEntry(
+        let renderedIcons = renderedCurrentDisplayIcons(darkMode: appState.darkModeEnabled, includeHidden: true)
+        let cap = store.spacePickerMaxAppIcons
+        // Name mode and a cap of 0 both leave nothing to scan for
+        let wantsIcons = cap > 0 && store.spacePickerStyle != .name
+        var ownersBySpace: [Int: [pid_t]] = [:]
+        if wantsIcons {
+            let regularSpaceIDs = renderedIcons.filter { !$0.slot.isFullscreen }.map(\.slot.spaceID)
+            ownersBySpace = displaySpaceProvider.windowOwnerPIDs(forSpaceIDs: regularSpaceIDs)
+        }
+        return renderedIcons.map { rendered in
+            let icons = (ownersBySpace[rendered.slot.spaceID] ?? []).compactMap(appIconResolver)
+            let (shown, overflow) = Self.capped(icons, limit: cap)
+            return SpacePickerEntry(
                 icon: rendered.icon,
                 title: rendered.slot.isFullscreen
                     ? (fullscreenAppName(forSpaceID: rendered.slot.spaceID) ?? "")
@@ -195,9 +224,17 @@ final class StatusBarRenderer {
                     : "",
                 isActive: rendered.slot.isActive,
                 targetSpace: rendered.slot.isFullscreen ? nil : rendered.slot.globalIndex,
-                spaceID: rendered.slot.spaceID
+                spaceID: rendered.slot.spaceID,
+                appIcons: shown,
+                overflowCount: overflow
             )
         }
+    }
+
+    /// Splits an ordered list at the app-icon cap: the leading items shown
+    /// as icons and the count folded into the "+N" overflow.
+    nonisolated static func capped<Element>(_ items: [Element], limit: Int) -> (shown: [Element], overflow: Int) {
+        (Array(items.prefix(limit)), max(0, items.count - limit))
     }
 
     /// Renders the icon for any (space, display) pair for the settings

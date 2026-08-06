@@ -316,6 +316,20 @@ enum SettingsSearchIndex {
             subtitle: Localization.tipHideSingleSpace,
             keywords: [.hide, .space]
         ),
+        SettingsSearchEntry(
+            anchor: .spacePickerIcons,
+            section: Localization.labelBehavior,
+            title: Localization.labelPickerAppIcons,
+            subtitle: Localization.tipPickerAppIcons,
+            keywords: [.icon, .space, .window]
+        ),
+        SettingsSearchEntry(
+            anchor: .spacePickerStyle,
+            section: Localization.labelBehavior,
+            title: Localization.labelPickerStyle,
+            subtitle: Localization.tipPickerStyle,
+            keywords: [.icon, .space]
+        ),
     ]
 
     // MARK: - Spaces

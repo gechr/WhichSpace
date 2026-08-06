@@ -10,6 +10,8 @@ final class CGSStub: DisplaySpaceProvider, @unchecked Sendable {
     private var spacesWithWindowsCalls = 0
     private var spacesWithWindowsSemaphore: DispatchSemaphore?
     private var spacesWithWindowsValue: Set<Int> = []
+    private var windowOwnerPIDsCalls = 0
+    private var windowOwnerPIDsValue: [Int: [pid_t]] = [:]
 
     var displays: [NSDictionary] = []
     var activeDisplayIdentifier: String?
@@ -54,6 +56,22 @@ final class CGSStub: DisplaySpaceProvider, @unchecked Sendable {
         withLock {
             fullscreenOwnerPIDsCalls += 1
             return fullscreenOwnerPIDsValue.filter { spaceIDs.contains($0.key) }
+        }
+    }
+
+    var windowOwnerPIDsMap: [Int: [pid_t]] {
+        get { withLock { windowOwnerPIDsValue } }
+        set { withLock { windowOwnerPIDsValue = newValue } }
+    }
+
+    var windowOwnerPIDsCallCount: Int {
+        withLock { windowOwnerPIDsCalls }
+    }
+
+    func windowOwnerPIDs(forSpaceIDs spaceIDs: [Int]) -> [Int: [pid_t]] {
+        withLock {
+            windowOwnerPIDsCalls += 1
+            return windowOwnerPIDsValue.filter { spaceIDs.contains($0.key) }
         }
     }
 

@@ -998,7 +998,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             Self.logger.info("no picker: \(entries.count) Space(s) available")
             return
         }
-        let menu = MenuBuilder.buildSpacePickerMenu(entries: entries, target: actionHandler)
+        // A cap of 0 turns the app icons off entirely, so the rows read as
+        // they always have
+        let style = appState.store.spacePickerMaxAppIcons > 0 ? appState.store.spacePickerStyle : .name
+        let menu = MenuBuilder.buildSpacePickerMenu(entries: entries, style: style, target: actionHandler)
         let position = NSPoint(x: 0, y: button.bounds.height + 5)
         menu.popUp(positioning: nil, at: position, in: button)
     }

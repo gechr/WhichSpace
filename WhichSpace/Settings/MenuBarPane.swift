@@ -175,6 +175,50 @@ struct MenuBarPane: View {
                 subtitle: Localization.tipHideSingleSpace,
                 anchor: .hideSingleSpace
             )
+            SettingsRowDivider()
+            SettingsSliderRow(
+                title: Localization.labelPickerAppIcons,
+                value: spacePickerMaxAppIconsBinding,
+                range: 0 ... Double(Layout.spacePickerMaxAppIconsRange.upperBound),
+                step: 1,
+                defaultValue: Double(Layout.defaultSpacePickerMaxAppIcons),
+                icon: "app.badge",
+                // The picker menu only appears in single-icon mode, so the
+                // rows fade while the bar shows every Space
+                dimmed: !showsCurrentSpaceOnly,
+                subtitle: Localization.tipPickerAppIcons,
+                anchor: .spacePickerIcons,
+                // Explicit so the trailing closure reads as the formatter
+                // rather than the parser
+                valueParser: SettingsSliderRow.parseNumber
+            ) { $0 == 0 ? Localization.labelOff : String(Int($0)) }
+            SettingsRowDivider()
+            spacePickerStyleRow
+        }
+    }
+
+    /// What each picker row shows beside its Space icon, nested under the
+    /// slider that decides whether app icons appear at all.
+    private var spacePickerStyleRow: some View {
+        let dimmed = !showsCurrentSpaceOnly || model.value(\.spacePickerMaxAppIcons) == 0
+        return SettingsRow(
+            icon: "list.bullet.rectangle",
+            subtitle: Localization.tipPickerStyle,
+            dimmed: dimmed,
+            indented: true,
+            anchor: .spacePickerStyle
+        ) {
+            Text(Localization.labelPickerStyle)
+                .foregroundStyle(dimmed ? .tertiary : .primary)
+        } control: {
+            Picker(Localization.labelPickerStyle, selection: model.binding(\.spacePickerStyle)) {
+                ForEach(SpacePickerStyle.allCases, id: \.self) { style in
+                    Text(style.localizedName).tag(style)
+                }
+            }
+            .pickerStyle(.menu)
+            .labelsHidden()
+            .fixedSize()
         }
     }
 
@@ -252,6 +296,14 @@ struct MenuBarPane: View {
         return Binding(
             get: { stored.wrappedValue == .letter },
             set: { stored.wrappedValue = $0 ? .letter : .appIcon }
+        )
+    }
+
+    private var spacePickerMaxAppIconsBinding: Binding<Double> {
+        let stored = model.binding(\.spacePickerMaxAppIcons)
+        return Binding(
+            get: { Double(stored.wrappedValue) },
+            set: { stored.wrappedValue = Int($0) }
         )
     }
 }

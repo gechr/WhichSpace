@@ -45,6 +45,7 @@ extension View {
 /// which forces a hardcoded pane height and leaves blank space below short
 /// panes. This VStack-based recreation of the same visual style sizes to its
 /// content, so the window fits each pane exactly.
+///
 struct SettingsForm<Content: View>: View {
     @ViewBuilder var content: Content
 
@@ -353,6 +354,7 @@ struct SettingsSliderRow: View {
     let defaultValue: Double
     var icon: String?
     var disabled = false
+    var dimmed = false
     var subtitle: String?
     var anchor: SettingsAnchor?
     /// Reads a typed value back out of the formatted display, so the number
@@ -369,9 +371,9 @@ struct SettingsSliderRow: View {
     }
 
     var body: some View {
-        SettingsRow(icon: icon, subtitle: subtitle, disabled: disabled, anchor: anchor) {
+        SettingsRow(icon: icon, subtitle: subtitle, disabled: disabled, dimmed: dimmed, anchor: anchor) {
             Text(title)
-                .foregroundStyle(disabled ? .tertiary : .primary)
+                .foregroundStyle(disabled || dimmed ? .tertiary : .primary)
         } control: {
             // The value reads as subtext beneath a fixed-width slider column,
             // so changing label widths never shove the row layout around and

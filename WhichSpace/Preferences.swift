@@ -98,6 +98,32 @@ enum SeparatorStyle: String, CaseIterable, Defaults.Serializable {
     }
 }
 
+// MARK: - SpacePickerStyle
+
+/// What each row of the left-click Space picker menu shows beside its Space
+/// icon. String-backed so future modes can be added without a key migration;
+/// an absent key resolves to `.icons`.
+enum SpacePickerStyle: String, CaseIterable, Defaults.Serializable {
+    /// The "Desktop N" name only
+    case name
+    /// The app icons only; an empty Space shows just its Space icon
+    case icons
+    /// The name followed by the app icons
+    case both
+
+    /// The localized name shown in the settings dropdown.
+    var localizedName: String {
+        switch self {
+        case .name:
+            Localization.labelPickerStyleName
+        case .icons:
+            Localization.labelPickerStyleIcons
+        case .both:
+            Localization.labelPickerStyleBoth
+        }
+    }
+}
+
 // MARK: - SpaceFont
 
 struct SpaceFont: Equatable, Defaults.Serializable {

@@ -130,6 +130,11 @@ enum KeySpecs {
     static let spaceIconStyles = TypedKeySpec(name: "spaceIconStyles", defaultValue: [Int: IconStyle]())
     static let spaceLabels = TypedKeySpec(name: "spaceLabels", defaultValue: [Int: String]())
     static let spaceLabelStyles = TypedKeySpec(name: "spaceLabelStyles", defaultValue: [Int: IconStyle]())
+    static let spacePickerMaxAppIcons = TypedKeySpec(
+        name: "spacePickerMaxAppIcons",
+        defaultValue: Layout.defaultSpacePickerMaxAppIcons
+    )
+    static let spacePickerStyle = TypedKeySpec(name: "spacePickerStyle", defaultValue: SpacePickerStyle.icons)
     static let spaceSkinTones = TypedKeySpec(name: "spaceSkinTones", defaultValue: [Int: SkinTone]())
     static let spaceSounds = TypedKeySpec(name: "spaceSounds", defaultValue: [Int: String]())
     static let spaceStyleMigrationVersion = TypedKeySpec(name: "spaceStyleMigrationVersion", defaultValue: 0)
@@ -188,6 +193,8 @@ enum KeySpecs {
         spaceIconStyles,
         spaceLabels,
         spaceLabelStyles,
+        spacePickerMaxAppIcons,
+        spacePickerStyle,
         spaceSkinTones,
         spaceSounds,
         spaceStyleMigrationVersion,
@@ -214,6 +221,8 @@ enum KeySpecs {
         scrollSensitivity.name,
         scrollWrapAround.name,
         soundName.name,
+        spacePickerMaxAppIcons.name,
+        spacePickerStyle.name,
         spaceSounds.name,
         spaceStyleMigrationVersion.name,
         verticalScrollEnabled.name,
@@ -604,6 +613,16 @@ final class DefaultsStore {
     var spaceLabelStyles: [Int: IconStyle] {
         get { self[KeySpecs.spaceLabelStyles] }
         set { self[KeySpecs.spaceLabelStyles] = newValue }
+    }
+
+    var spacePickerMaxAppIcons: Int {
+        get { self[KeySpecs.spacePickerMaxAppIcons] }
+        set { self[KeySpecs.spacePickerMaxAppIcons] = newValue.clamped(to: Layout.spacePickerMaxAppIconsRange) }
+    }
+
+    var spacePickerStyle: SpacePickerStyle {
+        get { self[KeySpecs.spacePickerStyle] }
+        set { self[KeySpecs.spacePickerStyle] = newValue }
     }
 
     var spaceSkinTones: [Int: SkinTone] {

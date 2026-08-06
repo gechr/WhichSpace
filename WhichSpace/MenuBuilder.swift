@@ -24,8 +24,13 @@ enum MenuBuilder {
 
     /// Builds the transient menu shown on left-click in single-icon mode: one
     /// item per Space, rendered exactly like its status bar icon, titled with
-    /// its Desktop name, with a checkmark on the active Space.
-    static func buildSpacePickerMenu(entries: [SpacePickerEntry], target: AnyObject) -> NSMenu {
+    /// its Desktop name and the icons of the apps on it per the picker style,
+    /// with a checkmark on the active Space.
+    static func buildSpacePickerMenu(
+        entries: [SpacePickerEntry],
+        style: SpacePickerStyle,
+        target: AnyObject
+    ) -> NSMenu {
         let menu = NSMenu()
         for entry in entries {
             let item = NSMenuItem(
@@ -39,10 +44,68 @@ enum MenuBuilder {
             item.image = entry.icon
             item.state = entry.isActive ? .on : .off
             item.representedObject = entry
+            if let attributed = attributedTitle(for: entry, style: style) {
+                // AppKit draws the plain title in place of an empty
+                // attributed one, so a blanked row clears the title itself
+                // and keeps the Desktop name as a tooltip
+                if attributed.length == 0 {
+                    item.title = ""
+                    item.toolTip = entry.title
+                } else {
+                    item.attributedTitle = attributed
+                }
+            }
             menu.addItem(item)
         }
         addBottomSpacer(to: menu)
         return menu
+    }
+
+    /// The attributed row title carrying the app icons, or nil when the plain
+    /// title already says everything: name mode, fullscreen rows, and an
+    /// iconless row in the combined style.
+    static func attributedTitle(for entry: SpacePickerEntry, style: SpacePickerStyle) -> NSAttributedString? {
+        guard style != .name, entry.targetSpace != nil else {
+            return nil
+        }
+        let font = NSFont.menuFont(ofSize: 0)
+        if entry.appIcons.isEmpty, entry.overflowCount == 0 {
+            guard style == .icons else {
+                return nil
+            }
+            // Empty Space in icons mode: just the Space icon, no text
+            return NSAttributedString(string: "")
+        }
+        let result = NSMutableAttributedString()
+        if style == .both {
+            // No foreground color on the name run: the menu substitutes the
+            // highlight and dark-mode colors only for unstyled text
+            result.append(NSAttributedString(string: entry.title + "  ", attributes: [.font: font]))
+        }
+        let side = Layout.spacePickerAppIconSize
+        for (index, icon) in entry.appIcons.enumerated() {
+            if index > 0 {
+                result.append(NSAttributedString(string: "\u{2009}", attributes: [.font: font]))
+            }
+            let attachment = NSTextAttachment()
+            attachment.image = icon
+            // An icon taller than the font's ascent grows the line box and
+            // drags the title off the row's centre with it, so the icon is
+            // held inside the ascent and centred on the cap height
+            attachment.bounds = CGRect(x: 0, y: (font.capHeight - side) / 2, width: side, height: side)
+            result.append(NSAttributedString(attachment: attachment))
+        }
+        if entry.overflowCount > 0 {
+            result.append(NSAttributedString(
+                string: " +\(entry.overflowCount)",
+                attributes: [.font: font, .foregroundColor: NSColor.secondaryLabelColor]
+            ))
+        }
+        // An attachment run carries no font of its own, so the line would
+        // otherwise take its metrics from the default font while the icons
+        // are placed against the menu font, tilting them off centre
+        result.addAttribute(.font, value: font, range: NSRange(location: 0, length: result.length))
+        return result
     }
 
     // MARK: - Version Header

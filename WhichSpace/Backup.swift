@@ -96,6 +96,8 @@ struct BackupSettings: Codable {
     var shrinkIconToFit: Bool
     var sizeScale: Double
     var soundName: String
+    var spacePickerMaxAppIcons: Int
+    var spacePickerStyle: String?
     /// Present only in backups from versions with the per-display toggle;
     /// nil means both preference families are live data. Never encoded -
     /// the synthesized encoder omits nil optionals.
@@ -113,7 +115,7 @@ struct BackupSettings: Codable {
         case paddingScale
         case scrollHapticFeedback, scrollHapticIntensity, scrollSensitivity, scrollWrapAround
         case separatorColor, separatorStyle, showAllDisplays, showAllSpaces, shrinkIconToFit
-        case sizeScale, soundName, uniqueIconsPerDisplay
+        case sizeScale, soundName, spacePickerMaxAppIcons, spacePickerStyle, uniqueIconsPerDisplay
         case verticalScrollEnabled
     }
 
@@ -151,6 +153,9 @@ struct BackupSettings: Codable {
         shrinkIconToFit = try container.decodeIfPresent(Bool.self, forKey: .shrinkIconToFit) ?? true
         sizeScale = try container.decodeIfPresent(Double.self, forKey: .sizeScale) ?? Layout.defaultSizeScale
         soundName = try container.decodeIfPresent(String.self, forKey: .soundName) ?? ""
+        spacePickerMaxAppIcons = try container.decodeIfPresent(Int.self, forKey: .spacePickerMaxAppIcons)
+            ?? Layout.defaultSpacePickerMaxAppIcons
+        spacePickerStyle = try container.decodeIfPresent(String.self, forKey: .spacePickerStyle)
         uniqueIconsPerDisplay = try container.decodeIfPresent(Bool.self, forKey: .uniqueIconsPerDisplay)
         verticalScrollEnabled = try container.decodeIfPresent(Bool.self, forKey: .verticalScrollEnabled) ?? false
     }
@@ -182,6 +187,8 @@ struct BackupSettings: Codable {
         shrinkIconToFit: Bool,
         sizeScale: Double,
         soundName: String,
+        spacePickerMaxAppIcons: Int,
+        spacePickerStyle: String?,
         verticalScrollEnabled: Bool
     ) {
         self.classicSpaceSwitching = classicSpaceSwitching
@@ -210,6 +217,8 @@ struct BackupSettings: Codable {
         self.shrinkIconToFit = shrinkIconToFit
         self.sizeScale = sizeScale
         self.soundName = soundName
+        self.spacePickerMaxAppIcons = spacePickerMaxAppIcons
+        self.spacePickerStyle = spacePickerStyle
         self.verticalScrollEnabled = verticalScrollEnabled
     }
 }
@@ -579,6 +588,8 @@ enum BackupManager {
             shrinkIconToFit: store.shrinkIconToFit,
             sizeScale: store.sizeScale,
             soundName: store.soundName,
+            spacePickerMaxAppIcons: store.spacePickerMaxAppIcons,
+            spacePickerStyle: store.spacePickerStyle.rawValue,
             verticalScrollEnabled: store.verticalScrollEnabled
         )
 
@@ -727,6 +738,9 @@ enum BackupManager {
         store.shrinkIconToFit = backup.settings.shrinkIconToFit
         store.sizeScale = backup.settings.sizeScale.clamped(to: Layout.sizeScaleRange)
         store.soundName = backup.settings.soundName
+        store.spacePickerMaxAppIcons = backup.settings.spacePickerMaxAppIcons
+        store.spacePickerStyle = backup.settings.spacePickerStyle
+            .flatMap { SpacePickerStyle(rawValue: $0) } ?? .icons
         store.verticalScrollEnabled = backup.settings.verticalScrollEnabled
 
         // Apply shared space preferences

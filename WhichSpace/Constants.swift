@@ -106,6 +106,12 @@ enum Layout {
     static let scrollHapticIntensityRange = 1 ... 6
     static let defaultScrollHapticIntensity = 4
 
+    /// Space picker menu app icons
+    static let defaultSpacePickerMaxAppIcons = 5
+    static let spacePickerMaxAppIconsRange = 0 ... 10
+    /// Point size of the app icons embedded in picker menu item titles
+    static let spacePickerAppIconSize = 16.0
+
     /// Mission Control's per-display Space limit
     static let maxSpacesPerDisplay = 16
 
@@ -183,7 +189,7 @@ enum HapticIntensityLabel {
         case 6:
             Localization.labelHapticMaximum
         default:
-            Localization.labelHapticOff
+            Localization.labelOff
         }
     }
 }
@@ -321,7 +327,6 @@ enum Localization {
     static let labelHapticLight = String(localized: "label_haptic_light")
     static let labelHapticMaximum = String(localized: "label_haptic_maximum")
     static let labelHapticMedium = String(localized: "label_haptic_medium")
-    static let labelHapticOff = String(localized: "label_haptic_off")
     static let labelHapticStrong = String(localized: "label_haptic_strong")
     static let labelHapticVeryLight = String(localized: "label_haptic_very_light")
     static let labelHapticVeryStrong = String(localized: "label_haptic_very_strong")
@@ -337,7 +342,13 @@ enum Localization {
     static let labelNumber = String(localized: "label_number")
     static let labelNumberBackground = String(localized: "label_number_background")
     static let labelNumberForeground = String(localized: "label_number_foreground")
+    static let labelOff = String(localized: "label_off")
     static let labelOutside = String(localized: "label_outside")
+    static let labelPickerAppIcons = String(localized: "label_picker_app_icons")
+    static let labelPickerStyle = String(localized: "label_picker_style")
+    static let labelPickerStyleBoth = String(localized: "label_picker_style_both")
+    static let labelPickerStyleIcons = String(localized: "label_picker_style_icons")
+    static let labelPickerStyleName = String(localized: "label_picker_style_name")
     static let labelPreview = String(localized: "label_preview")
     static let labelPrevious = String(localized: "label_previous")
     static let labelResetSettings = String(localized: "label_reset_settings")
@@ -445,6 +456,8 @@ enum Localization {
     static let tipLastChecked = String(localized: "tip_last_checked")
     static let tipLaunchAtLogin = String(localized: "tip_launch_at_login")
     static let tipLocalSpaceNumbers = String(localized: "tip_local_space_numbers")
+    static let tipPickerAppIcons = String(localized: "tip_picker_app_icons")
+    static let tipPickerStyle = String(localized: "tip_picker_style")
     static let tipQuit = String(localized: "tip_quit")
     static let tipCurrentSpace = String(localized: "tip_current_space")
     static let tipResetSettings = String(localized: "tip_reset_settings")

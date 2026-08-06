@@ -845,6 +845,39 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         XCTAssertEqual(store.separatorStyle, .middleDot)
     }
 
+    func testSpacePickerRoundTrip() throws {
+        store.spacePickerMaxAppIcons = 8
+        store.spacePickerStyle = .both
+
+        let json = try BackupManager.encode(store: store)
+        store.resetAll()
+        XCTAssertEqual(store.spacePickerMaxAppIcons, Layout.defaultSpacePickerMaxAppIcons)
+        XCTAssertEqual(store.spacePickerStyle, .icons)
+
+        let backup = try BackupManager.decode(jsonString: json)
+        BackupManager.apply(backup, to: store)
+        XCTAssertEqual(store.spacePickerMaxAppIcons, 8)
+        XCTAssertEqual(store.spacePickerStyle, .both)
+    }
+
+    func testSpacePickerStyleUnknownValueFallsBack() throws {
+        store.spacePickerStyle = .both
+        let json = try BackupManager.encode(store: store)
+        store.resetAll()
+
+        var object = try XCTUnwrap(
+            JSONSerialization.jsonObject(with: Data(json.utf8)) as? [String: Any]
+        )
+        var settings = try XCTUnwrap(object["settings"] as? [String: Any])
+        settings["spacePickerStyle"] = "bogus"
+        object["settings"] = settings
+        let mangled = try JSONSerialization.data(withJSONObject: object)
+
+        let backup = try BackupManager.decode(jsonString: XCTUnwrap(String(bytes: mangled, encoding: .utf8)))
+        BackupManager.apply(backup, to: store)
+        XCTAssertEqual(store.spacePickerStyle, .icons)
+    }
+
     func testExportAndLoadRoundTrip() throws {
         // Set up some settings
         store.showAllSpaces = true

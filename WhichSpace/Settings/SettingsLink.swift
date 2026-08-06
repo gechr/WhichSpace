@@ -71,6 +71,8 @@ enum SettingsAnchor: String, CaseIterable {
     case hideSingleSpace = "hide-single-space"
     case hideFullscreenApps = "hide-fullscreen-apps"
     case fullscreenLetter = "fullscreen-letter"
+    case spacePickerIcons = "space-picker-icons"
+    case spacePickerStyle = "space-picker-style"
 
     case preview
     case spaceLabel = "space-label"
@@ -138,7 +140,8 @@ enum SettingsAnchor: String, CaseIterable {
             .general
         case .iconSize, .iconPadding, .shrinkToFit, .localSpaceNumbers, .separatorColor,
              .separatorStyle, .showAllDisplays, .showAllSpaces, .dimInactiveSpaces,
-             .hideEmptySpaces, .hideSingleSpace, .hideFullscreenApps, .fullscreenLetter:
+             .hideEmptySpaces, .hideSingleSpace, .hideFullscreenApps, .fullscreenLetter,
+             .spacePickerIcons, .spacePickerStyle:
             .menuBar
         case .preview, .uniqueIconsPerDisplay, .displays, .spaceLabel, .numberStyle, .symbol,
              .emoji, .symbolPosition, .symbolWrap, .symbolGap, .skinTone, .symbolColor,
