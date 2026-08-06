@@ -66,37 +66,7 @@ struct SettingsConstraintsTests {
         #expect(!store.showAllDisplays)
     }
 
-    // MARK: - clickToSwitchSpaces Accessibility Guard
-
-    @Test("clickToSwitchSpaces fails without accessibility")
-    func clickToSwitchSpaces_failsWithoutAccessibility() {
-        let result = SettingsConstraints.setClickToSwitchSpaces(
-            true, store: store
-        ) { false }
-
-        #expect(!result, "Should fail when accessibility is not granted")
-        #expect(!store.clickToSwitchSpaces, "Setting should remain false")
-    }
-
-    @Test("clickToSwitchSpaces can always be disabled")
-    func clickToSwitchSpaces_canAlwaysBeDisabled() {
-        store.clickToSwitchSpaces = true
-
-        let result = SettingsConstraints.setClickToSwitchSpaces(false, store: store)
-
-        #expect(result, "Disabling should always succeed")
-        #expect(!store.clickToSwitchSpaces)
-    }
-
-    @Test("clickToSwitchSpaces disabling from default succeeds")
-    func clickToSwitchSpaces_disablingFromDefault_succeeds() {
-        let result = SettingsConstraints.setClickToSwitchSpaces(false, store: store)
-
-        #expect(result)
-        #expect(!store.clickToSwitchSpaces)
-    }
-
-    // MARK: - Scroll Switching Accessibility Guard
+    // MARK: - Switching Preferences Record Intent
 
     @Test("scroll switching defaults to disabled")
     func scrollSwitching_defaultsToDisabled() {
@@ -104,73 +74,29 @@ struct SettingsConstraintsTests {
         #expect(!store.verticalScrollEnabled)
     }
 
-    @Test("scroll switching fails without accessibility")
-    func scrollSwitching_failsWithoutAccessibility() {
-        let result = SettingsConstraints.setScrollSwitching(
-            true,
-            axis: \.verticalScrollEnabled,
-            store: store
-        ) { false }
+    @Test("clickToSwitchSpaces persists in both directions")
+    func clickToSwitchSpaces_persists() {
+        SettingsConstraints.setClickToSwitchSpaces(true, store: store)
+        #expect(store.clickToSwitchSpaces)
 
-        #expect(!result)
-        #expect(!store.verticalScrollEnabled)
-    }
-
-    @Test("scroll switching can always be disabled")
-    func scrollSwitching_canAlwaysBeDisabled() {
-        store.horizontalScrollEnabled = true
-
-        let result = SettingsConstraints.setScrollSwitching(
-            false,
-            axis: \.horizontalScrollEnabled,
-            store: store
-        ) { false }
-
-        #expect(result)
-        #expect(!store.horizontalScrollEnabled)
-    }
-
-    // MARK: - Accessibility Alert Flow (SettingsView binding logic)
-
-    @Test("accessibility alert triggered when enabling without permission")
-    func accessibilityAlert_triggeredWhenEnablingWithoutPermission() {
-        // Reproduces the binding setter logic from SettingsView.clickToSwitchSpacesBinding
-        var showingAccessibilityAlert = false
-
-        let result = SettingsConstraints.setClickToSwitchSpaces(
-            true, store: store
-        ) { false }
-        if !result {
-            showingAccessibilityAlert = true
-        }
-
-        #expect(showingAccessibilityAlert, "Alert should be triggered when enforcer denies the change")
-        #expect(!store.clickToSwitchSpaces, "Setting should remain false")
-    }
-
-    @Test("no accessibility alert when disabling")
-    func accessibilityAlert_notTriggeredWhenDisabling() {
-        store.clickToSwitchSpaces = true
-        var showingAccessibilityAlert = false
-
-        let result = SettingsConstraints.setClickToSwitchSpaces(false, store: store)
-        if !result {
-            showingAccessibilityAlert = true
-        }
-
-        #expect(!showingAccessibilityAlert, "No alert when disabling")
+        SettingsConstraints.setClickToSwitchSpaces(false, store: store)
         #expect(!store.clickToSwitchSpaces)
     }
 
-    @Test("no accessibility alert when already disabled")
-    func accessibilityAlert_notTriggeredWhenAlreadyDisabled() {
-        var showingAccessibilityAlert = false
+    @Test("scroll switching persists in both directions")
+    func scrollSwitching_persists() {
+        SettingsConstraints.setScrollSwitching(true, axis: \.verticalScrollEnabled, store: store)
+        #expect(store.verticalScrollEnabled)
 
-        let result = SettingsConstraints.setClickToSwitchSpaces(false, store: store)
-        if !result {
-            showingAccessibilityAlert = true
-        }
+        SettingsConstraints.setScrollSwitching(false, axis: \.verticalScrollEnabled, store: store)
+        #expect(!store.verticalScrollEnabled)
+    }
 
-        #expect(!showingAccessibilityAlert, "No alert when value is already false")
+    @Test("scroll axes write independently")
+    func scrollAxes_writeIndependently() {
+        SettingsConstraints.setScrollSwitching(true, axis: \.horizontalScrollEnabled, store: store)
+
+        #expect(store.horizontalScrollEnabled)
+        #expect(!store.verticalScrollEnabled)
     }
 }

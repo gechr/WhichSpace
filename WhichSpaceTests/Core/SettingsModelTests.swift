@@ -62,46 +62,45 @@ struct SettingsModelTests {
         #expect(!makeModel(trusted: false).accessibilityGranted)
     }
 
-    @Test("gated click binding persists when trusted")
+    @Test("click binding persists when trusted")
     func clickBindingTrusted() {
         let trusted = makeModel(trusted: true)
         trusted.clickToSwitchSpacesBinding.wrappedValue = true
         #expect(store.clickToSwitchSpaces)
     }
 
-    @Test("gated click binding snaps back when untrusted")
+    @Test("click binding persists when untrusted")
     func clickBindingUntrusted() {
         let untrusted = makeModel(trusted: false)
         let before = untrusted.tick
         untrusted.clickToSwitchSpacesBinding.wrappedValue = true
 
-        // The refused write leaves the store unchanged; the tick bump is what
-        // forces SwiftUI to re-read the getter so the toggle snaps back off
-        #expect(!store.clickToSwitchSpaces)
-        #expect(!untrusted.clickToSwitchSpacesBinding.wrappedValue)
+        // The pref records intent even without permission
+        #expect(store.clickToSwitchSpaces)
+        #expect(untrusted.clickToSwitchSpacesBinding.wrappedValue)
         #expect(untrusted.tick > before)
     }
 
-    @Test("gated scroll binding persists when trusted")
+    @Test("scroll binding persists when trusted")
     func scrollBindingTrusted() {
         let trusted = makeModel(trusted: true)
         trusted.scrollSwitchingBinding(axis: \.verticalScrollEnabled).wrappedValue = true
         #expect(store.verticalScrollEnabled)
     }
 
-    @Test("gated scroll binding snaps back when untrusted")
+    @Test("scroll binding persists when untrusted")
     func scrollBindingUntrusted() {
         let untrusted = makeModel(trusted: false)
         let before = untrusted.tick
         let binding = untrusted.scrollSwitchingBinding(axis: \.horizontalScrollEnabled)
         binding.wrappedValue = true
 
-        #expect(!store.horizontalScrollEnabled)
-        #expect(!binding.wrappedValue)
+        #expect(store.horizontalScrollEnabled)
+        #expect(binding.wrappedValue)
         #expect(untrusted.tick > before)
     }
 
-    @Test("disabling a gated setting never requires permission")
+    @Test("disabling a switching setting never requires permission")
     func gatedDisableUntrusted() {
         store.clickToSwitchSpaces = true
         store.verticalScrollEnabled = true

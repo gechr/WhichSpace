@@ -202,12 +202,12 @@ final class AppDelegateActionsTests: XCTestCase {
         )
     }
 
-    func testResolveClickPermission_untrustedWithSettingOn_turnsSettingOffAndAsks() {
+    func testResolveClickPermission_untrustedWithSettingOn_keepsSettingOnAndAsks() {
         store.clickToSwitchSpaces = true
         let localSut = makeDelegate(trusted: false)
 
         XCTAssertEqual(localSut.resolveClickPermission(), .needsRequest)
-        XCTAssertFalse(store.clickToSwitchSpaces, "A grant that went away should leave the setting off")
+        XCTAssertTrue(store.clickToSwitchSpaces, "The pref records intent even when the grant went away")
     }
 
     func testResolveClickPermission_untrustedWithSettingOff_leavesSettingOffAndAsks() {

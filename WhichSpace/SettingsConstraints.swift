@@ -13,39 +13,19 @@ enum SettingsConstraints {
         store.showAllDisplays = value
     }
 
-    /// Attempts to set `clickToSwitchSpaces`.
-    ///
-    /// When enabling, returns `false` if accessibility permission is not granted
-    /// (the caller is responsible for showing any UI prompt). Disabling always
-    /// succeeds. The trust check is injectable so tests don't depend on the
-    /// host process's actual TCC state.
-    @discardableResult
-    static func setClickToSwitchSpaces(
-        _ value: Bool,
-        store: DefaultsStore,
-        isProcessTrusted: () -> Bool = { Accessibility.isTrusted }
-    ) -> Bool {
-        if value, !isProcessTrusted() {
-            return false
-        }
+    /// Sets `clickToSwitchSpaces` - switching paths gate on permission at use
+    /// time.
+    static func setClickToSwitchSpaces(_ value: Bool, store: DefaultsStore) {
         store.clickToSwitchSpaces = value
-        return true
     }
 
-    /// Attempts to set a scroll-to-switch axis (`horizontalScrollEnabled` or
-    /// `verticalScrollEnabled`). Same contract as `setClickToSwitchSpaces`:
-    /// enabling requires accessibility permission, disabling always succeeds.
-    @discardableResult
+    /// Sets a scroll-to-switch axis (`horizontalScrollEnabled` or
+    /// `verticalScrollEnabled`). Same contract as `setClickToSwitchSpaces`.
     static func setScrollSwitching(
         _ value: Bool,
         axis: ReferenceWritableKeyPath<DefaultsStore, Bool>,
-        store: DefaultsStore,
-        isProcessTrusted: () -> Bool = { Accessibility.isTrusted }
-    ) -> Bool {
-        if value, !isProcessTrusted() {
-            return false
-        }
+        store: DefaultsStore
+    ) {
         store[keyPath: axis] = value
-        return true
     }
 }

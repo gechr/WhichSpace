@@ -91,9 +91,8 @@ final class SettingsModel {
         return isProcessTrusted()
     }
 
-    /// A gated binding for `clickToSwitchSpaces`: enabling without
-    /// accessibility permission leaves the store unchanged, and the tick bump
-    /// re-reads the getter so the toggle visibly snaps back off.
+    /// A binding for `clickToSwitchSpaces` - the write persists even without
+    /// accessibility permission.
     var clickToSwitchSpacesBinding: Binding<Bool> {
         Binding(
             get: { [self] in
@@ -101,16 +100,14 @@ final class SettingsModel {
                 return store.clickToSwitchSpaces
             },
             set: { [self] in
-                SettingsConstraints.setClickToSwitchSpaces(
-                    $0, store: store, isProcessTrusted: isProcessTrusted
-                )
+                SettingsConstraints.setClickToSwitchSpaces($0, store: store)
                 tick += 1
             }
         )
     }
 
-    /// A gated binding for a scroll-switching axis; same snap-back contract
-    /// as `clickToSwitchSpacesBinding`.
+    /// A binding for a scroll-switching axis; same contract as
+    /// `clickToSwitchSpacesBinding`.
     func scrollSwitchingBinding(axis: ReferenceWritableKeyPath<DefaultsStore, Bool>) -> Binding<Bool> {
         Binding(
             get: { [self] in
@@ -118,9 +115,7 @@ final class SettingsModel {
                 return store[keyPath: axis]
             },
             set: { [self] in
-                SettingsConstraints.setScrollSwitching(
-                    $0, axis: axis, store: store, isProcessTrusted: isProcessTrusted
-                )
+                SettingsConstraints.setScrollSwitching($0, axis: axis, store: store)
                 tick += 1
             }
         )

@@ -313,23 +313,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         startObservingSpaceChanges()
         startObservingPreferences()
 
-        // Disable switching gestures if accessibility permission was revoked
-        if !isProcessTrusted() {
-            let hadGestures = store.clickToSwitchSpaces || store.horizontalScrollEnabled || store.verticalScrollEnabled
-            if store.clickToSwitchSpaces {
-                SettingsConstraints.setClickToSwitchSpaces(false, store: store)
-            }
-            if store.horizontalScrollEnabled {
-                SettingsConstraints.setScrollSwitching(false, axis: \.horizontalScrollEnabled, store: store)
-            }
-            if store.verticalScrollEnabled {
-                SettingsConstraints.setScrollSwitching(false, axis: \.verticalScrollEnabled, store: store)
-            }
-            if hadGestures {
-                Self.logger.info("not trusted at launch; switching gestures turned off")
-            }
-        }
-
         // Warm the symbol/emoji catalogs off-main so the first settings-window
         // open doesn't pay for instantiating ~600 NSImages on the main thread
         Task.detached(priority: .utility) {
@@ -706,29 +689,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
     }
 
-    /// Resolves what a left click is allowed to do, enabling click-to-switch on
-    /// the first click and turning it back off if the grant has gone away.
-    ///
-    /// Permission can disappear after the setting was enabled - a revoked
-    /// grant, a TCC reset, or a rebuilt bundle the system no longer
-    /// recognises - so both states end in a permission request rather than a
-    /// click that does nothing and says nothing.
+    /// Resolves what a left click is allowed to do, enabling click-to-switch
+    /// on the first trusted left click. Without permission the preference is
+    /// left alone and the click leads to the permission request.
     func resolveClickPermission() -> ClickPermission {
-        // Auto-enable click-to-switch on first left click
-        guard store.clickToSwitchSpaces else {
-            let enabled = SettingsConstraints.setClickToSwitchSpaces(
-                true, store: store, isProcessTrusted: isProcessTrusted
-            )
-            if !enabled {
-                Self.logger.info("click ignored: not trusted, so click-to-switch stays off")
-            }
-            return enabled ? .granted : .needsRequest
+        guard isProcessTrusted() else {
+            Self.logger.info("click needs accessibility permission")
+            return .needsRequest
         }
 
-        guard isProcessTrusted() else {
-            Self.logger.info("click ignored: not trusted; turning click-to-switch off")
-            SettingsConstraints.setClickToSwitchSpaces(false, store: store)
-            return .needsRequest
+        // Auto-enable click-to-switch on first trusted left click
+        if !store.clickToSwitchSpaces {
+            SettingsConstraints.setClickToSwitchSpaces(true, store: store)
         }
 
         return .granted
