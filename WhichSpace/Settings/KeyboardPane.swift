@@ -22,47 +22,61 @@ struct KeyboardPane: View {
     @State private var revealsInactiveSpaces = false
 
     var body: some View {
-        SettingsForm {
-            if !model.accessibilityGranted {
-                AccessibilityBannerSection(model: model)
+        // The banner pins above the scroll view, so the warning stays visible
+        // while the sections scroll beneath it
+        Group {
+            if model.accessibilityGranted {
+                SettingsForm {
+                    sections
+                }
+            } else {
+                SettingsForm {
+                    AccessibilityBannerSection(model: model)
+                } content: {
+                    sections
+                }
             }
-            // Left/right rather than previous/next: "previous" names the
-            // last-visited Space, which is the third row here
-            SettingsSection(Localization.labelSwitch) {
-                recorderRow(
-                    title: Localization.labelLeft,
-                    icon: "arrowshape.left.fill",
-                    subtitle: Localization.tipHotkeySwitchLeft,
-                    anchor: .hotkeySwitchLeft,
-                    name: .switchLeft
-                )
-                SettingsRowDivider()
-                recorderRow(
-                    title: Localization.labelRight,
-                    icon: "arrowshape.right.fill",
-                    subtitle: Localization.tipHotkeySwitchRight,
-                    anchor: .hotkeySwitchRight,
-                    name: .switchRight
-                )
-                SettingsRowDivider()
-                recorderRow(
-                    title: Localization.labelPrevious,
-                    icon: "arrow.uturn.backward",
-                    subtitle: Localization.tipHotkeySwitchPrevious,
-                    anchor: .hotkeySwitchPrevious,
-                    name: .switchPrevious
-                )
-            }
-            windowSection
-            if !SpaceWindowMover.isSupported {
-                unsupportedNote
-            }
-            jumpSection
-            behaviorNote
         }
         // Revealing the hidden Jump rows grows the pane after the window was
         // sized to it, so the window has to follow
         .fitsSettingsWindow(measuring: CGSize(width: 0, height: Double(visibleJumpNumbers.count)))
+    }
+
+    @ViewBuilder
+    private var sections: some View {
+        // Left/right rather than previous/next: "previous" names the
+        // last-visited Space, which is the third row here
+        SettingsSection(Localization.labelSwitch) {
+            recorderRow(
+                title: Localization.labelLeft,
+                icon: "arrowshape.left.fill",
+                subtitle: Localization.tipHotkeySwitchLeft,
+                anchor: .hotkeySwitchLeft,
+                name: .switchLeft
+            )
+            SettingsRowDivider()
+            recorderRow(
+                title: Localization.labelRight,
+                icon: "arrowshape.right.fill",
+                subtitle: Localization.tipHotkeySwitchRight,
+                anchor: .hotkeySwitchRight,
+                name: .switchRight
+            )
+            SettingsRowDivider()
+            recorderRow(
+                title: Localization.labelPrevious,
+                icon: "arrow.uturn.backward",
+                subtitle: Localization.tipHotkeySwitchPrevious,
+                anchor: .hotkeySwitchPrevious,
+                name: .switchPrevious
+            )
+        }
+        windowSection
+        if !SpaceWindowMover.isSupported {
+            unsupportedNote
+        }
+        jumpSection
+        behaviorNote
     }
 
     // MARK: - Window

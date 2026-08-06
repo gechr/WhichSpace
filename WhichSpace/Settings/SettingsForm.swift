@@ -50,28 +50,57 @@ extension View {
 /// so a pane taller than that scrolls instead of running the window off the
 /// screen. A pane that fits reports its content height as the scroll view's
 /// ideal, keeping the window sized to the pane exactly as before.
-struct SettingsForm<Content: View>: View {
-    @ViewBuilder var content: Content
+///
+/// A `header` pins above the scroll view - the permission banner stays put
+/// while the sections scroll beneath it.
+struct SettingsForm<Header: View, Content: View>: View {
+    private let header: Header
+    private let content: Content
+    /// Distinguishes a real pinned header from the placeholder, so headerless
+    /// forms keep their top padding
+    private let hasHeader: Bool
 
     @Environment(SettingsHighlighter.self) private var highlighter: SettingsHighlighter?
 
+    init(@ViewBuilder content: () -> Content) where Header == EmptyView {
+        header = EmptyView()
+        self.content = content()
+        hasHeader = false
+    }
+
+    init(@ViewBuilder header: () -> Header, @ViewBuilder content: () -> Content) {
+        self.header = header()
+        self.content = content()
+        hasHeader = true
+    }
+
     var body: some View {
-        ScrollViewReader { proxy in
-            ScrollView {
-                VStack(alignment: .leading, spacing: Layout.settingsSectionSpacing) {
-                    content
+        VStack(alignment: .leading, spacing: Layout.settingsSectionSpacing) {
+            if hasHeader {
+                header
+                    .padding([.top, .horizontal], Layout.settingsPanePadding)
+                    .frame(width: Layout.settingsPaneContentWidth)
+            }
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack(alignment: .leading, spacing: Layout.settingsSectionSpacing) {
+                        content
+                    }
+                    .padding(
+                        hasHeader ? [.horizontal, .bottom] : .all,
+                        Layout.settingsPanePadding
+                    )
+                    .frame(width: Layout.settingsPaneContentWidth)
                 }
-                .padding(Layout.settingsPanePadding)
-                .frame(width: Layout.settingsPaneContentWidth)
-            }
-            .frame(maxHeight: maxPaneHeight)
-            // A deep link can point at a row the cap has scrolled out of
-            // view, so bring the anchor in rather than only highlighting it
-            .onAppear {
-                scroll(proxy, to: highlighter?.anchor)
-            }
-            .onChange(of: highlighter?.anchor) { _, anchor in
-                scroll(proxy, to: anchor)
+                .frame(maxHeight: maxPaneHeight)
+                // A deep link can point at a row the cap has scrolled out of
+                // view, so bring the anchor in rather than only highlighting it
+                .onAppear {
+                    scroll(proxy, to: highlighter?.anchor)
+                }
+                .onChange(of: highlighter?.anchor) { _, anchor in
+                    scroll(proxy, to: anchor)
+                }
             }
         }
         .toggleStyle(.switch)

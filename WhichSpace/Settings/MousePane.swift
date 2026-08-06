@@ -10,23 +10,35 @@ struct MousePane: View {
     let onHapticPreview: (Int) -> Void
 
     var body: some View {
-        SettingsForm {
-            if !model.accessibilityGranted {
+        // The banner pins above the scroll view, so the warning stays visible
+        // while the sections scroll beneath it
+        if model.accessibilityGranted {
+            SettingsForm {
+                sections
+            }
+        } else {
+            SettingsForm {
                 AccessibilityBannerSection(model: model)
+            } content: {
+                sections
             }
-            SettingsSection(Localization.labelClick, anchor: .click) {
-                SettingsToggleRow(
-                    title: Localization.toggleClickToSwitchSpaces,
-                    isOn: model.clickToSwitchSpacesBinding,
-                    icon: "hand.tap.fill",
-                    tint: permissionTint,
-                    subtitle: Localization.tipClickToSwitchSpaces,
-                    anchor: .clickToSwitch
-                )
-            }
-            scrollSection
-            behaviorSection
         }
+    }
+
+    @ViewBuilder
+    private var sections: some View {
+        SettingsSection(Localization.labelClick, anchor: .click) {
+            SettingsToggleRow(
+                title: Localization.toggleClickToSwitchSpaces,
+                isOn: model.clickToSwitchSpacesBinding,
+                icon: "hand.tap.fill",
+                tint: permissionTint,
+                subtitle: Localization.tipClickToSwitchSpaces,
+                anchor: .clickToSwitch
+            )
+        }
+        scrollSection
+        behaviorSection
     }
 
     private var scrollSection: some View {
