@@ -678,8 +678,19 @@ private struct SettingsWindowFitter: NSViewRepresentable {
     /// Grows or shrinks the window from its top-left corner, the same corner
     /// a tab switch sizes around, so the list the user is looking at stays put
     /// while the editor beside it moves.
-    private func fit(_ view: NSView) {
+    ///
+    /// A snap resize during a tab crossfade interrupts the transition and can
+    /// strand the incoming pane as a stale half-faded snapshot, so the fit
+    /// waits for the fade to drain first.
+    private func fit(_ view: NSView, retriesLeft: Int = 3) {
         guard let window = view.window, let pane = paneView(containing: view) else {
+            return
+        }
+        if retriesLeft > 0, hasRunningPaneAnimation(in: window) {
+            Task { @MainActor in
+                try? await Task.sleep(for: .milliseconds(350))
+                fit(view, retriesLeft: retriesLeft - 1)
+            }
             return
         }
         let content = CGRect(origin: .zero, size: pane.fittingSize)
@@ -694,6 +705,17 @@ private struct SettingsWindowFitter: NSViewRepresentable {
         frame.origin.y += frame.height - size.height
         frame.size = size
         window.setFrame(frame, display: true)
+    }
+
+    /// Whether a tab crossfade is animating a pane root view.
+    private func hasRunningPaneAnimation(in window: NSWindow) -> Bool {
+        guard let contentView = window.contentView else {
+            return false
+        }
+        if contentView.layer?.animationKeys()?.isEmpty == false {
+            return true
+        }
+        return contentView.subviews.contains { $0.layer?.animationKeys()?.isEmpty == false }
     }
 
     /// The pane's own root view - the content view's child this view descends

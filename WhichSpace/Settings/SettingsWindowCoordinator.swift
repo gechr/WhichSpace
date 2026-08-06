@@ -70,7 +70,11 @@ final class SettingsWindowCoordinator {
     private let highlighter: SettingsHighlighter
     private var windowController: SettingsWindowController?
     private var closeObserver: NSObjectProtocol?
+    private var titleObservation: NSKeyValueObservation?
     private var search: SettingsSearchController?
+
+    /// Margin past the package's 0.25 s tab crossfade before repairing.
+    private static let transitionSettleDelay: Duration = .milliseconds(400)
 
     init(models: [SettingsObservingModel], panes: [SettingsPane], highlighter: SettingsHighlighter) {
         self.models = models
@@ -119,6 +123,16 @@ final class SettingsWindowCoordinator {
                         }
                         self?.search?.reset()
                         ColorPanelCoordinator.closeSharedPanel()
+                    }
+                }
+                // The window is retitled on every tab activation, including
+                // toolbar clicks this coordinator never sees; an interrupted
+                // crossfade can strand the incoming pane half-faded, so each
+                // switch schedules a repair for after the transition
+                titleObservation = window.observe(\.title) { [weak self] _, _ in
+                    Task { @MainActor in
+                        try? await Task.sleep(for: Self.transitionSettleDelay)
+                        self?.restorePaneVisibility()
                     }
                 }
             }
