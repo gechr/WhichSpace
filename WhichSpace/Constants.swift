@@ -132,7 +132,7 @@ enum Layout {
     /// Inset between a pane's content and the window edge
     static let settingsPanePadding = 16.0
     /// Share of the screen height a settings pane may take before it scrolls
-    static let settingsPaneMaxHeightRatio = 0.8
+    static let settingsPaneMaxHeightRatio = 0.7
     /// Pane height cap when no screen is available to measure
     static let settingsPaneMaxHeightFallback = 800.0
     /// Vertical gap between the cards stacked in a pane
