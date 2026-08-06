@@ -597,7 +597,7 @@ struct SpacePickerTests {
 
         let menu = MenuBuilder.buildSpacePickerMenu(entries: entries, style: .both, target: target)
 
-        #expect(menu.items.count == 3)
+        #expect(menu.items.count == 4)
         let spaceItems = Array(menu.items.prefix(2))
         // No occupancy configured, so the combined style stays on the plain
         // titles the picker always had
@@ -614,6 +614,13 @@ struct SpacePickerTests {
             $0.action == #selector(ActionHandler.switchToPickedSpace(_:))
         })
         #expect(spaceItems.compactMap { ($0.representedObject as? SpacePickerEntry)?.spaceID } == [100, 101])
+        // The hidden item claims Cmd+, during menu tracking so the shortcut
+        // opens the real settings window rather than the blank Settings scene
+        let settingsItem = menu.items[2]
+        #expect(settingsItem.isHidden)
+        #expect(settingsItem.keyEquivalent == ",")
+        #expect(settingsItem.keyEquivalentModifierMask == [.command])
+        #expect(settingsItem.action == #selector(ActionHandler.openSettingsWindow))
         // The trailing item is the invisible spacer restoring the bottom inset
         #expect(menu.items.last?.view != nil)
         #expect(menu.items.last?.representedObject == nil)

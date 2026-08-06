@@ -83,12 +83,16 @@ enum AppInfo {
 // MARK: - Layout
 
 enum Layout {
-    // Size scale (percentage)
+    /// Size scale (percentage)
+    /// Slider default, leaving the icon at the base sizes below
     static let defaultSizeScale = 100.0
+    /// Slider bounds, from a little under the base size to a little over
     static let sizeScaleRange = 60.0 ... 120.0
 
-    // Padding scale (percentage)
+    /// Padding scale (percentage)
+    /// Slider default, leaving the padding at `defaultHorizontalPadding`
     static let defaultPaddingScale = 100.0
+    /// Slider bounds, from flush neighbours to double the default padding
     static let paddingScaleRange = 0.0 ... 200.0
     /// Padding scale applied while the icon is shrunk to fit, leaving a point
     /// between neighbouring icons rather than none
@@ -98,16 +102,23 @@ enum Layout {
     static let maxSymbolGap = 12.0
     /// Default gap percentage (25% of the maximum = 3 points)
     static let defaultSymbolGapScale = 25.0
+    /// Slider bounds, from no gap to the full `maxSymbolGap`
     static let symbolGapScaleRange = 0.0 ... 100.0
 
-    // Scroll-to-switch sensitivity (percentage)
+    /// Scroll-to-switch sensitivity (percentage)
+    /// Slider default, leaving the trackpad threshold at its base value
     static let defaultScrollSensitivity = 100.0
+    /// Slider bounds; higher divides the threshold, so less scrolling switches
     static let scrollSensitivityRange = 25.0 ... 200.0
+    /// Slider bounds, mapping to the very light through maximum labels
     static let scrollHapticIntensityRange = 1 ... 6
+    /// Slider default, the strong tap
     static let defaultScrollHapticIntensity = 4
 
     /// Space picker menu app icons
+    /// App icons shown per picker row before the list is truncated
     static let defaultSpacePickerMaxAppIcons = 5
+    /// Slider bounds, where 0 hides the app icons entirely
     static let spacePickerMaxAppIconsRange = 0 ... 10
     /// Point size of the app icons embedded in picker menu item titles
     static let spacePickerAppIconSize = 16.0
@@ -115,64 +126,99 @@ enum Layout {
     /// Mission Control's per-display Space limit
     static let maxSpacesPerDisplay = 16
 
-    // Settings window
+    /// Settings window
+    /// Width of a pane's content column, inside the padding
     static let settingsPaneContentWidth = 540.0
+    /// Inset between a pane's content and the window edge
     static let settingsPanePadding = 16.0
     /// Share of the screen height a settings pane may take before it scrolls
-    static let settingsPaneMaxHeightRatio = 0.7
+    static let settingsPaneMaxHeightRatio = 0.8
     /// Pane height cap when no screen is available to measure
     static let settingsPaneMaxHeightFallback = 800.0
+    /// Vertical gap between the cards stacked in a pane
     static let settingsSectionSpacing = 12.0
+    /// Inset from a card's edges to the row's controls
     static let settingsRowHorizontalPadding = 16.0
+    /// Space above and below a row's controls
     static let settingsRowVerticalPadding = 8.0
+    /// Font size of a row's title
     static let settingsRowFontSize = 13.0
+    /// Width reserved for a row's leading symbol, so the titles line up
     static let settingsRowIconWidth = 24.0
+    /// Extra leading inset for a row nested under the toggle that governs it
     static let settingsRowIndent = 16.0
+    /// Font size of the explanatory line under a row's title
     static let settingsRowSubtitleFontSize = 11.0
+    /// Width of a slider's track
     static let settingsSliderWidth = 140.0
+    /// Font size of the value label beside a slider
     static let settingsSliderValueFontSize = 11.0
+    /// Width reserved for a slider's value label, so the tracks line up
     static let settingsSliderValueWidth = 56.0
     /// Fraction of the track where a slider's default value sits, so defaults
     /// line up across rows whose ranges differ
     static let settingsSliderDefaultPosition = 0.5
+    /// Width of the Space list column in the Spaces pane
     static let settingsSpaceListWidth = 140.0
+    /// Height at which the Space list starts scrolling instead of growing
     static let settingsSpaceListMaxHeight = 800.0
+    /// Height cap on the jump-to-Space recorder list in the Keyboard pane
     static let settingsJumpListMaxHeight = 250.0
+    /// Trailing inset a scrolling list leaves for an overlay scroller
     static let settingsSpaceListScrollerWidth = 16.0
+    /// Character cap on a custom Space name
     static let settingsSpaceNameMaxLength = 10
+    /// Gap between the editor column and the preview card beside it
     static let settingsSpacesEditorGutter = 10.0
     /// Ideal height of the editor's scrolling stack, measured against the
     /// pinned preview card so the column's total holds steady as the card
     /// grows and the Space list keeps deciding how tall the window is
     static let settingsSpacesEditorBaseHeight = 576.0 - settingsSpacesPreviewMinHeight
+    /// Total width of the Spaces pane, list column and editor together
     static let settingsSpacesPaneWidth = 680.0
     /// Floor for the preview card, whose stack of actions is one shorter on
     /// the Default Style entry; the card grows past it rather than clipping
     static let settingsSpacesPreviewMinHeight = 132.0
+    /// Inset between the preview card and the pane's trailing edge
     static let settingsSpacesPreviewTrailingPadding = 10.0
+    /// Size scale the preview icon is rendered at, three times the menu bar
     static let settingsSpacesPreviewScale = 300.0
+    /// Slack either side of the icon at 100% padding
     static let defaultHorizontalPadding = statusItemWidth - baseSquareSize // 4.0pt
 
-    // Base sizes (at 100% scale)
+    /// Base sizes (at 100% scale)
+    /// Side of the square icon, and the width every style is measured against
     static let baseSquareSize = 20.0
+    /// Width of the polygon styles, a point wider so they read as the same size
     static let basePolygonSize = 21.0
-    static let defaultIconSize = baseSquareSize * defaultSizeScale / 100.0
+    /// Label font size for a single digit
     static let baseFontSize = 14.0
+    /// Label font size for two digits
     static let baseFontSizeSmall = 12.0
+    /// Label font size for three digits or more
     static let baseFontSizeTiny = 8.0
 
+    /// Width of the status item drawn for one Space
     static let statusItemWidth = 24.0
+    /// Height of the menu bar's drawing area
     static let statusItemHeight = 22.0
+    /// Canvas the icons are drawn into
     static let statusItemSize = CGSize(width: statusItemWidth, height: statusItemHeight)
+    /// Slot between adjacent displays when every display is shown
     static let displaySeparatorWidth = 12.0
+    /// Font size of the glyph separator styles, centred in that slot
     static let separatorGlyphFontSize = 12.0
 
     enum Icon {
+        /// Corner rounding of the square style
         static let cornerRadius = 4.0
-        static let fullscreenSymbolPointSize = 23.0
+        /// Stroke width of the outlined styles
         static let outlineWidth = 1.5
+        /// Corner rounding at a polygon's vertices
         static let polygonCornerRadius = 3.0
+        /// Point size of an SF Symbol before the size scale is applied
         static let sfSymbolPointSize = 16.0
+        /// Corner rounding for the triangle, larger to soften its sharper points
         static let triangleCornerRadius = 5.0
     }
 }

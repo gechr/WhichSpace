@@ -57,8 +57,24 @@ enum MenuBuilder {
             }
             menu.addItem(item)
         }
+        configureHiddenSettingsItem(in: menu, target: target)
         addBottomSpacer(to: menu)
         return menu
+    }
+
+    /// Hidden items still match key equivalents, so Cmd+, keeps opening the
+    /// settings window while this menu is tracking instead of falling through
+    /// to the app's hidden main menu.
+    private static func configureHiddenSettingsItem(in menu: NSMenu, target: AnyObject) {
+        let item = NSMenuItem(
+            title: Localization.menuSettingsWindow,
+            action: #selector(ActionHandler.openSettingsWindow),
+            keyEquivalent: ","
+        )
+        item.keyEquivalentModifierMask = [.command]
+        item.target = target
+        item.isHidden = true
+        menu.addItem(item)
     }
 
     /// The attributed row title carrying the app icons, or nil when the plain
