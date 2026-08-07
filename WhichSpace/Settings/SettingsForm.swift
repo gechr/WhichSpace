@@ -642,8 +642,10 @@ private struct SliderValueField: NSViewRepresentable {
 
 /// Shown until accessibility permission is granted; switching cannot work
 /// without it, so every pane offering a switching surface leads with it.
-/// The button requests permission and registers a grant watch so the banner
-/// clears live.
+/// Never granted, the button requests permission and registers a grant watch
+/// so the banner clears live. Revoked mid-session, it deep-links System
+/// Settings instead: the request flow starts with a `tccutil reset`, which
+/// must stay unreachable from the probe-driven state.
 struct AccessibilityBannerSection: View {
     let model: SettingsModel
 
@@ -663,7 +665,11 @@ struct AccessibilityBannerSection: View {
                 }
             } control: {
                 Button(Localization.actionOpenSystemSettings) {
-                    model.requestAccessibility()
+                    if model.accessibilityRevoked {
+                        Accessibility.openSettingsPane()
+                    } else {
+                        model.requestAccessibility()
+                    }
                 }
             }
         }

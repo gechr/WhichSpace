@@ -15,8 +15,13 @@ struct SettingsModelTests {
         model = SettingsModel(store: store, launchAtLogin: launchAtLogin)
     }
 
-    private func makeModel(trusted: Bool) -> SettingsModel {
-        SettingsModel(store: store, launchAtLogin: launchAtLogin) { trusted }
+    private func makeModel(trusted: Bool, capability: Bool = true) -> SettingsModel {
+        SettingsModel(
+            store: store,
+            launchAtLogin: launchAtLogin,
+            isProcessTrusted: { trusted },
+            isCapabilityTrusted: { capability }
+        )
     }
 
     @Test("binding round-trips through the memoizing subscript")
@@ -60,6 +65,17 @@ struct SettingsModelTests {
     func accessibilityGranted() {
         #expect(makeModel(trusted: true).accessibilityGranted)
         #expect(!makeModel(trusted: false).accessibilityGranted)
+    }
+
+    @Test("a lost live capability reads as revoked, not granted")
+    func accessibilityRevoked() {
+        let revoked = makeModel(trusted: true, capability: false)
+        #expect(!revoked.accessibilityGranted)
+        #expect(revoked.accessibilityRevoked)
+        // Trusted with the capability intact is plain granted
+        #expect(!makeModel(trusted: true).accessibilityRevoked)
+        // Never granted is the request state, not the revoked state
+        #expect(!makeModel(trusted: false, capability: false).accessibilityRevoked)
     }
 
     @Test("click binding persists when trusted")

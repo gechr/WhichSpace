@@ -191,6 +191,15 @@ enum Accessibility {
         openSettingsPane()
     }
 
+    /// Re-probes on demand from UI surfaces. A no-op until the watch has
+    /// started, so tests never run a real probe against host TCC state.
+    static func refreshCapabilityIfWatching() {
+        guard revocationWatchTask != nil else {
+            return
+        }
+        refreshCapability()
+    }
+
     /// Re-probes the live capability and records transitions in `liveStatus`.
     ///
     /// Only the trusted state is probed: creating an event tap without a list
