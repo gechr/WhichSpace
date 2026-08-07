@@ -129,7 +129,7 @@ struct SymbolGridView: View {
         }
         .buttonStyle(.plain)
         .help(catalog == .symbols ? item : "")
-        .onHover { hovering in
+        .previewHover { hovering in
             onHover?(item, hovering)
         }
     }
@@ -174,7 +174,7 @@ struct SkinToneRow: View {
                         )
                 }
                 .buttonStyle(.plain)
-                .onHover { hovering in
+                .previewHover { hovering in
                     onHover?(tone, hovering)
                 }
             }

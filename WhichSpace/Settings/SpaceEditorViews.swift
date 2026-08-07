@@ -361,7 +361,7 @@ struct SpaceEditorView: View {
                     Button(Localization.buttonSwap) {
                         model.invertColors()
                     }
-                    .onHover { hovering in
+                    .previewHover { hovering in
                         model.previewInvertedColors(hovering: hovering)
                     }
                 }
@@ -654,7 +654,7 @@ private struct FontPickerButton: View {
             )
         }
         .buttonStyle(.plain)
-        .onHover { hovering in
+        .previewHover { hovering in
             onHover?(convertedFont(for: family), hovering)
         }
     }
@@ -756,6 +756,12 @@ struct CommittingTextField: View {
 // MARK: - Cursor helpers
 
 extension View {
+    /// Reports hover through AppKit so views inserted by the settings pane
+    /// crossfade work before the user clicks inside the new pane.
+    func previewHover(_ onHover: @escaping (Bool) -> Void) -> some View {
+        overlay(PreviewHoverArea(onHover: onHover))
+    }
+
     /// Shows the arrow cursor while hovering a control embedded in a text
     /// field, which would otherwise keep the field's I-beam cursor.
     func arrowCursorOnHover() -> some View {
@@ -767,6 +773,71 @@ extension View {
     /// entered (true) or left (false) it.
     func segmentHover(count: Int, _ onHover: @escaping (Int, Bool) -> Void) -> some View {
         overlay(SegmentHoverArea(count: count, onHover: onHover))
+    }
+}
+
+/// SwiftUI's `.onHover` can leave its tracking inactive when an
+/// `NSHostingView` is inserted into an already-key window by an AppKit view
+/// controller transition. An explicit tracking area receives pointer movement
+/// independently of first-responder changes while remaining transparent to
+/// clicks.
+private struct PreviewHoverArea: NSViewRepresentable {
+    let onHover: (Bool) -> Void
+
+    private final class HoverView: NSView {
+        var onHover: ((Bool) -> Void)?
+        private var isHovering = false
+
+        override func updateTrackingAreas() {
+            super.updateTrackingAreas()
+            trackingAreas.forEach(removeTrackingArea)
+            addTrackingArea(NSTrackingArea(
+                rect: .zero,
+                options: [.mouseEnteredAndExited, .mouseMoved, .activeInKeyWindow, .inVisibleRect],
+                owner: self
+            ))
+        }
+
+        override func hitTest(_: CGPoint) -> NSView? {
+            nil
+        }
+
+        override func mouseEntered(with _: NSEvent) {
+            setHovering(true)
+        }
+
+        override func mouseMoved(with _: NSEvent) {
+            setHovering(true)
+        }
+
+        override func mouseExited(with _: NSEvent) {
+            setHovering(false)
+        }
+
+        func setHovering(_ hovering: Bool) {
+            guard hovering != isHovering else {
+                return
+            }
+            isHovering = hovering
+            onHover?(hovering)
+        }
+    }
+
+    func makeNSView(context _: Context) -> NSView {
+        let view = HoverView()
+        view.onHover = onHover
+        return view
+    }
+
+    func updateNSView(_ view: NSView, context _: Context) {
+        guard let view = view as? HoverView else {
+            return
+        }
+        view.onHover = onHover
+    }
+
+    static func dismantleNSView(_ view: NSView, coordinator _: Void) {
+        (view as? HoverView)?.setHovering(false)
     }
 }
 

@@ -48,7 +48,7 @@ struct SwatchRow: View {
                 }
                 .buttonStyle(.plain)
                 .help(Localization.colorTransparent)
-                .onHover { hovering in
+                .previewHover { hovering in
                     onHoverClear?(hovering)
                 }
             }
@@ -65,7 +65,7 @@ struct SwatchRow: View {
                 }
                 .buttonStyle(.plain)
                 .help(preset.name)
-                .onHover { hovering in
+                .previewHover { hovering in
                     onHoverSelect?(preset.color, hovering)
                 }
             }

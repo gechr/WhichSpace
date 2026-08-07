@@ -107,7 +107,7 @@ struct StyleGridView: View {
             )
         }
         .buttonStyle(.plain)
-        .onHover { hovering in
+        .previewHover { hovering in
             onHover?(style, hovering)
         }
     }
