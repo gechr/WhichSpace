@@ -288,6 +288,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         // Register recorded global hotkeys; inert until the user records one
         hotkeyCenter = HotkeyCenter(appState: appState, store: store)
 
+        // Keep the live capability reading current so the settings banner and
+        // switching surfaces notice a mid-session revoke
+        Accessibility.startRevocationWatch()
+
         // Start Sparkle so scheduled update checks run
         updaterController = SPUStandardUpdaterController(
             startingUpdater: true,
