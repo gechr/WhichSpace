@@ -666,7 +666,7 @@ struct AccessibilityBannerSection: View {
             } control: {
                 Button(Localization.actionOpenSystemSettings) {
                     if model.accessibilityRevoked {
-                        Accessibility.openSettingsPane()
+                        Accessibility.recoverFromRevocation()
                     } else {
                         model.requestAccessibility()
                     }

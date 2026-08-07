@@ -43,6 +43,9 @@ typealias ConfirmAction = (
 enum ClickPermission {
     case granted
     case needsRequest
+    /// Permission was revoked while the app runs; the frozen trust flag
+    /// still reads trusted but the live capability is gone
+    case revoked
 }
 
 // MARK: - App Delegate
@@ -65,6 +68,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     private let scrollHapticAction: @MainActor (Int) -> Void
     /// Reports Accessibility trust; injectable so click tests don't depend on the host's TCC state
     private let isProcessTrusted: () -> Bool
+    /// Reports the live capability reading; injectable for the same reason
+    private let isCapabilityTrusted: () -> Bool
 
     /// Clears recorded hotkeys on a full settings reset; a no-op in tests
     private let resetHotkeysAction: () -> Void
@@ -128,6 +133,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         }
         scrollHapticAction = HapticActuator.actuate
         isProcessTrusted = { AXIsProcessTrusted() }
+        isCapabilityTrusted = { Accessibility.liveStatus.capabilityTrusted }
         menuBarVisibilityProbe = CGMenuBarVisibilityProbe()
         resetHotkeysAction = { HotkeyCenter.resetBindings() }
         super.init()
@@ -150,6 +156,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         },
         scrollHapticAction: @escaping @MainActor (Int) -> Void = HapticActuator.actuate,
         isProcessTrusted: @escaping () -> Bool = { AXIsProcessTrusted() },
+        isCapabilityTrusted: @escaping () -> Bool = { Accessibility.liveStatus.capabilityTrusted },
         menuBarVisibilityProbe: MenuBarVisibilityProbe = CGMenuBarVisibilityProbe(),
         // Defaults to a no-op: the hotkey library stores bindings in the host
         // app's standard defaults domain, so a test resetting through the
@@ -163,6 +170,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         self.relativeSpaceSwitchAction = relativeSpaceSwitchAction
         self.scrollHapticAction = scrollHapticAction
         self.isProcessTrusted = isProcessTrusted
+        self.isCapabilityTrusted = isCapabilityTrusted
         self.menuBarVisibilityProbe = menuBarVisibilityProbe
         self.resetHotkeysAction = resetHotkeysAction
         super.init()
@@ -702,6 +710,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
             return .needsRequest
         }
 
+        guard isCapabilityTrusted() else {
+            Self.logger.info("click blocked: permission revoked while running")
+            return .revoked
+        }
+
         // Auto-enable click-to-switch on first trusted left click
         if !store.clickToSwitchSpaces {
             SettingsConstraints.setClickToSwitchSpaces(true, store: store)
@@ -711,8 +724,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
     }
 
     private func handleLeftClick(_ event: NSEvent, button: NSStatusBarButton) {
-        guard resolveClickPermission() == .granted else {
+        switch resolveClickPermission() {
+        case .granted:
+            break
+        case .needsRequest:
             actionHandler.requestAccessibilityForClickToSwitch()
+            return
+        case .revoked:
+            // The frozen trust flag still reads trusted, so the request
+            // flow's tccutil reset must stay unreachable from this state
+            Accessibility.recoverFromRevocation()
             return
         }
 

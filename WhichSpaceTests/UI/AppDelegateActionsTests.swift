@@ -189,16 +189,18 @@ final class AppDelegateActionsTests: XCTestCase {
 
     // MARK: - Click Permission Tests
 
-    private func makeDelegate(trusted: Bool) -> AppDelegate {
-        // Bound to a local first: a trailing closure here would bind to
+    private func makeDelegate(trusted: Bool, capability: Bool = true) -> AppDelegate {
+        // Bound to locals first: a trailing closure here would bind to
         // `missionControlNotificationSender`, the initializer's first closure
         // parameter.
         let isProcessTrusted: () -> Bool = { trusted }
+        let isCapabilityTrusted: () -> Bool = { capability }
         return AppDelegate(
             appState: appState,
             confirmAction: confirmStub.callAsFunction,
             launchAtLogin: launchAtLoginStub,
-            isProcessTrusted: isProcessTrusted
+            isProcessTrusted: isProcessTrusted,
+            isCapabilityTrusted: isCapabilityTrusted
         )
     }
 
@@ -232,6 +234,14 @@ final class AppDelegateActionsTests: XCTestCase {
 
         XCTAssertEqual(localSut.resolveClickPermission(), .granted)
         XCTAssertTrue(store.clickToSwitchSpaces)
+    }
+
+    func testResolveClickPermission_revokedWhileRunning_blocksWithoutTouchingSetting() {
+        store.clickToSwitchSpaces = false
+        let localSut = makeDelegate(trusted: true, capability: false)
+
+        XCTAssertEqual(localSut.resolveClickPermission(), .revoked)
+        XCTAssertFalse(store.clickToSwitchSpaces, "A revoked click must not auto-enable click-to-switch")
     }
 
     func testHandleMiddleClickEvent_consumesMiddleClickInsideButtonAndSendsNotification() throws {

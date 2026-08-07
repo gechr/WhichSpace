@@ -133,6 +133,8 @@ final class HotkeyCenter {
 
     /// Whether a press has already triggered the permission flow this launch.
     private var promptedForAccessibility = false
+    /// Whether a press has already deep-linked System Settings after a revoke.
+    private var openedSettingsForRevocation = false
 
     /// Every hotkey needs the Accessibility permission to post its events, so
     /// the first press without it starts the grant flow instead of leaving
@@ -140,6 +142,16 @@ final class HotkeyCenter {
     /// rather than stacking system dialogs.
     private func ensureAccessibility() -> Bool {
         if AXIsProcessTrusted() {
+            guard Accessibility.liveStatus.capabilityTrusted else {
+                // Revoked mid-session: the frozen trust flag still reads
+                // trusted, so the request flow's tccutil reset must stay
+                // unreachable from this state; recover once
+                if !openedSettingsForRevocation {
+                    openedSettingsForRevocation = true
+                    Accessibility.recoverFromRevocation()
+                }
+                return false
+            }
             return true
         }
         if !promptedForAccessibility {
