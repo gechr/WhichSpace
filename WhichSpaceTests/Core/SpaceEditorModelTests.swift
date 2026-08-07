@@ -389,6 +389,8 @@ struct SpaceEditorModelTests {
     @Test("the bulk copy confirmation names the scope it reaches")
     func bulkCopyConfirmationWording() {
         var asked: String?
+        SpacePreferences.setLabel("Source", forSpace: 1, store: store)
+        SpacePreferences.setLabel("Existing", forSpace: 2, store: store)
         let single = SpaceEditorModel(appState: makeAppState()) { message, _, _, _ in
             asked = message
             return false
@@ -405,9 +407,56 @@ struct SpaceEditorModelTests {
         shared.copyToAllSpaces()
         #expect(asked == Localization.confirmCopyToAllDisplays)
 
+        SpacePreferences.setLabel("Existing", forSpace: 2, display: "Main", store: store)
         shared.selectedDisplayID = "Main"
         shared.copyToAllSpaces()
         #expect(asked == Localization.confirmCopyToThisDisplay)
+    }
+
+    @Test("copy to an unmodified Space skips confirmation")
+    func copyToUnmodifiedSpace() {
+        var asked = false
+        let model = SpaceEditorModel(appState: makeAppState()) { _, _, _, _ in
+            asked = true
+            return false
+        }
+        model.setLabel("Work")
+        model.copyToSpace(2)
+        #expect(!asked)
+        #expect(store.spaceLabels[2] == "Work")
+    }
+
+    @Test("copy to a modified Space still confirms")
+    func copyToModifiedSpace() {
+        var asked = false
+        let model = SpaceEditorModel(appState: makeAppState()) { _, _, _, _ in
+            asked = true
+            return false
+        }
+        model.selection = .space(2)
+        model.setSymbol("star")
+        model.selection = .space(1)
+        model.setLabel("Work")
+        model.copyToSpace(2)
+        #expect(asked)
+        #expect(store.spaceSymbols[2] == "star")
+        #expect(store.spaceLabels[2] == nil)
+    }
+
+    @Test("copy to an identically configured Space skips confirmation")
+    func copyToIdenticalSpace() {
+        var asked = false
+        let model = SpaceEditorModel(appState: makeAppState()) { _, _, _, _ in
+            asked = true
+            return false
+        }
+        model.setLabel("Work")
+        model.selection = .space(2)
+        model.setLabel("Work")
+        model.selection = .space(1)
+        model.copyToSpace(2)
+        #expect(!asked)
+        #expect(store.spaceLabels[2] == "Work")
     }
 
     @Test("copy to one Space covers only that Space once confirmed")
@@ -469,6 +518,54 @@ struct SpaceEditorModelTests {
         #expect(store.spaceLabels[2] == nil)
     }
 
+    @Test("copy from into an unmodified Space skips confirmation")
+    func copyFromIntoUnmodifiedSpace() {
+        var asked = false
+        let model = SpaceEditorModel(appState: makeAppState()) { _, _, _, _ in
+            asked = true
+            return false
+        }
+        model.selection = .space(2)
+        model.setLabel("Work")
+        model.selection = .space(1)
+        model.copyFromSpace(2)
+        #expect(!asked)
+        #expect(store.spaceLabels[1] == "Work")
+    }
+
+    @Test("copy from into a modified Space still confirms")
+    func copyFromIntoModifiedSpace() {
+        var asked = false
+        let model = SpaceEditorModel(appState: makeAppState()) { _, _, _, _ in
+            asked = true
+            return false
+        }
+        model.selection = .space(2)
+        model.setSymbol("star")
+        model.selection = .space(1)
+        model.setLabel("Work")
+        model.copyFromSpace(2)
+        #expect(asked)
+        #expect(store.spaceLabels[1] == "Work")
+        #expect(store.spaceSymbols[1] == nil)
+    }
+
+    @Test("copy from an identically configured Space skips confirmation")
+    func copyFromIdenticalSpace() {
+        var asked = false
+        let model = SpaceEditorModel(appState: makeAppState()) { _, _, _, _ in
+            asked = true
+            return false
+        }
+        model.setLabel("Work")
+        model.selection = .space(2)
+        model.setLabel("Work")
+        model.selection = .space(1)
+        model.copyFromSpace(2)
+        #expect(!asked)
+        #expect(store.spaceLabels[1] == "Work")
+    }
+
     /// The edited Space is cleared before the copy, so it ends up matching
     /// the source rather than keeping keys the source never set.
     @Test("copy from replaces the edited Space's style rather than blending it")
@@ -524,6 +621,9 @@ struct SpaceEditorModelTests {
     @Test("a declined confirmation leaves the store unchanged")
     func declinedConfirmation() {
         let model = makeModel(confirmed: false)
+        model.selection = .space(2)
+        model.setSymbol("star")
+        model.selection = .space(1)
         model.setLabel("Work")
         model.copyToAllSpaces()
         #expect(SpacePreferences.label(forSpace: 2, display: "Main", store: store) == nil)

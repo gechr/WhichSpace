@@ -838,13 +838,39 @@ final class SpaceEditorModel {
         }
     }
 
+    /// Copying is only destructive when it replaces preferences already
+    /// stored at the destination's exact scope. Inherited styling remains
+    /// untouched, so it does not warrant a confirmation.
+    private func confirmCopyIfNeeded(
+        targetHasModifications: Bool,
+        message: String,
+        detail: String
+    ) -> Bool {
+        guard targetHasModifications else {
+            return true
+        }
+        return confirmAction(message, detail, Localization.buttonCopy, false)
+    }
+
     func copyToAllSpaces() {
         let wording = bulkCopyWording
-        guard confirmAction(
-            wording.confirm,
-            wording.detail,
-            Localization.buttonCopy,
-            false
+        let targetHasModifications = spaceEntries.contains { number, _ in
+            number != editingSpace && SpacePreferences.hasAnyScopedPreference(
+                forSpace: number,
+                context: selectedDisplayID,
+                store: store
+            ) && SpacePreferences.copyWouldChangeConfiguration(
+                from: editingSpace,
+                to: number,
+                fromDisplay: editingDisplay,
+                toDisplay: selectedDisplayID,
+                store: store
+            )
+        }
+        guard confirmCopyIfNeeded(
+            targetHasModifications: targetHasModifications,
+            message: wording.confirm,
+            detail: wording.detail
         ) else {
             return
         }
@@ -864,11 +890,27 @@ final class SpaceEditorModel {
     /// display as per-display overrides. Offered only while a display is
     /// selected - shared "All" edits already apply everywhere.
     func copyToAllDisplays() {
-        guard confirmAction(
-            Localization.confirmCopyToAllDisplays,
-            Localization.detailCopyToAllDisplays,
-            Localization.buttonCopy,
-            false
+        let targetHasModifications = displays.contains { display in
+            (1 ... max(display.entries.count, Layout.maxSpacesPerDisplay)).contains { number in
+                (number != editingSpace || display.displayID != selectedDisplayID)
+                    && SpacePreferences.hasAnyScopedPreference(
+                        forSpace: number,
+                        context: display.displayID,
+                        store: store
+                    )
+                    && SpacePreferences.copyWouldChangeConfiguration(
+                        from: editingSpace,
+                        to: number,
+                        fromDisplay: editingDisplay,
+                        toDisplay: display.displayID,
+                        store: store
+                    )
+            }
+        }
+        guard confirmCopyIfNeeded(
+            targetHasModifications: targetHasModifications,
+            message: Localization.confirmCopyToAllDisplays,
+            detail: Localization.detailCopyToAllDisplays
         ) else {
             return
         }
@@ -894,11 +936,20 @@ final class SpaceEditorModel {
         guard number != editingSpace else {
             return
         }
-        guard confirmAction(
-            Localization.confirmCopyToSpace,
-            Localization.detailCopyToSpace,
-            Localization.buttonCopy,
-            false
+        guard confirmCopyIfNeeded(
+            targetHasModifications: SpacePreferences.hasAnyScopedPreference(
+                forSpace: number,
+                context: selectedDisplayID,
+                store: store
+            ) && SpacePreferences.copyWouldChangeConfiguration(
+                from: editingSpace,
+                to: number,
+                fromDisplay: editingDisplay,
+                toDisplay: selectedDisplayID,
+                store: store
+            ),
+            message: Localization.confirmCopyToSpace,
+            detail: Localization.detailCopyToSpace
         ) else {
             return
         }
@@ -921,11 +972,21 @@ final class SpaceEditorModel {
         guard number != editingSpace else {
             return
         }
-        guard confirmAction(
-            Localization.confirmCopyFromSpace,
-            Localization.detailCopyFromSpace,
-            Localization.buttonCopy,
-            false
+        guard confirmCopyIfNeeded(
+            targetHasModifications: SpacePreferences.hasAnyScopedPreference(
+                forSpace: editingSpace,
+                context: editingDisplay,
+                store: store
+            ) && !SpacePreferences.configurationsMatch(
+                editingSpace,
+                display: editingDisplay,
+                number,
+                display: selectedDisplayID,
+                includeSound: !isEditingDefaultStyle,
+                store: store
+            ),
+            message: Localization.confirmCopyFromSpace,
+            detail: Localization.detailCopyFromSpace
         ) else {
             return
         }

@@ -465,9 +465,11 @@ enum SpacePreferences {
     /// the stamped-copy migration.
     private struct TemplateAccessor {
         let clear: (Int, String?, DefaultsStore) -> Void
+        let copiedValueDiffers: (Int, String?, Int, String?, DefaultsStore) -> Bool
         let hasRaw: (Int, String?, DefaultsStore) -> Bool
         let rawMatchesTemplate: (Int, String?, DefaultsStore) -> Bool
         let removeRaw: (Int, String?, DefaultsStore) -> Void
+        let valuesMatch: (Int, String?, Int, String?, DefaultsStore) -> Bool
         let displayKeys: (DefaultsStore) -> [String]
     }
 
@@ -482,6 +484,17 @@ enum SpacePreferences {
             clear: { space, display, store in
                 accessor.set(nil, forSpace: space, display: display, store: store)
             },
+            copiedValueDiffers: { source, sourceDisplay, target, targetDisplay, store in
+                guard let sourceValue = accessor.get(
+                    forSpace: source, display: sourceDisplay, store: store
+                ) else {
+                    return false
+                }
+                return !equals(
+                    sourceValue,
+                    accessor.get(forSpace: target, display: targetDisplay, store: store)
+                )
+            },
             hasRaw: { space, context, store in
                 accessor.raw(forSpace: space, context: context, store: store) != nil
             },
@@ -493,6 +506,12 @@ enum SpacePreferences {
             },
             removeRaw: { space, context, store in
                 accessor.removeRaw(forSpace: space, context: context, store: store)
+            },
+            valuesMatch: { first, firstDisplay, second, secondDisplay, store in
+                equals(
+                    accessor.get(forSpace: first, display: firstDisplay, store: store),
+                    accessor.get(forSpace: second, display: secondDisplay, store: store)
+                )
             },
             displayKeys: { store in
                 Array(store[keyPath: accessor.perDisplay].keys)
@@ -517,6 +536,7 @@ enum SpacePreferences {
         erase(symbolPositions),
         erase(symbolWraps),
     ]
+    private static let soundAccessor = erase(sounds)
 
     // MARK: - Symbols (SF Symbols or Emojis)
 
@@ -916,6 +936,40 @@ enum SpacePreferences {
             || symbolPositions.raw(forSpace: spaceNumber, context: display, store: store) != nil
             || symbolWraps.raw(forSpace: spaceNumber, context: display, store: store) != nil
             || sounds.raw(forSpace: spaceNumber, context: display, store: store) != nil
+    }
+
+    /// Whether copying the source's stored preferences would visibly change
+    /// any value at the target. Values absent from the source are ignored,
+    /// matching `copyPreferences`, which merges rather than clears them.
+    static func copyWouldChangeConfiguration(
+        from source: Int,
+        to target: Int,
+        fromDisplay: String? = nil,
+        toDisplay: String? = nil,
+        includeSound: Bool = true,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) -> Bool {
+        templateAccessors.contains {
+            $0.copiedValueDiffers(source, fromDisplay, target, toDisplay, store)
+        } || (includeSound
+            && soundAccessor.copiedValueDiffers(source, fromDisplay, target, toDisplay, store))
+    }
+
+    /// Whether two Spaces have the same complete configuration at their
+    /// effective display/shared scope.
+    /// Used for replacement copies, where values absent from the source do
+    /// clear their counterparts at the destination.
+    static func configurationsMatch(
+        _ first: Int,
+        display firstDisplay: String?,
+        _ second: Int,
+        display secondDisplay: String?,
+        includeSound: Bool = true,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) -> Bool {
+        templateAccessors.allSatisfy {
+            $0.valuesMatch(first, firstDisplay, second, secondDisplay, store)
+        } && (!includeSound || soundAccessor.valuesMatch(first, firstDisplay, second, secondDisplay, store))
     }
 
     /// Copies all per-space preferences from one space to another.
