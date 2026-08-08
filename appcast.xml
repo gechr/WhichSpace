@@ -7,9 +7,15 @@
     <language>en</language>
     <item>
         <title>Version 1.2.14</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.2.14
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.2.14</h2>
+          <ul>
+            <li>settings: Activate previews before content clicks</li>
+            <li>settings: Confirm destructive Space copies</li>
+            <li>settings: Distinguish Space reset actions</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.2.14</sparkle:fullReleaseNotesLink>
         <pubDate>Sat, 08 Aug 2026 01:05:03 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.2.14/WhichSpace.zip"
@@ -22,9 +28,20 @@
       </item>
     <item>
         <title>Version 1.2.13</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.2.13
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.2.13</h2>
+          <ul>
+            <li>settings: Keep switching toggles on when permission is missing</li>
+            <li>settings: Tint switching toggles red without permission</li>
+            <li>settings: Repair interrupted tab crossfades</li>
+            <li>settings: Reduce pane height cap</li>
+            <li>settings: Pin the permission banner above the scroll</li>
+            <li>accessibility: Detect revocation with a live event-tap probe</li>
+            <li>settings: Surface live revocation in the permission banner</li>
+            <li>switching: Route revoked clicks and hotkeys to System Settings</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.2.13</sparkle:fullReleaseNotesLink>
         <pubDate>Fri, 07 Aug 2026 23:15:45 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.2.13/WhichSpace.zip"
@@ -37,9 +54,16 @@
       </item>
     <item>
         <title>Version 1.2.12</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.2.12
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.2.12</h2>
+          <ul>
+            <li>switching: Fall back to classic switching while dragging</li>
+            <li>picker: Show per-Space app icons</li>
+            <li>settings: Cap pane height based on screen height</li>
+            <li>picker: Do not show blank settings window</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.2.12</sparkle:fullReleaseNotesLink>
         <pubDate>Thu, 06 Aug 2026 02:57:09 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.2.12/WhichSpace.zip"
@@ -52,9 +76,20 @@
       </item>
     <item>
         <title>Version 1.2.11</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.2.11
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.2.11</h2>
+          <ul>
+            <li>settings: Pulse the deep-link highlight</li>
+            <li>settings: Make slider field more obvious</li>
+            <li>menubar: Open settings on option-click</li>
+            <li>settings: Anchor the display picker for deep links</li>
+            <li>settings: Store the move-prompt suppression flag</li>
+            <li>localization: Drop unused <code>buttonLearnMore</code> string</li>
+            <li>settings: Always show the last-checked caption</li>
+            <li>settings: Collapse the Jump list to real Spaces</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.2.11</sparkle:fullReleaseNotesLink>
         <pubDate>Wed, 05 Aug 2026 22:00:40 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.2.11/WhichSpace.zip"
@@ -67,9 +102,15 @@
       </item>
     <item>
         <title>Version 1.2.10</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.2.10
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.2.10</h2>
+          <ul>
+            <li>readme: Refresh all screenshots</li>
+            <li>settings: Lead the label style grid with Box</li>
+            <li>settings: Refresh text fields on external writes</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.2.10</sparkle:fullReleaseNotesLink>
         <pubDate>Wed, 05 Aug 2026 01:27:58 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.2.10/WhichSpace.zip"
@@ -82,9 +123,14 @@
       </item>
     <item>
         <title>Version 1.2.9</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.2.9
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.2.9</h2>
+          <ul>
+            <li>readme: Refresh keybinds screenshot</li>
+            <li>hotkeys: Use global Desktop numbers</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.2.9</sparkle:fullReleaseNotesLink>
         <pubDate>Tue, 04 Aug 2026 21:45:24 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.2.9/WhichSpace.zip"
@@ -97,9 +143,14 @@
       </item>
     <item>
         <title>Version 1.2.8</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.2.8
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.2.8</h2>
+          <ul>
+            <li>menubar: Reset shrink level on width-affecting edits</li>
+            <li>menubar: Keep padding when shrinking icons to fit</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.2.8</sparkle:fullReleaseNotesLink>
         <pubDate>Tue, 04 Aug 2026 02:45:34 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.2.8/WhichSpace.zip"
@@ -112,9 +163,17 @@
       </item>
     <item>
         <title>Version 1.2.7</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.2.7
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.2.7</h2>
+          <ul>
+            <li>settings: Preserve dragged window position</li>
+            <li>settings: Hide single Space per display</li>
+            <li>settings: Tint accessibility warning card</li>
+            <li>settings: Add search keyword synonyms</li>
+            <li>localization: Align terms with Apple's macOS wording</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.2.7</sparkle:fullReleaseNotesLink>
         <pubDate>Mon, 03 Aug 2026 20:12:27 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.2.7/WhichSpace.zip"
@@ -127,9 +186,15 @@
       </item>
     <item>
         <title>Version 1.2.6</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.2.6
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.2.6</h2>
+          <ul>
+            <li>localization: Localize App Shortcut phrases</li>
+            <li>hotkeys: Add send and move window shortcuts</li>
+            <li>hotkeys: Add switch to previous Space</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.2.6</sparkle:fullReleaseNotesLink>
         <pubDate>Mon, 03 Aug 2026 02:54:11 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.2.6/WhichSpace.zip"
@@ -142,9 +207,16 @@
       </item>
     <item>
         <title>Version 1.2.5</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.2.5
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.2.5</h2>
+          <ul>
+            <li>icon: Collapse filled styles fully at 0% padding</li>
+            <li>scripting: Poll arrival every 10ms</li>
+            <li>settings: Add a "Keyboard" hotkeys pane</li>
+            <li>backup: Restore system fonts at their recorded size</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.2.5</sparkle:fullReleaseNotesLink>
         <pubDate>Mon, 03 Aug 2026 00:20:47 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.2.5/WhichSpace.zip"
@@ -157,9 +229,13 @@
       </item>
     <item>
         <title>Version 1.2.4</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.2.4
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.2.4</h2>
+          <ul>
+            <li>scripting: Re-raise the moved window on arrival</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.2.4</sparkle:fullReleaseNotesLink>
         <pubDate>Sun, 02 Aug 2026 22:21:29 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.2.4/WhichSpace.zip"
@@ -172,9 +248,21 @@
       </item>
     <item>
         <title>Version 1.2.3</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.2.3
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.2.3</h2>
+          <ul>
+            <li>settings: Refresh panes on external writes</li>
+            <li>settings: Show when updates were last checked</li>
+            <li>settings: Copy a style to a single Space</li>
+            <li>settings: Name the scope a bulk copy reaches</li>
+            <li>settings: Add a searchable index of every setting</li>
+            <li>settings: Copy a style from another Space</li>
+            <li>scripting: Keep the moved window focused</li>
+            <li>settings: Add hover previews to the Spaces pane</li>
+            <li>settings: Coalesce hover previews during sweeps</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.2.3</sparkle:fullReleaseNotesLink>
         <pubDate>Sun, 02 Aug 2026 20:10:41 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.2.3/WhichSpace.zip"
@@ -187,9 +275,14 @@
       </item>
     <item>
         <title>Version 1.2.2</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.2.2
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.2.2</h2>
+          <ul>
+            <li>scripting: Move the front window between Spaces</li>
+            <li>switching: Add classic Space switching option</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.2.2</sparkle:fullReleaseNotesLink>
         <pubDate>Sun, 02 Aug 2026 14:57:35 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.2.2/WhichSpace.zip"
@@ -202,9 +295,31 @@
       </item>
     <item>
         <title>Version 1.2.1</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.2.1
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.2.1</h2>
+          <ul>
+            <li>labels: Derive the input tip character limit</li>
+            <li>settings: Anchor slider defaults at the track midpoint</li>
+            <li>menubar: Announce the current Space to VoiceOver</li>
+            <li>settings: Let slider values be typed</li>
+            <li>settings: Add a factory reset to the General pane</li>
+            <li>menu: Show the Space picker in single-icon mode</li>
+            <li>settings: Orient the Spaces pane around the current Space</li>
+            <li>settings: Number placeholder rows with the global offset</li>
+            <li>defaults: Stop treating absent cache entries as nil hits</li>
+            <li>settings: Replace the per-display toggle with an <code>All</code> scope segment</li>
+            <li>settings: Open the window focused on the current Space</li>
+            <li>menubar: Add a separator style picker with glyph options</li>
+            <li>settings: Caption the <code>All</code> scope with what it applies to</li>
+            <li>menubar: Prompt on untrusted clicks and skip AppMover in debug</li>
+            <li>settings: Fill the Spaces pane height with the editor</li>
+            <li>settings: Reword the Space and Display toggles</li>
+            <li>menubar: Shrink the icon when it no longer fits</li>
+            <li>settings: Refactor "Menu Bar" pane layout</li>
+            <li>menubar: Show Desktop names in the Space picker</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.2.1</sparkle:fullReleaseNotesLink>
         <pubDate>Sat, 01 Aug 2026 21:06:50 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.2.1/WhichSpace.zip"
@@ -217,9 +332,27 @@
       </item>
     <item>
         <title>Version 1.2.0</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.2.0
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.2.0</h2>
+          <ul>
+            <li>badge: Add clear button to input field</li>
+            <li>app: Reduce tooltip hover delay</li>
+            <li>defaults: Invalidate cache on external writes</li>
+            <li>settings: Add General pane</li>
+            <li>settings: Add Menu Bar and Switching panes</li>
+            <li>settings: Add Spaces pane</li>
+            <li>menu: Slim to essentials</li>
+            <li>renderer: Retire preview machinery</li>
+            <li>localization: Correct translations across locales</li>
+            <li>settings: Add per-Space sound overrides</li>
+            <li>settings: Style Spaces before they exist</li>
+            <li>settings: Add <code>whichspace://settings</code> deep links</li>
+            <li>preferences: Inherit the Default Style live</li>
+            <li>readme: Refresh screenshots</li>
+            <li>settings: Fit the window to the Space list</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.2.0</sparkle:fullReleaseNotesLink>
         <pubDate>Fri, 31 Jul 2026 23:59:25 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.2.0/WhichSpace.zip"
@@ -232,9 +365,21 @@
       </item>
     <item>
         <title>Version 1.1.9</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.1.9
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.1.9</h2>
+          <ul>
+            <li>labels: Raise character limit to 20</li>
+            <li>symbols: Add more symbols</li>
+            <li>labels: Allow combining labels with symbols</li>
+            <li>readme: Round screenshot corners</li>
+            <li>symbols: Add per-Space symbol background color</li>
+            <li>ci: Test with Xcode 27</li>
+            <li>github: Update all versions</li>
+            <li>scripting: Add Space enumeration properties</li>
+            <li>colors: Add conditional transparency swatches</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.1.9</sparkle:fullReleaseNotesLink>
         <pubDate>Sun, 26 Jul 2026 20:53:34 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.1.9/WhichSpace.zip"
@@ -247,9 +392,14 @@
       </item>
     <item>
         <title>Version 1.1.8</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.1.8
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.1.8</h2>
+          <ul>
+            <li>menu: Redesign sliders with inline titles</li>
+            <li>scroll: Skip haptic feedback when no Space switch occurs</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.1.8</sparkle:fullReleaseNotesLink>
         <pubDate>Tue, 21 Jul 2026 22:22:16 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.1.8/WhichSpace.zip"
@@ -262,9 +412,13 @@
       </item>
     <item>
         <title>Version 1.1.7</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.1.7
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.1.7</h2>
+          <ul>
+            <li>scroll: Add haptic feedback intensity slider</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.1.7</sparkle:fullReleaseNotesLink>
         <pubDate>Tue, 21 Jul 2026 18:21:29 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.1.7/WhichSpace.zip"
@@ -277,9 +431,15 @@
       </item>
     <item>
         <title>Version 1.1.6</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.1.6
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.1.6</h2>
+          <ul>
+            <li>menu: Add <code>⌘U</code> shortcut for updates</li>
+            <li>backup: Cover new scroll settings</li>
+            <li>backup: Cover emoji picker skin tone</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.1.6</sparkle:fullReleaseNotesLink>
         <pubDate>Mon, 20 Jul 2026 22:33:51 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.1.6/WhichSpace.zip"
@@ -292,9 +452,14 @@
       </item>
     <item>
         <title>Version 1.1.5</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.1.5
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.1.5</h2>
+          <ul>
+            <li>scroll: Add haptic feedback option</li>
+            <li>scroll: Add wrap around option</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.1.5</sparkle:fullReleaseNotesLink>
         <pubDate>Mon, 20 Jul 2026 22:21:29 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.1.5/WhichSpace.zip"
@@ -307,9 +472,14 @@
       </item>
     <item>
         <title>Version 1.1.4</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.1.4
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.1.4</h2>
+          <ul>
+            <li>README: Add hyperlinks</li>
+            <li>display: Combine Space and display visibility modes</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.1.4</sparkle:fullReleaseNotesLink>
         <pubDate>Mon, 20 Jul 2026 20:32:43 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.1.4/WhichSpace.zip"
@@ -322,9 +492,13 @@
       </item>
     <item>
         <title>Version 1.1.3</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.1.3
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.1.3</h2>
+          <ul>
+            <li>sound: Add "Custom" menu item</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.1.3</sparkle:fullReleaseNotesLink>
         <pubDate>Mon, 20 Jul 2026 11:09:10 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.1.3/WhichSpace.zip"
@@ -337,9 +511,13 @@
       </item>
     <item>
         <title>Version 1.1.2</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.1.2
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.1.2</h2>
+          <ul>
+            <li>click: Skip picker menu with a single Space</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.1.2</sparkle:fullReleaseNotesLink>
         <pubDate>Mon, 20 Jul 2026 10:50:07 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.1.2/WhichSpace.zip"
@@ -352,9 +530,17 @@
       </item>
     <item>
         <title>Version 1.1.1</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.1.1
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.1.1</h2>
+          <ul>
+            <li>README: Fix "F" reference</li>
+            <li>scroll: Switch Spaces by scrolling over the icon</li>
+            <li>scripting: Add next and previous Space switching</li>
+            <li>url: Add <code>whichspace://</code> switching scheme</li>
+            <li>click: Show Space picker menu in single-icon mode</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.1.1</sparkle:fullReleaseNotesLink>
         <pubDate>Sun, 19 Jul 2026 19:33:46 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.1.1/WhichSpace.zip"
@@ -367,9 +553,22 @@
       </item>
     <item>
         <title>Version 1.1.0</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.1.0
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.1.0</h2>
+          <ul>
+            <li>tests: Poll for trailing debounce updates</li>
+            <li>monitor: Emit change ticks through update coordinator</li>
+            <li>state: Remove <code>updateActiveSpaceNumber</code> alias</li>
+            <li>preview: Extract <code>IconPreviewCoordinator</code></li>
+            <li>defaults: Derive key lists from single registry</li>
+            <li>render: Split icon resolution from drawing</li>
+            <li>tests: Cover icon preview coordination</li>
+            <li>intents: Expose scripting surface to Shortcuts</li>
+            <li>build: Sign debug builds</li>
+            <li>render: Show app icons on fullscreen Spaces</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.1.0</sparkle:fullReleaseNotesLink>
         <pubDate>Sat, 18 Jul 2026 20:51:12 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.1.0/WhichSpace.zip"
@@ -382,9 +581,13 @@
       </item>
     <item>
         <title>Version 1.0.9</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.0.9
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.0.9</h2>
+          <ul>
+            <li>scripting: Apply label or badge while switching</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.0.9</sparkle:fullReleaseNotesLink>
         <pubDate>Wed, 15 Jul 2026 00:10:05 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.0.9/WhichSpace.zip"
@@ -397,9 +600,13 @@
       </item>
     <item>
         <title>Version 1.0.8</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.0.8
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.0.8</h2>
+          <ul>
+            <li>input: Reset on empty value</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.0.8</sparkle:fullReleaseNotesLink>
         <pubDate>Tue, 14 Jul 2026 23:24:04 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.0.8/WhichSpace.zip"
@@ -412,9 +619,17 @@
       </item>
     <item>
         <title>Version 1.0.7</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.0.7
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.0.7</h2>
+          <ul>
+            <li>Makefile: Add clover format and run</li>
+            <li>build: Disable code signing</li>
+            <li>scripting: Allow setting current Space label</li>
+            <li>scripting: Allow setting current Space badge</li>
+            <li>localization: Translate scripting errors</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.0.7</sparkle:fullReleaseNotesLink>
         <pubDate>Tue, 14 Jul 2026 23:14:44 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.0.7/WhichSpace.zip"
@@ -427,9 +642,14 @@
       </item>
     <item>
         <title>Version 1.0.6</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.0.6
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.0.6</h2>
+          <ul>
+            <li>README: Showcase instant switching</li>
+            <li>Improve Space switching</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.0.6</sparkle:fullReleaseNotesLink>
         <pubDate>Fri, 10 Jul 2026 19:13:51 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.0.6/WhichSpace.zip"
@@ -442,9 +662,20 @@
       </item>
     <item>
         <title>Version 1.0.5</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.0.5
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.0.5</h2>
+          <ul>
+            <li>Keep window occupancy cache warm</li>
+            <li>Coalesce background window scans</li>
+            <li>Route typed Space update events</li>
+            <li>Keep Space monitor retrying</li>
+            <li>Narrow Space change notifications</li>
+            <li>Store canonical Space snapshot</li>
+            <li>Preserve leading edge past topology debounces</li>
+            <li>Drain window scan queue after cancellation</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.0.5</sparkle:fullReleaseNotesLink>
         <pubDate>Fri, 10 Jul 2026 18:29:49 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.0.5/WhichSpace.zip"
@@ -457,9 +688,13 @@
       </item>
     <item>
         <title>Version 1.0.4</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.0.4
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.0.4</h2>
+          <ul>
+            <li>Remove hidden menu bar icon warning</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.0.4</sparkle:fullReleaseNotesLink>
         <pubDate>Fri, 10 Jul 2026 01:15:08 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.0.4/WhichSpace.zip"
@@ -472,9 +707,16 @@
       </item>
     <item>
         <title>Version 1.0.3</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.0.3
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.0.3</h2>
+          <ul>
+            <li>Run <code>swiftformat</code> (v0.62.0)</li>
+            <li>Add Clover annotations</li>
+            <li>Fix LICENSE copyright year</li>
+            <li>Warn when the menu bar icon is hidden</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.0.3</sparkle:fullReleaseNotesLink>
         <pubDate>Wed, 08 Jul 2026 13:33:52 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.0.3/WhichSpace.zip"
@@ -487,9 +729,13 @@
       </item>
     <item>
         <title>Version 1.0.2</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.0.2
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.0.2</h2>
+          <ul>
+            <li>Fix icon preview lag when rapidly hovering style menu items</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.0.2</sparkle:fullReleaseNotesLink>
         <pubDate>Sun, 05 Jul 2026 16:24:17 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.0.2/WhichSpace.zip"
@@ -502,9 +748,16 @@
       </item>
     <item>
         <title>Version 1.0.1</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.0.1
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.0.1</h2>
+          <ul>
+            <li>Simplify installation instructions now app is notarized</li>
+            <li>Tidy up README</li>
+            <li>Fix translations</li>
+            <li>Always enable Sparkle updates</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.0.1</sparkle:fullReleaseNotesLink>
         <pubDate>Sun, 05 Jul 2026 02:48:49 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.0.1/WhichSpace.zip"
@@ -517,9 +770,13 @@
       </item>
     <item>
         <title>Version 1.0.0</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v1.0.0
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v1.0.0</h2>
+          <ul>
+            <li>WhichSpace is now signed and notarized</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.0.0</sparkle:fullReleaseNotesLink>
         <pubDate>Sat, 04 Jul 2026 23:15:08 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v1.0.0/WhichSpace.zip"
@@ -532,9 +789,24 @@
       </item>
     <item>
         <title>Version 0.19.0</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v0.19.0
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v0.19.0</h2>
+          <ul>
+            <li>Rework accessibility flow</li>
+            <li>Apply space snapshots on leading edge</li>
+            <li>Add WindowServer push notifications for space changes</li>
+            <li>Fix stale label style checkmarks</li>
+            <li>Resolve <code>{number}</code> token to displayed space number</li>
+            <li>Drop transient snapshots missing the current space</li>
+            <li>Trim redundant work on menu open</li>
+            <li>Inject accessibility check into settings constraints</li>
+            <li>Memoize decoded defaults values</li>
+            <li>Rebuild snapshots on space topology events</li>
+            <li>Render composite icons at native scale</li>
+            <li>Update deps</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.19.0</sparkle:fullReleaseNotesLink>
         <pubDate>Sat, 04 Jul 2026 22:01:05 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v0.19.0/WhichSpace.zip"
@@ -547,9 +819,42 @@
       </item>
     <item>
         <title>Version 0.18.3</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v0.18.3
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v0.18.3</h2>
+          <ul>
+            <li>Drop stale keyboard-shortcut wording from accessibility alert</li>
+            <li>Add <code>LANGUAGE</code> support to <code>make run</code></li>
+            <li>Bump zizmorcore/zizmor-action from 0.5.3 to 0.5.6 in the github-actions group (#64)</li>
+            <li>Bump the swift-packages group with 2 updates (#65)</li>
+            <li>Bump github.com/danielsaidi/emojikit from 2.5.0 to 3.0.0 in the swift-packages group (#66)</li>
+            <li>Update deps</li>
+            <li>Bump actions/checkout from 6.0.2 to 6.0.3 in the github-actions group (#67)</li>
+            <li>Bump the github-actions group with 2 updates (#68)</li>
+            <li>Fix memory leak in CGS <code>Copy</code> function calls</li>
+            <li>Tolerate missing keys when importing older backups</li>
+            <li>Drop redundant <code>didUpdateNotification</code> observer</li>
+            <li>Limit actor data-race checks to Debug builds</li>
+            <li>Dedupe symbol picker entries</li>
+            <li>Validate and clamp settings on backup import</li>
+            <li>Retry <code>SpaceMonitor</code> reopen after atomic plist replace</li>
+            <li>Protect default-style template from color reset</li>
+            <li>Key new-space default style by array index</li>
+            <li>Debounce click-triggered space refresh tasks</li>
+            <li>Restore backup colors in sRGB space</li>
+            <li>Match Downloads folder with path separator</li>
+            <li>Batch space queries per app in <code>activateAppOnSpace</code></li>
+            <li>Store middle-click monitor to prevent stacking</li>
+            <li>Hoist badge lookups out of menu update loop</li>
+            <li>Cache <code>StylePicker</code> icon across hover redraws</li>
+            <li>Tame trackpad scrolling in size sliders</li>
+            <li>Run <code>tccutil</code> reset without blocking main thread</li>
+            <li>Break retain cycle in <code>AppState</code> observer tasks</li>
+            <li>Key icon cache on store mutation counter</li>
+            <li>Warm symbol and emoji catalogs at launch</li>
+            <li>Cache emoji glyph measurement in picker grid</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.18.3</sparkle:fullReleaseNotesLink>
         <pubDate>Sat, 04 Jul 2026 19:33:44 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v0.18.3/WhichSpace.zip"
@@ -562,9 +867,30 @@
       </item>
     <item>
         <title>Version 0.18.2</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v0.18.2
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v0.18.2</h2>
+          <ul>
+            <li>github: Enable Zizmor pedantic mode</li>
+            <li>Bump zizmorcore/zizmor-action from 0.5.2 to 0.5.3 in the github-actions group (#62)</li>
+            <li>Bump github.com/danielsaidi/emojikit from 2.3.5 to 2.4.0 in the swift-packages group (#63)</li>
+            <li>Remove XCTest detection from AppEnvironment</li>
+            <li>Replace lazy DefaultsStore keys with subscript</li>
+            <li>Use typed throws in AppleScript switch handler</li>
+            <li>Use Unicode scalar literals for emoji modifiers</li>
+            <li>Name arrow key codes in SizeSlider</li>
+            <li>Use clearPreferences helper in resetSpaceToDefault</li>
+            <li>Migrate SpaceDefaultStyleTests to Swift Testing</li>
+            <li>Migrate DynamicDisplayTests to Swift Testing</li>
+            <li>Migrate AppStateTests to Swift Testing</li>
+            <li>Drop redundant clear branches when setting per-space prefs</li>
+            <li>Decode CGS managed displays via typed structs</li>
+            <li>Migrate RapidOperationsTests to Swift Testing</li>
+            <li>Migrate SpaceIconGeneratorTests to Swift Testing</li>
+            <li>Migrate DefaultsIsolationGuardTests to Swift Testing</li>
+            <li>Use isEmpty in DynamicDisplayTests collection checks</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.18.2</sparkle:fullReleaseNotesLink>
         <pubDate>Sat, 16 May 2026 20:32:06 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v0.18.2/WhichSpace.zip"
@@ -577,9 +903,14 @@
       </item>
     <item>
         <title>Version 0.18.1</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v0.18.1
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v0.18.1</h2>
+          <ul>
+            <li>Fix skin tone tests</li>
+            <li>Add AppleScript command to switch spaces</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.18.1</sparkle:fullReleaseNotesLink>
         <pubDate>Mon, 13 Apr 2026 11:20:01 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v0.18.1/WhichSpace.zip"
@@ -592,9 +923,16 @@
       </item>
     <item>
         <title>Version 0.18.0</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v0.18.0
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v0.18.0</h2>
+          <ul>
+            <li>Bump maxim-lobanov/setup-xcode from 1.6.0 to 1.7.0 in the github-actions group (#60)</li>
+            <li>README: Update gif</li>
+            <li>Bump the swift-packages group with 2 updates (#61)</li>
+            <li>Implement instant Space switching via synthetic dock-swipe gestures</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.18.0</sparkle:fullReleaseNotesLink>
         <pubDate>Fri, 10 Apr 2026 01:32:00 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v0.18.0/WhichSpace.zip"
@@ -607,9 +945,19 @@
       </item>
     <item>
         <title>Version 0.17.8</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v0.17.8
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v0.17.8</h2>
+          <ul>
+            <li>Bump github.com/danielsaidi/emojikit from 2.3.4 to 2.3.5 in the swift-packages group (#59)</li>
+            <li>Align terms in set default style strings</li>
+            <li>Improve translations</li>
+            <li>Fix scripting label not resolving template tokens</li>
+            <li>Fix default style inheritance across displays</li>
+            <li>Update deps</li>
+            <li>Fix test actor isolation</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.17.8</sparkle:fullReleaseNotesLink>
         <pubDate>Tue, 24 Mar 2026 12:49:02 +0000</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v0.17.8/WhichSpace.zip"
@@ -622,9 +970,14 @@
       </item>
     <item>
         <title>Version 0.17.7</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v0.17.7
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v0.17.7</h2>
+          <ul>
+            <li>Replace inherit toggle with set default style action</li>
+            <li>Rename Rounded style to Pill</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.17.7</sparkle:fullReleaseNotesLink>
         <pubDate>Mon, 23 Mar 2026 00:16:03 +0000</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v0.17.7/WhichSpace.zip"
@@ -637,9 +990,13 @@
       </item>
     <item>
         <title>Version 0.17.6</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v0.17.6
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v0.17.6</h2>
+          <ul>
+            <li>Inherit current Space styles when creating new Spaces</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.17.6</sparkle:fullReleaseNotesLink>
         <pubDate>Sun, 22 Mar 2026 14:16:59 +0000</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v0.17.6/WhichSpace.zip"
@@ -652,9 +1009,13 @@
       </item>
     <item>
         <title>Version 0.17.5</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v0.17.5
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v0.17.5</h2>
+          <ul>
+            <li>Fix padding with Rounded style</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.17.5</sparkle:fullReleaseNotesLink>
         <pubDate>Sun, 22 Mar 2026 13:53:17 +0000</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v0.17.5/WhichSpace.zip"
@@ -667,9 +1028,14 @@
       </item>
     <item>
         <title>Version 0.17.4</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v0.17.4
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v0.17.4</h2>
+          <ul>
+            <li>Change <code>{space}</code> to <code>{number}</code></li>
+            <li>Add Rounded style</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.17.4</sparkle:fullReleaseNotesLink>
         <pubDate>Sun, 22 Mar 2026 13:44:23 +0000</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v0.17.4/WhichSpace.zip"
@@ -682,9 +1048,17 @@
       </item>
     <item>
         <title>Version 0.17.3</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v0.17.3
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v0.17.3</h2>
+          <ul>
+            <li>README: Update Size screenshot</li>
+            <li>Set badge placeholder to <code>#</code></li>
+            <li>Add tooltips to badge and label input fields</li>
+            <li>README: Add Sounds section</li>
+            <li>Scan user sounds asynchronously on menu open</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.17.3</sparkle:fullReleaseNotesLink>
         <pubDate>Sun, 22 Mar 2026 12:20:43 +0000</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v0.17.3/WhichSpace.zip"
@@ -697,9 +1071,13 @@
       </item>
     <item>
         <title>Version 0.17.2</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v0.17.2
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v0.17.2</h2>
+          <ul>
+            <li>Fix label input clipping for long text</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.17.2</sparkle:fullReleaseNotesLink>
         <pubDate>Sat, 21 Mar 2026 13:09:24 +0000</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v0.17.2/WhichSpace.zip"
@@ -712,9 +1090,13 @@
       </item>
     <item>
         <title>Version 0.17.1</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v0.17.1
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v0.17.1</h2>
+          <ul>
+            <li>Add template support for labels and badges</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.17.1</sparkle:fullReleaseNotesLink>
         <pubDate>Sat, 21 Mar 2026 13:02:10 +0000</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v0.17.1/WhichSpace.zip"
@@ -727,9 +1109,14 @@
       </item>
     <item>
         <title>Version 0.17.0</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v0.17.0
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v0.17.0</h2>
+          <ul>
+            <li>Fix icon clipping at low padding values</li>
+            <li>Add support for custom Space labels</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.17.0</sparkle:fullReleaseNotesLink>
         <pubDate>Sat, 21 Mar 2026 12:45:48 +0000</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v0.17.0/WhichSpace.zip"
@@ -742,9 +1129,13 @@
       </item>
     <item>
         <title>Version 0.16.3</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v0.16.3
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v0.16.3</h2>
+          <ul>
+            <li>Fix preview lag during menu hover</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.16.3</sparkle:fullReleaseNotesLink>
         <pubDate>Fri, 20 Mar 2026 01:39:58 +0000</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v0.16.3/WhichSpace.zip"
@@ -757,9 +1148,13 @@
       </item>
     <item>
         <title>Version 0.16.2</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v0.16.2
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v0.16.2</h2>
+          <ul>
+            <li>Increase max padding to 200%</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.16.2</sparkle:fullReleaseNotesLink>
         <pubDate>Fri, 20 Mar 2026 01:01:44 +0000</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v0.16.2/WhichSpace.zip"
@@ -772,9 +1167,13 @@
       </item>
     <item>
         <title>Version 0.16.1</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v0.16.1
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v0.16.1</h2>
+          <ul>
+            <li>Add padding slider to Size menu</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.16.1</sparkle:fullReleaseNotesLink>
         <pubDate>Fri, 20 Mar 2026 00:47:12 +0000</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v0.16.1/WhichSpace.zip"
@@ -787,9 +1186,14 @@
       </item>
     <item>
         <title>Version 0.16.0</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v0.16.0
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v0.16.0</h2>
+          <ul>
+            <li>Bump zizmorcore/zizmor-action from 0.5.0 to 0.5.2 in the github-actions group (#56)</li>
+            <li>Add badge support</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.16.0</sparkle:fullReleaseNotesLink>
         <pubDate>Wed, 18 Mar 2026 10:20:35 +0000</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v0.16.0/WhichSpace.zip"
@@ -802,9 +1206,15 @@
       </item>
     <item>
         <title>Version 0.15.2</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v0.15.2
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v0.15.2</h2>
+          <ul>
+            <li>Bump github.com/danielsaidi/emojikit from 2.2.1 to 2.3.1 in the swift-packages group (#53)</li>
+            <li>Bump the swift-packages group with 2 updates (#55)</li>
+            <li>Auto-enable click-to-switch on first left click</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.15.2</sparkle:fullReleaseNotesLink>
         <pubDate>Sun, 08 Mar 2026 18:31:51 +0000</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v0.15.2/WhichSpace.zip"
@@ -817,9 +1227,13 @@
       </item>
     <item>
         <title>Version 0.15.1</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v0.15.1
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v0.15.1</h2>
+          <ul>
+            <li>Fix Number menu translations</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.15.1</sparkle:fullReleaseNotesLink>
         <pubDate>Wed, 11 Feb 2026 00:16:43 +0000</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v0.15.1/WhichSpace.zip"
@@ -832,9 +1246,18 @@
       </item>
     <item>
         <title>Version 0.15.0</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v0.15.0
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v0.15.0</h2>
+          <ul>
+            <li>Bump zizmorcore/zizmor-action from 0.4.1 to 0.5.0 in the github-actions group (#52)</li>
+            <li>Prevent app from appearing in Dock when relaunched</li>
+            <li>Improve right-click menu handling</li>
+            <li>Add middle-click to show Mission Control</li>
+            <li>Fix click-to-switch with filtered Spaces</li>
+            <li>Refactor and upgrade to Swift 6</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.15.0</sparkle:fullReleaseNotesLink>
         <pubDate>Wed, 11 Feb 2026 00:10:57 +0000</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v0.15.0/WhichSpace.zip"
@@ -847,9 +1270,14 @@
       </item>
     <item>
         <title>Version 0.14.3</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v0.14.3
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v0.14.3</h2>
+          <ul>
+            <li>Apply swiftformat and test lint fixes</li>
+            <li>Add support for switching to full-screen apps</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.14.3</sparkle:fullReleaseNotesLink>
         <pubDate>Mon, 02 Feb 2026 21:40:55 +0000</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v0.14.3/WhichSpace.zip"
@@ -862,9 +1290,14 @@
       </item>
     <item>
         <title>Version 0.14.2</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v0.14.2
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v0.14.2</h2>
+          <ul>
+            <li>Add support for Cmd+Q to quit</li>
+            <li>Bump the github-actions group with 2 updates (#48)</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.14.2</sparkle:fullReleaseNotesLink>
         <pubDate>Mon, 26 Jan 2026 23:40:37 +0000</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v0.14.2/WhichSpace.zip"
@@ -877,9 +1310,13 @@
       </item>
     <item>
         <title>Version 0.14.1</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v0.14.1
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v0.14.1</h2>
+          <ul>
+            <li>Omit empty settings in export</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.14.1</sparkle:fullReleaseNotesLink>
         <pubDate>Tue, 20 Jan 2026 23:34:26 +0000</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v0.14.1/WhichSpace.zip"
@@ -892,9 +1329,13 @@
       </item>
     <item>
         <title>Version 0.14.0</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v0.14.0
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v0.14.0</h2>
+          <ul>
+            <li>Add support for importing/exporting settings</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.14.0</sparkle:fullReleaseNotesLink>
         <pubDate>Thu, 15 Jan 2026 01:28:58 +0000</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v0.14.0/WhichSpace.zip"
@@ -907,9 +1348,13 @@
       </item>
     <item>
         <title>Version 0.13.4</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v0.13.4
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v0.13.4</h2>
+          <ul>
+            <li>Add option to hide icon when single Space</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.13.4</sparkle:fullReleaseNotesLink>
         <pubDate>Fri, 09 Jan 2026 01:09:35 +0000</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v0.13.4/WhichSpace.zip"
@@ -922,9 +1367,14 @@
       </item>
     <item>
         <title>Version 0.13.3</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v0.13.3
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v0.13.3</h2>
+          <ul>
+            <li>README: Add AppleScript support</li>
+            <li>Attempt to reset stale Accessibility permissions</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.13.3</sparkle:fullReleaseNotesLink>
         <pubDate>Tue, 06 Jan 2026 10:58:52 +0000</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v0.13.3/WhichSpace.zip"
@@ -937,9 +1387,13 @@
       </item>
     <item>
         <title>Version 0.13.2</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v0.13.2
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v0.13.2</h2>
+          <ul>
+            <li>Add AppleScript support</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.13.2</sparkle:fullReleaseNotesLink>
         <pubDate>Mon, 05 Jan 2026 19:47:47 +0000</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v0.13.2/WhichSpace.zip"
@@ -952,9 +1406,14 @@
       </item>
     <item>
         <title>Version 0.13.1</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v0.13.1
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v0.13.1</h2>
+          <ul>
+            <li>Use separate Homebrew tap repository</li>
+            <li>Improve app move logic</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.13.1</sparkle:fullReleaseNotesLink>
         <pubDate>Sun, 04 Jan 2026 18:13:47 +0000</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v0.13.1/WhichSpace.zip"
@@ -967,9 +1426,17 @@
       </item>
     <item>
         <title>Version 0.13.0</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v0.13.0
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v0.13.0</h2>
+          <ul>
+            <li>Switch to modern localization structure</li>
+            <li>Replace <code>PFMoveApplication</code> with Swift implementation</li>
+            <li>README: Update <code>xattr</code> command</li>
+            <li>Add Homebrew tap</li>
+            <li>Disable Sparkle if installed via Homebrew</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.13.0</sparkle:fullReleaseNotesLink>
         <pubDate>Sat, 03 Jan 2026 02:19:11 +0000</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v0.13.0/WhichSpace.zip"
@@ -982,9 +1449,15 @@
       </item>
     <item>
         <title>Version 0.12.12</title>
-        <sparkle:releaseNotesLink>
-          https://github.com/gechr/WhichSpace/releases/tag/v0.12.12
-        </sparkle:releaseNotesLink>
+        <description><![CDATA[
+          <h2>v0.12.12</h2>
+          <ul>
+            <li>Run tests on macOS 15 too</li>
+            <li>Refactor filenames and split app entrypoints</li>
+            <li>More refactoring and simplifications</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.12.12</sparkle:fullReleaseNotesLink>
         <pubDate>Sun, 21 Dec 2025 14:48:00 +0000</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/v0.12.12/WhichSpace.zip"
@@ -997,9 +1470,13 @@
       </item>
     <item>
       <title>Version 0.12.11</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.12.11
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.12.11</h2>
+        <ul>
+          <li>Defer status bar creation on startup</li>
+        </ul>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.12.11</sparkle:fullReleaseNotesLink>
       <pubDate>Thu, 18 Dec 2025 09:09:35 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.12.11/WhichSpace.zip"
@@ -1012,9 +1489,21 @@
     </item>
     <item>
       <title>Version 0.12.10</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.12.10
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.12.10</h2>
+        <ul>
+          <li>Tweak translations</li>
+          <li>Bump actions/checkout from 5.0.0 to 6.0.1 in the github-actions group (#43)</li>
+          <li>Add separator color hover preview</li>
+          <li>Show preview on all matching spaces when shared</li>
+          <li>Add scroll wheel support to size slider</li>
+          <li>Play sound previews on hover</li>
+          <li>Only play sounds on same-display space changes</li>
+          <li>Add support for user sounds</li>
+          <li>Add localization tests</li>
+        </ul>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.12.10</sparkle:fullReleaseNotesLink>
       <pubDate>Tue, 16 Dec 2025 01:41:34 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.12.10/WhichSpace.zip"
@@ -1027,9 +1516,13 @@
     </item>
     <item>
       <title>Version 0.12.9</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.12.9
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.12.9</h2>
+        <ul>
+          <li>Ensure icons do not go out of bounds</li>
+        </ul>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.12.9</sparkle:fullReleaseNotesLink>
       <pubDate>Sun, 14 Dec 2025 23:53:28 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.12.9/WhichSpace.zip"
@@ -1042,9 +1535,13 @@
     </item>
     <item>
       <title>Version 0.12.8</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.12.8
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.12.8</h2>
+        <ul>
+          <li>Fix numbering issue with full-screen apps</li>
+        </ul>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.12.8</sparkle:fullReleaseNotesLink>
       <pubDate>Sun, 14 Dec 2025 23:33:37 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.12.8/WhichSpace.zip"
@@ -1057,9 +1554,14 @@
     </item>
     <item>
       <title>Version 0.12.7</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.12.7
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.12.7</h2>
+        <ul>
+          <li>Fix lint issues</li>
+          <li>Update menu icon</li>
+        </ul>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.12.7</sparkle:fullReleaseNotesLink>
       <pubDate>Sun, 14 Dec 2025 23:04:35 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.12.7/WhichSpace.zip"
@@ -1072,9 +1574,13 @@
     </item>
     <item>
       <title>Version 0.12.6</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.12.6
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.12.6</h2>
+        <ul>
+          <li>Add option to use global Space numbers</li>
+        </ul>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.12.6</sparkle:fullReleaseNotesLink>
       <pubDate>Sun, 14 Dec 2025 22:36:01 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.12.6/WhichSpace.zip"
@@ -1087,9 +1593,14 @@
     </item>
     <item>
       <title>Version 0.12.5</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.12.5
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.12.5</h2>
+        <ul>
+          <li>Add more tests</li>
+          <li>Add translations (c451de3):</li>
+        </ul>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.12.5</sparkle:fullReleaseNotesLink>
       <pubDate>Sun, 14 Dec 2025 21:23:28 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.12.5/WhichSpace.zip"
@@ -1102,9 +1613,13 @@
     </item>
     <item>
       <title>Version 0.12.4</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.12.4
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.12.4</h2>
+        <ul>
+          <li>Work around menu clipping</li>
+        </ul>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.12.4</sparkle:fullReleaseNotesLink>
       <pubDate>Sun, 14 Dec 2025 17:17:50 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.12.4/WhichSpace.zip"
@@ -1117,9 +1632,14 @@
     </item>
     <item>
       <title>Version 0.12.3</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.12.3
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.12.3</h2>
+        <ul>
+          <li>Remove unused "Reset Sound To Default" action (#41)</li>
+          <li>Add hover previews</li>
+        </ul>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.12.3</sparkle:fullReleaseNotesLink>
       <pubDate>Sun, 14 Dec 2025 16:03:07 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.12.3/WhichSpace.zip"
@@ -1132,9 +1652,14 @@
     </item>
     <item>
       <title>Version 0.12.2</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.12.2
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.12.2</h2>
+        <ul>
+          <li>Update README</li>
+          <li>Add option to play sound on Space switch</li>
+        </ul>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.12.2</sparkle:fullReleaseNotesLink>
       <pubDate>Sat, 13 Dec 2025 22:07:14 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.12.2/WhichSpace.zip"
@@ -1147,9 +1672,15 @@
     </item>
     <item>
       <title>Version 0.12.1</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.12.1
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.12.1</h2>
+        <ul>
+          <li>Add "Slim" style</li>
+          <li>Refactor icon generation methods</li>
+          <li>Add support for emojis</li>
+        </ul>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.12.1</sparkle:fullReleaseNotesLink>
       <pubDate>Sat, 13 Dec 2025 21:35:06 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.12.1/WhichSpace.zip"
@@ -1162,9 +1693,14 @@
     </item>
     <item>
       <title>Version 0.12.0</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.12.0
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.12.0</h2>
+        <ul>
+          <li>Add "Stroke" and" Transparent" styles</li>
+          <li>Support &gt;16 Spaces via Yabai</li>
+        </ul>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.12.0</sparkle:fullReleaseNotesLink>
       <pubDate>Sat, 13 Dec 2025 13:41:24 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.12.0/WhichSpace.zip"
@@ -1177,9 +1713,13 @@
     </item>
     <item>
       <title>Version 0.11.4</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.11.4
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.11.4</h2>
+        <ul>
+          <li>Remove hacky Cmd+Q support for now</li>
+        </ul>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.11.4</sparkle:fullReleaseNotesLink>
       <pubDate>Fri, 12 Dec 2025 11:15:14 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.11.4/WhichSpace.zip"
@@ -1192,9 +1732,13 @@
     </item>
     <item>
       <title>Version 0.11.3</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.11.3
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.11.3</h2>
+        <ul>
+          <li>Fix Cmd+Q shortcut in menu</li>
+        </ul>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.11.3</sparkle:fullReleaseNotesLink>
       <pubDate>Fri, 12 Dec 2025 10:51:15 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.11.3/WhichSpace.zip"
@@ -1207,9 +1751,13 @@
     </item>
     <item>
       <title>Version 0.11.2</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.11.2
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.11.2</h2>
+        <ul>
+          <li>Center the font panel</li>
+        </ul>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.11.2</sparkle:fullReleaseNotesLink>
       <pubDate>Fri, 12 Dec 2025 10:45:37 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.11.2/WhichSpace.zip"
@@ -1222,9 +1770,14 @@
     </item>
     <item>
       <title>Version 0.11.1</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.11.1
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.11.1</h2>
+        <ul>
+          <li>README: Add "Show all Displays" screenshot</li>
+          <li>Add option to change Space fonts</li>
+        </ul>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.11.1</sparkle:fullReleaseNotesLink>
       <pubDate>Fri, 12 Dec 2025 10:40:49 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.11.1/WhichSpace.zip"
@@ -1237,9 +1790,11 @@
     </item>
     <item>
       <title>Version 0.11.0</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.11.0
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.11.0</h2>
+        <p><a href="https://github.com/gechr/WhichSpace/releases/tag/v0.11.0">Full release notes</a></p>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.11.0</sparkle:fullReleaseNotesLink>
       <pubDate>Wed, 10 Dec 2025 22:55:01 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.11.0/WhichSpace.zip"
@@ -1252,9 +1807,14 @@
     </item>
     <item>
       <title>Version 0.10.10</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.10.10
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.10.10</h2>
+        <ul>
+          <li>Only show separator colour swatch if visible</li>
+          <li>Fix colour picker defaults</li>
+        </ul>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.10.10</sparkle:fullReleaseNotesLink>
       <pubDate>Wed, 10 Dec 2025 10:49:41 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.10.10/WhichSpace.zip"
@@ -1267,9 +1827,13 @@
     </item>
     <item>
       <title>Version 0.10.9</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.10.9
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.10.9</h2>
+        <ul>
+          <li>Show menu on right-click only</li>
+        </ul>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.10.9</sparkle:fullReleaseNotesLink>
       <pubDate>Wed, 10 Dec 2025 00:29:19 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.10.9/WhichSpace.zip"
@@ -1282,9 +1846,11 @@
     </item>
     <item>
       <title>Version 0.10.8</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.10.8
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.10.8</h2>
+        <p><a href="https://github.com/gechr/WhichSpace/releases/tag/v0.10.8">Full release notes</a></p>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.10.8</sparkle:fullReleaseNotesLink>
       <pubDate>Wed, 10 Dec 2025 00:16:20 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.10.8/WhichSpace.zip"
@@ -1297,9 +1863,14 @@
     </item>
     <item>
       <title>Version 0.10.7</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.10.7
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.10.7</h2>
+        <ul>
+          <li>Fix test file cleanup</li>
+          <li>Add toggle to hide empty Spaces</li>
+        </ul>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.10.7</sparkle:fullReleaseNotesLink>
       <pubDate>Tue, 09 Dec 2025 10:29:12 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.10.7/WhichSpace.zip"
@@ -1312,9 +1883,14 @@
     </item>
     <item>
       <title>Version 0.10.6</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.10.6
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.10.6</h2>
+        <ul>
+          <li>Update README</li>
+          <li>Add toggle to dim inactive spaces</li>
+        </ul>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.10.6</sparkle:fullReleaseNotesLink>
       <pubDate>Tue, 09 Dec 2025 00:16:53 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.10.6/WhichSpace.zip"
@@ -1327,9 +1903,14 @@
     </item>
     <item>
       <title>Version 0.10.5</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.10.5
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.10.5</h2>
+        <ul>
+          <li>Format workflows</li>
+          <li>Add toggle for separate icons per display</li>
+        </ul>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.10.5</sparkle:fullReleaseNotesLink>
       <pubDate>Mon, 08 Dec 2025 23:32:17 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.10.5/WhichSpace.zip"
@@ -1342,9 +1923,13 @@
     </item>
     <item>
       <title>Version 0.10.4</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.10.4
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.10.4</h2>
+        <ul>
+          <li>Reinstate symbol colour picker</li>
+        </ul>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.10.4</sparkle:fullReleaseNotesLink>
       <pubDate>Mon, 08 Dec 2025 11:36:19 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.10.4/WhichSpace.zip"
@@ -1357,9 +1942,18 @@
     </item>
     <item>
       <title>Version 0.10.3</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.10.3
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.10.3</h2>
+        <ul>
+          <li>Enable Dependabot</li>
+          <li>Set up GitHub Actions</li>
+          <li>Bump zizmorcore/zizmor-action from 0.2.0 to 0.3.0 in the github-actions group (#40)</li>
+          <li>Add <code>Packages.swift</code> for Dependabot</li>
+          <li>Fix "Reset all Spaces" to include closed spaces</li>
+          <li>Clean up test preference files</li>
+        </ul>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.10.3</sparkle:fullReleaseNotesLink>
       <pubDate>Mon, 08 Dec 2025 01:45:50 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.10.3/WhichSpace.zip"
@@ -1372,9 +1966,11 @@
     </item>
     <item>
       <title>Version 0.10.2</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.10.2
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.10.2</h2>
+        <p><a href="https://github.com/gechr/WhichSpace/releases/tag/v0.10.2">Full release notes</a></p>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.10.2</sparkle:fullReleaseNotesLink>
       <pubDate>Sun, 07 Dec 2025 21:20:11 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.10.2/WhichSpace.zip"
@@ -1387,9 +1983,11 @@
     </item>
     <item>
       <title>Version 0.10.1</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.10.1
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.10.1</h2>
+        <p><a href="https://github.com/gechr/WhichSpace/releases/tag/v0.10.1">Full release notes</a></p>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.10.1</sparkle:fullReleaseNotesLink>
       <pubDate>Sun, 07 Dec 2025 17:50:19 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.10.1/WhichSpace.zip"
@@ -1402,9 +2000,11 @@
     </item>
     <item>
       <title>Version 0.10.0</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.10.0
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.10.0</h2>
+        <p><a href="https://github.com/gechr/WhichSpace/releases/tag/v0.10.0">Full release notes</a></p>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.10.0</sparkle:fullReleaseNotesLink>
       <pubDate>Sun, 07 Dec 2025 17:38:04 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.10.0/WhichSpace.zip"
@@ -1417,9 +2017,13 @@
     </item>
     <item>
       <title>Version 0.9.0</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.9.0
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.9.0</h2>
+        <ul>
+          <li>Add option to show all Spaces in the menu bar</li>
+        </ul>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.9.0</sparkle:fullReleaseNotesLink>
       <pubDate>Sun, 07 Dec 2025 01:56:15 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.9.0/WhichSpace.zip"
@@ -1432,9 +2036,13 @@
     </item>
     <item>
       <title>Version 0.8.5</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.8.5
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.8.5</h2>
+        <ul>
+          <li>Minor menu tweaks</li>
+        </ul>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.8.5</sparkle:fullReleaseNotesLink>
       <pubDate>Sun, 07 Dec 2025 01:00:54 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.8.5/WhichSpace.zip"
@@ -1447,9 +2055,11 @@
     </item>
     <item>
       <title>Version 0.8.4</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.8.4
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.8.4</h2>
+        <p><a href="https://github.com/gechr/WhichSpace/releases/tag/v0.8.4">Full release notes</a></p>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.8.4</sparkle:fullReleaseNotesLink>
       <pubDate>Sat, 06 Dec 2025 20:53:23 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.8.4/WhichSpace.zip"
@@ -1462,9 +2072,11 @@
     </item>
     <item>
       <title>Version 0.8.3</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.8.3
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.8.3</h2>
+        <p><a href="https://github.com/gechr/WhichSpace/releases/tag/v0.8.3">Full release notes</a></p>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.8.3</sparkle:fullReleaseNotesLink>
       <pubDate>Sat, 06 Dec 2025 20:32:31 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.8.3/WhichSpace.zip"
@@ -1477,9 +2089,11 @@
     </item>
     <item>
       <title>Version 0.8.2</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.8.2
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.8.2</h2>
+        <p><a href="https://github.com/gechr/WhichSpace/releases/tag/v0.8.2">Full release notes</a></p>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.8.2</sparkle:fullReleaseNotesLink>
       <pubDate>Sat, 06 Dec 2025 19:53:18 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.8.2/WhichSpace.zip"
@@ -1492,9 +2106,11 @@
     </item>
     <item>
       <title>Version 0.8.1</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.8.1
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.8.1</h2>
+        <p><a href="https://github.com/gechr/WhichSpace/releases/tag/v0.8.1">Full release notes</a></p>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.8.1</sparkle:fullReleaseNotesLink>
       <pubDate>Sat, 06 Dec 2025 18:51:05 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.8.1/WhichSpace.zip"
@@ -1507,9 +2123,11 @@
     </item>
     <item>
       <title>Version 0.8.0</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.8.0
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.8.0</h2>
+        <p><a href="https://github.com/gechr/WhichSpace/releases/tag/v0.8.0">Full release notes</a></p>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.8.0</sparkle:fullReleaseNotesLink>
       <pubDate>Sat, 06 Dec 2025 18:44:03 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.8.0/WhichSpace.zip"
@@ -1522,9 +2140,11 @@
     </item>
     <item>
       <title>Version 0.7.1</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.7.1
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.7.1</h2>
+        <p><a href="https://github.com/gechr/WhichSpace/releases/tag/v0.7.1">Full release notes</a></p>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.7.1</sparkle:fullReleaseNotesLink>
       <pubDate>Sat, 06 Dec 2025 14:50:01 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.7.1/WhichSpace.zip"
@@ -1537,9 +2157,13 @@
     </item>
     <item>
       <title>Version 0.7.0</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.7.0
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.7.0</h2>
+        <ul>
+          <li>Add support for symbols</li>
+        </ul>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.7.0</sparkle:fullReleaseNotesLink>
       <pubDate>Sat, 06 Dec 2025 14:15:22 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.7.0/WhichSpace.zip"
@@ -1552,9 +2176,11 @@
     </item>
     <item>
       <title>Version 0.6.2</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.6.2
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.6.2</h2>
+        <p><a href="https://github.com/gechr/WhichSpace/releases/tag/v0.6.2">Full release notes</a></p>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.6.2</sparkle:fullReleaseNotesLink>
       <pubDate>Sat, 06 Dec 2025 12:29:48 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.6.2/WhichSpace.zip"
@@ -1567,9 +2193,11 @@
     </item>
     <item>
       <title>Version 0.6.1</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.6.1
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.6.1</h2>
+        <p><a href="https://github.com/gechr/WhichSpace/releases/tag/v0.6.1">Full release notes</a></p>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.6.1</sparkle:fullReleaseNotesLink>
       <pubDate>Sat, 06 Dec 2025 12:23:59 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.6.1/WhichSpace.zip"
@@ -1582,9 +2210,13 @@
     </item>
     <item>
       <title>Version 0.6.0</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.6.0
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.6.0</h2>
+        <ul>
+          <li>Add icon style option</li>
+        </ul>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.6.0</sparkle:fullReleaseNotesLink>
       <pubDate>Sat, 06 Dec 2025 12:02:47 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.6.0/WhichSpace.zip"
@@ -1597,9 +2229,13 @@
     </item>
     <item>
       <title>Version 0.5.2</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.5.2
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.5.2</h2>
+        <ul>
+          <li>Add basic locale support</li>
+        </ul>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.5.2</sparkle:fullReleaseNotesLink>
       <pubDate>Fri, 05 Dec 2025 10:19:39 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.5.2/WhichSpace.zip"
@@ -1612,9 +2248,13 @@
     </item>
     <item>
       <title>Version 0.5.1</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.5.1
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.5.1</h2>
+        <ul>
+          <li>Add colour swatch picker</li>
+        </ul>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.5.1</sparkle:fullReleaseNotesLink>
       <pubDate>Fri, 05 Dec 2025 10:13:19 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.5.1/WhichSpace.zip"
@@ -1627,9 +2267,14 @@
     </item>
     <item>
       <title>Version 0.5.0</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.5.0
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.5.0</h2>
+        <ul>
+          <li>Add per-space colour options</li>
+          <li>Tweak icon styling to be a little more modern</li>
+        </ul>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.5.0</sparkle:fullReleaseNotesLink>
       <pubDate>Fri, 05 Dec 2025 10:00:21 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.5.0/WhichSpace.zip"
@@ -1642,9 +2287,13 @@
     </item>
     <item>
       <title>Version 0.4.1</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.4.1
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.4.1</h2>
+        <ul>
+          <li>Show per-display local space numbers for multi-monitor setups</li>
+        </ul>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.4.1</sparkle:fullReleaseNotesLink>
       <pubDate>Fri, 05 Dec 2025 09:34:04 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.4.1/WhichSpace.zip"
@@ -1657,9 +2306,16 @@
     </item>
     <item>
       <title>Version 0.4.0</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.4.0
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.4.0</h2>
+        <ul>
+          <li>Fix icon alignment</li>
+          <li>Remove private API dependency (NSStatusBarButtonCell)</li>
+          <li>Modernize Sparkle (2.x with EdDSA signing)</li>
+          <li>Require macOS 13.0+</li>
+        </ul>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.4.0</sparkle:fullReleaseNotesLink>
       <pubDate>Fri, 05 Dec 2025 01:47:16 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.4.0/WhichSpace.zip"
@@ -1672,9 +2328,11 @@
     </item>
     <item>
       <title>Version 0.3.2</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.3.2
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.3.2</h2>
+        <p>Rebuild with Xcode 12</p>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.3.2</sparkle:fullReleaseNotesLink>
       <pubDate>Sun, 11 Oct 2020 21:30:16 +0100</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.3.2/WhichSpace.zip"
@@ -1685,9 +2343,11 @@
     </item>
     <item>
       <title>Version 0.3.1</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.3.1
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.3.1</h2>
+        <p>Do not count fullscreen applications as spaces</p>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.3.1</sparkle:fullReleaseNotesLink>
       <pubDate>Fri, 11 Sep 2020 03:04:37 +0100</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.3.1/WhichSpace.zip"
@@ -1698,9 +2358,11 @@
     </item>
     <item>
       <title>Version 0.3.0</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.3.0
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.3.0</h2>
+        <p>Add support for multiple displays. Thanks to @tidues!</p>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.3.0</sparkle:fullReleaseNotesLink>
       <pubDate>Fri, 11 Sep 2020 01:52:52 +0100</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.3.0/WhichSpace.zip"
@@ -1711,9 +2373,11 @@
     </item>
     <item>
       <title>Version 0.2.4</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.2.4
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.2.4</h2>
+        <p>Add <code>"Move to Applications folder?"</code> prompt on first launch</p>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.2.4</sparkle:fullReleaseNotesLink>
       <pubDate>Tue, 21 Mar 2017 22:27:25 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.2.4/WhichSpace.zip"
@@ -1724,9 +2388,11 @@
     </item>
     <item>
       <title>Version 0.2.3</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.2.3
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.2.3</h2>
+        <p>Update to Sparkle v1.17.0 + fix auto-update issues</p>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.2.3</sparkle:fullReleaseNotesLink>
       <pubDate>Sat, 18 Mar 2017 14:41:11 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.2.3/WhichSpace.zip"
@@ -1737,9 +2403,11 @@
     </item>
     <item>
       <title>Version 0.2.2</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.2.2
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.2.2</h2>
+        <p>Change Code Signing Identity from _3rd Party Mac Developer Application_ to _Developer ID Application_ (for distribution outside of the Mac App Store)</p>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.2.2</sparkle:fullReleaseNotesLink>
       <pubDate>Sat, 18 Mar 2017 03:58:35 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.2.2/WhichSpace.zip"
@@ -1750,9 +2418,11 @@
     </item>
     <item>
       <title>Version 0.2.1</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.2.1
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.2.1</h2>
+        <p>Fix <code>"WhichSpace.app is damaged and can't be opened"</code> issues</p>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.2.1</sparkle:fullReleaseNotesLink>
       <pubDate>Tue, 14 Mar 2017 21:30:10 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.2.1/WhichSpace.zip"
@@ -1763,9 +2433,11 @@
     </item>
     <item>
       <title>Version 0.2.0</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.2.0
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.2.0</h2>
+        <p>Add (experimental) macOS Sierra support</p>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.2.0</sparkle:fullReleaseNotesLink>
       <pubDate>Mon, 13 Feb 2017 23:47:38 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.2.0/WhichSpace.app.zip"
@@ -1776,9 +2448,11 @@
     </item>
     <item>
       <title>Version 0.1.9</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.1.9
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.1.9</h2>
+        <p>Update Sparkle to v1.13.1</p>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.1.9</sparkle:fullReleaseNotesLink>
       <pubDate>Sat, 30 Jan 2016 13:36:52 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.1.9/WhichSpace.app.zip"
@@ -1789,9 +2463,11 @@
     </item>
     <item>
       <title>Version 0.1.8</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.1.8
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.1.8</h2>
+        <p>Tweak menu bar icon colours</p>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.1.8</sparkle:fullReleaseNotesLink>
       <pubDate>Wed, 18 Nov 2015 20:48:03 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.1.8/WhichSpace.app.zip"
@@ -1802,9 +2478,11 @@
     </item>
     <item>
       <title>Version 0.1.7</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.1.7
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.1.7</h2>
+        <p>Add support for 'Dark Mode'</p>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.1.7</sparkle:fullReleaseNotesLink>
       <pubDate>Wed, 18 Nov 2015 20:38:21 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.1.7/WhichSpace.app.zip"
@@ -1815,9 +2493,11 @@
     </item>
     <item>
       <title>Version 0.1.6</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.1.6
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.1.6</h2>
+        <p>Better detection of rearranged/deleted spaces. Thanks to @sdsykes!</p>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.1.6</sparkle:fullReleaseNotesLink>
       <pubDate>Tue, 17 Nov 2015 19:29:03 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.1.6/WhichSpace.app.zip"
@@ -1828,9 +2508,11 @@
     </item>
     <item>
       <title>Version 0.1.5</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.1.5
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.1.5</h2>
+        <p>Temporarily workaround issue detecting rearranged/deleted spaces</p>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.1.5</sparkle:fullReleaseNotesLink>
       <pubDate>Sat, 14 Nov 2015 15:54:05 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.1.5/WhichSpace.app.zip"
@@ -1841,9 +2523,11 @@
     </item>
     <item>
       <title>Version 0.1.4</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.1.4
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.1.4</h2>
+        <p>No functional changes, but WhichSpace.app is now code-signed!</p>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.1.4</sparkle:fullReleaseNotesLink>
       <pubDate>Thu, 12 Nov 2015 23:18:49 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.1.4/WhichSpace.app.zip"
@@ -1854,9 +2538,11 @@
     </item>
     <item>
       <title>Version 0.1.3</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.1.3
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.1.3</h2>
+        <p>Temporary workaround for "Update Error!" message when clicking "Check for Updates..."</p>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.1.3</sparkle:fullReleaseNotesLink>
       <pubDate>Mon Nov 9 21:33:37 2015 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.1.3/WhichSpace.app.zip"
@@ -1867,9 +2553,11 @@
     </item>
     <item>
       <title>Version 0.1.2</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.1.2
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.1.2</h2>
+        <p>Implement automatic updates</p>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.1.2</sparkle:fullReleaseNotesLink>
       <pubDate>Mon Nov 9 21:14:42 2015 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.1.2/WhichSpace.app.zip"
@@ -1880,9 +2568,11 @@
     </item>
     <item>
       <title>Version 0.1.1</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.1.1
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.1.1</h2>
+        <p>Draw numbers on-the-fly rather than relying on images. Thanks to @sdsykes!</p>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.1.1</sparkle:fullReleaseNotesLink>
       <pubDate>Fri Oct 30 16:57:23 2015 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.1.1/WhichSpace.app.zip"
@@ -1893,9 +2583,11 @@
     </item>
     <item>
       <title>Version 0.1.0</title>
-      <sparkle:releaseNotesLink>
-        https://github.com/gechr/WhichSpace/releases/tag/v0.1.0
-      </sparkle:releaseNotesLink>
+      <description><![CDATA[
+        <h2>v0.1.0</h2>
+        <p>Initial release</p>
+      ]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.1.0</sparkle:fullReleaseNotesLink>
       <pubDate>Thu Oct 29 22:15:31 2015 +0000</pubDate>
       <enclosure
         url="https://github.com/gechr/WhichSpace/releases/download/v0.1.0/WhichSpace.app.zip"
