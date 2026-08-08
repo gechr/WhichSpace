@@ -8,7 +8,7 @@
     <item>
         <title>Version 1.2.15</title>
         <description><![CDATA[
-          <h2>v1.2.15</h2>
+          <h3>v1.2.15</h3>
           <ul>
             <li>picker: Make app icon sizes consistent</li>
             <li>deps: Update all versions</li>
@@ -28,7 +28,7 @@
     <item>
         <title>Version 1.2.14</title>
         <description><![CDATA[
-          <h2>v1.2.14</h2>
+          <h3>v1.2.14</h3>
           <ul>
             <li>settings: Activate previews before content clicks</li>
             <li>settings: Confirm destructive Space copies</li>
@@ -49,7 +49,7 @@
     <item>
         <title>Version 1.2.13</title>
         <description><![CDATA[
-          <h2>v1.2.13</h2>
+          <h3>v1.2.13</h3>
           <ul>
             <li>settings: Keep switching toggles on when permission is missing</li>
             <li>settings: Tint switching toggles red without permission</li>
@@ -75,7 +75,7 @@
     <item>
         <title>Version 1.2.12</title>
         <description><![CDATA[
-          <h2>v1.2.12</h2>
+          <h3>v1.2.12</h3>
           <ul>
             <li>switching: Fall back to classic switching while dragging</li>
             <li>picker: Show per-Space app icons</li>
@@ -97,7 +97,7 @@
     <item>
         <title>Version 1.2.11</title>
         <description><![CDATA[
-          <h2>v1.2.11</h2>
+          <h3>v1.2.11</h3>
           <ul>
             <li>settings: Pulse the deep-link highlight</li>
             <li>settings: Make slider field more obvious</li>
@@ -123,7 +123,7 @@
     <item>
         <title>Version 1.2.10</title>
         <description><![CDATA[
-          <h2>v1.2.10</h2>
+          <h3>v1.2.10</h3>
           <ul>
             <li>readme: Refresh all screenshots</li>
             <li>settings: Lead the label style grid with Box</li>
@@ -144,7 +144,7 @@
     <item>
         <title>Version 1.2.9</title>
         <description><![CDATA[
-          <h2>v1.2.9</h2>
+          <h3>v1.2.9</h3>
           <ul>
             <li>readme: Refresh keybinds screenshot</li>
             <li>hotkeys: Use global Desktop numbers</li>
@@ -164,7 +164,7 @@
     <item>
         <title>Version 1.2.8</title>
         <description><![CDATA[
-          <h2>v1.2.8</h2>
+          <h3>v1.2.8</h3>
           <ul>
             <li>menubar: Reset shrink level on width-affecting edits</li>
             <li>menubar: Keep padding when shrinking icons to fit</li>
@@ -184,7 +184,7 @@
     <item>
         <title>Version 1.2.7</title>
         <description><![CDATA[
-          <h2>v1.2.7</h2>
+          <h3>v1.2.7</h3>
           <ul>
             <li>settings: Preserve dragged window position</li>
             <li>settings: Hide single Space per display</li>
@@ -207,7 +207,7 @@
     <item>
         <title>Version 1.2.6</title>
         <description><![CDATA[
-          <h2>v1.2.6</h2>
+          <h3>v1.2.6</h3>
           <ul>
             <li>localization: Localize App Shortcut phrases</li>
             <li>hotkeys: Add send and move window shortcuts</li>
@@ -228,7 +228,7 @@
     <item>
         <title>Version 1.2.5</title>
         <description><![CDATA[
-          <h2>v1.2.5</h2>
+          <h3>v1.2.5</h3>
           <ul>
             <li>icon: Collapse filled styles fully at 0% padding</li>
             <li>scripting: Poll arrival every 10ms</li>
@@ -250,7 +250,7 @@
     <item>
         <title>Version 1.2.4</title>
         <description><![CDATA[
-          <h2>v1.2.4</h2>
+          <h3>v1.2.4</h3>
           <ul>
             <li>scripting: Re-raise the moved window on arrival</li>
           </ul>
@@ -269,7 +269,7 @@
     <item>
         <title>Version 1.2.3</title>
         <description><![CDATA[
-          <h2>v1.2.3</h2>
+          <h3>v1.2.3</h3>
           <ul>
             <li>settings: Refresh panes on external writes</li>
             <li>settings: Show when updates were last checked</li>
@@ -296,7 +296,7 @@
     <item>
         <title>Version 1.2.2</title>
         <description><![CDATA[
-          <h2>v1.2.2</h2>
+          <h3>v1.2.2</h3>
           <ul>
             <li>scripting: Move the front window between Spaces</li>
             <li>switching: Add classic Space switching option</li>
@@ -316,7 +316,7 @@
     <item>
         <title>Version 1.2.1</title>
         <description><![CDATA[
-          <h2>v1.2.1</h2>
+          <h3>v1.2.1</h3>
           <ul>
             <li>labels: Derive the input tip character limit</li>
             <li>settings: Anchor slider defaults at the track midpoint</li>
@@ -353,7 +353,7 @@
     <item>
         <title>Version 1.2.0</title>
         <description><![CDATA[
-          <h2>v1.2.0</h2>
+          <h3>v1.2.0</h3>
           <ul>
             <li>badge: Add clear button to input field</li>
             <li>app: Reduce tooltip hover delay</li>
@@ -386,7 +386,7 @@
     <item>
         <title>Version 1.1.9</title>
         <description><![CDATA[
-          <h2>v1.1.9</h2>
+          <h3>v1.1.9</h3>
           <ul>
             <li>labels: Raise character limit to 20</li>
             <li>symbols: Add more symbols</li>
@@ -413,7 +413,7 @@
     <item>
         <title>Version 1.1.8</title>
         <description><![CDATA[
-          <h2>v1.1.8</h2>
+          <h3>v1.1.8</h3>
           <ul>
             <li>menu: Redesign sliders with inline titles</li>
             <li>scroll: Skip haptic feedback when no Space switch occurs</li>
@@ -433,7 +433,7 @@
     <item>
         <title>Version 1.1.7</title>
         <description><![CDATA[
-          <h2>v1.1.7</h2>
+          <h3>v1.1.7</h3>
           <ul>
             <li>scroll: Add haptic feedback intensity slider</li>
           </ul>
@@ -452,7 +452,7 @@
     <item>
         <title>Version 1.1.6</title>
         <description><![CDATA[
-          <h2>v1.1.6</h2>
+          <h3>v1.1.6</h3>
           <ul>
             <li>menu: Add <code>⌘U</code> shortcut for updates</li>
             <li>backup: Cover new scroll settings</li>
@@ -473,7 +473,7 @@
     <item>
         <title>Version 1.1.5</title>
         <description><![CDATA[
-          <h2>v1.1.5</h2>
+          <h3>v1.1.5</h3>
           <ul>
             <li>scroll: Add haptic feedback option</li>
             <li>scroll: Add wrap around option</li>
@@ -493,7 +493,7 @@
     <item>
         <title>Version 1.1.4</title>
         <description><![CDATA[
-          <h2>v1.1.4</h2>
+          <h3>v1.1.4</h3>
           <ul>
             <li>README: Add hyperlinks</li>
             <li>display: Combine Space and display visibility modes</li>
@@ -513,7 +513,7 @@
     <item>
         <title>Version 1.1.3</title>
         <description><![CDATA[
-          <h2>v1.1.3</h2>
+          <h3>v1.1.3</h3>
           <ul>
             <li>sound: Add "Custom" menu item</li>
           </ul>
@@ -532,7 +532,7 @@
     <item>
         <title>Version 1.1.2</title>
         <description><![CDATA[
-          <h2>v1.1.2</h2>
+          <h3>v1.1.2</h3>
           <ul>
             <li>click: Skip picker menu with a single Space</li>
           </ul>
@@ -551,7 +551,7 @@
     <item>
         <title>Version 1.1.1</title>
         <description><![CDATA[
-          <h2>v1.1.1</h2>
+          <h3>v1.1.1</h3>
           <ul>
             <li>README: Fix "F" reference</li>
             <li>scroll: Switch Spaces by scrolling over the icon</li>
@@ -574,7 +574,7 @@
     <item>
         <title>Version 1.1.0</title>
         <description><![CDATA[
-          <h2>v1.1.0</h2>
+          <h3>v1.1.0</h3>
           <ul>
             <li>tests: Poll for trailing debounce updates</li>
             <li>monitor: Emit change ticks through update coordinator</li>
@@ -602,7 +602,7 @@
     <item>
         <title>Version 1.0.9</title>
         <description><![CDATA[
-          <h2>v1.0.9</h2>
+          <h3>v1.0.9</h3>
           <ul>
             <li>scripting: Apply label or badge while switching</li>
           </ul>
@@ -621,7 +621,7 @@
     <item>
         <title>Version 1.0.8</title>
         <description><![CDATA[
-          <h2>v1.0.8</h2>
+          <h3>v1.0.8</h3>
           <ul>
             <li>input: Reset on empty value</li>
           </ul>
@@ -640,7 +640,7 @@
     <item>
         <title>Version 1.0.7</title>
         <description><![CDATA[
-          <h2>v1.0.7</h2>
+          <h3>v1.0.7</h3>
           <ul>
             <li>Makefile: Add clover format and run</li>
             <li>build: Disable code signing</li>
@@ -663,7 +663,7 @@
     <item>
         <title>Version 1.0.6</title>
         <description><![CDATA[
-          <h2>v1.0.6</h2>
+          <h3>v1.0.6</h3>
           <ul>
             <li>README: Showcase instant switching</li>
             <li>Improve Space switching</li>
@@ -683,7 +683,7 @@
     <item>
         <title>Version 1.0.5</title>
         <description><![CDATA[
-          <h2>v1.0.5</h2>
+          <h3>v1.0.5</h3>
           <ul>
             <li>Keep window occupancy cache warm</li>
             <li>Coalesce background window scans</li>
@@ -709,7 +709,7 @@
     <item>
         <title>Version 1.0.4</title>
         <description><![CDATA[
-          <h2>v1.0.4</h2>
+          <h3>v1.0.4</h3>
           <ul>
             <li>Remove hidden menu bar icon warning</li>
           </ul>
@@ -728,7 +728,7 @@
     <item>
         <title>Version 1.0.3</title>
         <description><![CDATA[
-          <h2>v1.0.3</h2>
+          <h3>v1.0.3</h3>
           <ul>
             <li>Run <code>swiftformat</code> (v0.62.0)</li>
             <li>Add Clover annotations</li>
@@ -750,7 +750,7 @@
     <item>
         <title>Version 1.0.2</title>
         <description><![CDATA[
-          <h2>v1.0.2</h2>
+          <h3>v1.0.2</h3>
           <ul>
             <li>Fix icon preview lag when rapidly hovering style menu items</li>
           </ul>
@@ -769,7 +769,7 @@
     <item>
         <title>Version 1.0.1</title>
         <description><![CDATA[
-          <h2>v1.0.1</h2>
+          <h3>v1.0.1</h3>
           <ul>
             <li>Simplify installation instructions now app is notarized</li>
             <li>Tidy up README</li>
@@ -791,7 +791,7 @@
     <item>
         <title>Version 1.0.0</title>
         <description><![CDATA[
-          <h2>v1.0.0</h2>
+          <h3>v1.0.0</h3>
           <ul>
             <li>WhichSpace is now signed and notarized</li>
           </ul>
@@ -810,7 +810,7 @@
     <item>
         <title>Version 0.19.0</title>
         <description><![CDATA[
-          <h2>v0.19.0</h2>
+          <h3>v0.19.0</h3>
           <ul>
             <li>Rework accessibility flow</li>
             <li>Apply space snapshots on leading edge</li>
@@ -840,7 +840,7 @@
     <item>
         <title>Version 0.18.3</title>
         <description><![CDATA[
-          <h2>v0.18.3</h2>
+          <h3>v0.18.3</h3>
           <ul>
             <li>Drop stale keyboard-shortcut wording from accessibility alert</li>
             <li>Add <code>LANGUAGE</code> support to <code>make run</code></li>
@@ -888,7 +888,7 @@
     <item>
         <title>Version 0.18.2</title>
         <description><![CDATA[
-          <h2>v0.18.2</h2>
+          <h3>v0.18.2</h3>
           <ul>
             <li>github: Enable Zizmor pedantic mode</li>
             <li>Bump zizmorcore/zizmor-action from 0.5.2 to 0.5.3 in the github-actions group (#62)</li>
@@ -924,7 +924,7 @@
     <item>
         <title>Version 0.18.1</title>
         <description><![CDATA[
-          <h2>v0.18.1</h2>
+          <h3>v0.18.1</h3>
           <ul>
             <li>Fix skin tone tests</li>
             <li>Add AppleScript command to switch spaces</li>
@@ -944,7 +944,7 @@
     <item>
         <title>Version 0.18.0</title>
         <description><![CDATA[
-          <h2>v0.18.0</h2>
+          <h3>v0.18.0</h3>
           <ul>
             <li>Bump maxim-lobanov/setup-xcode from 1.6.0 to 1.7.0 in the github-actions group (#60)</li>
             <li>README: Update gif</li>
@@ -966,7 +966,7 @@
     <item>
         <title>Version 0.17.8</title>
         <description><![CDATA[
-          <h2>v0.17.8</h2>
+          <h3>v0.17.8</h3>
           <ul>
             <li>Bump github.com/danielsaidi/emojikit from 2.3.4 to 2.3.5 in the swift-packages group (#59)</li>
             <li>Align terms in set default style strings</li>
@@ -991,7 +991,7 @@
     <item>
         <title>Version 0.17.7</title>
         <description><![CDATA[
-          <h2>v0.17.7</h2>
+          <h3>v0.17.7</h3>
           <ul>
             <li>Replace inherit toggle with set default style action</li>
             <li>Rename Rounded style to Pill</li>
@@ -1011,7 +1011,7 @@
     <item>
         <title>Version 0.17.6</title>
         <description><![CDATA[
-          <h2>v0.17.6</h2>
+          <h3>v0.17.6</h3>
           <ul>
             <li>Inherit current Space styles when creating new Spaces</li>
           </ul>
@@ -1030,7 +1030,7 @@
     <item>
         <title>Version 0.17.5</title>
         <description><![CDATA[
-          <h2>v0.17.5</h2>
+          <h3>v0.17.5</h3>
           <ul>
             <li>Fix padding with Rounded style</li>
           </ul>
@@ -1049,7 +1049,7 @@
     <item>
         <title>Version 0.17.4</title>
         <description><![CDATA[
-          <h2>v0.17.4</h2>
+          <h3>v0.17.4</h3>
           <ul>
             <li>Change <code>{space}</code> to <code>{number}</code></li>
             <li>Add Rounded style</li>
@@ -1069,7 +1069,7 @@
     <item>
         <title>Version 0.17.3</title>
         <description><![CDATA[
-          <h2>v0.17.3</h2>
+          <h3>v0.17.3</h3>
           <ul>
             <li>README: Update Size screenshot</li>
             <li>Set badge placeholder to <code>#</code></li>
@@ -1092,7 +1092,7 @@
     <item>
         <title>Version 0.17.2</title>
         <description><![CDATA[
-          <h2>v0.17.2</h2>
+          <h3>v0.17.2</h3>
           <ul>
             <li>Fix label input clipping for long text</li>
           </ul>
@@ -1111,7 +1111,7 @@
     <item>
         <title>Version 0.17.1</title>
         <description><![CDATA[
-          <h2>v0.17.1</h2>
+          <h3>v0.17.1</h3>
           <ul>
             <li>Add template support for labels and badges</li>
           </ul>
@@ -1130,7 +1130,7 @@
     <item>
         <title>Version 0.17.0</title>
         <description><![CDATA[
-          <h2>v0.17.0</h2>
+          <h3>v0.17.0</h3>
           <ul>
             <li>Fix icon clipping at low padding values</li>
             <li>Add support for custom Space labels</li>
@@ -1150,7 +1150,7 @@
     <item>
         <title>Version 0.16.3</title>
         <description><![CDATA[
-          <h2>v0.16.3</h2>
+          <h3>v0.16.3</h3>
           <ul>
             <li>Fix preview lag during menu hover</li>
           </ul>
@@ -1169,7 +1169,7 @@
     <item>
         <title>Version 0.16.2</title>
         <description><![CDATA[
-          <h2>v0.16.2</h2>
+          <h3>v0.16.2</h3>
           <ul>
             <li>Increase max padding to 200%</li>
           </ul>
@@ -1188,7 +1188,7 @@
     <item>
         <title>Version 0.16.1</title>
         <description><![CDATA[
-          <h2>v0.16.1</h2>
+          <h3>v0.16.1</h3>
           <ul>
             <li>Add padding slider to Size menu</li>
           </ul>
@@ -1207,7 +1207,7 @@
     <item>
         <title>Version 0.16.0</title>
         <description><![CDATA[
-          <h2>v0.16.0</h2>
+          <h3>v0.16.0</h3>
           <ul>
             <li>Bump zizmorcore/zizmor-action from 0.5.0 to 0.5.2 in the github-actions group (#56)</li>
             <li>Add badge support</li>
@@ -1227,7 +1227,7 @@
     <item>
         <title>Version 0.15.2</title>
         <description><![CDATA[
-          <h2>v0.15.2</h2>
+          <h3>v0.15.2</h3>
           <ul>
             <li>Bump github.com/danielsaidi/emojikit from 2.2.1 to 2.3.1 in the swift-packages group (#53)</li>
             <li>Bump the swift-packages group with 2 updates (#55)</li>
@@ -1248,7 +1248,7 @@
     <item>
         <title>Version 0.15.1</title>
         <description><![CDATA[
-          <h2>v0.15.1</h2>
+          <h3>v0.15.1</h3>
           <ul>
             <li>Fix Number menu translations</li>
           </ul>
@@ -1267,7 +1267,7 @@
     <item>
         <title>Version 0.15.0</title>
         <description><![CDATA[
-          <h2>v0.15.0</h2>
+          <h3>v0.15.0</h3>
           <ul>
             <li>Bump zizmorcore/zizmor-action from 0.4.1 to 0.5.0 in the github-actions group (#52)</li>
             <li>Prevent app from appearing in Dock when relaunched</li>
@@ -1291,7 +1291,7 @@
     <item>
         <title>Version 0.14.3</title>
         <description><![CDATA[
-          <h2>v0.14.3</h2>
+          <h3>v0.14.3</h3>
           <ul>
             <li>Apply swiftformat and test lint fixes</li>
             <li>Add support for switching to full-screen apps</li>
@@ -1311,7 +1311,7 @@
     <item>
         <title>Version 0.14.2</title>
         <description><![CDATA[
-          <h2>v0.14.2</h2>
+          <h3>v0.14.2</h3>
           <ul>
             <li>Add support for Cmd+Q to quit</li>
             <li>Bump the github-actions group with 2 updates (#48)</li>
@@ -1331,7 +1331,7 @@
     <item>
         <title>Version 0.14.1</title>
         <description><![CDATA[
-          <h2>v0.14.1</h2>
+          <h3>v0.14.1</h3>
           <ul>
             <li>Omit empty settings in export</li>
           </ul>
@@ -1350,7 +1350,7 @@
     <item>
         <title>Version 0.14.0</title>
         <description><![CDATA[
-          <h2>v0.14.0</h2>
+          <h3>v0.14.0</h3>
           <ul>
             <li>Add support for importing/exporting settings</li>
           </ul>
@@ -1369,7 +1369,7 @@
     <item>
         <title>Version 0.13.4</title>
         <description><![CDATA[
-          <h2>v0.13.4</h2>
+          <h3>v0.13.4</h3>
           <ul>
             <li>Add option to hide icon when single Space</li>
           </ul>
@@ -1388,7 +1388,7 @@
     <item>
         <title>Version 0.13.3</title>
         <description><![CDATA[
-          <h2>v0.13.3</h2>
+          <h3>v0.13.3</h3>
           <ul>
             <li>README: Add AppleScript support</li>
             <li>Attempt to reset stale Accessibility permissions</li>
@@ -1408,7 +1408,7 @@
     <item>
         <title>Version 0.13.2</title>
         <description><![CDATA[
-          <h2>v0.13.2</h2>
+          <h3>v0.13.2</h3>
           <ul>
             <li>Add AppleScript support</li>
           </ul>
@@ -1427,7 +1427,7 @@
     <item>
         <title>Version 0.13.1</title>
         <description><![CDATA[
-          <h2>v0.13.1</h2>
+          <h3>v0.13.1</h3>
           <ul>
             <li>Use separate Homebrew tap repository</li>
             <li>Improve app move logic</li>
@@ -1447,7 +1447,7 @@
     <item>
         <title>Version 0.13.0</title>
         <description><![CDATA[
-          <h2>v0.13.0</h2>
+          <h3>v0.13.0</h3>
           <ul>
             <li>Switch to modern localization structure</li>
             <li>Replace <code>PFMoveApplication</code> with Swift implementation</li>
@@ -1470,7 +1470,7 @@
     <item>
         <title>Version 0.12.12</title>
         <description><![CDATA[
-          <h2>v0.12.12</h2>
+          <h3>v0.12.12</h3>
           <ul>
             <li>Run tests on macOS 15 too</li>
             <li>Refactor filenames and split app entrypoints</li>
@@ -1491,7 +1491,7 @@
     <item>
       <title>Version 0.12.11</title>
       <description><![CDATA[
-        <h2>v0.12.11</h2>
+        <h3>v0.12.11</h3>
         <ul>
           <li>Defer status bar creation on startup</li>
         </ul>
@@ -1510,7 +1510,7 @@
     <item>
       <title>Version 0.12.10</title>
       <description><![CDATA[
-        <h2>v0.12.10</h2>
+        <h3>v0.12.10</h3>
         <ul>
           <li>Tweak translations</li>
           <li>Bump actions/checkout from 5.0.0 to 6.0.1 in the github-actions group (#43)</li>
@@ -1537,7 +1537,7 @@
     <item>
       <title>Version 0.12.9</title>
       <description><![CDATA[
-        <h2>v0.12.9</h2>
+        <h3>v0.12.9</h3>
         <ul>
           <li>Ensure icons do not go out of bounds</li>
         </ul>
@@ -1556,7 +1556,7 @@
     <item>
       <title>Version 0.12.8</title>
       <description><![CDATA[
-        <h2>v0.12.8</h2>
+        <h3>v0.12.8</h3>
         <ul>
           <li>Fix numbering issue with full-screen apps</li>
         </ul>
@@ -1575,7 +1575,7 @@
     <item>
       <title>Version 0.12.7</title>
       <description><![CDATA[
-        <h2>v0.12.7</h2>
+        <h3>v0.12.7</h3>
         <ul>
           <li>Fix lint issues</li>
           <li>Update menu icon</li>
@@ -1595,7 +1595,7 @@
     <item>
       <title>Version 0.12.6</title>
       <description><![CDATA[
-        <h2>v0.12.6</h2>
+        <h3>v0.12.6</h3>
         <ul>
           <li>Add option to use global Space numbers</li>
         </ul>
@@ -1614,7 +1614,7 @@
     <item>
       <title>Version 0.12.5</title>
       <description><![CDATA[
-        <h2>v0.12.5</h2>
+        <h3>v0.12.5</h3>
         <ul>
           <li>Add more tests</li>
           <li>Add translations (c451de3):</li>
@@ -1634,7 +1634,7 @@
     <item>
       <title>Version 0.12.4</title>
       <description><![CDATA[
-        <h2>v0.12.4</h2>
+        <h3>v0.12.4</h3>
         <ul>
           <li>Work around menu clipping</li>
         </ul>
@@ -1653,7 +1653,7 @@
     <item>
       <title>Version 0.12.3</title>
       <description><![CDATA[
-        <h2>v0.12.3</h2>
+        <h3>v0.12.3</h3>
         <ul>
           <li>Remove unused "Reset Sound To Default" action (#41)</li>
           <li>Add hover previews</li>
@@ -1673,7 +1673,7 @@
     <item>
       <title>Version 0.12.2</title>
       <description><![CDATA[
-        <h2>v0.12.2</h2>
+        <h3>v0.12.2</h3>
         <ul>
           <li>Update README</li>
           <li>Add option to play sound on Space switch</li>
@@ -1693,7 +1693,7 @@
     <item>
       <title>Version 0.12.1</title>
       <description><![CDATA[
-        <h2>v0.12.1</h2>
+        <h3>v0.12.1</h3>
         <ul>
           <li>Add "Slim" style</li>
           <li>Refactor icon generation methods</li>
@@ -1714,7 +1714,7 @@
     <item>
       <title>Version 0.12.0</title>
       <description><![CDATA[
-        <h2>v0.12.0</h2>
+        <h3>v0.12.0</h3>
         <ul>
           <li>Add "Stroke" and" Transparent" styles</li>
           <li>Support &gt;16 Spaces via Yabai</li>
@@ -1734,7 +1734,7 @@
     <item>
       <title>Version 0.11.4</title>
       <description><![CDATA[
-        <h2>v0.11.4</h2>
+        <h3>v0.11.4</h3>
         <ul>
           <li>Remove hacky Cmd+Q support for now</li>
         </ul>
@@ -1753,7 +1753,7 @@
     <item>
       <title>Version 0.11.3</title>
       <description><![CDATA[
-        <h2>v0.11.3</h2>
+        <h3>v0.11.3</h3>
         <ul>
           <li>Fix Cmd+Q shortcut in menu</li>
         </ul>
@@ -1772,7 +1772,7 @@
     <item>
       <title>Version 0.11.2</title>
       <description><![CDATA[
-        <h2>v0.11.2</h2>
+        <h3>v0.11.2</h3>
         <ul>
           <li>Center the font panel</li>
         </ul>
@@ -1791,7 +1791,7 @@
     <item>
       <title>Version 0.11.1</title>
       <description><![CDATA[
-        <h2>v0.11.1</h2>
+        <h3>v0.11.1</h3>
         <ul>
           <li>README: Add "Show all Displays" screenshot</li>
           <li>Add option to change Space fonts</li>
@@ -1811,7 +1811,7 @@
     <item>
       <title>Version 0.11.0</title>
       <description><![CDATA[
-        <h2>v0.11.0</h2>
+        <h3>v0.11.0</h3>
         <p><a href="https://github.com/gechr/WhichSpace/releases/tag/v0.11.0">Full release notes</a></p>
       ]]></description>
       <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.11.0</sparkle:fullReleaseNotesLink>
@@ -1828,7 +1828,7 @@
     <item>
       <title>Version 0.10.10</title>
       <description><![CDATA[
-        <h2>v0.10.10</h2>
+        <h3>v0.10.10</h3>
         <ul>
           <li>Only show separator colour swatch if visible</li>
           <li>Fix colour picker defaults</li>
@@ -1848,7 +1848,7 @@
     <item>
       <title>Version 0.10.9</title>
       <description><![CDATA[
-        <h2>v0.10.9</h2>
+        <h3>v0.10.9</h3>
         <ul>
           <li>Show menu on right-click only</li>
         </ul>
@@ -1867,7 +1867,7 @@
     <item>
       <title>Version 0.10.8</title>
       <description><![CDATA[
-        <h2>v0.10.8</h2>
+        <h3>v0.10.8</h3>
         <p><a href="https://github.com/gechr/WhichSpace/releases/tag/v0.10.8">Full release notes</a></p>
       ]]></description>
       <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.10.8</sparkle:fullReleaseNotesLink>
@@ -1884,7 +1884,7 @@
     <item>
       <title>Version 0.10.7</title>
       <description><![CDATA[
-        <h2>v0.10.7</h2>
+        <h3>v0.10.7</h3>
         <ul>
           <li>Fix test file cleanup</li>
           <li>Add toggle to hide empty Spaces</li>
@@ -1904,7 +1904,7 @@
     <item>
       <title>Version 0.10.6</title>
       <description><![CDATA[
-        <h2>v0.10.6</h2>
+        <h3>v0.10.6</h3>
         <ul>
           <li>Update README</li>
           <li>Add toggle to dim inactive spaces</li>
@@ -1924,7 +1924,7 @@
     <item>
       <title>Version 0.10.5</title>
       <description><![CDATA[
-        <h2>v0.10.5</h2>
+        <h3>v0.10.5</h3>
         <ul>
           <li>Format workflows</li>
           <li>Add toggle for separate icons per display</li>
@@ -1944,7 +1944,7 @@
     <item>
       <title>Version 0.10.4</title>
       <description><![CDATA[
-        <h2>v0.10.4</h2>
+        <h3>v0.10.4</h3>
         <ul>
           <li>Reinstate symbol colour picker</li>
         </ul>
@@ -1963,7 +1963,7 @@
     <item>
       <title>Version 0.10.3</title>
       <description><![CDATA[
-        <h2>v0.10.3</h2>
+        <h3>v0.10.3</h3>
         <ul>
           <li>Enable Dependabot</li>
           <li>Set up GitHub Actions</li>
@@ -1987,7 +1987,7 @@
     <item>
       <title>Version 0.10.2</title>
       <description><![CDATA[
-        <h2>v0.10.2</h2>
+        <h3>v0.10.2</h3>
         <p><a href="https://github.com/gechr/WhichSpace/releases/tag/v0.10.2">Full release notes</a></p>
       ]]></description>
       <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.10.2</sparkle:fullReleaseNotesLink>
@@ -2004,7 +2004,7 @@
     <item>
       <title>Version 0.10.1</title>
       <description><![CDATA[
-        <h2>v0.10.1</h2>
+        <h3>v0.10.1</h3>
         <p><a href="https://github.com/gechr/WhichSpace/releases/tag/v0.10.1">Full release notes</a></p>
       ]]></description>
       <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.10.1</sparkle:fullReleaseNotesLink>
@@ -2021,7 +2021,7 @@
     <item>
       <title>Version 0.10.0</title>
       <description><![CDATA[
-        <h2>v0.10.0</h2>
+        <h3>v0.10.0</h3>
         <p><a href="https://github.com/gechr/WhichSpace/releases/tag/v0.10.0">Full release notes</a></p>
       ]]></description>
       <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.10.0</sparkle:fullReleaseNotesLink>
@@ -2038,7 +2038,7 @@
     <item>
       <title>Version 0.9.0</title>
       <description><![CDATA[
-        <h2>v0.9.0</h2>
+        <h3>v0.9.0</h3>
         <ul>
           <li>Add option to show all Spaces in the menu bar</li>
         </ul>
@@ -2057,7 +2057,7 @@
     <item>
       <title>Version 0.8.5</title>
       <description><![CDATA[
-        <h2>v0.8.5</h2>
+        <h3>v0.8.5</h3>
         <ul>
           <li>Minor menu tweaks</li>
         </ul>
@@ -2076,7 +2076,7 @@
     <item>
       <title>Version 0.8.4</title>
       <description><![CDATA[
-        <h2>v0.8.4</h2>
+        <h3>v0.8.4</h3>
         <p><a href="https://github.com/gechr/WhichSpace/releases/tag/v0.8.4">Full release notes</a></p>
       ]]></description>
       <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.8.4</sparkle:fullReleaseNotesLink>
@@ -2093,7 +2093,7 @@
     <item>
       <title>Version 0.8.3</title>
       <description><![CDATA[
-        <h2>v0.8.3</h2>
+        <h3>v0.8.3</h3>
         <p><a href="https://github.com/gechr/WhichSpace/releases/tag/v0.8.3">Full release notes</a></p>
       ]]></description>
       <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.8.3</sparkle:fullReleaseNotesLink>
@@ -2110,7 +2110,7 @@
     <item>
       <title>Version 0.8.2</title>
       <description><![CDATA[
-        <h2>v0.8.2</h2>
+        <h3>v0.8.2</h3>
         <p><a href="https://github.com/gechr/WhichSpace/releases/tag/v0.8.2">Full release notes</a></p>
       ]]></description>
       <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.8.2</sparkle:fullReleaseNotesLink>
@@ -2127,7 +2127,7 @@
     <item>
       <title>Version 0.8.1</title>
       <description><![CDATA[
-        <h2>v0.8.1</h2>
+        <h3>v0.8.1</h3>
         <p><a href="https://github.com/gechr/WhichSpace/releases/tag/v0.8.1">Full release notes</a></p>
       ]]></description>
       <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.8.1</sparkle:fullReleaseNotesLink>
@@ -2144,7 +2144,7 @@
     <item>
       <title>Version 0.8.0</title>
       <description><![CDATA[
-        <h2>v0.8.0</h2>
+        <h3>v0.8.0</h3>
         <p><a href="https://github.com/gechr/WhichSpace/releases/tag/v0.8.0">Full release notes</a></p>
       ]]></description>
       <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.8.0</sparkle:fullReleaseNotesLink>
@@ -2161,7 +2161,7 @@
     <item>
       <title>Version 0.7.1</title>
       <description><![CDATA[
-        <h2>v0.7.1</h2>
+        <h3>v0.7.1</h3>
         <p><a href="https://github.com/gechr/WhichSpace/releases/tag/v0.7.1">Full release notes</a></p>
       ]]></description>
       <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.7.1</sparkle:fullReleaseNotesLink>
@@ -2178,7 +2178,7 @@
     <item>
       <title>Version 0.7.0</title>
       <description><![CDATA[
-        <h2>v0.7.0</h2>
+        <h3>v0.7.0</h3>
         <ul>
           <li>Add support for symbols</li>
         </ul>
@@ -2197,7 +2197,7 @@
     <item>
       <title>Version 0.6.2</title>
       <description><![CDATA[
-        <h2>v0.6.2</h2>
+        <h3>v0.6.2</h3>
         <p><a href="https://github.com/gechr/WhichSpace/releases/tag/v0.6.2">Full release notes</a></p>
       ]]></description>
       <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.6.2</sparkle:fullReleaseNotesLink>
@@ -2214,7 +2214,7 @@
     <item>
       <title>Version 0.6.1</title>
       <description><![CDATA[
-        <h2>v0.6.1</h2>
+        <h3>v0.6.1</h3>
         <p><a href="https://github.com/gechr/WhichSpace/releases/tag/v0.6.1">Full release notes</a></p>
       ]]></description>
       <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.6.1</sparkle:fullReleaseNotesLink>
@@ -2231,7 +2231,7 @@
     <item>
       <title>Version 0.6.0</title>
       <description><![CDATA[
-        <h2>v0.6.0</h2>
+        <h3>v0.6.0</h3>
         <ul>
           <li>Add icon style option</li>
         </ul>
@@ -2250,7 +2250,7 @@
     <item>
       <title>Version 0.5.2</title>
       <description><![CDATA[
-        <h2>v0.5.2</h2>
+        <h3>v0.5.2</h3>
         <ul>
           <li>Add basic locale support</li>
         </ul>
@@ -2269,7 +2269,7 @@
     <item>
       <title>Version 0.5.1</title>
       <description><![CDATA[
-        <h2>v0.5.1</h2>
+        <h3>v0.5.1</h3>
         <ul>
           <li>Add colour swatch picker</li>
         </ul>
@@ -2288,7 +2288,7 @@
     <item>
       <title>Version 0.5.0</title>
       <description><![CDATA[
-        <h2>v0.5.0</h2>
+        <h3>v0.5.0</h3>
         <ul>
           <li>Add per-space colour options</li>
           <li>Tweak icon styling to be a little more modern</li>
@@ -2308,7 +2308,7 @@
     <item>
       <title>Version 0.4.1</title>
       <description><![CDATA[
-        <h2>v0.4.1</h2>
+        <h3>v0.4.1</h3>
         <ul>
           <li>Show per-display local space numbers for multi-monitor setups</li>
         </ul>
@@ -2327,7 +2327,7 @@
     <item>
       <title>Version 0.4.0</title>
       <description><![CDATA[
-        <h2>v0.4.0</h2>
+        <h3>v0.4.0</h3>
         <ul>
           <li>Fix icon alignment</li>
           <li>Remove private API dependency (NSStatusBarButtonCell)</li>
@@ -2349,7 +2349,7 @@
     <item>
       <title>Version 0.3.2</title>
       <description><![CDATA[
-        <h2>v0.3.2</h2>
+        <h3>v0.3.2</h3>
         <p>Rebuild with Xcode 12</p>
       ]]></description>
       <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.3.2</sparkle:fullReleaseNotesLink>
@@ -2364,7 +2364,7 @@
     <item>
       <title>Version 0.3.1</title>
       <description><![CDATA[
-        <h2>v0.3.1</h2>
+        <h3>v0.3.1</h3>
         <p>Do not count fullscreen applications as spaces</p>
       ]]></description>
       <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.3.1</sparkle:fullReleaseNotesLink>
@@ -2379,7 +2379,7 @@
     <item>
       <title>Version 0.3.0</title>
       <description><![CDATA[
-        <h2>v0.3.0</h2>
+        <h3>v0.3.0</h3>
         <p>Add support for multiple displays. Thanks to @tidues!</p>
       ]]></description>
       <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.3.0</sparkle:fullReleaseNotesLink>
@@ -2394,7 +2394,7 @@
     <item>
       <title>Version 0.2.4</title>
       <description><![CDATA[
-        <h2>v0.2.4</h2>
+        <h3>v0.2.4</h3>
         <p>Add <code>"Move to Applications folder?"</code> prompt on first launch</p>
       ]]></description>
       <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.2.4</sparkle:fullReleaseNotesLink>
@@ -2409,7 +2409,7 @@
     <item>
       <title>Version 0.2.3</title>
       <description><![CDATA[
-        <h2>v0.2.3</h2>
+        <h3>v0.2.3</h3>
         <p>Update to Sparkle v1.17.0 + fix auto-update issues</p>
       ]]></description>
       <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.2.3</sparkle:fullReleaseNotesLink>
@@ -2424,7 +2424,7 @@
     <item>
       <title>Version 0.2.2</title>
       <description><![CDATA[
-        <h2>v0.2.2</h2>
+        <h3>v0.2.2</h3>
         <p>Change Code Signing Identity from _3rd Party Mac Developer Application_ to _Developer ID Application_ (for distribution outside of the Mac App Store)</p>
       ]]></description>
       <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.2.2</sparkle:fullReleaseNotesLink>
@@ -2439,7 +2439,7 @@
     <item>
       <title>Version 0.2.1</title>
       <description><![CDATA[
-        <h2>v0.2.1</h2>
+        <h3>v0.2.1</h3>
         <p>Fix <code>"WhichSpace.app is damaged and can't be opened"</code> issues</p>
       ]]></description>
       <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.2.1</sparkle:fullReleaseNotesLink>
@@ -2454,7 +2454,7 @@
     <item>
       <title>Version 0.2.0</title>
       <description><![CDATA[
-        <h2>v0.2.0</h2>
+        <h3>v0.2.0</h3>
         <p>Add (experimental) macOS Sierra support</p>
       ]]></description>
       <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.2.0</sparkle:fullReleaseNotesLink>
@@ -2469,7 +2469,7 @@
     <item>
       <title>Version 0.1.9</title>
       <description><![CDATA[
-        <h2>v0.1.9</h2>
+        <h3>v0.1.9</h3>
         <p>Update Sparkle to v1.13.1</p>
       ]]></description>
       <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.1.9</sparkle:fullReleaseNotesLink>
@@ -2484,7 +2484,7 @@
     <item>
       <title>Version 0.1.8</title>
       <description><![CDATA[
-        <h2>v0.1.8</h2>
+        <h3>v0.1.8</h3>
         <p>Tweak menu bar icon colours</p>
       ]]></description>
       <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.1.8</sparkle:fullReleaseNotesLink>
@@ -2499,7 +2499,7 @@
     <item>
       <title>Version 0.1.7</title>
       <description><![CDATA[
-        <h2>v0.1.7</h2>
+        <h3>v0.1.7</h3>
         <p>Add support for 'Dark Mode'</p>
       ]]></description>
       <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.1.7</sparkle:fullReleaseNotesLink>
@@ -2514,7 +2514,7 @@
     <item>
       <title>Version 0.1.6</title>
       <description><![CDATA[
-        <h2>v0.1.6</h2>
+        <h3>v0.1.6</h3>
         <p>Better detection of rearranged/deleted spaces. Thanks to @sdsykes!</p>
       ]]></description>
       <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.1.6</sparkle:fullReleaseNotesLink>
@@ -2529,7 +2529,7 @@
     <item>
       <title>Version 0.1.5</title>
       <description><![CDATA[
-        <h2>v0.1.5</h2>
+        <h3>v0.1.5</h3>
         <p>Temporarily workaround issue detecting rearranged/deleted spaces</p>
       ]]></description>
       <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.1.5</sparkle:fullReleaseNotesLink>
@@ -2544,7 +2544,7 @@
     <item>
       <title>Version 0.1.4</title>
       <description><![CDATA[
-        <h2>v0.1.4</h2>
+        <h3>v0.1.4</h3>
         <p>No functional changes, but WhichSpace.app is now code-signed!</p>
       ]]></description>
       <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.1.4</sparkle:fullReleaseNotesLink>
@@ -2559,7 +2559,7 @@
     <item>
       <title>Version 0.1.3</title>
       <description><![CDATA[
-        <h2>v0.1.3</h2>
+        <h3>v0.1.3</h3>
         <p>Temporary workaround for "Update Error!" message when clicking "Check for Updates..."</p>
       ]]></description>
       <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.1.3</sparkle:fullReleaseNotesLink>
@@ -2574,7 +2574,7 @@
     <item>
       <title>Version 0.1.2</title>
       <description><![CDATA[
-        <h2>v0.1.2</h2>
+        <h3>v0.1.2</h3>
         <p>Implement automatic updates</p>
       ]]></description>
       <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.1.2</sparkle:fullReleaseNotesLink>
@@ -2589,7 +2589,7 @@
     <item>
       <title>Version 0.1.1</title>
       <description><![CDATA[
-        <h2>v0.1.1</h2>
+        <h3>v0.1.1</h3>
         <p>Draw numbers on-the-fly rather than relying on images. Thanks to @sdsykes!</p>
       ]]></description>
       <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.1.1</sparkle:fullReleaseNotesLink>
@@ -2604,7 +2604,7 @@
     <item>
       <title>Version 0.1.0</title>
       <description><![CDATA[
-        <h2>v0.1.0</h2>
+        <h3>v0.1.0</h3>
         <p>Initial release</p>
       ]]></description>
       <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v0.1.0</sparkle:fullReleaseNotesLink>
