@@ -405,8 +405,9 @@ struct SpacesPane: View {
         }
     }
 
-    /// Both items confirm through the model before clearing anything. The
-    /// first names the template rather than a Space while it is selected.
+    /// All three items confirm through the model before clearing anything.
+    /// The first names the template rather than a Space while it is selected;
+    /// the destructive action is separated from the two inheritance actions.
     private var resetMenu: some View {
         Menu(Localization.actionReset) {
             Button(
@@ -416,8 +417,12 @@ struct SpacesPane: View {
             ) {
                 model.resetToDefault()
             }
-            Button(Localization.actionResetAllSpaces) {
+            Button(Localization.actionResetAllSpacesToDefault) {
                 model.resetAllSpacesToDefault()
+            }
+            Divider()
+            Button(Localization.actionResetAllSpaces) {
+                model.resetAllSpaces()
             }
         }
         .fixedSize()

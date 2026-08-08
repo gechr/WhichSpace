@@ -652,15 +652,38 @@ struct SpaceEditorModelTests {
         #expect(model.spaceSound == nil)
     }
 
-    @Test("reset all Spaces clears every preference map")
-    func resetAllSpaces() {
+    @Test("reset all Spaces to default clears overrides but preserves the template")
+    func resetAllSpacesToDefault() {
         let model = makeModel()
+        model.setLabel("Template")
+        model.saveAsDefaultStyle()
         model.setLabel("Work")
         model.selection = .space(2)
         model.setSymbol("star.fill")
+        model.setSpaceSound("Pop")
+        store.displaySpaceLabels = ["External": [1: "Display override"]]
+
         model.resetAllSpacesToDefault()
+
+        #expect(store.spaceLabels == [SpacePreferences.defaultStyleSpace: "Template"])
+        #expect(store.spaceSymbols.isEmpty)
+        #expect(store.spaceSounds.isEmpty)
+        #expect(store.displaySpaceLabels.isEmpty)
+        #expect(SpacePreferences.hasDefaultStyle(store: store))
+    }
+
+    @Test("reset all Spaces clears overrides and the template")
+    func resetAllSpaces() {
+        let model = makeModel()
+        model.setLabel("Template")
+        model.saveAsDefaultStyle()
+        model.setSymbol("star.fill")
+
+        model.resetAllSpaces()
+
         #expect(store.spaceLabels.isEmpty)
         #expect(store.spaceSymbols.isEmpty)
+        #expect(!SpacePreferences.hasDefaultStyle(store: store))
     }
 
     @Test("reset on the Default Style entry clears the template")

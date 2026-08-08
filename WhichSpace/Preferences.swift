@@ -1219,6 +1219,36 @@ enum SpacePreferences {
 
     // MARK: - Clear All
 
+    /// Clears every Space's overrides while preserving the saved default
+    /// style template. Display-scoped values can never hold the template, so
+    /// those maps are cleared outright.
+    static func clearAllSpaceOverrides(store: DefaultsStore = AppEnvironment.shared.store) {
+        store.spaceBadges = store.spaceBadges.filter { $0.key == defaultStyleSpace }
+        store.spaceColors = store.spaceColors.filter { $0.key == defaultStyleSpace }
+        store.spaceIconStyles = store.spaceIconStyles.filter { $0.key == defaultStyleSpace }
+        store.spaceLabels = store.spaceLabels.filter { $0.key == defaultStyleSpace }
+        store.spaceLabelStyles = store.spaceLabelStyles.filter { $0.key == defaultStyleSpace }
+        store.spaceSymbols = store.spaceSymbols.filter { $0.key == defaultStyleSpace }
+        store.spaceSymbolGaps = store.spaceSymbolGaps.filter { $0.key == defaultStyleSpace }
+        store.spaceSymbolPositions = store.spaceSymbolPositions.filter { $0.key == defaultStyleSpace }
+        store.spaceSymbolWraps = store.spaceSymbolWraps.filter { $0.key == defaultStyleSpace }
+        store.spaceFonts = store.spaceFonts.filter { $0.key == defaultStyleSpace }
+        store.spaceSkinTones = store.spaceSkinTones.filter { $0.key == defaultStyleSpace }
+        store.spaceSounds = store.spaceSounds.filter { $0.key == defaultStyleSpace }
+        store.displaySpaceBadges = [:]
+        store.displaySpaceColors = [:]
+        store.displaySpaceIconStyles = [:]
+        store.displaySpaceLabels = [:]
+        store.displaySpaceLabelStyles = [:]
+        store.displaySpaceSymbols = [:]
+        store.displaySpaceSymbolGaps = [:]
+        store.displaySpaceSymbolPositions = [:]
+        store.displaySpaceSymbolWraps = [:]
+        store.displaySpaceFonts = [:]
+        store.displaySpaceSkinTones = [:]
+        store.displaySpaceSounds = [:]
+    }
+
     /// Clears all preferences for all displays and shared settings.
     static func clearAll(store: DefaultsStore = AppEnvironment.shared.store) {
         store.spaceBadges = [:]

@@ -792,7 +792,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "المساحة الحالية"
+            "value" : "المساحة الحالية إلى [افتراضي]"
           }
         },
         "bg" : {
@@ -12844,259 +12844,521 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "جميع المساحات إلى الافتراضي"
+            "value" : "جميع التخصيصات"
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Всички Пространства към подразбиране"
+            "value" : "Всички персонализации"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tots els Espais al valor predeterminat"
+            "value" : "Totes les personalitzacions"
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Všechny Spaces na výchozí"
+            "value" : "Všechna přizpůsobení"
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alle Spaces til standard"
+            "value" : "Alle tilpasninger"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alle Spaces auf Standard"
+            "value" : "Alle Anpassungen"
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Όλοι οι Χώροι στην προεπιλογή"
+            "value" : "Όλες οι προσαρμογές"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "All Spaces to default"
+            "value" : "All customizations"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "All Spaces to default"
+            "value" : "All customisations"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todos los Espacios al valor predeterminado"
+            "value" : "Todas las personalizaciones"
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "همه فضاها به پیش‌فرض"
+            "value" : "همه سفارشی‌سازی‌ها"
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kaikki Spacet oletukseksi"
+            "value" : "Kaikki mukautukset"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tous les Espaces par défaut"
+            "value" : "Toutes les personnalisations"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "כל המרחבים לברירת מחדל"
+            "value" : "כל ההתאמות האישיות"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "सभी स्पेसेस को डिफ़ॉल्ट पर"
+            "value" : "सभी अनुकूलन"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Minden Space alapértelmezettre"
+            "value" : "Minden testreszabás"
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Semua Space ke bawaan"
+            "value" : "Semua kustomisasi"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tutti gli Spazi ai valori predefiniti"
+            "value" : "Tutte le personalizzazioni"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "すべてのスペースをデフォルトに"
+            "value" : "すべてのカスタマイズ"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "모든 스페이스를 기본값으로"
+            "value" : "모든 사용자 지정"
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Сите Простори на стандардно"
+            "value" : "Сите прилагодувања"
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Semua Ruang kepada lalai"
+            "value" : "Semua penyesuaian"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alle Spaces til standard"
+            "value" : "Alle tilpasninger"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alle Spaces naar standaard"
+            "value" : "Alle aanpassingen"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alle Spaces til standard"
+            "value" : "Alle tilpassingar"
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ساریاں سپیسز ڈیفالٹ تے"
+            "value" : "ساریاں کسٹمائزیشنز"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wszystkie Spaces do domyślnych"
+            "value" : "Wszystkie dostosowania"
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ټول سپېسونه ډیفالټ ته"
+            "value" : "ټول سمونونه"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todos os Espaços para a predefinição"
+            "value" : "Todas as personalizações"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todos os Espaços para o padrão"
+            "value" : "Todas as personalizações"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toate Spațiile la implicit"
+            "value" : "Toate personalizările"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Все Пространства по умолчанию"
+            "value" : "Все настройки"
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Všetky Priestory na predvolené"
+            "value" : "Všetky prispôsobenia"
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Svi Prostori na podrazumevano"
+            "value" : "Sva prilagođavanja"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alla Spaces till standard"
+            "value" : "Alla anpassningar"
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ทุก Space เป็นค่าเริ่มต้น"
+            "value" : "การปรับแต่งทั้งหมด"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tüm Alanları varsayılana"
+            "value" : "Tüm özelleştirmeler"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Усі Простори до стандартних"
+            "value" : "Усі налаштування"
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "تمام اسپیسز طے شدہ پر"
+            "value" : "تمام تخصیصات"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tất cả Không gian về mặc định"
+            "value" : "Tất cả tùy chỉnh"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "所有空间恢复默认"
+            "value" : "所有自定义"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "所有空間恢復預設"
+            "value" : "所有自訂"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "所有空間恢復預設"
+            "value" : "所有自訂"
+          }
+        }
+      }
+    },
+    "action_reset_all_spaces_to_default" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "جميع المساحات إلى [افتراضي]"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Всички Пространства към [По подразбиране]"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tots els Espais a [Predeterminat]"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Všechny Spaces na [Výchozí]"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle Spaces til [Standard]"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle Spaces auf [Standard]"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Όλοι οι Χώροι στην [Προεπιλογή]"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All Spaces to [Default]"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All Spaces to [Default]"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todos los Espacios a [Predeterminado]"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "همه فضاها به [پیش‌فرض]"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaikki Spacet asetukseen [Oletus]"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tous les Espaces vers [Par défaut]"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "כל המרחבים ל[ברירת מחדל]"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सभी स्पेसेस को [डिफ़ॉल्ट] पर"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minden Space az [Alapértelmezett] beállításra"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semua Space ke [Bawaan]"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tutti gli Spazi a [Predefinito]"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "すべてのスペースを[デフォルト]に"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모든 스페이스를 [기본]으로"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сите Простори на [Стандардно]"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semua Ruang kepada [Lalai]"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle Spaces til [Standard]"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle Spaces naar [Standaard]"
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle Spaces til [Standard]"
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ساریاں سپیسز [ڈیفالٹ] تے"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wszystkie Spaces do [Domyślny]"
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ټول سپېسونه [ډیفالټ] ته"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todos os Espaços para [Predefinição]"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todos os Espaços para [Padrão]"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toate Spațiile la [Implicit]"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Все Пространства в режим [По умолчанию]"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Všetky Priestory na [Predvolené]"
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Svi Prostori na [Podrazumevano]"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alla Spaces till [Standard]"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ทุก Space ไปที่ [ค่าเริ่มต้น]"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tüm Alanları [Varsayılan] ayarına"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Усі Простори до [Стандартний]"
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تمام اسپیسز [طے شدہ] پر"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tất cả Không gian sang [Mặc định]"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "所有空间设为[默认]"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "所有空間設為[預設]"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "所有空間設為[預設]"
           }
         }
       }
@@ -13106,259 +13368,259 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "المساحة الحالية إلى الافتراضي"
+            "value" : "المساحة الحالية إلى [افتراضي]"
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Текущото Пространство към подразбиране"
+            "value" : "Текущото Пространство към [По подразбиране]"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Espai actual al valor predeterminat"
+            "value" : "Espai actual a [Predeterminat]"
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aktuální Space na výchozí"
+            "value" : "Aktuální Space na [Výchozí]"
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nuværende Space til standard"
+            "value" : "Nuværende Space til [Standard]"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aktuellen Space auf Standard"
+            "value" : "Aktuellen Space auf [Standard]"
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Τρέχων Χώρος στην προεπιλογή"
+            "value" : "Τρέχων Χώρος στην [Προεπιλογή]"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Current Space to default"
+            "value" : "Current Space to [Default]"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Current Space to default"
+            "value" : "Current Space to [Default]"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Espacio actual al valor predeterminado"
+            "value" : "Espacio actual a [Predeterminado]"
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "فضای فعلی به پیش‌فرض"
+            "value" : "فضای فعلی به [پیش‌فرض]"
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nykyinen Space oletukseksi"
+            "value" : "Nykyinen Space asetukseen [Oletus]"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Espace actuel par défaut"
+            "value" : "Espace actuel vers [Par défaut]"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "המרחב הנוכחי לברירת מחדל"
+            "value" : "המרחב הנוכחי ל[ברירת מחדל]"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "वर्तमान स्पेस को डिफ़ॉल्ट पर"
+            "value" : "वर्तमान स्पेस को [डिफ़ॉल्ट] पर"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aktuális Space alapértelmezettre"
+            "value" : "Aktuális Space az [Alapértelmezett] beállításra"
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Space saat ini ke bawaan"
+            "value" : "Space saat ini ke [Bawaan]"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spazio corrente ai valori predefiniti"
+            "value" : "Spazio corrente a [Predefinito]"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "現在のスペースをデフォルトに"
+            "value" : "現在のスペースを[デフォルト]に"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "현재 스페이스를 기본값으로"
+            "value" : "현재 스페이스를 [기본]으로"
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Тековниот Простор на стандардно"
+            "value" : "Тековниот Простор на [Стандардно]"
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ruang semasa kepada lalai"
+            "value" : "Ruang semasa kepada [Lalai]"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gjeldende Space til standard"
+            "value" : "Gjeldende Space til [Standard]"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Huidige Space naar standaard"
+            "value" : "Huidige Space naar [Standaard]"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gjeldande Space til standard"
+            "value" : "Gjeldande Space til [Standard]"
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "موجودہ سپیس ڈیفالٹ تے"
+            "value" : "موجودہ سپیس [ڈیفالٹ] تے"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bieżący Space do domyślnych"
+            "value" : "Bieżący Space do [Domyślny]"
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "اوسنی سپېس ډیفالټ ته"
+            "value" : "اوسنی سپېس [ډیفالټ] ته"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Espaço atual para a predefinição"
+            "value" : "Espaço atual para [Predefinição]"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Espaço atual para o padrão"
+            "value" : "Espaço atual para [Padrão]"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spațiul curent la implicit"
+            "value" : "Spațiul curent la [Implicit]"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Текущее Пространство по умолчанию"
+            "value" : "Текущее Пространство в режим [По умолчанию]"
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aktuálny Priestor na predvolené"
+            "value" : "Aktuálny Priestor na [Predvolené]"
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trenutni Prostor na podrazumevano"
+            "value" : "Trenutni Prostor na [Podrazumevano]"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aktuell Space till standard"
+            "value" : "Aktuell Space till [Standard]"
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Space ปัจจุบันเป็นค่าเริ่มต้น"
+            "value" : "Space ปัจจุบันไปที่ [ค่าเริ่มต้น]"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Geçerli Alanı varsayılana"
+            "value" : "Geçerli Alanı [Varsayılan] ayarına"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Поточний Простір до стандартних"
+            "value" : "Поточний Простір до [Стандартний]"
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "موجودہ اسپیس طے شدہ پر"
+            "value" : "موجودہ اسپیس [طے شدہ] پر"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Không gian hiện tại về mặc định"
+            "value" : "Không gian hiện tại sang [Mặc định]"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "当前空间恢复默认"
+            "value" : "当前空间设为[默认]"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "目前空間恢復預設"
+            "value" : "目前空間設為[預設]"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "目前空間恢復預設"
+            "value" : "目前空間設為[預設]"
           }
         }
       }
@@ -24634,259 +24896,521 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "سيؤدي ذلك إلى إزالة تخصيصات اللون والنمط والخط والحجم والرمز والصوت لكل مساحة على جميع الشاشات."
+            "value" : "سيؤدي ذلك إلى إزالة تخصيصات اللون والنمط والخط والحجم والرمز والصوت لكل مساحة على جميع الشاشات، بما في ذلك النمط [افتراضي]."
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Това ще премахне персонализациите на цвета, стила, шрифта, размера, символа и звука за всяко Пространство на всички дисплеи."
+            "value" : "Това ще премахне персонализациите на цвета, стила, шрифта, размера, символа и звука за всяко Пространство на всички дисплеи, включително стила [По подразбиране]."
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Això eliminarà totes les personalitzacions de color, estil, lletra, mida, símbol i so de cada Espai a totes les pantalles."
+            "value" : "Això eliminarà totes les personalitzacions de color, estil, lletra, mida, símbol i so de cada Espai a totes les pantalles, inclòs l'estil [Predeterminat]."
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Odstraní úpravy barvy, stylu, písma, velikosti, symbolu a zvuku pro každý Space na všech displejích."
+            "value" : "Odstraní úpravy barvy, stylu, písma, velikosti, symbolu a zvuku pro každý Space na všech displejích, včetně stylu [Výchozí]."
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dette fjerner farve-, stil-, skrifttype-, størrelse-, symbol- og lydtilpasninger for hvert Space på alle skærme."
+            "value" : "Dette fjerner farve-, stil-, skrifttype-, størrelse-, symbol- og lydtilpasninger for hvert Space på alle skærme, inklusive stilen [Standard]."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dies entfernt alle Farb-, Stil-, Schrift-, Größen-, Symbol- und Sound-Anpassungen für jeden Space auf allen Displays."
+            "value" : "Dies entfernt alle Farb-, Stil-, Schrift-, Größen-, Symbol- und Sound-Anpassungen für jeden Space auf allen Displays, einschließlich des Stils [Standard]."
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Θα αφαιρέσει όλες τις προσαρμογές χρώματος, στιλ, γραμματοσειράς, μεγέθους, συμβόλου και ήχου για κάθε Χώρο σε όλες τις οθόνες."
+            "value" : "Θα αφαιρέσει όλες τις προσαρμογές χρώματος, στιλ, γραμματοσειράς, μεγέθους, συμβόλου και ήχου για κάθε Χώρο σε όλες τις οθόνες, συμπεριλαμβανομένου του στυλ [Προεπιλογή]."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This will remove all color, style, font, size, symbol, and sound customizations for every Space on all displays."
+            "value" : "This will remove all color, style, font, size, symbol, and sound customizations for every Space on all displays, including the [Default] style."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This will remove all colour, style, font, size, symbol, and sound customisations for every Space on all displays."
+            "value" : "This will remove all colour, style, font, size, symbol, and sound customisations for every Space on all displays, including the [Default] style."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esto quitará todas las personalizaciones de color, estilo, fuente, tamaño, símbolo y sonido de cada Espacio en todas las pantallas."
+            "value" : "Esto quitará todas las personalizaciones de color, estilo, fuente, tamaño, símbolo y sonido de cada Espacio en todas las pantallas, incluido el estilo [Predeterminado]."
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "این کار همه سفارشی‌سازی‌های رنگ، استایل، فونت، اندازه، نماد و صدا را برای هر فضا در همه نمایشگرها حذف می‌کند."
+            "value" : "این کار همه سفارشی‌سازی‌های رنگ، استایل، فونت، اندازه، نماد و صدا را برای هر فضا در همه نمایشگرها، از جمله سبک [پیش‌فرض]، حذف می‌کند."
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tämä poistaa väri-, tyyli-, fontti-, koko-, symboli- ja äänimukautukset jokaisesta Spacesta kaikilla näytöillä."
+            "value" : "Tämä poistaa väri-, tyyli-, fontti-, koko-, symboli- ja äänimukautukset jokaisesta Spacesta kaikilla näytöillä, myös [Oletus]-tyylin."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cela supprimera toutes les personnalisations de couleur, style, police, taille, symbole et son pour chaque Espace sur tous les écrans."
+            "value" : "Cela supprimera toutes les personnalisations de couleur, style, police, taille, symbole et son pour chaque Espace sur tous les écrans, y compris le style [Par défaut]."
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "פעולה זו תסיר התאמות של צבע, סגנון, גופן, גודל, סמל וצליל לכל מרחב בכל התצוגות."
+            "value" : "פעולה זו תסיר התאמות של צבע, סגנון, גופן, גודל, סמל וצליל לכל מרחב בכל התצוגות, כולל סגנון [ברירת מחדל]."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "यह सभी डिस्प्ले पर हर स्पेस के लिए रंग, स्टाइल, फ़ॉन्ट, आकार, प्रतीक और ध्वनि के अनुकूलन हटा देगा।"
+            "value" : "यह सभी डिस्प्ले पर हर स्पेस के लिए रंग, स्टाइल, फ़ॉन्ट, आकार, प्रतीक और ध्वनि के अनुकूलन हटा देगा, जिसमें [डिफ़ॉल्ट] शैली भी शामिल है।"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eltávolítja az összes szín-, stílus-, betűtípus-, méret-, szimbólum- és hangtestreszabást minden Space-ről az összes kijelzőn."
+            "value" : "Eltávolítja az összes szín-, stílus-, betűtípus-, méret-, szimbólum- és hangtestreszabást minden Space-ről az összes kijelzőn, beleértve az [Alapértelmezett] stílust is."
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ini akan menghapus kustomisasi warna, gaya, font, ukuran, simbol, dan suara untuk setiap Space di semua layar."
+            "value" : "Ini akan menghapus kustomisasi warna, gaya, font, ukuran, simbol, dan suara untuk setiap Space di semua layar, termasuk gaya [Bawaan]."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Questo rimuoverà tutte le personalizzazioni di colore, stile, font, dimensione, simbolo e suono per ogni Spazio su tutti i monitor."
+            "value" : "Questo rimuoverà tutte le personalizzazioni di colore, stile, font, dimensione, simbolo e suono per ogni Spazio su tutti i monitor, incluso lo stile [Predefinito]."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "すべてのディスプレイ上のすべてのスペースから色、スタイル、フォント、サイズ、シンボル、サウンドのカスタマイズを削除します。"
+            "value" : "すべてのディスプレイ上のすべてのスペースから色、スタイル、フォント、サイズ、シンボル、サウンドのカスタマイズを削除します。[デフォルト]スタイルも削除されます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "모든 디스플레이의 모든 스페이스에 대한 색상, 스타일, 글꼴, 크기, 심볼, 사운드 사용자 지정을 모두 제거합니다."
+            "value" : "모든 디스플레이의 모든 스페이스에 대한 색상, 스타일, 글꼴, 크기, 심볼, 사운드 사용자 지정을 모두 제거하며 [기본] 스타일도 포함됩니다."
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ова ќе ги отстрани сите прилагодувања на боја, стил, фонт, големина, симбол и звук за секој Простор на сите дисплеи."
+            "value" : "Ова ќе ги отстрани сите прилагодувања на боја, стил, фонт, големина, симбол и звук за секој Простор на сите дисплеи, вклучувајќи го и стилот [Стандардно]."
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ini akan mengalih keluar semua penyesuaian warna, gaya, fon, saiz, simbol dan bunyi untuk setiap Ruang pada semua paparan."
+            "value" : "Ini akan mengalih keluar semua penyesuaian warna, gaya, fon, saiz, simbol dan bunyi untuk setiap Ruang pada semua paparan, termasuk gaya [Lalai]."
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dette fjerner farge-, stil-, skrifttype-, størrelse-, symbol- og lydtilpasninger for hvert Space på alle skjermer."
+            "value" : "Dette fjerner farge-, stil-, skrifttype-, størrelse-, symbol- og lydtilpasninger for hvert Space på alle skjermer, inkludert stilen [Standard]."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dit verwijdert alle kleur-, stijl-, lettertype-, grootte-, symbool- en geluidsaanpassingen voor elke Space op alle schermen."
+            "value" : "Dit verwijdert alle kleur-, stijl-, lettertype-, grootte-, symbool- en geluidsaanpassingen voor elke Space op alle schermen, inclusief de stijl [Standaard]."
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dette fjernar tilpassingar av farge, stil, skrifttype, storleik, symbol og lyd for kvart Space på alle skjermar."
+            "value" : "Dette fjernar tilpassingar av farge, stil, skrifttype, storleik, symbol og lyd for kvart Space på alle skjermar, inkludert stilen [Standard]."
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ایہ ہر ڈسپلے 'تے ہر سپیس لئی رنگ، سٹائل، فونٹ، سائز، نشان تے آواز دیاں کسٹمائزیشن ختم کرے گا۔"
+            "value" : "ایہ ہر ڈسپلے 'تے ہر سپیس لئی رنگ، سٹائل، فونٹ، سائز، نشان تے آواز دیاں کسٹمائزیشن ختم کرے گا، جس وچ [ڈیفالٹ] سٹائل وی شامل اے۔"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Usunie dostosowania koloru, stylu, czcionki, rozmiaru, symbolu i dźwięku dla każdego Space na wszystkich ekranach."
+            "value" : "Usunie dostosowania koloru, stylu, czcionki, rozmiaru, symbolu i dźwięku dla każdego Space na wszystkich ekranach, w tym styl [Domyślny]."
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "دا به په ټولو ډیسپلېونو کې د هر سپېس د رنګ، سټایل، فانټ، اندازې، سمبول او غږ سمونونه لرې کړي."
+            "value" : "دا به په ټولو ډیسپلېونو کې د هر سپېس د رنګ، سټایل، فانټ، اندازې، سمبول او غږ سمونونه لرې کړي، د [ډیفالټ] سټایل په ګډون."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Isto irá remover todas as personalizações de cor, estilo, tipo de letra, tamanho, símbolo e som de cada Espaço em todos os monitores."
+            "value" : "Isto irá remover todas as personalizações de cor, estilo, tipo de letra, tamanho, símbolo e som de cada Espaço em todos os monitores, incluindo o estilo [Predefinição]."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Isso removerá todas as personalizações de cor, estilo, fonte, tamanho, símbolo e som de cada Espaço em todas as telas."
+            "value" : "Isso removerá todas as personalizações de cor, estilo, fonte, tamanho, símbolo e som de cada Espaço em todas as telas, incluindo o estilo [Padrão]."
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aceasta va elimina toate personalizările de culoare, stil, font, dimensiune, simbol și sunet pentru fiecare Spațiu de pe toate ecranele."
+            "value" : "Aceasta va elimina toate personalizările de culoare, stil, font, dimensiune, simbol și sunet pentru fiecare Spațiu de pe toate ecranele, inclusiv stilul [Implicit]."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Это удалит настройки цвета, стиля, шрифта, размера, символа и звука для каждого Пространства на всех дисплеях."
+            "value" : "Это удалит настройки цвета, стиля, шрифта, размера, символа и звука для каждого Пространства на всех дисплеях, включая стиль [По умолчанию]."
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toto odstráni všetky prispôsobenia farby, štýlu, písma, veľkosti, symbolu a zvuku pre každý Priestor na všetkých displejoch."
+            "value" : "Toto odstráni všetky prispôsobenia farby, štýlu, písma, veľkosti, symbolu a zvuku pre každý Priestor na všetkých displejoch vrátane štýlu [Predvolené]."
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ovo će ukloniti prilagođavanja boje, stila, fonta, veličine, simbola i zvuka za svaki Prostor na svim ekranima."
+            "value" : "Ovo će ukloniti prilagođavanja boje, stila, fonta, veličine, simbola i zvuka za svaki Prostor na svim ekranima, uključujući stil [Podrazumevano]."
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Detta tar bort alla färg-, stil-, teckensnitts-, storleks-, symbol- och ljudanpassningar för varje Space på alla skärmar."
+            "value" : "Detta tar bort alla färg-, stil-, teckensnitts-, storleks-, symbol- och ljudanpassningar för varje Space på alla skärmar, inklusive stilen [Standard]."
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "การดำเนินการนี้จะลบการปรับแต่งสี สไตล์ แบบอักษร ขนาด สัญลักษณ์ และเสียงของทุก Space บนทุกจอภาพ"
+            "value" : "การดำเนินการนี้จะลบการปรับแต่งสี สไตล์ แบบอักษร ขนาด สัญลักษณ์ และเสียงของทุก Space บนทุกจอภาพ รวมถึงสไตล์ [ค่าเริ่มต้น]"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bu, tüm ekranlardaki her Alan için renk, stil, yazı tipi, boyut, sembol ve ses özelleştirmelerini kaldırır."
+            "value" : "Bu, tüm ekranlardaki her Alan için renk, stil, yazı tipi, boyut, sembol ve ses özelleştirmelerini, [Varsayılan] stil dahil, kaldırır."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Це видалить всі налаштування кольору, стилю, шрифту, розміру, символу та звуку для кожного Простору на всіх дисплеях."
+            "value" : "Це видалить всі налаштування кольору, стилю, шрифту, розміру, символу та звуку для кожного Простору на всіх дисплеях, включно зі стилем [Стандартний]."
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "یہ تمام ڈسپلے پر ہر اسپیس کے رنگ، انداز، فونٹ، سائز، علامت اور آواز کی تخصیصات ہٹا دے گا۔"
+            "value" : "یہ تمام ڈسپلے پر ہر اسپیس کے رنگ، انداز، فونٹ، سائز، علامت اور آواز کی تخصیصات ہٹا دے گا، بشمول [طے شدہ] اسٹائل۔"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Thao tác này sẽ xóa mọi tùy chỉnh màu, kiểu, phông chữ, kích cỡ, ký hiệu và âm thanh cho từng Không gian trên mọi màn hình."
+            "value" : "Thao tác này sẽ xóa mọi tùy chỉnh màu, kiểu, phông chữ, kích cỡ, ký hiệu và âm thanh cho từng Không gian trên mọi màn hình, bao gồm cả kiểu [Mặc định]."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "这会移除所有显示器上每个空间的颜色、样式、字体、尺寸、符号和声音自定义。"
+            "value" : "这会移除所有显示器上每个空间的颜色、样式、字体、尺寸、符号和声音自定义，包括[默认]样式。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "這會移除所有顯示器上每個空間的顏色、樣式、字體、尺寸、符號和聲音自訂。"
+            "value" : "這會移除所有顯示器上每個空間的顏色、樣式、字體、尺寸、符號和聲音自訂，包括[預設]樣式。"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "這會移除所有顯示器上每個空間的顏色、樣式、字體、尺寸、符號和聲音自訂。"
+            "value" : "這會移除所有顯示器上每個空間的顏色、樣式、字體、尺寸、符號和聲音自訂，包括[預設]樣式。"
+          }
+        }
+      }
+    },
+    "detail_reset_all_spaces_to_default" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سيؤدي ذلك إلى إزالة تخصيصات كل مساحة على جميع الشاشات، بحيث تتبع جميعها النمط [افتراضي]."
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Това ще премахне персонализациите на всяко Пространство на всички дисплеи, така че всички да следват стила [По подразбиране]."
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Això eliminarà les personalitzacions de cada Espai a totes les pantalles perquè tots segueixin l'estil [Predeterminat]."
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odstraní přizpůsobení každého Space na všech displejích, takže všechny budou používat styl [Výchozí]."
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dette fjerner tilpasningerne for hvert Space på alle skærme, så de alle følger stilen [Standard]."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dies entfernt die Anpassungen jedes Spaces auf allen Displays, sodass alle dem Stil [Standard] folgen."
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Θα αφαιρέσει τις προσαρμογές κάθε Χώρου σε όλες τις οθόνες, ώστε όλοι να ακολουθούν το στυλ [Προεπιλογή]."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This will remove every Space's customizations on all displays, so they all follow the [Default] style."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This will remove every Space's customisations on all displays, so they all follow the [Default] style."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esto quitará las personalizaciones de cada Espacio en todas las pantallas para que todos sigan el estilo [Predeterminado]."
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "این کار سفارشی‌سازی‌های هر فضا را در همه نمایشگرها حذف می‌کند تا همگی از سبک [پیش‌فرض] پیروی کنند."
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tämä poistaa jokaisen Spacen mukautukset kaikilta näytöiltä, joten kaikki noudattavat [Oletus]-tyyliä."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cela supprimera les personnalisations de chaque Espace sur tous les écrans afin qu'ils suivent tous le style [Par défaut]."
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "פעולה זו תסיר את ההתאמות של כל מרחב בכל התצוגות, כך שכולם יעקבו אחר סגנון [ברירת מחדל]."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "यह सभी डिस्प्ले पर हर स्पेस के अनुकूलन हटा देगा, ताकि वे सभी [डिफ़ॉल्ट] शैली का पालन करें।"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eltávolítja minden Space testreszabásait az összes kijelzőn, így mindegyik az [Alapértelmezett] stílust követi."
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ini akan menghapus kustomisasi setiap Space di semua layar agar semuanya mengikuti gaya [Bawaan]."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questo rimuoverà le personalizzazioni di ogni Spazio su tutti i monitor, così che tutti seguano lo stile [Predefinito]."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "すべてのディスプレイ上の各スペースのカスタマイズを削除し、すべてが[デフォルト]スタイルに従うようにします。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모든 디스플레이에서 각 스페이스의 사용자 지정을 제거하여 모두 [기본] 스타일을 따르게 합니다."
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ова ќе ги отстрани прилагодувањата на секој Простор на сите дисплеи, така што сите ќе го следат стилот [Стандардно]."
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ini akan mengalih keluar penyesuaian setiap Ruang pada semua paparan supaya semuanya mengikut gaya [Lalai]."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dette fjerner tilpasningene for hvert Space på alle skjermer, slik at alle følger stilen [Standard]."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dit verwijdert de aanpassingen van elke Space op alle schermen, zodat ze allemaal de stijl [Standaard] volgen."
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dette fjernar tilpassingane for kvart Space på alle skjermar, slik at alle følgjer stilen [Standard]."
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ایہ سارے ڈسپلیاں اُتے ہر سپیس دیاں کسٹمائزیشنز ختم کرے گا، تاں جو ساریاں [ڈیفالٹ] سٹائل تے چلن۔"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usunie dostosowania każdego Space na wszystkich ekranach, dzięki czemu wszystkie będą używać stylu [Domyślny]."
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "دا به په ټولو ډیسپلېونو کې د هر سپېس سمونونه لرې کړي، ترڅو ټول [ډیفالټ] سټایل تعقیب کړي."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Isto irá remover as personalizações de cada Espaço em todos os monitores, para que todos sigam o estilo [Predefinição]."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Isso removerá as personalizações de cada Espaço em todas as telas, para que todos sigam o estilo [Padrão]."
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aceasta va elimina personalizările fiecărui Spațiu de pe toate ecranele, astfel încât toate să urmeze stilul [Implicit]."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Это удалит настройки каждого Пространства на всех дисплеях, и все они будут следовать стилю [По умолчанию]."
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toto odstráni prispôsobenia každého Priestoru na všetkých displejoch, takže všetky budú používať štýl [Predvolené]."
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ovo će ukloniti prilagođavanja svakog Prostora na svim ekranima, tako da svi prate stil [Podrazumevano]."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Detta tar bort anpassningarna för varje Space på alla skärmar, så att alla följer stilen [Standard]."
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "การดำเนินการนี้จะลบการปรับแต่งของทุก Space บนทุกจอภาพ เพื่อให้ทั้งหมดใช้สไตล์ [ค่าเริ่มต้น]"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu, tüm ekranlardaki her Alanın özelleştirmelerini kaldırır ve hepsinin [Varsayılan] stili izlemesini sağlar."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Це видалить налаштування кожного Простору на всіх дисплеях, тож усі вони наслідуватимуть стиль [Стандартний]."
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "یہ تمام ڈسپلے پر ہر اسپیس کی تخصیصات ہٹا دے گا، تاکہ سب [طے شدہ] اسٹائل کی پیروی کریں۔"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thao tác này sẽ xóa tùy chỉnh của mọi Không gian trên tất cả màn hình, để tất cả tuân theo kiểu [Mặc định]."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这会移除所有显示器上每个空间的自定义，使所有空间采用[默认]样式。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "這會移除所有顯示器上每個空間的自訂，使所有空間採用[預設]樣式。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "這會移除所有顯示器上每個空間的自訂，使所有空間採用[預設]樣式。"
           }
         }
       }
@@ -25420,259 +25944,259 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "سيؤدي ذلك إلى إزالة تخصيصات اللون والنمط والرمز والخط للمساحة الحالية، لتتبع النمط الافتراضي من جديد."
+            "value" : "سيؤدي ذلك إلى إزالة تخصيصات اللون والنمط والرمز والخط للمساحة الحالية، لتتبع النمط [افتراضي] من جديد."
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Това ще премахне персонализациите на цвета, стила, символа и шрифта за текущото Пространство, за да следва отново стила по подразбиране."
+            "value" : "Това ще премахне персонализациите на цвета, стила, символа и шрифта за текущото Пространство, за да следва отново стила [По подразбиране]."
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Això eliminarà les personalitzacions de color, estil, símbol i lletra de l'Espai actual, de manera que tornarà a seguir l'estil predeterminat."
+            "value" : "Això eliminarà les personalitzacions de color, estil, símbol i lletra de l'Espai actual, de manera que tornarà a seguir l'estil [Predeterminat]."
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Odstraní úpravy barvy, stylu, symbolu a písma aktuálního Space, takže bude znovu používat výchozí styl."
+            "value" : "Odstraní úpravy barvy, stylu, symbolu a písma aktuálního Space, takže bude znovu používat styl [Výchozí]."
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dette fjerner farve-, stil-, symbol- og skrifttypetilpasninger for det aktuelle Space, så det igen følger standardstilen."
+            "value" : "Dette fjerner farve-, stil-, symbol- og skrifttypetilpasninger for det aktuelle Space, så det igen følger stilen [Standard]."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dies entfernt die Farb-, Stil-, Symbol- und Schriftanpassungen des aktuellen Spaces, sodass er wieder dem Standardstil folgt."
+            "value" : "Dies entfernt die Farb-, Stil-, Symbol- und Schriftanpassungen des aktuellen Spaces, sodass er wieder dem Stil [Standard] folgt."
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Θα αφαιρέσει τις προσαρμογές χρώματος, στιλ, συμβόλου και γραμματοσειράς του τρέχοντος Χώρου, ώστε να ακολουθεί ξανά το προεπιλεγμένο στυλ."
+            "value" : "Θα αφαιρέσει τις προσαρμογές χρώματος, στιλ, συμβόλου και γραμματοσειράς του τρέχοντος Χώρου, ώστε να ακολουθεί ξανά το στυλ [Προεπιλογή]."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This will remove the color, style, symbol, and font customizations for the current Space, so it follows the default style again."
+            "value" : "This will remove the color, style, symbol, and font customizations for the current Space, so it follows the [Default] style again."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This will remove the colour, style, symbol, and font customisations for the current Space, so it follows the default style again."
+            "value" : "This will remove the colour, style, symbol, and font customisations for the current Space, so it follows the [Default] style again."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esto quitará las personalizaciones de color, estilo, símbolo y fuente del Espacio actual, de modo que volverá a seguir el estilo predeterminado."
+            "value" : "Esto quitará las personalizaciones de color, estilo, símbolo y fuente del Espacio actual, de modo que volverá a seguir el estilo [Predeterminado]."
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "این کار سفارشی‌سازی‌های رنگ، استایل، نماد و فونت فضای فعلی را حذف می‌کند تا دوباره از سبک پیش‌فرض پیروی کند."
+            "value" : "این کار سفارشی‌سازی‌های رنگ، استایل، نماد و فونت فضای فعلی را حذف می‌کند تا دوباره از سبک [پیش‌فرض] پیروی کند."
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tämä poistaa väri-, tyyli-, symboli- ja fonttimukautukset nykyisestä Spacesta, joten se noudattaa jälleen oletustyyliä."
+            "value" : "Tämä poistaa väri-, tyyli-, symboli- ja fonttimukautukset nykyisestä Spacesta, joten se noudattaa jälleen [Oletus]-tyyliä."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cela supprimera les personnalisations de couleur, style, symbole et police de l'Espace actuel, qui suivra à nouveau le style par défaut."
+            "value" : "Cela supprimera les personnalisations de couleur, style, symbole et police de l'Espace actuel, qui suivra à nouveau le style [Par défaut]."
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "פעולה זו תסיר התאמות של צבע, סגנון, סמל וגופן למרחב הנוכחי, כך שהוא ישוב לעקוב אחר סגנון ברירת המחדל."
+            "value" : "פעולה זו תסיר התאמות של צבע, סגנון, סמל וגופן למרחב הנוכחי, כך שהוא ישוב לעקוב אחר סגנון [ברירת מחדל]."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "यह मौजूदा स्पेस के लिए रंग, स्टाइल, प्रतीक और फ़ॉन्ट के अनुकूलन हटा देगा, जिससे वह फिर से डिफ़ॉल्ट शैली का पालन करेगा।"
+            "value" : "यह मौजूदा स्पेस के लिए रंग, स्टाइल, प्रतीक और फ़ॉन्ट के अनुकूलन हटा देगा, जिससे वह फिर से [डिफ़ॉल्ट] शैली का पालन करेगा।"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eltávolítja a szín-, stílus-, szimbólum- és betűtípus-testreszabásokat az aktuális Space-ről, így az újra az alapértelmezett stílust követi."
+            "value" : "Eltávolítja a szín-, stílus-, szimbólum- és betűtípus-testreszabásokat az aktuális Space-ről, így az újra az [Alapértelmezett] stílust követi."
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ini akan menghapus kustomisasi warna, gaya, simbol, dan font untuk Space saat ini, sehingga kembali mengikuti gaya bawaan."
+            "value" : "Ini akan menghapus kustomisasi warna, gaya, simbol, dan font untuk Space saat ini, sehingga kembali mengikuti gaya [Bawaan]."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Questo rimuoverà le personalizzazioni di colore, stile, simbolo e font dello Spazio corrente, che tornerà a seguire lo stile predefinito."
+            "value" : "Questo rimuoverà le personalizzazioni di colore, stile, simbolo e font dello Spazio corrente, che tornerà a seguire lo stile [Predefinito]."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "現在のスペースの色、スタイル、シンボル、フォントのカスタマイズを削除し、再びデフォルトのスタイルに従うようにします。"
+            "value" : "現在のスペースの色、スタイル、シンボル、フォントのカスタマイズを削除し、再び[デフォルト]スタイルに従うようにします。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "현재 스페이스의 색상, 스타일, 심볼, 글꼴 사용자 지정을 제거하여 다시 기본 스타일을 따르게 합니다."
+            "value" : "현재 스페이스의 색상, 스타일, 심볼, 글꼴 사용자 지정을 제거하여 다시 [기본] 스타일을 따르게 합니다."
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ова ќе ги отстрани прилагодувањата на боја, стил, симбол и фонт за тековниот Простор, така што повторно ќе го следи стандардниот стил."
+            "value" : "Ова ќе ги отстрани прилагодувањата на боја, стил, симбол и фонт за тековниот Простор, така што повторно ќе го следи стилот [Стандардно]."
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ini akan mengalih keluar penyesuaian warna, gaya, simbol dan fon untuk Ruang semasa, supaya ia mengikut gaya lalai semula."
+            "value" : "Ini akan mengalih keluar penyesuaian warna, gaya, simbol dan fon untuk Ruang semasa, supaya ia mengikut gaya [Lalai] semula."
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dette fjerner farge-, stil-, symbol- og skrifttypetilpasninger for gjeldende Space, slik at det følger standardstilen igjen."
+            "value" : "Dette fjerner farge-, stil-, symbol- og skrifttypetilpasninger for gjeldende Space, slik at det følger stilen [Standard] igjen."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dit verwijdert de aanpassingen van kleur, stijl, symbool en lettertype voor de huidige Space, zodat deze weer de standaardstijl volgt."
+            "value" : "Dit verwijdert de aanpassingen van kleur, stijl, symbool en lettertype voor de huidige Space, zodat deze weer de stijl [Standaard] volgt."
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dette fjernar tilpassingar av farge, stil, symbol og skrifttype for gjeldande Space, slik at det følgjer standardstilen igjen."
+            "value" : "Dette fjernar tilpassingar av farge, stil, symbol og skrifttype for gjeldande Space, slik at det følgjer stilen [Standard] igjen."
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ایہ موجودہ سپیس لئی رنگ، سٹائل، نشان تے فونٹ دیاں کسٹمائزیشن ختم کرے گا، تاں جو اوہ فیر ڈیفالٹ سٹائل تے چلے۔"
+            "value" : "ایہ موجودہ سپیس لئی رنگ، سٹائل، نشان تے فونٹ دیاں کسٹمائزیشن ختم کرے گا، تاں جو اوہ فیر [ڈیفالٹ] سٹائل تے چلے۔"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Usunie dostosowania koloru, stylu, symbolu i czcionki bieżącego Space, dzięki czemu znów będzie używać stylu domyślnego."
+            "value" : "Usunie dostosowania koloru, stylu, symbolu i czcionki bieżącego Space, dzięki czemu znów będzie używać stylu [Domyślny]."
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "دا به د روان سپېس د رنګ، سټایل، سمبول او فانټ سمونونه لرې کړي، ترڅو بیا ډیفالټ سټایل تعقیب کړي."
+            "value" : "دا به د روان سپېس د رنګ، سټایل، سمبول او فانټ سمونونه لرې کړي، ترڅو بیا [ډیفالټ] سټایل تعقیب کړي."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Isto irá remover as personalizações de cor, estilo, símbolo e tipo de letra do Espaço atual, para que volte a seguir o estilo predefinido."
+            "value" : "Isto irá remover as personalizações de cor, estilo, símbolo e tipo de letra do Espaço atual, para que volte a seguir o estilo [Predefinição]."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Isso removerá as personalizações de cor, estilo, símbolo e fonte do Espaço atual, para que ele volte a seguir o estilo padrão."
+            "value" : "Isso removerá as personalizações de cor, estilo, símbolo e fonte do Espaço atual, para que ele volte a seguir o estilo [Padrão]."
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aceasta va elimina personalizările de culoare, stil, simbol și font pentru Spațiul curent, astfel încât va urma din nou stilul implicit."
+            "value" : "Aceasta va elimina personalizările de culoare, stil, simbol și font pentru Spațiul curent, astfel încât va urma din nou stilul [Implicit]."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Это удалит пользовательские настройки цвета, стиля, символа и шрифта текущего Пространства, и оно снова будет следовать стилю по умолчанию."
+            "value" : "Это удалит пользовательские настройки цвета, стиля, символа и шрифта текущего Пространства, и оно снова будет следовать стилю [По умолчанию]."
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toto odstráni prispôsobenia farby, štýlu, symbolu a písma aktuálneho Priestoru, takže bude znova používať predvolený štýl."
+            "value" : "Toto odstráni prispôsobenia farby, štýlu, symbolu a písma aktuálneho Priestoru, takže bude znova používať štýl [Predvolené]."
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ovo će ukloniti prilagođavanja boje, stila, simbola i fonta za tekući Prostor, tako da će ponovo pratiti podrazumevani stil."
+            "value" : "Ovo će ukloniti prilagođavanja boje, stila, simbola i fonta za tekući Prostor, tako da će ponovo pratiti stil [Podrazumevano]."
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Detta tar bort färg-, stil-, symbol- och teckensnittsanpassningar för aktuellt Space, så att det följer standardstilen igen."
+            "value" : "Detta tar bort färg-, stil-, symbol- och teckensnittsanpassningar för aktuellt Space, så att det följer stilen [Standard] igen."
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "การดำเนินการนี้จะลบการปรับแต่งสี สไตล์ สัญลักษณ์ และแบบอักษรของ Space ปัจจุบัน เพื่อให้กลับไปใช้สไตล์เริ่มต้นอีกครั้ง"
+            "value" : "การดำเนินการนี้จะลบการปรับแต่งสี สไตล์ สัญลักษณ์ และแบบอักษรของ Space ปัจจุบัน เพื่อให้กลับไปใช้สไตล์ [ค่าเริ่มต้น] อีกครั้ง"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bu, geçerli Alan için renk, stil, sembol ve yazı tipi özelleştirmelerini kaldırır, böylece yeniden varsayılan stili izler."
+            "value" : "Bu, geçerli Alan için renk, stil, sembol ve yazı tipi özelleştirmelerini kaldırır, böylece yeniden [Varsayılan] stili izler."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Це видалить налаштування кольору, стилю, символу та шрифту поточного Простору, тож він знову наслідуватиме стандартний стиль."
+            "value" : "Це видалить налаштування кольору, стилю, символу та шрифту поточного Простору, тож він знову наслідуватиме стиль [Стандартний]."
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "یہ موجودہ اسپیس کے رنگ، انداز، علامت اور فونٹ کی تخصیصات ہٹا دے گا، تاکہ وہ دوبارہ طے شدہ اسٹائل کی پیروی کرے۔"
+            "value" : "یہ موجودہ اسپیس کے رنگ، انداز، علامت اور فونٹ کی تخصیصات ہٹا دے گا، تاکہ وہ دوبارہ [طے شدہ] اسٹائل کی پیروی کرے۔"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Thao tác này sẽ xóa tùy chỉnh màu, kiểu, ký hiệu và phông chữ của Không gian hiện tại, để nó lại tuân theo kiểu mặc định."
+            "value" : "Thao tác này sẽ xóa tùy chỉnh màu, kiểu, ký hiệu và phông chữ của Không gian hiện tại, để nó lại tuân theo kiểu [Mặc định]."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "这会移除当前空间的颜色、样式、符号和字体自定义，使其重新采用默认样式。"
+            "value" : "这会移除当前空间的颜色、样式、符号和字体自定义，使其重新采用[默认]样式。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "這會移除目前空間的顏色、樣式、符號與字體自訂，使其重新採用預設樣式。"
+            "value" : "這會移除目前空間的顏色、樣式、符號與字體自訂，使其重新採用[預設]樣式。"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "這會移除目前空間的顏色、樣式、符號與字體自訂，使其重新採用預設樣式。"
+            "value" : "這會移除目前空間的顏色、樣式、符號與字體自訂，使其重新採用[預設]樣式。"
           }
         }
       }

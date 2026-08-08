@@ -1042,10 +1042,25 @@ final class SpaceEditorModel {
         tick += 1
     }
 
+    /// Clears every Space's own preferences on every display so all Spaces
+    /// inherit the saved template. The template itself stays untouched.
+    func resetAllSpacesToDefault() {
+        guard confirmAction(
+            Localization.confirmResetAllSpaces,
+            Localization.detailResetAllSpacesToDefault,
+            Localization.buttonResetAll,
+            true
+        ) else {
+            return
+        }
+        SpacePreferences.clearAllSpaceOverrides(store: store)
+        tick += 1
+    }
+
     /// Clears every Space's preferences on every display, including the
     /// saved template and per-space sounds. Icon sizing, separator, and the
     /// global default sound stay untouched.
-    func resetAllSpacesToDefault() {
+    func resetAllSpaces() {
         guard confirmAction(
             Localization.confirmResetAllSpaces,
             Localization.detailResetAllSpaces,
