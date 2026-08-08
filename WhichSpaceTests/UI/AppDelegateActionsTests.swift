@@ -868,4 +868,28 @@ final class AppDelegateActionsTests: XCTestCase {
         localSut.actionHandler.resetAllSettings()
         XCTAssertEqual(resetCount, 1)
     }
+
+    /// The injected spy keeps the test off Sparkle's real SU* defaults, the
+    /// same way the hotkey seam above protects recorded hotkeys.
+    func testResetAllSettings_invokesInjectedUpdaterSettingsReset() {
+        var resetCount = 0
+        let resetUpdaterSettingsAction: () -> Void = { resetCount += 1 }
+        let localSut = AppDelegate(
+            appState: appState,
+            confirmAction: confirmStub.callAsFunction,
+            launchAtLogin: launchAtLoginStub,
+            resetUpdaterSettingsAction: resetUpdaterSettingsAction
+        )
+        defer {
+            localSut.stopObservingAppState()
+        }
+
+        confirmStub.shouldConfirm = false
+        localSut.actionHandler.resetAllSettings()
+        XCTAssertEqual(resetCount, 0)
+
+        confirmStub.shouldConfirm = true
+        localSut.actionHandler.resetAllSettings()
+        XCTAssertEqual(resetCount, 1)
+    }
 }

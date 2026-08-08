@@ -26,6 +26,11 @@ final class ActionHandler: NSObject {
     /// stores in the host app's standard defaults domain.
     let onResetHotkeys: (() -> Void)?
 
+    /// Callback invoked by a full reset to restore Sparkle's update settings.
+    /// Injected because the updater persists them in its own SU* defaults,
+    /// outside the store's key list.
+    let onResetUpdaterSettings: (() -> Void)?
+
     /// Convenience accessor for the store via appState.
     private var store: DefaultsStore {
         appState.store
@@ -42,7 +47,8 @@ final class ActionHandler: NSObject {
         onStatusBarIconNeedsUpdate: (() -> Void)? = nil,
         onCheckForUpdates: (() -> Void)? = nil,
         onOpenSettings: (() -> Void)? = nil,
-        onResetHotkeys: (() -> Void)? = nil
+        onResetHotkeys: (() -> Void)? = nil,
+        onResetUpdaterSettings: (() -> Void)? = nil
     ) {
         self.appState = appState
         self.launchAtLogin = launchAtLogin
@@ -51,6 +57,7 @@ final class ActionHandler: NSObject {
         self.onCheckForUpdates = onCheckForUpdates
         self.onOpenSettings = onOpenSettings
         self.onResetHotkeys = onResetHotkeys
+        self.onResetUpdaterSettings = onResetUpdaterSettings
         super.init()
     }
 
@@ -136,7 +143,8 @@ final class ActionHandler: NSObject {
     /// Returns every preference to the value it ships with, per-Space styling
     /// and Launch at Login included, so the app is left as it was on a fresh
     /// install. Launch at Login is not a defaults key, so it is turned off
-    /// alongside the store rather than by it.
+    /// alongside the store rather than by it, and Sparkle's update settings
+    /// are restored through the updater for the same reason.
     @objc func resetAllSettings() {
         guard confirmAction(
             Localization.confirmResetSettings,
@@ -149,6 +157,7 @@ final class ActionHandler: NSObject {
         store.resetAll()
         launchAtLogin.isEnabled = false
         onResetHotkeys?()
+        onResetUpdaterSettings?()
         onStatusBarIconNeedsUpdate?()
     }
 

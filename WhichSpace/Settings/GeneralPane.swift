@@ -101,6 +101,10 @@ struct GeneralPane: View {
                 } control: {
                     Button(Localization.actionReset) {
                         onResetAllSettings()
+                        // The update toggles bind to the updater, not the
+                        // store, so a confirmed reset needs an explicit
+                        // re-read
+                        updaterTick += 1
                     }
                 }
             }

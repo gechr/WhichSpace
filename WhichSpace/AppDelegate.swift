@@ -74,6 +74,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
     /// Clears recorded hotkeys on a full settings reset; a no-op in tests
     private let resetHotkeysAction: () -> Void
 
+    /// Restores Sparkle's update settings on a full settings reset. Nil falls
+    /// back to the live updater, which tests never create; injecting a spy
+    /// keeps them off Sparkle's real defaults.
+    private let resetUpdaterSettingsAction: (() -> Void)?
+
     /// Records why a click produced no switch; the early returns below leave
     /// no other trace.
     private static let logger = Logger(subsystem: "io.gechr.WhichSpace", category: "Click")
@@ -136,6 +141,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
         isCapabilityTrusted = { Accessibility.liveStatus.capabilityTrusted }
         menuBarVisibilityProbe = CGMenuBarVisibilityProbe()
         resetHotkeysAction = { HotkeyCenter.resetBindings() }
+        resetUpdaterSettingsAction = nil
         super.init()
         configureActionHandler()
     }
@@ -161,7 +167,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
         // Defaults to a no-op: the hotkey library stores bindings in the host
         // app's standard defaults domain, so a test resetting through the
         // real action would wipe the developer's recorded hotkeys
-        resetHotkeysAction: @escaping () -> Void = {}
+        resetHotkeysAction: @escaping () -> Void = {},
+        resetUpdaterSettingsAction: (() -> Void)? = nil
     ) {
         self.appState = appState
         self.confirmAction = confirmAction
@@ -173,6 +180,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
         self.isCapabilityTrusted = isCapabilityTrusted
         self.menuBarVisibilityProbe = menuBarVisibilityProbe
         self.resetHotkeysAction = resetHotkeysAction
+        self.resetUpdaterSettingsAction = resetUpdaterSettingsAction
         super.init()
         configureActionHandler()
     }
@@ -194,8 +202,28 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
             },
             onResetHotkeys: { [weak self] in
                 self?.resetHotkeysAction()
+            },
+            onResetUpdaterSettings: { [weak self] in
+                self?.resetUpdaterSettings()
             }
         )
+    }
+
+    /// Returns Sparkle's update settings to their shipped values. The updater
+    /// persists them in its own SU* defaults, outside the store's key list,
+    /// so `DefaultsStore.resetAll()` cannot reach them.
+    private func resetUpdaterSettings() {
+        if let resetUpdaterSettingsAction {
+            resetUpdaterSettingsAction()
+            return
+        }
+        guard let updater = updaterController?.updater else {
+            return
+        }
+        // Shipped defaults: Info.plist enables automatic checks, automatic
+        // installs are off
+        updater.automaticallyChecksForUpdates = true
+        updater.automaticallyDownloadsUpdates = false
     }
 
     // MARK: - Settings Window
