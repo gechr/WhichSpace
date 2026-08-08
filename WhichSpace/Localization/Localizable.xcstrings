@@ -792,7 +792,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "المساحة الحالية إلى [افتراضي]"
+            "value" : "المساحة الحالية"
           }
         },
         "bg" : {
@@ -14226,7 +14226,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le changement d'Espace nécessite l'autorisation d'accessibilité.\n\nAprès avoir cliqué sur Continuer, macOS vous demandera l'autorisation. Cliquez sur \" Ouvrir les Réglages Système \", puis trouvez %@ dans la liste et activez-le."
+            "value" : "Le changement d'Espace nécessite l'autorisation d'accessibilité.\n\nAprès avoir cliqué sur Continuer, macOS vous demandera l'autorisation. Cliquez sur « Ouvrir les Réglages Système », puis trouvez %@ dans la liste et activez-le."
           }
         },
         "he" : {
@@ -14292,7 +14292,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Het wisselen van Spaces vereist Toegankelijkheid-toestemming.\n\nNadat je op Ga door klikt, vraagt macOS om toestemming. Klik op \"Open Systeeminstellingen\", zoek %@ in de lijst en schakel het in."
+            "value" : "Voor het wisselen van Spaces is toestemming voor Toegankelijkheid vereist.\n\nNadat je op Ga door klikt, vraagt macOS om toestemming. Klik op \"Open Systeeminstellingen\", zoek %@ in de lijst en schakel het in."
           }
         },
         "nn" : {
@@ -15864,7 +15864,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Het wisselen van Spaces vereist Toegankelijkheid-toestemming."
+            "value" : "Voor het wisselen van Spaces is toestemming voor Toegankelijkheid vereist."
           }
         },
         "nn" : {
@@ -24248,7 +24248,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dit werkt alle andere Spaces bij zodat ze dezelfde kleur, stijl, symbool en hetzelfde lettertype hebben als deze Space."
+            "value" : "Dit werkt alle andere Spaces bij zodat ze dezelfde kleur en stijl, hetzelfde symbool en lettertype hebben als deze Space."
           }
         },
         "nn" : {
@@ -24510,7 +24510,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dit werkt de geselecteerde Space bij zodat deze dezelfde kleur, stijl, symbool en hetzelfde lettertype heeft als deze Space."
+            "value" : "Dit werkt de geselecteerde Space bij zodat deze dezelfde kleur en stijl, hetzelfde symbool en lettertype heeft als deze Space."
           }
         },
         "nn" : {
@@ -25712,7 +25712,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dies setzt jede Einstellung auf ihren Standardwert zurück, entfernt alle Space-Anpassungen auf allen Displays und deaktiviert den Start beim Login."
+            "value" : "Dies setzt jede Einstellung auf ihren Standardwert zurück, entfernt alle Space-Anpassungen auf allen Displays und deaktiviert den automatischen Start beim Login."
           }
         },
         "el" : {
@@ -43112,7 +43112,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kleur scheidingsteken"
+            "value" : "Kleur van het scheidingsteken"
           }
         },
         "nn" : {
@@ -43248,7 +43248,7 @@
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pic"
+            "value" : "Vinyeta"
           }
         },
         "cs" : {
@@ -44684,7 +44684,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stijl scheidingsteken"
+            "value" : "Stijl van het scheidingsteken"
           }
         },
         "nn" : {
@@ -53502,7 +53502,7 @@
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "color tint theme palette shade hue opacity transparent"
+            "value" : "colour tint theme palette shade hue opacity transparent"
           }
         },
         "es" : {
@@ -57522,7 +57522,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "werkruimte bureaublad virtueel desktop mission control"
+            "value" : "werkruimte bureaublad virtuele desktop mission control"
           }
         },
         "nn" : {
@@ -68720,7 +68720,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviar la ventana frontal al Espacio de la izquierda y cambiar de Espacio"
+            "value" : "Enviar la ventana en primer plano al Espacio de la izquierda y cambiar de Espacio"
           }
         },
         "fa" : {
@@ -68982,7 +68982,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviar la ventana frontal al Espacio de la derecha y cambiar de Espacio"
+            "value" : "Enviar la ventana en primer plano al Espacio de la derecha y cambiar de Espacio"
           }
         },
         "fa" : {
@@ -69244,7 +69244,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviar la ventana frontal al Espacio de la izquierda"
+            "value" : "Enviar la ventana en primer plano al Espacio de la izquierda"
           }
         },
         "fa" : {
@@ -69506,7 +69506,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviar la ventana frontal al Espacio de la derecha"
+            "value" : "Enviar la ventana en primer plano al Espacio de la derecha"
           }
         },
         "fa" : {
@@ -77343,7 +77343,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton, der beim Wechsel des aktuellen Space abgespielt wird"
+            "value" : "Ton, der beim Wechsel des aktuellen Spaces abgespielt wird"
           }
         },
         "el" : {
