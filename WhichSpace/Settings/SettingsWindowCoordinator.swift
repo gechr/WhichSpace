@@ -70,6 +70,7 @@ final class SettingsWindowCoordinator {
     private let highlighter: SettingsHighlighter
     private var windowController: SettingsWindowController?
     private var closeObserver: NSObjectProtocol?
+    private var closeShortcutMonitor: Any?
     private var titleObservation: NSKeyValueObservation?
     private var search: SettingsSearchController?
 
@@ -109,6 +110,7 @@ final class SettingsWindowCoordinator {
             if let window = controller.window {
                 window.autorecalculatesKeyViewLoop = true
                 attachSearch(to: window)
+                observeCloseShortcut(in: window)
                 // The external-change observation streams only need to run
                 // while the window can show their effects; the shared color
                 // panel must not outlive the selection it edits
@@ -174,6 +176,29 @@ final class SettingsWindowCoordinator {
         for subview in container.subviews where subview.alphaValue < 1 {
             subview.alphaValue = 1
         }
+    }
+
+    /// Closes the window on Command-W and Command-Q. The hidden main menu
+    /// carries no Close item because the empty Settings scene removes its
+    /// commands, so both shortcuts need explicit handling.
+    private func observeCloseShortcut(in window: NSWindow) {
+        closeShortcutMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak window] event in
+            guard let window, event.window === window, Self.isCloseShortcut(event) else {
+                return event
+            }
+            window.performClose(nil)
+            return nil
+        }
+    }
+
+    /// Command-W or Command-Q, with no other modifier along for the ride.
+    private static func isCloseShortcut(_ event: NSEvent) -> Bool {
+        guard event.modifierFlags.intersection(.deviceIndependentFlagsMask) == .command,
+              let key = event.charactersIgnoringModifiers?.lowercased()
+        else {
+            return false
+        }
+        return key == "w" || key == "q"
     }
 
     /// Wires up the toolbar's search field. A hit goes back through `show`,
