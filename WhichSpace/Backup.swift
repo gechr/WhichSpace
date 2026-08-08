@@ -79,6 +79,7 @@ struct BackupSettings: Codable {
     var hideFullscreenApps: Bool
     var hideSingleSpace: Bool
     var horizontalScrollEnabled: Bool
+    var includeBetaUpdates: Bool
     var invertHorizontalScroll: Bool
     var invertVerticalScroll: Bool
     var launchAtLogin: Bool
@@ -108,7 +109,7 @@ struct BackupSettings: Codable {
     private enum CodingKeys: String, CodingKey {
         case classicSpaceSwitching
         case clickToSwitchSpaces, dimInactiveSpaces, emojiPickerSkinTone, fullscreenIconStyle, hideEmptySpaces
-        case hideFullscreenApps, hideSingleSpace, horizontalScrollEnabled
+        case hideFullscreenApps, hideSingleSpace, horizontalScrollEnabled, includeBetaUpdates
         case invertHorizontalScroll, invertVerticalScroll, launchAtLogin, localSpaceNumbers
         // Raw value matches the legacy stored defaults key
         case moveApplicationAlertSuppress = "moveToApplicationsFolderAlertSuppress"
@@ -132,6 +133,7 @@ struct BackupSettings: Codable {
         hideFullscreenApps = try container.decodeIfPresent(Bool.self, forKey: .hideFullscreenApps) ?? false
         hideSingleSpace = try container.decodeIfPresent(Bool.self, forKey: .hideSingleSpace) ?? false
         horizontalScrollEnabled = try container.decodeIfPresent(Bool.self, forKey: .horizontalScrollEnabled) ?? false
+        includeBetaUpdates = try container.decodeIfPresent(Bool.self, forKey: .includeBetaUpdates) ?? false
         invertHorizontalScroll = try container.decodeIfPresent(Bool.self, forKey: .invertHorizontalScroll) ?? false
         invertVerticalScroll = try container.decodeIfPresent(Bool.self, forKey: .invertVerticalScroll) ?? false
         launchAtLogin = try container.decodeIfPresent(Bool.self, forKey: .launchAtLogin) ?? false
@@ -170,6 +172,7 @@ struct BackupSettings: Codable {
         hideFullscreenApps: Bool,
         hideSingleSpace: Bool,
         horizontalScrollEnabled: Bool,
+        includeBetaUpdates: Bool,
         invertHorizontalScroll: Bool,
         invertVerticalScroll: Bool,
         launchAtLogin: Bool,
@@ -200,6 +203,7 @@ struct BackupSettings: Codable {
         self.hideFullscreenApps = hideFullscreenApps
         self.hideSingleSpace = hideSingleSpace
         self.horizontalScrollEnabled = horizontalScrollEnabled
+        self.includeBetaUpdates = includeBetaUpdates
         self.invertHorizontalScroll = invertHorizontalScroll
         self.invertVerticalScroll = invertVerticalScroll
         self.launchAtLogin = launchAtLogin
@@ -571,6 +575,7 @@ enum BackupManager {
             hideFullscreenApps: store.hideFullscreenApps,
             hideSingleSpace: store.hideSingleSpace,
             horizontalScrollEnabled: store.horizontalScrollEnabled,
+            includeBetaUpdates: store.includeBetaUpdates,
             invertHorizontalScroll: store.invertHorizontalScroll,
             invertVerticalScroll: store.invertVerticalScroll,
             launchAtLogin: launchAtLogin.isEnabled,
@@ -717,6 +722,7 @@ enum BackupManager {
         store.hideFullscreenApps = backup.settings.hideFullscreenApps
         store.hideSingleSpace = backup.settings.hideSingleSpace
         store.horizontalScrollEnabled = backup.settings.horizontalScrollEnabled
+        store.includeBetaUpdates = backup.settings.includeBetaUpdates
         store.invertHorizontalScroll = backup.settings.invertHorizontalScroll
         store.invertVerticalScroll = backup.settings.invertVerticalScroll
         var launchAtLogin = launchAtLogin

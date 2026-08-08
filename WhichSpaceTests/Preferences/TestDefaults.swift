@@ -217,6 +217,7 @@ struct DefaultsIsolationGuardTests {
             "hideFullscreenApps",
             "hideSingleSpace",
             "horizontalScrollEnabled",
+            "includeBetaUpdates",
             "invertHorizontalScroll",
             "invertVerticalScroll",
             "localSpaceNumbers",

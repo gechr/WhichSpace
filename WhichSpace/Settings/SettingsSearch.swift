@@ -200,6 +200,13 @@ enum SettingsSearchIndex {
             keywords: [.update]
         ),
         SettingsSearchEntry(
+            anchor: .betaUpdates,
+            section: nil,
+            title: Localization.toggleBetaUpdates,
+            subtitle: Localization.tipBetaUpdates,
+            keywords: [.update]
+        ),
+        SettingsSearchEntry(
             anchor: .checkForUpdates,
             section: nil,
             title: Localization.actionCheckForUpdates,
