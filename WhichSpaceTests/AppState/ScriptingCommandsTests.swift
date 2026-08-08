@@ -535,54 +535,57 @@ struct ScriptingCommandsTests {
 
     // MARK: - Enumeration Tests
 
-    @Test("spaceCount matches the switchable Space range")
-    func spaceCount_matchesSwitchableRange() {
+    @Test("space elements match the switchable range on a single display")
+    func spaceElements_matchSwitchableRange() {
         let appState = makeAppState()
 
         // Asserted structurally against the array `switchToSpace` indexes.
         // Calling `switchToSpace` here would gate on `AXIsProcessTrusted`,
         // which is granted on a developer machine but never on CI
-        #expect(ScriptingHelpers.spaceCount(appState: appState) == appState.allSpaceEntries.count)
-        #expect(ScriptingHelpers.spaceCount(appState: appState) == 2)
-        #expect(ScriptingHelpers.resolveAllLabels(appState: appState, store: store).count == 2)
-        #expect(ScriptingHelpers.resolveAllBadges(appState: appState, store: store).count == 2)
+        #expect(ScriptingHelpers.scriptableSpaces(appState: appState, store: store).count
+            == appState.allSpaceEntries.count)
     }
 
-    @Test("spaceCount is zero when no Spaces are available")
-    func spaceCount_emptyWithoutSpaces() {
+    @Test("scriptable elements are empty when no Spaces are available")
+    func scriptableElements_emptyWithoutSpaces() {
         let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
-        #expect(ScriptingHelpers.spaceCount(appState: appState) == 0)
-        #expect(ScriptingHelpers.resolveAllLabels(appState: appState, store: store).isEmpty)
-        #expect(ScriptingHelpers.resolveAllBadges(appState: appState, store: store).isEmpty)
+        #expect(ScriptingHelpers.scriptableSpaces(appState: appState, store: store).isEmpty)
+        #expect(ScriptingHelpers.scriptableDisplays(appState: appState, store: store).isEmpty)
     }
 
-    @Test("resolveAllLabels returns defaults when no labels are customized")
-    func resolveAllLabels_defaults() {
+    @Test("space labels return defaults when no labels are customized")
+    func spaceLabels_defaults() {
         let appState = makeAppState()
 
-        #expect(ScriptingHelpers.resolveAllLabels(appState: appState, store: store) == ["1", "2"])
+        let labels = ScriptingHelpers.scriptableSpaces(appState: appState, store: store).map(\.label)
+
+        #expect(labels == ["1", "2"])
     }
 
-    @Test("resolveAllLabels includes custom labels for non-current Spaces")
-    func resolveAllLabels_includesCustomLabels() {
+    @Test("space labels include custom labels for non-current Spaces")
+    func spaceLabels_includeCustomLabels() {
         let appState = makeAppState(activeSpaceID: 101)
         SpacePreferences.setLabel("Mail", forSpace: 1, display: appState.currentDisplayID, store: store)
 
-        #expect(ScriptingHelpers.resolveAllLabels(appState: appState, store: store) == ["Mail", "2"])
+        let labels = ScriptingHelpers.scriptableSpaces(appState: appState, store: store).map(\.label)
+
+        #expect(labels == ["Mail", "2"])
     }
 
-    @Test("resolveAllLabels resolves templates against each Space's number")
-    func resolveAllLabels_resolvesTemplatePerSpace() {
+    @Test("space labels resolve templates against each Space's number")
+    func spaceLabels_resolveTemplatePerSpace() {
         let appState = makeAppState()
         SpacePreferences.setLabel("S{#}", forSpace: 1, display: appState.currentDisplayID, store: store)
         SpacePreferences.setLabel("S{#}", forSpace: 2, display: appState.currentDisplayID, store: store)
 
-        #expect(ScriptingHelpers.resolveAllLabels(appState: appState, store: store) == ["S1", "S2"])
+        let labels = ScriptingHelpers.scriptableSpaces(appState: appState, store: store).map(\.label)
+
+        #expect(labels == ["S1", "S2"])
     }
 
-    @Test("resolveAllLabels marks fullscreen Spaces with the default label")
-    func resolveAllLabels_fullscreen() {
+    @Test("space labels mark fullscreen Spaces with the default label")
+    func spaceLabels_fullscreen() {
         // Local numbering: fullscreen entries keep a position in the list.
         // Global numbering drops them, covered by the global tests below.
         store.localSpaceNumbers = true
@@ -601,22 +604,24 @@ struct ScriptingCommandsTests {
         let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
         #expect(
-            ScriptingHelpers.resolveAllLabels(appState: appState, store: store)
+            ScriptingHelpers.scriptableSpaces(appState: appState, store: store).map(\.label)
                 == ["1", Labels.fullscreen, "2"],
             "Fullscreen entries occupy a position but do not consume a Space number"
         )
     }
 
-    @Test("resolveAllBadges yields an empty string for unbadged Spaces")
-    func resolveAllBadges_emptyWhenUnset() throws {
+    @Test("space badges yield an empty string for unbadged Spaces")
+    func spaceBadges_emptyWhenUnset() throws {
         let appState = makeAppState()
         try ScriptingHelpers.setBadge("A", forSpace: 1, appState: appState, store: store)
 
-        #expect(ScriptingHelpers.resolveAllBadges(appState: appState, store: store) == ["A", ""])
+        let badges = ScriptingHelpers.scriptableSpaces(appState: appState, store: store).map(\.badge)
+
+        #expect(badges == ["A", ""])
     }
 
-    @Test("resolveAllBadges resolves the number token per Space")
-    func resolveAllBadges_resolvesSpaceToken() throws {
+    @Test("space badges resolve the number token per Space")
+    func spaceBadges_resolveSpaceToken() throws {
         let appState = makeAppState()
         try ScriptingHelpers.setBadge(
             BadgeTemplate.spaceToken,
@@ -631,7 +636,9 @@ struct ScriptingCommandsTests {
             store: store
         )
 
-        #expect(ScriptingHelpers.resolveAllBadges(appState: appState, store: store) == ["1", "2"])
+        let badges = ScriptingHelpers.scriptableSpaces(appState: appState, store: store).map(\.badge)
+
+        #expect(badges == ["1", "2"])
     }
 
     @Test("enumeration order matches switchToSpace indexing")
@@ -639,19 +646,13 @@ struct ScriptingCommandsTests {
         let appState = makeAppState(activeSpaceID: 100)
         SpacePreferences.setLabel("Target", forSpace: 2, display: appState.currentDisplayID, store: store)
 
-        let labels = ScriptingHelpers.resolveAllLabels(appState: appState, store: store)
+        let labels = ScriptingHelpers.scriptableSpaces(appState: appState, store: store).map(\.label)
         let index = try #require(labels.firstIndex(of: "Target"))
 
-        // A caller reading the list and switching to item N+1 lands on that Space
+        // On a single display element order equals switch order; with global
+        // numbering across displays `switch to space number` spans displays
+        // while elements stay per-display
         #expect(appState.allSpaceEntries[index].id == 101)
-    }
-
-    @Test("resolveLabel and resolveBadge return empty for out-of-range Spaces")
-    func resolveLabelAndBadge_outOfRange() {
-        let appState = makeAppState()
-
-        #expect(ScriptingHelpers.resolveLabel(forSpace: 99, appState: appState, store: store).isEmpty)
-        #expect(ScriptingHelpers.resolveBadge(forSpace: 99, appState: appState, store: store).isEmpty)
     }
 
     // MARK: - Global Numbering Tests
@@ -682,11 +683,12 @@ struct ScriptingCommandsTests {
         store.localSpaceNumbers = false
         let appState = makeMultiDisplayAppState()
 
-        #expect(ScriptingHelpers.spaceCount(appState: appState, store: store) == 4)
+        #expect(appState.globalDesktopEntries.count == 4)
+        let labels = ScriptingHelpers.scriptableDisplays(appState: appState, store: store)
+            .flatMap { $0.scriptableSpaces.map(\.label) }
         #expect(
-            ScriptingHelpers.resolveAllLabels(appState: appState, store: store)
-                == ["1", "2", "3", "4"],
-            "Fullscreen Spaces carry no global Desktop number"
+            labels == ["1", "2", Labels.fullscreen, "3", "4"],
+            "Default labels follow global numbering; fullscreen Spaces carry no Desktop number"
         )
     }
 
@@ -700,7 +702,8 @@ struct ScriptingCommandsTests {
         // Desktop 3 is the second display's first regular Space, stored at
         // its fullscreen-inclusive entry position
         #expect(SpacePreferences.label(forSpace: 2, display: "Side", store: store) == "Mail")
-        #expect(ScriptingHelpers.resolveAllLabels(appState: appState, store: store)[2] == "Mail")
+        let side = ScriptingHelpers.scriptableDisplays(appState: appState, store: store)[1]
+        #expect(side.scriptableSpaces[1].label == "Mail")
     }
 
     @Test("global numbered badges resolve the number token globally")
@@ -715,7 +718,9 @@ struct ScriptingCommandsTests {
             store: store
         )
 
-        #expect(ScriptingHelpers.resolveAllBadges(appState: appState, store: store) == ["", "", "", "4"])
+        let badges = ScriptingHelpers.scriptableDisplays(appState: appState, store: store)
+            .flatMap { $0.scriptableSpaces.map(\.badge) }
+        #expect(badges == ["", "", "", "", "4"])
     }
 
     @Test("global numbered writes past the last Desktop are ignored")
@@ -725,7 +730,9 @@ struct ScriptingCommandsTests {
 
         ScriptingHelpers.setLabel("Ghost", forSpace: 5, appState: appState, store: store)
 
-        #expect(ScriptingHelpers.resolveAllLabels(appState: appState, store: store) == ["1", "2", "3", "4"])
+        let labels = ScriptingHelpers.scriptableDisplays(appState: appState, store: store)
+            .flatMap { $0.scriptableSpaces.map(\.label) }
+        #expect(labels == ["1", "2", Labels.fullscreen, "3", "4"])
     }
 
     @Test("fullscreen current Space falls back to its entry position in global mode")
@@ -772,7 +779,178 @@ struct ScriptingCommandsTests {
 
         // 17 regular Spaces exist, but macOS's numbered shortcuts stop at 16,
         // so Desktop 17 is not addressable by global number on any surface
-        #expect(ScriptingHelpers.spaceCount(appState: appState, store: store) == 16)
-        #expect(ScriptingHelpers.resolveAllLabels(appState: appState, store: store).count == 16)
+        #expect(appState.globalDesktopEntries.count == 16)
+    }
+
+    // MARK: - Scriptable Object Model Tests
+
+    @Test("scriptableDisplays lists displays in CGS order")
+    func scriptableDisplays_listsDisplaysInOrder() {
+        let appState = makeMultiDisplayAppState()
+
+        let displays = ScriptingHelpers.scriptableDisplays(appState: appState, store: store)
+
+        #expect(displays.map(\.displayNumber) == [1, 2])
+        #expect(displays.map(\.displayID) == ["Main", "Side"])
+    }
+
+    @Test("display Spaces use fullscreen-inclusive entry positions")
+    func displaySpaces_fullscreenInclusivePositions() {
+        let appState = makeMultiDisplayAppState()
+
+        let side = ScriptingHelpers.scriptableDisplays(appState: appState, store: store)[1]
+
+        #expect(side.scriptableSpaces.map(\.spaceNumber) == [1, 2, 3])
+    }
+
+    @Test("app-level Spaces follow the current display regardless of numbering mode")
+    func appLevelSpaces_followCurrentDisplay() {
+        store.localSpaceNumbers = false
+        let appState = makeMultiDisplayAppState()
+
+        let spaces = ScriptingHelpers.scriptableSpaces(appState: appState, store: store)
+
+        #expect(spaces.map(\.spaceNumber) == [1, 2])
+        #expect(spaces.map(\.displayID) == ["Main", "Main"])
+    }
+
+    @Test("space label templates follow the numbering mode per display")
+    func spaceLabel_templateFollowsNumberingMode() {
+        store.localSpaceNumbers = false
+        let appState = makeMultiDisplayAppState()
+        SpacePreferences.setLabel("S{#}", forSpace: 3, display: "Side", store: store)
+
+        let side = ScriptingHelpers.scriptableDisplays(appState: appState, store: store)[1]
+
+        // Side's Desktops start at global number 3, so its second regular
+        // Space (entry position 3) renders the global number 4
+        #expect(side.scriptableSpaces[2].label == "S4")
+        store.localSpaceNumbers = true
+        #expect(side.scriptableSpaces[2].label == "S2")
+    }
+
+    @Test("space label setter writes the raw entry key on the owning display")
+    func spaceLabel_setterWritesRawKey() {
+        store.localSpaceNumbers = false
+        let appState = makeMultiDisplayAppState()
+
+        let side = ScriptingHelpers.scriptableDisplays(appState: appState, store: store)[1]
+        side.scriptableSpaces[1].label = "Mail"
+
+        // Entry position 2 on the owning display, untouched by the global
+        // Desktop numbering that `setLabel(forSpace:)` applies
+        #expect(SpacePreferences.label(forSpace: 2, display: "Side", store: store) == "Mail")
+        #expect(side.scriptableSpaces[1].label == "Mail")
+    }
+
+    @Test("space label setter trims, clears on empty, and truncates")
+    func spaceLabel_setterTrimsClearsAndTruncates() {
+        let appState = makeAppState()
+        let spaces = ScriptingHelpers.scriptableSpaces(appState: appState, store: store)
+
+        spaces[0].label = "  Work  "
+        #expect(SpacePreferences.label(forSpace: 1, display: "Main", store: store) == "Work")
+
+        spaces[0].label = String(repeating: "x", count: LabelTemplate.maxContentLength + 5)
+        let stored = SpacePreferences.label(forSpace: 1, display: "Main", store: store)
+        #expect(stored?.count == LabelTemplate.maxContentLength)
+        #expect(stored?.hasSuffix("…") == true)
+
+        spaces[0].label = "   "
+        #expect(SpacePreferences.label(forSpace: 1, display: "Main", store: store) == nil)
+    }
+
+    @Test("space badge setter validates and preserves the badge corner")
+    func spaceBadge_setterValidatesAndPreservesCorner() {
+        let appState = makeAppState()
+        let spaces = ScriptingHelpers.scriptableSpaces(appState: appState, store: store)
+        SpacePreferences.setBadge(
+            SpaceBadge(character: "A", position: .bottomRight),
+            forSpace: 1,
+            display: "Main",
+            store: store
+        )
+
+        spaces[0].badge = "👍🏽"
+        let updated = SpacePreferences.badge(forSpace: 1, display: "Main", store: store)
+        #expect(updated?.character == "👍🏽", "A multi-scalar emoji is a single character")
+        #expect(updated?.position == .bottomRight)
+
+        spaces[0].badge = "XY"
+        #expect(
+            SpacePreferences.badge(forSpace: 1, display: "Main", store: store)?.character == "👍🏽",
+            "An invalid badge leaves the stored badge untouched"
+        )
+
+        spaces[0].badge = ""
+        #expect(SpacePreferences.badge(forSpace: 1, display: "Main", store: store) == nil)
+        #expect(spaces[1].badge.isEmpty)
+    }
+
+    @Test("space badge number token follows the numbering mode per display")
+    func spaceBadge_tokenFollowsNumberingMode() throws {
+        store.localSpaceNumbers = false
+        let appState = makeMultiDisplayAppState()
+        try ScriptingHelpers.setBadge(BadgeTemplate.spaceToken, at: (3, "Side"), store: store)
+
+        let side = ScriptingHelpers.scriptableDisplays(appState: appState, store: store)[1]
+
+        #expect(side.scriptableSpaces[2].badge == "4")
+        store.localSpaceNumbers = true
+        #expect(side.scriptableSpaces[2].badge == "2")
+    }
+
+    @Test("currentScriptableSpace matches the current Space surface")
+    func currentScriptableSpace_matchesCurrentSurface() {
+        let appState = makeAppState()
+
+        let current = ScriptingHelpers.currentScriptableSpace(appState: appState, store: store)
+
+        #expect(current?.spaceNumber == appState.currentSpace)
+        #expect(current?.displayID == "Main")
+        #expect(
+            current?.label == ScriptingHelpers.resolveCurrentLabel(appState: appState, store: store),
+            "The element and the Shortcuts surface agree on the current label"
+        )
+    }
+
+    @Test("currentScriptableSpace is nil while the snapshot is empty")
+    func currentScriptableSpace_nilWhenEmpty() {
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+
+        #expect(ScriptingHelpers.currentScriptableSpace(appState: appState, store: store) == nil)
+    }
+
+    @Test("display name is empty when no attached screen matches")
+    func displayName_emptyForUnmatchedDisplay() {
+        let appState = makeAppState()
+
+        let displays = ScriptingHelpers.scriptableDisplays(appState: appState, store: store)
+
+        #expect(displays[0].name.isEmpty, "Stub display IDs match no real screen UUID")
+    }
+
+    @Test("disconnected displays and out-of-range entries resolve to nothing")
+    func scriptableSpaces_outOfRangeAndDisconnected() {
+        let appState = makeAppState()
+
+        #expect(ScriptingHelpers.scriptableSpaces(
+            onDisplay: "Gone",
+            container: .application,
+            appState: appState,
+            store: store
+        ).isEmpty)
+        #expect(ScriptingHelpers.resolveLabel(
+            atEntry: 99,
+            displayID: "Main",
+            appState: appState,
+            store: store
+        ).isEmpty)
+        #expect(ScriptingHelpers.resolveBadge(
+            atEntry: 99,
+            displayID: "Main",
+            appState: appState,
+            store: store
+        ).isEmpty)
     }
 }

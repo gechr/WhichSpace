@@ -163,29 +163,10 @@ final class SpaceEditorModel {
     }
 
     /// The system name of a display, for example "Built-in Retina Display".
-    /// CGS identifies displays by UUID string and `NSScreen` publishes only a
-    /// CoreGraphics display ID, so the screens are matched through the UUID
-    /// derived from theirs. Nil when no attached screen claims the UUID,
-    /// leaving the picker's numbers to stand on their own.
+    /// Nil when no attached screen claims the UUID, leaving the picker's
+    /// numbers to stand on their own.
     func displayName(for displayID: String?) -> String? {
-        guard let displayID else {
-            return nil
-        }
-        for screen in NSScreen.screens {
-            guard let number = screen.deviceDescription[
-                NSDeviceDescriptionKey("NSScreenNumber")
-            ] as? NSNumber,
-                let uuid = CGDisplayCreateUUIDFromDisplayID(
-                    CGDirectDisplayID(number.uint32Value)
-                )?.takeRetainedValue()
-            else {
-                continue
-            }
-            if CFUUIDCreateString(nil, uuid) as String == displayID {
-                return screen.localizedName
-            }
-        }
-        return nil
+        DisplayNameResolver.localizedName(for: displayID)
     }
 
     /// Keeps the selection valid when the display changes or Spaces close.

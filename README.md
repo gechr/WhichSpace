@@ -189,6 +189,8 @@ WhichSpace provides native actions in the [Shortcuts](https://support.apple.com/
 
 "Switch Space" and "Get Current Space Number" are also available directly from Spotlight and Siri.
 
+AppleScript exposes the same state through `space` and `display` objects. Setting a label or badge to "" resets a single Space, and the `reset all space labels` / `reset all space badges` commands mirror the **Reset All** actions.
+
 ---
 
 ### Scripting
@@ -236,33 +238,42 @@ osascript -e 'tell application "WhichSpace" to move front window right'
 
 ##### Spaces
 
+Spaces are objects: `space N` addresses the current display, `space N of display M` addresses another display, and `current space` is the Space you are on. Positions are fixed per display, unaffected by the numbering preference.
+
 ```bash
 # Get the current Space number (1-based numeric index)
 osascript -e 'tell application "WhichSpace" to get current space number'
 
-# Get the number of Spaces addressable by number
-osascript -e 'tell application "WhichSpace" to get space count'
+# Count the Spaces on the current display, or on another display
+osascript -e 'tell application "WhichSpace" to count spaces'
+osascript -e 'tell application "WhichSpace" to count spaces of display 2'
 
-# Get the labels of all Spaces, in order (item `N` is the target of `switch to space number N`)
-osascript -e 'tell application "WhichSpace" to get space labels'
+# Get the current Space as an object, e.g. `space 3 of application "WhichSpace"`
+osascript -e 'tell application "WhichSpace" to get current space'
 
-# Get the badges of all Spaces, in the same order
-osascript -e 'tell application "WhichSpace" to get space badges'
+# Get the labels of all Spaces on the current display, in order
+osascript -e 'tell application "WhichSpace" to get label of every space'
+
+# Get the badges of all Spaces on the current display, in the same order
+osascript -e 'tell application "WhichSpace" to get badge of every space'
 ```
 
 ##### Labels
 
 ```bash
 # Get the current Space label (as shown in the menu bar, e.g. "1", "2", "F" for fullscreen)
-osascript -e 'tell application "WhichSpace" to get current space label'
+osascript -e 'tell application "WhichSpace" to get label of current space'
 
 # Set a custom label for the current Space
-osascript -e 'tell application "WhichSpace" to set current space label to "Work"'
+osascript -e 'tell application "WhichSpace" to set label of current space to "Work"'
 
-# Reset the current Space label to its default (e.g. the Space number)
-osascript -e 'tell application "WhichSpace" to reset current space label'
+# Set a custom label for any Space, without switching to it
+osascript -e 'tell application "WhichSpace" to set label of space 3 to "Mail"'
 
-# Reset the labels of all Spaces to their defaults
+# Reset a Space label to its default (e.g. the Space number)
+osascript -e 'tell application "WhichSpace" to set label of space 3 to ""'
+
+# Reset the labels of all Spaces on every display to their defaults
 osascript -e 'tell application "WhichSpace" to reset all space labels'
 ```
 
@@ -270,16 +281,32 @@ osascript -e 'tell application "WhichSpace" to reset all space labels'
 
 ```bash
 # Get the current Space badge character
-osascript -e 'tell application "WhichSpace" to get current space badge'
+osascript -e 'tell application "WhichSpace" to get badge of current space'
 
-# Set a single-character badge for the current Space ("#" shows the Space number)
-osascript -e 'tell application "WhichSpace" to set current space badge to "A"'
+# Set a single-character badge for any Space ("#" shows the Space number)
+osascript -e 'tell application "WhichSpace" to set badge of current space to "A"'
+osascript -e 'tell application "WhichSpace" to set badge of space 2 to "#"'
 
-# Reset the current Space badge to its default
-osascript -e 'tell application "WhichSpace" to reset current space badge'
+# Reset a Space badge to its default
+osascript -e 'tell application "WhichSpace" to set badge of space 2 to ""'
 
-# Reset the badges of all Spaces to their defaults
+# Reset the badges of all Spaces on every display to their defaults
 osascript -e 'tell application "WhichSpace" to reset all space badges'
+```
+
+##### Displays
+
+Displays are numbered in the same order as the display picker in WhichSpace settings.
+
+```bash
+# Get the system names of all displays, e.g. "Built-in Retina Display"
+osascript -e 'tell application "WhichSpace" to get name of every display'
+
+# Address a Space on a specific display
+osascript -e 'tell application "WhichSpace" to set label of space 2 of display 2 to "Mail"'
+
+# Read every Space label on a specific display
+osascript -e 'tell application "WhichSpace" to get label of every space of display 2'
 ```
 
 ---

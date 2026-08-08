@@ -30,6 +30,28 @@ final class MoveWindowToSpaceCommand: NSScriptCommand {
     }
 }
 
+/// Command handler for AppleScript "reset all space badges" command.
+/// Usage: `tell application "WhichSpace" to reset all space badges`
+final class ResetAllSpaceBadgesCommand: NSScriptCommand {
+    override func performDefaultImplementation() -> Any? {
+        MainActor.assumeIsolated {
+            SpacePreferences.clearAllBadges(store: AppEnvironment.shared.store)
+        }
+        return nil
+    }
+}
+
+/// Command handler for AppleScript "reset all space labels" command.
+/// Usage: `tell application "WhichSpace" to reset all space labels`
+final class ResetAllSpaceLabelsCommand: NSScriptCommand {
+    override func performDefaultImplementation() -> Any? {
+        MainActor.assumeIsolated {
+            SpacePreferences.clearAllLabels(store: AppEnvironment.shared.store)
+        }
+        return nil
+    }
+}
+
 /// Command handler for AppleScript "send front window left" command.
 /// Usage: `tell application "WhichSpace" to send front window left`
 final class SendWindowLeftCommand: NSScriptCommand {
@@ -89,56 +111,6 @@ extension NSScriptCommand {
             }
             command.resumeExecution(withResult: nil)
         }
-    }
-}
-
-/// Command handler for AppleScript "reset all space badges" command.
-/// Usage: `tell application "WhichSpace" to reset all space badges`
-final class ResetAllSpaceBadgesCommand: NSScriptCommand {
-    override func performDefaultImplementation() -> Any? {
-        MainActor.assumeIsolated {
-            SpacePreferences.clearAllBadges(store: AppEnvironment.shared.store)
-        }
-        return nil
-    }
-}
-
-/// Command handler for AppleScript "reset all space labels" command.
-/// Usage: `tell application "WhichSpace" to reset all space labels`
-final class ResetAllSpaceLabelsCommand: NSScriptCommand {
-    override func performDefaultImplementation() -> Any? {
-        MainActor.assumeIsolated {
-            SpacePreferences.clearAllLabels(store: AppEnvironment.shared.store)
-        }
-        return nil
-    }
-}
-
-/// Command handler for AppleScript "reset current space badge" command.
-/// Usage: `tell application "WhichSpace" to reset current space badge`
-final class ResetCurrentSpaceBadgeCommand: NSScriptCommand {
-    override func performDefaultImplementation() -> Any? {
-        MainActor.assumeIsolated {
-            ScriptingHelpers.resetCurrentBadge(
-                appState: AppEnvironment.shared.appState,
-                store: AppEnvironment.shared.store
-            )
-        }
-        return nil
-    }
-}
-
-/// Command handler for AppleScript "reset current space label" command.
-/// Usage: `tell application "WhichSpace" to reset current space label`
-final class ResetCurrentSpaceLabelCommand: NSScriptCommand {
-    override func performDefaultImplementation() -> Any? {
-        MainActor.assumeIsolated {
-            ScriptingHelpers.resetCurrentLabel(
-                appState: AppEnvironment.shared.appState,
-                store: AppEnvironment.shared.store
-            )
-        }
-        return nil
     }
 }
 
@@ -416,95 +388,6 @@ enum ScriptingHelpers {
         SpaceSwitcher.switchRelative(goRight: goRight)
     }
 
-    /// Returns the number of Spaces addressable by `switch to space number`:
-    /// the current display's Spaces with local numbering, numbered Desktops
-    /// across every display otherwise.
-    static func spaceCount(
-        appState: AppState,
-        store: DefaultsStore = AppEnvironment.shared.store
-    ) -> Int {
-        store.localSpaceNumbers
-            ? appState.allSpaceEntries.count
-            : appState.globalDesktopEntries.count
-    }
-
-    /// Returns the resolved label of every numbered Space, in the same order
-    /// as `spaceCount`, so position N in the list is the Space that
-    /// `switch to space number N` targets.
-    static func resolveAllLabels(appState: AppState, store: DefaultsStore) -> [String] {
-        guard store.localSpaceNumbers else {
-            return appState.globalDesktopEntries.indices.map {
-                resolveGlobalLabel(number: $0 + 1, appState: appState, store: store)
-            }
-        }
-        return appState.allSpaceEntries.indices.map {
-            resolveLabel(forSpace: $0 + 1, appState: appState, store: store)
-        }
-    }
-
-    /// Returns the badge of every numbered Space, in the same order as
-    /// `resolveAllLabels`. Spaces without a badge yield "".
-    static func resolveAllBadges(appState: AppState, store: DefaultsStore) -> [String] {
-        guard store.localSpaceNumbers else {
-            return appState.globalDesktopEntries.indices.map {
-                resolveGlobalBadge(number: $0 + 1, appState: appState, store: store)
-            }
-        }
-        return appState.allSpaceEntries.indices.map {
-            resolveBadge(forSpace: $0 + 1, appState: appState, store: store)
-        }
-    }
-
-    /// Returns the label shown for the globally numbered Desktop: its custom
-    /// label with space tokens resolved against the global number, otherwise
-    /// the number itself, matching the menu bar in global mode.
-    private static func resolveGlobalLabel(number: Int, appState: AppState, store: DefaultsStore) -> String {
-        let target = appState.globalDesktopEntries[number - 1]
-        if let customLabel = SpacePreferences.label(
-            forSpace: target.position,
-            display: target.displayID,
-            store: store
-        ), !customLabel.isEmpty {
-            return LabelTemplate.resolve(customLabel, space: number)
-        }
-        return String(number)
-    }
-
-    /// Returns the badge of the globally numbered Desktop, with the number
-    /// token resolved against the global number. Unbadged Desktops yield "".
-    private static func resolveGlobalBadge(number: Int, appState: AppState, store: DefaultsStore) -> String {
-        let target = appState.globalDesktopEntries[number - 1]
-        guard let badge = SpacePreferences.badge(
-            forSpace: target.position,
-            display: target.displayID,
-            store: store
-        ) else {
-            return ""
-        }
-        guard badge.character == BadgeTemplate.spaceToken else {
-            return badge.character
-        }
-        return String(number)
-    }
-
-    /// Returns the label shown for the given Space: its custom label when set,
-    /// with space tokens resolved against the displayed number, otherwise the
-    /// default label ("1", "2", "F" for fullscreen).
-    static func resolveLabel(forSpace number: Int, appState: AppState, store: DefaultsStore) -> String {
-        if let customLabel = SpacePreferences.label(
-            forSpace: number,
-            display: appState.currentDisplayID,
-            store: store
-        ), !customLabel.isEmpty {
-            return LabelTemplate.resolve(customLabel, space: appState.displayNumber(forSpace: number))
-        }
-        let index = number - 1
-        guard appState.allSpaceEntries.indices.contains(index) else {
-            return ""
-        }
-        return appState.allSpaceEntries[index].label
-    }
-
     static func resolveCurrentLabel(appState: AppState, store: DefaultsStore) -> String {
         // The current Space keeps the snapshot's own label as its fallback,
         // which stays correct even while entries are momentarily empty
@@ -561,7 +444,7 @@ enum ScriptingHelpers {
         setLabel(label, at: (appState.currentSpace, appState.currentDisplayID), store: store)
     }
 
-    private static func setLabel(
+    static func setLabel(
         _ label: String,
         at key: (position: Int, displayID: String?),
         store: DefaultsStore
@@ -648,7 +531,7 @@ enum ScriptingHelpers {
         try setBadge(character, at: (appState.currentSpace, appState.currentDisplayID), store: store)
     }
 
-    private static func setBadge(
+    static func setBadge(
         _ character: String,
         at key: (position: Int, displayID: String?),
         store: DefaultsStore
@@ -702,83 +585,5 @@ extension NSApplication {
     /// Usage: `tell application "WhichSpace" to get current space number`
     @MainActor @objc var currentSpaceNumber: Int {
         AppEnvironment.shared.appState.currentSpaceDisplayNumber
-    }
-
-    /// Returns the number of Spaces addressable by `switch to space number`.
-    /// Usage: `tell application "WhichSpace" to get space count`
-    @MainActor @objc var spaceCount: Int {
-        ScriptingHelpers.spaceCount(appState: AppEnvironment.shared.appState)
-    }
-
-    /// Returns the label of every numbered Space, in order, so item N of the
-    /// list is the Space that `switch to space number N` targets.
-    /// Usage: `tell application "WhichSpace" to get space labels`
-    @MainActor @objc var spaceLabels: [String] {
-        ScriptingHelpers.resolveAllLabels(
-            appState: AppEnvironment.shared.appState,
-            store: AppEnvironment.shared.store
-        )
-    }
-
-    /// Returns the badge of every numbered Space, in the same order as
-    /// `spaceLabels`. Spaces without a badge yield "".
-    /// Usage: `tell application "WhichSpace" to get space badges`
-    @MainActor @objc var spaceBadges: [String] {
-        ScriptingHelpers.resolveAllBadges(
-            appState: AppEnvironment.shared.appState,
-            store: AppEnvironment.shared.store
-        )
-    }
-
-    /// Gets or sets the current space label.
-    /// Reading returns the custom label if set, otherwise "1", "2", "F" for fullscreen.
-    /// Assigning a non-empty string applies a custom label; assigning "" resets it,
-    /// as a synonym for the `reset current space label` command.
-    /// Over-long labels are truncated with a trailing ellipsis.
-    /// Usage: `tell application "WhichSpace" to get current space label`
-    /// Usage: `tell application "WhichSpace" to set current space label to "Label"`
-    @MainActor @objc var currentSpaceLabel: String {
-        get {
-            ScriptingHelpers.resolveCurrentLabel(
-                appState: AppEnvironment.shared.appState,
-                store: AppEnvironment.shared.store
-            )
-        }
-        set {
-            ScriptingHelpers.setCurrentLabel(
-                newValue,
-                appState: AppEnvironment.shared.appState,
-                store: AppEnvironment.shared.store
-            )
-        }
-    }
-
-    /// Gets or sets the current space badge character.
-    /// Reading returns the badge character ("#" resolved to the Space number), or "" when unset.
-    /// Assigning a single character applies the badge; more than one character is an error and
-    /// "" resets it, as a synonym for the `reset current space badge` command.
-    /// Usage: `tell application "WhichSpace" to get current space badge`
-    /// Usage: `tell application "WhichSpace" to set current space badge to "A"`
-    @MainActor @objc var currentSpaceBadge: String {
-        get {
-            ScriptingHelpers.resolveCurrentBadge(
-                appState: AppEnvironment.shared.appState,
-                store: AppEnvironment.shared.store
-            )
-        }
-        set {
-            do {
-                try ScriptingHelpers.setCurrentBadge(
-                    newValue,
-                    appState: AppEnvironment.shared.appState,
-                    store: AppEnvironment.shared.store
-                )
-            } catch {
-                // KVC setters can't throw; report through the in-flight command
-                let command = NSScriptCommand.current()
-                command?.scriptErrorNumber = errOSACantAssign
-                command?.scriptErrorString = error.localizedDescription
-            }
-        }
     }
 }
