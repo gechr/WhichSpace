@@ -1,4 +1,5 @@
 import AppKit
+import Combine
 import Settings
 import Sparkle
 import SwiftUI
@@ -15,9 +16,13 @@ struct GeneralPane: View {
     let onExportSettings: () -> Void
     let onResetAllSettings: () -> Void
 
-    /// Sparkle state is not observable; bumped when the check toggle flips
-    /// so dependent rows re-read the updater
+    /// Only `canCheckForUpdates` is KVO-observable on the updater; bumped
+    /// when the check toggle flips or a session ends so the other rows
+    /// re-read the updater
     @State private var updaterTick = 0
+
+    /// Mirrors the updater's in-flight state, driven by KVO below
+    @State private var checkInProgress = false
 
     var body: some View {
         let _ = updaterTick
@@ -70,10 +75,13 @@ struct GeneralPane: View {
                 SettingsRow(subtitle: lastCheckedCaption, anchor: .checkForUpdates) {
                     EmptyView()
                 } control: {
+                    if checkInProgress {
+                        ProgressView().controlSize(.small)
+                    }
                     Button(Localization.actionCheckForUpdates) {
                         onCheckForUpdates()
-                        refreshLastChecked()
                     }
+                    .disabled(checkInProgress)
                     .help(String(format: Localization.tipCheckForUpdates, AppInfo.appName))
                 }
             }
@@ -110,6 +118,28 @@ struct GeneralPane: View {
             }
             footer
         }
+        .onReceive(canCheckPublisher) { canCheck in
+            // Each body evaluation subscribes a fresh KVO publisher whose
+            // initial emission lands here; bumping state on those replays
+            // would re-render and resubscribe forever
+            guard checkInProgress != !canCheck else {
+                return
+            }
+            checkInProgress = !canCheck
+            // Sparkle stamps the check date when the appcast fetch starts,
+            // so the caption re-reads on every session transition
+            updaterTick += 1
+        }
+    }
+
+    /// KVO publisher for the updater's in-flight state: `canCheckForUpdates`
+    /// is false while an update session runs. A nil updater (previews) reads
+    /// as idle.
+    private var canCheckPublisher: AnyPublisher<Bool, Never> {
+        guard let updater else {
+            return Just(true).eraseToAnyPublisher()
+        }
+        return updater.publisher(for: \.canCheckForUpdates).eraseToAnyPublisher()
     }
 
     /// Says "never" until Sparkle has checked at least once, so a bare row
@@ -119,17 +149,6 @@ struct GeneralPane: View {
             .map { $0.formatted(date: .abbreviated, time: .shortened) }
             ?? Localization.labelNever
         return String(format: Localization.tipLastChecked, value)
-    }
-
-    /// Sparkle stamps the check date when the appcast fetch starts, not when
-    /// the button is clicked, so the caption re-reads shortly after as well
-    /// as immediately.
-    private func refreshLastChecked() {
-        updaterTick += 1
-        Task {
-            try? await Task.sleep(for: .seconds(2))
-            updaterTick += 1
-        }
     }
 
     private var footer: some View {
