@@ -57,6 +57,16 @@ struct GeneralPane: View {
                     anchor: .autoInstallUpdates
                 )
                 SettingsRowDivider()
+                // Applies to manual checks too, so not gated on the
+                // auto-check toggle
+                SettingsToggleRow(
+                    title: Localization.toggleBetaUpdates,
+                    isOn: model.binding(\.includeBetaUpdates),
+                    icon: "testtube.2",
+                    subtitle: Localization.tipBetaUpdates,
+                    anchor: .betaUpdates
+                )
+                SettingsRowDivider()
                 SettingsRow(subtitle: lastCheckedCaption, anchor: .checkForUpdates) {
                     EmptyView()
                 } control: {

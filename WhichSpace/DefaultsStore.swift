@@ -91,6 +91,7 @@ enum KeySpecs {
         defaultValue: FullscreenIconStyle.appIcon
     )
     static let horizontalScrollEnabled = TypedKeySpec(name: "horizontalScrollEnabled", defaultValue: false)
+    static let includeBetaUpdates = TypedKeySpec(name: "includeBetaUpdates", defaultValue: false)
     static let invertHorizontalScroll = TypedKeySpec(name: "invertHorizontalScroll", defaultValue: false)
     static let invertVerticalScroll = TypedKeySpec(name: "invertVerticalScroll", defaultValue: false)
     static let paddingScale = TypedKeySpec(name: "paddingScale", defaultValue: Layout.defaultPaddingScale)
@@ -171,6 +172,7 @@ enum KeySpecs {
         hideFullscreenApps,
         hideSingleSpace,
         horizontalScrollEnabled,
+        includeBetaUpdates,
         invertHorizontalScroll,
         invertVerticalScroll,
         localSpaceNumbers,
@@ -213,6 +215,7 @@ enum KeySpecs {
         clickToSwitchSpaces.name,
         displaySpaceSounds.name,
         horizontalScrollEnabled.name,
+        includeBetaUpdates.name,
         invertHorizontalScroll.name,
         invertVerticalScroll.name,
         moveApplicationAlertSuppress.name,
@@ -472,6 +475,11 @@ final class DefaultsStore {
     var horizontalScrollEnabled: Bool {
         get { self[KeySpecs.horizontalScrollEnabled] }
         set { self[KeySpecs.horizontalScrollEnabled] = newValue }
+    }
+
+    var includeBetaUpdates: Bool {
+        get { self[KeySpecs.includeBetaUpdates] }
+        set { self[KeySpecs.includeBetaUpdates] = newValue }
     }
 
     var invertHorizontalScroll: Bool {

@@ -50,6 +50,7 @@ enum SettingsAnchor: String, CaseIterable {
     case launchAtLogin = "launch-at-login"
     case autoCheckUpdates = "auto-check-updates"
     case autoInstallUpdates = "auto-install-updates"
+    case betaUpdates = "beta-updates"
     case checkForUpdates = "check-for-updates"
     case backup
     case resetSettings = "reset-settings"
@@ -135,8 +136,8 @@ enum SettingsAnchor: String, CaseIterable {
     /// The pane the row lives on, letting a link name the setting alone.
     var pane: SettingsPaneID {
         switch self {
-        case .launchAtLogin, .autoCheckUpdates, .autoInstallUpdates, .checkForUpdates, .backup,
-             .resetSettings:
+        case .launchAtLogin, .autoCheckUpdates, .autoInstallUpdates, .betaUpdates, .checkForUpdates,
+             .backup, .resetSettings:
             .general
         case .iconSize, .iconPadding, .shrinkToFit, .localSpaceNumbers, .separatorColor,
              .separatorStyle, .showAllDisplays, .showAllSpaces, .dimInactiveSpaces,

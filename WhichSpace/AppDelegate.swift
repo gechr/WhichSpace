@@ -51,7 +51,7 @@ enum ClickPermission {
 // MARK: - App Delegate
 
 @MainActor
-final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverDelegate {
+final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SPUStandardUserDriverDelegate {
     // MARK: - Properties
 
     private let confirmAction: ConfirmAction
@@ -303,7 +303,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
         // Start Sparkle so scheduled update checks run
         updaterController = SPUStandardUpdaterController(
             startingUpdater: true,
-            updaterDelegate: nil,
+            updaterDelegate: self,
             userDriverDelegate: self
         )
 
@@ -538,6 +538,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverD
                 self?.updateStatusBarIcon()
             }
         })
+    }
+
+    // MARK: - SPUUpdaterDelegate
+
+    /// Queried on every update check, so flipping the settings toggle takes
+    /// effect without a restart. Items tagged with a channel in the appcast
+    /// are invisible unless their channel is returned here.
+    nonisolated func allowedChannels(for _: SPUUpdater) -> Set<String> {
+        // Sparkle calls updater-delegate methods on the main thread
+        MainActor.assumeIsolated {
+            store.includeBetaUpdates ? ["beta"] : []
+        }
     }
 
     // MARK: - SPUStandardUserDriverDelegate
