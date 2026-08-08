@@ -6,6 +6,26 @@
     <description>Most recent changes with links to updates.</description>
     <language>en</language>
     <item>
+        <title>Version 1.2.15</title>
+        <description><![CDATA[
+          <h2>v1.2.15</h2>
+          <ul>
+            <li>picker: Make app icon sizes consistent</li>
+            <li>deps: Update all versions</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.2.15</sparkle:fullReleaseNotesLink>
+        <pubDate>Sat, 08 Aug 2026 16:03:05 +0100</pubDate>
+        <enclosure
+          url="https://github.com/gechr/WhichSpace/releases/download/v1.2.15/WhichSpace.zip"
+          sparkle:version="1.2.15"
+          sparkle:shortVersionString="1.2.15"
+          sparkle:edSignature="VZIboe3eWi63Dt8Dl3lgRYVIFpdwimpB3fepLldnsVWBzd534JVPgdV3Bqh6ozbUq8GnwhqsIgwSdYhzrWEkCQ=="
+          length="4087587"
+          type="application/octet-stream" />
+        <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      </item>
+    <item>
         <title>Version 1.2.14</title>
         <description><![CDATA[
           <h2>v1.2.14</h2>
