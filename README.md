@@ -80,7 +80,7 @@ brew install --cask whichspace
 
 #### Choose foreground and background colors for each Space, or apply one color to all Spaces
 
-<img src="Screenshots/SectionColor.png" width="60%">
+<img src="Screenshots/SectionColor.png" width="500">
 
 ---
 
@@ -88,7 +88,7 @@ brew install --cask whichspace
 
 #### Choose from a variety of icons for each Space, or apply one icon to all Spaces
 
-<img src="Screenshots/SectionNumber.png" width="60%">
+<img src="Screenshots/SectionNumber.png" width="500">
 
 ---
 
@@ -96,11 +96,11 @@ brew install --cask whichspace
 
 #### Use custom symbols instead of numbers for a more personalised look
 
-<img src="Screenshots/PickerSymbol.png" width="60%">
+<img src="Screenshots/PickerSymbol.png" width="500">
 
 #### Or pick an emoji instead
 
-<img src="Screenshots/PickerEmoji.png" width="60%">
+<img src="Screenshots/PickerEmoji.png" width="500">
 
 ---
 
@@ -108,7 +108,7 @@ brew install --cask whichspace
 
 #### Add a small character next to the Space number
 
-<img src="Screenshots/SectionBadge.png" width="60%">
+<img src="Screenshots/SectionBadge.png" width="500">
 
 > [!NOTE]
 > Use `#` as the badge character to insert the current Space number.
@@ -119,7 +119,7 @@ brew install --cask whichspace
 
 #### Replace Space numbers with custom text labels
 
-<img src="Screenshots/SectionLabel.png" width="60%">
+<img src="Screenshots/SectionLabel.png" width="500">
 
 > [!NOTE]
 > Use `{#}` in a label to insert the current Space number, e.g. `{#} - Work` → `3 - Work`.
@@ -130,7 +130,7 @@ brew install --cask whichspace
 
 #### Adjust the scale and padding of the icons in the menu bar
 
-<img src="Screenshots/SectionSize.png" width="60%">
+<img src="Screenshots/SectionSize.png" width="500">
 
 ---
 
@@ -138,7 +138,7 @@ brew install --cask whichspace
 
 #### Choose a custom font for each Space, or apply one font to all Spaces
 
-<img src="Screenshots/SectionFont.png" width="60%">
+<img src="Screenshots/SectionFont.png" width="500">
 
 ---
 
@@ -146,7 +146,7 @@ brew install --cask whichspace
 
 #### Switch Spaces or move windows with global keyboard shortcuts
 
-<img src="Screenshots/SectionKeybinds.png" width="60%">
+<img src="Screenshots/SectionKeybinds.png" width="500">
 
 > [!NOTE]
 > The **Window** shortcuts move the front window between Spaces.
@@ -159,7 +159,7 @@ brew install --cask whichspace
 
 #### Play a sound when switching Spaces
 
-<img src="Screenshots/SectionSound.png" width="60%">
+<img src="Screenshots/SectionSound.png" width="500">
 
 Choose from built-in macOS system sounds, or add your own custom sounds.
 
