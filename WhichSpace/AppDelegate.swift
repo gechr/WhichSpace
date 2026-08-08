@@ -88,6 +88,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
     private static let scrollSwitchCooldown: TimeInterval = 0.3
     private var scrollAccumulator = 0.0
     private var lastScrollSwitchTimestamp: TimeInterval = -.infinity
+    /// Whether a scroll has already deep-linked System Settings after a revoke
+    private var scrollOpenedSettingsForRevocation = false
 
     /// Reads whether anyone else's status items are still drawn
     private let menuBarVisibilityProbe: MenuBarVisibilityProbe
@@ -711,6 +713,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
             goRight = delta > 0
         }
         if shouldSwitch {
+            // Revoked mid-session: the frozen trust flag still reads trusted,
+            // so the switch would silently no-op; deep-link System Settings
+            // once instead, matching clicks and hotkeys
+            if isProcessTrusted(), !isCapabilityTrusted() {
+                if !scrollOpenedSettingsForRevocation {
+                    scrollOpenedSettingsForRevocation = true
+                    Accessibility.recoverFromRevocation()
+                }
+                return nil
+            }
             lastScrollSwitchTimestamp = event.timestamp
             let switched = relativeSpaceSwitchAction(goRight, store.scrollWrapAround)
             // Gesture phases indicate direct touch interaction more reliably
