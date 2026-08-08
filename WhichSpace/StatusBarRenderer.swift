@@ -89,7 +89,27 @@ final class StatusBarRenderer {
         else {
             return nil
         }
-        return app.icon
+        return StatusBarRenderer.pickerAppIcon(for: app)
+    }
+
+    /// Normalized picker icons keyed by bundle identifier, so the pixel
+    /// scan runs once per app rather than on every menu open.
+    private static var pickerAppIconCache: [String: NSImage] = [:]
+
+    /// The app's icon normalized to a uniform artwork size, so apps whose
+    /// icons bake in different transparent margins still render at the
+    /// same visual size in the Space picker.
+    static func pickerAppIcon(for app: NSRunningApplication) -> NSImage? {
+        guard let icon = app.icon else {
+            return nil
+        }
+        let key = app.bundleIdentifier ?? String(app.processIdentifier)
+        if let cached = pickerAppIconCache[key] {
+            return cached
+        }
+        let normalized = SpaceIconGenerator.normalizedAppIcon(icon, side: Layout.spacePickerAppIconSize)
+        pickerAppIconCache[key] = normalized
+        return normalized
     }
 
     private static let spacesWithWindowsCacheTTL: TimeInterval = 0.2

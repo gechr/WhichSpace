@@ -794,6 +794,109 @@ enum SpaceIconGenerator {
         }
     }
 
+    // MARK: - App Icon Normalization
+
+    /// Fraction of the icon canvas Apple's icon grid reserves for artwork
+    /// (824 of 1024 points). Compliant icons bake this margin into their
+    /// bitmaps; non-compliant ones fill more or less of the canvas.
+    private static let appIconGridFraction = 824.0 / 1024.0
+
+    /// Alpha level below which a pixel counts as transparent margin, so a
+    /// faint drop shadow does not inflate the measured artwork bounds.
+    private static let appIconAlphaThreshold: UInt8 = 25
+
+    /// Redraws an app icon so its opaque artwork spans the icon grid
+    /// fraction of a square canvas, centered on the artwork rather than
+    /// the canvas. Margins vary between apps and even between the small
+    /// and large representations of one icon, so the content is measured
+    /// and rebaked at the raster size the icon will actually display at
+    /// (2x for Retina). Returns the icon unchanged when it cannot be
+    /// rasterized or has no opaque pixels.
+    static func normalizedAppIcon(_ icon: NSImage, side: Double) -> NSImage {
+        let sample = Int(side.rounded(.up)) * 2
+        let canvas = CGRect(x: 0, y: 0, width: Double(sample), height: Double(sample))
+        guard sample > 0,
+              icon.size.width > 0, icon.size.height > 0,
+              let measured = rasterizedAppIcon(icon, sample: sample, in: canvas),
+              let content = opaqueBounds(of: measured, sample: sample)
+        else {
+            return icon
+        }
+        let factor = appIconGridFraction * Double(sample) / max(content.width, content.height)
+        let normalizedRect = CGRect(
+            x: canvas.midX - content.midX * factor,
+            y: canvas.midY - content.midY * factor,
+            width: canvas.width * factor,
+            height: canvas.height * factor
+        )
+        guard let normalized = rasterizedAppIcon(icon, sample: sample, in: normalizedRect),
+              let image = normalized.makeImage()
+        else {
+            return icon
+        }
+        let rep = NSBitmapImageRep(cgImage: image)
+        rep.size = NSSize(width: side, height: side)
+        let result = NSImage(size: rep.size)
+        result.addRepresentation(rep)
+        return result
+    }
+
+    /// Draws the icon into a fresh sample x sample bitmap at the given
+    /// destination rect, returning the context for pixel inspection.
+    private static func rasterizedAppIcon(_ icon: NSImage, sample: Int, in rect: CGRect) -> CGContext? {
+        guard let context = CGContext(
+            data: nil,
+            width: sample,
+            height: sample,
+            bitsPerComponent: 8,
+            bytesPerRow: sample * 4,
+            space: CGColorSpaceCreateDeviceRGB(),
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+        ) else {
+            return nil
+        }
+        NSGraphicsContext.saveGraphicsState()
+        NSGraphicsContext.current = NSGraphicsContext(cgContext: context, flipped: false)
+        icon.draw(
+            in: rect,
+            from: NSRect(origin: .zero, size: icon.size),
+            operation: .copy,
+            fraction: 1
+        )
+        NSGraphicsContext.restoreGraphicsState()
+        return context
+    }
+
+    /// The bounding box of pixels above the alpha threshold, in the
+    /// bottom-left drawing coordinates of the context, or nil when the
+    /// bitmap is fully transparent.
+    private static func opaqueBounds(of context: CGContext, sample: Int) -> CGRect? {
+        guard let data = context.data else {
+            return nil
+        }
+        let stride = context.bytesPerRow
+        let buffer = data.assumingMemoryBound(to: UInt8.self)
+        var minX = sample, maxX = -1, minY = sample, maxY = -1
+        for row in 0 ..< sample {
+            for column in 0 ..< sample where buffer[row * stride + column * 4 + 3] > appIconAlphaThreshold {
+                minX = min(minX, column)
+                maxX = max(maxX, column)
+                minY = min(minY, row)
+                maxY = max(maxY, row)
+            }
+        }
+        guard maxX >= 0 else {
+            return nil
+        }
+        // Buffer rows run top-down while drawing coordinates run bottom-up
+        return CGRect(
+            x: Double(minX),
+            y: Double(sample - 1 - maxY),
+            width: Double(maxX - minX + 1),
+            height: Double(maxY - minY + 1)
+        )
+    }
+
     /// Generates a status bar icon showing a fullscreen app's icon
     static func generateAppIcon(
         _ appIcon: NSImage,
@@ -807,14 +910,16 @@ enum SpaceIconGenerator {
             sizeScale: scale,
             paddingScale: paddingScale
         )
-        // App icons carry built-in transparent margins, so draw slightly
-        // larger than the square style to match its visual weight
+        // App icons carry built-in transparent margins (normalized to the
+        // icon grid fraction), so draw slightly larger than the square
+        // style to match its visual weight
         let side = min((Layout.baseSquareSize + 3) * scale, maxIconSize)
+        let icon = normalizedAppIcon(appIcon, side: side)
         return NSImage(size: canvasSize, flipped: false) { rect in
             let iconRect = centeredRect(size: CGSize(width: side, height: side), in: rect)
-            appIcon.draw(
+            icon.draw(
                 in: iconRect,
-                from: NSRect(origin: .zero, size: appIcon.size),
+                from: NSRect(origin: .zero, size: icon.size),
                 operation: .sourceOver,
                 fraction: 1
             )

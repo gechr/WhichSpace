@@ -861,6 +861,63 @@ struct SpaceIconGeneratorTests {
         #expect(Layout.defaultHorizontalPadding == Layout.statusItemWidth - Layout.baseSquareSize)
     }
 
+    // MARK: - App Icon Normalization Tests
+
+    /// A square canvas whose opaque artwork spans the given fraction,
+    /// mimicking the transparent margins apps bake into their icons.
+    private func syntheticAppIcon(canvas: Double, contentFraction: Double) -> NSImage {
+        NSImage(size: NSSize(width: canvas, height: canvas), flipped: false) { rect in
+            let side = rect.width * contentFraction
+            NSColor.red.setFill()
+            NSRect(
+                x: rect.midX - side / 2,
+                y: rect.midY - side / 2,
+                width: side,
+                height: side
+            ).fill()
+            return true
+        }
+    }
+
+    @Test("app icons with different baked-in margins normalize to the same size")
+    func normalizedAppIconEqualizesMargins() throws {
+        let fullBleed = SpaceIconGenerator.normalizedAppIcon(
+            syntheticAppIcon(canvas: 64, contentFraction: 1.0),
+            side: 16
+        )
+        let padded = SpaceIconGenerator.normalizedAppIcon(
+            syntheticAppIcon(canvas: 64, contentFraction: 0.5),
+            side: 16
+        )
+        let fullBleedContent = try #require(nonTransparentBounds(of: fullBleed))
+        let paddedContent = try #require(nonTransparentBounds(of: padded))
+        #expect(abs(fullBleedContent.width - paddedContent.width) <= 1)
+        #expect(abs(fullBleedContent.height - paddedContent.height) <= 1)
+        // Artwork spans the icon grid fraction (824/1024) of the 32 px raster
+        let expected = 32.0 * 824.0 / 1024.0
+        #expect(abs(fullBleedContent.width - expected) <= 1)
+        #expect(fullBleed.size == NSSize(width: 16, height: 16))
+    }
+
+    @Test("off-center artwork is recentered on the canvas")
+    func normalizedAppIconRecentersContent() throws {
+        let offCenter = NSImage(size: NSSize(width: 64, height: 64), flipped: false) { rect in
+            NSColor.red.setFill()
+            NSRect(x: 0, y: 0, width: rect.width / 2, height: rect.height / 2).fill()
+            return true
+        }
+        let normalized = SpaceIconGenerator.normalizedAppIcon(offCenter, side: 16)
+        let content = try #require(nonTransparentBounds(of: normalized))
+        #expect(abs(content.midX - 16) <= 1)
+        #expect(abs(content.midY - 16) <= 1)
+    }
+
+    @Test("fully transparent icon is returned unchanged")
+    func normalizedAppIconLeavesTransparentIconAlone() {
+        let clear = NSImage(size: NSSize(width: 32, height: 32), flipped: false) { _ in true }
+        #expect(SpaceIconGenerator.normalizedAppIcon(clear, side: 16) === clear)
+    }
+
     // MARK: - Helpers
 
     private func bitmap(_ image: NSImage, sampling: Double) -> NSBitmapImageRep? {
