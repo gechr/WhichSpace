@@ -792,7 +792,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "المساحة الحالية إلى [افتراضي]"
+            "value" : "المساحة الحالية"
           }
         },
         "bg" : {
@@ -3330,7 +3330,7 @@
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mută fereastra din față în Spațiul ${spaceNumber}"
+            "value" : "Mută fereastra din prim-plan în Spațiul ${spaceNumber}"
           }
         },
         "ru" : {
@@ -3366,7 +3366,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Öndeki pencereyi Alan ${spaceNumber} konumuna taşı"
+            "value" : "Öndeki pencereyi ${spaceNumber} numaralı alana taşı"
           }
         },
         "uk" : {
@@ -3514,7 +3514,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sposta la finestra in primo piano in uno Spazio dello schermo attuale, passando facoltativamente a esso."
+            "value" : "Sposta la finestra in primo piano in uno Spazio del monitor attuale, passando eventualmente a quest'ultimo."
           }
         },
         "ja" : {
@@ -3538,7 +3538,7 @@
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Memindahkan tetingkap terdepan ke Ruang pada paparan semasa, dengan pilihan bertukar kepadanya."
+            "value" : "Memindahkan tetingkap terdepan ke Ruang pada paparan semasa dan boleh beralih ke Ruang itu jika dikehendaki."
           }
         },
         "nb" : {
@@ -3550,7 +3550,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verplaatst het voorste venster naar een Space op het huidige beeldscherm en wisselt er optioneel naartoe."
+            "value" : "Verplaatst het voorste venster naar een Space op het huidige beeldscherm en schakelt er desgewenst naartoe."
           }
         },
         "nn" : {
@@ -3592,7 +3592,7 @@
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mută fereastra din față într-un Spațiu de pe ecranul curent, comutând opțional la acesta."
+            "value" : "Mută fereastra din prim-plan într-un Spațiu de pe ecranul curent, comutând opțional la acesta."
           }
         },
         "ru" : {
@@ -3646,7 +3646,7 @@
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Di chuyển cửa sổ trên cùng đến một Không gian trên màn hình hiện tại, tùy chọn chuyển đến Không gian đó."
+            "value" : "Di chuyển cửa sổ trên cùng đến một Không gian trên màn hình hiện tại và có thể chuyển đến Không gian đó."
           }
         },
         "zh-Hans" : {
@@ -3776,7 +3776,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sposta la finestra in primo piano nello Spazio a sinistra, passando facoltativamente a esso."
+            "value" : "Sposta la finestra in primo piano nello Spazio a sinistra, passando eventualmente a quest'ultimo."
           }
         },
         "ja" : {
@@ -3800,7 +3800,7 @@
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Memindahkan tetingkap terdepan ke Ruang di sebelah kiri, dengan pilihan bertukar kepadanya."
+            "value" : "Memindahkan tetingkap terdepan ke Ruang di sebelah kiri dan boleh beralih ke Ruang itu jika dikehendaki."
           }
         },
         "nb" : {
@@ -3812,7 +3812,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verplaatst het voorste venster naar de Space links en wisselt er optioneel naartoe."
+            "value" : "Verplaatst het voorste venster naar de Space links en schakelt er desgewenst naartoe."
           }
         },
         "nn" : {
@@ -3836,7 +3836,7 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "مخکینۍ کړکۍ کيڼ لوري سپېس ته لېږدوي، او په خوښه هغه سپېس ته اوړي."
+            "value" : "مخکینۍ کړکۍ په کيڼ لوري کې سپېس ته لېږدوي، او په خوښه هغه سپېس ته اوړي."
           }
         },
         "pt" : {
@@ -3854,7 +3854,7 @@
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mută fereastra din față în Spațiul din stânga, comutând opțional la acesta."
+            "value" : "Mută fereastra din prim-plan în Spațiul din stânga, comutând opțional la acesta."
           }
         },
         "ru" : {
@@ -3908,7 +3908,7 @@
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Di chuyển cửa sổ trên cùng đến Không gian bên trái, tùy chọn chuyển đến Không gian đó."
+            "value" : "Di chuyển cửa sổ trên cùng đến Không gian bên trái và có thể chuyển đến Không gian đó."
           }
         },
         "zh-Hans" : {
@@ -4038,7 +4038,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sposta la finestra in primo piano nello Spazio a destra, passando facoltativamente a esso."
+            "value" : "Sposta la finestra in primo piano nello Spazio a destra, passando eventualmente a quest'ultimo."
           }
         },
         "ja" : {
@@ -4062,7 +4062,7 @@
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Memindahkan tetingkap terdepan ke Ruang di sebelah kanan, dengan pilihan bertukar kepadanya."
+            "value" : "Memindahkan tetingkap terdepan ke Ruang di sebelah kanan dan boleh beralih ke Ruang itu jika dikehendaki."
           }
         },
         "nb" : {
@@ -4074,7 +4074,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verplaatst het voorste venster naar de Space rechts en wisselt er optioneel naartoe."
+            "value" : "Verplaatst het voorste venster naar de Space rechts en schakelt er desgewenst naartoe."
           }
         },
         "nn" : {
@@ -4098,7 +4098,7 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "مخکینۍ کړکۍ ښي لوري سپېس ته لېږدوي، او په خوښه هغه سپېس ته اوړي."
+            "value" : "مخکینۍ کړکۍ په ښي لوري کې سپېس ته لېږدوي، او په خوښه هغه سپېس ته اوړي."
           }
         },
         "pt" : {
@@ -4116,7 +4116,7 @@
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mută fereastra din față în Spațiul din dreapta, comutând opțional la acesta."
+            "value" : "Mută fereastra din prim-plan în Spațiul din dreapta, comutând opțional la acesta."
           }
         },
         "ru" : {
@@ -4170,7 +4170,7 @@
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Di chuyển cửa sổ trên cùng đến Không gian bên phải, tùy chọn chuyển đến Không gian đó."
+            "value" : "Di chuyển cửa sổ trên cùng đến Không gian bên phải và có thể chuyển đến Không gian đó."
           }
         },
         "zh-Hans" : {
@@ -8456,7 +8456,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vaihda vasemmalle"
+            "value" : "Siirry vasemmalle"
           }
         },
         "fr" : {
@@ -8516,7 +8516,7 @@
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tukar ke kiri"
+            "value" : "Beralih ke kiri"
           }
         },
         "nb" : {
@@ -8588,7 +8588,7 @@
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prebaci ulevo"
+            "value" : "Pređi ulevo"
           }
         },
         "sv" : {
@@ -8718,7 +8718,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vaihda oikealle"
+            "value" : "Siirry oikealle"
           }
         },
         "fr" : {
@@ -8778,7 +8778,7 @@
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tukar ke kanan"
+            "value" : "Beralih ke kanan"
           }
         },
         "nb" : {
@@ -8850,7 +8850,7 @@
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prebaci udesno"
+            "value" : "Pređi udesno"
           }
         },
         "sv" : {
@@ -9826,7 +9826,7 @@
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bertukar ke Ruang di sebelah kiri."
+            "value" : "Beralih ke Ruang di sebelah kiri."
           }
         },
         "nb" : {
@@ -9862,7 +9862,7 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "کيڼ لوري سپېس ته اوړي."
+            "value" : "په کيڼ لوري کې سپېس ته اوړي."
           }
         },
         "pt" : {
@@ -10088,7 +10088,7 @@
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bertukar ke Ruang di sebelah kanan."
+            "value" : "Beralih ke Ruang di sebelah kanan."
           }
         },
         "nb" : {
@@ -10124,7 +10124,7 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ښي لوري سپېس ته اوړي."
+            "value" : "په ښي لوري کې سپېس ته اوړي."
           }
         },
         "pt" : {
@@ -10856,7 +10856,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "コピー元..."
+            "value" : "コピー元…"
           }
         },
         "ko" : {
@@ -10910,7 +10910,7 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "کاپي کړئ له..."
+            "value" : "له... څخه کاپي کړئ"
           }
         },
         "pt" : {
@@ -10988,13 +10988,13 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "复制自..."
+            "value" : "复制自…"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "複製自..."
+            "value" : "從…複製"
           }
         },
         "zh-HK" : {
@@ -13030,7 +13030,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Все настройки"
+            "value" : "Все пользовательские настройки"
           }
         },
         "sk" : {
@@ -13066,7 +13066,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Усі налаштування"
+            "value" : "Усі індивідуальні налаштування"
           }
         },
         "ur" : {
@@ -13096,7 +13096,7 @@
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "所有自訂"
+            "value" : "所有自訂項目"
           }
         }
       }
@@ -13172,13 +13172,13 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kaikki Spacet asetukseen [Oletus]"
+            "value" : "Kaikki Spacet [Oletus]-tyyliin"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tous les Espaces vers [Par défaut]"
+            "value" : "Rétablir [Par défaut] pour tous les Espaces"
           }
         },
         "he" : {
@@ -13316,7 +13316,7 @@
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ทุก Space ไปที่ [ค่าเริ่มต้น]"
+            "value" : "ตั้งค่า Space ทั้งหมดเป็น [ค่าเริ่มต้น]"
           }
         },
         "tr" : {
@@ -13340,7 +13340,7 @@
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tất cả Không gian sang [Mặc định]"
+            "value" : "Đặt tất cả Không gian về [Mặc định]"
           }
         },
         "zh-Hans" : {
@@ -13434,13 +13434,13 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nykyinen Space asetukseen [Oletus]"
+            "value" : "Nykyinen Space [Oletus]-tyyliin"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Espace actuel vers [Par défaut]"
+            "value" : "Rétablir [Par défaut] pour l’Espace actuel"
           }
         },
         "he" : {
@@ -13572,13 +13572,13 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aktuell Space till [Standard]"
+            "value" : "Aktuellt Space till [Standard]"
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Space ปัจจุบันไปที่ [ค่าเริ่มต้น]"
+            "value" : "ตั้งค่า Space ปัจจุบันเป็น [ค่าเริ่มต้น]"
           }
         },
         "tr" : {
@@ -13602,7 +13602,7 @@
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Không gian hiện tại sang [Mặc định]"
+            "value" : "Đặt Không gian hiện tại về [Mặc định]"
           }
         },
         "zh-Hans" : {
@@ -14178,7 +14178,7 @@
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Skift mellem Spaces kræver tilladelse til Tilgængelighed.\n\nEfter du klikker Fortsæt, vil macOS bede om tilladelse. Klik på \"Åbn Systemindstillinger\", find %@ på listen, og aktivér den."
+            "value" : "Skift mellem Spaces kræver tilladelse til Tilgængelighed.\n\nNår du har klikket på Fortsæt, beder macOS dig om tilladelse. Klik på \"Åbn Systemindstillinger\", find %@ på listen, og aktivér den."
           }
         },
         "de" : {
@@ -14190,7 +14190,7 @@
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Η εναλλαγή Χώρων απαιτεί άδεια Προσβασιμότητας.\n\nΑφού πατήσετε Συνέχεια, το macOS θα ζητήσει άδεια. Πατήστε \"Άνοιγμα Ρυθμίσεων Συστήματος\", βρείτε το %@ στη λίστα και ενεργοποιήστε το."
+            "value" : "Η εναλλαγή Χώρων απαιτεί άδεια Προσβασιμότητας.\n\nΑφού πατήσετε Συνέχεια, το macOS θα ζητήσει άδεια. Πατήστε «Άνοιγμα ρυθμίσεων συστήματος», βρείτε το %@ στη λίστα και ενεργοποιήστε το."
           }
         },
         "en" : {
@@ -14226,7 +14226,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le changement d'Espace nécessite l'autorisation d'accessibilité.\n\nAprès avoir cliqué sur Continuer, macOS vous demandera l'autorisation. Cliquez sur \" Ouvrir les Réglages Système \", puis trouvez %@ dans la liste et activez-le."
+            "value" : "Le changement d'Espace nécessite l'autorisation d'accessibilité.\n\nAprès avoir cliqué sur Continuer, macOS vous demandera l'autorisation. Cliquez sur « Ouvrir les Réglages Système », puis trouvez %@ dans la liste et activez-le."
           }
         },
         "he" : {
@@ -14256,7 +14256,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il passaggio tra Spazi richiede l'autorizzazione Accessibilità.\n\nDopo aver fatto clic su Continua, macOS chiederà l'autorizzazione. Fai clic su \"Apri Impostazioni di Sistema\", cerca %@ nell'elenco e abilitalo."
+            "value" : "Il passaggio tra Spazi richiede l'autorizzazione per l'accessibilità.\n\nDopo aver fatto clic su Continua, macOS chiederà l'autorizzazione. Fai clic su \"Apri Impostazioni di Sistema\", cerca %@ nell'elenco e abilitalo."
           }
         },
         "ja" : {
@@ -14292,7 +14292,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Het wisselen van Spaces vereist Toegankelijkheid-toestemming.\n\nNadat je op Ga door klikt, vraagt macOS om toestemming. Klik op \"Open Systeeminstellingen\", zoek %@ in de lijst en schakel het in."
+            "value" : "Voor het wisselen van Spaces is toestemming voor Toegankelijkheid vereist.\n\nNadat je op Ga door klikt, vraagt macOS om toestemming. Klik op \"Open Systeeminstellingen\", zoek %@ in de lijst en schakel het in."
           }
         },
         "nn" : {
@@ -14334,7 +14334,7 @@
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comutarea între Spații necesită permisiunea de Accesibilitate.\n\nDupă ce faceți clic pe Continuă, macOS va solicita permisiunea. Faceți clic pe \"Deschide Setări sistem\", găsiți %@ în listă și activați-l."
+            "value" : "Comutarea între Spații necesită permisiunea de Accesibilitate.\n\nDupă ce faceți clic pe Continuați, macOS vă va solicita permisiunea. Faceți clic pe „Deschideți Configurări sistem”, apoi găsiți %@ în listă și activați-l."
           }
         },
         "ru" : {
@@ -14388,13 +14388,13 @@
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chuyển đổi Không gian yêu cầu quyền Trợ năng.\n\nSau khi nhấp Tiếp tục, macOS sẽ yêu cầu quyền. Nhấp vào \"Mở Cài đặt Hệ thống\", tìm %@ trong danh sách và bật lên."
+            "value" : "Việc chuyển đổi Không gian yêu cầu quyền Trợ năng.\n\nSau khi bấm vào Tiếp tục, macOS sẽ yêu cầu bạn cấp quyền. Bấm vào \"Mở Cài đặt hệ thống\", sau đó tìm %@ trong danh sách và bật mục đó."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "切换空间需要辅助功能权限。\n\n点按\"继续\"后，macOS 会请求权限。点按\"打开系统设置\"，在列表中找到 %@ 并启用。"
+            "value" : "切换空间需要辅助功能权限。\n\n点按“继续”后，macOS 会请求权限。点按“打开系统设置”，在列表中找到 %@ 并启用。"
           }
         },
         "zh-Hant" : {
@@ -15864,7 +15864,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Het wisselen van Spaces vereist Toegankelijkheid-toestemming."
+            "value" : "Voor het wisselen van Spaces is toestemming voor Toegankelijkheid vereist."
           }
         },
         "nn" : {
@@ -21170,7 +21170,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kopiera från det valda Space?"
+            "value" : "Kopiera från det valda Spacet?"
           }
         },
         "th" : {
@@ -21956,7 +21956,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kopiera till det valda Space?"
+            "value" : "Kopiera till det valda Spacet?"
           }
         },
         "th" : {
@@ -23718,7 +23718,7 @@
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dette erstatter fargen, stilen, symbolet og skrifttypen til dette Space med det valgte Spaces."
+            "value" : "Dette erstatter fargen, stilen, symbolet og skrifttypen for dette Spacet med de tilsvarende innstillingene fra det valgte Spacet."
           }
         },
         "nl" : {
@@ -23730,7 +23730,7 @@
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dette byter ut fargen, stilen, symbolet og skrifttypen til dette Space med dei frå det valde Space."
+            "value" : "Dette byter ut fargen, stilen, symbolet og skrifttypen til dette Spacet med dei frå det valde Spacet."
           }
         },
         "pa" : {
@@ -23790,7 +23790,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Detta ersätter färgen, stilen, symbolen och teckensnittet på det här Space med det valda Spaces."
+            "value" : "Detta ersätter färgen, stilen, symbolen och teckensnittet för det här Spacet med motsvarande inställningar för det valda Spacet."
           }
         },
         "th" : {
@@ -24122,7 +24122,7 @@
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Això actualitzarà tots els altres Espais per coincidir amb el color, l'estil, el símbol i el tipus de lletra d'aquest Espai."
+            "value" : "Això actualitzarà tots els altres Espais perquè coincideixin amb el color, l'estil, el símbol i el tipus de lletra d'aquest Espai."
           }
         },
         "cs" : {
@@ -24242,25 +24242,25 @@
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dette oppdaterer alle andre Spaces slik at de matcher fargen, stilen, symbolet og skrifttypen til dette Space."
+            "value" : "Dette oppdaterer alle andre Spaces slik at de får samme farge, stil, symbol og skrifttype som dette Spacet."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dit werkt alle andere Spaces bij zodat ze dezelfde kleur, stijl, symbool en hetzelfde lettertype hebben als deze Space."
+            "value" : "Dit werkt alle andere Spaces bij zodat ze dezelfde kleur en stijl, hetzelfde symbool en lettertype hebben als deze Space."
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dette oppdaterer alle andre Spaces slik at dei får same farge, stil, symbol og skrifttype som dette Space."
+            "value" : "Dette oppdaterer alle andre Spaces slik at dei får same farge, stil, symbol og skrifttype som dette Spacet."
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ایہ ہور سارے سپیسز نوں اِس سپیس دے رنگ، سٹائل، نشان تے فونٹ نال ملا دے گا۔"
+            "value" : "ایہ ہور ساریاں سپیسز نوں اِس سپیس دے رنگ، سٹائل، نشان تے فونٹ نال ملا دے گا۔"
           }
         },
         "pl" : {
@@ -24314,7 +24314,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Detta uppdaterar alla andra Spaces så att de matchar färgen, stilen, symbolen och teckensnittet på det här Space."
+            "value" : "Detta uppdaterar alla andra Spaces så att de matchar färgen, stilen, symbolen och teckensnittet för det här Spacet."
           }
         },
         "th" : {
@@ -24384,7 +24384,7 @@
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Això actualitzarà l'Espai seleccionat per coincidir amb el color, l'estil, el símbol i el tipus de lletra d'aquest Espai."
+            "value" : "Això actualitzarà l'Espai seleccionat perquè coincideixi amb el color, l'estil, el símbol i el tipus de lletra d'aquest Espai."
           }
         },
         "cs" : {
@@ -24504,19 +24504,19 @@
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dette oppdaterer det valgte Space slik at det matcher fargen, stilen, symbolet og skrifttypen til dette Space."
+            "value" : "Dette oppdaterer det valgte Spacet slik at det får samme farge, stil, symbol og skrifttype som dette Spacet."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dit werkt de geselecteerde Space bij zodat deze dezelfde kleur, stijl, symbool en hetzelfde lettertype heeft als deze Space."
+            "value" : "Dit werkt de geselecteerde Space bij zodat deze dezelfde kleur en stijl, hetzelfde symbool en lettertype heeft als deze Space."
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dette oppdaterer det valde Space slik at det får same farge, stil, symbol og skrifttype som dette Space."
+            "value" : "Dette oppdaterer det valde Spacet slik at det får same farge, stil, symbol og skrifttype som dette Spacet."
           }
         },
         "pa" : {
@@ -24576,7 +24576,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Detta uppdaterar det valda Space så att det matchar färgen, stilen, symbolen och teckensnittet på det här Space."
+            "value" : "Detta uppdaterar det valda Spacet så att det matchar färgen, stilen, symbolen och teckensnittet för det här Spacet."
           }
         },
         "th" : {
@@ -24974,7 +24974,7 @@
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "פעולה זו תסיר התאמות של צבע, סגנון, גופן, גודל, סמל וצליל לכל מרחב בכל התצוגות, כולל סגנון [ברירת מחדל]."
+            "value" : "פעולה זו תסיר התאמות של צבע, סגנון, גופן, גודל, סמל וצליל לכל מרחב בכל הצגים, כולל סגנון [ברירת מחדל]."
           }
         },
         "hi" : {
@@ -25236,7 +25236,7 @@
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "פעולה זו תסיר את ההתאמות של כל מרחב בכל התצוגות, כך שכולם יעקבו אחר סגנון [ברירת מחדל]."
+            "value" : "פעולה זו תסיר את ההתאמות של כל מרחב בכל הצגים, כך שכולם יפעלו לפי סגנון [ברירת מחדל]."
           }
         },
         "hi" : {
@@ -25308,7 +25308,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ایہ سارے ڈسپلیاں اُتے ہر سپیس دیاں کسٹمائزیشنز ختم کرے گا، تاں جو ساریاں [ڈیفالٹ] سٹائل تے چلن۔"
+            "value" : "ایہ سارے ڈسپلے اُتے ہر سپیس دیاں کسٹمائزیشنز ختم کرے گا، تاں جو ساریاں سپیسز [ڈیفالٹ] سٹائل تے چلن۔"
           }
         },
         "pl" : {
@@ -25712,7 +25712,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dies setzt jede Einstellung auf ihren Standardwert zurück, entfernt alle Space-Anpassungen auf allen Displays und deaktiviert den Start beim Login."
+            "value" : "Dies setzt jede Einstellung auf ihren Standardwert zurück, entfernt alle Space-Anpassungen auf allen Displays und deaktiviert den automatischen Start beim Login."
           }
         },
         "el" : {
@@ -25748,7 +25748,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tämä palauttaa jokaisen asetuksen oletusarvoonsa, poistaa kaikki Space-mukautukset kaikilla näytöillä ja poistaa käytöstä käynnistyksen kirjautuessa."
+            "value" : "Tämä palauttaa kaikki asetukset oletusarvoihinsa, poistaa kaikki Space-mukautukset kaikilta näytöiltä eikä enää avaa sovellusta sisäänkirjauduttaessa."
           }
         },
         "fr" : {
@@ -25760,7 +25760,7 @@
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "פעולה זו תשחזר כל הגדרה לברירת המחדל שלה, תסיר את כל ההתאמות של המרחבים בכל התצוגות ותכבה את ההפעלה בעת ההתחברות."
+            "value" : "פעולה זו תשחזר כל הגדרה לברירת המחדל שלה, תסיר את כל ההתאמות של המרחבים בכל הצגים ותכבה את ההפעלה בעת ההתחברות."
           }
         },
         "hi" : {
@@ -25796,7 +25796,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "모든 설정을 기본값으로 되돌리고, 모든 디스플레이의 스페이스 사용자 지정을 제거하며, 로그인 시 실행을 끕니다."
+            "value" : "모든 설정을 기본값으로 되돌리고, 모든 디스플레이의 스페이스 사용자 지정을 제거하며, 로그인 시 열기를 끕니다."
           }
         },
         "mk" : {
@@ -25916,7 +25916,7 @@
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Thao tác này sẽ khôi phục mọi cài đặt về giá trị mặc định, xóa mọi tùy chỉnh Không gian trên mọi màn hình và tắt tùy chọn Chạy khi đăng nhập."
+            "value" : "Thao tác này sẽ khôi phục mọi cài đặt về giá trị mặc định, xóa mọi tùy chỉnh Không gian trên mọi màn hình và tắt tùy chọn Mở khi đăng nhập."
           }
         },
         "zh-Hans" : {
@@ -26124,7 +26124,7 @@
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aceasta va elimina personalizările de culoare, stil, simbol și font pentru Spațiul curent, astfel încât va urma din nou stilul [Implicit]."
+            "value" : "Aceasta va elimina personalizările de culoare, stil, simbol și font pentru Spațiul curent, astfel încât să urmeze din nou stilul [Implicit]."
           }
         },
         "ru" : {
@@ -28780,7 +28780,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pencere Alan %d konumuna taşınamadı."
+            "value" : "Pencere %d numaralı alana taşınamadı."
           }
         },
         "uk" : {
@@ -28976,7 +28976,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ایس macOS ورژن وچ سپیسز وچکار ونڈو لجانا سپورٹ نئیں۔"
+            "value" : "macOS دے ایس ورژن وچ سپیسز وچکار ونڈوز نوں لجانا سپورٹ نئیں کیتا جاندا۔"
           }
         },
         "pl" : {
@@ -29148,7 +29148,7 @@
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "هیچ فضای بازدیدشده قبلی وجود ندارد."
+            "value" : "هیچ فضای قبلاً بازدیدشده‌ای وجود ندارد."
           }
         },
         "fi" : {
@@ -29292,7 +29292,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ingen tidigare besökt Space."
+            "value" : "Inget tidigare besökt Space."
           }
         },
         "th" : {
@@ -29322,7 +29322,7 @@
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chưa có Không gian nào được dùng trước đó."
+            "value" : "Chưa có Không gian nào được truy cập trước đó."
           }
         },
         "zh-Hans" : {
@@ -29916,7 +29916,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Space %d is a fullscreen Space and cannot receive windows."
+            "value" : "Space %d is a full-screen Space and cannot receive windows."
           }
         },
         "en-GB" : {
@@ -30060,7 +30060,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Пространство %d является полноэкранным Пространством и не может принимать окна."
+            "value" : "Пространство %d является полноэкранным и не может принимать окна."
           }
         },
         "sk" : {
@@ -30422,7 +30422,7 @@
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Det forreste vindue er i fuld skærm og kan ikke flyttes mellem Spaces."
+            "value" : "Det forreste vindue vises på fuld skærm og kan ikke flyttes mellem Spaces."
           }
         },
         "de" : {
@@ -30440,7 +30440,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The frontmost window is fullscreen and cannot be moved between Spaces."
+            "value" : "The frontmost window is in full-screen mode and cannot be moved between Spaces."
           }
         },
         "en-GB" : {
@@ -30524,7 +30524,7 @@
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tetingkap terdepan sedang dalam skrin penuh dan tidak boleh dipindahkan antara Ruang."
+            "value" : "Tetingkap terdepan berada dalam mod skrin penuh dan tidak boleh dipindahkan antara Ruang."
           }
         },
         "nb" : {
@@ -30578,7 +30578,7 @@
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fereastra din față este pe tot ecranul și nu poate fi mutată între Spații."
+            "value" : "Fereastra din prim-plan este pe tot ecranul și nu poate fi mutată între Spații."
           }
         },
         "ru" : {
@@ -30738,7 +30738,7 @@
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "כולן"
+            "value" : "כולם"
           }
         },
         "hi" : {
@@ -36788,7 +36788,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Salto"
+            "value" : "Passaggio diretto"
           }
         },
         "ja" : {
@@ -36812,7 +36812,7 @@
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lompatan"
+            "value" : "Lompat"
           }
         },
         "nb" : {
@@ -37740,7 +37740,7 @@
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Преместете наляво"
+            "value" : "Премести наляво"
           }
         },
         "ca" : {
@@ -37926,7 +37926,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Presunúť vľavo"
+            "value" : "Presunúť doľava"
           }
         },
         "sr" : {
@@ -38002,7 +38002,7 @@
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Преместете надясно"
+            "value" : "Премести надясно"
           }
         },
         "ca" : {
@@ -38188,7 +38188,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Presunúť vpravo"
+            "value" : "Presunúť doprava"
           }
         },
         "sr" : {
@@ -38354,7 +38354,7 @@
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "belum pernah"
+            "value" : "tidak pernah"
           }
         },
         "it" : {
@@ -38504,13 +38504,13 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "從未"
+            "value" : "永不"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "從未"
+            "value" : "永不"
           }
         }
       }
@@ -39860,7 +39860,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "App-Icons"
+            "value" : "App-Symbole"
           }
         },
         "el" : {
@@ -39968,7 +39968,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "App-pictogrammen"
+            "value" : "Appsymbolen"
           }
         },
         "nn" : {
@@ -39980,7 +39980,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ایپ آئیکن"
+            "value" : "ایپ آئیکنز"
           }
         },
         "pl" : {
@@ -40058,7 +40058,7 @@
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ایپ آئیکن"
+            "value" : "ایپ آئیکنز"
           }
         },
         "vi" : {
@@ -40152,7 +40152,7 @@
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "سبک منوی انتخاب"
+            "value" : "سبک انتخابگر"
           }
         },
         "fi" : {
@@ -40344,7 +40344,7 @@
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "選擇選單樣式"
+            "value" : "選擇器樣式"
           }
         }
       }
@@ -40384,7 +40384,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Name und Icons"
+            "value" : "Name und Symbole"
           }
         },
         "el" : {
@@ -40492,7 +40492,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Naam en pictogrammen"
+            "value" : "Naam en symbolen"
           }
         },
         "nn" : {
@@ -40504,7 +40504,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ناں تے آئیکن"
+            "value" : "ناں تے آئیکنز"
           }
         },
         "pl" : {
@@ -40582,7 +40582,7 @@
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "نام اور آئیکن"
+            "value" : "نام اور آئیکنز"
           }
         },
         "vi" : {
@@ -40646,7 +40646,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Icons"
+            "value" : "Symbole"
           }
         },
         "el" : {
@@ -40754,7 +40754,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pictogrammen"
+            "value" : "Symbolen"
           }
         },
         "nn" : {
@@ -40766,7 +40766,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "آئیکن"
+            "value" : "آئیکنز"
           }
         },
         "pl" : {
@@ -40844,7 +40844,7 @@
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "آئیکن"
+            "value" : "آئیکنز"
           }
         },
         "vi" : {
@@ -41682,7 +41682,7 @@
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Obnovení nastavení"
+            "value" : "Obnovit nastavení"
           }
         },
         "da" : {
@@ -41748,7 +41748,7 @@
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "सेटिंग्स रीसेट"
+            "value" : "सेटिंग्स रीसेट करें"
           }
         },
         "hu" : {
@@ -41814,13 +41814,13 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ترتیبات ری سیٹ"
+            "value" : "ترتیبات ری سیٹ کرو"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przywracanie ustawień"
+            "value" : "Przywróć ustawienia domyślne"
           }
         },
         "ps" : {
@@ -41856,7 +41856,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Obnovenie nastavení"
+            "value" : "Obnoviť nastavenia"
           }
         },
         "sr" : {
@@ -41892,7 +41892,7 @@
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ترتیبات ری سیٹ"
+            "value" : "ترتیبات کو ری سیٹ کریں"
           }
         },
         "vi" : {
@@ -42194,7 +42194,7 @@
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Изпратете наляво"
+            "value" : "Изпрати наляво"
           }
         },
         "ca" : {
@@ -42206,7 +42206,7 @@
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Odeslat vlevo"
+            "value" : "Přesunout doleva"
           }
         },
         "da" : {
@@ -42380,7 +42380,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Odoslať vľavo"
+            "value" : "Odoslať doľava"
           }
         },
         "sr" : {
@@ -42422,7 +42422,7 @@
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gửi sang trái"
+            "value" : "Đưa sang trái"
           }
         },
         "zh-Hans" : {
@@ -42456,7 +42456,7 @@
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Изпратете надясно"
+            "value" : "Изпрати надясно"
           }
         },
         "ca" : {
@@ -42468,7 +42468,7 @@
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Odeslat vpravo"
+            "value" : "Přesunout doprava"
           }
         },
         "da" : {
@@ -42642,7 +42642,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Odoslať vpravo"
+            "value" : "Odoslať doprava"
           }
         },
         "sr" : {
@@ -42684,7 +42684,7 @@
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gửi sang phải"
+            "value" : "Đưa sang phải"
           }
         },
         "zh-Hans" : {
@@ -43112,7 +43112,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kleur scheidingsteken"
+            "value" : "Kleur van het scheidingsteken"
           }
         },
         "nn" : {
@@ -43248,7 +43248,7 @@
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pic"
+            "value" : "Vinyeta"
           }
         },
         "cs" : {
@@ -44142,7 +44142,7 @@
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ништо"
+            "value" : "Нема"
           }
         },
         "ms" : {
@@ -44684,7 +44684,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stijl scheidingsteken"
+            "value" : "Stijl van het scheidingsteken"
           }
         },
         "nn" : {
@@ -44838,7 +44838,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hautfarbe"
+            "value" : "Hautton"
           }
         },
         "el" : {
@@ -44916,7 +44916,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "肌の色"
+            "value" : "スキントーン"
           }
         },
         "ko" : {
@@ -45018,7 +45018,7 @@
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "สีผิว"
+            "value" : "โทนสีผิว"
           }
         },
         "tr" : {
@@ -45416,7 +45416,7 @@
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "स्पेसेस"
+            "value" : "स्पेस"
           }
         },
         "hu" : {
@@ -46446,7 +46446,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kapseli (Ääriviiva)"
+            "value" : "Kapseli (ääriviiva)"
           }
         },
         "fr" : {
@@ -46512,7 +46512,7 @@
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kapsel (Omriss)"
+            "value" : "Kapsel (omriss)"
           }
         },
         "nl" : {
@@ -46584,7 +46584,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kapsel (Kontur)"
+            "value" : "Kapsel (kontur)"
           }
         },
         "th" : {
@@ -46762,7 +46762,7 @@
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Менување"
+            "value" : "Префрлување"
           }
         },
         "ms" : {
@@ -46792,7 +46792,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "تبدیلی"
+            "value" : "سوئچ"
           }
         },
         "pl" : {
@@ -46810,7 +46810,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mudança"
+            "value" : "Mudar de Espaço"
           }
         },
         "pt-BR" : {
@@ -46858,7 +46858,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Değiştirme"
+            "value" : "Geçiş"
           }
         },
         "uk" : {
@@ -53496,13 +53496,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "colour tint theme palette shade hue opacity transparent"
+            "value" : "color tint theme palette shade hue opacity transparent"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "color tint theme palette shade hue opacity transparent"
+            "value" : "colour tint theme palette shade hue opacity transparent"
           }
         },
         "es" : {
@@ -57522,7 +57522,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "werkruimte bureaublad virtueel desktop mission control"
+            "value" : "werkruimte bureaublad virtuele desktop mission control"
           }
         },
         "nn" : {
@@ -61388,7 +61388,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kapseli (Ääriviiva)"
+            "value" : "Kapseli (ääriviiva)"
           }
         },
         "fr" : {
@@ -61454,7 +61454,7 @@
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kapsel (Omriss)"
+            "value" : "Kapsel (omriss)"
           }
         },
         "nl" : {
@@ -61526,7 +61526,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kapsel (Kontur)"
+            "value" : "Kapsel (kontur)"
           }
         },
         "th" : {
@@ -63766,7 +63766,7 @@
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "כל התצוגות"
+            "value" : "כל הצגים"
           }
         },
         "hi" : {
@@ -66332,7 +66332,7 @@
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erstat farve, stil, symbol og skrifttype for dette Space med et andet Spaces"
+            "value" : "Erstat farven, stilen, symbolet og skrifttypen for dette Space med dem fra et andet Space"
           }
         },
         "de" : {
@@ -66368,7 +66368,7 @@
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "رنگ، استایل، نماد و فونت این فضا را با موارد فضای دیگری جایگزین کنید"
+            "value" : "رنگ، سبک، نماد و فونت این فضا را با رنگ، سبک، نماد و فونت فضای دیگری جایگزین کنید"
           }
         },
         "fi" : {
@@ -66434,13 +66434,13 @@
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ganti warna, gaya, simbol dan fon Ruang ini dengan milik Ruang lain"
+            "value" : "Gantikan warna, gaya, simbol dan fon Ruang ini dengan tetapan Ruang lain"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erstatt farge, stil, symbol og skrifttype for dette Space med et annet Spaces"
+            "value" : "Bruk fargen, stilen, symbolet og skrifttypen fra et annet Space på dette Spacet."
           }
         },
         "nl" : {
@@ -66452,7 +66452,7 @@
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Byt ut farge, stil, symbol og skrifttype for dette Space med dei frå eit anna Space"
+            "value" : "Byt ut farge, stil, symbol og skrifttype for dette Spacet med dei frå eit anna Space"
           }
         },
         "pa" : {
@@ -66512,7 +66512,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ersätt färg, stil, symbol och teckensnitt för det här Space med ett annat Spaces"
+            "value" : "Ersätt det här Spacets färg, stil, symbol och teckensnitt med motsvarande inställningar från ett annat Space"
           }
         },
         "th" : {
@@ -66548,7 +66548,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "将此空间的颜色、样式、符号和字体替换为其他空间的"
+            "value" : "用另一空间的颜色、样式、符号和字体替换此空间的相应设置"
           }
         },
         "zh-Hant" : {
@@ -66560,7 +66560,7 @@
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "將此空間的顏色、樣式、符號與字體替換為其他空間的"
+            "value" : "將另一個空間的顏色、樣式、符號和字體套用至此空間"
           }
         }
       }
@@ -66964,7 +66964,7 @@
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Det aktive Space"
+            "value" : "Det aktive Spacet"
           }
         },
         "nl" : {
@@ -66976,7 +66976,7 @@
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Det aktive Space"
+            "value" : "Det aktive Spacet"
           }
         },
         "pa" : {
@@ -67036,7 +67036,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Det aktiva Space"
+            "value" : "Det aktiva Spacet"
           }
         },
         "th" : {
@@ -67072,7 +67072,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "当前活跃的空间"
+            "value" : "当前使用的空间"
           }
         },
         "zh-Hant" : {
@@ -67518,7 +67518,7 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "د روان سپېس د متن لپاره ځانګړی فانټ"
+            "value" : "د اوسني سپېس د متن لپاره ځانګړی فانټ"
           }
         },
         "pt" : {
@@ -68566,7 +68566,7 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "کله چې پر هر ډیسپلې یوازې یو سپېس وي د مېنو پټې نښه پټه کړئ"
+            "value" : "کله چې پر هر ډیسپلې یوازې یو سپېس وي، د مېنو پټې نښه پټه کړئ"
           }
         },
         "pt" : {
@@ -68708,7 +68708,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Send the front window to the Space on the left and switch Space"
+            "value" : "Send the front window to the Space on the left and switch to it"
           }
         },
         "en-GB" : {
@@ -68720,7 +68720,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviar la ventana frontal al Espacio de la izquierda y cambiar de Espacio"
+            "value" : "Enviar la ventana en primer plano al Espacio de la izquierda y cambiar de Espacio"
           }
         },
         "fa" : {
@@ -68816,7 +68816,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "اگلی ونڈو نوں کھبے پاسے دی سپیس تے بھیجو تے سپیس بدلو"
+            "value" : "سامہنے والی ونڈو نوں کھبے پاسے دی سپیس تے بھیجو تے سپیس بدلو"
           }
         },
         "pl" : {
@@ -68828,25 +68828,25 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "مخکینۍ کړکۍ کيڼې خوا سپېس ته ولېږئ او سپېس بدل کړئ"
+            "value" : "مخکینۍ کړکۍ د کيڼې خوا سپېس ته ولېږئ او هماغه سپېس ته لاړ شئ"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviar a janela da frente para o Espaço à esquerda e mudar de Espaço"
+            "value" : "Enviar a janela em primeiro plano para o Espaço à esquerda e mudar de Espaço"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviar a janela da frente para o Espaço à esquerda e mudar de Espaço"
+            "value" : "Enviar a janela em primeiro plano para o Espaço à esquerda e mudar de Espaço"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trimite fereastra din față în Spațiul din stânga și comută Spațiul"
+            "value" : "Trimite fereastra din prim-plan în Spațiul din stânga și trece la acel Spațiu"
           }
         },
         "ru" : {
@@ -68864,13 +68864,13 @@
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pošaljite prednji prozor na Prostor levo i promenite Prostor"
+            "value" : "Pošaljite prednji prozor na Prostor levo i prebacite se na njega"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Skicka det främsta fönstret till Spacen till vänster och byt Space"
+            "value" : "Skicka det främsta fönstret till Spacet till vänster och byt Space"
           }
         },
         "th" : {
@@ -68882,13 +68882,13 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Öndeki pencereyi soldaki Alana gönder ve Alanı değiştir"
+            "value" : "Öndeki pencereyi soldaki Alana gönder ve o Alana geç"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Надіслати переднє вікно на Простір ліворуч і перемкнути Простір"
+            "value" : "Перемістити активне вікно до Простору ліворуч і перейти до нього"
           }
         },
         "ur" : {
@@ -68970,7 +68970,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Send the front window to the Space on the right and switch Space"
+            "value" : "Send the front window to the Space on the right and switch to it"
           }
         },
         "en-GB" : {
@@ -68982,7 +68982,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviar la ventana frontal al Espacio de la derecha y cambiar de Espacio"
+            "value" : "Enviar la ventana en primer plano al Espacio de la derecha y cambiar de Espacio"
           }
         },
         "fa" : {
@@ -69078,7 +69078,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "اگلی ونڈو نوں سجے پاسے دی سپیس تے بھیجو تے سپیس بدلو"
+            "value" : "سامہنے والی ونڈو نوں سجے پاسے دی سپیس تے بھیجو تے سپیس بدلو"
           }
         },
         "pl" : {
@@ -69090,25 +69090,25 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "مخکینۍ کړکۍ ښي خوا سپېس ته ولېږئ او سپېس بدل کړئ"
+            "value" : "مخکینۍ کړکۍ د ښي خوا سپېس ته ولېږئ او هماغه سپېس ته لاړ شئ"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviar a janela da frente para o Espaço à direita e mudar de Espaço"
+            "value" : "Enviar a janela em primeiro plano para o Espaço à direita e mudar de Espaço"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviar a janela da frente para o Espaço à direita e mudar de Espaço"
+            "value" : "Enviar a janela em primeiro plano para o Espaço à direita e mudar de Espaço"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trimite fereastra din față în Spațiul din dreapta și comută Spațiul"
+            "value" : "Trimite fereastra din prim-plan în Spațiul din dreapta și trece la acel Spațiu"
           }
         },
         "ru" : {
@@ -69126,13 +69126,13 @@
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pošaljite prednji prozor na Prostor desno i promenite Prostor"
+            "value" : "Pošaljite prednji prozor na Prostor desno i prebacite se na njega"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Skicka det främsta fönstret till Spacen till höger och byt Space"
+            "value" : "Skicka det främsta fönstret till Spacet till höger och byt Space"
           }
         },
         "th" : {
@@ -69144,13 +69144,13 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Öndeki pencereyi sağdaki Alana gönder ve Alanı değiştir"
+            "value" : "Öndeki pencereyi sağdaki Alana gönder ve o Alana geç"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Надіслати переднє вікно на Простір праворуч і перемкнути Простір"
+            "value" : "Перемістити активне вікно до Простору праворуч і перейти до нього"
           }
         },
         "ur" : {
@@ -69244,7 +69244,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviar la ventana frontal al Espacio de la izquierda"
+            "value" : "Enviar la ventana en primer plano al Espacio de la izquierda"
           }
         },
         "fa" : {
@@ -69340,7 +69340,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "اگلی ونڈو نوں کھبے پاسے دی سپیس تے بھیجو"
+            "value" : "سامہنے والی ونڈو نوں کھبے پاسے دی سپیس تے بھیجو"
           }
         },
         "pl" : {
@@ -69352,25 +69352,25 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "مخکینۍ کړکۍ کيڼې خوا سپېس ته ولېږئ"
+            "value" : "مخکینۍ کړکۍ د کيڼې خوا سپېس ته ولېږئ"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviar a janela da frente para o Espaço à esquerda"
+            "value" : "Enviar a janela em primeiro plano para o Espaço à esquerda"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviar a janela da frente para o Espaço à esquerda"
+            "value" : "Enviar a janela em primeiro plano para o Espaço à esquerda"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trimite fereastra din față în Spațiul din stânga"
+            "value" : "Trimite fereastra din prim-plan în Spațiul din stânga"
           }
         },
         "ru" : {
@@ -69394,7 +69394,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Skicka det främsta fönstret till Spacen till vänster"
+            "value" : "Skicka det främsta fönstret till Spacet till vänster"
           }
         },
         "th" : {
@@ -69412,7 +69412,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Надіслати переднє вікно на Простір ліворуч"
+            "value" : "Перемістити активне вікно до Простору ліворуч"
           }
         },
         "ur" : {
@@ -69506,7 +69506,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviar la ventana frontal al Espacio de la derecha"
+            "value" : "Enviar la ventana en primer plano al Espacio de la derecha"
           }
         },
         "fa" : {
@@ -69602,7 +69602,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "اگلی ونڈو نوں سجے پاسے دی سپیس تے بھیجو"
+            "value" : "سامہنے والی ونڈو نوں سجے پاسے دی سپیس تے بھیجو"
           }
         },
         "pl" : {
@@ -69614,25 +69614,25 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "مخکینۍ کړکۍ ښي خوا سپېس ته ولېږئ"
+            "value" : "مخکینۍ کړکۍ د ښي خوا سپېس ته ولېږئ"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviar a janela da frente para o Espaço à direita"
+            "value" : "Enviar a janela em primeiro plano para o Espaço à direita"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviar a janela da frente para o Espaço à direita"
+            "value" : "Enviar a janela em primeiro plano para o Espaço à direita"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trimite fereastra din față în Spațiul din dreapta"
+            "value" : "Trimite fereastra din prim-plan în Spațiul din dreapta"
           }
         },
         "ru" : {
@@ -69656,7 +69656,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Skicka det främsta fönstret till Spacen till höger"
+            "value" : "Skicka det främsta fönstret till Spacet till höger"
           }
         },
         "th" : {
@@ -69674,7 +69674,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Надіслати переднє вікно на Простір праворуч"
+            "value" : "Перемістити активне вікно до Простору праворуч"
           }
         },
         "ur" : {
@@ -69876,7 +69876,7 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "کيڼې خوا سپېس ته بدل شئ"
+            "value" : "د کيڼې خوا سپېس ته لاړ شئ"
           }
         },
         "pt" : {
@@ -69918,7 +69918,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Byt till Spacen till vänster"
+            "value" : "Byt till Spacet till vänster"
           }
         },
         "th" : {
@@ -69936,7 +69936,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Перемкнути на Простір ліворуч"
+            "value" : "Перейти до Простору ліворуч"
           }
         },
         "ur" : {
@@ -70138,7 +70138,7 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "وروستي کتل شوي سپېس ته بېرته بدل شئ"
+            "value" : "وروستي کتل شوي سپېس ته بېرته لاړ شئ"
           }
         },
         "pt" : {
@@ -70180,7 +70180,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Byt tillbaka till den senast besökta Spacen"
+            "value" : "Byt tillbaka till det senast besökta Spacet"
           }
         },
         "th" : {
@@ -70198,7 +70198,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Перемкнути назад на останній відвіданий Простір"
+            "value" : "Повернутися до останнього відвіданого Простору"
           }
         },
         "ur" : {
@@ -70400,7 +70400,7 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ښي خوا سپېس ته بدل شئ"
+            "value" : "د ښي خوا سپېس ته لاړ شئ"
           }
         },
         "pt" : {
@@ -70442,7 +70442,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Byt till Spacen till höger"
+            "value" : "Byt till Spacet till höger"
           }
         },
         "th" : {
@@ -70460,7 +70460,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Перемкнути на Простір праворуч"
+            "value" : "Перейти до Простору праворуч"
           }
         },
         "ur" : {
@@ -70852,7 +70852,7 @@
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vízszintes kitöltés az egyes ikonok tartalma körül"
+            "value" : "Vízszintes térköz az egyes ikonok tartalma körül"
           }
         },
         "id" : {
@@ -70894,7 +70894,7 @@
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vannrett utfylling rundt innholdet i hvert ikon"
+            "value" : "Vannrett innvendig marg rundt innholdet i hvert ikon"
           }
         },
         "nl" : {
@@ -70906,7 +70906,7 @@
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vassrett utfylling rundt innhaldet i kvart ikon"
+            "value" : "Vassrett luft rundt innhaldet i kvart ikon"
           }
         },
         "pa" : {
@@ -70978,7 +70978,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Her simgenin içeriği çevresindeki yatay dolgu"
+            "value" : "Her simgenin içeriğinin çevresindeki yatay dolgu"
           }
         },
         "uk" : {
@@ -71633,7 +71633,7 @@
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "कस्टम टेक्स्ट, अधिकतम %lld वर्ण।\nस्पेस नंबर के लिए {#} उपयोग करें।"
+            "value" : "कस्टम टेक्स्ट, अधिकतम %lld वर्ण।\nस्पेस नंबर के लिए {#} का उपयोग करें।"
           }
         },
         "hu" : {
@@ -71663,7 +71663,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "사용자 지정 텍스트, 최대 %lld자.\n스페이스 번호에는 {#} 사용."
+            "value" : "사용자 지정 텍스트, 최대 %lld자.\n스페이스 번호를 표시하려면 {#} 기호를 사용하세요."
           }
         },
         "mk" : {
@@ -71699,7 +71699,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "حسبِ منشا ٹیکسٹ، زیادہ سے زیادہ %lld حروف۔\nسپیس نمبر لئی {#} ورتو۔"
+            "value" : "حسبِ منشا ٹیکسٹ، ودھ توں ودھ %lld اکھر۔\nسپیس نمبر لئی {#} ورتو۔"
           }
         },
         "pl" : {
@@ -72015,7 +72015,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Senaste kontroll: %@"
+            "value" : "Senast kontrollerat: %@"
           }
         },
         "th" : {
@@ -72395,7 +72395,7 @@
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "هر نمایشگر از فضای 1 شروع می‌شود، به‌جای شماره‌گذاری پیوسته"
+            "value" : "هر نمایشگر از فضای ۱ شروع می‌شود، به‌جای شماره‌گذاری پیوسته"
           }
         },
         "fi" : {
@@ -72413,13 +72413,13 @@
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "כל תצוגה מתחילה במרחב 1, במקום מספור רציף"
+            "value" : "כל צג מתחיל במרחב 1, במקום מספור רציף"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "लगातार नंबरिंग की बजाय हर डिस्प्ले स्पेस 1 से शुरू होता है"
+            "value" : "लगातार नंबरिंग के बजाय, हर डिस्प्ले पर स्पेस की गिनती 1 से शुरू होती है"
           }
         },
         "hu" : {
@@ -72473,7 +72473,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elk scherm begint bij Space 1 in plaats van doorlopende nummering"
+            "value" : "Elk scherm begint bij Space 1 in plaats van door te nummeren"
           }
         },
         "nn" : {
@@ -72503,7 +72503,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cada monitor começa no Espaço 1, em vez de uma numeração contínua"
+            "value" : "Cada monitor começa no Espaço 1, em vez de continuar a numeração"
           }
         },
         "pt-BR" : {
@@ -72657,7 +72657,7 @@
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "تعداد آیکون‌های برنامه برای هر فضا"
+            "value" : "تعداد آیکون‌های برنامه که در هر فضا نمایش داده می‌شوند"
           }
         },
         "fi" : {
@@ -73021,7 +73021,7 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "د ټاکلو د مېنو هره کرښه څه ښیي"
+            "value" : "د ټاکونکي هره کرښه څه ښيي"
           }
         },
         "pt" : {
@@ -75021,7 +75021,7 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hae ohjelman %@ asetuksista"
+            "value" : "Hae %@-asetuksista"
           }
         },
         "fr" : {
@@ -75045,7 +75045,7 @@
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Keresés a(z) %@ beállításai között"
+            "value" : "%@ beállításainak keresése"
           }
         },
         "id" : {
@@ -75479,13 +75479,13 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "لون الفاصل المرسوم بين مساحات كل شاشة"
+            "value" : "لون الفاصل المرسوم بين مجموعات المساحات الخاصة بالشاشات"
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Цвят на разделителя между Пространствата на всеки дисплей"
+            "value" : "Цвят на разделителя между групите Пространства на отделните дисплеи"
           }
         },
         "ca" : {
@@ -75509,7 +75509,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Farbe des Trenners zwischen den Spaces der einzelnen Displays"
+            "value" : "Farbe des Trenners zwischen den Space-Gruppen der einzelnen Displays"
           }
         },
         "el" : {
@@ -75545,25 +75545,25 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kunkin näytön Spacejen välisen erottimen väri"
+            "value" : "Näyttöjen Space-ryhmien väliin piirrettävän erottimen väri"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Couleur du séparateur entre les Espaces de chaque écran"
+            "value" : "Couleur du séparateur entre les groupes d’Espaces de chaque écran"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "צבע המפריד בין המרחבים של כל תצוגה"
+            "value" : "צבע המפריד המוצג בין קבוצות המרחבים של הצגים"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "प्रत्येक डिस्प्ले के स्पेसेस के बीच खींचे गए विभाजक का रंग"
+            "value" : "अलग-अलग डिस्प्ले के स्पेस समूहों के बीच बनाए गए विभाजक का रंग"
           }
         },
         "hu" : {
@@ -75575,7 +75575,7 @@
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Warna pemisah antara Space setiap layar"
+            "value" : "Warna pemisah di antara grup Space dari tiap layar"
           }
         },
         "it" : {
@@ -75587,13 +75587,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "各ディスプレイのスペースの間に表示される区切り記号の色"
+            "value" : "ディスプレイごとのスペース群の間に表示される区切り記号の色"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "각 디스플레이의 스페이스 사이에 그려지는 구분 기호 색상"
+            "value" : "디스플레이별 스페이스 그룹 사이에 그려지는 구분선의 색상"
           }
         },
         "mk" : {
@@ -75605,31 +75605,31 @@
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Warna pemisah antara Ruang setiap paparan"
+            "value" : "Warna pemisah yang dilukis antara kumpulan Ruang bagi setiap paparan"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Farge på skilletegnet mellom hver skjerms Spaces"
+            "value" : "Farge på skilletegnet mellom skjermenes Space-grupper"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kleur van het scheidingsteken tussen de Spaces van elk scherm"
+            "value" : "Kleur van het scheidingsteken tussen de Space-groepen van de verschillende schermen"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Farge på skiljeteiknet mellom kvar skjerm sine Spaces"
+            "value" : "Farge på skiljet mellom Space-gruppene for dei ulike skjermane"
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ہر ڈسپلے دیاں سپیسز وچکار کھچے گئے جداکار دا رنگ"
+            "value" : "ہر ڈسپلے دے سپیسز دے گروپاں وچکار کھچے جداکار دا رنگ"
           }
         },
         "pl" : {
@@ -75641,7 +75641,7 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "د هرې ډیسپلې د سپېسونو ترمنځ د کښل شوي بېلوونکي رنګ"
+            "value" : "د ډیسپلېګانو د سپېس ډلو ترمنځ د کښل شوي بېلوونکي رنګ"
           }
         },
         "pt" : {
@@ -75659,7 +75659,7 @@
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Culoare pentru separatorul dintre Spațiile fiecărui ecran"
+            "value" : "Culoarea separatorului dintre grupurile de Spații corespunzătoare ecranelor"
           }
         },
         "ru" : {
@@ -75677,7 +75677,7 @@
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Boja razdelnika između Prostora svakog ekrana"
+            "value" : "Boja razdelnika između grupa Prostora na različitim ekranima"
           }
         },
         "sv" : {
@@ -75689,13 +75689,13 @@
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "สีของตัวคั่นระหว่าง Space ของแต่ละจอภาพ"
+            "value" : "สีของตัวคั่นระหว่างกลุ่ม Space ของแต่ละจอภาพ"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Her ekranın Alanları arasına çizilen ayırıcının rengi"
+            "value" : "Ekranlara ait Alan grupları arasına çizilen ayırıcının rengi"
           }
         },
         "uk" : {
@@ -75707,31 +75707,31 @@
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ہر ڈسپلے کے اسپیسز کے درمیان کھینچے گئے جداکار کا رنگ"
+            "value" : "مختلف ڈسپلے کے اسپیس گروپس کے درمیان کھینچے گئے جداکار کا رنگ"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Màu của dấu phân tách giữa các Không gian của mỗi màn hình"
+            "value" : "Màu của dấu phân tách giữa các nhóm Không gian theo màn hình"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "每个显示器的空间之间分隔符的颜色"
+            "value" : "绘制在各显示器空间组之间的分隔符颜色"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "每個顯示器的空間之間分隔符號的顏色"
+            "value" : "各顯示器空間群組之間所繪分隔符號的顏色"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "每個顯示器的空間之間分隔符號的顏色"
+            "value" : "用來分隔各顯示器空間群組的分隔符號顏色"
           }
         }
       }
@@ -75741,13 +75741,13 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "شكل الفاصل المرسوم بين مساحات كل شاشة"
+            "value" : "شكل الفاصل المرسوم بين مجموعات المساحات الخاصة بالشاشات"
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Форма на разделителя между Пространствата на всеки дисплей"
+            "value" : "Форма на разделителя между групите Пространства на отделните дисплеи"
           }
         },
         "ca" : {
@@ -75771,7 +75771,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Form des Trenners zwischen den Spaces der einzelnen Displays"
+            "value" : "Form des Trenners zwischen den Space-Gruppen der einzelnen Displays"
           }
         },
         "el" : {
@@ -75807,25 +75807,25 @@
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kunkin näytön Spacejen välisen erottimen muoto"
+            "value" : "Näyttöjen Space-ryhmien väliin piirrettävän erottimen muoto"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Forme du séparateur entre les Espaces de chaque écran"
+            "value" : "Forme du séparateur entre les groupes d’Espaces de chaque écran"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "צורת המפריד בין המרחבים של כל תצוגה"
+            "value" : "צורת המפריד המוצג בין קבוצות המרחבים של הצגים"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "प्रत्येक डिस्प्ले के स्पेसेस के बीच खींचे गए विभाजक का आकार"
+            "value" : "अलग-अलग डिस्प्ले के स्पेस समूहों के बीच बनाए गए विभाजक का आकार"
           }
         },
         "hu" : {
@@ -75837,7 +75837,7 @@
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bentuk pemisah antara Space setiap layar"
+            "value" : "Bentuk pemisah di antara grup Space dari tiap layar"
           }
         },
         "it" : {
@@ -75849,13 +75849,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "各ディスプレイのスペースの間に表示される区切り記号の形"
+            "value" : "ディスプレイごとのスペース群の間に表示される区切り記号の形"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "각 디스플레이의 스페이스 사이에 그려지는 구분 기호 모양"
+            "value" : "디스플레이별 스페이스 그룹 사이에 그려지는 구분선의 모양"
           }
         },
         "mk" : {
@@ -75867,31 +75867,31 @@
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bentuk pemisah antara Ruang setiap paparan"
+            "value" : "Bentuk pemisah yang dilukis antara kumpulan Ruang bagi setiap paparan"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Form på skilletegnet mellom hver skjerms Spaces"
+            "value" : "Form på skilletegnet mellom skjermenes Space-grupper"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vorm van het scheidingsteken tussen de Spaces van elk scherm"
+            "value" : "Vorm van het scheidingsteken tussen de Space-groepen van de verschillende schermen"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Form på skiljeteiknet mellom kvar skjerm sine Spaces"
+            "value" : "Form på skiljet mellom Space-gruppene for dei ulike skjermane"
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ہر ڈسپلے دیاں سپیسز وچکار کھچے گئے جداکار دی شکل"
+            "value" : "ہر ڈسپلے دے سپیسز دے گروپاں وچکار کھچے جداکار دی شکل"
           }
         },
         "pl" : {
@@ -75903,7 +75903,7 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "د هرې ډیسپلې د سپېسونو ترمنځ د کښل شوي بېلوونکي بڼه"
+            "value" : "د ډیسپلېګانو د سپېس ډلو ترمنځ د کښل شوي بېلوونکي بڼه"
           }
         },
         "pt" : {
@@ -75921,7 +75921,7 @@
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Formă pentru separatorul dintre Spațiile fiecărui ecran"
+            "value" : "Forma separatorului dintre grupurile de Spații corespunzătoare ecranelor"
           }
         },
         "ru" : {
@@ -75939,7 +75939,7 @@
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oblik razdelnika između Prostora svakog ekrana"
+            "value" : "Oblik razdelnika između grupa Prostora na različitim ekranima"
           }
         },
         "sv" : {
@@ -75951,13 +75951,13 @@
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "รูปร่างของตัวคั่นระหว่าง Space ของแต่ละจอภาพ"
+            "value" : "รูปร่างของตัวคั่นระหว่างกลุ่ม Space ของแต่ละจอภาพ"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Her ekranın Alanları arasına çizilen ayırıcının şekli"
+            "value" : "Ekranlara ait Alan grupları arasına çizilen ayırıcının şekli"
           }
         },
         "uk" : {
@@ -75969,31 +75969,31 @@
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ہر ڈسپلے کے اسپیسز کے درمیان کھینچے گئے جداکار کی شکل"
+            "value" : "مختلف ڈسپلے کے اسپیس گروپس کے درمیان کھینچے گئے جداکار کی شکل"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hình dạng của dấu phân tách giữa các Không gian của mỗi màn hình"
+            "value" : "Hình dạng của dấu phân tách giữa các nhóm Không gian theo màn hình"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "每个显示器的空间之间分隔符的形状"
+            "value" : "绘制在各显示器空间组之间的分隔符形状"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "每個顯示器的空間之間分隔符號的形狀"
+            "value" : "各顯示器空間群組之間所繪分隔符號的形狀"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "每個顯示器的空間之間分隔符號的形狀"
+            "value" : "用來分隔各顯示器空間群組的分隔符號形狀"
           }
         }
       }
@@ -76605,13 +76605,13 @@
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "כולל מרחבים מכל תצוגה במקום מהתצוגה הפעילה בלבד"
+            "value" : "הכללת מרחבים מכל הצגים במקום מהצג הפעיל בלבד"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "सिर्फ़ सक्रिय डिस्प्ले की बजाय हर डिस्प्ले के स्पेसेस शामिल करता है"
+            "value" : "सिर्फ़ सक्रिय डिस्प्ले के बजाय, हर डिस्प्ले के स्पेस शामिल करें"
           }
         },
         "hu" : {
@@ -77343,7 +77343,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton, der beim Wechsel des aktuellen Space abgespielt wird"
+            "value" : "Ton, der beim Wechsel des aktuellen Spaces abgespielt wird"
           }
         },
         "el" : {
@@ -77707,7 +77707,7 @@
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lyd som spilles av når du bytter til dette Space"
+            "value" : "Lyd som spilles av når du bytter til dette Spacet"
           }
         },
         "nl" : {
@@ -77719,7 +77719,7 @@
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lyd som vert spela av når du byter til dette Space"
+            "value" : "Lyd som vert spela av når du byter til dette Spacet"
           }
         },
         "pa" : {
@@ -77755,7 +77755,7 @@
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sunet redat la comutarea pe acest Spațiu"
+            "value" : "Sunet redat când se trece la acest Spațiu"
           }
         },
         "ru" : {
@@ -77969,7 +77969,7 @@
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dette Space finnes ikke ennå. Stilen brukes når det opprettes."
+            "value" : "Dette Spacet finnes ikke ennå. Stilen brukes når det opprettes."
           }
         },
         "nl" : {
@@ -77981,7 +77981,7 @@
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dette Space finst ikkje enno. Stilen blir brukt når det blir oppretta."
+            "value" : "Dette Spacet finst ikkje enno. Stilen blir brukt når det blir oppretta."
           }
         },
         "pa" : {
@@ -78231,7 +78231,7 @@
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dette Space finnes ikke ennå. Snarveien virker når det opprettes."
+            "value" : "Dette Spacet finnes ikke ennå. Snarveien virker når det opprettes."
           }
         },
         "nl" : {
@@ -78243,7 +78243,7 @@
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dette Space finst ikkje enno. Snarvegen verkar når det blir oppretta."
+            "value" : "Dette Spacet finst ikkje enno. Snarvegen verkar når det blir oppretta."
           }
         },
         "pa" : {
@@ -80475,7 +80475,7 @@
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Skrýt aplikace na celou obrazovku"
+            "value" : "Skrýt aplikace v režimu celé obrazovky"
           }
         },
         "da" : {
@@ -80613,7 +80613,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ukryj aplikacje na pełnym ekranie"
+            "value" : "Ukryj aplikacje pełnoekranowe"
           }
         },
         "ps" : {
@@ -80637,7 +80637,7 @@
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ascunde aplicațiile pe tot ecranul"
+            "value" : "Ascunde aplicațiile în modul ecran complet"
           }
         },
         "ru" : {
@@ -80679,7 +80679,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Приховати повноекранні застосунки"
+            "value" : "Приховувати повноекранні застосунки"
           }
         },
         "ur" : {
@@ -81321,7 +81321,7 @@
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "התחל מספור מחדש בכל תצוגה"
+            "value" : "התחל את המספור מחדש בכל צג"
           }
         },
         "hi" : {
@@ -82369,13 +82369,13 @@
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "הצג מרחבים מתצוגות אחרות"
+            "value" : "הצג מרחבים מצגים אחרים"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "अन्य डिस्प्ले के स्पेसेस दिखाएँ"
+            "value" : "अन्य डिस्प्ले के स्पेस दिखाएँ"
           }
         },
         "hu" : {
@@ -82441,7 +82441,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "دوجے ڈسپلے دے سپیسز وکھاؤ"
+            "value" : "ہور ڈسپلےآں دے سپیسز وکھاؤ"
           }
         },
         "pl" : {
@@ -82559,7 +82559,7 @@
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Покажи всяко Пространство"
+            "value" : "Показвай всички Пространства"
           }
         },
         "ca" : {
@@ -82887,7 +82887,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Réduire pour que ça tienne"
+            "value" : "Réduire pour ajuster"
           }
         },
         "he" : {
@@ -82917,7 +82917,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Riduci perché ci stia"
+            "value" : "Riduci per adattare"
           }
         },
         "ja" : {
