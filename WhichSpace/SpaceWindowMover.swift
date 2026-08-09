@@ -288,13 +288,15 @@ struct SpaceWindowMover {
     }
 
     /// Moves the front window one Space left or right, skipping fullscreen
-    /// Spaces. Without `wrap` either edge is an error rather than a silent
-    /// no-op, so a script can tell a refusal from a move; the hotkeys pass the
-    /// same wrap preference the switch hotkeys use.
+    /// Spaces and any whose IDs appear in `skippingSpaceIDs`. Without `wrap`
+    /// either edge is an error rather than a silent no-op, so a script can
+    /// tell a refusal from a move; the hotkeys pass the same wrap preference
+    /// the switch hotkeys use.
     func moveRelative(
         goRight: Bool,
         follow: Bool,
         wrap: Bool = false,
+        skippingSpaceIDs: Set<Int> = [],
         appState: AppState
     ) async throws(MoveError) {
         let entries = appState.allSpaceEntries
@@ -303,12 +305,18 @@ struct SpaceWindowMover {
         }
         let step = goRight ? 1 : -1
         var index = appState.currentSpace + step
-        index = skippingFullscreen(from: index, step: step, entries: entries)
+        index = skippingIneligible(from: index, step: step, entries: entries, skipping: skippingSpaceIDs)
         if wrap, !entries.indices.contains(index - 1) {
-            // Resume from the far end and walk inward, so the fullscreen skip
-            // applies to the wrapped side too
-            index = skippingFullscreen(from: goRight ? 1 : entries.count, step: step, entries: entries)
-            // Landing back where the window already is is not a move
+            // Resume from the far end and walk inward, so both skip rules
+            // apply to the wrapped side too. The walk cannot run past the
+            // current Space: the front window keeps it eligible, and landing
+            // back on it is caught as not being a move.
+            index = skippingIneligible(
+                from: goRight ? 1 : entries.count,
+                step: step,
+                entries: entries,
+                skipping: skippingSpaceIDs
+            )
             guard index != appState.currentSpace else {
                 throw .spaceOutOfRange(requested: index, max: entries.count)
             }
@@ -325,11 +333,19 @@ struct SpaceWindowMover {
         )
     }
 
-    /// Advances a 1-based Space number past any fullscreen entries, stopping at
-    /// the first regular Space or at the edge it runs off.
-    private func skippingFullscreen(from start: Int, step: Int, entries: [SpaceEntry]) -> Int {
+    /// Advances a 1-based Space number past any fullscreen or skipped
+    /// entries, stopping at the first eligible Space or at the edge it runs
+    /// off.
+    private func skippingIneligible(
+        from start: Int,
+        step: Int,
+        entries: [SpaceEntry],
+        skipping: Set<Int>
+    ) -> Int {
         var index = start
-        while entries.indices.contains(index - 1), entries[index - 1].regularIndex == nil {
+        while entries.indices.contains(index - 1),
+              entries[index - 1].regularIndex == nil || skipping.contains(entries[index - 1].id)
+        {
             index += step
         }
         return index

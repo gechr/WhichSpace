@@ -217,6 +217,8 @@ struct DefaultsIsolationGuardTests {
             "hideFullscreenApps",
             "hideSingleSpace",
             "horizontalScrollEnabled",
+            "hotkeysSkipEmptySpaces",
+            "hotkeysWindowSkipEmptySpaces",
             "includeBetaUpdates",
             "invertHorizontalScroll",
             "invertVerticalScroll",

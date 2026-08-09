@@ -560,6 +560,13 @@ enum SettingsSearchIndex {
         // The direction rows share bare Left/Right/Previous titles, so each
         // takes the switch card as its section, mirroring the scroll invert rows
         SettingsSearchEntry(
+            anchor: .hotkeySwitchPrevious,
+            section: Localization.labelSwitch,
+            title: Localization.labelPrevious,
+            subtitle: Localization.tipHotkeySwitchPrevious,
+            keywords: [.hotkey, .space]
+        ),
+        SettingsSearchEntry(
             anchor: .hotkeySwitchLeft,
             section: Localization.labelSwitch,
             title: Localization.labelLeft,
@@ -574,10 +581,10 @@ enum SettingsSearchIndex {
             keywords: [.hotkey, .space]
         ),
         SettingsSearchEntry(
-            anchor: .hotkeySwitchPrevious,
+            anchor: .hotkeySkipEmptySpaces,
             section: Localization.labelSwitch,
-            title: Localization.labelPrevious,
-            subtitle: Localization.tipHotkeySwitchPrevious,
+            title: Localization.toggleSkipEmptySpaces,
+            subtitle: Localization.tipSkipEmptySpaces,
             keywords: [.hotkey, .space]
         ),
         SettingsSearchEntry(
@@ -606,6 +613,13 @@ enum SettingsSearchIndex {
             section: Localization.labelWindow,
             title: Localization.labelMoveRight,
             subtitle: Localization.tipHotkeyMoveRight,
+            keywords: [.hotkey, .window, .space]
+        ),
+        SettingsSearchEntry(
+            anchor: .hotkeyWindowSkipEmptySpaces,
+            section: Localization.labelWindow,
+            title: Localization.toggleSkipEmptySpaces,
+            subtitle: Localization.tipWindowSkipEmptySpaces,
             keywords: [.hotkey, .window, .space]
         ),
         SettingsSearchEntry(

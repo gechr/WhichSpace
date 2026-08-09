@@ -77832,6 +77832,268 @@
         }
       }
     },
+    "tip_skip_empty_spaces" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تخطي المساحات التي لا تحتوي على نوافذ مفتوحة عند التبديل إلى اليسار أو اليمين"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Прескачай Пространствата без отворени прозорци при превключване наляво или надясно"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Omet els Espais sense finestres obertes en canviar cap a l'esquerra o cap a la dreta"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Přeskakovat Spaces bez otevřených oken při přepínání vlevo nebo vpravo"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spring Spaces uden åbne vinduer over, når du skifter til venstre eller højre"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spaces ohne offene Fenster beim Wechseln nach links oder rechts überspringen"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Παράλειψη Χώρων χωρίς ανοικτά παράθυρα κατά τη μετάβαση αριστερά ή δεξιά"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skip Spaces that have no open windows when switching left or right"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skip Spaces that have no open windows when switching left or right"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Omitir Espacios sin ventanas abiertas al cambiar a la izquierda o a la derecha"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "هنگام جابه‌جایی به چپ یا راست از فضاهای بدون پنجره باز رد شوید"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ohita Spacet, joissa ei ole avoimia ikkunoita, kun vaihdat vasemmalle tai oikealle"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ignorer les Espaces sans fenêtre ouverte lors du passage à gauche ou à droite"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "דלג על מרחבים ללא חלונות פתוחים בעת מעבר שמאלה או ימינה"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "बाएँ या दाएँ स्विच करते समय उन स्पेसेस को छोड़ें जिनमें खुली विंडो नहीं हैं"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nyitott ablak nélküli Space-ek kihagyása balra vagy jobbra váltáskor"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lewati Space tanpa jendela terbuka saat beralih ke kiri atau kanan"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salta gli Spazi senza finestre aperte quando passi a sinistra o a destra"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左右に切り替えるときに開いているウインドウがないスペースをスキップ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "왼쪽이나 오른쪽으로 전환할 때 열린 창이 없는 스페이스 건너뛰기"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Прескокни Простори без отворени прозорци при префрлање налево или надесно"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Langkau Ruang yang tiada tetingkap terbuka apabila bertukar ke kiri atau kanan"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hopp over Spaces uten åpne vinduer når du bytter til venstre eller høyre"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spaces zonder open vensters overslaan bij het wisselen naar links of rechts"
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hopp over Spaces utan opne vindauge når du byter til venstre eller høgre"
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "کھبے یاں سجے سوئچ کرن ویلے اوہ سپیسز چھڈو جیہڑے وچ کوئی کھلی ونڈو نہیں"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pomijaj Spaces bez otwartych okien podczas przełączania w lewo lub w prawo"
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "کيڼ يا ښي خوا ته د تلو پر مهال هغه سپېسونه پرېږدئ چې خلاص کړکۍ نه لري"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ignorar Espaços sem janelas abertas ao mudar para a esquerda ou para a direita"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ignorar Espaços sem janelas abertas ao alternar para a esquerda ou para a direita"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Omite Spațiile fără ferestre deschise la comutarea spre stânga sau spre dreapta"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пропускать Пространства без открытых окон при переключении влево или вправо"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preskakovať Priestory bez otvorených okien pri prepínaní vľavo alebo vpravo"
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preskoči Prostore bez otvorenih prozora pri prebacivanju levo ili desno"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoppa över Spaces utan öppna fönster när du byter till vänster eller höger"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ข้าม Space ที่ไม่มีหน้าต่างเปิดเมื่อสลับไปทางซ้ายหรือขวา"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sola veya sağa geçerken penceresi olmayan Alanları atla"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пропускати Простори без відкритих вікон під час переходу ліворуч або праворуч"
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "بائیں یا دائیں جانب جاتے وقت وہ اسپیسز چھوڑیں جن میں کوئی کھلی ونڈو نہیں"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bỏ qua các Không gian không có cửa sổ đang mở khi chuyển sang trái hoặc phải"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "向左或向右切换时跳过没有打开窗口的空间"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "向左或向右切換時略過沒有開啟視窗的空間"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "向左或向右切換時略過沒有開啟視窗的空間"
+          }
+        }
+      }
+    },
     "tip_sound" : {
       "localizations" : {
         "ar" : {
@@ -79138,6 +79400,268 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "在全螢幕空間顯示「F」而非應用程式圖示"
+          }
+        }
+      }
+    },
+    "tip_window_skip_empty_spaces" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تخطي المساحات التي لا تحتوي على نوافذ مفتوحة عند إرسال النافذة الأمامية أو نقلها"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Прескачай Пространствата без отворени прозорци при изпращане или преместване на предния прозорец"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Omet els Espais sense finestres obertes en enviar o moure la finestra frontal"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Přeskakovat Spaces bez otevřených oken při odesílání nebo přesouvání předního okna"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spring Spaces uden åbne vinduer over, når du sender eller flytter det forreste vindue"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spaces ohne offene Fenster beim Senden oder Verschieben des vordersten Fensters überspringen"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Παράλειψη Χώρων χωρίς ανοικτά παράθυρα κατά την αποστολή ή τη μετακίνηση του παραθύρου στο προσκήνιο"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skip Spaces that have no open windows when sending or moving the front window"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skip Spaces that have no open windows when sending or moving the front window"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Omitir Espacios sin ventanas abiertas al enviar o mover la ventana en primer plano"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "هنگام ارسال یا جابه‌جایی پنجره جلویی از فضاهای بدون پنجره باز رد شوید"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ohita Spacet, joissa ei ole avoimia ikkunoita, kun lähetät tai siirrät etummaista ikkunaa"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ignorer les Espaces sans fenêtre ouverte lors de l’envoi ou du déplacement de la fenêtre au premier plan"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "דלג על מרחבים ללא חלונות פתוחים בעת שליחה או הזזה של החלון שבחזית"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सामने की विंडो को भेजते या ले जाते समय उन स्पेसेस को छोड़ें जिनमें खुली विंडो नहीं हैं"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nyitott ablak nélküli Space-ek kihagyása az előtérben lévő ablak küldésekor vagy áthelyezésekor"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lewati Space tanpa jendela terbuka saat mengirim atau memindahkan jendela terdepan"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salta gli Spazi senza finestre aperte quando invii o sposti la finestra in primo piano"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最前面のウインドウを送るときや移動するときに開いているウインドウがないスペースをスキップ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "맨 앞 윈도우를 보내거나 이동할 때 열린 창이 없는 스페이스 건너뛰기"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Прескокни Простори без отворени прозорци при испраќање или преместување на предниот прозорец"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Langkau Ruang yang tiada tetingkap terbuka apabila menghantar atau mengalihkan tetingkap hadapan"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hopp over Spaces uten åpne vinduer når du sender eller flytter det fremste vinduet"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spaces zonder open vensters overslaan bij het verzenden of verplaatsen van het voorste venster"
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hopp over Spaces utan opne vindauge når du sender eller flyttar det fremste vindauget"
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سامہنے والی ونڈو نوں بھیجن یا لے جان ویلے اوہ سپیسز چھڈو جیہڑے وچ کوئی کھلی ونڈو نہیں"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pomijaj Spaces bez otwartych okien podczas wysyłania lub przenoszenia przedniego okna"
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "د مخکینۍ کړکۍ د لېږلو یا لېږدولو پر مهال هغه سپېسونه پرېږدئ چې خلاص کړکۍ نه لري"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ignorar Espaços sem janelas abertas ao enviar ou mover a janela em primeiro plano"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ignorar Espaços sem janelas abertas ao enviar ou mover a janela em primeiro plano"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Omite Spațiile fără ferestre deschise la trimiterea sau mutarea ferestrei din prim-plan"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пропускать Пространства без открытых окон при отправке или перемещении переднего окна"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preskakovať Priestory bez otvorených okien pri odosielaní alebo presúvaní predného okna"
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preskoči Prostore bez otvorenih prozora pri slanju ili premeštanju prednjeg prozora"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoppa över Spaces utan öppna fönster när du skickar eller flyttar det främsta fönstret"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ข้าม Space ที่ไม่มีหน้าต่างเปิดเมื่อส่งหรือย้ายหน้าต่างหน้าสุด"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öndeki pencereyi gönderirken veya taşırken penceresi olmayan Alanları atla"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пропускати Простори без відкритих вікон під час надсилання або переміщення активного вікна"
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سامنے والی ونڈو کو بھیجتے یا منتقل کرتے وقت وہ اسپیسز چھوڑیں جن میں کوئی کھلی ونڈو نہیں"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bỏ qua các Không gian không có cửa sổ đang mở khi gửi hoặc di chuyển cửa sổ trên cùng"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "发送或移动最前面的窗口时跳过没有打开窗口的空间"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "傳送或移動最前面的視窗時略過沒有開啟視窗的空間"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "傳送或移動最前面的視窗時略過沒有開啟視窗的空間"
           }
         }
       }
@@ -83592,6 +84116,268 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "縮小以符合選單列寬度"
+          }
+        }
+      }
+    },
+    "toggle_skip_empty_spaces" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تخطي المساحات الفارغة"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Прескачай празните Пространства"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Omet els Espais buits"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Přeskakovat prázdné Spaces"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spring tomme Spaces over"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leere Spaces überspringen"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Παράλειψη άδειων Χώρων"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skip empty Spaces"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skip empty Spaces"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Omitir Espacios vacíos"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "رد شدن از فضاهای خالی"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ohita tyhjät Spacet"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ignorer les Espaces vides"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "דלג על מרחבים ריקים"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "खाली स्पेसेस छोड़ें"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Üres Space-ek kihagyása"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lewati Space kosong"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salta gli Spazi vuoti"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "空のスペースをスキップ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "빈 스페이스 건너뛰기"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Прескокни празни Простори"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Langkau Ruang kosong"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hopp over tomme Spaces"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lege Spaces overslaan"
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hopp over tomme Spaces"
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "خالی سپیسز چھڈو"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pomijaj puste Spaces"
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "خالي سپېسونه پرېږدئ"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ignorar Espaços vazios"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ignorar Espaços vazios"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Omite Spațiile goale"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пропускать пустые Пространства"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preskakovať prázdne Priestory"
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preskoči prazne Prostore"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoppa över tomma Spaces"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ข้าม Space ว่าง"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Boş Alanları atla"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пропускати порожні Простори"
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "خالی اسپیسز چھوڑیں"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bỏ qua Không gian trống"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跳过空的空间"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "略過空的空間"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "略過空的空間"
           }
         }
       }

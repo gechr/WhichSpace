@@ -132,7 +132,7 @@ enum Layout {
     /// Inset between a pane's content and the window edge
     static let settingsPanePadding = 16.0
     /// Share of the screen height a settings pane may take before it scrolls
-    static let settingsPaneMaxHeightRatio = 0.7
+    static let settingsPaneMaxHeightRatio = 0.75
     /// Pane height cap when no screen is available to measure
     static let settingsPaneMaxHeightFallback = 800.0
     /// Vertical gap between the cards stacked in a pane
@@ -526,6 +526,7 @@ enum Localization {
     static let tipSeparator = String(localized: "tip_separator")
     static let tipSeparatorStyle = String(localized: "tip_separator_style")
     static let tipSetDefaultStyle = String(localized: "tip_set_default_style")
+    static let tipSkipEmptySpaces = String(localized: "tip_skip_empty_spaces")
     static let tipSettingsWindow = String(localized: "tip_settings_window")
     static let tipShowAllDisplays = String(localized: "tip_show_all_displays")
     static let tipShrinkToFit = String(localized: "tip_shrink_to_fit")
@@ -535,6 +536,7 @@ enum Localization {
     static let tipSpacePlaceholder = String(localized: "tip_space_placeholder")
     static let tipSpacePlaceholderHotkey = String(localized: "tip_space_placeholder_hotkey")
     static let tipUseFForFullscreenApps = String(localized: "tip_use_f_for_fullscreen_apps")
+    static let tipWindowSkipEmptySpaces = String(localized: "tip_window_skip_empty_spaces")
     static let toggleAutoCheckUpdates = String(localized: "toggle_auto_check_updates")
     static let toggleAutoInstallUpdates = String(localized: "toggle_auto_install_updates")
     static let toggleBetaUpdates = String(localized: "toggle_beta_updates")
@@ -552,6 +554,7 @@ enum Localization {
     static let toggleShowAllDisplays = String(localized: "toggle_show_all_displays")
     static let toggleShowAllSpaces = String(localized: "toggle_show_all_spaces")
     static let toggleShrinkToFit = String(localized: "toggle_shrink_to_fit")
+    static let toggleSkipEmptySpaces = String(localized: "toggle_skip_empty_spaces")
     static let toggleUseFForFullscreenApps = String(localized: "toggle_use_f_for_fullscreen_apps")
 }
 

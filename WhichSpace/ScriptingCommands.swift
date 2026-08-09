@@ -301,16 +301,24 @@ enum ScriptingHelpers {
     }
 
     /// Moves the frontmost window one Space left or right, skipping fullscreen
-    /// Spaces. Without `wrap` either edge is an error rather than a silent
-    /// no-op, which is what the scripting and URL surfaces want.
+    /// Spaces and any whose IDs appear in `skippingSpaceIDs`. Without `wrap`
+    /// either edge is an error rather than a silent no-op, which is what the
+    /// scripting and URL surfaces want.
     static func moveWindowRelative(
         goRight: Bool,
         follow: Bool,
         wrap: Bool = false,
+        skippingSpaceIDs: Set<Int> = [],
         appState: AppState = AppEnvironment.shared.appState,
         mover: SpaceWindowMover = SpaceWindowMover()
     ) async throws(MoveError) {
-        try await mover.moveRelative(goRight: goRight, follow: follow, wrap: wrap, appState: appState)
+        try await mover.moveRelative(
+            goRight: goRight,
+            follow: follow,
+            wrap: wrap,
+            skippingSpaceIDs: skippingSpaceIDs,
+            appState: appState
+        )
     }
 
     /// Switches to the Space at the given 1-based number. Numbering follows

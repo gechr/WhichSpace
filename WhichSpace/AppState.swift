@@ -235,6 +235,18 @@ final class AppState {
         allDisplaysSpaceInfo.contains { $0.regularSpaceCount > 1 }
     }
 
+    /// Spaces on every display with no qualifying windows, resolved from the
+    /// same occupancy source the hideEmptySpaces filter renders from.
+    /// Spanning all displays keeps the set valid whichever display a switch
+    /// resolves as active, since skipping matches by ID membership. Queried
+    /// on demand rather than cached: callers are per-keypress, and a stale
+    /// answer would route a switch to a Space that just gained or lost its
+    /// last window.
+    func emptySpaceIDs() -> Set<Int> {
+        let spaceIDs = allDisplaysSpaceInfo.flatMap { $0.entries.map(\.id) }
+        return Set(spaceIDs).subtracting(displaySpaceProvider.spacesWithWindows(forSpaceIDs: spaceIDs))
+    }
+
     private let displaySpaceProvider: DisplaySpaceProvider
 
     let store: DefaultsStore

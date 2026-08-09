@@ -102,6 +102,104 @@ struct SpaceSwitcherTests {
         )
     }
 
+    @Test("relative target is the adjacent Space when nothing is skipped")
+    func relativeTarget_adjacent() {
+        #expect(
+            SpaceSwitcher.relativeTargetIndex(
+                from: 0, goRight: true, wrap: false, spaceIDs: [100, 101, 102]
+            ) == 1
+        )
+        #expect(
+            SpaceSwitcher.relativeTargetIndex(
+                from: 2, goRight: false, wrap: false, spaceIDs: [100, 101, 102]
+            ) == 1
+        )
+    }
+
+    @Test("skipped Spaces are jumped over in the direction of travel")
+    func relativeTarget_skipsInDirection() {
+        #expect(
+            SpaceSwitcher.relativeTargetIndex(
+                from: 0, goRight: true, wrap: false, spaceIDs: [100, 101, 102], skipping: [101]
+            ) == 2
+        )
+        #expect(
+            SpaceSwitcher.relativeTargetIndex(
+                from: 0, goRight: true, wrap: false, spaceIDs: [100, 101, 102, 103], skipping: [101, 102]
+            ) == 3
+        )
+        #expect(
+            SpaceSwitcher.relativeTargetIndex(
+                from: 3, goRight: false, wrap: false, spaceIDs: [100, 101, 102, 103], skipping: [101, 102]
+            ) == 0
+        )
+    }
+
+    @Test("clamped at the edge without wrap")
+    func relativeTarget_edgeClampsWithoutWrap() {
+        #expect(
+            SpaceSwitcher.relativeTargetIndex(
+                from: 2, goRight: true, wrap: false, spaceIDs: [100, 101, 102]
+            ) == nil
+        )
+        #expect(
+            SpaceSwitcher.relativeTargetIndex(
+                from: 0, goRight: false, wrap: false, spaceIDs: [100, 101, 102]
+            ) == nil
+        )
+    }
+
+    @Test("only skipped Spaces ahead yields no target without wrap")
+    func relativeTarget_allSkippedAhead_returnsNil() {
+        #expect(
+            SpaceSwitcher.relativeTargetIndex(
+                from: 0, goRight: true, wrap: false, spaceIDs: [100, 101, 102], skipping: [101, 102]
+            ) == nil
+        )
+    }
+
+    @Test("wrap resumes from the opposite edge")
+    func relativeTarget_wrapsToOppositeEdge() {
+        #expect(
+            SpaceSwitcher.relativeTargetIndex(
+                from: 2, goRight: true, wrap: true, spaceIDs: [100, 101, 102]
+            ) == 0
+        )
+        #expect(
+            SpaceSwitcher.relativeTargetIndex(
+                from: 0, goRight: false, wrap: true, spaceIDs: [100, 101, 102]
+            ) == 2
+        )
+    }
+
+    @Test("wrap keeps skipping from the opposite edge")
+    func relativeTarget_wrapSkipsFromOppositeEdge() {
+        #expect(
+            SpaceSwitcher.relativeTargetIndex(
+                from: 2, goRight: true, wrap: true, spaceIDs: [100, 101, 102, 103], skipping: [100, 103]
+            ) == 1
+        )
+        #expect(
+            SpaceSwitcher.relativeTargetIndex(
+                from: 1, goRight: false, wrap: true, spaceIDs: [100, 101, 102, 103], skipping: [100, 103]
+            ) == 2
+        )
+    }
+
+    @Test("wrap that reaches the current Space again yields no target")
+    func relativeTarget_wrapExhausted_returnsNil() {
+        #expect(
+            SpaceSwitcher.relativeTargetIndex(
+                from: 1, goRight: true, wrap: true, spaceIDs: [100, 101, 102], skipping: [100, 102]
+            ) == nil
+        )
+        #expect(
+            SpaceSwitcher.relativeTargetIndex(
+                from: 0, goRight: true, wrap: true, spaceIDs: [100]
+            ) == nil
+        )
+    }
+
     @Test("activateAppOnSpace returns false for invalid space ID")
     func activateAppOnSpace_invalidID_returnsFalse() {
         // Space ID 0 should never match a real space

@@ -185,13 +185,20 @@ final class HotkeyCenter {
     }
 
     /// Wrapping follows the same preference as scroll switching, so the two
-    /// relative surfaces agree about what happens at the edges.
+    /// relative surfaces agree about what happens at the edges. Skipping
+    /// empty Spaces is a hotkey-only preference: scroll and the scripting
+    /// surfaces keep stepping one Space at a time.
     private func switchRelative(goRight: Bool) {
         guard ensureAccessibility() else {
             return
         }
         performSwitch(forwardsKeyEvents: switchForwardsKeyEvents) {
-            _ = SpaceSwitcher.switchRelative(goRight: goRight, wrap: store.scrollWrapAround)
+            let skipped = store.hotkeysSkipEmptySpaces ? appState.emptySpaceIDs() : []
+            _ = SpaceSwitcher.switchRelative(
+                goRight: goRight,
+                wrap: store.scrollWrapAround,
+                skippingSpaceIDs: skipped
+            )
         }
     }
 
@@ -222,16 +229,20 @@ final class HotkeyCenter {
 
     /// Wrapping follows the same preference as the switch hotkeys, so both
     /// directions behave the same way at the edges. Failures stay silent for
-    /// the same reason `switchTo` swallows its own.
+    /// the same reason `switchTo` swallows its own. Skipping empty Spaces has
+    /// its own preference, separate from the switch hotkeys': landing a
+    /// window on an empty Space is a normal way to start a fresh Desktop.
     private func moveWindow(goRight: Bool, follow: Bool) {
         guard ensureAccessibility() else {
             return
         }
         Task { @MainActor in
+            let skipped = store.hotkeysWindowSkipEmptySpaces ? appState.emptySpaceIDs() : []
             try? await ScriptingHelpers.moveWindowRelative(
                 goRight: goRight,
                 follow: follow,
                 wrap: store.scrollWrapAround,
+                skippingSpaceIDs: skipped,
                 appState: appState
             )
         }

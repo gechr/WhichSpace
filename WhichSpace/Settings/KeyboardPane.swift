@@ -45,7 +45,8 @@ struct KeyboardPane: View {
     @ViewBuilder
     private var sections: some View {
         // Left/right rather than previous/next: "previous" names the
-        // last-visited Space, which is the third row here
+        // last-visited Space, so it gets its own card below the directional
+        // hotkeys and the skip toggle that only governs them.
         SettingsSection(Localization.labelSwitch) {
             recorderRow(
                 title: Localization.labelLeft,
@@ -63,6 +64,16 @@ struct KeyboardPane: View {
                 name: .switchRight
             )
             SettingsRowDivider()
+            SettingsToggleRow(
+                title: Localization.toggleSkipEmptySpaces,
+                isOn: model.binding(\.hotkeysSkipEmptySpaces),
+                icon: "arrow.right.to.line.compact",
+                subtitle: Localization.tipSkipEmptySpaces,
+                anchor: .hotkeySkipEmptySpaces
+            )
+            .padding(.trailing, Layout.settingsSpaceListScrollerWidth)
+        }
+        SettingsSection {
             recorderRow(
                 title: Localization.labelPrevious,
                 icon: "arrow.uturn.backward",
@@ -116,6 +127,15 @@ struct KeyboardPane: View {
                 anchor: .hotkeyMoveRight,
                 name: .moveRight
             )
+            SettingsRowDivider()
+            SettingsToggleRow(
+                title: Localization.toggleSkipEmptySpaces,
+                isOn: model.binding(\.hotkeysWindowSkipEmptySpaces),
+                icon: "arrow.right.to.line.compact",
+                subtitle: Localization.tipWindowSkipEmptySpaces,
+                anchor: .hotkeyWindowSkipEmptySpaces
+            )
+            .padding(.trailing, Layout.settingsSpaceListScrollerWidth)
         }
     }
 

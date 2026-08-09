@@ -197,13 +197,17 @@ enum SpaceSwitcher {
 
     /// Switches one Space left or right on the menu bar display, clamped at the
     /// edges unless `wrap` is true, in which case scrolling past either edge
-    /// wraps around to the opposite end.
-    /// Posts a single synthetic dock-swipe gesture, so fullscreen Spaces are
-    /// traversed the same way a real three-finger swipe would.
+    /// wraps around to the opposite end. Spaces whose IDs appear in
+    /// `skippingSpaceIDs` are jumped over, landing on the nearest remaining
+    /// Space in the direction of travel.
     /// Returns whether a switch was actually performed, so callers can skip
     /// feedback (e.g. haptics) when the gesture was a no-op.
     @discardableResult
-    @MainActor static func switchRelative(goRight: Bool, wrap: Bool = false) -> Bool {
+    @MainActor static func switchRelative(
+        goRight: Bool,
+        wrap: Bool = false,
+        skippingSpaceIDs: Set<Int> = []
+    ) -> Bool {
         let conn = _CGSDefaultConnection()
 
         guard let activeDisplayRef = CGSCopyActiveMenuBarDisplayIdentifier(conn) else {
@@ -224,42 +228,34 @@ enum SpaceSwitcher {
         }
 
         let currentIndex = prediction(for: display.identifier) ?? cgsCurrentIndex
-        let targetIndex = currentIndex + (goRight ? 1 : -1)
-        guard display.spaces.indices.contains(targetIndex) else {
-            if wrap {
-                return wrapAround(goRight: goRight, currentIndex: currentIndex, display: display)
-            }
+        guard let targetIndex = relativeTargetIndex(
+            from: currentIndex,
+            goRight: goRight,
+            wrap: wrap,
+            spaceIDs: display.spaces.map(\.id),
+            skipping: skippingSpaceIDs
+        ) else {
             return false
         }
 
-        guard postStep(goRight: goRight, velocity: swipeVelocity) else {
-            return false
-        }
-
-        recordPrediction(targetIndex, for: display.identifier)
-        return true
-    }
-
-    /// Jumps from one edge of the Space strip to the other by swiping back
-    /// across every intermediate Space, mirroring how `switchToSpace(id:)`
-    /// covers multi-Space distances.
-    @MainActor private static func wrapAround(goRight: Bool, currentIndex: Int, display: ManagedDisplay) -> Bool {
-        let targetIndex = goRight ? 0 : display.spaces.count - 1
+        // A wrap reaches its target by stepping back across the intermediate
+        // Spaces, so the posted direction follows the index delta rather than
+        // the requested one.
         let steps = abs(targetIndex - currentIndex)
-        guard steps > 0 else {
-            return false
-        }
-
-        if requiresClassicPath {
+        let stepsRight = targetIndex > currentIndex
+        if steps == 1 {
+            guard postStep(goRight: stepsRight, velocity: swipeVelocity) else {
+                return false
+            }
+        } else if requiresClassicPath {
             let target = display.spaces[targetIndex].id
-            guard classicSwitch(toSpaceID: target, goRight: !goRight, steps: steps, connection: _CGSDefaultConnection())
-            else {
+            guard classicSwitch(toSpaceID: target, goRight: stepsRight, steps: steps, connection: conn) else {
                 return false
             }
         } else {
             let velocity = swipeVelocity * Double(steps)
             for _ in 0 ..< steps {
-                guard postSwipeGesture(goRight: !goRight, velocity: velocity) else {
+                guard postSwipeGesture(goRight: stepsRight, velocity: velocity) else {
                     return false
                 }
             }
@@ -267,6 +263,41 @@ enum SpaceSwitcher {
 
         recordPrediction(targetIndex, for: display.identifier)
         return true
+    }
+
+    /// The index a relative switch lands on: the nearest index in the
+    /// direction of travel whose Space ID is not skipped. When the scan runs
+    /// off the edge and `wrap` is true, it resumes from the opposite end and
+    /// stops before reaching the current index again. Nil when no Space
+    /// qualifies. A pure routing decision kept separate from event posting so
+    /// skip and wrap behavior can be covered without changing the test
+    /// runner's active Space.
+    static func relativeTargetIndex(
+        from currentIndex: Int,
+        goRight: Bool,
+        wrap: Bool,
+        spaceIDs: [Int],
+        skipping: Set<Int> = []
+    ) -> Int? {
+        let direction = goRight ? 1 : -1
+        var index = currentIndex + direction
+        while spaceIDs.indices.contains(index) {
+            if !skipping.contains(spaceIDs[index]) {
+                return index
+            }
+            index += direction
+        }
+        guard wrap else {
+            return nil
+        }
+        index = goRight ? 0 : spaceIDs.count - 1
+        while spaceIDs.indices.contains(index), index != currentIndex {
+            if !skipping.contains(spaceIDs[index]) {
+                return index
+            }
+            index += direction
+        }
+        return nil
     }
 
     // MARK: - CGS Dictionary Decoding
