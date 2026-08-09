@@ -100,7 +100,7 @@ final class StatusBarRenderer {
     /// icons bake in different transparent margins still render at the
     /// same visual size in the Space picker.
     static func pickerAppIcon(for app: NSRunningApplication) -> NSImage? {
-        guard let icon = app.icon else {
+        guard let icon = appIconArtwork(for: app) else {
             return nil
         }
         let key = app.bundleIdentifier ?? String(app.processIdentifier)
@@ -110,6 +110,28 @@ final class StatusBarRenderer {
         let normalized = SpaceIconGenerator.normalizedAppIcon(icon, side: Layout.spacePickerAppIconSize)
         pickerAppIconCache[key] = normalized
         return normalized
+    }
+
+    /// The app's original icon artwork. The system image for apps whose
+    /// icon is a plain `.icns` file gains small representations that
+    /// shrink the artwork onto an opaque plate, and the picker and status
+    /// bar draw at exactly those sizes, so the bundled `.icns` is loaded
+    /// directly to keep the artwork full-bleed. Apps with an asset
+    /// catalog icon (`CFBundleIconName`) keep the system-provided image.
+    static func appIconArtwork(for app: NSRunningApplication) -> NSImage? {
+        guard let bundleURL = app.bundleURL,
+              let bundle = Bundle(url: bundleURL),
+              bundle.object(forInfoDictionaryKey: "CFBundleIconName") == nil,
+              let iconFile = bundle.object(forInfoDictionaryKey: "CFBundleIconFile") as? String,
+              let url = bundle.url(
+                  forResource: (iconFile as NSString).deletingPathExtension,
+                  withExtension: "icns"
+              ),
+              let artwork = NSImage(contentsOf: url)
+        else {
+            return app.icon
+        }
+        return artwork
     }
 
     private static let spacesWithWindowsCacheTTL: TimeInterval = 0.2
@@ -417,10 +439,12 @@ final class StatusBarRenderer {
     /// The icon of the app occupying a fullscreen space, or nil to fall back
     /// to the "F" glyph.
     private func fullscreenAppIcon(forSpaceID spaceID: Int) -> NSImage? {
-        guard let pid = fullscreenOwners()[spaceID] else {
+        guard let pid = fullscreenOwners()[spaceID],
+              let app = NSRunningApplication(processIdentifier: pid)
+        else {
             return nil
         }
-        return NSRunningApplication(processIdentifier: pid)?.icon
+        return Self.appIconArtwork(for: app)
     }
 
     /// The localized name of the app occupying a fullscreen space, or nil
