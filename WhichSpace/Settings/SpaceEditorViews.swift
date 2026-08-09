@@ -781,26 +781,74 @@ extension View {
 /// controller transition. An explicit tracking area receives pointer movement
 /// independently of first-responder changes while remaining transparent to
 /// clicks.
+///
+/// A tracking area turns pointer movement into enter and exit events, so
+/// content scrolling under a resting pointer strands the last hover state -
+/// the exit for the cell that slid away never fires. Scrolling shifts a clip
+/// view's bounds on every step - user, momentum, and programmatic alike - so
+/// each bounds change re-derives hover from the pointer's current position.
+private class ScrollAwareHoverView: NSView {
+    override init(frame frameRect: CGRect) {
+        super.init(frame: frameRect)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(contentDidScroll(_:)),
+            name: NSView.boundsDidChangeNotification,
+            object: nil
+        )
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) is not supported")
+    }
+
+    override func updateTrackingAreas() {
+        super.updateTrackingAreas()
+        trackingAreas.forEach(removeTrackingArea)
+        addTrackingArea(NSTrackingArea(
+            rect: .zero,
+            options: [.mouseEnteredAndExited, .mouseMoved, .activeInKeyWindow, .inVisibleRect],
+            owner: self
+        ))
+    }
+
+    override func hitTest(_: CGPoint) -> NSView? {
+        nil
+    }
+
+    /// Re-derives hover state after content moved without pointer movement.
+    func reevaluateHover() {}
+
+    /// The pointer's window location while it is inside this view's visible
+    /// bounds and the window can deliver hover events, else nil. Views no
+    /// longer clip to bounds by default, so `visibleRect` alone spans the
+    /// whole unclipped scroll region and must be intersected with `bounds`.
+    func hoverLocation() -> CGPoint? {
+        guard let window, window.isKeyWindow else {
+            return nil
+        }
+        let location = window.mouseLocationOutsideOfEventStream
+        guard bounds.intersection(visibleRect).contains(convert(location, from: nil)) else {
+            return nil
+        }
+        return location
+    }
+
+    @objc private func contentDidScroll(_ notification: Notification) {
+        guard let view = notification.object as? NSView, view.window === window else {
+            return
+        }
+        reevaluateHover()
+    }
+}
+
 private struct PreviewHoverArea: NSViewRepresentable {
     let onHover: (Bool) -> Void
 
-    private final class HoverView: NSView {
+    private final class HoverView: ScrollAwareHoverView {
         var onHover: ((Bool) -> Void)?
         private var isHovering = false
-
-        override func updateTrackingAreas() {
-            super.updateTrackingAreas()
-            trackingAreas.forEach(removeTrackingArea)
-            addTrackingArea(NSTrackingArea(
-                rect: .zero,
-                options: [.mouseEnteredAndExited, .mouseMoved, .activeInKeyWindow, .inVisibleRect],
-                owner: self
-            ))
-        }
-
-        override func hitTest(_: CGPoint) -> NSView? {
-            nil
-        }
 
         override func mouseEntered(with _: NSEvent) {
             setHovering(true)
@@ -812,6 +860,10 @@ private struct PreviewHoverArea: NSViewRepresentable {
 
         override func mouseExited(with _: NSEvent) {
             setHovering(false)
+        }
+
+        override func reevaluateHover() {
+            setHovering(hoverLocation() != nil)
         }
 
         func setHovering(_ hovering: Bool) {
@@ -850,42 +902,36 @@ private struct SegmentHoverArea: NSViewRepresentable {
     let count: Int
     let onHover: (Int, Bool) -> Void
 
-    private final class HoverView: NSView {
+    private final class HoverView: ScrollAwareHoverView {
         var count = 1
         var onHover: ((Int, Bool) -> Void)?
         private var hoveredIndex: Int?
 
-        override func updateTrackingAreas() {
-            super.updateTrackingAreas()
-            trackingAreas.forEach(removeTrackingArea)
-            addTrackingArea(NSTrackingArea(
-                rect: .zero,
-                options: [.mouseEnteredAndExited, .mouseMoved, .activeInKeyWindow, .inVisibleRect],
-                owner: self
-            ))
-        }
-
-        override func hitTest(_: CGPoint) -> NSView? {
-            nil
-        }
-
         override func mouseEntered(with event: NSEvent) {
-            update(with: event)
+            update(atWindowLocation: event.locationInWindow)
         }
 
         override func mouseMoved(with event: NSEvent) {
-            update(with: event)
+            update(atWindowLocation: event.locationInWindow)
         }
 
         override func mouseExited(with _: NSEvent) {
             setHovered(nil)
         }
 
-        private func update(with event: NSEvent) {
+        override func reevaluateHover() {
+            guard let location = hoverLocation() else {
+                setHovered(nil)
+                return
+            }
+            update(atWindowLocation: location)
+        }
+
+        private func update(atWindowLocation location: CGPoint) {
             guard bounds.width > 0, count >= 1 else {
                 return
             }
-            let x = convert(event.locationInWindow, from: nil).x
+            let x = convert(location, from: nil).x
             var index = min(max(Int(x / (bounds.width / Double(count))), 0), count - 1)
             if userInterfaceLayoutDirection == .rightToLeft {
                 index = count - 1 - index
@@ -896,7 +942,7 @@ private struct SegmentHoverArea: NSViewRepresentable {
         /// Enter for the new segment goes out before exit for the old one,
         /// so the model's match gate treats the old exit as stale and the
         /// preview never drops between two segments.
-        private func setHovered(_ index: Int?) {
+        func setHovered(_ index: Int?) {
             guard index != hoveredIndex else {
                 return
             }
@@ -924,6 +970,10 @@ private struct SegmentHoverArea: NSViewRepresentable {
         }
         view.count = count
         view.onHover = onHover
+    }
+
+    static func dismantleNSView(_ view: NSView, coordinator _: Void) {
+        (view as? HoverView)?.setHovered(nil)
     }
 }
 
