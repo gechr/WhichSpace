@@ -6,6 +6,26 @@
     <description>Most recent changes with links to updates.</description>
     <language>en</language>
     <item>
+        <title>Version 1.2.18</title>
+        <description><![CDATA[
+          <h3>v1.2.18</h3>
+          <ul>
+            <li>hotkeys: Add "Skip empty Spaces" toggles</li>
+            <li>settings: Add "Display order" option</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.2.18</sparkle:fullReleaseNotesLink>
+        <pubDate>Sun, 09 Aug 2026 20:40:38 +0100</pubDate>
+        <enclosure
+          url="https://github.com/gechr/WhichSpace/releases/download/v1.2.18/WhichSpace.zip"
+          sparkle:version="1.2.18"
+          sparkle:shortVersionString="1.2.18"
+          sparkle:edSignature="ZHRuLgAN7JPVjQZwV0mNSoLkLolzWuZMmeJHShyxkr6+BG7qY+USP4YfyKRBBRxGdQBp8TSbHikBKQvA836lBA=="
+          length="4154170"
+          type="application/octet-stream" />
+        <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      </item>
+    <item>
         <title>Version 1.2.17</title>
         <description><![CDATA[
           <h3>v1.2.17</h3>
