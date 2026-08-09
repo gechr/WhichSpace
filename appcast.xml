@@ -6,6 +6,27 @@
     <description>Most recent changes with links to updates.</description>
     <language>en</language>
     <item>
+        <title>Version 1.2.17</title>
+        <description><![CDATA[
+          <h3>v1.2.17</h3>
+          <ul>
+            <li>picker: Show dim <code>(empty)</code> placeholder for Spaces without windows</li>
+            <li>picker: Ensure app icons fill square</li>
+            <li>picker: Add <code>None</code> row style</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.2.17</sparkle:fullReleaseNotesLink>
+        <pubDate>Sun, 09 Aug 2026 16:12:05 +0100</pubDate>
+        <enclosure
+          url="https://github.com/gechr/WhichSpace/releases/download/v1.2.17/WhichSpace.zip"
+          sparkle:version="1.2.17"
+          sparkle:shortVersionString="1.2.17"
+          sparkle:edSignature="4gHqvySjyUVwf/ben5C1mZXdISK1IGL8eRaty7LHS+au6QbrMrwdwMbw5d/KxUuQdEENtFQEdvJCmUsip4+WCg=="
+          length="4112889"
+          type="application/octet-stream" />
+        <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      </item>
+    <item>
         <title>Version 1.2.16</title>
         <description><![CDATA[
           <h3>v1.2.16</h3>
