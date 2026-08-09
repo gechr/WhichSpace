@@ -37,6 +37,7 @@ enum KeySpecs {
     static let classicSpaceSwitching = TypedKeySpec(name: "classicSpaceSwitching", defaultValue: false)
     static let clickToSwitchSpaces = TypedKeySpec(name: "clickToSwitchSpaces", defaultValue: false)
     static let dimInactiveSpaces = TypedKeySpec(name: "dimInactiveSpaces", defaultValue: true)
+    static let displayOrder = TypedKeySpec(name: "displayOrder", defaultValue: DisplayOrder.system)
     static let displaySpaceBadges = TypedKeySpec(
         name: "displaySpaceBadges",
         defaultValue: [String: [Int: SpaceBadge]]()
@@ -100,6 +101,7 @@ enum KeySpecs {
     static let invertHorizontalScroll = TypedKeySpec(name: "invertHorizontalScroll", defaultValue: false)
     static let invertVerticalScroll = TypedKeySpec(name: "invertVerticalScroll", defaultValue: false)
     static let paddingScale = TypedKeySpec(name: "paddingScale", defaultValue: Layout.defaultPaddingScale)
+    static let preserveSystemSpaceNumbers = TypedKeySpec(name: "preserveSystemSpaceNumbers", defaultValue: false)
     static let hideEmptySpaces = TypedKeySpec(name: "hideEmptySpaces", defaultValue: false)
     static let hideFullscreenApps = TypedKeySpec(name: "hideFullscreenApps", defaultValue: false)
     static let hideSingleSpace = TypedKeySpec(name: "hideSingleSpace", defaultValue: false)
@@ -159,6 +161,7 @@ enum KeySpecs {
         classicSpaceSwitching,
         clickToSwitchSpaces,
         dimInactiveSpaces,
+        displayOrder,
         displaySpaceBadges,
         displaySpaceColors,
         displaySpaceFonts,
@@ -185,6 +188,7 @@ enum KeySpecs {
         localSpaceNumbers,
         moveApplicationAlertSuppress,
         paddingScale,
+        preserveSystemSpaceNumbers,
         scrollHapticFeedback,
         scrollHapticIntensity,
         scrollSensitivity,
@@ -396,6 +400,11 @@ final class DefaultsStore {
         set { self[KeySpecs.dimInactiveSpaces] = newValue }
     }
 
+    var displayOrder: DisplayOrder {
+        get { self[KeySpecs.displayOrder] }
+        set { self[KeySpecs.displayOrder] = newValue }
+    }
+
     var displaySpaceBadges: [String: [Int: SpaceBadge]] {
         get { self[KeySpecs.displaySpaceBadges] }
         set { self[KeySpecs.displaySpaceBadges] = newValue }
@@ -524,6 +533,11 @@ final class DefaultsStore {
     var paddingScale: Double {
         get { self[KeySpecs.paddingScale] }
         set { self[KeySpecs.paddingScale] = newValue }
+    }
+
+    var preserveSystemSpaceNumbers: Bool {
+        get { self[KeySpecs.preserveSystemSpaceNumbers] }
+        set { self[KeySpecs.preserveSystemSpaceNumbers] = newValue }
     }
 
     var scrollHapticFeedback: Bool {

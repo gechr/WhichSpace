@@ -779,6 +779,49 @@ final class AppDelegateActionsTests: XCTestCase {
         XCTAssertEqual(store.scrollSensitivity, external)
     }
 
+    func testPreservingSystemSpaceNumbersRebuildsSnapshot() async throws {
+        stub.activeDisplayIdentifier = "DisplayB"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "DisplayB",
+                spaces: [(id: 200, isFullscreen: false), (id: 201, isFullscreen: false)],
+                activeSpaceID: 200
+            ),
+            CGSStub.makeDisplay(
+                displayID: "DisplayA",
+                spaces: [
+                    (id: 100, isFullscreen: false),
+                    (id: 101, isFullscreen: false),
+                    (id: 102, isFullscreen: false),
+                ],
+                activeSpaceID: 100
+            ),
+        ]
+        stub.displayBoundsMap = [
+            "DisplayA": CGRect(x: 0, y: 0, width: 1728, height: 1117),
+            "DisplayB": CGRect(x: 1728, y: 0, width: 2560, height: 1440),
+        ]
+        // The physical order only takes effect while every display is shown
+        store.showAllDisplays = true
+        store.displayOrder = .physical
+        store.preserveSystemSpaceNumbers = false
+        appState.forceSpaceUpdate()
+        XCTAssertEqual(appState.allDisplaysSpaceInfo.map(\.globalStartIndex), [1, 4])
+
+        sut.startObservingPreferences()
+        defer { sut.stopObservingPreferences() }
+
+        let deadline = ContinuousClock.now.advanced(by: .seconds(2))
+        while appState.allDisplaysSpaceInfo.map(\.globalStartIndex) != [3, 1], ContinuousClock.now < deadline {
+            store.preserveSystemSpaceNumbers = false
+            try await Task.sleep(for: .milliseconds(25))
+            store.preserveSystemSpaceNumbers = true
+            try await Task.sleep(for: .milliseconds(25))
+        }
+
+        XCTAssertEqual(appState.allDisplaysSpaceInfo.map(\.globalStartIndex), [3, 1])
+    }
+
     func testPaddingEditWhileShrunkReturnsIconToFullSize() async throws {
         sut.startObservingPreferences()
         defer { sut.stopObservingPreferences() }

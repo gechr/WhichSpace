@@ -160,6 +160,20 @@ struct SettingsModelTests {
         #expect(!store.showAllSpaces)
         #expect(store.showAllDisplays)
     }
+
+    @Test("physical display order binding maps the binary preference")
+    func physicalDisplayOrderBinding() {
+        let binding = model.physicalDisplayOrderBinding
+        #expect(!binding.wrappedValue)
+
+        binding.wrappedValue = true
+        #expect(store.displayOrder == .physical)
+        #expect(binding.wrappedValue)
+
+        binding.wrappedValue = false
+        #expect(store.displayOrder == .system)
+        #expect(!binding.wrappedValue)
+    }
 }
 
 struct SliderValueParsingTests {

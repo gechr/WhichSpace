@@ -73,6 +73,7 @@ struct BackupSettings: Codable {
     var classicSpaceSwitching: Bool
     var clickToSwitchSpaces: Bool
     var dimInactiveSpaces: Bool
+    var displayOrder: String?
     var emojiPickerSkinTone: Int
     var fullscreenIconStyle: String?
     var hideEmptySpaces: Bool
@@ -88,6 +89,7 @@ struct BackupSettings: Codable {
     var localSpaceNumbers: Bool
     var moveApplicationAlertSuppress: Bool
     var paddingScale: Double?
+    var preserveSystemSpaceNumbers: Bool
     var scrollHapticFeedback: Bool
     var scrollHapticIntensity: Int
     var scrollSensitivity: Double
@@ -110,13 +112,15 @@ struct BackupSettings: Codable {
 
     private enum CodingKeys: String, CodingKey {
         case classicSpaceSwitching
-        case clickToSwitchSpaces, dimInactiveSpaces, emojiPickerSkinTone, fullscreenIconStyle, hideEmptySpaces
+        case clickToSwitchSpaces, dimInactiveSpaces, displayOrder, emojiPickerSkinTone, fullscreenIconStyle
+        case hideEmptySpaces
         case hideFullscreenApps, hideSingleSpace, horizontalScrollEnabled, hotkeysSkipEmptySpaces
         case hotkeysWindowSkipEmptySpaces, includeBetaUpdates
         case invertHorizontalScroll, invertVerticalScroll, launchAtLogin, localSpaceNumbers
         // Raw value matches the legacy stored defaults key
         case moveApplicationAlertSuppress = "moveToApplicationsFolderAlertSuppress"
         case paddingScale
+        case preserveSystemSpaceNumbers
         case scrollHapticFeedback, scrollHapticIntensity, scrollSensitivity, scrollWrapAround
         case separatorColor, separatorStyle, showAllDisplays, showAllSpaces, shrinkIconToFit
         case sizeScale, soundName, spacePickerMaxAppIcons, spacePickerStyle, uniqueIconsPerDisplay
@@ -129,6 +133,7 @@ struct BackupSettings: Codable {
         classicSpaceSwitching = try container.decodeIfPresent(Bool.self, forKey: .classicSpaceSwitching) ?? false
         clickToSwitchSpaces = try container.decodeIfPresent(Bool.self, forKey: .clickToSwitchSpaces) ?? false
         dimInactiveSpaces = try container.decodeIfPresent(Bool.self, forKey: .dimInactiveSpaces) ?? true
+        displayOrder = try container.decodeIfPresent(String.self, forKey: .displayOrder)
         emojiPickerSkinTone = try container.decodeIfPresent(Int.self, forKey: .emojiPickerSkinTone)
             ?? SkinTone.default.rawValue
         fullscreenIconStyle = try container.decodeIfPresent(String.self, forKey: .fullscreenIconStyle)
@@ -148,6 +153,9 @@ struct BackupSettings: Codable {
             Bool.self, forKey: .moveApplicationAlertSuppress
         ) ?? false
         paddingScale = try container.decodeIfPresent(Double.self, forKey: .paddingScale)
+        preserveSystemSpaceNumbers = try container.decodeIfPresent(
+            Bool.self, forKey: .preserveSystemSpaceNumbers
+        ) ?? false
         scrollHapticFeedback = try container.decodeIfPresent(Bool.self, forKey: .scrollHapticFeedback) ?? false
         scrollHapticIntensity = try container.decodeIfPresent(Int.self, forKey: .scrollHapticIntensity)
             ?? Layout.defaultScrollHapticIntensity
@@ -172,6 +180,7 @@ struct BackupSettings: Codable {
         classicSpaceSwitching: Bool,
         clickToSwitchSpaces: Bool,
         dimInactiveSpaces: Bool,
+        displayOrder: String?,
         emojiPickerSkinTone: Int,
         fullscreenIconStyle: String?,
         hideEmptySpaces: Bool,
@@ -187,6 +196,7 @@ struct BackupSettings: Codable {
         localSpaceNumbers: Bool,
         moveApplicationAlertSuppress: Bool,
         paddingScale: Double?,
+        preserveSystemSpaceNumbers: Bool,
         scrollHapticFeedback: Bool,
         scrollHapticIntensity: Int,
         scrollSensitivity: Double,
@@ -205,6 +215,7 @@ struct BackupSettings: Codable {
         self.classicSpaceSwitching = classicSpaceSwitching
         self.clickToSwitchSpaces = clickToSwitchSpaces
         self.dimInactiveSpaces = dimInactiveSpaces
+        self.displayOrder = displayOrder
         self.emojiPickerSkinTone = emojiPickerSkinTone
         self.fullscreenIconStyle = fullscreenIconStyle
         self.hideEmptySpaces = hideEmptySpaces
@@ -220,6 +231,7 @@ struct BackupSettings: Codable {
         self.localSpaceNumbers = localSpaceNumbers
         self.moveApplicationAlertSuppress = moveApplicationAlertSuppress
         self.paddingScale = paddingScale
+        self.preserveSystemSpaceNumbers = preserveSystemSpaceNumbers
         self.scrollHapticFeedback = scrollHapticFeedback
         self.scrollHapticIntensity = scrollHapticIntensity
         self.scrollSensitivity = scrollSensitivity
@@ -579,6 +591,7 @@ enum BackupManager {
             classicSpaceSwitching: store.classicSpaceSwitching,
             clickToSwitchSpaces: store.clickToSwitchSpaces,
             dimInactiveSpaces: store.dimInactiveSpaces,
+            displayOrder: store.displayOrder.rawValue,
             emojiPickerSkinTone: store.emojiPickerSkinTone.rawValue,
             fullscreenIconStyle: store.fullscreenIconStyle.rawValue,
             hideEmptySpaces: store.hideEmptySpaces,
@@ -594,6 +607,7 @@ enum BackupManager {
             localSpaceNumbers: store.localSpaceNumbers,
             moveApplicationAlertSuppress: store.moveApplicationAlertSuppress,
             paddingScale: store.paddingScale,
+            preserveSystemSpaceNumbers: store.preserveSystemSpaceNumbers,
             scrollHapticFeedback: store.scrollHapticFeedback,
             scrollHapticIntensity: store.scrollHapticIntensity,
             scrollSensitivity: store.scrollSensitivity,
@@ -726,6 +740,8 @@ enum BackupManager {
         store.classicSpaceSwitching = backup.settings.classicSpaceSwitching
         store.clickToSwitchSpaces = backup.settings.clickToSwitchSpaces
         store.dimInactiveSpaces = backup.settings.dimInactiveSpaces
+        store.displayOrder = backup.settings.displayOrder
+            .flatMap { DisplayOrder(rawValue: $0) } ?? .system
         // Unrecognized values (from a newer app version or hand edit) keep the default
         store.emojiPickerSkinTone = SkinTone(rawValue: backup.settings.emojiPickerSkinTone) ?? .default
         store.fullscreenIconStyle = backup.settings.fullscreenIconStyle
@@ -745,6 +761,7 @@ enum BackupManager {
         store.moveApplicationAlertSuppress = backup.settings.moveApplicationAlertSuppress
         store.paddingScale = (backup.settings.paddingScale ?? Layout.defaultPaddingScale)
             .clamped(to: Layout.paddingScaleRange)
+        store.preserveSystemSpaceNumbers = backup.settings.preserveSystemSpaceNumbers
         store.scrollHapticFeedback = backup.settings.scrollHapticFeedback
         store.scrollHapticIntensity = backup.settings.scrollHapticIntensity
         store.scrollSensitivity = backup.settings.scrollSensitivity.clamped(to: Layout.scrollSensitivityRange)

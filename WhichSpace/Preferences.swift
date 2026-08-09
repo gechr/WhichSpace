@@ -98,6 +98,18 @@ enum SeparatorStyle: String, CaseIterable, Defaults.Serializable {
     }
 }
 
+// MARK: - DisplayOrder
+
+/// How display groups are ordered in the status bar and in global Desktop
+/// numbering. String-backed so future orders can be added without a key
+/// migration; an absent key resolves to `.system`.
+enum DisplayOrder: String, CaseIterable, Defaults.Serializable {
+    /// macOS's managed-display order, matching Mission Control's numbering
+    case system
+    /// Physical left-to-right monitor arrangement
+    case physical
+}
+
 // MARK: - SpacePickerStyle
 
 /// What each row of the left-click Space picker menu shows beside its Space

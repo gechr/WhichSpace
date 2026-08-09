@@ -934,6 +934,43 @@ struct AppStateTests {
 
         NSApp.appearance = previousAppearance
     }
+
+    // MARK: - Display Order Gating
+
+    @Test("physical display order is suspended while other displays are hidden")
+    func displayOrder_suspendedWithoutShowAllDisplays() {
+        stub.activeDisplayIdentifier = "DisplayB"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "DisplayB",
+                spaces: [(id: 200, isFullscreen: false), (id: 201, isFullscreen: false)],
+                activeSpaceID: 200
+            ),
+            CGSStub.makeDisplay(
+                displayID: "DisplayA",
+                spaces: [(id: 100, isFullscreen: false), (id: 101, isFullscreen: false)],
+                activeSpaceID: 100
+            ),
+        ]
+        stub.displayBoundsMap = [
+            "DisplayA": CGRect(x: 0, y: 0, width: 1728, height: 1117),
+            "DisplayB": CGRect(x: 1728, y: 0, width: 2560, height: 1440),
+        ]
+        store.displayOrder = .physical
+        store.showAllDisplays = false
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+
+        // The greyed-out order setting keeps its stored value but stops
+        // affecting numbering while only the active display is shown
+        #expect(appState.allDisplaysSpaceInfo.map(\.displayID) == ["DisplayB", "DisplayA"])
+        #expect(appState.currentGlobalSpaceIndex == 1)
+
+        store.showAllDisplays = true
+        appState.forceSpaceUpdate()
+
+        #expect(appState.allDisplaysSpaceInfo.map(\.displayID) == ["DisplayA", "DisplayB"])
+        #expect(appState.currentGlobalSpaceIndex == 3)
+    }
 }
 
 // MARK: - Bitmap Helpers

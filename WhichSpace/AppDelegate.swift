@@ -522,9 +522,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
         observePreferences(store.widthAffectingKeys, resettingShrinkLevel: true)
         observePreferences(store.widthNeutralIconKeys, resettingShrinkLevel: false)
 
-        let localSpaceNumbersKey = store.keyFor(KeySpecs.localSpaceNumbers)
+        // Numbering and display order are decided while the snapshot is built,
+        // so these need a rebuild rather than only a rerender. The
+        // show-all-displays toggle gates the display order settings, so it
+        // rebuilds too.
+        let snapshotKeys: [Defaults._AnyKey] = [
+            KeySpecs.localSpaceNumbers.anyKey(suite: store.suite),
+            KeySpecs.displayOrder.anyKey(suite: store.suite),
+            KeySpecs.preserveSystemSpaceNumbers.anyKey(suite: store.suite),
+            KeySpecs.showAllDisplays.anyKey(suite: store.suite),
+        ]
         preferenceObservationTasks.append(Task { [weak self] in
-            for await _ in Defaults.updates(localSpaceNumbersKey, initial: false) {
+            for await _ in Defaults.updates(snapshotKeys, initial: false) {
                 guard !Task.isCancelled
                 else { return }
                 self?.appState.forceSpaceUpdate()

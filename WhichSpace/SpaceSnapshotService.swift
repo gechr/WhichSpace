@@ -10,7 +10,9 @@ enum SpaceSnapshotService {
     /// Builds an immutable snapshot of the current space state from system data
     static func buildSnapshot(
         provider: DisplaySpaceProvider,
-        localSpaceNumbers: Bool
+        localSpaceNumbers: Bool,
+        displayOrder: DisplayOrder = .system,
+        preserveSystemSpaceNumbers: Bool = false
     ) -> SpaceSnapshot {
         guard let displays = provider.copyManagedDisplaySpaces(),
               let activeDisplay = provider.copyActiveMenuBarDisplayIdentifier()
@@ -75,18 +77,38 @@ enum SpaceSnapshotService {
             }
         }
 
+        // Capture macOS's numbering before an optional presentation reorder.
+        // The preserved offsets let a physical order read, for example, 5 | 1.
+        var systemGlobalStartIndices: [String: Int] = [:]
+        var systemGlobalIndex = 1
+        for parsed in parsedDisplays {
+            systemGlobalStartIndices[parsed.displayID] = systemGlobalIndex
+            systemGlobalIndex += parsed.regularSpaceCount
+        }
+
+        if displayOrder == .physical {
+            parsedDisplays = DisplayArrangement.sorted(
+                parsedDisplays,
+                identifier: \.displayID,
+                bounds: provider.displayBounds(forIdentifier:)
+            )
+        }
+
         // Build DisplaySpaceInfo with computed globalStartIndex
         var allDisplays: [DisplaySpaceInfo] = []
-        var globalIndex = 1
+        var presentationGlobalIndex = 1
         for parsed in parsedDisplays {
+            let globalStartIndex = preserveSystemSpaceNumbers
+                ? systemGlobalStartIndices[parsed.displayID] ?? presentationGlobalIndex
+                : presentationGlobalIndex
             allDisplays.append(DisplaySpaceInfo(
                 displayID: parsed.displayID,
                 entries: parsed.entries,
                 activeSpaceID: parsed.activeSpaceID,
-                globalStartIndex: globalIndex,
+                globalStartIndex: globalStartIndex,
                 regularSpaceCount: parsed.regularSpaceCount
             ))
-            globalIndex += parsed.regularSpaceCount
+            presentationGlobalIndex += parsed.regularSpaceCount
         }
 
         // Find the active display - prefer activeDisplay, fall back to mainDisplay

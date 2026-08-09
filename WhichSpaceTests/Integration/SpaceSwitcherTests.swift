@@ -102,6 +102,92 @@ struct SpaceSwitcherTests {
         )
     }
 
+    @Test("reordered cross-display route posts the target's CGS Desktop number")
+    func reorderedRoute_postsCGSDesktopNumber() throws {
+        let cgsDisplays = try twoDisplays()
+        let reordered = [cgsDisplays[1], cgsDisplays[0]]
+
+        // DisplayB leads the menu bar, so Desktop 5 is DisplayA's first
+        // Space, which macOS still numbers Desktop 1
+        #expect(
+            SpaceSwitcher.desktopSwitchRoute(
+                number: 5,
+                activeDisplayID: "DisplayB",
+                displays: reordered,
+                cgsDisplays: cgsDisplays
+            ) == .otherDisplay(hotKey: 118)
+        )
+    }
+
+    @Test("reordered same-display route still uses its Space ID")
+    func reorderedRoute_sameDisplayUsesSpaceID() throws {
+        let cgsDisplays = try twoDisplays()
+        let reordered = [cgsDisplays[1], cgsDisplays[0]]
+
+        #expect(
+            SpaceSwitcher.desktopSwitchRoute(
+                number: 2,
+                activeDisplayID: "DisplayB",
+                displays: reordered,
+                cgsDisplays: cgsDisplays
+            ) == .activeDisplay(spaceID: 201)
+        )
+    }
+
+    @Test("reordered route has no target past macOS's last numbered Desktop")
+    func reorderedRoute_beyondNumberedDesktops_returnsNil() throws {
+        let cgsDisplays = try [
+            managedDisplay(
+                identifier: "DisplayA",
+                spaces: (100 ..< 108).map { (id: $0, fullscreen: false) },
+                currentSpaceID: 100
+            ),
+            managedDisplay(
+                identifier: "DisplayB",
+                spaces: (200 ..< 208).map { (id: $0, fullscreen: false) },
+                currentSpaceID: 200
+            ),
+            managedDisplay(
+                identifier: "DisplayC",
+                spaces: (300 ..< 308).map { (id: $0, fullscreen: false) },
+                currentSpaceID: 300
+            ),
+        ]
+        let reordered = [cgsDisplays[2], cgsDisplays[0], cgsDisplays[1]]
+
+        // Desktop 1 in the menu bar is DisplayC's first Space, which macOS
+        // numbers Desktop 17 - past the numbered shortcuts
+        #expect(
+            SpaceSwitcher.desktopSwitchRoute(
+                number: 1,
+                activeDisplayID: "DisplayA",
+                displays: reordered,
+                cgsDisplays: cgsDisplays
+            ) == nil
+        )
+    }
+
+    @Test("Desktop numbers count regular Spaces across displays in CGS order")
+    func desktopNumberForSpaceID_countsAcrossDisplays() throws {
+        let displays = try [
+            managedDisplay(
+                identifier: "DisplayA",
+                spaces: [(100, false), (150, true), (101, false)],
+                currentSpaceID: 100
+            ),
+            managedDisplay(
+                identifier: "DisplayB",
+                spaces: [(200, false)],
+                currentSpaceID: 200
+            ),
+        ]
+
+        #expect(SpaceSwitcher.desktopNumber(forSpaceID: 101, displays: displays) == 2)
+        #expect(SpaceSwitcher.desktopNumber(forSpaceID: 200, displays: displays) == 3)
+        #expect(SpaceSwitcher.desktopNumber(forSpaceID: 150, displays: displays) == nil)
+        #expect(SpaceSwitcher.desktopNumber(forSpaceID: 999, displays: displays) == nil)
+    }
+
     @Test("relative target is the adjacent Space when nothing is skipped")
     func relativeTarget_adjacent() {
         #expect(

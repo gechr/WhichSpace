@@ -845,6 +845,21 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         XCTAssertEqual(store.separatorStyle, .middleDot)
     }
 
+    func testDisplayOrderRoundTrip() throws {
+        store.displayOrder = .physical
+        store.preserveSystemSpaceNumbers = true
+
+        let json = try BackupManager.encode(store: store)
+        store.resetAll()
+        XCTAssertEqual(store.displayOrder, .system)
+        XCTAssertFalse(store.preserveSystemSpaceNumbers)
+
+        let backup = try BackupManager.decode(jsonString: json)
+        BackupManager.apply(backup, to: store)
+        XCTAssertEqual(store.displayOrder, .physical)
+        XCTAssertTrue(store.preserveSystemSpaceNumbers)
+    }
+
     func testSpacePickerRoundTrip() throws {
         store.spacePickerMaxAppIcons = 8
         store.spacePickerStyle = .both

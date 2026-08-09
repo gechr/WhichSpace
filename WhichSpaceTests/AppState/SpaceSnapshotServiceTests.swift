@@ -229,4 +229,154 @@ struct SpaceSnapshotServiceTests {
         #expect(snapshot.currentGlobalSpaceIndex == 3)
         #expect(snapshot.currentSpaceLabel == "3")
     }
+
+    // MARK: - Display Arrangement Order
+
+    /// CGS order [B, A] with A physically left of B.
+    private func makeArrangementStub() -> CGSStub {
+        let stub = CGSStub()
+        stub.activeDisplayIdentifier = "DisplayB"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "DisplayB",
+                spaces: [(id: 200, isFullscreen: false), (id: 201, isFullscreen: false)],
+                activeSpaceID: 200
+            ),
+            CGSStub.makeDisplay(
+                displayID: "DisplayA",
+                spaces: [
+                    (id: 100, isFullscreen: false),
+                    (id: 101, isFullscreen: false),
+                    (id: 102, isFullscreen: false),
+                ],
+                activeSpaceID: 100
+            ),
+        ]
+        stub.displayBoundsMap = [
+            "DisplayA": CGRect(x: 0, y: 0, width: 1728, height: 1117),
+            "DisplayB": CGRect(x: 1728, y: 0, width: 2560, height: 1440),
+        ]
+        return stub
+    }
+
+    @Test("arrangement order reorders displays and global numbering")
+    func arrangement_reordersDisplaysAndGlobalNumbering() {
+        let stub = makeArrangementStub()
+
+        let snapshot = SpaceSnapshotService.buildSnapshot(
+            provider: stub,
+            localSpaceNumbers: false,
+            displayOrder: .physical
+        )
+
+        // DisplayA (x: 0) sorts before DisplayB (x: 1728) despite CGS order
+        #expect(snapshot.allDisplaysSpaceInfo.map(\.displayID) == ["DisplayA", "DisplayB"])
+        #expect(snapshot.allDisplaysSpaceInfo[0].globalStartIndex == 1)
+        #expect(snapshot.allDisplaysSpaceInfo[1].globalStartIndex == 4)
+        // Active space 200 is DisplayB's first Space => global Desktop 4
+        #expect(snapshot.currentGlobalSpaceIndex == 4)
+        #expect(snapshot.currentSpaceLabel == "4")
+    }
+
+    @Test("arrangement order can preserve macOS global numbering")
+    func arrangement_preservesSystemGlobalNumbering() {
+        let stub = makeArrangementStub()
+
+        let snapshot = SpaceSnapshotService.buildSnapshot(
+            provider: stub,
+            localSpaceNumbers: false,
+            displayOrder: .physical,
+            preserveSystemSpaceNumbers: true
+        )
+
+        // The groups move to physical order, but their macOS number ranges do
+        // not: DisplayA starts at 3 and DisplayB still starts at 1.
+        #expect(snapshot.allDisplaysSpaceInfo.map(\.displayID) == ["DisplayA", "DisplayB"])
+        #expect(snapshot.allDisplaysSpaceInfo.map(\.globalStartIndex) == [3, 1])
+        #expect(snapshot.currentGlobalSpaceIndex == 1)
+        #expect(snapshot.currentSpaceLabel == "1")
+    }
+
+    @Test("system order keeps CGS order with bounds available")
+    func system_keepsCGSOrder() {
+        let stub = makeArrangementStub()
+
+        let snapshot = SpaceSnapshotService.buildSnapshot(
+            provider: stub,
+            localSpaceNumbers: false,
+            displayOrder: .system
+        )
+
+        #expect(snapshot.allDisplaysSpaceInfo.map(\.displayID) == ["DisplayB", "DisplayA"])
+        #expect(snapshot.currentGlobalSpaceIndex == 1)
+    }
+
+    @Test("arrangement order breaks x ties by y, upper display first")
+    func arrangement_tieBreaksByOriginY() {
+        let stub = makeArrangementStub()
+        stub.displayBoundsMap = [
+            "DisplayA": CGRect(x: 0, y: -1117, width: 1728, height: 1117),
+            "DisplayB": CGRect(x: 0, y: 0, width: 1728, height: 1117),
+        ]
+
+        let snapshot = SpaceSnapshotService.buildSnapshot(
+            provider: stub,
+            localSpaceNumbers: false,
+            displayOrder: .physical
+        )
+
+        #expect(snapshot.allDisplaysSpaceInfo.map(\.displayID) == ["DisplayA", "DisplayB"])
+    }
+
+    @Test("arrangement order falls back to CGS order when bounds are missing")
+    func arrangement_missingBounds_fallsBackToCGSOrder() {
+        let stub = makeArrangementStub()
+        stub.displayBoundsMap.removeValue(forKey: "DisplayA")
+
+        let snapshot = SpaceSnapshotService.buildSnapshot(
+            provider: stub,
+            localSpaceNumbers: false,
+            displayOrder: .physical
+        )
+
+        #expect(snapshot.allDisplaysSpaceInfo.map(\.displayID) == ["DisplayB", "DisplayA"])
+        #expect(snapshot.currentGlobalSpaceIndex == 1)
+    }
+
+    @Test("arrangement order keeps CGS order for equal frames")
+    func arrangement_equalFrames_keepsCGSOrder() {
+        let stub = makeArrangementStub()
+        let mirrored = CGRect(x: 0, y: 0, width: 1728, height: 1117)
+        stub.displayBoundsMap = ["DisplayA": mirrored, "DisplayB": mirrored]
+
+        let snapshot = SpaceSnapshotService.buildSnapshot(
+            provider: stub,
+            localSpaceNumbers: false,
+            displayOrder: .physical
+        )
+
+        #expect(snapshot.allDisplaysSpaceInfo.map(\.displayID) == ["DisplayB", "DisplayA"])
+    }
+
+    @Test("arrangement order is a no-op for a single Main display")
+    func arrangement_singleMainDisplay_noop() {
+        let stub = CGSStub()
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [(id: 100, isFullscreen: false), (id: 101, isFullscreen: false)],
+                activeSpaceID: 101
+            ),
+        ]
+
+        let snapshot = SpaceSnapshotService.buildSnapshot(
+            provider: stub,
+            localSpaceNumbers: false,
+            displayOrder: .physical
+        )
+
+        #expect(snapshot.allDisplaysSpaceInfo.map(\.displayID) == ["Main"])
+        #expect(snapshot.currentGlobalSpaceIndex == 2)
+    }
 }

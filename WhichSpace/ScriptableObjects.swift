@@ -210,8 +210,9 @@ final class ScriptableSpace: NSObject {
 }
 
 extension ScriptingHelpers {
-    /// Returns a scriptable stand-in for every display, in CGS order, the
-    /// same order as the display picker in the Settings Spaces pane.
+    /// Returns a scriptable stand-in for every display, in the configured
+    /// display order, the same order as the display picker in the Settings
+    /// Spaces pane.
     static func scriptableDisplays(appState: AppState, store: DefaultsStore) -> [ScriptableDisplay] {
         appState.allDisplaysSpaceInfo.enumerated().map { index, info in
             ScriptableDisplay(

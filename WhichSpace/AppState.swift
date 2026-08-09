@@ -213,7 +213,7 @@ final class AppState {
         allDisplaysSpaceInfo.reduce(0) { $0 + $1.regularSpaceCount }
     }
 
-    /// Regular Spaces across every display in Mission Control order, so index
+    /// Regular Spaces across every display in Desktop-number order, so index
     /// N-1 is the Space that global Desktop number N addresses. Each carries
     /// the display and 1-based fullscreen-inclusive entry position that key
     /// its stored label and badge. Fullscreen Spaces have no Desktop number,
@@ -222,10 +222,20 @@ final class AppState {
     var globalDesktopEntries: [(displayID: String, position: Int, entry: SpaceEntry)] {
         let desktops = allDisplaysSpaceInfo.flatMap { display in
             display.entries.enumerated().compactMap { index, entry in
-                entry.regularIndex == nil ? nil : (display.displayID, index + 1, entry)
+                entry.regularIndex.map {
+                    (
+                        number: display.globalStartIndex + $0 - 1,
+                        displayID: display.displayID,
+                        position: index + 1,
+                        entry: entry
+                    )
+                }
             }
         }
-        return Array(desktops.prefix(Layout.maxSpacesPerDisplay))
+        return desktops
+            .sorted { $0.number < $1.number }
+            .prefix(Layout.maxSpacesPerDisplay)
+            .map { ($0.displayID, $0.position, $0.entry) }
     }
 
     /// Whether any display has more than one regular Space. A collection of
@@ -494,11 +504,16 @@ final class AppState {
         )
     }
 
-    /// Builds an immutable snapshot of the current space state from system data
+    /// Builds an immutable snapshot of the current space state from system
+    /// data. The display order settings sit greyed out under the
+    /// show-all-displays toggle, so turning it off suspends their effect on
+    /// numbering rather than leaving a disabled row still changing the icon.
     private func buildSnapshot() -> SpaceSnapshot {
         SpaceSnapshotService.buildSnapshot(
             provider: displaySpaceProvider,
-            localSpaceNumbers: store.localSpaceNumbers
+            localSpaceNumbers: store.localSpaceNumbers,
+            displayOrder: store.showAllDisplays ? store.displayOrder : .system,
+            preserveSystemSpaceNumbers: store.preserveSystemSpaceNumbers
         )
     }
 

@@ -98,6 +98,10 @@ struct MenuBarPane: View {
             anchor: .showAllDisplays
         )
         SettingsRowDivider()
+        displayOrderRow
+        SettingsRowDivider()
+        preserveSystemSpaceNumbersRow
+        SettingsRowDivider()
         separatorColorRow
         SettingsRowDivider()
         separatorStyleRow
@@ -223,6 +227,38 @@ struct MenuBarPane: View {
             .labelsHidden()
             .fixedSize()
         }
+    }
+
+    // MARK: - Display Order Row
+
+    /// Whether display groups follow their physical left-to-right arrangement,
+    /// nested under the toggle that puts more than one of them in the menu bar.
+    private var displayOrderRow: some View {
+        SettingsToggleRow(
+            title: Localization.labelDisplayOrder,
+            isOn: model.physicalDisplayOrderBinding,
+            icon: "rectangle.3.group",
+            indented: true,
+            disabled: !model.value(\.showAllDisplays),
+            subtitle: Localization.tipDisplayOrder,
+            anchor: .displayOrder
+        )
+    }
+
+    /// Whether a physical reorder changes only group placement while each
+    /// Desktop keeps the number assigned by macOS.
+    private var preserveSystemSpaceNumbersRow: some View {
+        let physicalOrderEnabled = model.value(\.displayOrder) == .physical
+        return SettingsToggleRow(
+            title: Localization.togglePreserveSystemSpaceNumbers,
+            isOn: model.binding(\.preserveSystemSpaceNumbers),
+            icon: "123.rectangle",
+            indented: true,
+            disabled: !model.value(\.showAllDisplays) || model.value(\.localSpaceNumbers),
+            dimmed: !physicalOrderEnabled,
+            subtitle: Localization.tipPreserveSystemSpaceNumbers,
+            anchor: .preserveSystemSpaceNumbers
+        )
     }
 
     // MARK: - Separator Rows

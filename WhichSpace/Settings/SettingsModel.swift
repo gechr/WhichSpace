@@ -87,6 +87,21 @@ final class SettingsModel {
         )
     }
 
+    /// Presents the two-case display-order preference as a switch: enabled
+    /// uses the physical left-to-right arrangement; disabled follows macOS.
+    var physicalDisplayOrderBinding: Binding<Bool> {
+        Binding(
+            get: { [self] in
+                _ = tick
+                return store.displayOrder == .physical
+            },
+            set: { [self] in
+                store.displayOrder = $0 ? .physical : .system
+                tick += 1
+            }
+        )
+    }
+
     /// Whether accessibility permission is currently granted. Reading `tick`
     /// first lets `requestAccessibility` refresh dependent UI on a grant.
     /// The trust flag freezes at its launch value on external changes, so the

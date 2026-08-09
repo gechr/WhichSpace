@@ -63,6 +63,8 @@ enum SettingsAnchor: String, CaseIterable {
     case uniqueIconsPerDisplay = "unique-icons-per-display"
     case displays
     case localSpaceNumbers = "local-space-numbers"
+    case displayOrder = "display-order"
+    case preserveSystemSpaceNumbers = "preserve-system-space-numbers"
     case separatorColor = "separator-color"
     case separatorStyle = "separator-style"
     case showAllDisplays = "show-all-displays"
@@ -141,7 +143,8 @@ enum SettingsAnchor: String, CaseIterable {
         case .launchAtLogin, .autoCheckUpdates, .autoInstallUpdates, .betaUpdates, .checkForUpdates,
              .backup, .resetSettings:
             .general
-        case .iconSize, .iconPadding, .shrinkToFit, .localSpaceNumbers, .separatorColor,
+        case .iconSize, .iconPadding, .shrinkToFit, .localSpaceNumbers, .displayOrder,
+             .preserveSystemSpaceNumbers, .separatorColor,
              .separatorStyle, .showAllDisplays, .showAllSpaces, .dimInactiveSpaces,
              .hideEmptySpaces, .hideSingleSpace, .hideFullscreenApps, .fullscreenLetter,
              .spacePickerIcons, .spacePickerStyle:

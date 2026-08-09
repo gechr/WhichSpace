@@ -182,7 +182,8 @@ enum SpaceSwitcher {
         guard let route = desktopSwitchRoute(
             number: number,
             activeDisplayID: activeDisplay.identifier,
-            displays: displays
+            displays: presentationOrdered(displays),
+            cgsDisplays: displays
         ) else {
             return false
         }
@@ -336,6 +337,22 @@ enum SpaceSwitcher {
         }
     }
 
+    /// The displays in the order the menu bar numbers their Desktops. A
+    /// physical presentation reorder only affects numbering when the menu bar
+    /// shows every display and the user has not chosen to preserve the
+    /// numbers assigned by macOS, matching the snapshot's gating.
+    @MainActor private static func presentationOrdered(_ displays: [ManagedDisplay]) -> [ManagedDisplay] {
+        let store = AppEnvironment.shared.store
+        guard store.showAllDisplays, store.displayOrder == .physical, !store.preserveSystemSpaceNumbers else {
+            return displays
+        }
+        return DisplayArrangement.sorted(
+            displays,
+            identifier: \.identifier,
+            bounds: DisplayGeometry.bounds(forDisplayIdentifier:)
+        )
+    }
+
     private static func managedDisplays(connection: Int32) -> [ManagedDisplay] {
         guard let rawRef = CGSCopyManagedDisplaySpaces(connection),
               let raw = rawRef.takeRetainedValue() as? [[String: Any]]
@@ -354,27 +371,40 @@ enum SpaceSwitcher {
         case otherDisplay(hotKey: CGSSymbolicHotKey)
     }
 
+    /// `displays` is in the order the menu bar numbers Desktops, which the
+    /// display order preference can reorder. `cgsDisplays` stays in raw CGS
+    /// order for the cross-display route, whose symbolic hotkey addresses
+    /// macOS's own numbering; empty means the two orders are the same.
     static func desktopSwitchRoute(
         number: Int,
         activeDisplayID: String,
-        displays: [ManagedDisplay]
+        displays: [ManagedDisplay],
+        cgsDisplays: [ManagedDisplay] = []
     ) -> DesktopSwitchRoute? {
         guard number >= 1, number <= HotKey.maxDesktops else {
             return nil
         }
 
-        var desktopNumber = 0
+        var counted = 0
         for display in displays {
             for space in display.spaces where !space.isFullscreen {
-                desktopNumber += 1
-                guard desktopNumber == number else {
+                counted += 1
+                guard counted == number else {
                     continue
                 }
                 if display.identifier == activeDisplayID {
                     return .activeDisplay(spaceID: space.id)
                 }
+                // A reordered number can point at a Desktop macOS numbers
+                // beyond its last numbered shortcut, which has no route
+                guard let cgsNumber = desktopNumber(
+                    forSpaceID: space.id,
+                    displays: cgsDisplays.isEmpty ? displays : cgsDisplays
+                ), cgsNumber <= HotKey.maxDesktops else {
+                    return nil
+                }
                 return .otherDisplay(
-                    hotKey: HotKey.firstDesktop + CGSSymbolicHotKey(number - 1)
+                    hotKey: HotKey.firstDesktop + CGSSymbolicHotKey(cgsNumber - 1)
                 )
             }
         }
@@ -430,11 +460,17 @@ enum SpaceSwitcher {
         return true
     }
 
+    private static func desktopNumber(forSpaceID spaceID: Int, connection: Int32) -> Int? {
+        desktopNumber(forSpaceID: spaceID, displays: managedDisplays(connection: connection))
+    }
+
     /// The 1-based Mission Control Desktop number for a space ID, counting
     /// regular Spaces across every display, or nil for fullscreen Spaces.
-    private static func desktopNumber(forSpaceID spaceID: Int, connection: Int32) -> Int? {
+    /// Callers pass displays in raw CGS order: this number addresses macOS's
+    /// own numbering rather than the menu bar's.
+    static func desktopNumber(forSpaceID spaceID: Int, displays: [ManagedDisplay]) -> Int? {
         var number = 0
-        for display in managedDisplays(connection: connection) {
+        for display in displays {
             for space in display.spaces {
                 if space.isFullscreen {
                     if space.id == spaceID {

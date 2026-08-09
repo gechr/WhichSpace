@@ -7,9 +7,69 @@ protocol DisplaySpaceProvider: Sendable {
     // swiftlint:disable:next discouraged_optional_collection
     func copyManagedDisplaySpaces() -> [NSDictionary]?
     func copyActiveMenuBarDisplayIdentifier() -> String?
+    func displayBounds(forIdentifier identifier: String) -> CGRect?
     func fullscreenOwnerPIDs(forSpaceIDs spaceIDs: [Int]) -> [Int: pid_t]
     func spacesWithWindows(forSpaceIDs spaceIDs: [Int]) -> Set<Int>
     func windowOwnerPIDs(forSpaceIDs spaceIDs: [Int]) -> [Int: [pid_t]]
+}
+
+// MARK: - Display Geometry
+
+/// Resolves a CGS "Display Identifier" UUID string to its global CG frame.
+/// Returns nil for identifiers with no matching display, including the
+/// literal "Main" used when "Displays have separate Spaces" is off.
+enum DisplayGeometry {
+    static func bounds(forDisplayIdentifier identifier: String) -> CGRect? {
+        guard let uuid = CFUUIDCreateFromString(nil, identifier as CFString) else {
+            return nil
+        }
+        let displayID = CGDisplayGetDisplayIDFromUUID(uuid)
+        guard displayID != kCGNullDirectDisplay else {
+            return nil
+        }
+        return CGDisplayBounds(displayID)
+    }
+}
+
+// MARK: - Display Arrangement
+
+/// Orders display-keyed items by physical monitor position, left to right
+/// then top to bottom. Generic so the snapshot builder and the space
+/// switcher share one definition of arrangement order.
+enum DisplayArrangement {
+    /// Stable sort by (origin.x, origin.y) of each item's display frame in
+    /// global CG coordinates. Returns `items` unchanged when any frame is
+    /// unresolvable, keeping CGS order rather than sorting a partial set.
+    static func sorted<Element>(
+        _ items: [Element],
+        identifier: (Element) -> String,
+        bounds: (String) -> CGRect?
+    ) -> [Element] {
+        guard items.count > 1 else {
+            return items
+        }
+        var frames: [CGRect] = []
+        for item in items {
+            guard let frame = bounds(identifier(item)) else {
+                return items
+            }
+            frames.append(frame)
+        }
+        let order = items.indices.sorted { lhs, rhs in
+            let left = frames[lhs]
+            let right = frames[rhs]
+            if left.origin.x != right.origin.x {
+                return left.origin.x < right.origin.x
+            }
+            if left.origin.y != right.origin.y {
+                return left.origin.y < right.origin.y
+            }
+            // Swift's sort is not guaranteed stable; equal frames (e.g.
+            // mirrored displays) keep their CGS relative order.
+            return lhs < rhs
+        }
+        return order.map { items[$0] }
+    }
 }
 
 // MARK: - CGSDisplaySpaceProvider
@@ -35,6 +95,10 @@ struct CGSDisplaySpaceProvider: DisplaySpaceProvider {
             return nil
         }
         return result.takeRetainedValue() as String
+    }
+
+    func displayBounds(forIdentifier identifier: String) -> CGRect? {
+        DisplayGeometry.bounds(forDisplayIdentifier: identifier)
     }
 
     func spacesWithWindows(forSpaceIDs spaceIDs: [Int]) -> Set<Int> {

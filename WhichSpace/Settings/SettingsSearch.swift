@@ -268,6 +268,20 @@ enum SettingsSearchIndex {
             keywords: [.display, .space, .hide]
         ),
         SettingsSearchEntry(
+            anchor: .displayOrder,
+            section: Localization.labelSpaces,
+            title: Localization.labelDisplayOrder,
+            subtitle: Localization.tipDisplayOrder,
+            keywords: [.display, .space]
+        ),
+        SettingsSearchEntry(
+            anchor: .preserveSystemSpaceNumbers,
+            section: Localization.labelSpaces,
+            title: Localization.togglePreserveSystemSpaceNumbers,
+            subtitle: Localization.tipPreserveSystemSpaceNumbers,
+            keywords: [.display, .space]
+        ),
+        SettingsSearchEntry(
             anchor: .separatorColor,
             section: Localization.labelSpaces,
             title: Localization.labelSeparator,
