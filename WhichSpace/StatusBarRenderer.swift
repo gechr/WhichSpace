@@ -253,14 +253,20 @@ final class StatusBarRenderer {
             let regularSpaceIDs = renderedIcons.filter { !$0.slot.isFullscreen }.map(\.slot.spaceID)
             ownersBySpace = displaySpaceProvider.windowOwnerPIDs(forSpaceIDs: regularSpaceIDs)
         }
+        // Mission Control numbers Desktops only once there are two, so a
+        // lone Desktop across all displays keeps the bare name
+        let desktopCount = appState.allDisplaysSpaceInfo.reduce(0) { $0 + $1.regularSpaceCount }
         return renderedIcons.map { rendered in
             let icons = (ownersBySpace[rendered.slot.spaceID] ?? []).compactMap(appIconResolver)
             let (shown, overflow) = Self.capped(icons, limit: cap)
+            let desktopName = desktopCount == 1
+                ? Localization.labelDesktop
+                : String(format: Localization.labelDesktopNumber, rendered.slot.displayNumber)
             return SpacePickerEntry(
                 icon: rendered.icon,
                 title: rendered.slot.isFullscreen
                     ? (fullscreenAppName(forSpaceID: rendered.slot.spaceID) ?? "")
-                    : String(format: Localization.labelDesktopNumber, rendered.slot.displayNumber),
+                    : desktopName,
                 keyEquivalent: !rendered.slot.isFullscreen && (1 ... 9).contains(rendered.slot.displayNumber)
                     ? String(rendered.slot.displayNumber)
                     : "",

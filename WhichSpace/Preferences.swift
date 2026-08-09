@@ -104,9 +104,12 @@ enum SeparatorStyle: String, CaseIterable, Defaults.Serializable {
 /// icon. String-backed so future modes can be added without a key migration;
 /// an absent key resolves to `.icons`.
 enum SpacePickerStyle: String, CaseIterable, Defaults.Serializable {
+    /// The Space icon alone, with no title beside it
+    // swiftlint:disable:next discouraged_none_name
+    case none
     /// The "Desktop N" name only
     case name
-    /// The app icons only; an empty Space shows just its Space icon
+    /// The app icons only; an empty Space shows a dim "(empty)" placeholder
     case icons
     /// The name followed by the app icons
     case both
@@ -114,6 +117,8 @@ enum SpacePickerStyle: String, CaseIterable, Defaults.Serializable {
     /// The localized name shown in the settings dropdown.
     var localizedName: String {
         switch self {
+        case .none:
+            Localization.labelNone
         case .name:
             Localization.labelPickerStyleName
         case .icons:

@@ -45,11 +45,19 @@ enum MenuBuilder {
             item.state = entry.isActive ? .on : .off
             item.representedObject = entry
             if let attributed = attributedTitle(for: entry, style: style) {
-                item.attributedTitle = attributed
-                // The "(empty)" placeholder does not name the Space, so
-                // the Desktop name moves to a tooltip
-                if style == .icons, entry.appIcons.isEmpty, entry.overflowCount == 0 {
+                // AppKit draws the plain title in place of an empty
+                // attributed one, so a blanked row clears the title itself
+                // and keeps the Desktop name as a tooltip
+                if attributed.length == 0 {
+                    item.title = ""
                     item.toolTip = entry.title
+                } else {
+                    item.attributedTitle = attributed
+                    // The "(empty)" placeholder does not name the Space
+                    // either, so those rows keep the tooltip too
+                    if entry.appIcons.isEmpty, entry.overflowCount == 0 {
+                        item.toolTip = entry.title
+                    }
                 }
             }
             menu.addItem(item)
@@ -76,8 +84,12 @@ enum MenuBuilder {
 
     /// The attributed row title carrying the app icons, or nil when the plain
     /// title already says everything: name mode, fullscreen rows, and an
-    /// iconless row in the combined style.
+    /// iconless row in the combined style. An empty string blanks the row
+    /// entirely in the none style.
     static func attributedTitle(for entry: SpacePickerEntry, style: SpacePickerStyle) -> NSAttributedString? {
+        if style == .none {
+            return NSAttributedString(string: "")
+        }
         guard style != .name, entry.targetSpace != nil else {
             return nil
         }

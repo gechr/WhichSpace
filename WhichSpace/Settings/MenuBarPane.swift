@@ -200,7 +200,8 @@ struct MenuBarPane: View {
     /// What each picker row shows beside its Space icon, nested under the
     /// slider that decides whether app icons appear at all.
     private var spacePickerStyleRow: some View {
-        let dimmed = !showsCurrentSpaceOnly || model.value(\.spacePickerMaxAppIcons) == 0
+        let dimmed = !showsCurrentSpaceOnly
+            || (model.value(\.spacePickerMaxAppIcons) == 0 && model.value(\.spacePickerStyle) != SpacePickerStyle.none)
         return SettingsRow(
             icon: "list.bullet.rectangle",
             subtitle: Localization.tipPickerStyle,
@@ -212,7 +213,9 @@ struct MenuBarPane: View {
                 .foregroundStyle(dimmed ? .tertiary : .primary)
         } control: {
             Picker(Localization.labelPickerStyle, selection: model.binding(\.spacePickerStyle)) {
-                ForEach(SpacePickerStyle.allCases, id: \.self) { style in
+                Text(SpacePickerStyle.none.localizedName).tag(SpacePickerStyle.none)
+                Divider()
+                ForEach(SpacePickerStyle.allCases.filter { $0 != .none }, id: \.self) { style in
                     Text(style.localizedName).tag(style)
                 }
             }

@@ -495,7 +495,7 @@ struct SpaceEditorView: View {
                 Text("[\(Localization.labelDefault)]").tag(String?.none)
                 Divider()
             }
-            Text(Localization.soundNone).tag(String?.some(""))
+            Text(Localization.labelNone).tag(String?.some(""))
             // The group headers only disambiguate when both groups exist;
             // with no user sounds the system list stands alone unlabeled
             if userSounds.isEmpty {

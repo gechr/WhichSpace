@@ -568,6 +568,21 @@ struct SpacePickerTests {
         #expect(entries[1].keyEquivalent.isEmpty)
     }
 
+    @Test("a lone Desktop keeps the bare Mission Control name")
+    func loneDesktopStaysUnnumbered() {
+        let appState = makeAppState(
+            spaces: [
+                (id: 100, isFullscreen: false),
+                (id: 101, isFullscreen: true),
+            ],
+            activeSpaceID: 100
+        )
+
+        let entries = appState.spacePickerEntries()
+
+        #expect(entries[0].title == Localization.labelDesktop)
+    }
+
     @Test("fullscreen spaces with no known owner stay untitled")
     func fullscreenEntryWithoutOwnerHasNoTitle() {
         let appState = makeAppState(
@@ -830,6 +845,23 @@ struct SpacePickerTests {
         // Desktop name as a tooltip
         let menu = MenuBuilder.buildSpacePickerMenu(entries: [empty], style: .icons, target: NSObject())
         #expect(menu.items[0].attributedTitle?.string == Localization.labelPickerEmpty)
+        #expect(menu.items[0].toolTip == "Desktop 1")
+    }
+
+    @Test("the none style blanks every row and keeps the name as a tooltip")
+    func noneStyleBlanksAllRows() {
+        let withIcons = makeEntry(appIcons: [NSImage()])
+
+        let title = MenuBuilder.attributedTitle(for: withIcons, style: SpacePickerStyle.none)
+        #expect(title?.string.isEmpty == true)
+
+        let menu = MenuBuilder.buildSpacePickerMenu(
+            entries: [withIcons],
+            style: SpacePickerStyle.none,
+            target: NSObject()
+        )
+        #expect(menu.items[0].title.isEmpty)
+        #expect(menu.items[0].attributedTitle == nil)
         #expect(menu.items[0].toolTip == "Desktop 1")
     }
 
