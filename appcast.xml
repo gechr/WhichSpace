@@ -6,6 +6,32 @@
     <description>Most recent changes with links to updates.</description>
     <language>en</language>
     <item>
+        <title>Version 1.2.16</title>
+        <description><![CDATA[
+          <h3>v1.2.16</h3>
+          <ul>
+            <li>settings: Close window on Cmd+W and Cmd+Q</li>
+            <li>updates: Add opt-in beta channel toggle</li>
+            <li>localization: Correct translations across locales</li>
+            <li>settings: Restore Sparkle update settings on full reset</li>
+            <li>settings: Drive update-check feedback from Sparkle KVO</li>
+            <li>switching: Route revoked scrolls to System Settings</li>
+            <li>scripting: Add <code>space</code> and <code>display</code> object model</li>
+            <li>settings: Re-check hover previews when content scrolls</li>
+          </ul>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.2.16</sparkle:fullReleaseNotesLink>
+        <pubDate>Sun, 09 Aug 2026 15:32:56 +0100</pubDate>
+        <enclosure
+          url="https://github.com/gechr/WhichSpace/releases/download/v1.2.16/WhichSpace.zip"
+          sparkle:version="1.2.16"
+          sparkle:shortVersionString="1.2.16"
+          sparkle:edSignature="u/5iDTo5+BFqfiPXxFaC6jb7c9zfZ/twBK+zvruyvjCUIIiTRIADJLKTsJuWWq6aUvk4d93j+GsJTteoV5jyBw=="
+          length="4105510"
+          type="application/octet-stream" />
+        <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      </item>
+    <item>
         <title>Version 1.2.15</title>
         <description><![CDATA[
           <h3>v1.2.15</h3>
