@@ -815,22 +815,21 @@ struct SpacePickerTests {
         #expect(attachmentCount(iconsOnly) == 2)
     }
 
-    @Test("empty Spaces blank in icons mode and stay plain in the combined mode")
-    func emptySpacesBlankInIconsMode() {
+    @Test("empty Spaces show a dim placeholder in icons mode and stay plain in the combined mode")
+    func emptySpacesShowPlaceholderInIconsMode() {
         let empty = makeEntry()
 
         let iconsOnly = MenuBuilder.attributedTitle(for: empty, style: .icons)
-        #expect(iconsOnly != nil)
-        #expect(iconsOnly?.string.isEmpty == true)
+        #expect(iconsOnly?.string == Localization.labelPickerEmpty)
+        let color = iconsOnly?.attribute(.foregroundColor, at: 0, effectiveRange: nil) as? NSColor
+        #expect(color == .secondaryLabelColor)
 
         #expect(MenuBuilder.attributedTitle(for: empty, style: .both) == nil)
 
-        // AppKit falls back to the plain title when the attributed one is
-        // empty, so the built row blanks the title and keeps the name as a
-        // tooltip
+        // The placeholder does not name the Space, so the row keeps the
+        // Desktop name as a tooltip
         let menu = MenuBuilder.buildSpacePickerMenu(entries: [empty], style: .icons, target: NSObject())
-        #expect(menu.items[0].title.isEmpty)
-        #expect(menu.items[0].attributedTitle == nil)
+        #expect(menu.items[0].attributedTitle?.string == Localization.labelPickerEmpty)
         #expect(menu.items[0].toolTip == "Desktop 1")
     }
 

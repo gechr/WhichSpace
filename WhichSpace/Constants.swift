@@ -397,6 +397,7 @@ enum Localization {
     static let labelOff = String(localized: "label_off")
     static let labelOutside = String(localized: "label_outside")
     static let labelPickerAppIcons = String(localized: "label_picker_app_icons")
+    static let labelPickerEmpty = String(localized: "label_picker_empty")
     static let labelPickerStyle = String(localized: "label_picker_style")
     static let labelPickerStyleBoth = String(localized: "label_picker_style_both")
     static let labelPickerStyleIcons = String(localized: "label_picker_style_icons")

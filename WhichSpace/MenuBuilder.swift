@@ -45,14 +45,11 @@ enum MenuBuilder {
             item.state = entry.isActive ? .on : .off
             item.representedObject = entry
             if let attributed = attributedTitle(for: entry, style: style) {
-                // AppKit draws the plain title in place of an empty
-                // attributed one, so a blanked row clears the title itself
-                // and keeps the Desktop name as a tooltip
-                if attributed.length == 0 {
-                    item.title = ""
+                item.attributedTitle = attributed
+                // The "(empty)" placeholder does not name the Space, so
+                // the Desktop name moves to a tooltip
+                if style == .icons, entry.appIcons.isEmpty, entry.overflowCount == 0 {
                     item.toolTip = entry.title
-                } else {
-                    item.attributedTitle = attributed
                 }
             }
             menu.addItem(item)
@@ -89,8 +86,11 @@ enum MenuBuilder {
             guard style == .icons else {
                 return nil
             }
-            // Empty Space in icons mode: just the Space icon, no text
-            return NSAttributedString(string: "")
+            // Empty Space in icons mode: a dim placeholder in place of icons
+            return NSAttributedString(
+                string: Localization.labelPickerEmpty,
+                attributes: [.font: font, .foregroundColor: NSColor.secondaryLabelColor]
+            )
         }
         let result = NSMutableAttributedString()
         if style == .both {
