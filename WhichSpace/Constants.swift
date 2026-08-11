@@ -78,6 +78,49 @@ enum AppInfo {
     static var appName: String {
         Bundle.main.infoDictionary?["CFBundleName"] as? String ?? "WhichSpace"
     }
+
+    /// Marketing version stamped into the bundle. Development builds carry a
+    /// `git describe` suffix, e.g. 1.2.18-1-gfe06204-dirty.
+    static var version: String {
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
+    }
+
+    static let repository = "https://github.com/gechr/WhichSpace"
+
+    static var repositoryURL: URL? {
+        URL(string: repository)
+    }
+
+    /// Release page for the running build, or the release list when the stamp
+    /// does not name a tag.
+    static var releaseURL: URL? {
+        guard let tag = releaseTag(for: version) else {
+            return URL(string: "\(repository)/releases")
+        }
+        return URL(string: "\(repository)/releases/tag/\(tag)")
+    }
+
+    /// Tag the given version was built from, so a development build still
+    /// points at the release behind it. Returns nil when the stamp is not a
+    /// version.
+    static func releaseTag(for version: String) -> String? {
+        var value = version
+        if value.hasSuffix(dirtySuffix) {
+            value.removeLast(dirtySuffix.count)
+        }
+        // The distance from the tag and the commit git describe resolved to
+        // are trimmed separately from the tag's own hyphenated parts, so a
+        // pre-release tag such as 1.3.0-rc.1 survives intact
+        if let range = value.range(of: "-[0-9]+-g[0-9a-f]+$", options: .regularExpression) {
+            value.removeSubrange(range)
+        }
+        guard value.first?.isNumber == true else {
+            return nil
+        }
+        return "v\(value)"
+    }
+
+    private static let dirtySuffix = "-dirty"
 }
 
 // MARK: - Layout

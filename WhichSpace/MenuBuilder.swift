@@ -139,10 +139,10 @@ enum MenuBuilder {
     // MARK: - Version Header
 
     private static func configureVersionHeader(in menu: NSMenu) {
-        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
-        let versionItem = NSMenuItem(title: "\(AppInfo.appName) v\(version)", action: nil, keyEquivalent: "")
+        let title = "\(AppInfo.appName) v\(AppInfo.version)"
+        let versionItem = NSMenuItem(title: title, action: nil, keyEquivalent: "")
         versionItem.isEnabled = false
-        versionItem.toolTip = "https://github.com/gechr/WhichSpace"
+        versionItem.toolTip = AppInfo.repository
         if let icon = NSApp.applicationIconImage {
             let resized = NSImage(size: NSSize(width: 16, height: 16), flipped: false) { rect in
                 icon.draw(in: rect)

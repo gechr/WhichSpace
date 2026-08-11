@@ -152,18 +152,28 @@ struct GeneralPane: View {
     }
 
     private var footer: some View {
-        HStack {
-            let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
-            let name = "\(AppInfo.appName) v\(version)"
-            if let url = URL(string: "https://github.com/gechr/WhichSpace") {
-                Link(name, destination: url)
-            } else {
-                Text(name)
-                    .foregroundStyle(.secondary)
-            }
+        HStack(spacing: 6) {
+            footerLink(AppInfo.appName, destination: AppInfo.repositoryURL)
+            // Verbatim keeps the separator out of the string catalog, which
+            // the localized initializer would file it in
+            Text(verbatim: "·")
+                .foregroundStyle(.secondary)
+            footerLink("v\(AppInfo.version)", destination: AppInfo.releaseURL)
         }
         .font(.callout)
         .frame(maxWidth: .infinity)
         .padding(.top, 4)
+    }
+
+    /// Falls back to plain text when the URL does not build, so the footer
+    /// still reads as a version stamp.
+    @ViewBuilder
+    private func footerLink(_ title: String, destination: URL?) -> some View {
+        if let destination {
+            Link(title, destination: destination)
+        } else {
+            Text(title)
+                .foregroundStyle(.secondary)
+        }
     }
 }
