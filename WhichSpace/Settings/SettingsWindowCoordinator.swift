@@ -148,6 +148,7 @@ final class SettingsWindowCoordinator {
             }
         }
         windowController?.show(pane: pane?.identifier)
+        fitWindowToPane()
         restorePaneVisibility()
         if let visibleTopLeft, let window = windowController?.window {
             window.setFrameOrigin(NSPoint(
@@ -162,6 +163,29 @@ final class SettingsWindowCoordinator {
         windowController?.window?.makeFirstResponder(nil)
         // Set last so the fade runs against a pane that is already on screen
         highlighter.point(at: focus)
+    }
+
+    /// Sizes the window around the pane just put on screen, in the same pass
+    /// that showed it so the corrected size is the first one drawn.
+    ///
+    /// A pane is measured for the window before it is on screen, where an
+    /// AppKit-backed control has yet to take the control size the pane sets
+    /// and answers with its default instead: the General pane's mini switches
+    /// report a taller row each, leaving a band of empty window below the
+    /// content. The window is then resized only for an animated tab switch,
+    /// which a toolbar click gets and a deep link or a search hit does not, so
+    /// a pane reached by either keeps whichever height the previous pane had.
+    /// Both readings settle once the pane is in the window, so measure again
+    /// from here.
+    private func fitWindowToPane() {
+        guard let window = windowController?.window,
+              // A crossfade adds the incoming pane before dropping the
+              // outgoing one, so the pane being shown is the last subview
+              let pane = window.contentViewController?.view.subviews.last
+        else {
+            return
+        }
+        fitSettingsWindow(window, to: pane)
     }
 
     /// An animated toolbar switch crossfades the outgoing pane's view to

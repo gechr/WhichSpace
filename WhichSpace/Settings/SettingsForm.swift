@@ -686,7 +686,28 @@ struct SettingsRowDivider: View {
     }
 }
 
-// MARK: - Live Window Fitting
+// MARK: - Window Fitting
+
+/// Sizes `window` around the pane it shows.
+///
+/// Grows or shrinks from the top-left corner, the same corner a tab switch
+/// sizes around, so the list the user is looking at stays put while the editor
+/// beside it moves.
+@MainActor
+func fitSettingsWindow(_ window: NSWindow, to pane: NSView) {
+    let content = CGRect(origin: .zero, size: pane.fittingSize)
+    let size = window.frameRect(forContentRect: content).size
+    guard size.width > 0, size.height > 0 else {
+        return
+    }
+    var frame = window.frame
+    guard abs(frame.width - size.width) > 0.5 || abs(frame.height - size.height) > 0.5 else {
+        return
+    }
+    frame.origin.y += frame.height - size.height
+    frame.size = size
+    window.setFrame(frame, display: true)
+}
 
 /// Resizes the settings window around its pane whenever `measured` changes.
 ///
@@ -710,10 +731,6 @@ private struct SettingsWindowFitter: NSViewRepresentable {
         }
     }
 
-    /// Grows or shrinks the window from its top-left corner, the same corner
-    /// a tab switch sizes around, so the list the user is looking at stays put
-    /// while the editor beside it moves.
-    ///
     /// A snap resize during a tab crossfade interrupts the transition and can
     /// strand the incoming pane as a stale half-faded snapshot, so the fit
     /// waits for the fade to drain first.
@@ -728,18 +745,7 @@ private struct SettingsWindowFitter: NSViewRepresentable {
             }
             return
         }
-        let content = CGRect(origin: .zero, size: pane.fittingSize)
-        let size = window.frameRect(forContentRect: content).size
-        guard size.width > 0, size.height > 0 else {
-            return
-        }
-        var frame = window.frame
-        guard abs(frame.width - size.width) > 0.5 || abs(frame.height - size.height) > 0.5 else {
-            return
-        }
-        frame.origin.y += frame.height - size.height
-        frame.size = size
-        window.setFrame(frame, display: true)
+        fitSettingsWindow(window, to: pane)
     }
 
     /// Whether a tab crossfade is animating a pane root view.
