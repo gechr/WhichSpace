@@ -6,9 +6,18 @@
     <description>Most recent changes with links to updates.</description>
     <language>en</language>
     <item>
-        <title>Version 1.2.18</title>
+        <title>Version 1.2.19</title>
         <description><![CDATA[
           <style>.sparkle-installed-version, .sparkle-installed-version ~ * { display: none }</style>
+          <section data-sparkle-version="1.2.19">
+            <h3>v1.2.19</h3>
+            <ul>
+              <li>build: Optimize Release builds for size</li>
+              <li>settings: Size the window to the pane on show</li>
+              <li>settings: Link the version to its release tag</li>
+              <li>settings: Title the window after the app</li>
+            </ul>
+          </section>
           <section data-sparkle-version="1.2.18">
             <h3>v1.2.18</h3>
             <ul>
@@ -994,6 +1003,26 @@
             <h3>v0.1.0</h3>
             <p>Initial release</p>
           </section>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.2.19</sparkle:fullReleaseNotesLink>
+        <pubDate>Tue, 11 Aug 2026 02:31:39 +0100</pubDate>
+        <enclosure
+          url="https://github.com/gechr/WhichSpace/releases/download/v1.2.19/WhichSpace.zip"
+          sparkle:version="1.2.19"
+          sparkle:shortVersionString="1.2.19"
+          sparkle:edSignature="BssaBp3q2TGIHAc0lgCvi0WLZBmULOxmZO73Ot8YcYFp987hbG8k+MUAO+mOJVCWnyyEUnRxs4G2LZIIH/sbCQ=="
+          length="4041111"
+          type="application/octet-stream" />
+        <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      </item>
+    <item>
+        <title>Version 1.2.18</title>
+        <description><![CDATA[
+          <h3>v1.2.18</h3>
+          <ul>
+            <li>hotkeys: Add "Skip empty Spaces" toggles</li>
+            <li>settings: Add "Display order" option</li>
+          </ul>
         ]]></description>
         <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.2.18</sparkle:fullReleaseNotesLink>
         <pubDate>Sun, 09 Aug 2026 20:40:38 +0100</pubDate>
