@@ -226,9 +226,14 @@ final class SpaceEditorModel {
     func spaceName(for candidate: (number: Int, entry: SpaceEntry?)) -> String? {
         _ = tick
         guard let entry = candidate.entry else {
-            let entries = selectedDisplayInfo?.entries ?? appState.allSpaceEntries
-            let regularCount = entries.compactMap(\.regularIndex).max() ?? 0
-            let number = regularCount + candidate.number - entries.count
+            guard let display = selectedDisplayInfo else {
+                return String(format: Localization.labelDesktopNumber, candidate.number)
+            }
+            let number = StatusBarRenderer.placeholderNumber(
+                atPosition: candidate.number,
+                on: display,
+                localNumbers: store.localSpaceNumbers
+            )
             return String(format: Localization.labelDesktopNumber, number)
         }
         if let custom = customSpaceName(for: entry) {
@@ -237,7 +242,15 @@ final class SpaceEditorModel {
         guard let regularIndex = entry.regularIndex else {
             return nil
         }
-        return String(format: Localization.labelDesktopNumber, regularIndex)
+        let number = if store.localSpaceNumbers {
+            regularIndex
+        } else {
+            StatusBarRenderer.globalIndex(
+                entry: entry,
+                globalStartIndex: selectedDisplayInfo?.globalStartIndex ?? 1
+            )
+        }
+        return String(format: Localization.labelDesktopNumber, number)
     }
 
     /// The Keyboard pane's globally numbered Desktop title. Regular Spaces

@@ -135,8 +135,12 @@ struct SpaceEditorModelTests {
         model.selectedDisplayID = "Second"
         model.selection = .space(1)
         #expect(model.editingDisplayNumber == 5)
+        #expect(model.spaceName(for: model.spaceEntries[0])
+            == String(format: Localization.labelDesktopNumber, 5))
         model.selection = .space(2)
         #expect(model.editingDisplayNumber == 6)
+        #expect(model.spaceName(for: model.spaceEntries[1])
+            == String(format: Localization.labelDesktopNumber, 6))
     }
 
     @Test("placeholders on a second display restart in local numbering")
@@ -147,6 +151,10 @@ struct SpaceEditorModelTests {
         model.selectedDisplayID = "Second"
         model.selection = .space(2)
         #expect(model.editingDisplayNumber == 2)
+        #expect(model.spaceName(for: model.spaceEntries[0])
+            == String(format: Localization.labelDesktopNumber, 1))
+        #expect(model.spaceName(for: model.spaceEntries[1])
+            == String(format: Localization.labelDesktopNumber, 2))
     }
 
     @Test("placeholders skip fullscreen entries when extrapolating")
