@@ -131,7 +131,17 @@ final class SettingsWindowCoordinator {
                 // toolbar clicks this coordinator never sees; an interrupted
                 // crossfade can strand the incoming pane half-faded, so each
                 // switch schedules a repair for after the transition
-                titleObservation = window.observe(\.title) { [weak self] _, _ in
+                titleObservation = window.observe(\.title) { [weak self] window, _ in
+                    // The title is set from the tab activation, on the main
+                    // thread, and KVO delivers on the thread that set it, so
+                    // the name is replaced before the bar is drawn
+                    let retitled = MainActor.assumeIsolated {
+                        Self.restoreAppTitle(in: window)
+                    }
+                    // The remaining change is the replacement above
+                    guard retitled else {
+                        return
+                    }
                     Task { @MainActor in
                         try? await Task.sleep(for: Self.transitionSettleDelay)
                         self?.restorePaneVisibility()
@@ -163,6 +173,21 @@ final class SettingsWindowCoordinator {
         windowController?.window?.makeFirstResponder(nil)
         // Set last so the fade runs against a pane that is already on screen
         highlighter.point(at: focus)
+    }
+
+    /// Puts the app's name in the title bar, reporting whether a pane name was
+    /// there to replace.
+    ///
+    /// The window is titled after the pane it shows, which the selected
+    /// toolbar item below already names, so the bar carries the app the window
+    /// belongs to instead.
+    @MainActor
+    private static func restoreAppTitle(in window: NSWindow) -> Bool {
+        guard window.title != AppInfo.appName else {
+            return false
+        }
+        window.title = AppInfo.appName
+        return true
     }
 
     /// Sizes the window around the pane just put on screen, in the same pass
