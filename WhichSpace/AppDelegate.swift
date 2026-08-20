@@ -11,7 +11,9 @@ import Settings
 
 extension NSEvent {
     var isRightClick: Bool {
-        type == .rightMouseUp || modifierFlags.contains(.control)
+        // Status item click events arrive with empty modifierFlags on
+        // macOS 27, so the hardware modifier state fills the gap.
+        type == .rightMouseUp || modifierFlags.union(Self.modifierFlags).contains(.control)
     }
 }
 
@@ -748,14 +750,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
             Self.logger.info("click ignored: no current event")
             return
         }
-
         if event.isRightClick {
             guard let button = statusBarItem?.button else {
                 return
             }
             let position = NSPoint(x: 0, y: button.bounds.height + 5)
             statusMenu.popUp(positioning: nil, at: position, in: button)
-        } else if event.modifierFlags.contains(.option) {
+        } else if event.modifierFlags.union(NSEvent.modifierFlags).contains(.option) {
             actionHandler.openSettingsWindow()
         } else {
             handleLeftClick(event, button: button)
@@ -821,7 +822,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
             return
         }
 
-        let location = button.convert(event.locationInWindow, from: nil)
+        // Status item click events report the button center as their
+        // locationInWindow on macOS 27, so the on-screen mouse position is
+        // the only reliable source for per-slot hit testing.
+        let locationInWindow = button.window.map { $0.convertPoint(fromScreen: NSEvent.mouseLocation) }
+            ?? event.locationInWindow
+        let location = button.convert(locationInWindow, from: nil)
         let clickX = Double(location.x)
 
         // Use StatusBarLayout hit testing
