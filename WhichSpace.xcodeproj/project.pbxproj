@@ -583,7 +583,7 @@
 				5E4C3D052F890A230003F868 /* XCRemoteSwiftPackageReference "Defaults" */,
 				5E4C3D082F890A230003F86A /* XCRemoteSwiftPackageReference "EmojiKit" */,
 				60A8BCFFA24A458AABBE2B4C /* XCRemoteSwiftPackageReference "Settings" */,
-				76CDD311E63E49148190CFA1 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
+				135B404B209F4CED861B5787 /* XCLocalSwiftPackageReference "Vendor/KeyboardShortcuts" */,
 			);
 			productRefGroup = 5E13C8881BE03A6F00FF4305 /* Products */;
 			projectDirPath = "";
@@ -1041,15 +1041,14 @@
 				revision = f41475771f65379ca10852c95119a7f53f0de5a5;
 			};
 		};
-		76CDD311E63E49148190CFA1 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/sindresorhus/KeyboardShortcuts";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 3.0.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		135B404B209F4CED861B5787 /* XCLocalSwiftPackageReference "Vendor/KeyboardShortcuts" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Vendor/KeyboardShortcuts;
+		};
+/* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		5E342D5D2E650D570003F863 /* Sparkle */ = {
@@ -1079,7 +1078,6 @@
 		};
 		E728704D47F646A69EFD161F /* KeyboardShortcuts */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 76CDD311E63E49148190CFA1 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */;
 			productName = KeyboardShortcuts;
 		};
 /* End XCSwiftPackageProductDependency section */

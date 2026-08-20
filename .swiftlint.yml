@@ -1,6 +1,7 @@
 excluded:
   - .build/
   - build/
+  - Vendor/
 
 only_rules:
   - accessibility_trait_for_button
