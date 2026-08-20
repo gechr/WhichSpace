@@ -55,13 +55,15 @@ struct MenuBarPane: View {
             anchor: .showAllSpaces
         )
         SettingsRowDivider()
-        SettingsToggleRow(
-            title: Localization.toggleDimInactiveSpaces,
-            isOn: model.binding(\.dimInactiveSpaces),
+        SettingsSliderRow(
+            title: Localization.labelInactiveSpaceOpacity,
+            value: model.binding(\.inactiveSpaceOpacity),
+            range: Layout.inactiveSpaceOpacityRange,
+            defaultValue: Layout.defaultInactiveSpaceOpacity,
             icon: "aqi.low",
             indented: true,
             disabled: showsCurrentSpaceOnly,
-            subtitle: Localization.tipDimInactiveSpaces,
+            subtitle: Localization.tipInactiveSpaceOpacity,
             anchor: .dimInactiveSpaces
         )
         SettingsRowDivider()

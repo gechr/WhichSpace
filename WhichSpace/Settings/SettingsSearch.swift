@@ -242,8 +242,8 @@ enum SettingsSearchIndex {
         SettingsSearchEntry(
             anchor: .dimInactiveSpaces,
             section: Localization.labelSpaces,
-            title: Localization.toggleDimInactiveSpaces,
-            subtitle: Localization.tipDimInactiveSpaces,
+            title: Localization.labelInactiveSpaceOpacity,
+            subtitle: Localization.tipInactiveSpaceOpacity,
             keywords: [.space, .color]
         ),
         SettingsSearchEntry(

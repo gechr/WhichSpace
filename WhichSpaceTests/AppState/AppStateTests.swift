@@ -532,10 +532,10 @@ struct AppStateTests {
         }
     }
 
-    @Test("showAllDisplays: active Space on another display is dimmed")
-    func showAllDisplays_otherDisplayActiveSpaceIsDimmed() throws {
+    @Test("showAllDisplays: inactive Space uses configured opacity")
+    func showAllDisplays_inactiveSpaceUsesConfiguredOpacity() throws {
         store.showAllDisplays = true
-        store.dimInactiveSpaces = true
+        store.inactiveSpaceOpacity = 65
         stub.activeDisplayIdentifier = "DisplayA"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -569,15 +569,16 @@ struct AppStateTests {
             height: bitmap.pixelsHigh
         ))
 
-        #expect(activeAlpha > inactiveAlpha)
-        #expect(inactiveAlpha / activeAlpha < 0.5)
+        let ratio = inactiveAlpha / activeAlpha
+        #expect(ratio > 0.55)
+        #expect(ratio < 0.75)
     }
 
     @Test("combined mode: only the current Space is undimmed across displays")
     func combinedMode_onlyCurrentSpaceIsUndimmedAcrossDisplays() throws {
         store.showAllDisplays = true
         store.showAllSpaces = true
-        store.dimInactiveSpaces = true
+        store.inactiveSpaceOpacity = Layout.defaultInactiveSpaceOpacity
         stub.activeDisplayIdentifier = "DisplayA"
         stub.displays = [
             CGSStub.makeDisplay(
@@ -615,10 +616,10 @@ struct AppStateTests {
         }
     }
 
-    @Test("showAllSpaces with dimInactive disabled: all spaces equal alpha")
-    func showAllSpaces_dimInactiveDisabled_allSpacesSameAlpha() throws {
+    @Test("showAllSpaces with 100% inactive opacity: all spaces equal alpha")
+    func showAllSpaces_fullInactiveOpacity_allSpacesSameAlpha() throws {
         store.showAllSpaces = true
-        store.dimInactiveSpaces = false
+        store.inactiveSpaceOpacity = 100
 
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [

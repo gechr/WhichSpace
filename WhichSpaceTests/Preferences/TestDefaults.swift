@@ -175,21 +175,37 @@ struct DefaultsIsolationGuardTests {
     func storeOperations() {
         #expect(!store.showAllSpaces)
         #expect(store.sizeScale == Layout.defaultSizeScale)
+        #expect(store.inactiveSpaceOpacity == Layout.defaultInactiveSpaceOpacity)
         #expect(!store.scrollHapticFeedback)
         #expect(store.scrollHapticIntensity == Layout.defaultScrollHapticIntensity)
         #expect(store.spaceColors.isEmpty)
 
         store.showAllSpaces = true
         store.sizeScale = 80.0
+        store.inactiveSpaceOpacity = 0
         store.spaceColors = [1: SpaceColors(foreground: .red, background: .blue)]
 
         #expect(store.showAllSpaces)
         #expect(store.sizeScale == 80.0)
+        #expect(store.inactiveSpaceOpacity == Layout.inactiveSpaceOpacityRange.lowerBound)
         #expect(store.spaceColors.count == 1)
 
         store.resetAll()
         #expect(!store.showAllSpaces)
         #expect(store.sizeScale == Layout.defaultSizeScale)
+    }
+
+    @Test("legacy dimming preference migrates to opacity")
+    func legacyDimmingPreferenceMigratesToOpacity() {
+        let legacySuite = TestSuiteFactory.createSuite()
+        legacySuite.suite.set(false, forKey: "dimInactiveSpaces")
+
+        let migratedStore = DefaultsStore(suite: legacySuite.suite)
+
+        #expect(migratedStore.inactiveSpaceOpacity == 100)
+        #expect(legacySuite.suite.object(forKey: "dimInactiveSpaces") == nil)
+        migratedStore.resetAll()
+        TestSuiteFactory.destroySuite(legacySuite)
     }
 
     /// Verifies that KeySpecs matches Defaults.Keys definitions.
@@ -198,7 +214,7 @@ struct DefaultsIsolationGuardTests {
         let expectedKeyNames: Set = [
             "classicSpaceSwitching",
             "clickToSwitchSpaces",
-            "dimInactiveSpaces",
+            "inactiveSpaceOpacity",
             "displayOrder",
             "displaySpaceBadges",
             "displaySpaceColors",

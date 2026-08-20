@@ -126,6 +126,10 @@ enum AppInfo {
 // MARK: - Layout
 
 enum Layout {
+    /// Inactive Space icon opacity (percentage)
+    static let defaultInactiveSpaceOpacity = 35.0
+    static let inactiveSpaceOpacityRange = 5.0 ... 100.0
+
     /// Size scale (percentage)
     /// Slider default, leaving the icon at the base sizes below
     static let defaultSizeScale = 100.0
@@ -432,6 +436,7 @@ enum Localization {
     static let labelHapticVeryLight = String(localized: "label_haptic_very_light")
     static let labelHapticVeryStrong = String(localized: "label_haptic_very_strong")
     static let labelHorizontal = String(localized: "label_horizontal")
+    static let labelInactiveSpaceOpacity = String(localized: "label_inactive_space_opacity")
     static let labelInside = String(localized: "label_inside")
     static let labelJump = String(localized: "label_jump")
     static let labelLabelBackground = String(localized: "label_label_background")
@@ -536,7 +541,7 @@ enum Localization {
     static let tipClearBadge = String(localized: "tip_clear_badge")
     static let tipClearLabel = String(localized: "tip_clear_label")
     static let tipClickToSwitchSpaces = String(localized: "tip_click_to_switch_spaces")
-    static let tipDimInactiveSpaces = String(localized: "tip_dim_inactive_spaces")
+    static let tipInactiveSpaceOpacity = String(localized: "tip_inactive_space_opacity")
     static let tipDisplayOrder = String(localized: "tip_display_order")
     static let tipFont = String(localized: "tip_font")
     static let tipHasOwnStyle = String(localized: "tip_has_own_style")
@@ -592,7 +597,6 @@ enum Localization {
     static let toggleBetaUpdates = String(localized: "toggle_beta_updates")
     static let toggleClassicSwitching = String(localized: "toggle_classic_switching")
     static let toggleClickToSwitchSpaces = String(localized: "toggle_click_to_switch_spaces")
-    static let toggleDimInactiveSpaces = String(localized: "toggle_dim_inactive_spaces")
     static let toggleHideEmptySpaces = String(localized: "toggle_hide_empty_spaces")
     static let toggleHideFullscreenApps = String(localized: "toggle_hide_fullscreen_apps")
     static let toggleHideSingleSpace = String(localized: "toggle_hide_single_space")

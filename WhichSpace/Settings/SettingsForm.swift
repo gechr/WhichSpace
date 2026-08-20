@@ -437,6 +437,7 @@ struct SettingsSliderRow: View {
     var step: Double?
     let defaultValue: Double
     var icon: String?
+    var indented = false
     var disabled = false
     var dimmed = false
     var subtitle: String?
@@ -455,7 +456,14 @@ struct SettingsSliderRow: View {
     }
 
     var body: some View {
-        SettingsRow(icon: icon, subtitle: subtitle, disabled: disabled, dimmed: dimmed, anchor: anchor) {
+        SettingsRow(
+            icon: icon,
+            subtitle: subtitle,
+            disabled: disabled,
+            dimmed: dimmed,
+            indented: indented,
+            anchor: anchor
+        ) {
             Text(title)
                 .foregroundStyle(disabled || dimmed ? .tertiary : .primary)
         } control: {
@@ -503,20 +511,29 @@ struct SettingsSliderRow: View {
     @ViewBuilder
     private var slider: some View {
         if let step {
-            Slider(value: value, in: range, step: step) {
+            Slider(value: value, in: range, step: step, onEditingChanged: beginSliderEditing) {
                 Text(title)
             }
         } else if anchorsDefault {
-            Slider(value: anchoredPosition, in: 0 ... 1) {
+            Slider(value: anchoredPosition, in: 0 ... 1, onEditingChanged: beginSliderEditing) {
                 Text(title)
             }
             // The slider carries a track position rather than the setting, so
             // spell the setting out for VoiceOver
             .accessibilityValue(Text(valueFormatter(value.wrappedValue)))
         } else {
-            Slider(value: value, in: range) {
+            Slider(value: value, in: range, onEditingChanged: beginSliderEditing) {
                 Text(title)
             }
+        }
+    }
+
+    /// Ends value-field editing before a drag changes the binding. Otherwise
+    /// the field editor keeps stale text and commits it over the dragged value
+    /// when the mouse is released.
+    private func beginSliderEditing(_ editing: Bool) {
+        if editing {
+            endFieldEditing()
         }
     }
 

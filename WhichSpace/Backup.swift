@@ -72,7 +72,10 @@ struct Backup: Codable {
 struct BackupSettings: Codable {
     var classicSpaceSwitching: Bool
     var clickToSwitchSpaces: Bool
-    var dimInactiveSpaces: Bool
+    /// Decode-only compatibility with backups exported before opacity was adjustable.
+    // swiftlint:disable:next discouraged_optional_boolean
+    private var dimInactiveSpaces: Bool?
+    var inactiveSpaceOpacity: Double
     var displayOrder: String?
     var emojiPickerSkinTone: Int
     var fullscreenIconStyle: String?
@@ -117,6 +120,7 @@ struct BackupSettings: Codable {
         case hideFullscreenApps, hideSingleSpace, horizontalScrollEnabled, hotkeysSkipEmptySpaces
         case hotkeysWindowSkipEmptySpaces, includeBetaUpdates
         case invertHorizontalScroll, invertVerticalScroll, launchAtLogin, localSpaceNumbers
+        case inactiveSpaceOpacity
         // Raw value matches the legacy stored defaults key
         case moveApplicationAlertSuppress = "moveToApplicationsFolderAlertSuppress"
         case paddingScale
@@ -132,7 +136,10 @@ struct BackupSettings: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         classicSpaceSwitching = try container.decodeIfPresent(Bool.self, forKey: .classicSpaceSwitching) ?? false
         clickToSwitchSpaces = try container.decodeIfPresent(Bool.self, forKey: .clickToSwitchSpaces) ?? false
-        dimInactiveSpaces = try container.decodeIfPresent(Bool.self, forKey: .dimInactiveSpaces) ?? true
+        dimInactiveSpaces = nil
+        let legacyDimInactiveSpaces = try container.decodeIfPresent(Bool.self, forKey: .dimInactiveSpaces)
+        inactiveSpaceOpacity = try container.decodeIfPresent(Double.self, forKey: .inactiveSpaceOpacity)
+            ?? (legacyDimInactiveSpaces == false ? 100 : Layout.defaultInactiveSpaceOpacity)
         displayOrder = try container.decodeIfPresent(String.self, forKey: .displayOrder)
         emojiPickerSkinTone = try container.decodeIfPresent(Int.self, forKey: .emojiPickerSkinTone)
             ?? SkinTone.default.rawValue
@@ -179,7 +186,7 @@ struct BackupSettings: Codable {
     init(
         classicSpaceSwitching: Bool,
         clickToSwitchSpaces: Bool,
-        dimInactiveSpaces: Bool,
+        inactiveSpaceOpacity: Double,
         displayOrder: String?,
         emojiPickerSkinTone: Int,
         fullscreenIconStyle: String?,
@@ -214,7 +221,8 @@ struct BackupSettings: Codable {
     ) {
         self.classicSpaceSwitching = classicSpaceSwitching
         self.clickToSwitchSpaces = clickToSwitchSpaces
-        self.dimInactiveSpaces = dimInactiveSpaces
+        dimInactiveSpaces = nil
+        self.inactiveSpaceOpacity = inactiveSpaceOpacity
         self.displayOrder = displayOrder
         self.emojiPickerSkinTone = emojiPickerSkinTone
         self.fullscreenIconStyle = fullscreenIconStyle
@@ -590,7 +598,7 @@ enum BackupManager {
         let settings = BackupSettings(
             classicSpaceSwitching: store.classicSpaceSwitching,
             clickToSwitchSpaces: store.clickToSwitchSpaces,
-            dimInactiveSpaces: store.dimInactiveSpaces,
+            inactiveSpaceOpacity: store.inactiveSpaceOpacity,
             displayOrder: store.displayOrder.rawValue,
             emojiPickerSkinTone: store.emojiPickerSkinTone.rawValue,
             fullscreenIconStyle: store.fullscreenIconStyle.rawValue,
@@ -739,7 +747,7 @@ enum BackupManager {
         // Apply global settings
         store.classicSpaceSwitching = backup.settings.classicSpaceSwitching
         store.clickToSwitchSpaces = backup.settings.clickToSwitchSpaces
-        store.dimInactiveSpaces = backup.settings.dimInactiveSpaces
+        store.inactiveSpaceOpacity = backup.settings.inactiveSpaceOpacity
         store.displayOrder = backup.settings.displayOrder
             .flatMap { DisplayOrder(rawValue: $0) } ?? .system
         // Unrecognized values (from a newer app version or hand edit) keep the default

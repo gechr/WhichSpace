@@ -387,7 +387,7 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         XCTAssertEqual(backup.bundleId, "com.test.app")
         XCTAssertEqual(backup.version, "1.0.0")
         XCTAssertTrue(backup.settings.clickToSwitchSpaces)
-        XCTAssertFalse(backup.settings.dimInactiveSpaces)
+        XCTAssertEqual(backup.settings.inactiveSpaceOpacity, 100)
         XCTAssertEqual(backup.settings.sizeScale, 80.0)
         XCTAssertEqual(backup.settings.soundName, "Pop")
     }
@@ -410,7 +410,7 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
 
         XCTAssertTrue(backup.settings.clickToSwitchSpaces)
         XCTAssertEqual(backup.settings.sizeScale, 80.0)
-        XCTAssertTrue(backup.settings.dimInactiveSpaces)
+        XCTAssertEqual(backup.settings.inactiveSpaceOpacity, Layout.defaultInactiveSpaceOpacity)
         XCTAssertFalse(backup.settings.hideEmptySpaces)
         XCTAssertFalse(backup.settings.horizontalScrollEnabled)
         XCTAssertFalse(backup.settings.invertHorizontalScroll)
@@ -546,7 +546,7 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         BackupManager.apply(backup, to: store)
 
         XCTAssertTrue(store.clickToSwitchSpaces)
-        XCTAssertTrue(store.dimInactiveSpaces)
+        XCTAssertEqual(store.inactiveSpaceOpacity, Layout.defaultInactiveSpaceOpacity)
         XCTAssertTrue(store.hideEmptySpaces)
         XCTAssertTrue(store.hideFullscreenApps)
         XCTAssertTrue(store.hideSingleSpace)
@@ -562,12 +562,13 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         XCTAssertTrue(store.verticalScrollEnabled)
     }
 
-    func testApplyClampsOutOfRangeScales() throws {
+    func testApplyClampsOutOfRangeSettings() throws {
         let json = """
         {
             "bundleId": "com.test.app",
             "version": "1.0.0",
             "settings": {
+                "inactiveSpaceOpacity": -50.0,
                 "sizeScale": 99999.0,
                 "paddingScale": -50.0,
                 "scrollSensitivity": 99999.0
@@ -579,6 +580,7 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         BackupManager.apply(backup, to: store)
 
         XCTAssertEqual(store.sizeScale, Layout.sizeScaleRange.upperBound)
+        XCTAssertEqual(store.inactiveSpaceOpacity, Layout.inactiveSpaceOpacityRange.lowerBound)
         XCTAssertEqual(store.paddingScale, Layout.paddingScaleRange.lowerBound)
         XCTAssertEqual(store.scrollSensitivity, Layout.scrollSensitivityRange.upperBound)
     }
@@ -896,6 +898,7 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
     func testExportAndLoadRoundTrip() throws {
         // Set up some settings
         store.showAllSpaces = true
+        store.inactiveSpaceOpacity = 72
         store.sizeScale = 85.0
         store.horizontalScrollEnabled = true
         store.invertHorizontalScroll = true
@@ -929,6 +932,7 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
 
         // Verify settings restored
         XCTAssertTrue(store.showAllSpaces)
+        XCTAssertEqual(store.inactiveSpaceOpacity, 72)
         XCTAssertEqual(store.sizeScale, 85.0)
         XCTAssertTrue(store.horizontalScrollEnabled)
         XCTAssertTrue(store.invertHorizontalScroll)

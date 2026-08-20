@@ -578,7 +578,7 @@ final class StatusBarRenderer {
 
         let totalWidth = renderedIcons.reduce(0) { $0 + $1.icon.size.width }
         let imageSize = NSSize(width: totalWidth, height: Layout.statusItemHeight)
-        let dimInactive = store.dimInactiveSpaces
+        let inactiveAlpha = store.inactiveSpaceOpacity / 100
         return Self.drawDeferred(size: imageSize) {
             var xOffset: Double = 0
             for rendered in renderedIcons {
@@ -589,7 +589,7 @@ final class StatusBarRenderer {
                     height: Layout.statusItemHeight
                 )
 
-                let alpha = rendered.slot.isActive || !dimInactive ? 1.0 : 0.35
+                let alpha = rendered.slot.isActive ? 1.0 : inactiveAlpha
                 rendered.icon.draw(
                     in: drawRect,
                     from: NSRect(origin: .zero, size: rendered.icon.size),
@@ -617,7 +617,7 @@ final class StatusBarRenderer {
         let totalWidth = totalSpacesWidth + Double(separatorCount) * Layout.displaySeparatorWidth
 
         let imageSize = NSSize(width: totalWidth, height: Layout.statusItemHeight)
-        let dimInactive = store.dimInactiveSpaces
+        let inactiveAlpha = store.inactiveSpaceOpacity / 100
         let separatorColor = store.separatorColor
             ?? IconColors.defaultSeparator(darkMode: darkMode)
         let separatorStyle = store.separatorStyle
@@ -638,7 +638,7 @@ final class StatusBarRenderer {
                         height: Layout.statusItemHeight
                     )
 
-                    let alpha = rendered.slot.isActive || !dimInactive ? 1.0 : 0.35
+                    let alpha = rendered.slot.isActive ? 1.0 : inactiveAlpha
                     rendered.icon.draw(
                         in: drawRect,
                         from: NSRect(origin: .zero, size: rendered.icon.size),

@@ -309,7 +309,7 @@ struct IntegrationTests {
             ),
         ]
         store.showAllSpaces = true
-        store.dimInactiveSpaces = true
+        store.inactiveSpaceOpacity = Layout.defaultInactiveSpaceOpacity
 
         let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 

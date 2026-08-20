@@ -36,7 +36,10 @@ extension TypedKeySpec: AnyKeySpec {
 enum KeySpecs {
     static let classicSpaceSwitching = TypedKeySpec(name: "classicSpaceSwitching", defaultValue: false)
     static let clickToSwitchSpaces = TypedKeySpec(name: "clickToSwitchSpaces", defaultValue: false)
-    static let dimInactiveSpaces = TypedKeySpec(name: "dimInactiveSpaces", defaultValue: true)
+    static let inactiveSpaceOpacity = TypedKeySpec(
+        name: "inactiveSpaceOpacity",
+        defaultValue: Layout.defaultInactiveSpaceOpacity
+    )
     static let displayOrder = TypedKeySpec(name: "displayOrder", defaultValue: DisplayOrder.system)
     static let displaySpaceBadges = TypedKeySpec(
         name: "displaySpaceBadges",
@@ -160,7 +163,7 @@ enum KeySpecs {
     static let allSpecs: [any AnyKeySpec] = [
         classicSpaceSwitching,
         clickToSwitchSpaces,
-        dimInactiveSpaces,
+        inactiveSpaceOpacity,
         displayOrder,
         displaySpaceBadges,
         displaySpaceColors,
@@ -257,6 +260,7 @@ enum KeySpecs {
         displaySpaceColors.name,
         displaySpaceSkinTones.name,
         emojiPickerSkinTone.name,
+        inactiveSpaceOpacity.name,
         separatorColor.name,
         separatorStyle.name,
         spaceColors.name,
@@ -308,6 +312,21 @@ final class DefaultsStore {
 
     init(suite: UserDefaults) {
         self.suite = suite
+        migrateDimInactiveSpaces()
+    }
+
+    /// Converts the former on/off preference to its equivalent opacity. The
+    /// legacy default (on) already matches 35%; off becomes fully opaque.
+    private func migrateDimInactiveSpaces() {
+        let legacyName = "dimInactiveSpaces"
+        guard let legacy = suite.object(forKey: legacyName) as? NSNumber else {
+            return
+        }
+
+        if !legacy.boolValue {
+            Defaults[KeySpecs.inactiveSpaceOpacity.key(suite: suite)] = 100
+        }
+        suite.removeObject(forKey: legacyName)
     }
 
     /// Read/write a defaults value via its `TypedKeySpec`, memoizing decoded
@@ -395,9 +414,9 @@ final class DefaultsStore {
         set { self[KeySpecs.clickToSwitchSpaces] = newValue }
     }
 
-    var dimInactiveSpaces: Bool {
-        get { self[KeySpecs.dimInactiveSpaces] }
-        set { self[KeySpecs.dimInactiveSpaces] = newValue }
+    var inactiveSpaceOpacity: Double {
+        get { self[KeySpecs.inactiveSpaceOpacity] }
+        set { self[KeySpecs.inactiveSpaceOpacity] = newValue.clamped(to: Layout.inactiveSpaceOpacityRange) }
     }
 
     var displayOrder: DisplayOrder {
