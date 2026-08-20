@@ -105,6 +105,7 @@ struct StyleGridView: View {
                         lineWidth: 2
                     )
             )
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .previewHover { hovering in
