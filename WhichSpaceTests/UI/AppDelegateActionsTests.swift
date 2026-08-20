@@ -189,6 +189,29 @@ final class AppDelegateActionsTests: XCTestCase {
 
     // MARK: - Click Permission Tests
 
+    func testSpaceSwipeGuidance_onlyShowsForUnconfiguredInstantSwitchingOnMacOS27() {
+        XCTAssertTrue(AppDelegate.shouldShowSpaceSwipeGestureGuidance(
+            requiresSetting: true,
+            usesClassicSwitching: false,
+            gestureEnabled: false
+        ))
+        XCTAssertFalse(AppDelegate.shouldShowSpaceSwipeGestureGuidance(
+            requiresSetting: false,
+            usesClassicSwitching: false,
+            gestureEnabled: false
+        ))
+        XCTAssertFalse(AppDelegate.shouldShowSpaceSwipeGestureGuidance(
+            requiresSetting: true,
+            usesClassicSwitching: true,
+            gestureEnabled: false
+        ))
+        XCTAssertFalse(AppDelegate.shouldShowSpaceSwipeGestureGuidance(
+            requiresSetting: true,
+            usesClassicSwitching: false,
+            gestureEnabled: true
+        ))
+    }
+
     private func makeDelegate(trusted: Bool, capability: Bool = true) -> AppDelegate {
         // Bound to locals first: a trailing closure here would bind to
         // `missionControlNotificationSender`, the initializer's first closure

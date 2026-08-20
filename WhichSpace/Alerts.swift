@@ -66,6 +66,35 @@ struct InfoAlert {
     }
 }
 
+enum SpaceSwipeGestureAlertResponse: Sendable {
+    case enableInstantSwitching
+    case useClassicSwitching
+}
+
+/// Explains the macOS 27 system setting required by instant Space switching.
+struct SpaceSwipeGestureAlert {
+    func runModal() -> SpaceSwipeGestureAlertResponse {
+        runAlertOnMain {
+            NSApp.activate(ignoringOtherApps: true)
+
+            let alert = NSAlert()
+            alert.messageText = Localization.alertSpaceSwipeGestureTitle
+            alert.informativeText = String(
+                format: Localization.alertSpaceSwipeGestureDetail,
+                AppInfo.appName
+            )
+            alert.alertStyle = .informational
+            alert.useSmallAppIcon()
+            alert.addButton(withTitle: Localization.buttonEnableSwipeGestures)
+            alert.addButton(withTitle: Localization.buttonUseClassicSwitching)
+
+            return alert.runModal() == .alertFirstButtonReturn
+                ? .enableInstantSwitching
+                : .useClassicSwitching
+        }
+    }
+}
+
 /// A confirmation alert for destructive or important actions
 struct ConfirmationAlert {
     let message: String

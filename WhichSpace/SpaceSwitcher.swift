@@ -1,4 +1,5 @@
 import AppKit
+import Darwin
 
 // MARK: - Space Switching via Synthetic Dock-Swipe Gestures
 
@@ -14,11 +15,18 @@ enum SpaceSwitcher {
     private enum Field {
         static let eventType = CGEventField(rawValue: 55)!
         static let gestureHIDType = CGEventField(rawValue: 110)!
+        static let gestureSwipeMask = CGEventField(rawValue: 115)!
         static let gestureSwipeMotion = CGEventField(rawValue: 123)!
         static let gestureSwipeProgress = CGEventField(rawValue: 124)!
+        static let gestureSwipePositionX = CGEventField(rawValue: 125)!
+        static let gestureSwipePositionY = CGEventField(rawValue: 126)!
         static let gestureSwipeVelocityX = CGEventField(rawValue: 129)!
         static let gestureSwipeVelocityY = CGEventField(rawValue: 130)!
         static let gesturePhase = CGEventField(rawValue: 132)!
+        static let gesturePhase2 = CGEventField(rawValue: 134)!
+        static let gestureFlavor = CGEventField(rawValue: 138)!
+        static let eventTimestamp = CGEventField(rawValue: 169)!
+        static let iohidPayload: UInt16 = 4205
     }
 
     /// CGS event type constants.
@@ -107,7 +115,7 @@ enum SpaceSwitcher {
     /// Switches to the space with the given CGS space ID on the menu bar display.
     /// Posts synthetic dock-swipe gestures to move from the current space to the target.
     @discardableResult
-    @MainActor static func switchToSpace(id targetSpaceID: Int) -> Bool {
+    @MainActor static func switchToSpace(id targetSpaceID: Int, fromStatusItemClick: Bool = false) -> Bool {
         let conn = _CGSDefaultConnection()
 
         guard let activeDisplayRef = CGSCopyActiveMenuBarDisplayIdentifier(conn) else {
@@ -142,7 +150,7 @@ enum SpaceSwitcher {
         let steps = abs(targetIndex - currentIndex)
         let goRight = targetIndex > currentIndex
 
-        if requiresClassicPath {
+        if requiresClassicPath(fromStatusItemClick: fromStatusItemClick) {
             guard classicSwitch(toSpaceID: targetSpaceID, goRight: goRight, steps: steps, connection: conn) else {
                 return false
             }
@@ -248,7 +256,7 @@ enum SpaceSwitcher {
             guard postStep(goRight: stepsRight, velocity: swipeVelocity) else {
                 return false
             }
-        } else if requiresClassicPath {
+        } else if requiresClassicPath() {
             let target = display.spaces[targetIndex].id
             guard classicSwitch(toSpaceID: target, goRight: stepsRight, steps: steps, connection: conn) else {
                 return false
@@ -420,19 +428,134 @@ enum SpaceSwitcher {
         AppEnvironment.shared.store.classicSpaceSwitching
     }
 
+    /// macOS 27 validates synthetic dock swipes against an IOHID payload.
+    /// Earlier releases must keep posting the original plain events.
+    private nonisolated static let requiresIOHIDPayload =
+        ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 27
+
+    /// The extra system gesture requirement is part of the macOS 27 event
+    /// path only. Older releases retain their established switching behavior.
+    nonisolated static var requiresSpaceSwipeGestureSetting: Bool {
+        requiresIOHIDPayload
+    }
+
+    /// Whether macOS has either horizontal three- or four-finger Space swipe
+    /// configured for a built-in/Bluetooth trackpad. Direct defaults writes
+    /// are insufficient because they do not update Dock's live HID state.
+    static var spaceSwipeGestureSettingEnabled: Bool {
+        guard requiresSpaceSwipeGestureSetting else {
+            return true
+        }
+
+        let domains = [
+            "com.apple.AppleMultitouchTrackpad",
+            "com.apple.driver.AppleBluetoothMultitouch.trackpad",
+        ]
+        let deviceKeys = [
+            "TrackpadThreeFingerHorizSwipeGesture",
+            "TrackpadFourFingerHorizSwipeGesture",
+        ]
+        var values: [Int?] = domains.flatMap { domain in
+            deviceKeys.map { key in
+                preferenceInt(key: key, applicationID: domain as CFString, host: kCFPreferencesAnyHost)
+            }
+        }
+        values.append(preferenceInt(
+            key: "com.apple.trackpad.threeFingerHorizSwipeGesture",
+            applicationID: kCFPreferencesAnyApplication,
+            host: kCFPreferencesCurrentHost
+        ))
+        values.append(preferenceInt(
+            key: "com.apple.trackpad.fourFingerHorizSwipeGesture",
+            applicationID: kCFPreferencesAnyApplication,
+            host: kCFPreferencesCurrentHost
+        ))
+        return hasEnabledSpaceSwipeGesture(values)
+    }
+
+    static func hasEnabledSpaceSwipeGesture(_ values: [Int?]) -> Bool {
+        values.contains { ($0 ?? 0) != 0 }
+    }
+
+    /// Uses the same private preference backend as Trackpad settings to make
+    /// the macOS 27 gesture recognizer live immediately. A direct defaults
+    /// write changes the plist but does not update Dock or the HID service.
+    @MainActor static func enableSpaceSwipeGestureSetting() -> Bool {
+        guard requiresSpaceSwipeGestureSetting else {
+            return true
+        }
+
+        let path = "/System/Library/PrivateFrameworks/PreferencePanesSupport.framework/PreferencePanesSupport"
+        guard dlopen(path, RTLD_NOW | RTLD_LOCAL) != nil,
+              let backendClass = NSClassFromString("MTTGestureBackEnd") as? NSObject.Type
+        else {
+            return false
+        }
+
+        let sharedSelector = NSSelectorFromString("sharedInstance")
+        guard backendClass.responds(to: sharedSelector),
+              let backend = backendClass.perform(sharedSelector)?.takeUnretainedValue() as? NSObject
+        else {
+            return false
+        }
+
+        let cloudSelector = NSSelectorFromString("setShouldSyncChangesToCloud:")
+        if backend.responds(to: cloudSelector) {
+            typealias BoolSetter = @convention(c) (AnyObject, Selector, Bool) -> Void
+            let setter = unsafeBitCast(backend.method(for: cloudSelector), to: BoolSetter.self)
+            setter(backend, cloudSelector, false)
+        }
+
+        let swipeSelector = NSSelectorFromString("setFourFingerHorizSwipe:")
+        guard backend.responds(to: swipeSelector) else {
+            return false
+        }
+        typealias IntegerSetter = @convention(c) (AnyObject, Selector, Int) -> Void
+        let setter = unsafeBitCast(backend.method(for: swipeSelector), to: IntegerSetter.self)
+        setter(backend, swipeSelector, 2)
+        return spaceSwipeGestureSettingEnabled
+    }
+
+    private static func preferenceInt(key: String, applicationID: CFString, host: CFString) -> Int? {
+        let value = CFPreferencesCopyValue(
+            key as CFString,
+            applicationID,
+            kCFPreferencesCurrentUser,
+            host
+        )
+        return (value as? NSNumber)?.intValue
+    }
+
     /// Whether the next switch must take the classic hotkey route. A held
     /// mouse button means the WindowServer is tracking a drag, which swallows
     /// synthetic swipe gestures without any failure signal, so instant
     /// switching falls back to the Mission Control shortcuts until the
     /// button is released. Key events still get delivered during a drag,
     /// and the switch carries the held window to the target Space.
-    @MainActor private static var requiresClassicPath: Bool {
-        usesClassicSwitching || NSEvent.pressedMouseButtons != 0
+    @MainActor private static func requiresClassicPath(fromStatusItemClick: Bool = false) -> Bool {
+        let heldButtonIsDrag = heldButtonRequiresClassicPath(
+            buttonIsPressed: NSEvent.pressedMouseButtons != 0,
+            fromStatusItemClick: fromStatusItemClick,
+            requiresIOHIDPayload: requiresIOHIDPayload
+        )
+        return usesClassicSwitching || heldButtonIsDrag
+    }
+
+    /// On macOS 27 the status item's mouse-up action can run before AppKit's
+    /// global pressed-button state clears. Earlier releases retain the exact
+    /// historical behavior, and every non-status-item switch still treats a
+    /// held button as a window drag.
+    static func heldButtonRequiresClassicPath(
+        buttonIsPressed: Bool,
+        fromStatusItemClick: Bool,
+        requiresIOHIDPayload: Bool
+    ) -> Bool {
+        buttonIsPressed && !(requiresIOHIDPayload && fromStatusItemClick)
     }
 
     /// Posts one switch step left or right using the active mechanism.
     @MainActor private static func postStep(goRight: Bool, velocity: Double) -> Bool {
-        if requiresClassicPath {
+        if requiresClassicPath() {
             return postHotKey(goRight ? HotKey.moveRight : HotKey.moveLeft)
         }
         return postSwipeGesture(goRight: goRight, velocity: velocity)
@@ -447,7 +570,10 @@ enum SpaceSwitcher {
         steps: Int,
         connection: Int32
     ) -> Bool {
-        if let number = desktopNumber(forSpaceID: targetSpaceID, connection: connection),
+        // On macOS 27 the numbered shortcut's posted key events do not switch
+        // the active display, so every target is reached by stepping instead.
+        if !requiresIOHIDPayload,
+           let number = desktopNumber(forSpaceID: targetSpaceID, connection: connection),
            number <= HotKey.maxDesktops
         {
             return postHotKey(HotKey.firstDesktop + CGSSymbolicHotKey(number - 1))
@@ -524,9 +650,14 @@ enum SpaceSwitcher {
     /// All three phases (began, changed, ended) are required - with only two,
     /// switching does not work while Mission Control is open.
     private static func postSwipeGesture(goRight: Bool, velocity: Double) -> Bool {
-        postDockSwipe(phase: Phase.began, goRight: goRight, velocity: velocity)
-            && postDockSwipe(phase: Phase.changed, goRight: goRight, velocity: velocity)
-            && postDockSwipe(phase: Phase.ended, goRight: goRight, velocity: velocity)
+        guard requiresIOHIDPayload else {
+            return postDockSwipe(phase: Phase.began, goRight: goRight, velocity: velocity)
+                && postDockSwipe(phase: Phase.changed, goRight: goRight, velocity: velocity)
+                && postDockSwipe(phase: Phase.ended, goRight: goRight, velocity: velocity)
+        }
+        return postAugmentedDockSwipe(phase: Phase.began, goRight: goRight, velocity: velocity)
+            && postAugmentedDockSwipe(phase: Phase.changed, goRight: goRight, velocity: velocity)
+            && postAugmentedDockSwipe(phase: Phase.ended, goRight: goRight, velocity: velocity)
     }
 
     private static func postDockSwipe(phase: Int64, goRight: Bool, velocity: Double) -> Bool {
@@ -547,6 +678,163 @@ enum SpaceSwitcher {
 
         event.post(tap: .cgSessionEventTap)
         return true
+    }
+
+    // MARK: - macOS 27 IOHID Payload
+
+    // Binary IOHID event layouts appended to the serialized CGEvent. These
+    // are used only by the macOS 27 branch in `postSwipeGesture` above.
+
+    private enum IOHID {
+        static let eventTypeVelocity: UInt32 = 9
+        static let eventTypeFluidTouchGesture: UInt32 = 23
+        static let flavorDockPrimary: UInt16 = 3
+    }
+
+    private struct IOHIDEventBase {
+        var size: UInt32
+        var type: UInt32
+        var options: UInt32
+        var depth: UInt8
+        var reserved: (UInt8, UInt8, UInt8)
+    }
+
+    private struct IOHIDFluidTouchGestureData {
+        var base: IOHIDEventBase
+        var positionX: Int32
+        var positionY: Int32
+        var positionZ: Int32
+        var swipeMask: UInt32
+        var gestureMotion: UInt16
+        var gestureFlavor: UInt16
+        var swipeProgress: Int32
+    }
+
+    private struct IOHIDVelocityEventData {
+        var base: IOHIDEventBase
+        var velocityX: Int32
+        var velocityY: Int32
+        var velocityZ: Int32
+    }
+
+    private struct IOHIDSystemQueueElementHeader {
+        var timestamp: UInt64
+        var senderID: UInt64
+        var options: UInt32
+        var attributeLength: UInt32
+        var eventCount: UInt32
+    }
+
+    private static func postAugmentedDockSwipe(phase: Int64, goRight: Bool, velocity: Double) -> Bool {
+        guard let event = CGEvent(source: nil) else {
+            return false
+        }
+
+        let progress = goRight ? 1.0 : -1.0
+        let signedVelocity = goRight ? velocity : -velocity
+
+        event.setIntegerValueField(Field.eventType, value: EventType.dockControl)
+        event.setIntegerValueField(Field.gestureHIDType, value: hidTypeDockSwipe)
+        event.setIntegerValueField(Field.gesturePhase, value: phase)
+        event.setDoubleValueField(Field.gestureSwipeProgress, value: progress)
+        event.setIntegerValueField(Field.gestureSwipeMotion, value: horizontalMotion)
+        event.setDoubleValueField(Field.gestureSwipeVelocityX, value: signedVelocity)
+        event.setDoubleValueField(Field.gestureSwipeVelocityY, value: 0)
+        event.setIntegerValueField(Field.gesturePhase2, value: phase)
+        event.setDoubleValueField(Field.gestureFlavor, value: Double(IOHID.flavorDockPrimary))
+        event.setDoubleValueField(Field.eventTimestamp, value: Double(mach_absolute_time()))
+        event.setDoubleValueField(Field.gestureSwipePositionX, value: 0.1)
+
+        guard let augmented = withIOHIDPayload(event, phase: phase, velocity: signedVelocity) else {
+            return false
+        }
+        augmented.post(tap: .cgSessionEventTap)
+        return true
+    }
+
+    private static func withIOHIDPayload(_ event: CGEvent, phase: Int64, velocity: Double) -> CGEvent? {
+        guard let serialized = event.data else {
+            return nil
+        }
+
+        var bytes = serialized as Data
+        guard bytes.starts(with: [0, 0, 0, 2]) else {
+            return nil
+        }
+        let payload = iohidPayload(event: event, phase: phase, velocity: velocity)
+        let size = UInt16(payload.count)
+        bytes.append(UInt8(size >> 8))
+        bytes.append(UInt8(size & 0xFF))
+        bytes.append(UInt8(Field.iohidPayload >> 8))
+        bytes.append(UInt8(Field.iohidPayload & 0xFF))
+        bytes.append(payload)
+
+        return CGEvent(withDataAllocator: kCFAllocatorDefault, data: bytes as CFData)
+    }
+
+    private static func iohidPayload(event: CGEvent, phase: Int64, velocity: Double) -> Data {
+        let timestamp = event.timestamp != 0 ? event.timestamp : mach_absolute_time()
+        let progress = event.getDoubleValueField(Field.gestureSwipeProgress)
+        let positionX = event.getDoubleValueField(Field.gestureSwipePositionX)
+        let positionY = event.getDoubleValueField(Field.gestureSwipePositionY)
+        var data = Data()
+
+        var header = IOHIDSystemQueueElementHeader(
+            timestamp: timestamp,
+            senderID: 0,
+            options: 0,
+            attributeLength: 0,
+            eventCount: 2
+        )
+        withUnsafeBytes(of: &header) { data.append(contentsOf: $0) }
+
+        var gesture = IOHIDFluidTouchGestureData(
+            base: IOHIDEventBase(
+                size: UInt32(MemoryLayout<IOHIDFluidTouchGestureData>.size),
+                type: IOHID.eventTypeFluidTouchGesture,
+                options: UInt32((phase & 0xFF) << 24),
+                depth: 0,
+                reserved: (0, 0, 0)
+            ),
+            positionX: fixedPoint(positionX),
+            positionY: fixedPoint(positionY),
+            positionZ: 0,
+            swipeMask: 0,
+            gestureMotion: UInt16(horizontalMotion),
+            gestureFlavor: IOHID.flavorDockPrimary,
+            swipeProgress: fixedPoint(-progress)
+        )
+        withUnsafeBytes(of: &gesture) { data.append(contentsOf: $0) }
+
+        var velocityEvent = IOHIDVelocityEventData(
+            base: IOHIDEventBase(
+                size: UInt32(MemoryLayout<IOHIDVelocityEventData>.size),
+                type: IOHID.eventTypeVelocity,
+                options: 0,
+                depth: 1,
+                reserved: (0, 0, 0)
+            ),
+            velocityX: fixedPoint(-velocity),
+            velocityY: 0,
+            velocityZ: 0
+        )
+        withUnsafeBytes(of: &velocityEvent) { data.append(contentsOf: $0) }
+        return data
+    }
+
+    private static func fixedPoint(_ value: Double) -> Int32 {
+        let scaled = value * 65_536.0
+        if scaled >= Double(Int32.max) {
+            return Int32.max
+        }
+        if scaled <= Double(Int32.min) {
+            return Int32.min
+        }
+        let fixed = Int32(scaled)
+        if fixed == 0, value != 0 {
+            return value > 0 ? 1 : -1
+        }
+        return fixed
     }
 
     // MARK: - Accessibility

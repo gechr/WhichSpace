@@ -21,18 +21,21 @@ final class SettingsModel {
     @ObservationIgnored private var launchAtLogin: LaunchAtLoginProvider
     @ObservationIgnored private let isProcessTrusted: () -> Bool
     @ObservationIgnored private let isCapabilityTrusted: () -> Bool
+    @ObservationIgnored private let onClassicSwitchingDisabled: () -> Void
     @ObservationIgnored private var observationTask: Task<Void, Never>?
 
     init(
         store: DefaultsStore,
         launchAtLogin: LaunchAtLoginProvider,
         isProcessTrusted: @escaping () -> Bool = { Accessibility.isTrusted },
-        isCapabilityTrusted: @escaping () -> Bool = { Accessibility.liveStatus.capabilityTrusted }
+        isCapabilityTrusted: @escaping () -> Bool = { Accessibility.liveStatus.capabilityTrusted },
+        onClassicSwitchingDisabled: @escaping () -> Void = {}
     ) {
         self.store = store
         self.launchAtLogin = launchAtLogin
         self.isProcessTrusted = isProcessTrusted
         self.isCapabilityTrusted = isCapabilityTrusted
+        self.onClassicSwitchingDisabled = onClassicSwitchingDisabled
     }
 
     // MARK: - Bindings
@@ -142,6 +145,25 @@ final class SettingsModel {
             set: { [self] in
                 SettingsConstraints.setClickToSwitchSpaces($0, store: store)
                 tick += 1
+            }
+        )
+    }
+
+    /// Rechecks the macOS 27 instant-switching prerequisite as soon as the
+    /// user leaves Classic Switching. The injected action is a no-op on
+    /// earlier macOS releases.
+    var classicSpaceSwitchingBinding: Binding<Bool> {
+        Binding(
+            get: { [self] in
+                _ = tick
+                return store.classicSpaceSwitching
+            },
+            set: { [self] in
+                store.classicSpaceSwitching = $0
+                tick += 1
+                if !$0 {
+                    onClassicSwitchingDisabled()
+                }
             }
         )
     }

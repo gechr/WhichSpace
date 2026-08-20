@@ -3,6 +3,41 @@ import Testing
 
 @MainActor
 struct SpaceSwitcherTests {
+    @Test("status-item mouse-up stays instant only on macOS 27")
+    func statusItemMouseUp_ignoresHeldButtonOnlyWhenPayloadIsRequired() {
+        #expect(!SpaceSwitcher.heldButtonRequiresClassicPath(
+            buttonIsPressed: true,
+            fromStatusItemClick: true,
+            requiresIOHIDPayload: true
+        ))
+        #expect(SpaceSwitcher.heldButtonRequiresClassicPath(
+            buttonIsPressed: true,
+            fromStatusItemClick: true,
+            requiresIOHIDPayload: false
+        ))
+    }
+
+    @Test("non-click switches preserve held-window classic fallback")
+    func nonClickSwitch_heldButtonStillRequiresClassicPath() {
+        #expect(SpaceSwitcher.heldButtonRequiresClassicPath(
+            buttonIsPressed: true,
+            fromStatusItemClick: false,
+            requiresIOHIDPayload: true
+        ))
+        #expect(!SpaceSwitcher.heldButtonRequiresClassicPath(
+            buttonIsPressed: false,
+            fromStatusItemClick: false,
+            requiresIOHIDPayload: true
+        ))
+    }
+
+    @Test("any enabled horizontal trackpad gesture satisfies macOS 27")
+    func spaceSwipeGestureSetting_anyNonzeroValueIsEnabled() {
+        #expect(!SpaceSwitcher.hasEnabledSpaceSwipeGesture([nil, 0, 0, nil]))
+        #expect(SpaceSwitcher.hasEnabledSpaceSwipeGesture([0, 2, 0, 0]))
+        #expect(SpaceSwitcher.hasEnabledSpaceSwipeGesture([1]))
+    }
+
     @Test("global Desktop five routes to the second display")
     func globalDesktopFive_routesAcrossDisplays() throws {
         let displays = try twoDisplays()

@@ -101,7 +101,7 @@ struct MousePane: View {
         SettingsSection(Localization.labelBehavior, anchor: .behavior) {
             SettingsToggleRow(
                 title: Localization.toggleClassicSwitching,
-                isOn: model.binding(\.classicSpaceSwitching),
+                isOn: model.classicSpaceSwitchingBinding,
                 icon: "keyboard",
                 subtitle: Localization.tipClassicSwitching,
                 anchor: .classicSwitching

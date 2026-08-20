@@ -85,6 +85,24 @@ struct SettingsModelTests {
         #expect(store.clickToSwitchSpaces)
     }
 
+    @Test("leaving Classic Switching rechecks instant switching")
+    func classicSwitchingBindingRechecksWhenDisabled() {
+        var recheckCount = 0
+        let onClassicSwitchingDisabled = { recheckCount += 1 }
+        let localModel = SettingsModel(
+            store: store,
+            launchAtLogin: launchAtLogin,
+            onClassicSwitchingDisabled: onClassicSwitchingDisabled
+        )
+
+        localModel.classicSpaceSwitchingBinding.wrappedValue = true
+        #expect(recheckCount == 0)
+
+        localModel.classicSpaceSwitchingBinding.wrappedValue = false
+        #expect(!store.classicSpaceSwitching)
+        #expect(recheckCount == 1)
+    }
+
     @Test("click binding persists when untrusted")
     func clickBindingUntrusted() {
         let untrusted = makeModel(trusted: false)

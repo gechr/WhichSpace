@@ -236,7 +236,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
     /// named pane with one row scrolled into view.
     func showSettingsWindow(pane: SettingsPaneID? = nil, focus: SettingsFocus? = nil) {
         if settingsCoordinator == nil {
-            let model = SettingsModel(store: store, launchAtLogin: launchAtLogin)
+            let onClassicSwitchingDisabled: () -> Void = { [weak self] in
+                self?.showSpaceSwipeGestureGuidanceIfNeeded()
+            }
+            let model = SettingsModel(
+                store: store,
+                launchAtLogin: launchAtLogin,
+                onClassicSwitchingDisabled: onClassicSwitchingDisabled
+            )
             let editorModel = SpaceEditorModel(appState: appState, confirmAction: confirmAction)
             let highlighter = SettingsHighlighter()
             let generalPane = Settings.PaneHostingController(pane: Settings.Pane(
@@ -363,6 +370,48 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
             _ = ItemData.symbols.count
             _ = ItemData.emojis.count
         }
+
+        // macOS 27 only honors instant dock swipes while its corresponding
+        // trackpad gesture is enabled. Defer the modal until launch setup has
+        // returned, then offer to apply the setting through Apple's backend.
+        Task { @MainActor [weak self] in
+            await Task.yield()
+            self?.showSpaceSwipeGestureGuidanceIfNeeded()
+        }
+    }
+
+    func showSpaceSwipeGestureGuidanceIfNeeded() {
+        let requiresSetting = SpaceSwitcher.requiresSpaceSwipeGestureSetting
+        guard requiresSetting else {
+            return
+        }
+
+        guard Self.shouldShowSpaceSwipeGestureGuidance(
+            requiresSetting: requiresSetting,
+            usesClassicSwitching: store.classicSpaceSwitching,
+            gestureEnabled: SpaceSwitcher.spaceSwipeGestureSettingEnabled
+        ) else {
+            return
+        }
+
+        switch SpaceSwipeGestureAlert().runModal() {
+        case .enableInstantSwitching:
+            if !SpaceSwitcher.enableSpaceSwipeGestureSetting(),
+               let url = URL(string: "x-apple.systempreferences:com.apple.Trackpad-Settings.extension")
+            {
+                NSWorkspace.shared.open(url)
+            }
+        case .useClassicSwitching:
+            store.classicSpaceSwitching = true
+        }
+    }
+
+    static func shouldShowSpaceSwipeGestureGuidance(
+        requiresSetting: Bool,
+        usesClassicSwitching: Bool,
+        gestureEnabled: Bool
+    ) -> Bool {
+        requiresSetting && !usesClassicSwitching && !gestureEnabled
     }
 
     func applicationShouldHandleReopen(_: NSApplication, hasVisibleWindows _: Bool) -> Bool {
@@ -843,7 +892,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
             return
         }
 
-        SpaceSwitcher.switchToSpace(id: slot.spaceID)
+        SpaceSwitcher.switchToSpace(id: slot.spaceID, fromStatusItemClick: true)
     }
 
     // MARK: - Auto Shrink

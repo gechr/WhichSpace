@@ -13440,7 +13440,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rétablir [Par défaut] pour l’Espace actuel"
+            "value" : "Rétablir [Par défaut] pour l'Espace actuel"
           }
         },
         "he" : {
@@ -14190,7 +14190,7 @@
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Η εναλλαγή Χώρων απαιτεί άδεια Προσβασιμότητας.\n\nΑφού πατήσετε Συνέχεια, το macOS θα ζητήσει άδεια. Πατήστε «Άνοιγμα ρυθμίσεων συστήματος», βρείτε το %@ στη λίστα και ενεργοποιήστε το."
+            "value" : "Η εναλλαγή Χώρων απαιτεί άδεια Προσβασιμότητας.\n\nΑφού πατήσετε Συνέχεια, το macOS θα ζητήσει άδεια. Πατήστε \"Άνοιγμα ρυθμίσεων συστήματος\", βρείτε το %@ στη λίστα και ενεργοποιήστε το."
           }
         },
         "en" : {
@@ -14226,7 +14226,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le changement d'Espace nécessite l'autorisation d'accessibilité.\n\nAprès avoir cliqué sur Continuer, macOS vous demandera l'autorisation. Cliquez sur « Ouvrir les Réglages Système », puis trouvez %@ dans la liste et activez-le."
+            "value" : "Le changement d'Espace nécessite l'autorisation d'accessibilité.\n\nAprès avoir cliqué sur Continuer, macOS vous demandera l'autorisation. Cliquez sur \" Ouvrir les Réglages Système \", puis trouvez %@ dans la liste et activez-le."
           }
         },
         "he" : {
@@ -14334,7 +14334,7 @@
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comutarea între Spații necesită permisiunea de Accesibilitate.\n\nDupă ce faceți clic pe Continuați, macOS vă va solicita permisiunea. Faceți clic pe „Deschideți Configurări sistem”, apoi găsiți %@ în listă și activați-l."
+            "value" : "Comutarea între Spații necesită permisiunea de Accesibilitate.\n\nDupă ce faceți clic pe Continuați, macOS vă va solicita permisiunea. Faceți clic pe \"Deschideți Configurări sistem\", apoi găsiți %@ în listă și activați-l."
           }
         },
         "ru" : {
@@ -14394,7 +14394,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "切换空间需要辅助功能权限。\n\n点按“继续”后，macOS 会请求权限。点按“打开系统设置”，在列表中找到 %@ 并启用。"
+            "value" : "切换空间需要辅助功能权限。\n\n点按\"继续\"后，macOS 会请求权限。点按\"打开系统设置\"，在列表中找到 %@ 并启用。"
           }
         },
         "zh-Hant" : {
@@ -14918,7 +14918,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "要添加自定义声音，请将声音文件拷贝到~/Library/Sounds文件夹。它们将显示在声音菜单的“用户”部分。"
+            "value" : "要添加自定义声音，请将声音文件拷贝到~/Library/Sounds文件夹。它们将显示在声音菜单的\"用户\"部分。"
           }
         },
         "zh-Hant" : {
@@ -15717,6 +15717,530 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "匯入設定失敗"
+          }
+        }
+      }
+    },
+    "alert_space_swipe_gesture_detail" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "في macOS 27، يتطلب التبديل الفوري بين المساحات تفعيل \"التمرير بين تطبيقات ملء الشاشة\" في إعدادات لوحة التعقب.\n\nيمكن لـ %@ تفعيلها باستخدام أربعة أصابع. يعمل التبديل الكلاسيكي بدونها، لكنه أبطأ."
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "В macOS 27 незабавното превключване на Пространства изисква \"Плъзгане между приложения на цял екран\" в настройките на тракпада.\n\n%@ може да го включи с четири пръста. Класическото превключване работи и без него, но е по-бавно."
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Al macOS 27, el canvi instantani d'Espai requereix \"Llisca entre aplicacions a pantalla completa\" als ajustos del trackpad.\n\n%@ ho pot activar amb quatre dits. El canvi clàssic funciona sense aquesta opció, però és més lent."
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "V macOS 27 vyžaduje okamžité přepínání Spaces zapnutí volby \"Přejíždět mezi aplikacemi na celé obrazovce\" v nastavení trackpadu.\n\n%@ ji může zapnout pro čtyři prsty. Klasické přepínání funguje i bez ní, ale je pomalejší."
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I macOS 27 kræver øjeblikkeligt skift af Space, at \"Skub mellem apps på fuld skærm\" er slået til i pegefeltindstillingerne.\n\n%@ kan slå indstillingen til med fire fingre. Klassisk skift virker uden den, men er langsommere."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unter macOS 27 erfordert der sofortige Space-Wechsel die Option \"Zwischen Vollbild-Apps streichen\" in den Trackpad-Einstellungen.\n\n%@ kann die Option mit vier Fingern aktivieren. Klassisches Umschalten funktioniert ohne sie, ist aber langsamer."
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Στο macOS 27, η άμεση εναλλαγή Χώρων απαιτεί την ενεργοποίηση της \"Σάρωσης μεταξύ εφαρμογών πλήρους οθόνης\" στις ρυθμίσεις επιφάνειας αφής.\n\nΤο %@ μπορεί να την ενεργοποιήσει με τέσσερα δάχτυλα. Η κλασική εναλλαγή λειτουργεί χωρίς αυτήν, αλλά είναι πιο αργή."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On macOS 27, instant Space switching requires \"Swipe between full-screen applications\" in Trackpad settings.\n\n%@ can enable it with four fingers. Classic switching works without it, but is slower."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On macOS 27, instant Space switching requires \"Swipe between full-screen applications\" in Trackpad settings.\n\n%@ can enable it with four fingers. Classic switching works without it, but is slower."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En macOS 27, el cambio instantáneo de Espacio requiere \"Deslizar entre apps a pantalla completa\" en los ajustes del trackpad.\n\n%@ puede activarlo con cuatro dedos. El cambio clásico funciona sin esa opción, pero es más lento."
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "در macOS 27، جابه‌جایی فوری بین فضاها به فعال بودن \"کشیدن بین برنامه‌های تمام‌صفحه\" در تنظیمات ترک‌پد نیاز دارد.\n\n%@ می‌تواند آن را با چهار انگشت فعال کند. جابه‌جایی کلاسیک بدون آن هم کار می‌کند، اما کندتر است."
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS 27:ssä välitön Spacen vaihto edellyttää, että ohjauslevyn asetuksissa on käytössä \"Pyyhkäise koko näytön appien välillä\".\n\n%@ voi ottaa sen käyttöön neljällä sormella. Klassinen vaihto toimii ilman sitä, mutta on hitaampi."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sous macOS 27, le changement instantané d'Espace nécessite l'option \"Balayer entre les apps en plein écran\" dans les réglages du trackpad.\n\n%@ peut l'activer avec quatre doigts. Le changement classique fonctionne sans elle, mais il est plus lent."
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ב-macOS 27, מעבר מיידי בין מרחבים דורש הפעלה של \"החלקה בין יישומים במסך מלא\" בהגדרות משטח המגע.\n\n%@ יכול להפעיל אותה בארבע אצבעות. החלפה קלאסית פועלת בלעדיה, אך היא איטית יותר."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS 27 पर तुरंत स्पेस बदलने के लिए ट्रैकपैड सेटिंग में \"फ़ुल-स्क्रीन ऐप्लिकेशन के बीच स्वाइप करें\" चालू होना चाहिए।\n\n%@ इसे चार उँगलियों से चालू कर सकता है। क्लासिक स्विचिंग इसके बिना भी काम करती है, लेकिन धीमी है।"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS 27-en az azonnali Space-váltáshoz be kell kapcsolni a \"Lapozás a teljes képernyős alkalmazások között\" beállítást a trackpad beállításaiban.\n\nA %@ négy ujjal be tudja kapcsolni. A klasszikus váltás enélkül is működik, de lassabb."
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Di macOS 27, perpindahan Space instan memerlukan \"Gesek di antara aplikasi layar penuh\" di pengaturan trackpad.\n\n%@ dapat mengaktifkannya dengan empat jari. Peralihan klasik tetap berfungsi tanpa itu, tetapi lebih lambat."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In macOS 27, il passaggio istantaneo tra Spazi richiede \"Scorri tra le app a tutto schermo\" nelle impostazioni del trackpad.\n\n%@ può abilitarla con quattro dita. Il passaggio classico funziona senza, ma è più lento."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS 27でスペースを瞬時に切り替えるには、トラックパッド設定で「フルスクリーンアプリケーション間をスワイプ」が必要です。\n\n%@が4本指で有効にできます。クラシックな切り替えは設定なしでも動作しますが、遅くなります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS 27에서 스페이스를 즉시 전환하려면 트랙패드 설정에서 \"전체 화면 응용 프로그램 쓸어넘기기\"를 켜야 합니다.\n\n%@가 네 손가락으로 켤 수 있습니다. 클래식 전환은 이 설정 없이도 작동하지만 더 느립니다."
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Во macOS 27, инстантното менување Простори бара \"Лизгање меѓу апликации на цел екран\" во поставките за подлогата за допир.\n\n%@ може да ја вклучи со четири прсти. Класичното префрлување работи и без неа, но е побавно."
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pada macOS 27, pertukaran Ruang serta-merta memerlukan \"Leret antara aplikasi skrin penuh\" dalam tetapan pad jejak.\n\n%@ boleh mendayakannya dengan empat jari. Penukaran klasik tetap berfungsi tanpanya, tetapi lebih perlahan."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I macOS 27 krever øyeblikkelig bytte av Space at \"Sveip mellom fullskjermsprogrammer\" er slått på i styreflateinnstillingene.\n\n%@ kan slå innstillingen på med fire fingre. Klassisk bytte fungerer uten den, men er tregere."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In macOS 27 vereist direct wisselen van Space dat \"Veeg tussen schermvullende apps\" is ingeschakeld in de trackpadinstellingen.\n\n%@ kan deze instelling met vier vingers inschakelen. Klassiek wisselen werkt zonder deze instelling, maar is langzamer."
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I macOS 27 krev straksbyte av Space at \"Sveip mellom fullskjermsprogram\" er slått på i styreflateinnstillingane.\n\n%@ kan slå innstillinga på med fire fingrar. Klassisk byte fungerer utan henne, men er tregare."
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS 27 اُتے فوری سپیس بدلن لئی ٹریک پیڈ دیاں ترتیباں وچ \"پوری سکرین ایپلی کیشناں دے درمیان سوائپ کرو\" چالو ہونا ضروری اے۔\n\n%@ ایہہ چار اُنگلاں نال چالو کر سکدا اے۔ کلاسک سوئچنگ ایہدے بغیر وی کم کردی اے، پر ہولی اے۔"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "W macOS 27 natychmiastowe przełączanie Spaces wymaga włączenia opcji \"Przesuwaj między aplikacjami pełnoekranowymi\" w ustawieniach gładzika.\n\n%@ może włączyć tę opcję dla czterech palców. Klasyczne przełączanie działa bez niej, ale jest wolniejsze."
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "په macOS 27 کې، د سپېسونو سمدستي بدلول د ټرېک‌پېډ په امستنو کې د \"د بشپړ سکرین اپونو ترمنځ سوایپ\" فعالولو ته اړتیا لري.\n\n%@ کولی شي دا په څلورو ګوتو فعاله کړي. کلاسیک بدلون له دې پرته هم کار کوي، خو وروتر دی."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No macOS 27, a mudança instantânea de Espaço requer a opção \"Passar entre aplicações em ecrã completo\" nas definições do trackpad.\n\nO %@ pode ativá-la com quatro dedos. A mudança clássica funciona sem ela, mas é mais lenta."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No macOS 27, a troca instantânea de Espaço requer \"Deslizar entre apps em tela cheia\" nos ajustes do trackpad.\n\nO %@ pode ativar esse ajuste com quatro dedos. A troca clássica funciona sem ele, mas é mais lenta."
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "În macOS 27, comutarea instantanee între Spații necesită activarea opțiunii \"Glisați între aplicațiile pe ecran complet\" în configurările trackpadului.\n\n%@ o poate activa cu patru degete. Comutarea clasică funcționează fără ea, dar este mai lentă."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "В macOS 27 для мгновенного переключения Пространств требуется включить \"Смахивание между полноэкранными приложениями\" в настройках трекпада.\n\n%@ может включить этот параметр для четырёх пальцев. Классическое переключение работает и без него, но медленнее."
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "V macOS 27 vyžaduje okamžité prepínanie Priestorov zapnutie možnosti \"Prechádzať medzi aplikáciami na celej obrazovke\" v nastaveniach trackpadu.\n\n%@ ju môže zapnúť pre štyri prsty. Klasické prepínanie funguje aj bez nej, ale je pomalšie."
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "U sistemu macOS 27, trenutno prebacivanje Prostora zahteva opciju \"Prevlačenje između aplikacija preko celog ekrana\" u podešavanjima dodirne površine.\n\n%@ može da je uključi sa četiri prsta. Klasično prebacivanje radi i bez nje, ali je sporije."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I macOS 27 kräver omedelbara Space-byten att \"Svep mellan helskärmsappar\" är aktiverat i styrplatteinställningarna.\n\n%@ kan aktivera inställningen med fyra fingrar. Klassiskt byte fungerar utan den, men är långsammare."
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ใน macOS 27 การสลับ Space ทันทีต้องเปิด \"ปัดระหว่างแอปแบบเต็มหน้าจอ\" ในการตั้งค่าแทร็คแพด\n\n%@ เปิดใช้ได้ด้วยสี่นิ้ว การสลับแบบดั้งเดิมใช้งานได้โดยไม่ต้องเปิด แต่ช้ากว่า"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS 27'de anında Alan değiştirme için izleme dörtgeni ayarlarında \"Tam ekran uygulamalar arasında kaydır\" seçeneği etkin olmalıdır.\n\n%@ bunu dört parmakla etkinleştirebilir. Klasik geçiş bu seçenek olmadan da çalışır, ancak daha yavaştır."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "У macOS 27 для миттєвого перемикання Просторів потрібно ввімкнути \"Гортання між повноекранними програмами\" в параметрах трекпада.\n\n%@ може ввімкнути цей параметр для чотирьох пальців. Класичне перемикання працює й без нього, але повільніше."
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS 27 پر فوری اسپیس تبدیل کرنے کے لیے ٹریک پیڈ کی ترتیبات میں \"فل اسکرین ایپس کے درمیان سوائپ\" فعال ہونا ضروری ہے۔\n\n%@ اسے چار انگلیوں کے ساتھ فعال کر سکتا ہے۔ کلاسیکی سوئچنگ اس کے بغیر بھی کام کرتی ہے، لیکن سست ہے۔"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trên macOS 27, việc chuyển Không gian tức thì yêu cầu bật \"Vuốt giữa các ứng dụng toàn màn hình\" trong cài đặt bàn di.\n\n%@ có thể bật cài đặt này bằng bốn ngón tay. Chuyển đổi cổ điển vẫn hoạt động mà không cần bật, nhưng chậm hơn."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在 macOS 27 中，即时切换空间需要在触控板设置中启用\"在全屏应用程序之间轻扫\"。\n\n%@ 可以将它启用为四指手势。经典切换无需此设置也能使用，但速度较慢。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在 macOS 27 中，即時切換空間需要在觸控式軌跡板設定中啟用「在全螢幕 App 之間滑動」。\n\n%@ 可以將它啟用為四指手勢。傳統切換不需要此設定也能使用，但速度較慢。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在 macOS 27 中，即時切換空間需要在觸控板設定中啟用「在全螢幕 App 之間掃動」。\n\n%@ 可以將它啟用為四指手勢。傳統切換不需要此設定也能使用，但速度較慢。"
+          }
+        }
+      }
+    },
+    "alert_space_swipe_gesture_title" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تمكين إيماءات التمرير بين المساحات"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Активирайте жестовете за плъзгане между Пространства"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activa els gestos de lliscament entre Espais"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zapněte gesta přejetí mezi Spaces"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Slå strygebevægelser mellem Spaces til"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Streichgesten zwischen Spaces aktivieren"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ενεργοποίηση χειρονομιών σάρωσης μεταξύ Χώρων"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable Space Swipe Gestures"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable Space Swipe Gestures"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activa los gestos de deslizamiento entre Espacios"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "فعال کردن حرکت‌های پیمایش بین فضاها"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ota Spacejen pyyhkäisyeleet käyttöön"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activer les gestes de balayage entre les Espaces"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הפעלת מחוות החלקה בין מרחבים"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "स्पेस के बीच स्वाइप जेस्चर चालू करें"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Space-váltó kézmozdulatok bekapcsolása"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktifkan Gestur Geser Antar-Space"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abilita i gesti di scorrimento tra gli Spazi"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "スペースのスワイプジェスチャを有効にする"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "스페이스 쓸어넘기기 제스처 활성화"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Овозможете гестови за лизгање меѓу Простори"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dayakan Gerak Isyarat Leret Antara Ruang"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Slå på sveipebevegelser mellom Spaces"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schakel veeggebaren tussen Spaces in"
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Slå på sveiperørsler mellom Spaces"
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سپیسز وچکار سوائپ اشارے چالو کرو"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Włącz gesty przesuwania między Spaces"
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "د سپېسونو ترمنځ د سوایپ اشارې فعالې کړئ"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ativar gestos de deslize entre Espaços"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ativar gestos de deslize entre Espaços"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activează gesturile de glisare între Spații"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Включите жесты смахивания между Пространствами"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zapnite gestá potiahnutia medzi Priestormi"
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Omogućite pokrete prevlačenja između Prostora"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktivera svepgester mellan Spaces"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "เปิดใช้คำสั่งนิ้วปัดระหว่าง Space"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alanlar Arası Kaydırma Hareketlerini Etkinleştir"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Увімкніть жести гортання між Просторами"
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "اسپیسز کے درمیان سوائپ اشارے فعال کریں"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bật cử chỉ vuốt giữa các Không gian"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启用空间轻扫手势"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "啟用空間滑動手勢"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "啟用空間掃動手勢"
           }
         }
       }
@@ -17031,6 +17555,268 @@
         }
       }
     },
+    "button_enable_swipe_gestures" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تمكين إيماءات التمرير"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Активирай жестовете за плъзгане"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activa els gestos de lliscament"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zapnout gesta přejetí"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Slå strygebevægelser til"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Streichgesten aktivieren"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ενεργοποίηση χειρονομιών σάρωσης"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable Swipe Gestures"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable Swipe Gestures"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activar los gestos de deslizamiento"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "فعال کردن حرکت‌های پیمایش"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ota pyyhkäisyeleet käyttöön"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activer les gestes de balayage"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הפעלת מחוות החלקה"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "स्वाइप जेस्चर चालू करें"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kézmozdulatok bekapcsolása"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktifkan Gestur Geser"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abilita i gesti di scorrimento"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "スワイプジェスチャを有効にする"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "쓸어넘기기 제스처 활성화"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Овозможи гестови за лизгање"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dayakan Gerak Isyarat Leret"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Slå på sveipebevegelser"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Veeggebaren inschakelen"
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Slå på sveiperørsler"
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سوائپ اشارے چالو کرو"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Włącz gesty przesuwania"
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "د سوایپ اشارې فعالې کړئ"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ativar gestos de deslize"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ativar gestos de deslize"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activează gesturile de glisare"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Включить жесты смахивания"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zapnúť gestá potiahnutia"
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Omogući pokrete prevlačenja"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktivera svepgester"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "เปิดใช้คำสั่งนิ้วปัด"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydırma Hareketlerini Etkinleştir"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Увімкнути жести гортання"
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سوائپ اشارے فعال کریں"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bật cử chỉ vuốt"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启用轻扫手势"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "啟用滑動手勢"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "啟用掃動手勢"
+          }
+        }
+      }
+    },
     "button_ok" : {
       "localizations" : {
         "ar" : {
@@ -18337,6 +19123,268 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "交換"
+          }
+        }
+      }
+    },
+    "button_use_classic_switching" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "استخدم التبديل الكلاسيكي"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Използвай класическо превключване"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utilitza el canvi clàssic"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Použít klasické přepínání"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brug klassisk skift"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Klassisches Umschalten verwenden"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Χρήση κλασικής εναλλαγής"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use Classic Switching"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use Classic Switching"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usar el cambio clásico"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "استفاده از جابه‌جایی کلاسیک"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Käytä klassista vaihtoa"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utiliser le changement classique"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "השתמש בהחלפה קלאסית"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "क्लासिक स्विचिंग का उपयोग करें"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Klasszikus váltás használata"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gunakan peralihan klasik"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usa il passaggio classico"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "クラシックな切り替えを使用"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "클래식 전환 사용"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Користи класично префрлување"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gunakan penukaran klasik"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bruk klassisk bytte"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Klassiek wisselen gebruiken"
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bruk klassisk byte"
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "کلاسک سوئچنگ ورتو"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Użyj klasycznego przełączania"
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "کلاسیک بدلون وکاروئ"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usar a mudança clássica"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usar a troca clássica"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Folosește comutarea clasică"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Использовать классическое переключение"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Použiť klasické prepínanie"
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Koristi klasično prebacivanje"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Använd klassiskt byte"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ใช้การสลับแบบดั้งเดิม"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Klasik geçişi kullan"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Використовувати класичне перемикання"
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "کلاسیکی سوئچنگ استعمال کریں"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dùng chuyển đổi cổ điển"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用经典切换"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用傳統切換"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用傳統切換"
           }
         }
       }
@@ -77385,7 +78433,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Couleur du séparateur entre les groupes d’Espaces de chaque écran"
+            "value" : "Couleur du séparateur entre les groupes d'Espaces de chaque écran"
           }
         },
         "he" : {
@@ -77647,7 +78695,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Forme du séparateur entre les groupes d’Espaces de chaque écran"
+            "value" : "Forme du séparateur entre les groupes d'Espaces de chaque écran"
           }
         },
         "he" : {
@@ -80791,7 +81839,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ignorer les Espaces sans fenêtre ouverte lors de l’envoi ou du déplacement de la fenêtre au premier plan"
+            "value" : "Ignorer les Espaces sans fenêtre ouverte lors de l'envoi ou du déplacement de la fenêtre au premier plan"
           }
         },
         "he" : {
@@ -83875,7 +84923,7 @@
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conserva els números d’escriptori de macOS"
+            "value" : "Conserva els números d'escriptori de macOS"
           }
         },
         "cs" : {
