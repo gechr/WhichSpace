@@ -907,8 +907,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
     private func scheduleEvictionCheck() {
         pendingEvictionCheck?.cancel()
         pendingEvictionCheck = nil
-        // Nothing to schedule once the icon is as small as it goes
-        guard store.shrinkIconToFit, appState.shrinkLevel.next != nil else {
+        // Nothing to schedule once the icon is as small as it goes, unless
+        // the detector still needs a settled reading to finalise the
+        // neighbour count it will grow back against
+        guard store.shrinkIconToFit,
+              appState.shrinkLevel.next != nil || evictionDetector.awaitingSettledNeighbourCount
+        else {
             return
         }
         evictionDetector.beginSettling(now: Date())

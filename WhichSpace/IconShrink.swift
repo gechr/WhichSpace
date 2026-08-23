@@ -178,6 +178,11 @@ struct MenuBarEvictionDetector {
     /// icon to its left, so it is only worth attempting on evidence that the
     /// crowding eased.
     private var neighbourCountWhenShrunk: Int?
+    /// Whether the recorded neighbour count still comes from the eviction
+    /// reading. That reading is taken while the arriving status item is
+    /// mid-layout and not yet drawn, so it misses the very item that caused
+    /// the shrink; the first settled reading afterwards replaces it.
+    private var neighbourCountIsProvisional = false
 
     /// Holds readings off until the status item has been laid out again.
     mutating func beginSettling(now: Date) {
@@ -189,20 +194,44 @@ struct MenuBarEvictionDetector {
         settleDeadline
     }
 
+    /// Whether the next settled reading is still needed to replace the
+    /// provisional neighbour count, even at the bottom of the ladder.
+    var awaitingSettledNeighbourCount: Bool {
+        neighbourCountIsProvisional
+    }
+
     /// Applies a probe reading, returning the level to render at, or nil to
     /// leave the icon as it is.
     mutating func apply(_ snapshot: StatusWindowSnapshot, now: Date) -> IconShrinkLevel? {
         guard now >= settleDeadline,
               snapshot.sessionIsActive,
-              snapshot.otherMenuBarWindowIsOnScreen,
-              !snapshot.ownWindowIsOnScreen,
-              let next = level.next
+              snapshot.otherMenuBarWindowIsOnScreen
         else {
+            return nil
+        }
+
+        if snapshot.ownWindowIsOnScreen {
+            // The settled reading is the first to count the item whose
+            // arrival caused the shrink. Taking the larger of the two
+            // readings keeps a transient departure between them from
+            // lowering the bar for growing back.
+            if neighbourCountIsProvisional {
+                neighbourCountWhenShrunk = max(
+                    neighbourCountWhenShrunk ?? 0,
+                    snapshot.otherStatusWindowCount
+                )
+                neighbourCountIsProvisional = false
+            }
+            return nil
+        }
+
+        guard let next = level.next else {
             return nil
         }
 
         level = next
         neighbourCountWhenShrunk = snapshot.otherStatusWindowCount
+        neighbourCountIsProvisional = true
         return next
     }
 
@@ -230,5 +259,7 @@ struct MenuBarEvictionDetector {
     mutating func reset() {
         level = .full
         settleDeadline = .distantPast
+        neighbourCountWhenShrunk = nil
+        neighbourCountIsProvisional = false
     }
 }

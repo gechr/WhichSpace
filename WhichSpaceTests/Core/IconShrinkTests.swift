@@ -210,6 +210,76 @@ struct IconShrinkTests {
         #expect(!detector.shouldRetryFullSize(otherStatusWindowCount: 0))
     }
 
+    @Test("the settled reading counts the item whose arrival caused the shrink")
+    func retry_settledReadingReplacesTheEvictionCount() {
+        var detector = MenuBarEvictionDetector()
+        detector.reset()
+
+        // The eviction reading is taken while the arriving status item is
+        // mid-layout, so it counts 11 neighbours; the settled reading counts
+        // the newcomer too
+        let evicted = StatusWindowSnapshot(
+            ownWindowIsOnScreen: false,
+            otherStatusWindowCount: 11,
+            sessionIsActive: true
+        )
+        let settled = StatusWindowSnapshot(
+            ownWindowIsOnScreen: true,
+            otherStatusWindowCount: 12,
+            sessionIsActive: true
+        )
+        #expect(detector.apply(evicted, now: Self.now) == .compact)
+        #expect(detector.awaitingSettledNeighbourCount)
+        #expect(detector.apply(settled, now: Self.now) == nil)
+        #expect(!detector.awaitingSettledNeighbourCount)
+
+        // The newcomer going away must read as room opening up, or the icon
+        // stays shrunk for the departure of the very item that displaced it
+        #expect(detector.shouldRetryFullSize(otherStatusWindowCount: 11))
+    }
+
+    @Test("a settled reading below the eviction count does not lower the bar")
+    func retry_settledReadingNeverLowersTheCount() {
+        var detector = MenuBarEvictionDetector()
+        detector.reset()
+
+        // A neighbour left between the two readings, so room already opened
+        // up relative to the crowding that caused the shrink
+        _ = detector.apply(Self.evicted, now: Self.now)
+        let settled = StatusWindowSnapshot(
+            ownWindowIsOnScreen: true,
+            otherStatusWindowCount: 2,
+            sessionIsActive: true
+        )
+        #expect(detector.apply(settled, now: Self.now) == nil)
+
+        #expect(detector.shouldRetryFullSize(otherStatusWindowCount: 2))
+    }
+
+    @Test("only the first settled reading after a shrink is recorded")
+    func retry_laterOnScreenReadingsAreIgnored() {
+        var detector = MenuBarEvictionDetector()
+        detector.reset()
+        _ = detector.apply(Self.evicted, now: Self.now)
+        let settled = StatusWindowSnapshot(
+            ownWindowIsOnScreen: true,
+            otherStatusWindowCount: 4,
+            sessionIsActive: true
+        )
+        _ = detector.apply(settled, now: Self.now)
+
+        // A neighbour has since left; re-recording this reading would demand
+        // a second departure just as the evidence for growing back arrives
+        let fewerNeighbours = StatusWindowSnapshot(
+            ownWindowIsOnScreen: true,
+            otherStatusWindowCount: 3,
+            sessionIsActive: true
+        )
+        #expect(detector.apply(fewerNeighbours, now: Self.now) == nil)
+
+        #expect(detector.shouldRetryFullSize(otherStatusWindowCount: 3))
+    }
+
     // MARK: - Probe Fallback
 
     @Test("an unavailable window list reads as fitting")
