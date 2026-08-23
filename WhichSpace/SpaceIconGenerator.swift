@@ -1,11 +1,3 @@
-//
-//  SpaceIconGenerator.swift
-//  WhichSpace
-//
-//  Created by George Christou.
-//  Copyright © 2020 George Christou. All rights reserved.
-//
-
 import Cocoa
 
 // MARK: - IconStyle Shape Metadata

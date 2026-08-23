@@ -1,11 +1,3 @@
-//
-//  SpaceMonitor.swift
-//  WhichSpace
-//
-//  Created by George Christou.
-//  Copyright © 2020 George Christou. All rights reserved.
-//
-
 import Foundation
 import os.log
 
