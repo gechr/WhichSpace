@@ -12,17 +12,21 @@ private final class FakeWindowMover: WindowMoving, @unchecked Sendable {
     var effective: Set<WindowMoveBackend>
     var spaces: [Int]
     private(set) var attempted: [WindowMoveBackend] = []
+    private(set) var attemptedWindowIDs: [CGWindowID] = []
+    private var spacesByWindow: [CGWindowID: [Int]]
 
     init(
         available: Set<WindowMoveBackend> = [.bridged],
         effective: Set<WindowMoveBackend> = [.bridged],
         // The Space `makeAppState` starts on, so the window looks like it lives
         // on the display whose Spaces are being numbered
-        spaces: [Int] = [100]
+        spaces: [Int] = [100],
+        spacesByWindow: [CGWindowID: [Int]] = [:]
     ) {
         self.available = available
         self.effective = effective
         self.spaces = spaces
+        self.spacesByWindow = spacesByWindow
     }
 
     func isAvailable(_ backend: WindowMoveBackend) -> Bool {
@@ -33,24 +37,37 @@ private final class FakeWindowMover: WindowMoving, @unchecked Sendable {
     /// which is a copy rather than a move.
     var leavesSourceMembership = false
 
-    func perform(_ backend: WindowMoveBackend, windowID _: CGWindowID, spaceID: Int) -> Bool {
+    func perform(_ backend: WindowMoveBackend, windowID: CGWindowID, spaceID: Int) -> Bool {
         attempted.append(backend)
+        attemptedWindowIDs.append(windowID)
         if effective.contains(backend) {
-            spaces = leavesSourceMembership ? spaces + [spaceID] : [spaceID]
+            if let windowSpaces = spacesByWindow[windowID] {
+                spacesByWindow[windowID] = leavesSourceMembership ? windowSpaces + [spaceID] : [spaceID]
+            } else {
+                spaces = leavesSourceMembership ? spaces + [spaceID] : [spaceID]
+            }
         }
         return true
     }
 
-    func spaceIDs(forWindow _: CGWindowID) -> [Int] {
-        spaces
+    func spaceIDs(forWindow windowID: CGWindowID) -> [Int] {
+        spacesByWindow[windowID] ?? spaces
     }
 }
 
 private struct FakeLocator: FrontWindowLocating {
-    var window: FrontWindow?
+    var windows: [FrontWindow]
 
-    func frontWindow() -> FrontWindow? {
-        window
+    init(window: FrontWindow?) {
+        windows = window.map { [$0] } ?? []
+    }
+
+    init(windows: [FrontWindow]) {
+        self.windows = windows
+    }
+
+    func frontWindows(fallbackPID _: pid_t?) -> [FrontWindow] {
+        windows
     }
 }
 
@@ -95,6 +112,7 @@ struct SpaceWindowMoverTests {
     private func makeMover(
         _ mover: FakeWindowMover,
         window: FrontWindow? = FrontWindow(id: 42, ownerPID: 99),
+        windows: [FrontWindow] = [],
         raiser: FakeRaiser = FakeRaiser(),
         isProcessTrusted: Bool = true,
         followed: FollowRecorder = FollowRecorder(),
@@ -103,7 +121,7 @@ struct SpaceWindowMoverTests {
     ) -> SpaceWindowMover {
         SpaceWindowMover(
             mover: mover,
-            locator: FakeLocator(window: window),
+            locator: FakeLocator(windows: windows.isEmpty ? window.map { [$0] } ?? [] : windows),
             raiser: raiser,
             isProcessTrusted: { isProcessTrusted },
             followAction: { target, ownerPID in followed.record(target: target, ownerPID: ownerPID) },
@@ -238,7 +256,7 @@ struct SpaceWindowMoverTests {
 
     @Test("global Desktop move accepts a window on another display")
     func moveGlobal_windowOnOtherDisplay_moves() async throws {
-        let fake = FakeWindowMover(spaces: [202])
+        let fake = FakeWindowMover(spaces: [201])
         let mover = makeMover(fake)
 
         try await mover.move(toGlobalDesktop: 1, follow: false, appState: makeMultiDisplayAppState())
@@ -258,6 +276,39 @@ struct SpaceWindowMoverTests {
         #expect(fake.attempted.isEmpty)
     }
 
+    @Test("move skips candidates that are not on an active addressable Space")
+    func move_skipsInactiveSpaceCandidate() async throws {
+        let fake = FakeWindowMover(spacesByWindow: [41: [101], 42: [100]])
+        let mover = makeMover(
+            fake,
+            windows: [
+                FrontWindow(id: 41, ownerPID: 10),
+                FrontWindow(id: 42, ownerPID: 20),
+            ]
+        )
+
+        try await mover.move(toSpaceNumber: 2, follow: false, appState: makeAppState())
+
+        #expect(fake.attemptedWindowIDs == [42], "The inactive-Space window must not be moved")
+    }
+
+    @Test("local move does not substitute a window on the numbered display")
+    func move_frontWindowOnOtherDisplay_doesNotSubstituteCandidate() async {
+        let fake = FakeWindowMover(spacesByWindow: [41: [201], 42: [100]])
+        let mover = makeMover(
+            fake,
+            windows: [
+                FrontWindow(id: 41, ownerPID: 10),
+                FrontWindow(id: 42, ownerPID: 20),
+            ]
+        )
+
+        await #expect(throws: MoveError.self) {
+            try await mover.move(toSpaceNumber: 2, follow: false, appState: makeMultiDisplayAppState())
+        }
+        #expect(fake.attemptedWindowIDs.isEmpty, "The command must not silently move a different window")
+    }
+
     @Test("move with no available backend throws without attempting one")
     func move_withoutBackend_throws() async {
         let fake = FakeWindowMover(available: [], effective: [])
@@ -272,7 +323,7 @@ struct SpaceWindowMoverTests {
 
     @Test("a window already on the target space is not moved again")
     func move_alreadyOnTarget_skipsMove() async throws {
-        let fake = FakeWindowMover(spaces: [101])
+        let fake = FakeWindowMover(spaces: [100, 101])
         let followed = FollowRecorder()
         let mover = makeMover(fake, followed: followed)
 
@@ -389,7 +440,7 @@ struct SpaceWindowMoverTests {
     @Test("the sticky path raises too")
     func move_alreadyOnTarget_raises() async throws {
         let raiser = FakeRaiser()
-        let mover = makeMover(FakeWindowMover(spaces: [101]), raiser: raiser)
+        let mover = makeMover(FakeWindowMover(spaces: [100, 101]), raiser: raiser)
 
         try await mover.move(toSpaceNumber: 2, follow: true, appState: makeAppState())
 
@@ -400,7 +451,7 @@ struct SpaceWindowMoverTests {
     func move_arrival_reRaises() async throws {
         let raiser = FakeRaiser()
         let events = EventLog()
-        let mover = makeMover(FakeWindowMover(), raiser: raiser) { _ in events.record("activate") }
+        let mover = makeMover(FakeWindowMover(spaces: [101]), raiser: raiser) { _ in events.record("activate") }
 
         // The stub already reports the target Space as current, so the switch
         // is seen to land immediately
@@ -426,7 +477,7 @@ struct SpaceWindowMoverTests {
     func move_send_skipsArrival() async throws {
         let raiser = FakeRaiser()
         let events = EventLog()
-        let mover = makeMover(FakeWindowMover(), raiser: raiser) { _ in events.record("activate") }
+        let mover = makeMover(FakeWindowMover(spaces: [101]), raiser: raiser) { _ in events.record("activate") }
 
         try await mover.move(toSpaceNumber: 2, follow: false, appState: makeAppState(activeSpaceID: 101))
 
@@ -668,29 +719,44 @@ struct SpaceWindowMoverTests {
 
     @Test("front window prefers the frontmost app")
     func resolve_prefersFrontmostApp() {
-        let list = [window(number: 1, pid: 10), window(number: 2, pid: 20)]
+        let list = [window(number: 1, pid: 10), window(number: 2, pid: 20), window(number: 3, pid: 20)]
 
-        let resolved = SystemFrontWindowLocator.resolve(windowList: list, frontmostPID: 20, excluding: 99)
+        let resolved = SystemFrontWindowLocator.resolve(windowList: list, preferredPID: 20, excluding: [99])
 
-        #expect(resolved == FrontWindow(id: 2, ownerPID: 20))
+        #expect(resolved == [
+            FrontWindow(id: 2, ownerPID: 20),
+            FrontWindow(id: 3, ownerPID: 20),
+            FrontWindow(id: 1, ownerPID: 10),
+        ])
     }
 
     @Test("front window falls back to front-to-back order")
     func resolve_fallsBackToWindowOrder() {
         let list = [window(number: 1, pid: 10), window(number: 2, pid: 20)]
 
-        let resolved = SystemFrontWindowLocator.resolve(windowList: list, frontmostPID: 77, excluding: 99)
+        let resolved = SystemFrontWindowLocator.resolve(windowList: list, preferredPID: 77, excluding: [99])
 
-        #expect(resolved == FrontWindow(id: 1, ownerPID: 10))
+        #expect(resolved == [FrontWindow(id: 1, ownerPID: 10), FrontWindow(id: 2, ownerPID: 20)])
     }
 
-    @Test("front window skips our own windows")
-    func resolve_skipsOwnProcess() {
-        let list = [window(number: 1, pid: 99), window(number: 2, pid: 20)]
+    @Test("front window skips excluded application windows")
+    func resolve_skipsExcludedProcesses() {
+        let list = [
+            window(number: 1, pid: 1242),
+            window(number: 2, pid: 99),
+            window(number: 3, pid: 20),
+        ]
 
-        let resolved = SystemFrontWindowLocator.resolve(windowList: list, frontmostPID: 99, excluding: 99)
+        let resolved = SystemFrontWindowLocator.resolve(
+            windowList: list,
+            preferredPID: 1242,
+            excluding: [99, 1242]
+        )
 
-        #expect(resolved == FrontWindow(id: 2, ownerPID: 20), "Our own Settings window must never be the one moved")
+        #expect(
+            resolved == [FrontWindow(id: 3, ownerPID: 20)],
+            "WhichSpace and WindowManager windows must never be moved"
+        )
     }
 
     @Test("front window skips non-regular, tiny and invisible windows")
@@ -702,13 +768,13 @@ struct SpaceWindowMoverTests {
             window(number: 4, pid: 13),
         ]
 
-        let resolved = SystemFrontWindowLocator.resolve(windowList: list, frontmostPID: nil, excluding: 99)
+        let resolved = SystemFrontWindowLocator.resolve(windowList: list, preferredPID: nil, excluding: [99])
 
-        #expect(resolved == FrontWindow(id: 4, ownerPID: 13))
+        #expect(resolved == [FrontWindow(id: 4, ownerPID: 13)])
     }
 
     @Test("front window is nil when nothing qualifies")
     func resolve_withoutCandidates_isNil() {
-        #expect(SystemFrontWindowLocator.resolve(windowList: [], frontmostPID: nil, excluding: 99) == nil)
+        #expect(SystemFrontWindowLocator.resolve(windowList: [], preferredPID: nil, excluding: [99]).isEmpty)
     }
 }

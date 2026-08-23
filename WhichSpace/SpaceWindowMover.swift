@@ -107,35 +107,53 @@ struct FrontWindow: Equatable {
 }
 
 protocol FrontWindowLocating: Sendable {
-    func frontWindow() -> FrontWindow?
+    func frontWindows(fallbackPID: pid_t?) -> [FrontWindow]
 }
 
 /// Identifies the window to move from the window list rather than through
 /// Accessibility, so moving a window needs no permission of its own.
 struct SystemFrontWindowLocator: FrontWindowLocating {
-    func frontWindow() -> FrontWindow? {
-        // On-screen only, so candidates are limited to the current Space
+    private static let windowManagerBundleID = "com.apple.WindowManager"
+
+    func frontWindows(fallbackPID: pid_t?) -> [FrontWindow] {
         let options: CGWindowListOption = [.optionOnScreenOnly, .excludeDesktopElements]
         let windowList = CGWindowListCopyWindowInfo(options, kCGNullWindowID) as? [[String: Any]] ?? []
+
+        let ownPID = ProcessInfo.processInfo.processIdentifier
+        let ownerPIDs = Set(windowList.compactMap { $0[kCGWindowOwnerPID as String] as? pid_t })
+        let windowManagerPIDs = ownerPIDs.filter {
+            NSRunningApplication(processIdentifier: $0)?.bundleIdentifier == Self.windowManagerBundleID
+        }
+        let frontmostPID = NSWorkspace.shared.frontmostApplication.flatMap { application in
+            guard application.processIdentifier != ownPID,
+                  application.bundleIdentifier != Self.windowManagerBundleID
+            else {
+                return fallbackPID
+            }
+            return application.processIdentifier
+        } ?? fallbackPID
+
         return Self.resolve(
             windowList: windowList,
-            frontmostPID: NSWorkspace.shared.frontmostApplication?.processIdentifier,
-            excluding: ProcessInfo.processInfo.processIdentifier
+            preferredPID: frontmostPID,
+            excluding: windowManagerPIDs.union([ownPID])
         )
     }
 
-    /// Picks the frontmost app's first regular window, falling back to the
-    /// front-to-back window order. Kept pure so tests cover it directly.
+    /// Returns regular windows in preference order: the most recently active
+    /// user application's windows first, then the remaining front-to-back
+    /// WindowServer order. Kept pure so tests cover it directly.
     static func resolve(
         windowList: [[String: Any]],
-        frontmostPID: pid_t?,
-        excluding ownPID: pid_t
-    ) -> FrontWindow? {
+        preferredPID: pid_t?,
+        excluding excludedPIDs: Set<pid_t>
+    ) -> [FrontWindow] {
         var candidates: [FrontWindow] = []
 
         for window in windowList {
             guard let layer = window[kCGWindowLayer as String] as? Int, layer == 0,
-                  let ownerPID = window[kCGWindowOwnerPID as String] as? pid_t, ownerPID != ownPID,
+                  let ownerPID = window[kCGWindowOwnerPID as String] as? pid_t,
+                  !excludedPIDs.contains(ownerPID),
                   let windowNumber = window[kCGWindowNumber as String] as? Int
             else {
                 continue
@@ -154,10 +172,11 @@ struct SystemFrontWindowLocator: FrontWindowLocating {
             candidates.append(FrontWindow(id: CGWindowID(windowNumber), ownerPID: ownerPID))
         }
 
-        if let frontmostPID, let owned = candidates.first(where: { $0.ownerPID == frontmostPID }) {
-            return owned
+        guard let preferredPID else {
+            return candidates
         }
-        return candidates.first
+        let preferred = candidates.filter { $0.ownerPID == preferredPID }
+        return preferred + candidates.filter { $0.ownerPID != preferredPID }
     }
 }
 
@@ -365,11 +384,19 @@ struct SpaceWindowMover {
             throw .accessibilityNotTrusted
         }
 
-        guard let window = locator.frontWindow() else {
+        // `.optionOnScreenOnly` can include Stage Manager strip contents and
+        // windows from inactive Spaces. Rank every plausible window first,
+        // then accept the first one whose membership is currently visible.
+        // Addressability is checked afterwards so a local command never
+        // substitutes another display's window with a different candidate.
+        let activeSpaceIDs = Set(appState.allDisplaysSpaceInfo.compactMap(\.activeSpaceID))
+        let located = locator.frontWindows(fallbackPID: appState.lastUserApplicationPID).lazy.compactMap { window in
+            let source = Set(mover.spaceIDs(forWindow: window.id))
+            return source.isDisjoint(with: activeSpaceIDs) ? nil : (window, source)
+        }.first
+        guard let (window, source) = located else {
             throw .noWindowToMove
         }
-
-        let source = Set(mover.spaceIDs(forWindow: window.id))
 
         // A sticky window is already everywhere, so treat it as moved
         if source.contains(spaceID) {

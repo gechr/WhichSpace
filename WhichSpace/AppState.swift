@@ -154,6 +154,12 @@ final class AppState {
     private var snapshot: SpaceSnapshot = .empty
     private(set) var darkModeEnabled = false
 
+    /// The last foreground application that represents a user window. URL
+    /// dispatch can temporarily activate WhichSpace, while Stage Manager can
+    /// report its WindowManager agent as foreground; neither should replace
+    /// the application whose window the user intends to move.
+    @ObservationIgnored private(set) var lastUserApplicationPID: pid_t?
+
     /// The Space left behind on each display, keyed by display identifier and
     /// holding a CGS Space ID rather than a position, so the entry survives
     /// Spaces being added or removed around it. Only written when the Space
@@ -374,6 +380,8 @@ final class AppState {
     private func configureObservers() {
         let workspace = NSWorkspace.shared
 
+        rememberUserApplication(workspace.frontmostApplication)
+
         // WindowServer push notifications - the lowest-latency space-change
         // signal (NSWorkspace's notification derives from the same events
         // but arrives later; the plist file watch waits on cfprefsd)
@@ -393,9 +401,11 @@ final class AppState {
         })
 
         notificationTasks.append(Task { [weak self] in
-            for await _ in workspace.notificationCenter
+            for await notification in workspace.notificationCenter
                 .notifications(named: NSWorkspace.didActivateApplicationNotification)
             {
+                let application = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication
+                self?.rememberUserApplication(application)
                 self?.handleSpaceUpdate(.fallback)
             }
         })
@@ -451,6 +461,16 @@ final class AppState {
                 }
             }
         }
+    }
+
+    private func rememberUserApplication(_ application: NSRunningApplication?) {
+        guard let application,
+              application.processIdentifier != ProcessInfo.processInfo.processIdentifier,
+              application.bundleIdentifier != "com.apple.WindowManager"
+        else {
+            return
+        }
+        lastUserApplicationPID = application.processIdentifier
     }
 
     // MARK: - Distributed Notification Helper
