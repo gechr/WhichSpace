@@ -108,6 +108,7 @@ enum SpaceSwitcher {
     /// Clears switch predictions once a real space snapshot lands.
     @MainActor static func resetPredictions() {
         predictions.removeAll()
+        restoreParkedWindowIfReady()
     }
 
     // MARK: - Public API
@@ -155,6 +156,10 @@ enum SpaceSwitcher {
                 return false
             }
         } else {
+            parkKeyWindowIfNeeded(
+                currentSpaceID: display.currentSpaceID,
+                targetSpaceID: targetSpaceID
+            )
             let velocity = swipeVelocity * Double(steps)
             for _ in 0 ..< steps {
                 guard postSwipeGesture(goRight: goRight, velocity: velocity) else {
@@ -252,12 +257,21 @@ enum SpaceSwitcher {
         // the requested one.
         let steps = abs(targetIndex - currentIndex)
         let stepsRight = targetIndex > currentIndex
+        let target = display.spaces[targetIndex].id
+        // The single-step route decides classic vs gesture inside postStep
+        // with the same predicate, so this mirrors the route actually taken
+        let classicRoute = requiresClassicPath()
+        if !classicRoute {
+            parkKeyWindowIfNeeded(
+                currentSpaceID: display.currentSpaceID,
+                targetSpaceID: target
+            )
+        }
         if steps == 1 {
             guard postStep(goRight: stepsRight, velocity: swipeVelocity) else {
                 return false
             }
-        } else if requiresClassicPath() {
-            let target = display.spaces[targetIndex].id
+        } else if classicRoute {
             guard classicSwitch(toSpaceID: target, goRight: stepsRight, steps: steps, connection: conn) else {
                 return false
             }
@@ -658,6 +672,57 @@ enum SpaceSwitcher {
         return postAugmentedDockSwipe(phase: Phase.began, goRight: goRight, velocity: velocity)
             && postAugmentedDockSwipe(phase: Phase.changed, goRight: goRight, velocity: velocity)
             && postAugmentedDockSwipe(phase: Phase.ended, goRight: goRight, velocity: velocity)
+    }
+
+    // MARK: - Window Parking
+
+    /// The foreground window remembered when a synthetic switch leaves its
+    /// Space, and whether it has been ordered out for a return switch.
+    @MainActor private static var trackedWindow: (window: NSWindow, spaceID: Int, parked: Bool)?
+
+    /// macOS 27 strands the menu bar when a synthetic switch arrives on a
+    /// Space whose frontmost window belongs to this accessory app. Removing
+    /// that window from the ordering before the switch prevents the bad
+    /// WindowServer state; lowering or deactivating it does not.
+    @MainActor private static func parkKeyWindowIfNeeded(
+        currentSpaceID: Int,
+        targetSpaceID: Int
+    ) {
+        guard requiresIOHIDPayload, trackedWindow?.parked != true else {
+            return
+        }
+        if NSApp.isActive, let window = NSApp.keyWindow, window.isVisible {
+            trackedWindow = (window, currentSpaceID, false)
+        } else if trackedWindow?.spaceID == currentSpaceID {
+            // Another app replaced WhichSpace before this Space was left, so
+            // the remembered window is no longer the arrival front window.
+            trackedWindow = nil
+        }
+        guard let tracked = trackedWindow,
+              tracked.spaceID == targetSpaceID,
+              tracked.window.isVisible
+        else {
+            return
+        }
+        tracked.window.orderOut(nil)
+        trackedWindow = (tracked.window, tracked.spaceID, true)
+    }
+
+    /// Restores only after AppState has applied a real snapshot for the
+    /// window's owning Space. Later switches cannot cancel this ownership,
+    /// and a failed event post safely leaves an already off-Space window
+    /// parked until that Space is eventually visited.
+    @MainActor private static func restoreParkedWindowIfReady() {
+        guard let tracked = trackedWindow, tracked.parked else {
+            return
+        }
+        let ownerIsCurrent = managedDisplays(connection: _CGSDefaultConnection())
+            .contains { $0.currentSpaceID == tracked.spaceID }
+        guard ownerIsCurrent else {
+            return
+        }
+        trackedWindow = nil
+        tracked.window.orderFront(nil)
     }
 
     private static func postDockSwipe(phase: Int64, goRight: Bool, velocity: Double) -> Bool {

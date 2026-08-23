@@ -157,6 +157,7 @@ final class SettingsWindowCoordinator {
                 model.prepareForShow()
             }
         }
+        windowController?.window?.collectionBehavior.insert(.moveToActiveSpace)
         windowController?.show(pane: pane?.identifier)
         fitWindowToPane()
         restorePaneVisibility()
