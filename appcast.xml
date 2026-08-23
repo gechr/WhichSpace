@@ -6,9 +6,22 @@
     <description>Most recent changes with links to updates.</description>
     <language>en</language>
     <item>
-        <title>Version 1.2.20</title>
+        <title>Version 1.3.0</title>
         <description><![CDATA[
           <style>.sparkle-installed-version, .sparkle-installed-version ~ * { display: none }</style>
+          <section data-sparkle-version="1.3.0">
+            <h3>v1.3.0</h3>
+            <ul>
+              <li>menubar: Fix click handling on macOS 27</li>
+              <li>deps: Update all versions</li>
+              <li>settings: Make style grid cells fully clickable</li>
+              <li>deps: Vendor <code>KeyboardShortcuts</code> to fix record on macOS 27</li>
+              <li>spaces: Fix instant switching on macOS 27</li>
+              <li>settings: Add inactive Space opacity control</li>
+              <li>windows: Harden front window selection</li>
+              <li>menubar: Grow back after displacing item leaves</li>
+            </ul>
+          </section>
           <section data-sparkle-version="1.2.20">
             <h3>v1.2.20</h3>
             <ul>
@@ -1009,6 +1022,25 @@
             <h3>v0.1.0</h3>
             <p>Initial release</p>
           </section>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.3.0</sparkle:fullReleaseNotesLink>
+        <pubDate>Sun, 23 Aug 2026 15:58:09 +0100</pubDate>
+        <enclosure
+          url="https://github.com/gechr/WhichSpace/releases/download/v1.3.0/WhichSpace.zip"
+          sparkle:version="1.3.0"
+          sparkle:shortVersionString="1.3.0"
+          sparkle:edSignature="9ql8GcPxL1EfBHY5CGuXXA0Gk3dj1RoQuB7XlxwHfk0EF4s9kkN45OrH3RwaGGAVFLWFxJo8J2/uii4ElLtdAg=="
+          length="4072712"
+          type="application/octet-stream" />
+        <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      </item>
+    <item>
+        <title>Version 1.2.20</title>
+        <description><![CDATA[
+          <h3>v1.2.20</h3>
+          <ul>
+            <li>settings: Match Desktop names to numbering</li>
+          </ul>
         ]]></description>
         <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.2.20</sparkle:fullReleaseNotesLink>
         <pubDate>Tue, 11 Aug 2026 22:08:08 +0100</pubDate>
