@@ -62,6 +62,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
     private(set) var actionHandler: ActionHandler!
     private var middleClickMonitor: Any?
     private var scrollMonitor: Any?
+    private var globalScrollMonitor: Any?
     private var statusBarItem: NSStatusItem!
 
     /// Switches one Space left or right; injectable so scroll tests don't move real Spaces
@@ -92,6 +93,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
     private var lastScrollSwitchTimestamp: TimeInterval = -.infinity
     /// Whether a scroll has already deep-linked System Settings after a revoke
     private var scrollOpenedSettingsForRevocation = false
+    /// macOS 27 hosts status items out of process, so scrolls over the icon
+    /// are delivered to the host process and never reach the local monitor.
+    private static let statusItemScrollsArriveOutOfProcess =
+        ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 27
 
     /// Reads whether anyone else's status items are still drawn
     private let menuBarVisibilityProbe: MenuBarVisibilityProbe
@@ -686,6 +691,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
         scrollMonitor = NSEvent.addLocalMonitorForEvents(matching: .scrollWheel) { [weak self] event in
             self?.handleScrollEvent(event, in: self?.statusBarItem?.button) ?? event
         }
+        if let globalScrollMonitor {
+            NSEvent.removeMonitor(globalScrollMonitor)
+            self.globalScrollMonitor = nil
+        }
+        if Self.statusItemScrollsArriveOutOfProcess {
+            globalScrollMonitor = NSEvent.addGlobalMonitorForEvents(matching: .scrollWheel) { [weak self] event in
+                _ = self?.handleScrollEvent(event, in: self?.statusBarItem?.button)
+            }
+        }
         updateStatusBarIcon()
     }
 
@@ -709,9 +723,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
     /// each event wins. A cooldown between switches keeps flicks to a single hop.
     /// Returns nil when the event is consumed; otherwise returns the original event.
     func handleScrollEvent(_ event: NSEvent, in button: NSView?) -> NSEvent? {
-        guard let button,
-              button.isMousePoint(button.convert(event.locationInWindow, from: nil), in: button.bounds)
-        else {
+        // Scroll events over the status item arrive via the global monitor on
+        // macOS 27, where locationInWindow is not in the button's window, so
+        // the on-screen mouse position is the only reliable containment source.
+        guard let button else {
+            return event
+        }
+        let locationInWindow = button.window.map { $0.convertPoint(fromScreen: NSEvent.mouseLocation) }
+            ?? event.locationInWindow
+        guard button.isMousePoint(button.convert(locationInWindow, from: nil), in: button.bounds) else {
             return event
         }
         let verticalEnabled = store.verticalScrollEnabled
