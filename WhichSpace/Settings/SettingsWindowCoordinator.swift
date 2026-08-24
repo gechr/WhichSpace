@@ -167,7 +167,9 @@ final class SettingsWindowCoordinator {
                 model.prepareForShow()
             }
         }
-        windowController?.window?.collectionBehavior.insert(.moveToActiveSpace)
+        if ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 27 {
+            windowController?.window?.collectionBehavior.insert(.moveToActiveSpace)
+        }
         windowController?.show(pane: pane?.identifier)
         fitWindowToPane()
         restorePaneVisibility()

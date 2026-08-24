@@ -9,11 +9,32 @@ import Settings
 
 // MARK: - NSEvent Right-Click Detection
 
+/// macOS 27 hosts status items out of process, so their events can lose the
+/// button window's coordinates and modifier flags.
+private let statusItemEventsArriveOutOfProcess =
+    ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 27
+
 extension NSEvent {
+    private var statusItemModifierFlags: ModifierFlags {
+        guard statusItemEventsArriveOutOfProcess else {
+            return modifierFlags
+        }
+        return modifierFlags.union(Self.modifierFlags)
+    }
+
     var isRightClick: Bool {
-        // Status item click events arrive with empty modifierFlags on
-        // macOS 27, so the hardware modifier state fills the gap.
-        type == .rightMouseUp || modifierFlags.union(Self.modifierFlags).contains(.control)
+        type == .rightMouseUp || statusItemModifierFlags.contains(.control)
+    }
+
+    var isOptionClick: Bool {
+        statusItemModifierFlags.contains(.option)
+    }
+
+    func statusItemLocation(in window: NSWindow?) -> CGPoint {
+        guard statusItemEventsArriveOutOfProcess, let window else {
+            return locationInWindow
+        }
+        return window.convertPoint(fromScreen: Self.mouseLocation)
     }
 }
 
@@ -93,11 +114,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
     private var lastScrollSwitchTimestamp: TimeInterval = -.infinity
     /// Whether a scroll has already deep-linked System Settings after a revoke
     private var scrollOpenedSettingsForRevocation = false
-    /// macOS 27 hosts status items out of process, so scrolls over the icon
-    /// are delivered to the host process and never reach the local monitor.
-    private static let statusItemScrollsArriveOutOfProcess =
-        ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 27
-
     /// Reads whether anyone else's status items are still drawn
     private let menuBarVisibilityProbe: MenuBarVisibilityProbe
     private var evictionDetector = MenuBarEvictionDetector()
@@ -695,7 +711,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
             NSEvent.removeMonitor(globalScrollMonitor)
             self.globalScrollMonitor = nil
         }
-        if Self.statusItemScrollsArriveOutOfProcess {
+        if statusItemEventsArriveOutOfProcess {
             globalScrollMonitor = NSEvent.addGlobalMonitorForEvents(matching: .scrollWheel) { [weak self] event in
                 _ = self?.handleScrollEvent(event, in: self?.statusBarItem?.button)
             }
@@ -729,8 +745,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
         guard let button else {
             return event
         }
-        let locationInWindow = button.window.map { $0.convertPoint(fromScreen: NSEvent.mouseLocation) }
-            ?? event.locationInWindow
+        let locationInWindow = event.statusItemLocation(in: button.window)
         guard button.isMousePoint(button.convert(locationInWindow, from: nil), in: button.bounds) else {
             return event
         }
@@ -825,7 +840,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
             }
             let position = NSPoint(x: 0, y: button.bounds.height + 5)
             statusMenu.popUp(positioning: nil, at: position, in: button)
-        } else if event.modifierFlags.union(NSEvent.modifierFlags).contains(.option) {
+        } else if event.isOptionClick {
             actionHandler.openSettingsWindow()
         } else {
             handleLeftClick(event, button: button)
@@ -894,8 +909,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
         // Status item click events report the button center as their
         // locationInWindow on macOS 27, so the on-screen mouse position is
         // the only reliable source for per-slot hit testing.
-        let locationInWindow = button.window.map { $0.convertPoint(fromScreen: NSEvent.mouseLocation) }
-            ?? event.locationInWindow
+        let locationInWindow = event.statusItemLocation(in: button.window)
         let location = button.convert(locationInWindow, from: nil)
         let clickX = Double(location.x)
 
