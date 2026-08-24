@@ -1,4 +1,5 @@
 import AppKit
+import KeyboardShortcuts
 import Settings
 
 extension Settings.PaneIdentifier {
@@ -41,6 +42,15 @@ extension SettingsPaneID {
             .keyboard
         }
     }
+
+    /// The pane a Settings package identifier names, for reading a pane back
+    /// out of the toolbar order.
+    init?(identifier: Settings.PaneIdentifier) {
+        guard let pane = Self.allCases.first(where: { $0.identifier == identifier }) else {
+            return nil
+        }
+        self = pane
+    }
 }
 
 /// A settings model with an external-change observation stream scoped to the
@@ -70,7 +80,7 @@ final class SettingsWindowCoordinator {
     private let highlighter: SettingsHighlighter
     private var windowController: SettingsWindowController?
     private var closeObserver: NSObjectProtocol?
-    private var closeShortcutMonitor: Any?
+    private var shortcutMonitor: Any?
     private var titleObservation: NSKeyValueObservation?
     private var search: SettingsSearchController?
 
@@ -110,7 +120,7 @@ final class SettingsWindowCoordinator {
             if let window = controller.window {
                 window.autorecalculatesKeyViewLoop = true
                 attachSearch(to: window)
-                observeCloseShortcut(in: window)
+                observeWindowShortcuts(in: window)
                 // The external-change observation streams only need to run
                 // while the window can show their effects; the shared color
                 // panel must not outlive the selection it edits
@@ -228,16 +238,26 @@ final class SettingsWindowCoordinator {
         }
     }
 
-    /// Closes the window on Command-W and Command-Q. The hidden main menu
-    /// carries no Close item because the empty Settings scene removes its
-    /// commands, so both shortcuts need explicit handling.
-    private func observeCloseShortcut(in window: NSWindow) {
-        closeShortcutMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak window] event in
-            guard let window, event.window === window, Self.isCloseShortcut(event) else {
+    /// Handles the window's own key equivalents: Command-W and Command-Q to
+    /// close, and Command-digit to select a pane. The hidden main menu carries
+    /// no items for any of them because the empty Settings scene removes its
+    /// commands, so all three need explicit handling.
+    private func observeWindowShortcuts(in window: NSWindow) {
+        shortcutMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self, weak window] event in
+            guard let window, event.window === window else {
                 return event
             }
-            window.performClose(nil)
-            return nil
+            if Self.isCloseShortcut(event) {
+                window.performClose(nil)
+                return nil
+            }
+            if let index = Self.paneShortcutIndex(event),
+               !Self.isRecordingShortcut(in: window),
+               self?.selectPane(at: index) == true
+            {
+                return nil
+            }
+            return event
         }
     }
 
@@ -249,6 +269,49 @@ final class SettingsWindowCoordinator {
             return false
         }
         return key == "w" || key == "q"
+    }
+
+    /// The toolbar position a Command-digit selects, counting from the left.
+    /// Command-1 through Command-9 read as positions the way they do in System
+    /// Settings and a tabbed window.
+    private static func paneShortcutIndex(_ event: NSEvent) -> Int? {
+        guard event.modifierFlags.intersection(.deviceIndependentFlagsMask) == .command,
+              let key = event.charactersIgnoringModifiers,
+              let digit = Int(key), (1 ... 9).contains(digit)
+        else {
+            return nil
+        }
+        return digit - 1
+    }
+
+    /// Whether a shortcut recorder holds the focus. It takes every key it is
+    /// sent as part of the shortcut being recorded, so Command-digit belongs to
+    /// it rather than to the toolbar.
+    private static func isRecordingShortcut(in window: NSWindow) -> Bool {
+        // A field being edited answers as its field editor, which sits inside
+        // the recorder rather than being it
+        var view = window.firstResponder as? NSView
+        while let candidate = view {
+            if candidate is KeyboardShortcuts.RecorderCocoa {
+                return true
+            }
+            view = candidate.superview
+        }
+        return false
+    }
+
+    /// Shows the pane in `index`'s toolbar position, reporting whether there
+    /// was one. Routed through `show` so a keyboard switch preserves the
+    /// window's corner, refits it, and repairs pane visibility exactly as a
+    /// deep link does.
+    private func selectPane(at index: Int) -> Bool {
+        guard index < panes.count,
+              let pane = SettingsPaneID(identifier: panes[index].paneIdentifier)
+        else {
+            return false
+        }
+        show(pane: pane)
+        return true
     }
 
     /// Wires up the toolbar's search field. A hit goes back through `show`,
