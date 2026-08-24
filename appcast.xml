@@ -6,9 +6,18 @@
     <description>Most recent changes with links to updates.</description>
     <language>en</language>
     <item>
-        <title>Version 1.3.0</title>
+        <title>Version 1.3.1</title>
         <description><![CDATA[
           <style>.sparkle-installed-version, .sparkle-installed-version ~ * { display: none }</style>
+          <section data-sparkle-version="1.3.1">
+            <h3>v1.3.1</h3>
+            <ul>
+              <li>menubar: Fix scroll switching on macOS 27</li>
+              <li>cleanup: Strip license headers</li>
+              <li>spaces: Fix stranded menu bar on macOS 27</li>
+              <li>settings: Select panes with Command-digit</li>
+            </ul>
+          </section>
           <section data-sparkle-version="1.3.0">
             <h3>v1.3.0</h3>
             <ul>
@@ -1022,6 +1031,32 @@
             <h3>v0.1.0</h3>
             <p>Initial release</p>
           </section>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.3.1</sparkle:fullReleaseNotesLink>
+        <pubDate>Mon, 24 Aug 2026 11:46:58 +0100</pubDate>
+        <enclosure
+          url="https://github.com/gechr/WhichSpace/releases/download/v1.3.1/WhichSpace.zip"
+          sparkle:version="1.3.1"
+          sparkle:shortVersionString="1.3.1"
+          sparkle:edSignature="qmVXlgw0Mu+/YPWUecDzHDkeq4xUdScLCU0JvON2eBW/YO8/ru3v8fRpfgFpA/6+a3hK/PHXDln83WdY5nYgAg=="
+          length="4076118"
+          type="application/octet-stream" />
+        <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      </item>
+    <item>
+        <title>Version 1.3.0</title>
+        <description><![CDATA[
+          <h3>v1.3.0</h3>
+          <ul>
+            <li>menubar: Fix click handling on macOS 27</li>
+            <li>deps: Update all versions</li>
+            <li>settings: Make style grid cells fully clickable</li>
+            <li>deps: Vendor <code>KeyboardShortcuts</code> to fix record on macOS 27</li>
+            <li>spaces: Fix instant switching on macOS 27</li>
+            <li>settings: Add inactive Space opacity control</li>
+            <li>windows: Harden front window selection</li>
+            <li>menubar: Grow back after displacing item leaves</li>
+          </ul>
         ]]></description>
         <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.3.0</sparkle:fullReleaseNotesLink>
         <pubDate>Sun, 23 Aug 2026 15:58:09 +0100</pubDate>
