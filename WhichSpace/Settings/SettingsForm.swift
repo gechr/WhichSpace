@@ -408,23 +408,17 @@ struct SettingsToggleRow: View {
             Toggle(title, isOn: isOn)
                 .labelsHidden()
                 .controlSize(.mini)
-                .tint(tint?.opacity(0.5))
+                .tint(tint)
         }
         // The row's hierarchical styles resolve against this, so a tinted
         // row renders in shades of the tint rather than gray
         .foregroundStyle(tint.map(AnyShapeStyle.init) ?? AnyShapeStyle(.foreground))
     }
 
-    /// A tinted row dims its title to the subtitle's shade - the tint itself
-    /// carries the warning.
+    /// A tinted row keeps its title at full strength, rendered in the tint.
+    /// The row still works, so only a faded one may read as unavailable.
     private var titleStyle: AnyShapeStyle {
-        if disabled || dimmed {
-            AnyShapeStyle(.tertiary)
-        } else if tint != nil {
-            AnyShapeStyle(.secondary)
-        } else {
-            AnyShapeStyle(.primary)
-        }
+        disabled || dimmed ? AnyShapeStyle(.tertiary) : AnyShapeStyle(.primary)
     }
 }
 
