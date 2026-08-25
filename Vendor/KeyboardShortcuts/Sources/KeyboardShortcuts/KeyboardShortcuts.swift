@@ -23,6 +23,18 @@ public enum KeyboardShortcuts {
 		case disallow(reason: String)
 
 		/**
+		The shortcut requires confirmation before it is saved.
+
+		Shows a two-button alert. The shortcut is saved only if the user picks the confirm button.
+
+		- Parameter reason: A message explaining the conflict.
+		- Parameter message: Optional secondary text.
+		- Parameter cancelTitle: The title of the button that discards the shortcut.
+		- Parameter confirmTitle: The title of the button that saves it anyway.
+		*/
+		case confirm(reason: String, message: String?, cancelTitle: String, confirmTitle: String)
+
+		/**
 		Creates a disallow result with a localized reason.
 		*/
 		@available(macOS 13, *)
@@ -45,9 +57,19 @@ public enum KeyboardShortcuts {
 	private static var isInitialized = false
 
 	/**
-	When `true`, event handlers will not be called for registered keyboard shortcuts.
+	When `true`, event handlers will not be called for registered keyboard shortcuts, and the Carbon registrations are suspended.
+
+	Gating the handler alone is not enough: a registered hotkey consumes the keystroke before it can reach a recorder's local event monitor, so recording a combination already bound to another name would silently do nothing.
 	*/
-	static var isPaused = false
+	static var isPaused = false {
+		didSet {
+			guard isPaused != oldValue else {
+				return
+			}
+
+			HotKeyCenter.shared.setPaused(isPaused)
+		}
+	}
 
 	/**
 	Enable/disable monitoring of all keyboard shortcuts.

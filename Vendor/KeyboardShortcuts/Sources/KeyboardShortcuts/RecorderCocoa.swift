@@ -466,9 +466,19 @@ extension KeyboardShortcuts {
 					}
 				}
 
-				if case .disallow(let reason) = validateShortcut?(shortcut) {
+				switch validateShortcut?(shortcut) {
+				case .disallow(let reason):
 					showAlert(title: reason)
 					return nil
+				case .confirm(let reason, let message, let cancelTitle, let confirmTitle):
+					// The confirm button goes first so it is the default one.
+					let response = showAlert(title: reason, message: message, buttonTitles: [confirmTitle, cancelTitle])
+
+					guard response == .alertFirstButtonReturn else {
+						return nil
+					}
+				case .allow, .none:
+					break
 				}
 
 				stringValue = "\(shortcut)"

@@ -89,6 +89,33 @@ final class HotkeyCenter {
         }
     }
 
+    /// The recorded name holding `shortcut`, ignoring `name` so re-recording a
+    /// binding onto itself is not a conflict. One combination must map to one
+    /// name: the library invokes every handler whose name resolves to a
+    /// shortcut, so a duplicate fires both actions on a single press.
+    static func owner(
+        of shortcut: KeyboardShortcuts.Shortcut,
+        excluding name: KeyboardShortcuts.Name
+    ) -> KeyboardShortcuts.Name? {
+        var bindings = [KeyboardShortcuts.Name: KeyboardShortcuts.Shortcut]()
+        for candidate in allNames {
+            bindings[candidate] = KeyboardShortcuts.getShortcut(for: candidate)
+        }
+        return owner(of: shortcut, excluding: name, bindings: bindings)
+    }
+
+    /// The lookup itself, taking the bindings rather than reading them, so it
+    /// resolves without the recorded state the live overload reaches for.
+    /// Numbered names past the current Desktop count are searched too: a
+    /// binding on an inert row still owns its combination.
+    static func owner(
+        of shortcut: KeyboardShortcuts.Shortcut,
+        excluding name: KeyboardShortcuts.Name,
+        bindings: [KeyboardShortcuts.Name: KeyboardShortcuts.Shortcut]
+    ) -> KeyboardShortcuts.Name? {
+        allNames.first { $0 != name && bindings[$0] == shortcut }
+    }
+
     private let appState: AppState
     private let store: DefaultsStore
 

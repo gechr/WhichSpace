@@ -220,8 +220,70 @@ struct KeyboardPane: View {
         SettingsRow(icon: icon, subtitle: subtitle, anchor: anchor) {
             Text(title)
         } control: {
-            KeyboardShortcuts.Recorder(for: name)
+            recorder(for: name)
         }
+    }
+
+    /// One combination must map to one action: the library invokes every
+    /// handler whose name resolves to a shortcut, so a duplicate would fire
+    /// both actions on a single press. Recording one already taken asks
+    /// before replacing it, naming the action that holds it, and the
+    /// confirmed replacement clears the previous owner once the save lands.
+    private func recorder(for name: KeyboardShortcuts.Name) -> some View {
+        KeyboardShortcuts.Recorder(for: name) { shortcut in
+            guard let shortcut,
+                  let owner = HotkeyCenter.owner(of: shortcut, excluding: name)
+            else {
+                return
+            }
+            KeyboardShortcuts.reset(owner)
+        }
+        .shortcutValidation { shortcut in
+            guard let owner = HotkeyCenter.owner(of: shortcut, excluding: name) else {
+                return .allow
+            }
+            // The combination and its owner go in the detail rather than the
+            // title, so the title stays one line at any name length.
+            return .confirm(
+                reason: Localization.alertDuplicateShortcut,
+                message: String(
+                    format: Localization.alertDuplicateShortcutDetail,
+                    "\(shortcut)",
+                    label(for: owner)
+                ),
+                cancelTitle: Localization.buttonCancel,
+                confirmTitle: Localization.buttonReplace
+            )
+        }
+    }
+
+    /// Names an action the way the pane presents it, verb then row, using the
+    /// same separator the behavior note uses for a settings path. A picker
+    /// may be hiding the row that holds the combination, so the verb has to
+    /// be part of the name for it to be findable.
+    private func label(for name: KeyboardShortcuts.Name) -> String {
+        // Previous has no direction or number and leads on its own card, so
+        // the card title names it on its own.
+        guard name != .switchPrevious else {
+            return Localization.labelPreviousSpace
+        }
+        for verb in [Verb.switchTo, .send, .move] {
+            if let index = verb.numberedNames.firstIndex(of: name) {
+                return path(verb.title, numberedLabel(number: index + 1))
+            }
+            let directional = verb.directionalNames
+            if name == directional.left {
+                return path(verb.title, Localization.labelLeft)
+            }
+            if name == directional.right {
+                return path(verb.title, Localization.labelRight)
+            }
+        }
+        return name.rawValue
+    }
+
+    private func path(_ verb: String, _ row: String) -> String {
+        "\(verb) › \(row)"
     }
 
     /// Wrap around and classic switching govern these hotkeys too - for
@@ -382,9 +444,19 @@ struct KeyboardPane: View {
             )
             .foregroundStyle(placeholder ? AnyShapeStyle(.tertiary) : AnyShapeStyle(.primary))
         } control: {
-            KeyboardShortcuts.Recorder(for: recorderName(for: number))
+            recorder(for: recorderName(for: number))
         }
         .help(placeholder ? Localization.tipSpacePlaceholderHotkey : "")
+    }
+
+    /// What a numbered row calls its Desktop, matching the row above so a
+    /// conflict alert names the row the way it reads on screen.
+    private func numberedLabel(number: Int) -> String {
+        guard model.value(\.localSpaceNumbers) else {
+            return editorModel.globalDesktopName(for: number)
+        }
+        return editorModel.spaceName(for: localCandidate(number))
+            ?? String(format: Localization.labelSpaceNumber, number)
     }
 
     /// The same candidate shape the Spaces sidebar lists: the real entry
@@ -443,6 +515,43 @@ private struct VerbSegments: NSViewRepresentable {
                 return
             }
             selection.wrappedValue = verb
+        }
+    }
+}
+
+/// What each verb records, so a conflict alert can name a binding by the
+/// picker tab and row it lives behind rather than by its storage key.
+private extension KeyboardPane.Verb {
+    var title: String {
+        switch self {
+        case .switchTo:
+            Localization.labelSwitch
+        case .send:
+            Localization.labelSendWindow
+        case .move:
+            Localization.labelMoveWindow
+        }
+    }
+
+    var numberedNames: [KeyboardShortcuts.Name] {
+        switch self {
+        case .switchTo:
+            KeyboardShortcuts.Name.jumpToSpace
+        case .send:
+            KeyboardShortcuts.Name.sendToSpace
+        case .move:
+            KeyboardShortcuts.Name.moveToSpace
+        }
+    }
+
+    var directionalNames: (left: KeyboardShortcuts.Name, right: KeyboardShortcuts.Name) {
+        switch self {
+        case .switchTo:
+            (.switchLeft, .switchRight)
+        case .send:
+            (.sendLeft, .sendRight)
+        case .move:
+            (.moveLeft, .moveRight)
         }
     }
 }

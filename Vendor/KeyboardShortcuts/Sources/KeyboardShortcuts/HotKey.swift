@@ -89,6 +89,7 @@ final class HotKeyCenter {
 	private var openMenuObserver: NSObjectProtocol?
 	private var closeMenuObserver: NSObjectProtocol?
 	private var isEnabled = true
+	private var isPaused = false
 	private var isMenuOpen = false {
 		didSet {
 			guard isMenuOpen != oldValue else {
@@ -158,6 +159,18 @@ final class HotKeyCenter {
 	}
 
 	/**
+	Suspends the Carbon registrations while a recorder is active, so the keystroke reaches the recorder instead of being consumed by the hotkey dispatcher.
+	*/
+	func setPaused(_ isPaused: Bool) {
+		guard self.isPaused != isPaused else {
+			return
+		}
+
+		self.isPaused = isPaused
+		updateMode()
+	}
+
+	/**
 	Sets up menu tracking observers that toggle menu-open hotkey mode.
 	*/
 	private func setUpMenuTrackingObserversIfNeeded() {
@@ -205,7 +218,12 @@ final class HotKeyCenter {
 	}
 
 	private func updateMode() {
-		mode = isEnabled ? (isMenuOpen ? .menuOpen : .normal) : .disabled
+		guard isEnabled, !isPaused else {
+			mode = .disabled
+			return
+		}
+
+		mode = isMenuOpen ? .menuOpen : .normal
 	}
 
 	func nextId() -> Int {
