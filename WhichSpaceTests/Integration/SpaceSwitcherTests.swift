@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 @testable import WhichSpace
 
@@ -319,6 +320,55 @@ struct SpaceSwitcherTests {
                 from: 0, goRight: true, wrap: true, spaceIDs: [100]
             ) == nil
         )
+    }
+
+    @Test("target sighting arms the record, and the origin returning then bounces")
+    func gestureBounce_targetThenOrigin_counts() {
+        let record = gestureSwitch()
+
+        let judged = SpaceSwitcher.judgeGestureSwitch(record, currentSpaceID: 101, age: 0.1)
+        guard case let .keep(armed) = judged else {
+            Issue.record("expected the target sighting to keep and arm the record")
+            return
+        }
+        #expect(armed.armed)
+
+        #expect(SpaceSwitcher.judgeGestureSwitch(armed, currentSpaceID: 100, age: 0.2) == .bounce)
+    }
+
+    @Test("the origin before any target sighting is not a bounce")
+    func gestureBounce_originBeforeTarget_doesNotCount() {
+        let record = gestureSwitch()
+        #expect(SpaceSwitcher.judgeGestureSwitch(record, currentSpaceID: 100, age: 0.1) == .keep(record))
+    }
+
+    @Test("a third Space current leaves the record unchanged")
+    func gestureBounce_unrelatedSpaceCurrent_keepsRecord() {
+        let record = gestureSwitch()
+        #expect(SpaceSwitcher.judgeGestureSwitch(record, currentSpaceID: 102, age: 0.1) == .keep(record))
+    }
+
+    @Test("a record past the judgement window is dropped even when armed")
+    func gestureBounce_expiredRecord_isDropped() {
+        var armed = gestureSwitch()
+        armed.armed = true
+        #expect(SpaceSwitcher.judgeGestureSwitch(armed, currentSpaceID: 100, age: 0.5) == .drop)
+    }
+
+    @Test("a record whose origin equals its target is dropped")
+    func gestureBounce_degenerateRecord_isDropped() {
+        let record = SpaceSwitcher.GestureSwitch(originSpaceID: 100, targetSpaceID: 100, madeAt: Date())
+        #expect(SpaceSwitcher.judgeGestureSwitch(record, currentSpaceID: 100, age: 0.1) == .drop)
+    }
+
+    @Test("the classic fallback flips at the bounce threshold")
+    func gestureBounce_thresholdFlipsFallback() {
+        #expect(!SpaceSwitcher.shouldFallBackToClassic(bounceCount: 1))
+        #expect(SpaceSwitcher.shouldFallBackToClassic(bounceCount: 2))
+    }
+
+    private func gestureSwitch() -> SpaceSwitcher.GestureSwitch {
+        SpaceSwitcher.GestureSwitch(originSpaceID: 100, targetSpaceID: 101, madeAt: Date())
     }
 
     @Test("activateAppOnSpace returns false for invalid space ID")

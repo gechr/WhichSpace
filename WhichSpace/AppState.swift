@@ -575,7 +575,7 @@ final class AppState {
         // predictions are now wrong. Topology-only snapshot changes keep
         // predictions so mid-burst switches don't overshoot
         if newSnapshot.currentSpaceID != oldSpaceID {
-            SpaceSwitcher.resetPredictions()
+            SpaceSwitcher.resetPredictions(appliedDisplays: newSnapshot.allDisplaysSpaceInfo)
         }
 
         recordLastVisitedSpace(oldSpaceID: oldSpaceID, oldDisplayID: oldDisplayID)

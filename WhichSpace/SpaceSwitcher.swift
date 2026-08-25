@@ -105,10 +105,130 @@ enum SpaceSwitcher {
         predictions[display] = (index, Date())
     }
 
-    /// Clears switch predictions once a real space snapshot lands.
-    @MainActor static func resetPredictions() {
+    /// Clears switch predictions once a real space snapshot lands. The
+    /// applied display states also judge any recorded gesture switches, so
+    /// bounce detection sees exactly the snapshot that triggered the call
+    /// rather than a fresh CGS read that may already show a newer transition.
+    @MainActor static func resetPredictions(appliedDisplays: [DisplaySpaceInfo]) {
+        detectGestureBounces(in: appliedDisplays)
         predictions.removeAll()
         restoreParkedWindowIfReady()
+    }
+
+    // MARK: - Bounce Fallback
+
+    /// A posted gesture switch remembered past prediction clearing. A
+    /// snapshot showing the target current arms the record; a later snapshot
+    /// showing the origin current again while armed is a bounce, meaning the
+    /// system performed the switch and immediately reversed it.
+    struct GestureSwitch: Equatable {
+        let originSpaceID: Int
+        let targetSpaceID: Int
+        let madeAt: Date
+        var armed = false
+    }
+
+    /// The most recent gesture switch per display. Reaching the target does
+    /// not remove an entry: a switch can commit and be reversed straight
+    /// back, so each entry stays judgeable until it ages out of the window.
+    @MainActor private static var gestureSwitches: [String: GestureSwitch] = [:]
+
+    /// Bounced gesture switches observed so far this session.
+    @MainActor private static var gestureBounceCount = 0
+
+    /// Whether switching has fallen back to the classic route because
+    /// gesture switches bounced.
+    @MainActor private static var prefersClassicAfterBounces = false
+
+    /// How long after posting a record stays judgeable. Past this a return
+    /// to the origin Space is plausibly the user's own switch back.
+    static let gestureBounceWindow: TimeInterval = 0.35
+
+    /// Bounces tolerated before switching falls back to the classic route,
+    /// so one coincidental user return does not flip the session.
+    static let gestureBounceFallbackThreshold = 2
+
+    /// What an applied snapshot means for a recorded gesture switch.
+    enum GestureSwitchJudgement: Equatable {
+        case keep(GestureSwitch)
+        case drop
+        case bounce
+    }
+
+    /// Judges one recorded switch against the Space now current on its
+    /// display. Arming requires the target to have been seen current, so an
+    /// origin sighting from a switch that has not visibly landed yet never
+    /// counts. A pure transition kept separate from event posting so it can
+    /// be covered without changing the test runner's active Space.
+    static func judgeGestureSwitch(
+        _ record: GestureSwitch,
+        currentSpaceID: Int,
+        age: TimeInterval
+    ) -> GestureSwitchJudgement {
+        guard age <= gestureBounceWindow, record.originSpaceID != record.targetSpaceID else {
+            return .drop
+        }
+        if currentSpaceID == record.targetSpaceID {
+            var armed = record
+            armed.armed = true
+            return .keep(armed)
+        }
+        if record.armed, currentSpaceID == record.originSpaceID {
+            return .bounce
+        }
+        return .keep(record)
+    }
+
+    /// Whether enough bounces have accumulated to abandon gesture switching.
+    static func shouldFallBackToClassic(bounceCount: Int) -> Bool {
+        bounceCount >= gestureBounceFallbackThreshold
+    }
+
+    @MainActor private static func recordGestureSwitch(
+        from originSpaceID: Int,
+        to targetSpaceID: Int,
+        for display: String
+    ) {
+        gestureSwitches[display] = GestureSwitch(
+            originSpaceID: originSpaceID,
+            targetSpaceID: targetSpaceID,
+            madeAt: Date()
+        )
+    }
+
+    /// Judges recorded gesture switches against the applied snapshot. After
+    /// `gestureBounceFallbackThreshold` bounces every later switch takes the
+    /// classic route for the rest of the session, which does not post
+    /// gestures and so cannot bounce.
+    @MainActor private static func detectGestureBounces(in appliedDisplays: [DisplaySpaceInfo]) {
+        guard !prefersClassicAfterBounces, !gestureSwitches.isEmpty else {
+            return
+        }
+        let now = Date()
+        for display in appliedDisplays {
+            guard let record = gestureSwitches[display.displayID],
+                  let currentSpaceID = display.activeSpaceID
+            else {
+                continue
+            }
+            switch judgeGestureSwitch(
+                record,
+                currentSpaceID: currentSpaceID,
+                age: now.timeIntervalSince(record.madeAt)
+            ) {
+            case let .keep(updated):
+                gestureSwitches[display.displayID] = updated
+            case .drop:
+                gestureSwitches[display.displayID] = nil
+            case .bounce:
+                gestureSwitches[display.displayID] = nil
+                gestureBounceCount += 1
+            }
+        }
+        if shouldFallBackToClassic(bounceCount: gestureBounceCount) {
+            prefersClassicAfterBounces = true
+            NSLog("SpaceSwitcher: gesture switches keep bouncing back, using classic switching for this session")
+        }
     }
 
     // MARK: - Public API
@@ -160,10 +280,19 @@ enum SpaceSwitcher {
                 currentSpaceID: display.currentSpaceID
             )
             let velocity = swipeVelocity * Double(steps)
-            for _ in 0 ..< steps {
+            let direction = goRight ? 1 : -1
+            // Each completed gesture moves one Space, so recording per step
+            // keeps a partial multi-step failure attributable to the Space
+            // the posted gestures actually reached
+            for step in 1 ... steps {
                 guard postSwipeGesture(goRight: goRight, velocity: velocity) else {
                     return false
                 }
+                recordGestureSwitch(
+                    from: display.currentSpaceID,
+                    to: display.spaces[currentIndex + direction * step].id,
+                    for: display.identifier
+                )
             }
         }
 
@@ -257,8 +386,8 @@ enum SpaceSwitcher {
         let steps = abs(targetIndex - currentIndex)
         let stepsRight = targetIndex > currentIndex
         let target = display.spaces[targetIndex].id
-        // The single-step route decides classic vs gesture inside postStep
-        // with the same predicate, so this mirrors the route actually taken
+        // The route is resolved once and passed down, so the posted
+        // mechanism and the bounce record always agree
         let classicRoute = requiresClassicPath()
         if !classicRoute {
             parkKeyWindowIfNeeded(
@@ -266,8 +395,15 @@ enum SpaceSwitcher {
             )
         }
         if steps == 1 {
-            guard postStep(goRight: stepsRight, velocity: swipeVelocity) else {
+            guard postStep(goRight: stepsRight, velocity: swipeVelocity, classic: classicRoute) else {
                 return false
+            }
+            if !classicRoute {
+                recordGestureSwitch(
+                    from: display.currentSpaceID,
+                    to: target,
+                    for: display.identifier
+                )
             }
         } else if classicRoute {
             guard classicSwitch(toSpaceID: target, goRight: stepsRight, steps: steps, connection: conn) else {
@@ -275,10 +411,19 @@ enum SpaceSwitcher {
             }
         } else {
             let velocity = swipeVelocity * Double(steps)
-            for _ in 0 ..< steps {
+            let direction = stepsRight ? 1 : -1
+            // Each completed gesture moves one Space, so recording per step
+            // keeps a partial multi-step failure attributable to the Space
+            // the posted gestures actually reached
+            for step in 1 ... steps {
                 guard postSwipeGesture(goRight: stepsRight, velocity: velocity) else {
                     return false
                 }
+                recordGestureSwitch(
+                    from: display.currentSpaceID,
+                    to: display.spaces[currentIndex + direction * step].id,
+                    for: display.identifier
+                )
             }
         }
 
@@ -543,14 +688,15 @@ enum SpaceSwitcher {
     /// synthetic swipe gestures without any failure signal, so instant
     /// switching falls back to the Mission Control shortcuts until the
     /// button is released. Key events still get delivered during a drag,
-    /// and the switch carries the held window to the target Space.
+    /// and the switch carries the held window to the target Space. A session
+    /// whose gesture switches bounced stays on the classic route throughout.
     @MainActor private static func requiresClassicPath(fromStatusItemClick: Bool = false) -> Bool {
         let heldButtonIsDrag = heldButtonRequiresClassicPath(
             buttonIsPressed: NSEvent.pressedMouseButtons != 0,
             fromStatusItemClick: fromStatusItemClick,
             requiresIOHIDPayload: requiresIOHIDPayload
         )
-        return usesClassicSwitching || heldButtonIsDrag
+        return usesClassicSwitching || prefersClassicAfterBounces || heldButtonIsDrag
     }
 
     /// On macOS 27 the status item's mouse-up action can run before AppKit's
@@ -565,9 +711,10 @@ enum SpaceSwitcher {
         buttonIsPressed && !(requiresIOHIDPayload && fromStatusItemClick)
     }
 
-    /// Posts one switch step left or right using the active mechanism.
-    @MainActor private static func postStep(goRight: Bool, velocity: Double) -> Bool {
-        if requiresClassicPath() {
+    /// Posts one switch step left or right using the route the caller
+    /// resolved, so the posted mechanism always matches what was recorded.
+    @MainActor private static func postStep(goRight: Bool, velocity: Double, classic: Bool) -> Bool {
+        if classic {
             return postHotKey(goRight ? HotKey.moveRight : HotKey.moveLeft)
         }
         return postSwipeGesture(goRight: goRight, velocity: velocity)
