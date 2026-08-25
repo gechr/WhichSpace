@@ -575,7 +575,7 @@ enum SettingsSearchIndex {
         // takes the switch card as its section, mirroring the scroll invert rows
         SettingsSearchEntry(
             anchor: .hotkeySwitchPrevious,
-            section: Localization.labelSwitch,
+            section: Localization.labelPreviousSpace,
             title: Localization.labelPrevious,
             subtitle: Localization.tipHotkeySwitchPrevious,
             keywords: [.hotkey, .space]
@@ -603,43 +603,50 @@ enum SettingsSearchIndex {
         ),
         SettingsSearchEntry(
             anchor: .hotkeySendLeft,
-            section: Localization.labelWindow,
-            title: Localization.labelSendLeft,
+            section: Localization.labelSendWindow,
+            title: Localization.labelLeft,
             subtitle: Localization.tipHotkeySendLeft,
             keywords: [.hotkey, .window, .space]
         ),
         SettingsSearchEntry(
             anchor: .hotkeySendRight,
-            section: Localization.labelWindow,
-            title: Localization.labelSendRight,
+            section: Localization.labelSendWindow,
+            title: Localization.labelRight,
             subtitle: Localization.tipHotkeySendRight,
             keywords: [.hotkey, .window, .space]
         ),
         SettingsSearchEntry(
+            anchor: .hotkeySendSkipEmptySpaces,
+            section: Localization.labelSendWindow,
+            title: Localization.toggleSkipEmptySpaces,
+            subtitle: Localization.tipSendSkipEmptySpaces,
+            keywords: [.hotkey, .window, .space]
+        ),
+        SettingsSearchEntry(
             anchor: .hotkeyMoveLeft,
-            section: Localization.labelWindow,
-            title: Localization.labelMoveLeft,
+            section: Localization.labelMoveWindow,
+            title: Localization.labelLeft,
             subtitle: Localization.tipHotkeyMoveLeft,
             keywords: [.hotkey, .window, .space]
         ),
         SettingsSearchEntry(
             anchor: .hotkeyMoveRight,
-            section: Localization.labelWindow,
-            title: Localization.labelMoveRight,
+            section: Localization.labelMoveWindow,
+            title: Localization.labelRight,
             subtitle: Localization.tipHotkeyMoveRight,
             keywords: [.hotkey, .window, .space]
         ),
         SettingsSearchEntry(
-            anchor: .hotkeyWindowSkipEmptySpaces,
-            section: Localization.labelWindow,
+            anchor: .hotkeyMoveSkipEmptySpaces,
+            section: Localization.labelMoveWindow,
             title: Localization.toggleSkipEmptySpaces,
-            subtitle: Localization.tipWindowSkipEmptySpaces,
+            subtitle: Localization.tipMoveSkipEmptySpaces,
             keywords: [.hotkey, .window, .space]
         ),
         SettingsSearchEntry(
-            anchor: .jump,
+            anchor: .numberedSpaces,
             section: nil,
-            title: Localization.labelJump,
+            title: Localization.labelNumberedSpaces,
             subtitle: nil,
             keywords: [.hotkey, .space]
         ),

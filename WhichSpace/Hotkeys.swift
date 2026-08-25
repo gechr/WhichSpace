@@ -16,6 +16,16 @@ extension KeyboardShortcuts.Name {
     static let jumpToSpace: [Self] = (1 ... HotkeyCenter.maxJumpTargets).map {
         Self("switchToSpace\($0)")
     }
+
+    /// Numbered window hotkeys, one send and one move per Desktop, following
+    /// the same inert-past-the-count rule as `jumpToSpace`.
+    static let sendToSpace: [Self] = (1 ... HotkeyCenter.maxJumpTargets).map {
+        Self("sendToSpace\($0)")
+    }
+
+    static let moveToSpace: [Self] = (1 ... HotkeyCenter.maxJumpTargets).map {
+        Self("moveToSpace\($0)")
+    }
 }
 
 /// Routes recorded global hotkeys through the shared switching backends.
@@ -36,6 +46,8 @@ final class HotkeyCenter {
     static var allNames: [KeyboardShortcuts.Name] {
         [.switchLeft, .switchRight, .switchPrevious, .sendLeft, .sendRight, .moveLeft, .moveRight]
             + KeyboardShortcuts.Name.jumpToSpace
+            + KeyboardShortcuts.Name.sendToSpace
+            + KeyboardShortcuts.Name.moveToSpace
     }
 
     /// Clears every recorded binding, returning the pane to its fresh state.
@@ -126,6 +138,20 @@ final class HotkeyCenter {
             KeyboardShortcuts.onKeyDown(for: name) { [weak self] in
                 Task { @MainActor in
                     self?.switchTo(number: index + 1)
+                }
+            }
+        }
+        for (index, name) in KeyboardShortcuts.Name.sendToSpace.enumerated() {
+            KeyboardShortcuts.onKeyDown(for: name) { [weak self] in
+                Task { @MainActor in
+                    self?.moveWindow(toNumber: index + 1, follow: false)
+                }
+            }
+        }
+        for (index, name) in KeyboardShortcuts.Name.moveToSpace.enumerated() {
+            KeyboardShortcuts.onKeyDown(for: name) { [weak self] in
+                Task { @MainActor in
+                    self?.moveWindow(toNumber: index + 1, follow: true)
                 }
             }
         }
@@ -230,20 +256,39 @@ final class HotkeyCenter {
     /// Wrapping follows the same preference as the switch hotkeys, so both
     /// directions behave the same way at the edges. Failures stay silent for
     /// the same reason `switchTo` swallows its own. Skipping empty Spaces has
-    /// its own preference, separate from the switch hotkeys': landing a
+    /// a preference per verb, separate from the switch hotkeys': landing a
     /// window on an empty Space is a normal way to start a fresh Desktop.
     private func moveWindow(goRight: Bool, follow: Bool) {
         guard ensureAccessibility() else {
             return
         }
         Task { @MainActor in
-            let skipped = store.hotkeysWindowSkipEmptySpaces ? appState.emptySpaceIDs() : []
+            let skips = follow ? store.hotkeysMoveSkipEmptySpaces : store.hotkeysSendSkipEmptySpaces
+            let skipped = skips ? appState.emptySpaceIDs() : []
             try? await ScriptingHelpers.moveWindowRelative(
                 goRight: goRight,
                 follow: follow,
                 wrap: store.scrollWrapAround,
                 skippingSpaceIDs: skipped,
                 appState: appState
+            )
+        }
+    }
+
+    /// Skipping empty Spaces does not apply here: an absolute target has
+    /// nothing to step over, matching how `switchTo` ignores the toggle.
+    /// Numbering follows the menu bar preference, the same resolution the
+    /// numbered switch hotkeys use.
+    private func moveWindow(toNumber number: Int, follow: Bool) {
+        guard ensureAccessibility() else {
+            return
+        }
+        Task { @MainActor in
+            try? await ScriptingHelpers.moveWindow(
+                toSpace: number,
+                follow: follow,
+                appState: appState,
+                store: store
             )
         }
     }

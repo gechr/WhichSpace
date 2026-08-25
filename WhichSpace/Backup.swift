@@ -83,8 +83,9 @@ struct BackupSettings: Codable {
     var hideFullscreenApps: Bool
     var hideSingleSpace: Bool
     var horizontalScrollEnabled: Bool
+    var hotkeysMoveSkipEmptySpaces: Bool
+    var hotkeysSendSkipEmptySpaces: Bool
     var hotkeysSkipEmptySpaces: Bool
-    var hotkeysWindowSkipEmptySpaces: Bool
     var includeBetaUpdates: Bool
     var invertHorizontalScroll: Bool
     var invertVerticalScroll: Bool
@@ -117,8 +118,9 @@ struct BackupSettings: Codable {
         case classicSpaceSwitching
         case clickToSwitchSpaces, dimInactiveSpaces, displayOrder, emojiPickerSkinTone, fullscreenIconStyle
         case hideEmptySpaces
-        case hideFullscreenApps, hideSingleSpace, horizontalScrollEnabled, hotkeysSkipEmptySpaces
-        case hotkeysWindowSkipEmptySpaces, includeBetaUpdates
+        case hideFullscreenApps, hideSingleSpace, horizontalScrollEnabled
+        case hotkeysMoveSkipEmptySpaces, hotkeysSendSkipEmptySpaces, hotkeysSkipEmptySpaces
+        case includeBetaUpdates
         case invertHorizontalScroll, invertVerticalScroll, launchAtLogin, localSpaceNumbers
         case inactiveSpaceOpacity
         // Raw value matches the legacy stored defaults key
@@ -148,9 +150,11 @@ struct BackupSettings: Codable {
         hideFullscreenApps = try container.decodeIfPresent(Bool.self, forKey: .hideFullscreenApps) ?? false
         hideSingleSpace = try container.decodeIfPresent(Bool.self, forKey: .hideSingleSpace) ?? false
         horizontalScrollEnabled = try container.decodeIfPresent(Bool.self, forKey: .horizontalScrollEnabled) ?? false
+        hotkeysMoveSkipEmptySpaces = try container
+            .decodeIfPresent(Bool.self, forKey: .hotkeysMoveSkipEmptySpaces) ?? false
+        hotkeysSendSkipEmptySpaces = try container
+            .decodeIfPresent(Bool.self, forKey: .hotkeysSendSkipEmptySpaces) ?? false
         hotkeysSkipEmptySpaces = try container.decodeIfPresent(Bool.self, forKey: .hotkeysSkipEmptySpaces) ?? false
-        hotkeysWindowSkipEmptySpaces = try container
-            .decodeIfPresent(Bool.self, forKey: .hotkeysWindowSkipEmptySpaces) ?? false
         includeBetaUpdates = try container.decodeIfPresent(Bool.self, forKey: .includeBetaUpdates) ?? false
         invertHorizontalScroll = try container.decodeIfPresent(Bool.self, forKey: .invertHorizontalScroll) ?? false
         invertVerticalScroll = try container.decodeIfPresent(Bool.self, forKey: .invertVerticalScroll) ?? false
@@ -194,8 +198,9 @@ struct BackupSettings: Codable {
         hideFullscreenApps: Bool,
         hideSingleSpace: Bool,
         horizontalScrollEnabled: Bool,
+        hotkeysMoveSkipEmptySpaces: Bool,
+        hotkeysSendSkipEmptySpaces: Bool,
         hotkeysSkipEmptySpaces: Bool,
-        hotkeysWindowSkipEmptySpaces: Bool,
         includeBetaUpdates: Bool,
         invertHorizontalScroll: Bool,
         invertVerticalScroll: Bool,
@@ -230,8 +235,9 @@ struct BackupSettings: Codable {
         self.hideFullscreenApps = hideFullscreenApps
         self.hideSingleSpace = hideSingleSpace
         self.horizontalScrollEnabled = horizontalScrollEnabled
+        self.hotkeysMoveSkipEmptySpaces = hotkeysMoveSkipEmptySpaces
+        self.hotkeysSendSkipEmptySpaces = hotkeysSendSkipEmptySpaces
         self.hotkeysSkipEmptySpaces = hotkeysSkipEmptySpaces
-        self.hotkeysWindowSkipEmptySpaces = hotkeysWindowSkipEmptySpaces
         self.includeBetaUpdates = includeBetaUpdates
         self.invertHorizontalScroll = invertHorizontalScroll
         self.invertVerticalScroll = invertVerticalScroll
@@ -606,8 +612,9 @@ enum BackupManager {
             hideFullscreenApps: store.hideFullscreenApps,
             hideSingleSpace: store.hideSingleSpace,
             horizontalScrollEnabled: store.horizontalScrollEnabled,
+            hotkeysMoveSkipEmptySpaces: store.hotkeysMoveSkipEmptySpaces,
+            hotkeysSendSkipEmptySpaces: store.hotkeysSendSkipEmptySpaces,
             hotkeysSkipEmptySpaces: store.hotkeysSkipEmptySpaces,
-            hotkeysWindowSkipEmptySpaces: store.hotkeysWindowSkipEmptySpaces,
             includeBetaUpdates: store.includeBetaUpdates,
             invertHorizontalScroll: store.invertHorizontalScroll,
             invertVerticalScroll: store.invertVerticalScroll,
@@ -758,8 +765,9 @@ enum BackupManager {
         store.hideFullscreenApps = backup.settings.hideFullscreenApps
         store.hideSingleSpace = backup.settings.hideSingleSpace
         store.horizontalScrollEnabled = backup.settings.horizontalScrollEnabled
+        store.hotkeysMoveSkipEmptySpaces = backup.settings.hotkeysMoveSkipEmptySpaces
+        store.hotkeysSendSkipEmptySpaces = backup.settings.hotkeysSendSkipEmptySpaces
         store.hotkeysSkipEmptySpaces = backup.settings.hotkeysSkipEmptySpaces
-        store.hotkeysWindowSkipEmptySpaces = backup.settings.hotkeysWindowSkipEmptySpaces
         store.includeBetaUpdates = backup.settings.includeBetaUpdates
         store.invertHorizontalScroll = backup.settings.invertHorizontalScroll
         store.invertVerticalScroll = backup.settings.invertVerticalScroll

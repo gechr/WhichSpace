@@ -117,10 +117,11 @@ enum SettingsAnchor: String, CaseIterable {
     case hotkeySwitchPrevious = "switch-previous"
     case hotkeySendLeft = "send-left"
     case hotkeySendRight = "send-right"
+    case hotkeySendSkipEmptySpaces = "send-skip-empty-spaces"
     case hotkeyMoveLeft = "move-left"
     case hotkeyMoveRight = "move-right"
-    case hotkeyWindowSkipEmptySpaces = "window-skip-empty-spaces"
-    case jump
+    case hotkeyMoveSkipEmptySpaces = "move-skip-empty-spaces"
+    case numberedSpaces = "numbered-spaces"
 
     /// The anchor owning the row or section a link lands on. Emoji shares the
     /// Glyph section with symbol, so both point at the same place; keeping the
@@ -159,8 +160,8 @@ enum SettingsAnchor: String, CaseIterable {
              .scrollWrapAround, .scrollSensitivity, .scrollHaptics:
             .mouse
         case .hotkeySwitchLeft, .hotkeySwitchRight, .hotkeySkipEmptySpaces, .hotkeySwitchPrevious,
-             .hotkeySendLeft, .hotkeySendRight, .hotkeyMoveLeft, .hotkeyMoveRight,
-             .hotkeyWindowSkipEmptySpaces, .jump:
+             .hotkeySendLeft, .hotkeySendRight, .hotkeySendSkipEmptySpaces,
+             .hotkeyMoveLeft, .hotkeyMoveRight, .hotkeyMoveSkipEmptySpaces, .numberedSpaces:
             .keyboard
         }
     }

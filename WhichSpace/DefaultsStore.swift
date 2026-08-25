@@ -95,11 +95,9 @@ enum KeySpecs {
         defaultValue: FullscreenIconStyle.appIcon
     )
     static let horizontalScrollEnabled = TypedKeySpec(name: "horizontalScrollEnabled", defaultValue: false)
+    static let hotkeysMoveSkipEmptySpaces = TypedKeySpec(name: "hotkeysMoveSkipEmptySpaces", defaultValue: false)
+    static let hotkeysSendSkipEmptySpaces = TypedKeySpec(name: "hotkeysSendSkipEmptySpaces", defaultValue: false)
     static let hotkeysSkipEmptySpaces = TypedKeySpec(name: "hotkeysSkipEmptySpaces", defaultValue: false)
-    static let hotkeysWindowSkipEmptySpaces = TypedKeySpec(
-        name: "hotkeysWindowSkipEmptySpaces",
-        defaultValue: false
-    )
     static let includeBetaUpdates = TypedKeySpec(name: "includeBetaUpdates", defaultValue: false)
     static let invertHorizontalScroll = TypedKeySpec(name: "invertHorizontalScroll", defaultValue: false)
     static let invertVerticalScroll = TypedKeySpec(name: "invertVerticalScroll", defaultValue: false)
@@ -184,8 +182,9 @@ enum KeySpecs {
         hideFullscreenApps,
         hideSingleSpace,
         horizontalScrollEnabled,
+        hotkeysMoveSkipEmptySpaces,
+        hotkeysSendSkipEmptySpaces,
         hotkeysSkipEmptySpaces,
-        hotkeysWindowSkipEmptySpaces,
         includeBetaUpdates,
         invertHorizontalScroll,
         invertVerticalScroll,
@@ -231,8 +230,9 @@ enum KeySpecs {
         clickToSwitchSpaces.name,
         displaySpaceSounds.name,
         horizontalScrollEnabled.name,
+        hotkeysMoveSkipEmptySpaces.name,
+        hotkeysSendSkipEmptySpaces.name,
         hotkeysSkipEmptySpaces.name,
-        hotkeysWindowSkipEmptySpaces.name,
         includeBetaUpdates.name,
         invertHorizontalScroll.name,
         invertVerticalScroll.name,
@@ -517,14 +517,19 @@ final class DefaultsStore {
         set { self[KeySpecs.horizontalScrollEnabled] = newValue }
     }
 
+    var hotkeysMoveSkipEmptySpaces: Bool {
+        get { self[KeySpecs.hotkeysMoveSkipEmptySpaces] }
+        set { self[KeySpecs.hotkeysMoveSkipEmptySpaces] = newValue }
+    }
+
+    var hotkeysSendSkipEmptySpaces: Bool {
+        get { self[KeySpecs.hotkeysSendSkipEmptySpaces] }
+        set { self[KeySpecs.hotkeysSendSkipEmptySpaces] = newValue }
+    }
+
     var hotkeysSkipEmptySpaces: Bool {
         get { self[KeySpecs.hotkeysSkipEmptySpaces] }
         set { self[KeySpecs.hotkeysSkipEmptySpaces] = newValue }
-    }
-
-    var hotkeysWindowSkipEmptySpaces: Bool {
-        get { self[KeySpecs.hotkeysWindowSkipEmptySpaces] }
-        set { self[KeySpecs.hotkeysWindowSkipEmptySpaces] = newValue }
     }
 
     var includeBetaUpdates: Bool {

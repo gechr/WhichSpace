@@ -17,9 +17,25 @@ struct KeyboardPane: View {
     /// system would route the scheme to the installed copy, not this one
     let onOpenBehavior: () -> Void
 
-    /// Placeholder rows stay hidden until asked for, so the Jump card only
-    /// spends height on Spaces that exist
+    /// Placeholder rows stay hidden until asked for, so the numbered card
+    /// only spends height on Spaces that exist
     @State private var revealsInactiveSpaces = false
+
+    /// Which verb a card's rows record: switch goes there, send moves the
+    /// front window and stays, move takes the window and follows. One column
+    /// behind a picker rather than three cards of the same rows each.
+    fileprivate enum Verb: Int {
+        case switchTo
+        case send
+        case move
+    }
+
+    @State private var directionalVerb = Verb.switchTo
+    @State private var numberedVerb = Verb.switchTo
+
+    /// Read to flip a card's picker to the verb a deep link or search hit
+    /// targets, since the other verbs' rows are not in the hierarchy.
+    @Environment(SettingsHighlighter.self) private var highlighter: SettingsHighlighter?
 
     var body: some View {
         // The banner pins above the scroll view, so the warning stays visible
@@ -37,43 +53,16 @@ struct KeyboardPane: View {
                 }
             }
         }
-        // Revealing the hidden Jump rows grows the pane after the window was
-        // sized to it, so the window has to follow
-        .fitsSettingsWindow(measuring: CGSize(width: 0, height: Double(visibleJumpNumbers.count)))
+        // Revealing the hidden numbered rows grows the pane after the window
+        // was sized to it, so the window has to follow
+        .fitsSettingsWindow(measuring: CGSize(width: 0, height: Double(visibleNumbers.count)))
     }
 
     @ViewBuilder
     private var sections: some View {
-        // Left/right rather than previous/next: "previous" names the
-        // last-visited Space, so it gets its own card below the directional
-        // hotkeys and the skip toggle that only governs them.
-        SettingsSection(Localization.labelSwitch) {
-            recorderRow(
-                title: Localization.labelLeft,
-                icon: "arrowshape.left.fill",
-                subtitle: Localization.tipHotkeySwitchLeft,
-                anchor: .hotkeySwitchLeft,
-                name: .switchLeft
-            )
-            SettingsRowDivider()
-            recorderRow(
-                title: Localization.labelRight,
-                icon: "arrowshape.right.fill",
-                subtitle: Localization.tipHotkeySwitchRight,
-                anchor: .hotkeySwitchRight,
-                name: .switchRight
-            )
-            SettingsRowDivider()
-            SettingsToggleRow(
-                title: Localization.toggleSkipEmptySpaces,
-                isOn: model.binding(\.hotkeysSkipEmptySpaces),
-                icon: "arrow.right.to.line.compact",
-                subtitle: Localization.tipSkipEmptySpaces,
-                anchor: .hotkeySkipEmptySpaces
-            )
-            .padding(.trailing, Layout.settingsSpaceListScrollerWidth)
-        }
-        SettingsSection {
+        // "Previous" names the last-visited Space - unlike every other
+        // hotkey it has no direction or number, so it leads on its own card.
+        SettingsSection(Localization.labelPreviousSpace) {
             recorderRow(
                 title: Localization.labelPrevious,
                 icon: "arrow.uturn.backward",
@@ -82,60 +71,126 @@ struct KeyboardPane: View {
                 name: .switchPrevious
             )
         }
-        windowSection
+        directionalSection
         if !SpaceWindowMover.isSupported {
             unsupportedNote
         }
-        jumpSection
+        numberedSection
         behaviorNote
     }
 
-    // MARK: - Window
+    // MARK: - Adjacent Spaces
 
-    /// Sending leaves you where you are and moving follows the window, so the
-    /// filled arrows mark the rows that switch Space too.
-    private var windowSection: some View {
-        SettingsSection(Localization.labelWindow) {
-            recorderRow(
-                title: Localization.labelSendLeft,
-                icon: "arrow.left.square",
-                subtitle: Localization.tipHotkeySendLeft,
-                anchor: .hotkeySendLeft,
-                name: .sendLeft
-            )
+    /// The left/right hotkeys for all three verbs, one verb's rows at a time
+    /// behind the same picker the numbered card uses. Each verb keeps its own
+    /// skip toggle: landing a window on an empty Space is a normal way to
+    /// start a fresh Desktop, so the window verbs decide separately from
+    /// switching.
+    private var directionalSection: some View {
+        SettingsSection(Localization.labelAdjacentSpaces) {
+            verbPicker(Localization.labelAdjacentSpaces, selection: $directionalVerb)
             SettingsRowDivider()
-            recorderRow(
-                title: Localization.labelSendRight,
-                icon: "arrow.right.square",
-                subtitle: Localization.tipHotkeySendRight,
-                anchor: .hotkeySendRight,
-                name: .sendRight
-            )
-            SettingsRowDivider()
-            recorderRow(
-                title: Localization.labelMoveLeft,
-                icon: "arrow.left.square.fill",
-                subtitle: Localization.tipHotkeyMoveLeft,
-                anchor: .hotkeyMoveLeft,
-                name: .moveLeft
-            )
-            SettingsRowDivider()
-            recorderRow(
-                title: Localization.labelMoveRight,
-                icon: "arrow.right.square.fill",
-                subtitle: Localization.tipHotkeyMoveRight,
-                anchor: .hotkeyMoveRight,
-                name: .moveRight
-            )
-            SettingsRowDivider()
-            SettingsToggleRow(
-                title: Localization.toggleSkipEmptySpaces,
-                isOn: model.binding(\.hotkeysWindowSkipEmptySpaces),
-                icon: "arrow.right.to.line.compact",
-                subtitle: Localization.tipWindowSkipEmptySpaces,
-                anchor: .hotkeyWindowSkipEmptySpaces
-            )
-            .padding(.trailing, Layout.settingsSpaceListScrollerWidth)
+            switch directionalVerb {
+            case .switchTo:
+                recorderRow(
+                    title: Localization.labelLeft,
+                    icon: "arrowshape.left.fill",
+                    subtitle: Localization.tipHotkeySwitchLeft,
+                    anchor: .hotkeySwitchLeft,
+                    name: .switchLeft
+                )
+                SettingsRowDivider()
+                recorderRow(
+                    title: Localization.labelRight,
+                    icon: "arrowshape.right.fill",
+                    subtitle: Localization.tipHotkeySwitchRight,
+                    anchor: .hotkeySwitchRight,
+                    name: .switchRight
+                )
+                SettingsRowDivider()
+                SettingsToggleRow(
+                    title: Localization.toggleSkipEmptySpaces,
+                    isOn: model.binding(\.hotkeysSkipEmptySpaces),
+                    icon: "arrow.right.to.line.compact",
+                    subtitle: Localization.tipSkipEmptySpaces,
+                    anchor: .hotkeySkipEmptySpaces
+                )
+            case .send:
+                recorderRow(
+                    title: Localization.labelLeft,
+                    icon: "arrowshape.left.fill",
+                    subtitle: Localization.tipHotkeySendLeft,
+                    anchor: .hotkeySendLeft,
+                    name: .sendLeft
+                )
+                SettingsRowDivider()
+                recorderRow(
+                    title: Localization.labelRight,
+                    icon: "arrowshape.right.fill",
+                    subtitle: Localization.tipHotkeySendRight,
+                    anchor: .hotkeySendRight,
+                    name: .sendRight
+                )
+                SettingsRowDivider()
+                SettingsToggleRow(
+                    title: Localization.toggleSkipEmptySpaces,
+                    isOn: model.binding(\.hotkeysSendSkipEmptySpaces),
+                    icon: "arrow.right.to.line.compact",
+                    subtitle: Localization.tipSendSkipEmptySpaces,
+                    anchor: .hotkeySendSkipEmptySpaces
+                )
+            case .move:
+                recorderRow(
+                    title: Localization.labelLeft,
+                    icon: "arrowshape.left.fill",
+                    subtitle: Localization.tipHotkeyMoveLeft,
+                    anchor: .hotkeyMoveLeft,
+                    name: .moveLeft
+                )
+                SettingsRowDivider()
+                recorderRow(
+                    title: Localization.labelRight,
+                    icon: "arrowshape.right.fill",
+                    subtitle: Localization.tipHotkeyMoveRight,
+                    anchor: .hotkeyMoveRight,
+                    name: .moveRight
+                )
+                SettingsRowDivider()
+                SettingsToggleRow(
+                    title: Localization.toggleSkipEmptySpaces,
+                    isOn: model.binding(\.hotkeysMoveSkipEmptySpaces),
+                    icon: "arrow.right.to.line.compact",
+                    subtitle: Localization.tipMoveSkipEmptySpaces,
+                    anchor: .hotkeyMoveSkipEmptySpaces
+                )
+            }
+        }
+        // A deep link or search hit can target a row the picker is hiding,
+        // so the verb follows the anchor before the highlight lands
+        .onChange(of: highlighter?.anchor) { _, anchor in
+            if let verb = Self.directionalVerb(for: anchor) {
+                directionalVerb = verb
+            }
+        }
+        .onAppear {
+            if let verb = Self.directionalVerb(for: highlighter?.anchor) {
+                directionalVerb = verb
+            }
+        }
+    }
+
+    /// The verb whose rows carry the anchor, nil for anchors outside the
+    /// directional card.
+    private static func directionalVerb(for anchor: SettingsAnchor?) -> Verb? {
+        switch anchor {
+        case .hotkeySwitchLeft, .hotkeySwitchRight, .hotkeySkipEmptySpaces:
+            .switchTo
+        case .hotkeySendLeft, .hotkeySendRight, .hotkeySendSkipEmptySpaces:
+            .send
+        case .hotkeyMoveLeft, .hotkeyMoveRight, .hotkeyMoveSkipEmptySpaces:
+            .move
+        default:
+            nil
         }
     }
 
@@ -153,8 +208,8 @@ struct KeyboardPane: View {
 
     // MARK: - Rows
 
-    /// The rows outside the Jump list, which differ only in what they say and
-    /// which binding they record.
+    /// The rows outside the numbered list, which differ only in what they say
+    /// and which binding they record.
     private func recorderRow(
         title: String,
         icon: String,
@@ -167,9 +222,6 @@ struct KeyboardPane: View {
         } control: {
             KeyboardShortcuts.Recorder(for: name)
         }
-        // The Jump list gives up this strip to its scroller, so the other
-        // cards give up the same width and all the recorders stay aligned
-        .padding(.trailing, Layout.settingsSpaceListScrollerWidth)
     }
 
     /// Wrap around and classic switching govern these hotkeys too - for
@@ -206,35 +258,22 @@ struct KeyboardPane: View {
     /// bindable numbers hidden behind a reveal button so the card does not
     /// spend sixteen rows of height on Spaces that do not exist. Global
     /// numbering resolves across every display; local numbering follows the
-    /// active display. The list scrolls within a capped height so a revealed
-    /// sixteen rows do not run the window off the screen.
-    private var jumpSection: some View {
-        let visible = visibleJumpNumbers
-        return SettingsSection(Localization.labelJump, anchor: .jump) {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 0) {
-                    ForEach(Array(visible.enumerated()), id: \.element) { index, number in
-                        if index > 0 {
-                            SettingsRowDivider()
-                        }
-                        jumpRow(number: number)
-                    }
+    /// active display. The card lays out every visible row; the pane's own
+    /// scroll view handles a revealed sixteen rows overrunning the screen.
+    private var numberedSection: some View {
+        let visible = visibleNumbers
+        return SettingsSection(Localization.labelNumberedSpaces, anchor: .numberedSpaces) {
+            verbPicker(Localization.labelNumberedSpaces, selection: $numberedVerb)
+            SettingsRowDivider()
+            ForEach(Array(visible.enumerated()), id: \.element) { index, number in
+                if index > 0 {
+                    SettingsRowDivider()
                 }
-                // A space-reserving scroller insets the rows by itself; the
-                // overlay kind floats over them, so the rows step aside for
-                // it here. Either way the Switch card above pads by the same
-                // width, keeping the two columns of recorders aligned.
-                .padding(
-                    .trailing,
-                    NSScroller.preferredScrollerStyle == .overlay
-                        ? Layout.settingsSpaceListScrollerWidth
-                        : 0
-                )
+                numberedRow(number: number)
             }
-            .frame(maxHeight: Layout.settingsJumpListMaxHeight)
-            if visible.count < HotkeyCenter.maxJumpTargets {
+            if hasInactiveSpaces {
                 SettingsRowDivider()
-                revealButton
+                revealToggleButton
             }
         }
         // A binding on a hidden row must stay visible, so the list starts
@@ -257,28 +296,64 @@ struct KeyboardPane: View {
 
     /// The rows on screen: every Space that exists, plus the placeholders
     /// once revealed.
-    private var visibleJumpNumbers: [Int] {
+    private var visibleNumbers: [Int] {
         let all = Array(1 ... HotkeyCenter.maxJumpTargets)
         return revealsInactiveSpaces ? all : all.filter { !isPlaceholder($0) }
     }
 
+    /// A recorded binding on a hidden row must stay visible whichever verb
+    /// the picker shows, so every verb's names count.
     private var placeholderHasBinding: Bool {
         (1 ... HotkeyCenter.maxJumpTargets).contains { number in
-            isPlaceholder(number)
-                && KeyboardShortcuts.getShortcut(for: KeyboardShortcuts.Name.jumpToSpace[number - 1]) != nil
+            isPlaceholder(number) && [
+                KeyboardShortcuts.Name.jumpToSpace[number - 1],
+                KeyboardShortcuts.Name.sendToSpace[number - 1],
+                KeyboardShortcuts.Name.moveToSpace[number - 1],
+            ].contains { KeyboardShortcuts.getShortcut(for: $0) != nil }
         }
     }
 
-    private var revealButton: some View {
+    /// The verbs share one card's rows, so the picker chooses which binding
+    /// a row records rather than growing the card threefold. `title` names
+    /// the control for accessibility.
+    private func verbPicker(_ title: String, selection: Binding<Verb>) -> some View {
+        VerbSegments(title: title, selection: selection)
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, Layout.settingsRowHorizontalPadding)
+            .padding(.vertical, Layout.settingsRowVerticalPadding)
+    }
+
+    private func recorderName(for number: Int) -> KeyboardShortcuts.Name {
+        switch numberedVerb {
+        case .switchTo:
+            KeyboardShortcuts.Name.jumpToSpace[number - 1]
+        case .send:
+            KeyboardShortcuts.Name.sendToSpace[number - 1]
+        case .move:
+            KeyboardShortcuts.Name.moveToSpace[number - 1]
+        }
+    }
+
+    /// Whether any bindable number is a placeholder, leaving the toggle
+    /// below the rows something to reveal or hide.
+    private var hasInactiveSpaces: Bool {
+        (1 ... HotkeyCenter.maxJumpTargets).contains(where: isPlaceholder)
+    }
+
+    private var revealToggleButton: some View {
         Button {
             withAnimation {
-                revealsInactiveSpaces = true
+                revealsInactiveSpaces.toggle()
             }
         } label: {
             HStack(spacing: 5) {
-                Image(systemName: "chevron.down.2")
+                Image(systemName: revealsInactiveSpaces ? "chevron.up.2" : "chevron.down.2")
                     .frame(width: Layout.settingsRowIconWidth)
-                Text(Localization.actionRevealInactiveSpaces)
+                Text(
+                    revealsInactiveSpaces
+                        ? Localization.actionHideInactiveSpaces
+                        : Localization.actionRevealInactiveSpaces
+                )
                 Spacer(minLength: 0)
             }
             .font(.system(size: Layout.settingsRowFontSize))
@@ -288,13 +363,13 @@ struct KeyboardPane: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .help(Localization.tipSpacePlaceholderHotkey)
+        .help(revealsInactiveSpaces ? "" : Localization.tipSpacePlaceholderHotkey)
     }
 
     /// Placeholder rows grey only the name, the same treatment the Spaces
     /// sidebar gives them; the recorder stays full strength because binding
     /// ahead of time is exactly what those rows are for.
-    private func jumpRow(number: Int) -> some View {
+    private func numberedRow(number: Int) -> some View {
         let localNumbers = model.value(\.localSpaceNumbers)
         let candidate = localCandidate(number)
         let placeholder = isPlaceholder(number)
@@ -307,7 +382,7 @@ struct KeyboardPane: View {
             )
             .foregroundStyle(placeholder ? AnyShapeStyle(.tertiary) : AnyShapeStyle(.primary))
         } control: {
-            KeyboardShortcuts.Recorder(for: KeyboardShortcuts.Name.jumpToSpace[number - 1])
+            KeyboardShortcuts.Recorder(for: recorderName(for: number))
         }
         .help(placeholder ? Localization.tipSpacePlaceholderHotkey : "")
     }
@@ -318,5 +393,56 @@ struct KeyboardPane: View {
     private func localCandidate(_ number: Int) -> (number: Int, entry: SpaceEntry?) {
         let entries = appState.allSpaceEntries
         return (number, number <= entries.count ? entries[number - 1] : nil)
+    }
+}
+
+/// The verb tabs as an `NSSegmentedControl`: SwiftUI's segmented picker
+/// sizes to its labels and centers in extra width, while
+/// `segmentDistribution = .fillEqually` stretches the segments across the
+/// card's full row.
+private struct VerbSegments: NSViewRepresentable {
+    let title: String
+    @Binding fileprivate var selection: KeyboardPane.Verb
+
+    func makeNSView(context: Context) -> NSSegmentedControl {
+        let control = NSSegmentedControl(
+            labels: [
+                Localization.labelSwitch,
+                Localization.labelSendWindow,
+                Localization.labelMoveWindow,
+            ],
+            trackingMode: .selectOne,
+            target: context.coordinator,
+            action: #selector(Coordinator.selectionChanged(_:))
+        )
+        control.segmentDistribution = .fillEqually
+        control.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        control.setAccessibilityLabel(title)
+        return control
+    }
+
+    func updateNSView(_ control: NSSegmentedControl, context: Context) {
+        context.coordinator.selection = $selection
+        control.selectedSegment = selection.rawValue
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(selection: $selection)
+    }
+
+    final class Coordinator: NSObject {
+        fileprivate var selection: Binding<KeyboardPane.Verb>
+
+        fileprivate init(selection: Binding<KeyboardPane.Verb>) {
+            self.selection = selection
+        }
+
+        @MainActor
+        @objc func selectionChanged(_ sender: NSSegmentedControl) {
+            guard let verb = KeyboardPane.Verb(rawValue: sender.selectedSegment) else {
+                return
+            }
+            selection.wrappedValue = verb
+        }
     }
 }

@@ -209,8 +209,6 @@ enum Layout {
     static let settingsSpaceListWidth = 140.0
     /// Height at which the Space list starts scrolling instead of growing
     static let settingsSpaceListMaxHeight = 800.0
-    /// Height cap on the jump-to-Space recorder list in the Keyboard pane
-    static let settingsJumpListMaxHeight = 250.0
     /// Trailing inset a scrolling list leaves for an overlay scroller
     static let settingsSpaceListScrollerWidth = 16.0
     /// Character cap on a custom Space name
@@ -334,6 +332,7 @@ enum Localization {
     static let actionCopyTo = String(localized: "action_copy_to")
     static let actionCheckForUpdates = String(localized: "action_check_for_updates")
     static let actionExportSettings = String(localized: "action_export_settings")
+    static let actionHideInactiveSpaces = String(localized: "action_hide_inactive_spaces")
     static let actionImportSettings = String(localized: "action_import_settings")
     static let actionInvertColors = String(localized: "action_invert_colors")
     static let actionOpenSystemSettings = String(localized: "action_open_system_settings")
@@ -412,6 +411,7 @@ enum Localization {
     static let errorScriptingSpaceOutOfRange = String(localized: "error_scripting_space_out_of_range")
     static let errorScriptingWindowIsFullscreen = String(localized: "error_scripting_window_is_fullscreen")
 
+    static let labelAdjacentSpaces = String(localized: "label_adjacent_spaces")
     static let labelAllDisplays = String(localized: "label_all_displays")
     static let labelAppearance = String(localized: "label_appearance")
     static let labelAllSpaces = String(localized: "label_all_spaces")
@@ -438,17 +438,16 @@ enum Localization {
     static let labelHorizontal = String(localized: "label_horizontal")
     static let labelInactiveSpaceOpacity = String(localized: "label_inactive_space_opacity")
     static let labelInside = String(localized: "label_inside")
-    static let labelJump = String(localized: "label_jump")
     static let labelLabelBackground = String(localized: "label_label_background")
     static let labelLabelForeground = String(localized: "label_label_foreground")
     static let labelLeft = String(localized: "label_left")
-    static let labelMoveLeft = String(localized: "label_move_left")
-    static let labelMoveRight = String(localized: "label_move_right")
+    static let labelMoveWindow = String(localized: "label_move_window")
     static let labelNever = String(localized: "label_never")
     static let labelNone = String(localized: "label_none")
     static let labelNumber = String(localized: "label_number")
     static let labelNumberBackground = String(localized: "label_number_background")
     static let labelNumberForeground = String(localized: "label_number_foreground")
+    static let labelNumberedSpaces = String(localized: "label_numbered_spaces")
     static let labelOff = String(localized: "label_off")
     static let labelOutside = String(localized: "label_outside")
     static let labelPickerAppIcons = String(localized: "label_picker_app_icons")
@@ -459,10 +458,10 @@ enum Localization {
     static let labelPickerStyleName = String(localized: "label_picker_style_name")
     static let labelPreview = String(localized: "label_preview")
     static let labelPrevious = String(localized: "label_previous")
+    static let labelPreviousSpace = String(localized: "label_previous_space")
     static let labelResetSettings = String(localized: "label_reset_settings")
     static let labelRight = String(localized: "label_right")
-    static let labelSendLeft = String(localized: "label_send_left")
-    static let labelSendRight = String(localized: "label_send_right")
+    static let labelSendWindow = String(localized: "label_send_window")
     static let labelSensitivity = String(localized: "label_sensitivity")
     static let labelSkinTone = String(localized: "label_skin_tone")
     static let labelSeparator = String(localized: "label_separator")
@@ -485,7 +484,6 @@ enum Localization {
     static let labelStylePill = String(localized: "label_style_pill")
     static let labelStylePillOutline = String(localized: "label_style_pill_outline")
     static let labelVertical = String(localized: "label_vertical")
-    static let labelWindow = String(localized: "label_window")
     static let menuBadge = String(localized: "menu_badge")
     static let menuColor = String(localized: "menu_color")
     static let menuEmoji = String(localized: "menu_emoji")
@@ -565,6 +563,7 @@ enum Localization {
     static let tipLastChecked = String(localized: "tip_last_checked")
     static let tipLaunchAtLogin = String(localized: "tip_launch_at_login")
     static let tipLocalSpaceNumbers = String(localized: "tip_local_space_numbers")
+    static let tipMoveSkipEmptySpaces = String(localized: "tip_move_skip_empty_spaces")
     static let tipPickerAppIcons = String(localized: "tip_picker_app_icons")
     static let tipPickerStyle = String(localized: "tip_picker_style")
     static let tipPreserveSystemSpaceNumbers = String(localized: "tip_preserve_system_space_numbers")
@@ -577,6 +576,7 @@ enum Localization {
     static let tipScrollInverted = String(localized: "tip_scroll_inverted")
     static let tipScrollWrapAround = String(localized: "tip_scroll_wrap_around")
     static let tipSearch = String(localized: "tip_search")
+    static let tipSendSkipEmptySpaces = String(localized: "tip_send_skip_empty_spaces")
     static let tipSensitivity = String(localized: "tip_sensitivity")
     static let tipSeparator = String(localized: "tip_separator")
     static let tipSeparatorStyle = String(localized: "tip_separator_style")
@@ -591,7 +591,6 @@ enum Localization {
     static let tipSpacePlaceholder = String(localized: "tip_space_placeholder")
     static let tipSpacePlaceholderHotkey = String(localized: "tip_space_placeholder_hotkey")
     static let tipUseFForFullscreenApps = String(localized: "tip_use_f_for_fullscreen_apps")
-    static let tipWindowSkipEmptySpaces = String(localized: "tip_window_skip_empty_spaces")
     static let toggleAutoCheckUpdates = String(localized: "toggle_auto_check_updates")
     static let toggleAutoInstallUpdates = String(localized: "toggle_auto_install_updates")
     static let toggleBetaUpdates = String(localized: "toggle_beta_updates")
