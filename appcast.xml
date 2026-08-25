@@ -6,9 +6,22 @@
     <description>Most recent changes with links to updates.</description>
     <language>en</language>
     <item>
-        <title>Version 1.3.2</title>
+        <title>Version 1.3.3</title>
         <description><![CDATA[
           <style>.sparkle-installed-version, .sparkle-installed-version ~ * { display: none }</style>
+          <section data-sparkle-version="1.3.3">
+            <h3>v1.3.3</h3>
+            <ul>
+              <li>menubar: Fix actor-isolation warning</li>
+              <li>menubar: Defer eviction checks across Space transitions</li>
+              <li>settings: Make shrink-to-fit opt-in</li>
+              <li>spaces: Fall back to classic switching when gestures bounce</li>
+              <li>switching: Restore force-enabled hotkeys after posting</li>
+              <li>hotkeys: Add numbered send/move bindings</li>
+              <li>hotkeys: Offer to replace a duplicate shortcut</li>
+              <li>settings: Keep permission-tinted rows undimmed</li>
+            </ul>
+          </section>
           <section data-sparkle-version="1.3.2">
             <h3>v1.3.2</h3>
             <ul>
@@ -1038,6 +1051,26 @@
             <h3>v0.1.0</h3>
             <p>Initial release</p>
           </section>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.3.3</sparkle:fullReleaseNotesLink>
+        <pubDate>Wed, 26 Aug 2026 00:07:09 +0100</pubDate>
+        <enclosure
+          url="https://github.com/gechr/WhichSpace/releases/download/v1.3.3/WhichSpace.zip"
+          sparkle:version="1.3.3"
+          sparkle:shortVersionString="1.3.3"
+          sparkle:edSignature="BG/aYzaC+JyljlLSZ5pZ77sseCgebMVxkYJIJXxqhWXDk4wO0eGsg/+IyKzyoS27YegE5XfHjMLns4Q7FijMAw=="
+          length="4124746"
+          type="application/octet-stream" />
+        <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      </item>
+    <item>
+        <title>Version 1.3.2</title>
+        <description><![CDATA[
+          <h3>v1.3.2</h3>
+          <ul>
+            <li>macos: Preserve behavior before macOS 27</li>
+            <li>spaces: Take Mission Control reorders into account</li>
+          </ul>
         ]]></description>
         <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.3.2</sparkle:fullReleaseNotesLink>
         <pubDate>Tue, 25 Aug 2026 01:38:20 +0100</pubDate>
