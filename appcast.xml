@@ -6,9 +6,16 @@
     <description>Most recent changes with links to updates.</description>
     <language>en</language>
     <item>
-        <title>Version 1.3.1</title>
+        <title>Version 1.3.2</title>
         <description><![CDATA[
           <style>.sparkle-installed-version, .sparkle-installed-version ~ * { display: none }</style>
+          <section data-sparkle-version="1.3.2">
+            <h3>v1.3.2</h3>
+            <ul>
+              <li>macos: Preserve behavior before macOS 27</li>
+              <li>spaces: Take Mission Control reorders into account</li>
+            </ul>
+          </section>
           <section data-sparkle-version="1.3.1">
             <h3>v1.3.1</h3>
             <ul>
@@ -1031,6 +1038,28 @@
             <h3>v0.1.0</h3>
             <p>Initial release</p>
           </section>
+        ]]></description>
+        <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.3.2</sparkle:fullReleaseNotesLink>
+        <pubDate>Tue, 25 Aug 2026 01:38:20 +0100</pubDate>
+        <enclosure
+          url="https://github.com/gechr/WhichSpace/releases/download/v1.3.2/WhichSpace.zip"
+          sparkle:version="1.3.2"
+          sparkle:shortVersionString="1.3.2"
+          sparkle:edSignature="mKbOijK3XlVZJt/UBqgdcbW4blRgcXVkg3DIvMV40fCvqae9wNVE4LsymMxx3C0e9fkqnO0Yz0ioZEZleq+aDA=="
+          length="4089336"
+          type="application/octet-stream" />
+        <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      </item>
+    <item>
+        <title>Version 1.3.1</title>
+        <description><![CDATA[
+          <h3>v1.3.1</h3>
+          <ul>
+            <li>menubar: Fix scroll switching on macOS 27</li>
+            <li>cleanup: Strip license headers</li>
+            <li>spaces: Fix stranded menu bar on macOS 27</li>
+            <li>settings: Select panes with Command-digit</li>
+          </ul>
         ]]></description>
         <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/v1.3.1</sparkle:fullReleaseNotesLink>
         <pubDate>Mon, 24 Aug 2026 11:46:58 +0100</pubDate>
