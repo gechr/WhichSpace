@@ -883,6 +883,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "WhichSpace/Classes/WhichSpace-Bridging-Header.h";
 				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
 				SWIFT_VERSION = 6.0;
 			};
 			name = Debug;
@@ -916,6 +917,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "WhichSpace/Classes/WhichSpace-Bridging-Header.h";
 				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
 				SWIFT_VERSION = 6.0;
 			};
 			name = Release;
@@ -937,6 +939,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.gechr.WhichSpaceTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
 				SWIFT_VERSION = 6.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WhichSpace.app/Contents/MacOS/WhichSpace";
 			};
@@ -963,6 +966,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.gechr.WhichSpaceTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
 				SWIFT_VERSION = 6.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WhichSpace.app/Contents/MacOS/WhichSpace";
 			};

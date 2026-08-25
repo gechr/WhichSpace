@@ -30,6 +30,7 @@ extension NSEvent {
         statusItemModifierFlags.contains(.option)
     }
 
+    @MainActor
     func statusItemLocation(in window: NSWindow?) -> CGPoint {
         guard statusItemEventsArriveOutOfProcess, let window else {
             return locationInWindow
