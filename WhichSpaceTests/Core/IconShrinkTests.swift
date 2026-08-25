@@ -142,6 +142,41 @@ struct IconShrinkTests {
         #expect(detector.apply(Self.evicted, now: afterWindow) == .compact)
     }
 
+    @Test("a Space transition holds off a transient eviction reading")
+    func apply_spaceTransitionIsAllowedToSettle() {
+        var detector = MenuBarEvictionDetector()
+        detector.reset()
+        detector.beginSpaceTransition(now: Self.now)
+
+        let duringTransition = Self.now.addingTimeInterval(
+            MenuBarEvictionDetector.spaceTransitionSettleInterval - 0.1
+        )
+        #expect(detector.apply(Self.evicted, now: duringTransition) == nil)
+        #expect(detector.level == .full)
+
+        let afterTransition = Self.now.addingTimeInterval(
+            MenuBarEvictionDetector.spaceTransitionSettleInterval
+        )
+        #expect(detector.apply(Self.evicted, now: afterTransition) == .compact)
+    }
+
+    @Test("an icon relayout does not shorten the Space transition window")
+    func settle_spaceTransitionDeadlineWins() {
+        var detector = MenuBarEvictionDetector()
+        detector.reset()
+        detector.beginSpaceTransition(now: Self.now)
+
+        let relayout = Self.now.addingTimeInterval(0.1)
+        detector.beginSettling(now: relayout)
+
+        let expected = Self.now
+            .addingTimeInterval(MenuBarEvictionDetector.spaceTransitionSettleInterval)
+            .addingTimeInterval(
+                MenuBarEvictionDetector.checkDelay - MenuBarEvictionDetector.settleInterval
+            )
+        #expect(detector.evictionCheckDate == expected)
+    }
+
     // MARK: - Reset
 
     @Test("reset returns the icon to full size")
@@ -200,6 +235,54 @@ struct IconShrinkTests {
         _ = detector.apply(Self.evicted, now: Self.now)
 
         #expect(detector.shouldRetryFullSize(otherStatusWindowCount: 2))
+    }
+
+    @Test("a Space transition waits for a reliable reading before growing back")
+    func retry_spaceTransitionDefersGrowBack() {
+        var detector = MenuBarEvictionDetector()
+        detector.reset()
+        _ = detector.apply(Self.evicted, now: Self.now)
+        detector.beginSpaceTransition(now: Self.now)
+
+        let duringTransition = Self.now.addingTimeInterval(
+            MenuBarEvictionDetector.spaceTransitionSettleInterval - 0.1
+        )
+        let roomAppeared = StatusWindowSnapshot(
+            ownWindowIsOnScreen: true,
+            otherStatusWindowCount: 2,
+            sessionIsActive: true
+        )
+        #expect(detector.apply(roomAppeared, now: duringTransition) == nil)
+        #expect(detector.level == .compact)
+
+        let afterTransition = Self.now.addingTimeInterval(
+            MenuBarEvictionDetector.spaceTransitionSettleInterval
+        )
+        #expect(detector.apply(roomAppeared, now: afterTransition) == .full)
+        #expect(detector.level == .full)
+    }
+
+    @Test("a hidden menu bar keeps the Space transition retry pending")
+    func retry_hiddenMenuBarWaitsForVisibleStatusWindow() {
+        var detector = MenuBarEvictionDetector()
+        detector.reset()
+        _ = detector.apply(Self.evicted, now: Self.now)
+        detector.beginSpaceTransition(now: Self.now)
+
+        let afterTransition = Self.now.addingTimeInterval(
+            MenuBarEvictionDetector.spaceTransitionSettleInterval
+        )
+        #expect(detector.apply(Self.barHidden, now: afterTransition) == nil)
+        #expect(detector.level == .compact)
+        #expect(detector.awaitingSettledReading)
+
+        let barReturned = StatusWindowSnapshot(
+            ownWindowIsOnScreen: true,
+            otherStatusWindowCount: 2,
+            sessionIsActive: true
+        )
+        #expect(detector.apply(barReturned, now: afterTransition) == .full)
+        #expect(!detector.awaitingSettledReading)
     }
 
     @Test("an unshrunk icon has nothing to grow back to")

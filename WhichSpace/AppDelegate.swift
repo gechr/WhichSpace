@@ -374,10 +374,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
         appState.renderer.onIconNeedsUpdate = { [weak self] in
             self?.updateStatusBarIcon()
         }
-        // A Space change only earns another attempt at full size once the
-        // crowding that caused the shrink has eased
+        // Space transitions briefly give an unreliable status-window reading;
+        // once one lands, wait for its animation to settle before judging fit.
         appState.onSnapshotDidChange = { [weak self] in
-            self?.retryFullSizeIfRoomAppeared()
+            self?.handleSnapshotDidChange()
         }
         startObservingIconVisibility()
 
@@ -943,25 +943,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
         pendingEvictionCheck?.cancel()
         pendingEvictionCheck = nil
         // Nothing to schedule once the icon is as small as it goes, unless
-        // the detector still needs a settled reading to finalise the
-        // neighbour count it will grow back against
+        // the detector still needs a reliable reading to finalise neighbour
+        // tracking or reconsider the full-size icon after a Space change
         guard store.shrinkIconToFit,
-              appState.shrinkLevel.next != nil || evictionDetector.awaitingSettledNeighbourCount
+              appState.shrinkLevel.next != nil || evictionDetector.awaitingSettledReading
         else {
             return
         }
         evictionDetector.beginSettling(now: Date())
+        let delay = max(0, evictionDetector.evictionCheckDate.timeIntervalSinceNow)
         pendingEvictionCheck = Task { [weak self] in
-            try? await Task.sleep(for: .seconds(MenuBarEvictionDetector.checkDelay))
+            try? await Task.sleep(for: .seconds(delay))
             guard !Task.isCancelled else {
                 return
             }
             self?.pendingEvictionCheck = nil
-            self?.shrinkIfEvicted()
+            self?.applyEvictionReading()
         }
     }
 
-    /// Shrinks the icon a step when the menu bar has dropped it.
+    /// Applies a settled menu-bar reading, shrinking an evicted icon or
+    /// restoring one after enough neighbours have disappeared.
     ///
     /// The reading that matters is a relative one. Running out of room takes
     /// this app's item off screen and leaves its neighbours behind, so the
@@ -974,7 +976,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
     /// created it, so this app's own status window never appears in the window
     /// list and its absence there says nothing; occlusion answers for it
     /// instead, and is only observable for windows this process owns.
-    private func shrinkIfEvicted() {
+    private func applyEvictionReading() {
         guard store.shrinkIconToFit,
               let statusBarItem, statusBarItem.isVisible,
               let window = statusBarItem.button?.window
@@ -997,7 +999,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
         guard let level = evictionDetector.apply(snapshot, now: Date()) else {
             return
         }
-        Self.logger.info("menu bar dropped the icon, shrinking to level \(level.rawValue)")
+        if level == .full {
+            Self.logger.info("menu bar has room again, restoring the icon")
+        } else {
+            Self.logger.info("menu bar dropped the icon, shrinking to level \(level.rawValue)")
+        }
         appState.shrinkLevel = level
     }
 
@@ -1018,27 +1024,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
         appState.shrinkLevel = .full
     }
 
-    /// Grows the icon back only once a status item has gone away.
-    ///
-    /// Widening the item reflows every icon to its left, so the whole menu bar
-    /// repaints. Doing that on every Space switch costs a visible flicker each
-    /// time and almost always ends where it started, because switching Space
-    /// does not change what the menu bar is holding. A neighbouring status item
-    /// disappearing does change it, and is the case worth spending a repaint
-    /// on.
-    private func retryFullSizeIfRoomAppeared() {
-        guard store.shrinkIconToFit, appState.shrinkLevel != .full else {
-            return
-        }
-        guard let bounds = lastKnownStatusDisplay else {
-            return
-        }
-        let count = menuBarVisibilityProbe.otherStatusWindowCount(onDisplay: bounds)
-        guard evictionDetector.shouldRetryFullSize(otherStatusWindowCount: count) else {
-            return
-        }
-        Self.logger.info("menu bar has room again, restoring the icon")
-        resetShrinkLevel()
+    /// Defers eviction detection until an animated Space transition has
+    /// finished. Mission Control can hide this status window a frame before
+    /// its neighbours; sampling that transient state strips custom styling by
+    /// incorrectly advancing the shrink ladder to `.compact`.
+    private func handleSnapshotDidChange() {
+        evictionDetector.beginSpaceTransition(now: Date())
+        scheduleEvictionCheck()
     }
 
     /// Watches for the icon being dropped by something other than this app.

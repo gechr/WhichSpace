@@ -165,6 +165,11 @@ struct MenuBarEvictionDetector {
     /// the image relayouts the bar, during which the item reads as off screen.
     static let settleInterval: TimeInterval = 0.4
 
+    /// How long an adjacent Space transition is allowed to finish. During the
+    /// animation this app's status window can disappear before the other menu
+    /// extras, which otherwise looks exactly like genuine eviction.
+    static let spaceTransitionSettleInterval: TimeInterval = 1
+
     /// How long after a render the deciding reading is taken. A little past
     /// the settle interval, so a reading is never discarded for landing on
     /// the boundary.
@@ -183,15 +188,29 @@ struct MenuBarEvictionDetector {
     /// mid-layout and not yet drawn, so it misses the very item that caused
     /// the shrink; the first settled reading afterwards replaces it.
     private var neighbourCountIsProvisional = false
+    /// Whether a Space change should use its next reliable reading to see if
+    /// enough neighbours disappeared for the full icon to fit again.
+    private var fullSizeRetryIsPending = false
 
     /// Holds readings off until the status item has been laid out again.
     mutating func beginSettling(now: Date) {
-        settleDeadline = now.addingTimeInterval(Self.settleInterval)
+        settleDeadline = max(settleDeadline, now.addingTimeInterval(Self.settleInterval))
     }
 
-    /// The moment a held-off reading becomes usable again.
-    var settleDeadlineDate: Date {
-        settleDeadline
+    /// Holds eviction readings off while the system animates to a new Space.
+    /// A later ordinary settle request must not shorten this longer window.
+    mutating func beginSpaceTransition(now: Date) {
+        settleDeadline = max(
+            settleDeadline,
+            now.addingTimeInterval(Self.spaceTransitionSettleInterval)
+        )
+        fullSizeRetryIsPending = level != .full
+    }
+
+    /// The first reliable time to probe, including a small margin past the
+    /// boundary so timer jitter cannot make the detector discard the reading.
+    var evictionCheckDate: Date {
+        settleDeadline.addingTimeInterval(Self.checkDelay - Self.settleInterval)
     }
 
     /// Whether the next settled reading is still needed to replace the
@@ -200,17 +219,31 @@ struct MenuBarEvictionDetector {
         neighbourCountIsProvisional
     }
 
+    /// Whether a reading is still needed even when the shrink ladder is at
+    /// its floor. A hidden menu bar leaves a Space-change retry pending until
+    /// this app's status window is visible and its neighbour count is usable.
+    var awaitingSettledReading: Bool {
+        neighbourCountIsProvisional || fullSizeRetryIsPending
+    }
+
     /// Applies a probe reading, returning the level to render at, or nil to
     /// leave the icon as it is.
     mutating func apply(_ snapshot: StatusWindowSnapshot, now: Date) -> IconShrinkLevel? {
         guard now >= settleDeadline,
-              snapshot.sessionIsActive,
-              snapshot.otherMenuBarWindowIsOnScreen
+              snapshot.sessionIsActive
         else {
             return nil
         }
 
         if snapshot.ownWindowIsOnScreen {
+            if fullSizeRetryIsPending,
+               shouldRetryFullSize(otherStatusWindowCount: snapshot.otherStatusWindowCount)
+            {
+                reset()
+                return .full
+            }
+            fullSizeRetryIsPending = false
+
             // The settled reading is the first to count the item whose
             // arrival caused the shrink. Taking the larger of the two
             // readings keeps a transient departure between them from
@@ -224,6 +257,14 @@ struct MenuBarEvictionDetector {
             }
             return nil
         }
+
+        // Mission Control, a fullscreen Space, or an auto-hidden menu bar can
+        // hide every status window together. Keep any grow-back retry pending
+        // until the bar returns and the relative reading is meaningful.
+        guard snapshot.otherMenuBarWindowIsOnScreen else {
+            return nil
+        }
+        fullSizeRetryIsPending = false
 
         guard let next = level.next else {
             return nil
@@ -250,10 +291,10 @@ struct MenuBarEvictionDetector {
 
     /// Returns the icon to full size.
     ///
-    /// Called when the user switches Space, changes a setting, or the display
-    /// configuration changes. Every layout starts at the top of the ladder and
-    /// steps down only as far as the readings require: remembering where a
-    /// layout settled last time would save a step, but a remembered level is
+    /// Called when room opens, the user changes a setting, or the display
+    /// configuration changes. Every layout starts at the top of the ladder
+    /// and steps down only as far as the readings require: remembering where
+    /// a layout settled last time would save a step, but a remembered level is
     /// applied without testing the one above it, so a stale entry can never
     /// discover that the shallower level now fits.
     mutating func reset() {
@@ -261,5 +302,6 @@ struct MenuBarEvictionDetector {
         settleDeadline = .distantPast
         neighbourCountWhenShrunk = nil
         neighbourCountIsProvisional = false
+        fullSizeRetryIsPending = false
     }
 }
