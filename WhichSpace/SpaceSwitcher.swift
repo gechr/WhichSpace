@@ -723,7 +723,7 @@ enum SpaceSwitcher {
     /// Switches via the "Switch to Desktop N" shortcut when the target has
     /// one, stepping with the arrow shortcuts otherwise (fullscreen Spaces
     /// and Desktops beyond 16 have no numbered shortcut).
-    private static func classicSwitch(
+    @MainActor private static func classicSwitch(
         toSpaceID targetSpaceID: Int,
         goRight: Bool,
         steps: Int,
@@ -772,9 +772,40 @@ enum SpaceSwitcher {
         return nil
     }
 
+    /// Symbolic hotkeys force-enabled for a posted switch because the user
+    /// has them switched off in System Settings, awaiting restoration.
+    @MainActor private static var forceEnabledHotKeys: Set<CGSSymbolicHotKey> = []
+
+    /// Pending restoration of force-enabled hotkeys.
+    @MainActor private static var hotKeyRestoreTask: Task<Void, Never>?
+
+    /// How long a force-enabled hotkey stays on after posting. The posted key
+    /// events must reach WindowServer while the hotkey is live; once matched,
+    /// disabling again does not affect the in-flight switch.
+    private static let hotKeyRestoreDelay: Duration = .milliseconds(250)
+
+    /// Turns force-enabled hotkeys back off once posted events have had time
+    /// to be matched, so a shortcut the user disabled in System Settings does
+    /// not stay live for the rest of the session. Each post pushes the
+    /// restoration back, keeping the hotkey on across rapid successive steps.
+    @MainActor private static func scheduleHotKeyRestore() {
+        hotKeyRestoreTask?.cancel()
+        hotKeyRestoreTask = Task {
+            try? await Task.sleep(for: hotKeyRestoreDelay)
+            guard !Task.isCancelled else {
+                return
+            }
+            for hotKey in forceEnabledHotKeys {
+                CGSSetSymbolicHotKeyEnabled(hotKey, false)
+            }
+            forceEnabledHotKeys.removeAll()
+            hotKeyRestoreTask = nil
+        }
+    }
+
     /// Posts the key event pair for a symbolic hotkey, enabling the hotkey
     /// first if the user has it switched off in System Settings.
-    private static func postHotKey(_ hotKey: CGSSymbolicHotKey) -> Bool {
+    @MainActor private static func postHotKey(_ hotKey: CGSSymbolicHotKey) -> Bool {
         var keyCode: CGKeyCode = 0
         var flags: CGSModifierFlags = 0
         guard CGSGetSymbolicHotKeyValue(hotKey, nil, &keyCode, &flags) == .success else {
@@ -787,6 +818,8 @@ enum SpaceSwitcher {
                 NSLog("SpaceSwitcher: failed to enable hot key %d", Int(hotKey))
                 return false
             }
+            forceEnabledHotKeys.insert(hotKey)
+            scheduleHotKeyRestore()
         }
 
         guard let keyDown = CGEvent(keyboardEventSource: nil, virtualKey: keyCode, keyDown: true),
