@@ -333,6 +333,17 @@ struct StatusBarShrinkLevelTests {
         #expect(appState.statusBarLayout().slots.map(\.label) == ["1", "2", "3"])
     }
 
+    @Test("single-icon mode still shrinks a custom label")
+    func compact_singleIconModeDropsCustomLabel() {
+        store.spaceLabels = [2: "A very long workspace label"]
+        let appState = makeAppState(spaces: Self.plainSpaces, activeSpaceID: 101)
+        let fullWidth = appState.statusBarIcon.size.width
+
+        appState.shrinkLevel = .compact
+
+        #expect(appState.statusBarIcon.size.width < fullWidth)
+    }
+
     @Test("every level of the ladder narrows the icon again")
     func levels_narrowTheIconMonotonically() {
         store.showAllDisplays = true

@@ -178,6 +178,7 @@ struct DefaultsIsolationGuardTests {
         #expect(store.inactiveSpaceOpacity == Layout.defaultInactiveSpaceOpacity)
         #expect(!store.scrollHapticFeedback)
         #expect(store.scrollHapticIntensity == Layout.defaultScrollHapticIntensity)
+        #expect(!store.shrinkIconToFit)
         #expect(store.spaceColors.isEmpty)
 
         store.showAllSpaces = true

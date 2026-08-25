@@ -7,8 +7,7 @@ import SwiftUI
 ///
 /// The sections are ordered so that a row always appears below the toggles
 /// that gate it. Both visibility masters lead the pane, which puts the rows
-/// they dim - the fullscreen letter, and shrinking to fit - in reading order
-/// after the settings that explain the dimming.
+/// they dim in reading order after the settings that explain the dimming.
 struct MenuBarPane: View {
     let model: SettingsModel
 
@@ -166,10 +165,6 @@ struct MenuBarPane: View {
                 title: Localization.toggleShrinkToFit,
                 isOn: model.binding(\.shrinkIconToFit),
                 icon: "arrow.down.right.and.arrow.up.left",
-                // A single icon has no Spaces or displays to drop, leaving
-                // only its own padding and styling to give up, so the row
-                // fades while staying live
-                dimmed: showsCurrentSpaceOnly,
                 subtitle: String(format: Localization.tipShrinkToFit, AppInfo.appName),
                 anchor: .shrinkToFit
             )

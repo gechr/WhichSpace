@@ -173,7 +173,7 @@ struct BackupSettings: Codable {
         separatorStyle = try container.decodeIfPresent(String.self, forKey: .separatorStyle)
         showAllDisplays = try container.decodeIfPresent(Bool.self, forKey: .showAllDisplays) ?? false
         showAllSpaces = try container.decodeIfPresent(Bool.self, forKey: .showAllSpaces) ?? false
-        shrinkIconToFit = try container.decodeIfPresent(Bool.self, forKey: .shrinkIconToFit) ?? true
+        shrinkIconToFit = try container.decodeIfPresent(Bool.self, forKey: .shrinkIconToFit) ?? false
         sizeScale = try container.decodeIfPresent(Double.self, forKey: .sizeScale) ?? Layout.defaultSizeScale
         soundName = try container.decodeIfPresent(String.self, forKey: .soundName) ?? ""
         spacePickerMaxAppIcons = try container.decodeIfPresent(Int.self, forKey: .spacePickerMaxAppIcons)

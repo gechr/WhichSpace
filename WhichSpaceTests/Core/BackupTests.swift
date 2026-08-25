@@ -416,6 +416,7 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         XCTAssertFalse(backup.settings.invertHorizontalScroll)
         XCTAssertFalse(backup.settings.invertVerticalScroll)
         XCTAssertEqual(backup.settings.scrollSensitivity, Layout.defaultScrollSensitivity)
+        XCTAssertFalse(backup.settings.shrinkIconToFit)
         XCTAssertNil(backup.settings.uniqueIconsPerDisplay)
         XCTAssertFalse(backup.settings.verticalScrollEnabled)
         XCTAssertEqual(backup.settings.soundName, "")
