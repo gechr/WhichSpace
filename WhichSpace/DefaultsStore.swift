@@ -141,6 +141,7 @@ enum KeySpecs {
     static let spaceIconStyles = TypedKeySpec(name: "spaceIconStyles", defaultValue: [Int: IconStyle]())
     static let spaceLabels = TypedKeySpec(name: "spaceLabels", defaultValue: [Int: String]())
     static let spaceLabelStyles = TypedKeySpec(name: "spaceLabelStyles", defaultValue: [Int: IconStyle]())
+    static let spaceOrders = TypedKeySpec(name: "spaceOrders", defaultValue: [String: [String]]())
     static let spacePickerMaxAppIcons = TypedKeySpec(
         name: "spacePickerMaxAppIcons",
         defaultValue: Layout.defaultSpacePickerMaxAppIcons
@@ -209,6 +210,7 @@ enum KeySpecs {
         spaceIconStyles,
         spaceLabels,
         spaceLabelStyles,
+        spaceOrders,
         spacePickerMaxAppIcons,
         spacePickerStyle,
         spaceSkinTones,
@@ -240,6 +242,7 @@ enum KeySpecs {
         scrollSensitivity.name,
         scrollWrapAround.name,
         soundName.name,
+        spaceOrders.name,
         spacePickerMaxAppIcons.name,
         spacePickerStyle.name,
         spaceSounds.name,
@@ -673,6 +676,15 @@ final class DefaultsStore {
     var spaceLabelStyles: [Int: IconStyle] {
         get { self[KeySpecs.spaceLabelStyles] }
         set { self[KeySpecs.spaceLabelStyles] = newValue }
+    }
+
+    /// Each display's Space order as CGS Space UUIDs, in fullscreen-inclusive
+    /// entry position order. Compared against fresh snapshots to detect
+    /// Mission Control reorders, so per-Space preferences can follow their
+    /// Spaces. Device-local state, not part of settings backups.
+    var spaceOrders: [String: [String]] {
+        get { self[KeySpecs.spaceOrders] }
+        set { self[KeySpecs.spaceOrders] = newValue }
     }
 
     var spacePickerMaxAppIcons: Int {

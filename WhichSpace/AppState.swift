@@ -546,6 +546,9 @@ final class AppState {
         if newSnapshot.currentSpaceID == 0, !snapshot.allSpaceEntries.isEmpty {
             return
         }
+        // Runs on equal snapshots too: a pending topology candidate is
+        // confirmed by the next observation, which is usually a no-op apply
+        reconcileSpaceOrders(with: newSnapshot)
         // Skip no-op applies so notification bursts (e.g. every app
         // activation) don't invalidate caches or re-render the icon. Window
         // layout may still have changed, so refresh that data in the
@@ -579,6 +582,112 @@ final class AppState {
 
         // Post notification if space changed on the same display
         postCurrentDisplaySpaceChangeIfNeeded(oldSpaceID: oldSpaceID, oldDisplayID: oldDisplayID)
+    }
+
+    /// A topology observed once that differs from the baseline in Space or
+    /// display membership. Adopted as the new baseline only when the next
+    /// snapshot shows it again, so a single transient partial CGS read
+    /// cannot replace the baseline. Nil means no candidate is in flight,
+    /// which an empty map cannot express.
+    // swiftlint:disable:next discouraged_optional_collection
+    private var pendingSpaceOrders: [String: [String]]?
+
+    /// Tracks each display's Space order by CGS UUID and, when a snapshot
+    /// shows the same Spaces in a different order (a Mission Control
+    /// reorder), moves per-Space preferences so they follow their Spaces.
+    /// Orders persist in defaults, so a reorder done while the app is not
+    /// running reconciles on the next launch.
+    ///
+    /// CGS reads can race display reconfiguration and briefly drop Spaces or
+    /// whole displays, so a snapshot whose membership differs from the
+    /// baseline is only a candidate: it must be observed twice in a row
+    /// before it replaces the baseline, and it never remaps. Only a pure
+    /// reorder - same displays, same Space sets - remaps, and immediately: a
+    /// partial read cannot fabricate one, and the settled baseline stays
+    /// intact underneath any transient in between.
+    ///
+    /// The double observation is a heuristic, not a proof of completeness: a
+    /// transient that survives two consecutive snapshots is adopted as a real
+    /// membership change. A reorder raced by one is then lost - preferences
+    /// stay at their old positions, the pre-tracking behavior - and, rarer
+    /// still, a further partial read showing the adopted reduced set in a
+    /// different order can remap against the poisoned baseline and move
+    /// preferences wrongly until the user rearranges them. Both need the
+    /// same incomplete CGS state to persist across multiple reads while the
+    /// Spaces change underneath, and the values themselves are never lost.
+    /// A snapshot in which any display's UUIDs are missing or ambiguous is
+    /// discarded outright, changing neither the baseline nor the candidate.
+    private func reconcileSpaceOrders(with newSnapshot: SpaceSnapshot) {
+        guard !newSnapshot.allDisplaysSpaceInfo.isEmpty else {
+            return
+        }
+        var current: [String: [String]] = [:]
+        for display in newSnapshot.allDisplaysSpaceInfo {
+            let uuids = display.entries.compactMap(\.uuid)
+            guard uuids.count == display.entries.count,
+                  !uuids.contains(""),
+                  Set(uuids).count == uuids.count
+            else {
+                return
+            }
+            current[display.displayID] = uuids
+        }
+        let baseline = store.spaceOrders
+        guard current != baseline else {
+            pendingSpaceOrders = nil
+            return
+        }
+        guard !baseline.isEmpty else {
+            // Nothing recorded yet, so there is no reorder to detect - adopt
+            // the first observation as the baseline
+            store.spaceOrders = current
+            pendingSpaceOrders = nil
+            return
+        }
+        let isPureReorder = Set(current.keys) == Set(baseline.keys)
+            && current.allSatisfy { displayID, uuids in
+                guard let previous = baseline[displayID] else {
+                    return false
+                }
+                // The count check guards a corrupted external baseline with
+                // duplicates, which equal sets alone would let through
+                return previous.count == uuids.count && Set(previous) == Set(uuids)
+            }
+        guard isPureReorder else {
+            if pendingSpaceOrders == current {
+                store.spaceOrders = current
+                pendingSpaceOrders = nil
+            } else {
+                pendingSpaceOrders = current
+            }
+            return
+        }
+        pendingSpaceOrders = nil
+        // A shared-scope position spans every display, so it can only follow
+        // a reorder when a single display makes the association unambiguous
+        let includeShared = current.count == 1
+        for (displayID, uuids) in current {
+            guard let previous = baseline[displayID], previous != uuids else {
+                continue
+            }
+            var mapping: [Int: Int] = [:]
+            for (index, uuid) in uuids.enumerated() {
+                guard let previousIndex = previous.firstIndex(of: uuid), previousIndex != index else {
+                    continue
+                }
+                mapping[previousIndex + 1] = index + 1
+            }
+            guard !mapping.isEmpty else {
+                continue
+            }
+            SpacePreferences.remapPositions(
+                mapping,
+                display: displayID,
+                includeShared: includeShared,
+                store: store
+            )
+        }
+        store.spaceOrders = current
     }
 
     /// Remembers the Space just left, so `previousSpaceNumber` can offer it as

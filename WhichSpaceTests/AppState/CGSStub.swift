@@ -111,8 +111,27 @@ final class CGSStub: DisplaySpaceProvider, @unchecked Sendable {
         spaces: [(id: Int, isFullscreen: Bool)],
         activeSpaceID: Int
     ) -> NSDictionary {
-        let spaceDicts: [[String: Any]] = spaces.map { space in
+        makeDisplay(
+            displayID: displayID,
+            uuidSpaces: spaces.map { (id: $0.id, uuid: nil, isFullscreen: $0.isFullscreen) },
+            activeSpaceID: activeSpaceID
+        )
+    }
+
+    /// Creates display data whose spaces carry CGS Space UUIDs, for tests
+    /// exercising order tracking. A nil uuid omits the key, matching CGS
+    /// data that lacks one. The distinct label keeps `spaces: []` calls
+    /// unambiguous.
+    static func makeDisplay(
+        displayID: String,
+        uuidSpaces: [(id: Int, uuid: String?, isFullscreen: Bool)],
+        activeSpaceID: Int
+    ) -> NSDictionary {
+        let spaceDicts: [[String: Any]] = uuidSpaces.map { space in
             var dict: [String: Any] = ["ManagedSpaceID": space.id]
+            if let uuid = space.uuid {
+                dict["uuid"] = uuid
+            }
             if space.isFullscreen {
                 dict["TileLayoutManager"] = ["SomeKey": "SomeValue"]
             }

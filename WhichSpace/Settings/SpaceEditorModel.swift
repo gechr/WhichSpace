@@ -43,14 +43,23 @@ final class SpaceEditorModel {
     var selectedDisplayID: String? {
         didSet {
             clearPreview()
+            captureSelectionUUID()
         }
     }
 
     var selection: Selection {
         didSet {
             clearPreview()
+            captureSelectionUUID()
         }
     }
+
+    /// The CGS UUID of the selected Space, captured when the selection is
+    /// set. A Mission Control reorder moves preferences to the Space's new
+    /// position, so the positional selection must follow the Space too -
+    /// left alone, the next edit would land on whichever Space took over
+    /// the old position.
+    @ObservationIgnored private var selectionUUID: String?
 
     /// Overrides applied to the pinned preview card while a candidate value
     /// is hovered; nil while no hover preview is active
@@ -183,6 +192,28 @@ final class SpaceEditorModel {
         if case let .space(number) = selection, !spaceEntries.contains(where: { $0.number == number }) {
             selection = .space(1)
         }
+    }
+
+    private func captureSelectionUUID() {
+        guard case let .space(number) = selection else {
+            selectionUUID = nil
+            return
+        }
+        selectionUUID = spaceEntries.first { $0.number == number }?.entry?.uuid
+    }
+
+    /// Follows the selected Space to its new position after a reorder. A
+    /// UUID no longer present (Space removed, display switched) leaves the
+    /// positional selection for `normalizeSelection` to handle.
+    func retargetSelectionAfterReorder() {
+        guard case let .space(number) = selection,
+              let selectionUUID,
+              let moved = spaceEntries.first(where: { $0.entry?.uuid == selectionUUID }),
+              moved.number != number
+        else {
+            return
+        }
+        selection = .space(moved.number)
     }
 
     /// Re-points the pane at the Space the user is on, so an opening window
@@ -1094,6 +1125,10 @@ final class SpaceEditorModel {
         let keys = store.allKeys
         observationTask = Task { [weak self] in
             for await _ in Defaults.updates(keys, initial: false) {
+                // A reorder reaches this stream through its preference and
+                // spaceOrders writes; the selection must move with its Space
+                // before the pane re-renders against the new positions
+                self?.retargetSelectionAfterReorder()
                 self?.tick += 1
             }
         }

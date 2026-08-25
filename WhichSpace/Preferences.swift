@@ -421,6 +421,33 @@ enum SpacePreferences {
             return store[keyPath: shared][spaceNumber]
         }
 
+        /// Moves stored values between positions. `mapping` is old position
+        /// to new position for every position that moved; positions outside
+        /// it keep their values. The display's override map is always
+        /// permuted; the shared map only when `includeShared`.
+        func remap(_ mapping: [Int: Int], display: String, includeShared: Bool, store: DefaultsStore) {
+            if includeShared {
+                store[keyPath: shared] = applying(mapping, to: store[keyPath: shared])
+            }
+            var perDisplayMap = store[keyPath: perDisplay]
+            if let spaceMap = perDisplayMap[display] {
+                perDisplayMap[display] = applying(mapping, to: spaceMap)
+                store[keyPath: perDisplay] = perDisplayMap
+            }
+        }
+
+        private func applying(_ mapping: [Int: Int], to map: [Int: T]) -> [Int: T] {
+            var result = map
+            for (source, destination) in mapping {
+                if let value = map[source] {
+                    result[destination] = value
+                } else {
+                    result.removeValue(forKey: destination)
+                }
+            }
+            return result
+        }
+
         /// Removes a value from one storage family, bypassing the
         /// override cascade.
         func removeRaw(forSpace spaceNumber: Int, context display: String?, store: DefaultsStore) {
@@ -1067,6 +1094,37 @@ enum SpacePreferences {
         symbolPositions.set(nil, forSpace: spaceNumber, display: display, store: store)
         symbolWraps.set(nil, forSpace: spaceNumber, display: display, store: store)
         sounds.set(nil, forSpace: spaceNumber, display: display, store: store)
+    }
+
+    // MARK: - Reordering
+
+    /// Moves every per-Space preference between positions after Mission
+    /// Control reorders Spaces, so customization follows the Space rather
+    /// than staying at its old position. `mapping` is old position to new
+    /// position for every Space that moved. The display's override map is
+    /// always permuted; the shared maps only when `includeShared` - on a
+    /// single display they are the live scope, while with several displays
+    /// a shared position applies to every display at once and cannot
+    /// follow one display's reorder. The default style template (space 0)
+    /// is positionless and never part of a mapping.
+    static func remapPositions(
+        _ mapping: [Int: Int],
+        display: String,
+        includeShared: Bool,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) {
+        colorsAccessor.remap(mapping, display: display, includeShared: includeShared, store: store)
+        iconStyles.remap(mapping, display: display, includeShared: includeShared, store: store)
+        fonts.remap(mapping, display: display, includeShared: includeShared, store: store)
+        symbols.remap(mapping, display: display, includeShared: includeShared, store: store)
+        badges.remap(mapping, display: display, includeShared: includeShared, store: store)
+        labels.remap(mapping, display: display, includeShared: includeShared, store: store)
+        labelStyles.remap(mapping, display: display, includeShared: includeShared, store: store)
+        skinTones.remap(mapping, display: display, includeShared: includeShared, store: store)
+        symbolGaps.remap(mapping, display: display, includeShared: includeShared, store: store)
+        symbolPositions.remap(mapping, display: display, includeShared: includeShared, store: store)
+        symbolWraps.remap(mapping, display: display, includeShared: includeShared, store: store)
+        sounds.remap(mapping, display: display, includeShared: includeShared, store: store)
     }
 
     // MARK: - Default Style

@@ -972,6 +972,263 @@ struct AppStateTests {
         #expect(appState.allDisplaysSpaceInfo.map(\.displayID) == ["DisplayA", "DisplayB"])
         #expect(appState.currentGlobalSpaceIndex == 3)
     }
+
+    // MARK: - Space Order Reconciliation
+
+    /// Builds a "Main" display whose Space IDs stay glued to their UUIDs, so
+    /// a reordered call reproduces what CGS reports after a Mission Control
+    /// drag: same Spaces, new positions.
+    private func makeMainDisplay(uuids: [String], activeSpaceID: Int = 100) -> NSDictionary {
+        let ids = ["A": 100, "B": 101, "C": 102, "D": 103]
+        return CGSStub.makeDisplay(
+            displayID: "Main",
+            uuidSpaces: uuids.map { uuid in
+                (id: ids[uuid] ?? 199, uuid: uuid, isFullscreen: false)
+            },
+            activeSpaceID: activeSpaceID
+        )
+    }
+
+    @Test("Mission Control reorder moves preferences with their Spaces")
+    func spaceReorder_movesPreferencesWithSpaces() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [makeMainDisplay(uuids: ["A", "B", "C"])]
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        SpacePreferences.setLabel("Work", forSpace: 2, store: store)
+        SpacePreferences.setSymbol("star", forSpace: 2, store: store)
+
+        // Space B moves from position 2 to position 3
+        stub.displays = [makeMainDisplay(uuids: ["A", "C", "B"])]
+        appState.forceSpaceUpdate()
+
+        #expect(SpacePreferences.label(forSpace: 3, store: store) == "Work")
+        #expect(SpacePreferences.symbol(forSpace: 3, store: store) == "star")
+        #expect(SpacePreferences.label(forSpace: 2, store: store) == nil)
+    }
+
+    @Test("adding a Space records the new order without remapping")
+    func spaceAdded_recordsOrderWithoutRemap() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [makeMainDisplay(uuids: ["A", "B"])]
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        SpacePreferences.setLabel("Work", forSpace: 2, store: store)
+
+        // A new Space lands between the existing two - not a permutation
+        stub.displays = [makeMainDisplay(uuids: ["A", "C", "B"])]
+        appState.forceSpaceUpdate()
+
+        #expect(SpacePreferences.label(forSpace: 2, store: store) == "Work")
+
+        // A second observation confirms the candidate as the new baseline
+        appState.forceSpaceUpdate()
+        #expect(store.spaceOrders["Main"] == ["A", "C", "B"])
+
+        // The confirmed order is the new baseline: a later reorder remaps
+        stub.displays = [makeMainDisplay(uuids: ["A", "B", "C"])]
+        appState.forceSpaceUpdate()
+
+        #expect(SpacePreferences.label(forSpace: 3, store: store) == "Work")
+        #expect(SpacePreferences.label(forSpace: 2, store: store) == nil)
+    }
+
+    @Test("multi-display reorder remaps overrides but not shared positions")
+    func multiDisplayReorder_remapsOverridesOnly() {
+        stub.activeDisplayIdentifier = "DisplayA"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "DisplayA",
+                uuidSpaces: [(id: 100, uuid: "A", isFullscreen: false), (id: 101, uuid: "B", isFullscreen: false)],
+                activeSpaceID: 100
+            ),
+            CGSStub.makeDisplay(
+                displayID: "DisplayB",
+                uuidSpaces: [(id: 200, uuid: "C", isFullscreen: false), (id: 201, uuid: "D", isFullscreen: false)],
+                activeSpaceID: 200
+            ),
+        ]
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        SpacePreferences.setLabel("Shared", forSpace: 1, store: store)
+        SpacePreferences.setLabel("Override", forSpace: 1, display: "DisplayB", store: store)
+
+        // DisplayB's Spaces swap; DisplayA is untouched
+        stub.displays = [
+            stub.displays[0],
+            CGSStub.makeDisplay(
+                displayID: "DisplayB",
+                uuidSpaces: [(id: 201, uuid: "D", isFullscreen: false), (id: 200, uuid: "C", isFullscreen: false)],
+                activeSpaceID: 200
+            ),
+        ]
+        appState.forceSpaceUpdate()
+
+        #expect(store.spaceLabels == [1: "Shared"])
+        #expect(store.displaySpaceLabels["DisplayB"] == [2: "Override"])
+    }
+
+    @Test("spaces without UUIDs are not order-tracked")
+    func missingUUIDs_skipOrderTracking() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [(id: 100, isFullscreen: false), (id: 101, isFullscreen: false)],
+                activeSpaceID: 100
+            ),
+        ]
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        SpacePreferences.setLabel("Work", forSpace: 2, store: store)
+
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                spaces: [(id: 101, isFullscreen: false), (id: 100, isFullscreen: false)],
+                activeSpaceID: 100
+            ),
+        ]
+        appState.forceSpaceUpdate()
+
+        #expect(store.spaceOrders.isEmpty)
+        #expect(SpacePreferences.label(forSpace: 2, store: store) == "Work")
+    }
+
+    @Test("a transient partial snapshot cannot poison the order baseline")
+    func transientPartialSnapshot_keepsBaselineAndRemapsWhenSettled() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [makeMainDisplay(uuids: ["A", "B", "C"])]
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        SpacePreferences.setLabel("Work", forSpace: 2, store: store)
+
+        // A racy CGS read drops Space B but still reports a current Space
+        stub.displays = [makeMainDisplay(uuids: ["A", "C"])]
+        appState.forceSpaceUpdate()
+
+        #expect(store.spaceOrders["Main"] == ["A", "B", "C"])
+
+        // The settled read shows the real state: a reorder of the same set,
+        // which must still be recognized against the unpoisoned baseline
+        stub.displays = [makeMainDisplay(uuids: ["A", "C", "B"])]
+        appState.forceSpaceUpdate()
+
+        #expect(SpacePreferences.label(forSpace: 3, store: store) == "Work")
+        #expect(SpacePreferences.label(forSpace: 2, store: store) == nil)
+        #expect(store.spaceOrders["Main"] == ["A", "C", "B"])
+    }
+
+    @Test("a transient observed twice is adopted, losing the reorder but never remapping")
+    func transientObservedTwice_adoptsWithoutRemapping() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [makeMainDisplay(uuids: ["A", "B", "C"])]
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        SpacePreferences.setLabel("Work", forSpace: 2, store: store)
+
+        // The documented residual of the double-observation heuristic: a
+        // partial read that survives two consecutive snapshots is
+        // indistinguishable from a real Space removal and becomes the
+        // baseline
+        stub.displays = [makeMainDisplay(uuids: ["A", "C"])]
+        appState.forceSpaceUpdate()
+        appState.forceSpaceUpdate()
+        #expect(store.spaceOrders["Main"] == ["A", "C"])
+
+        // The settled reorder then reads as a membership change against the
+        // poisoned baseline: the reorder is lost and preferences keep their
+        // old positions, exactly the pre-tracking behavior
+        stub.displays = [makeMainDisplay(uuids: ["A", "C", "B"])]
+        appState.forceSpaceUpdate()
+        appState.forceSpaceUpdate()
+
+        #expect(SpacePreferences.label(forSpace: 2, store: store) == "Work")
+        #expect(SpacePreferences.label(forSpace: 3, store: store) == nil)
+        #expect(store.spaceOrders["Main"] == ["A", "C", "B"])
+    }
+
+    @Test("a snapshot with an unreadable UUID changes neither baseline nor candidate")
+    func unreadableUUID_leavesTrackingStateAlone() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [makeMainDisplay(uuids: ["A", "B", "C"])]
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        SpacePreferences.setLabel("Work", forSpace: 2, store: store)
+
+        // Two reads with one UUID unreadable must not erode the baseline -
+        // dropping the display instead would erase it after confirmation
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                uuidSpaces: [
+                    (id: 100, uuid: "A", isFullscreen: false),
+                    (id: 101, uuid: nil, isFullscreen: false),
+                    (id: 102, uuid: "C", isFullscreen: false),
+                ],
+                activeSpaceID: 100
+            ),
+        ]
+        appState.forceSpaceUpdate()
+        appState.forceSpaceUpdate()
+        #expect(store.spaceOrders["Main"] == ["A", "B", "C"])
+
+        // Identities return in reordered form: still recognized against the
+        // preserved baseline
+        stub.displays = [makeMainDisplay(uuids: ["A", "C", "B"])]
+        appState.forceSpaceUpdate()
+
+        #expect(SpacePreferences.label(forSpace: 3, store: store) == "Work")
+        #expect(SpacePreferences.label(forSpace: 2, store: store) == nil)
+    }
+
+    @Test("a transient single-display read cannot permute shared positions")
+    func transientSingleDisplayRead_protectsSharedMaps() {
+        stub.activeDisplayIdentifier = "DisplayA"
+        let displayA = CGSStub.makeDisplay(
+            displayID: "DisplayA",
+            uuidSpaces: [(id: 100, uuid: "A", isFullscreen: false), (id: 101, uuid: "B", isFullscreen: false)],
+            activeSpaceID: 100
+        )
+        let displayB = CGSStub.makeDisplay(
+            displayID: "DisplayB",
+            uuidSpaces: [(id: 200, uuid: "C", isFullscreen: false), (id: 201, uuid: "D", isFullscreen: false)],
+            activeSpaceID: 200
+        )
+        stub.displays = [displayA, displayB]
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        SpacePreferences.setLabel("Shared", forSpace: 1, store: store)
+
+        // A racy CGS read drops DisplayB entirely while DisplayA arrives
+        // reordered - the momentary single-display view must not make the
+        // shared maps follow DisplayA's permutation
+        let reorderedA = CGSStub.makeDisplay(
+            displayID: "DisplayA",
+            uuidSpaces: [(id: 101, uuid: "B", isFullscreen: false), (id: 100, uuid: "A", isFullscreen: false)],
+            activeSpaceID: 100
+        )
+        stub.displays = [reorderedA]
+        appState.forceSpaceUpdate()
+
+        #expect(store.spaceLabels == [1: "Shared"])
+        #expect(store.spaceOrders["DisplayA"] == ["A", "B"])
+
+        // The settled read restores DisplayB: a pure reorder of DisplayA,
+        // remapped without touching shared positions
+        stub.displays = [reorderedA, displayB]
+        appState.forceSpaceUpdate()
+
+        #expect(store.spaceLabels == [1: "Shared"])
+        #expect(store.spaceOrders["DisplayA"] == ["B", "A"])
+    }
+
+    @Test("a reorder done while the app was not running reconciles at launch")
+    func offlineReorder_reconcilesAtLaunch() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [makeMainDisplay(uuids: ["A", "B", "C"])]
+        _ = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        SpacePreferences.setLabel("Work", forSpace: 2, store: store)
+
+        stub.displays = [makeMainDisplay(uuids: ["B", "A", "C"])]
+        _ = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+
+        #expect(SpacePreferences.label(forSpace: 1, store: store) == "Work")
+        #expect(SpacePreferences.label(forSpace: 2, store: store) == nil)
+        #expect(store.spaceOrders["Main"] == ["B", "A", "C"])
+    }
 }
 
 // MARK: - Bitmap Helpers

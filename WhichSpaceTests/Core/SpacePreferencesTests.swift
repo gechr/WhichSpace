@@ -707,4 +707,87 @@ struct SpacePreferencesTests {
         #expect(SpacePreferences.resolvedSoundName(forSpace: 1, display: "Display1", store: store) == "Pop")
         #expect(SpacePreferences.resolvedSoundName(forSpace: 1, display: "Display2", store: store) == "Glass")
     }
+
+    // MARK: - remapPositions Tests
+
+    @Test("remapPositions moves shared values between positions")
+    func remapPositionsMovesSharedValues() {
+        SpacePreferences.setLabel("One", forSpace: 1, store: store)
+        SpacePreferences.setLabel("Two", forSpace: 2, store: store)
+        SpacePreferences.setSymbol("star", forSpace: 1, store: store)
+
+        SpacePreferences.remapPositions([1: 2, 2: 1], display: "Main", includeShared: true, store: store)
+
+        #expect(SpacePreferences.label(forSpace: 1, store: store) == "Two")
+        #expect(SpacePreferences.label(forSpace: 2, store: store) == "One")
+        #expect(SpacePreferences.symbol(forSpace: 2, store: store) == "star")
+        #expect(SpacePreferences.symbol(forSpace: 1, store: store) == nil)
+    }
+
+    @Test("remapPositions moves every preference family")
+    func remapPositionsMovesAllFamilies() {
+        SpacePreferences.setColors(
+            SpaceColors(foreground: .red, background: .blue), forSpace: 1, store: store
+        )
+        SpacePreferences.setIconStyle(.hexagon, forSpace: 1, store: store)
+        SpacePreferences.setFont(SpaceFont(font: .systemFont(ofSize: 13)), forSpace: 1, store: store)
+        SpacePreferences.setSymbol("star", forSpace: 1, store: store)
+        SpacePreferences.setBadge(SpaceBadge(character: "!", position: .topLeft), forSpace: 1, store: store)
+        SpacePreferences.setLabel("Work", forSpace: 1, store: store)
+        SpacePreferences.setLabelStyle(.pill, forSpace: 1, store: store)
+        SpacePreferences.setSkinTone(.medium, forSpace: 1, store: store)
+        SpacePreferences.setSymbolGap(4.0, forSpace: 1, store: store)
+        SpacePreferences.setSymbolPosition(.right, forSpace: 1, store: store)
+        SpacePreferences.setSymbolWrap(.outside, forSpace: 1, store: store)
+        SpacePreferences.setSound("Glass", forSpace: 1, store: store)
+
+        SpacePreferences.remapPositions([1: 2, 2: 1], display: "Main", includeShared: true, store: store)
+
+        #expect(SpacePreferences.colors(forSpace: 2, store: store)?.foreground == .red)
+        #expect(SpacePreferences.iconStyle(forSpace: 2, store: store) == .hexagon)
+        #expect(SpacePreferences.font(forSpace: 2, store: store)?.font == .systemFont(ofSize: 13))
+        #expect(SpacePreferences.symbol(forSpace: 2, store: store) == "star")
+        #expect(SpacePreferences.badge(forSpace: 2, store: store)?.character == "!")
+        #expect(SpacePreferences.label(forSpace: 2, store: store) == "Work")
+        #expect(SpacePreferences.labelStyle(forSpace: 2, store: store) == .pill)
+        #expect(SpacePreferences.skinTone(forSpace: 2, store: store) == .medium)
+        #expect(SpacePreferences.symbolGap(forSpace: 2, store: store) == 4.0)
+        #expect(SpacePreferences.symbolPosition(forSpace: 2, store: store) == .right)
+        #expect(SpacePreferences.symbolWrap(forSpace: 2, store: store) == .outside)
+        #expect(SpacePreferences.sound(forSpace: 2, store: store) == "Glass")
+        #expect(!SpacePreferences.hasAnyPreference(forSpace: 1, store: store))
+    }
+
+    @Test("remapPositions clears a destination whose source had no value")
+    func remapPositionsClearsEmptySourceDestination() {
+        SpacePreferences.setLabel("Two", forSpace: 2, store: store)
+
+        SpacePreferences.remapPositions([1: 2, 2: 1], display: "Main", includeShared: true, store: store)
+
+        #expect(SpacePreferences.label(forSpace: 1, store: store) == "Two")
+        #expect(SpacePreferences.label(forSpace: 2, store: store) == nil)
+    }
+
+    @Test("remapPositions leaves shared maps alone when not included")
+    func remapPositionsExcludesSharedWhenAsked() {
+        SpacePreferences.setLabel("Shared", forSpace: 1, store: store)
+        SpacePreferences.setLabel("Override", forSpace: 1, display: "Display1", store: store)
+
+        SpacePreferences.remapPositions([1: 2, 2: 1], display: "Display1", includeShared: false, store: store)
+
+        #expect(store.spaceLabels == [1: "Shared"])
+        #expect(store.displaySpaceLabels["Display1"] == [2: "Override"])
+    }
+
+    @Test("remapPositions leaves the default style template untouched")
+    func remapPositionsPreservesTemplate() {
+        SpacePreferences.setLabel("Template", forSpace: SpacePreferences.defaultStyleSpace, store: store)
+        SpacePreferences.setLabel("One", forSpace: 1, store: store)
+
+        SpacePreferences.remapPositions([1: 2, 2: 1], display: "Main", includeShared: true, store: store)
+
+        #expect(store.spaceLabels[SpacePreferences.defaultStyleSpace] == "Template")
+        #expect(store.spaceLabels[2] == "One")
+        #expect(store.spaceLabels[1] == nil)
+    }
 }

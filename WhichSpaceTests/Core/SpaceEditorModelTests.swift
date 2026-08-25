@@ -66,6 +66,46 @@ struct SpaceEditorModelTests {
         #expect(model.editingDisplay == nil)
     }
 
+    @Test("selection follows its Space across a Mission Control reorder")
+    func selectionFollowsSpaceAcrossReorder() {
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                uuidSpaces: [
+                    (id: 100, uuid: "A", isFullscreen: false),
+                    (id: 101, uuid: "B", isFullscreen: false),
+                    (id: 102, uuid: "C", isFullscreen: false),
+                ],
+                activeSpaceID: 100
+            ),
+        ]
+        let appState = makeAppState()
+        let model = SpaceEditorModel(
+            appState: appState,
+            confirmAction: { _, _, _, _ in true },
+            previewApplyDelay: .milliseconds(1)
+        )
+        // Space B at position 2; selecting it captures its UUID
+        model.selection = .space(2)
+
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                uuidSpaces: [
+                    (id: 100, uuid: "A", isFullscreen: false),
+                    (id: 102, uuid: "C", isFullscreen: false),
+                    (id: 101, uuid: "B", isFullscreen: false),
+                ],
+                activeSpaceID: 100
+            ),
+        ]
+        appState.forceSpaceUpdate()
+        model.retargetSelectionAfterReorder()
+
+        #expect(model.selection == .space(3))
+        #expect(model.editingSpace == 3)
+    }
+
     @Test("normalizeSelection keeps a placeholder Space selected")
     func normalizeSelectionKeepsPlaceholder() {
         let model = makeModel()
