@@ -243,7 +243,7 @@ struct DiagnosticsTests {
 
         #expect(report.hasPrefix("<details>"))
         #expect(report.hasSuffix("</details>"))
-        #expect(report.contains("<summary>WhichSpace diagnostics</summary>"))
+        #expect(report.contains("<summary><b>WhichSpace Diagnostics</b></summary>"))
     }
 
     @Test("report carries the version and topology a report needs")

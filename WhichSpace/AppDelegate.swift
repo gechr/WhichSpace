@@ -347,6 +347,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
             "menu bar app must stay resident"
         )
 
+        // Undo a temporary Reduce Motion enable that a crashed process never
+        // restored. Recovery is next-launch only, so between the crash and
+        // this launch the setting stays enabled
+        SpaceSwitcher.restoreLeftoverReduceMotionOverride()
+
         // AppKit's tooltip manager reads this key
         // register() keeps it session-only and yields to a user-set value
         UserDefaults.standard.register(defaults: ["NSInitialToolTipDelay": 500])
@@ -409,6 +414,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
             await Task.yield()
             self?.showSpaceSwipeGestureGuidanceIfNeeded()
         }
+    }
+
+    func applicationWillTerminate(_: Notification) {
+        SpaceSwitcher.restoreReduceMotionOverride()
     }
 
     func showSpaceSwipeGestureGuidanceIfNeeded() {

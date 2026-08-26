@@ -56,6 +56,9 @@ struct DiagnosticsEnvironment {
     /// Display names of running third-party apps known to affect Space
     /// switching, matched against `DiagnosticsEnvironment.knownApps`.
     var thirdPartyApps: [String]
+    /// How far switching has escalated away from plain gesture posting,
+    /// which shows from a report alone that switches bounce on the machine.
+    var gestureFallbackStage: SpaceSwitcher.GestureFallbackStage = .gesture
 
     /// Third-party apps that affect Space switching, keyed by bundle identifier. Only matches are
     /// reported, so the list never enumerates what the user has installed. Daemons such as yabai
@@ -107,7 +110,8 @@ struct DiagnosticsEnvironment {
             activeSpaceIndex: activeSpaceIndex,
             activeDesktopNumber: activeDesktopNumber,
             activeSpaceIsFullscreen: activeSpaceIsFullscreen,
-            thirdPartyApps: runningKnownApps()
+            thirdPartyApps: runningKnownApps(),
+            gestureFallbackStage: SpaceSwitcher.fallbackStage
         )
     }
 
@@ -186,6 +190,7 @@ enum Diagnostics {
             ("Shrink to fit", string(store.shrinkIconToFit)),
             ("Size scale", string(store.sizeScale)),
             ("Classic switching", string(store.classicSpaceSwitching)),
+            ("Reduce Motion fallback", string(store.reduceMotionFallback)),
             ("Click to switch", string(store.clickToSwitchSpaces)),
             ("Vertical scroll", string(store.verticalScrollEnabled)),
             ("Horizontal scroll", string(store.horizontalScrollEnabled)),
@@ -235,6 +240,7 @@ enum Diagnostics {
                 ("Accessibility granted", string(environment.accessibilityTrusted)),
                 ("Stage Manager", environment.stageManagerEnabled.rawValue),
                 ("Reduce Motion", string(environment.reduceMotionEnabled)),
+                ("Gesture fallback", environment.gestureFallbackStage.reportName),
                 (
                     "Other apps running",
                     environment.thirdPartyApps.isEmpty
@@ -274,7 +280,7 @@ enum Diagnostics {
 
         return """
         <details>
-        <summary>WhichSpace diagnostics</summary>
+        <summary><b>WhichSpace Diagnostics</b></summary>
 
         ```
         \(body)
@@ -312,6 +318,23 @@ enum Diagnostics {
 
     private static func string(_ value: Double) -> String {
         String(format: "%.2f", value)
+    }
+}
+
+// MARK: - GestureFallbackStage
+
+extension SpaceSwitcher.GestureFallbackStage {
+    /// Stable English name for the report, so it does not follow the enum's
+    /// storage or any display string.
+    var reportName: String {
+        switch self {
+        case .gesture:
+            "none"
+        case .reduceMotionWrap:
+            "Reduce Motion wrap"
+        case .classic:
+            "classic"
+        }
     }
 }
 

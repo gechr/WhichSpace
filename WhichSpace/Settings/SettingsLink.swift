@@ -108,6 +108,7 @@ enum SettingsAnchor: String, CaseIterable {
     case invertVerticalScroll = "invert-vertical-scroll"
     case horizontalScroll = "horizontal-scroll"
     case invertHorizontalScroll = "invert-horizontal-scroll"
+    case reduceMotionFallback = "reduce-motion-fallback"
     case scrollWrapAround = "scroll-wrap-around"
     case scrollSensitivity = "scroll-sensitivity"
     case scrollHaptics = "scroll-haptics"
@@ -158,7 +159,7 @@ enum SettingsAnchor: String, CaseIterable {
             .spaces
         case .accessibility, .behavior, .click, .scroll, .classicSwitching, .clickToSwitch,
              .verticalScroll, .invertVerticalScroll, .horizontalScroll, .invertHorizontalScroll,
-             .scrollWrapAround, .scrollSensitivity, .scrollHaptics:
+             .reduceMotionFallback, .scrollWrapAround, .scrollSensitivity, .scrollHaptics:
             .mouse
         case .hotkeySwitchLeft, .hotkeySwitchRight, .hotkeySkipEmptySpaces, .hotkeySwitchPrevious,
              .hotkeySendLeft, .hotkeySendRight, .hotkeySendSkipEmptySpaces,

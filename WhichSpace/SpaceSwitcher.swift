@@ -126,6 +126,7 @@ enum SpaceSwitcher {
         let targetSpaceID: Int
         let madeAt: Date
         var armed = false
+        var reduceMotionActive = false
     }
 
     /// The most recent gesture switch per display. Reaching the target does
@@ -133,19 +134,42 @@ enum SpaceSwitcher {
     /// back, so each entry stays judgeable until it ages out of the window.
     @MainActor private static var gestureSwitches: [String: GestureSwitch] = [:]
 
-    /// Bounced gesture switches observed so far this session.
-    @MainActor private static var gestureBounceCount = 0
+    /// Bounced switches posted while Reduce Motion was off.
+    @MainActor private static var plainBounces = 0
 
-    /// Whether switching has fallen back to the classic route because
-    /// gesture switches bounced.
-    @MainActor private static var prefersClassicAfterBounces = false
+    /// Bounced switches posted while Reduce Motion was on (the user's own
+    /// setting or this app's temporary enable).
+    @MainActor private static var reduceMotionBounces = 0
+
+    /// How far switching has escalated away from plain gesture posting.
+    /// Bounces implicate the animated transition path, so the first
+    /// escalation wraps switches in a temporary Reduce Motion enable, which
+    /// keeps them instant; bounces that survive that wrap escalate to the
+    /// classic route, which posts no gestures at all.
+    enum GestureFallbackStage: Equatable {
+        case gesture
+        case reduceMotionWrap
+        case classic
+    }
+
+    /// Derived live from the bounce counters and the opt-in, so enabling
+    /// the wrap after a plain-bounce escalation to classic takes effect on
+    /// the next switch rather than waiting for a relaunch, and disabling it
+    /// mid-wrap routes the next switch classically.
+    @MainActor static var fallbackStage: GestureFallbackStage {
+        resolveFallbackStage(
+            plainBounces: plainBounces,
+            reduceMotionBounces: reduceMotionBounces,
+            wrapEnabled: reduceMotionFallbackEnabled
+        )
+    }
 
     /// How long after posting a record stays judgeable. Past this a return
     /// to the origin Space is plausibly the user's own switch back.
     static let gestureBounceWindow: TimeInterval = 0.35
 
-    /// Bounces tolerated before switching falls back to the classic route,
-    /// so one coincidental user return does not flip the session.
+    /// Bounces tolerated before switching escalates to the next fallback
+    /// stage, so one coincidental user return does not flip the session.
     static let gestureBounceFallbackThreshold = 2
 
     /// What an applied snapshot means for a recorded gesture switch.
@@ -179,9 +203,23 @@ enum SpaceSwitcher {
         return .keep(record)
     }
 
-    /// Whether enough bounces have accumulated to abandon gesture switching.
-    static func shouldFallBackToClassic(bounceCount: Int) -> Bool {
-        bounceCount >= gestureBounceFallbackThreshold
+    /// The stage the accumulated bounce counts call for. Bounces posted with
+    /// Reduce Motion already on prove the wrap cannot help, so they escalate
+    /// straight to classic, as do all bounces when the user has not opted
+    /// into the wrap. A pure decision kept separate from event posting so it
+    /// can be covered without changing the test runner's active Space.
+    static func resolveFallbackStage(
+        plainBounces: Int,
+        reduceMotionBounces: Int,
+        wrapEnabled: Bool
+    ) -> GestureFallbackStage {
+        if reduceMotionBounces >= gestureBounceFallbackThreshold {
+            return .classic
+        }
+        if plainBounces >= gestureBounceFallbackThreshold {
+            return wrapEnabled ? .reduceMotionWrap : .classic
+        }
+        return .gesture
     }
 
     @MainActor private static func recordGestureSwitch(
@@ -192,18 +230,21 @@ enum SpaceSwitcher {
         gestureSwitches[display] = GestureSwitch(
             originSpaceID: originSpaceID,
             targetSpaceID: targetSpaceID,
-            madeAt: Date()
+            madeAt: Date(),
+            reduceMotionActive: ReduceMotionController.shared.isEffectivelyEnabled
         )
     }
 
-    /// Judges recorded gesture switches against the applied snapshot. After
-    /// `gestureBounceFallbackThreshold` bounces every later switch takes the
-    /// classic route for the rest of the session, which does not post
-    /// gestures and so cannot bounce.
+    /// Judges recorded gesture switches against the applied snapshot and
+    /// escalates the fallback stage as bounces accumulate.
     @MainActor private static func detectGestureBounces(in appliedDisplays: [DisplaySpaceInfo]) {
-        guard !prefersClassicAfterBounces, !gestureSwitches.isEmpty else {
+        // Records first: reading the stage consults the store through
+        // AppEnvironment.shared, which is still initializing when the first
+        // snapshot applies, and no record can exist before the first switch
+        guard !gestureSwitches.isEmpty, fallbackStage != .classic else {
             return
         }
+        let stageBefore = fallbackStage
         let now = Date()
         for display in appliedDisplays {
             guard let record = gestureSwitches[display.displayID],
@@ -222,12 +263,24 @@ enum SpaceSwitcher {
                 gestureSwitches[display.displayID] = nil
             case .bounce:
                 gestureSwitches[display.displayID] = nil
-                gestureBounceCount += 1
+                if record.reduceMotionActive {
+                    reduceMotionBounces += 1
+                } else {
+                    plainBounces += 1
+                }
             }
         }
-        if shouldFallBackToClassic(bounceCount: gestureBounceCount) {
-            prefersClassicAfterBounces = true
-            NSLog("SpaceSwitcher: gesture switches keep bouncing back, using classic switching for this session")
+        guard fallbackStage != stageBefore else {
+            return
+        }
+        switch fallbackStage {
+        case .gesture:
+            break
+        case .reduceMotionWrap:
+            NSLog("SpaceSwitcher: gesture switches keep bouncing back, wrapping them in Reduce Motion")
+        case .classic:
+            ReduceMotionController.shared.restore()
+            NSLog("SpaceSwitcher: gesture switches still bounce, using classic switching for this session")
         }
     }
 
@@ -279,6 +332,9 @@ enum SpaceSwitcher {
             parkKeyWindowIfNeeded(
                 currentSpaceID: display.currentSpaceID
             )
+            if fallbackStage == .reduceMotionWrap, reduceMotionFallbackEnabled {
+                ReduceMotionController.shared.engageForSwitch()
+            }
             let velocity = swipeVelocity * Double(steps)
             let direction = goRight ? 1 : -1
             // Each completed gesture moves one Space, so recording per step
@@ -393,6 +449,9 @@ enum SpaceSwitcher {
             parkKeyWindowIfNeeded(
                 currentSpaceID: display.currentSpaceID
             )
+            if fallbackStage == .reduceMotionWrap, reduceMotionFallbackEnabled {
+                ReduceMotionController.shared.engageForSwitch()
+            }
         }
         if steps == 1 {
             guard postStep(goRight: stepsRight, velocity: swipeVelocity, classic: classicRoute) else {
@@ -464,6 +523,194 @@ enum SpaceSwitcher {
             index += direction
         }
         return nil
+    }
+
+    // MARK: - Reduce Motion Override
+
+    /// Undoes a temporary Reduce Motion enable that a previous process never
+    /// restored. Recovery is next-launch only: between a hard kill and the
+    /// next launch the setting stays enabled. Called once at launch.
+    @MainActor static func restoreLeftoverReduceMotionOverride() {
+        ReduceMotionController.shared.restoreLeftoverFromPreviousLaunch()
+    }
+
+    /// Returns Reduce Motion to the user's own state. Called at termination.
+    @MainActor static func restoreReduceMotionOverride() {
+        ReduceMotionController.shared.restore()
+    }
+
+    /// Temporarily enables the system Reduce Motion setting around gesture
+    /// switches. Reduce Motion replaces the Dock's animated slide transition
+    /// with a crossfade, and machines whose animated path reverses synthetic
+    /// switches complete them on the crossfade path. The wrap engages only
+    /// after bounces have implicated the animated path, so healthy machines
+    /// never touch the setting. System accessors, the leftover marker, and
+    /// the restore scheduler are injected so tests never touch the real
+    /// setting.
+    @MainActor final class ReduceMotionController {
+        static let shared = ReduceMotionController()
+
+        /// Reads the current system value fresh on every call. The library
+        /// getter caches its first in-process read, so ownership decisions
+        /// must never rely on it: a user enabling Reduce Motion mid-session
+        /// has to be seen, or a later restore would disable their choice.
+        private let readSystemEnabled: () -> Bool
+
+        /// Nil when the private setter is unavailable, which disables the
+        /// wrap entirely and leaves any leftover marker in place.
+        private let writeSystemEnabled: ((Bool) -> Void)?
+
+        private let readMarker: () -> Bool
+        private let writeMarker: (Bool) -> Void
+        private let scheduleRestore: (@escaping @MainActor () -> Void) -> Task<Void, Never>
+        private let settleAfterEnable: () -> Void
+
+        /// Set while this app has Reduce Motion enabled on the user's behalf.
+        private(set) var temporarilyEnabled = false
+
+        private var restoreTask: Task<Void, Never>?
+
+        init(
+            readSystemEnabled: @escaping () -> Bool,
+            writeSystemEnabled: ((Bool) -> Void)?,
+            readMarker: @escaping () -> Bool,
+            writeMarker: @escaping (Bool) -> Void,
+            scheduleRestore: @escaping (@escaping @MainActor () -> Void) -> Task<Void, Never>,
+            settleAfterEnable: @escaping () -> Void
+        ) {
+            self.readSystemEnabled = readSystemEnabled
+            self.writeSystemEnabled = writeSystemEnabled
+            self.readMarker = readMarker
+            self.writeMarker = writeMarker
+            self.scheduleRestore = scheduleRestore
+            self.settleAfterEnable = settleAfterEnable
+        }
+
+        private convenience init() {
+            self.init(
+                readSystemEnabled: Self.livePreferenceRead,
+                writeSystemEnabled: Self.librarySetter.map { setter in
+                    { setter($0 ? 1 : 0) }
+                },
+                readMarker: { UserDefaults.standard.bool(forKey: Self.leftoverDefaultsKey) },
+                writeMarker: { present in
+                    if present {
+                        UserDefaults.standard.set(true, forKey: Self.leftoverDefaultsKey)
+                    } else {
+                        UserDefaults.standard.removeObject(forKey: Self.leftoverDefaultsKey)
+                    }
+                },
+                scheduleRestore: { body in
+                    Task { @MainActor in
+                        try? await Task.sleep(nanoseconds: Self.restoreDelay)
+                        guard !Task.isCancelled else {
+                            return
+                        }
+                        body()
+                    }
+                },
+                // The Dock observes the change asynchronously, so give the
+                // notification a moment to land before gestures are posted
+                settleAfterEnable: { usleep(25_000) }
+            )
+        }
+
+        /// Persisted alongside the enable so a crash before the restore is
+        /// undone on the next launch.
+        private static let leftoverDefaultsKey = "reduceMotionTemporarilyEnabled"
+
+        /// How long after the last wrapped switch the setting is restored.
+        private static let restoreDelay: UInt64 = 1_000_000_000
+
+        private typealias SetterFunction = @convention(c) (Int32) -> Void
+
+        /// The setter System Settings itself uses. A plain defaults write
+        /// does not propagate to running processes, this route does.
+        private static let librarySetter: SetterFunction? = {
+            guard let handle = dlopen("/usr/lib/libAccessibility.dylib", RTLD_NOW),
+                  let setter = dlsym(handle, "_AXSSetReduceMotionEnabled")
+            else {
+                return nil
+            }
+            return unsafeBitCast(setter, to: SetterFunction.self)
+        }()
+
+        /// A synchronized preference read observes external setter changes
+        /// live, unlike the library getter and NSWorkspace, whose values
+        /// freeze at first read.
+        private static func livePreferenceRead() -> Bool {
+            let domain = "com.apple.Accessibility" as CFString
+            CFPreferencesAppSynchronize(domain)
+            var exists = DarwinBoolean(false)
+            let value = CFPreferencesGetAppBooleanValue(
+                "ReduceMotionEnabled" as CFString,
+                domain,
+                &exists
+            )
+            return exists.boolValue && value
+        }
+
+        /// Whether Reduce Motion is on for the next posted gesture.
+        var isEffectivelyEnabled: Bool {
+            temporarilyEnabled || readSystemEnabled()
+        }
+
+        /// Enables Reduce Motion ahead of an imminent gesture switch when
+        /// the user has it off, and extends the pending restore otherwise.
+        func engageForSwitch() {
+            guard let writeSystemEnabled else {
+                return
+            }
+            if temporarilyEnabled {
+                rearmRestore()
+                return
+            }
+            guard !readSystemEnabled() else {
+                return
+            }
+            writeMarker(true)
+            temporarilyEnabled = true
+            writeSystemEnabled(true)
+            rearmRestore()
+            settleAfterEnable()
+        }
+
+        private func rearmRestore() {
+            restoreTask?.cancel()
+            restoreTask = scheduleRestore { [weak self] in
+                self?.restore()
+            }
+        }
+
+        /// Returns the setting to the user's own state.
+        func restore() {
+            restoreTask?.cancel()
+            restoreTask = nil
+            guard temporarilyEnabled else {
+                return
+            }
+            temporarilyEnabled = false
+            writeSystemEnabled?(false)
+            writeMarker(false)
+        }
+
+        /// Disables Reduce Motion when a previous process enabled it and
+        /// died before restoring, and keeps the marker when the setter is
+        /// unavailable so the evidence survives for a later launch. The
+        /// marker was set while the user's own setting was off; a user who
+        /// enabled Reduce Motion between the crash and this launch has that
+        /// choice overridden, accepted as the cost of never leaving the
+        /// app's own enable behind.
+        func restoreLeftoverFromPreviousLaunch() {
+            guard readMarker() else {
+                return
+            }
+            guard let writeSystemEnabled else {
+                return
+            }
+            writeSystemEnabled(false)
+            writeMarker(false)
+        }
     }
 
     // MARK: - CGS Dictionary Decoding
@@ -585,6 +832,14 @@ enum SpaceSwitcher {
         AppEnvironment.shared.store.classicSpaceSwitching
     }
 
+    /// Whether the user opted into the temporary Reduce Motion wrap. Read
+    /// live so switching the toggle off stops new wraps immediately; an
+    /// already-active temporary enable still restores on its own schedule,
+    /// within about a second of the last wrapped switch.
+    @MainActor private static var reduceMotionFallbackEnabled: Bool {
+        AppEnvironment.shared.store.reduceMotionFallback
+    }
+
     /// macOS 27 validates synthetic dock swipes against an IOHID payload.
     /// Earlier releases must keep posting the original plain events.
     private nonisolated static let requiresIOHIDPayload =
@@ -696,7 +951,7 @@ enum SpaceSwitcher {
             fromStatusItemClick: fromStatusItemClick,
             requiresIOHIDPayload: requiresIOHIDPayload
         )
-        return usesClassicSwitching || prefersClassicAfterBounces || heldButtonIsDrag
+        return usesClassicSwitching || fallbackStage == .classic || heldButtonIsDrag
     }
 
     /// On macOS 27 the status item's mouse-up action can run before AppKit's

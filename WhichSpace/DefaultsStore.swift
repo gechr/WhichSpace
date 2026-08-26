@@ -112,6 +112,7 @@ enum KeySpecs {
         name: "moveToApplicationsFolderAlertSuppress",
         defaultValue: false
     )
+    static let reduceMotionFallback = TypedKeySpec(name: "reduceMotionFallback", defaultValue: false)
     static let scrollHapticFeedback = TypedKeySpec(
         name: "scrollHapticFeedback",
         defaultValue: false
@@ -192,6 +193,7 @@ enum KeySpecs {
         moveApplicationAlertSuppress,
         paddingScale,
         preserveSystemSpaceNumbers,
+        reduceMotionFallback,
         scrollHapticFeedback,
         scrollHapticIntensity,
         scrollSensitivity,
@@ -237,6 +239,7 @@ enum KeySpecs {
         invertHorizontalScroll.name,
         invertVerticalScroll.name,
         moveApplicationAlertSuppress.name,
+        reduceMotionFallback.name,
         scrollHapticFeedback.name,
         scrollHapticIntensity.name,
         scrollSensitivity.name,
@@ -565,6 +568,11 @@ final class DefaultsStore {
     var preserveSystemSpaceNumbers: Bool {
         get { self[KeySpecs.preserveSystemSpaceNumbers] }
         set { self[KeySpecs.preserveSystemSpaceNumbers] = newValue }
+    }
+
+    var reduceMotionFallback: Bool {
+        get { self[KeySpecs.reduceMotionFallback] }
+        set { self[KeySpecs.reduceMotionFallback] = newValue }
     }
 
     var scrollHapticFeedback: Bool {

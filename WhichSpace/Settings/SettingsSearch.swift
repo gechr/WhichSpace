@@ -553,6 +553,13 @@ enum SettingsSearchIndex {
             keywords: [.space, .hotkey]
         ),
         SettingsSearchEntry(
+            anchor: .reduceMotionFallback,
+            section: Localization.labelBehavior,
+            title: Localization.toggleReduceMotionFallback,
+            subtitle: Localization.tipReduceMotionFallback,
+            keywords: [.space]
+        ),
+        SettingsSearchEntry(
             anchor: .scrollWrapAround,
             section: Localization.labelBehavior,
             title: Localization.toggleScrollWrapAround,
