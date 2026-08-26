@@ -164,15 +164,68 @@ struct SystemFrontWindowLocator: FrontWindowLocating {
         else {
             return nil
         }
-        var windowID = CGWindowID(0)
         let element = value as! AXUIElement
         // The timeout binds to the exact element it is set on, so the derived
         // focused-window element needs its own
         AXUIElementSetMessagingTimeout(element, messagingTimeout)
-        guard _AXUIElementGetWindow(element, &windowID) == .success, windowID != kCGNullWindowID else {
+        var windowID = CGWindowID(0)
+        guard let window = resolvingSheet(element),
+              _AXUIElementGetWindow(window, &windowID) == .success, windowID != kCGNullWindowID
+        else {
             return nil
         }
         return windowID
+    }
+
+    /// Upper bound on sheet-to-window parent hops. A sheet's owning window is
+    /// normally its direct parent; the slack covers nested containers without
+    /// letting a cyclic hierarchy walk forever.
+    private static let maxParentHops = 4
+
+    /// Follows a focused sheet to the window that owns it. A sheet (e.g. a
+    /// Save panel attached to a document) can report as the focused window,
+    /// but the movable window is the document window behind it, reached
+    /// through the parent chain. A non-sheet element passes through
+    /// unchanged, and an unresolvable sheet yields nil so the WindowServer
+    /// ordering stands. A failed role read also yields nil: an element that
+    /// cannot be told apart from a sheet must not be promoted. Expects
+    /// `element` to already carry the messaging timeout, and applies it to
+    /// every element it visits.
+    private static func resolvingSheet(_ element: AXUIElement) -> AXUIElement? {
+        var current = element
+        var hops = 0
+        while true {
+            guard let role = role(of: current) else {
+                return nil
+            }
+            guard role == kAXSheetRole else {
+                return current
+            }
+            guard hops < maxParentHops else {
+                return nil
+            }
+            var value: CFTypeRef?
+            guard AXUIElementCopyAttributeValue(current, kAXParentAttribute as CFString, &value) == .success,
+                  let value, CFGetTypeID(value) == AXUIElementGetTypeID()
+            else {
+                return nil
+            }
+            let parent = value as! AXUIElement
+            guard !CFEqual(parent, current) else {
+                return nil
+            }
+            AXUIElementSetMessagingTimeout(parent, messagingTimeout)
+            current = parent
+            hops += 1
+        }
+    }
+
+    private static func role(of element: AXUIElement) -> String? {
+        var value: CFTypeRef?
+        guard AXUIElementCopyAttributeValue(element, kAXRoleAttribute as CFString, &value) == .success else {
+            return nil
+        }
+        return value as? String
     }
 
     /// Returns regular windows in preference order: the most recently active
