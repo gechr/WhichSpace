@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 📖 Documentation
+    url: https://github.com/gechr/WhichSpace#readme
+    about: Features, settings, keybinds, and the full scripting reference.
+  - name: 🚀 Release notes
+    url: https://github.com/gechr/WhichSpace/releases
+    about: Check whether your problem is already fixed in a newer version.

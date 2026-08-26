@@ -1,0 +1,47 @@
+name: ❓ Question
+description: Ask how something works, or get help with your setup
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        If WhichSpace is behaving in a way you think is wrong, file a bug report instead.
+
+        **Two things that come up often:**
+
+        - **The menu bar icon is missing.** The menu bar is almost certainly full. Command-drag some icons around, or remove a few.
+        - **Nothing happens when clicking a Space.** WhichSpace needs Accessibility permission, granted under **System Settings → Privacy & Security → Accessibility**.
+
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Preflight
+      options:
+        - label: I read the [README](https://github.com/gechr/WhichSpace#readme)
+          required: true
+        - label: I searched open and closed issues
+          required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Your question
+    validations:
+      required: true
+
+  - type: textarea
+    id: tried
+    attributes:
+      label: What have you tried?
+
+  - type: input
+    id: whichspace-version
+    attributes:
+      label: WhichSpace version
+      description: Shown at the top of the right-click menu, e.g. `v1.3.3`.
+
+  - type: input
+    id: macos-version
+    attributes:
+      label: macOS version
+      description: e.g. `26.6.2 (25G220)`.

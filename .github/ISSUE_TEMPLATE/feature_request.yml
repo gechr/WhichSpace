@@ -1,0 +1,66 @@
+name: ✨ Feature
+description: Suggest a new feature or an improvement to an existing one
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the suggestion. WhichSpace is maintained by one person, so the clearer the problem behind the request, the better the chance it gets built.
+
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Preflight
+      options:
+        - label: I searched open and closed issues for the same request
+          required: true
+        - label: I checked the [README](https://github.com/gechr/WhichSpace#readme) in case this already exists
+          required: true
+
+  - type: textarea
+    id: request
+    attributes:
+      label: What would you like WhichSpace to do?
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does it solve?
+      description: What are you trying to do, and what gets in the way today?
+    validations:
+      required: true
+
+  - type: textarea
+    id: workaround
+    attributes:
+      label: What do you do instead today?
+      description: Scripts, Hammerspoon, skhd, another app, or nothing at all. Knowing the workaround helps judge how much the feature adds.
+
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Where would it live?
+      description: Select everything that fits.
+      multiple: true
+      options:
+        - The menu bar icon itself
+        - The right-click menu
+        - The Settings window
+        - A keyboard shortcut
+        - AppleScript, the URL scheme, or Shortcuts
+        - Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: design
+    attributes:
+      label: How would it look or behave?
+      description: A mockup, screenshot of another app doing it, or a sketch of the settings it would need. If it adds settings, say which ones - keeping the Settings window from bloating is a real constraint.
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else

@@ -1,0 +1,122 @@
+name: 🐛 Bug
+description: Something in WhichSpace is not working as expected
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a report.
+
+        **Before you file:** if the WhichSpace icon is missing from the menu bar, it is almost always because the menu bar is full. Command-drag some icons around, or remove a few, and it should reappear.
+
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Preflight
+      options:
+        - label: I am running the latest version of WhichSpace (**Check for Updates...** in the right-click menu)
+          required: true
+        - label: I searched open and closed issues for a duplicate
+          required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What went wrong, and what you expected instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostics
+      description: |
+        Open **Settings → General → Diagnostics** and click **Copy**, then paste here. It fills in your versions, display setup and settings in one step.
+
+        It carries no Space labels, badges, display identifiers or file paths. Paste it as-is.
+
+        **If WhichSpace will not start**, type `Unavailable` here and fill in the two version fields below instead.
+      placeholder: |
+        <details>
+        <summary>WhichSpace diagnostics</summary>
+        ...
+    validations:
+      required: true
+
+  - type: input
+    id: whichspace-version
+    attributes:
+      label: WhichSpace version
+      description: Only needed if you could not copy the diagnostics above, for instance because the app will not start. Shown at the top of the right-click menu, e.g. `v1.3.3`.
+
+  - type: input
+    id: macos-version
+    attributes:
+      label: macOS version
+      description: Only needed if you could not copy the diagnostics above, e.g. `26.6.2 (25G220)`.
+
+  - type: dropdown
+    id: trigger
+    attributes:
+      label: How do you trigger the behavior?
+      description: Select everything that applies.
+      multiple: true
+      options:
+        - Clicking the menu bar icon
+        - Scrolling over the menu bar icon
+        - Opening the right-click menu or Settings
+        - Launching WhichSpace
+        - A WhichSpace keyboard shortcut
+        - A built-in macOS keyboard shortcut (Control-1, Control-2, Control-Left, Control-Right)
+        - A trackpad swipe
+        - Mission Control
+        - AppleScript
+        - The whichspace:// URL scheme
+        - The Shortcuts app
+        - A third-party tool (Hammerspoon, skhd, Keyboard Maestro, etc.)
+        - Nothing, it happens on its own
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: If you can reproduce it reliably, number the steps so they can be followed exactly. Skip this if it happens unpredictably.
+      placeholder: |
+        1. Set a custom label on Space 2
+        2. Swipe left with three fingers
+        3. The menu bar shows "2" instead of the label
+
+  - type: checkboxes
+    id: environment
+    attributes:
+      label: Anything else in play?
+      description: The diagnostics above already report your settings and any running apps we know about, so this is only what they cannot see.
+      options:
+        - label: "Enabling **Settings → Mouse → Classic switching** makes the problem go away"
+        - label: I run a background tool that has no app window (yabai, skhd, Karabiner-Elements, etc.)
+
+  - type: textarea
+    id: attachments
+    attributes:
+      label: Attachments
+      description: Drag in screenshots, screen recordings, or a crash report. For anything visual, a short recording usually settles the question faster than a description.
+
+  - type: dropdown
+    id: install-method
+    attributes:
+      label: How did you install WhichSpace?
+      description: Mainly matters for installation and update problems.
+      options:
+        - Homebrew cask
+        - Downloaded WhichSpace.zip from GitHub
+        - Built from source
+        - Not sure
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else
+      description: The exact command you ran, the names and versions of any third-party tools involved, links to related issues, or anything else worth knowing.
