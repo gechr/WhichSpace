@@ -31,6 +31,20 @@ struct URLCommandsTests {
     func matchingIsCaseInsensitive() {
         #expect(parse("WHICHSPACE://Switch/LEFT") == .switchLeft)
         #expect(parse("WHICHSPACE://Send/3") == .moveWindowToSpace(number: 3, follow: false))
+        #expect(parse("WHICHSPACE://Diagnostics/COPY") == .copyDiagnostics)
+    }
+
+    @Test("diagnostics copy parses")
+    func diagnosticsCopyParses() {
+        #expect(parse("whichspace://diagnostics/copy") == .copyDiagnostics)
+    }
+
+    @Test("diagnostics without a verb is rejected")
+    func diagnosticsWithoutVerbIsRejected() {
+        // Bare `diagnostics` does nothing on its own, so it must not silently
+        // fall through to the copy
+        #expect(parse("whichspace://diagnostics") == nil)
+        #expect(parse("whichspace://diagnostics/paste") == nil)
     }
 
     @Test("move follows the window and send does not switch Space")

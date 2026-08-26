@@ -11,6 +11,8 @@ import Foundation
 /// - `whichspace://move/3` - move the front window to a Space by number and
 ///   switch to it; `left` and `right` are also accepted
 /// - `whichspace://send/3` - the same, without switching Space
+/// - `whichspace://diagnostics/copy` - copy a summary of the current setup
+///   to the clipboard
 /// - `whichspace://settings` - open settings on the last pane shown
 /// - `whichspace://settings/spaces` - open settings on a named pane
 /// - `whichspace://settings?highlight=icon-size` - open settings on whichever
@@ -25,6 +27,7 @@ enum URLCommand: Equatable {
     case moveWindowToSpace(number: Int, follow: Bool)
     case moveWindowRelative(goRight: Bool, follow: Bool)
     case openSettings(pane: SettingsPaneID?, focus: SettingsFocus?)
+    case copyDiagnostics
 
     /// Parses a `whichspace://` URL into a command, or nil when the URL
     /// does not match a supported form. Matching is case-insensitive.
@@ -40,6 +43,10 @@ enum URLCommand: Equatable {
             return parseWindowMove(url, follow: true)
         case "send":
             return parseWindowMove(url, follow: false)
+        case "diagnostics":
+            return url.pathComponents.count > 1 && url.pathComponents[1].lowercased() == "copy"
+                ? .copyDiagnostics
+                : nil
         case "settings":
             return parseSettings(url)
         default:

@@ -96,7 +96,7 @@ body:
       description: The diagnostics above already report your settings and any running apps we know about, so this is only what they cannot see.
       options:
         - label: "Enabling **Settings → Mouse → Classic switching** makes the problem go away"
-        - label: I run a background tool that has no app window (yabai, skhd, Karabiner-Elements, etc.)
+        - label: I run a background tool that has no app window (yabai, skhd, etc.)
 
   - type: textarea
     id: attachments

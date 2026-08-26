@@ -1,5 +1,18 @@
 import Cocoa
 
+/// Command handler for AppleScript "copy diagnostics" command.
+/// Usage: `tell application "WhichSpace" to copy diagnostics`
+///
+/// Puts the report on the clipboard like the Settings button, and returns it
+/// so a script can read it without going through the pasteboard.
+final class CopyDiagnosticsCommand: NSScriptCommand {
+    override func performDefaultImplementation() -> Any? {
+        MainActor.assumeIsolated {
+            ScriptingHelpers.copyDiagnostics()
+        }
+    }
+}
+
 /// Command handler for AppleScript "move front window left" command.
 /// Usage: `tell application "WhichSpace" to move front window left`
 final class MoveWindowLeftCommand: NSScriptCommand {
@@ -282,6 +295,49 @@ enum MoveError: LocalizedError {
 
 @MainActor
 enum ScriptingHelpers {
+    /// The bug-report summary, built the same way for the Settings button, the
+    /// URL scheme and AppleScript.
+    static func diagnosticsReport(
+        appState: AppState = AppEnvironment.shared.appState,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) -> String {
+        let displays = appState.allDisplaysSpaceInfo
+        let activeDisplay = displays.firstIndex { $0.displayID == appState.currentDisplayID }
+        let activeEntry = activeDisplay
+            .flatMap { displays[$0].entries.firstIndex { $0.id == appState.currentSpaceID } }
+        let environment = DiagnosticsEnvironment.current(
+            spacesPerDisplay: displays.map(\.regularSpaceCount),
+            fullscreenSpaceCount: displays.reduce(0) { $0 + $1.entries.count - $1.regularSpaceCount },
+            shrinkLevel: appState.shrinkLevel,
+            // Ordinals rather than identifiers, and 1-based to line up with
+            // the counts they index into
+            activeDisplay: activeDisplay.map { $0 + 1 },
+            activeSpaceIndex: activeEntry.map { $0 + 1 },
+            activeDesktopNumber: appState.currentGlobalSpaceIndex > 0 ? appState.currentGlobalSpaceIndex : nil,
+            activeSpaceIsFullscreen: activeDisplay.flatMap { display in
+                activeEntry.map { displays[display].entries[$0].regularIndex == nil }
+            } ?? false
+        )
+        return Diagnostics.markdown(
+            environment: environment,
+            store: store,
+            hotkeys: HotkeyCenter.describeBindings()
+        )
+    }
+
+    /// Puts the report on the pasteboard and hands it back, so a caller that
+    /// wants the text does not have to read the pasteboard to get it.
+    @discardableResult
+    static func copyDiagnostics(
+        appState: AppState = AppEnvironment.shared.appState,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) -> String {
+        let report = diagnosticsReport(appState: appState, store: store)
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(report, forType: .string)
+        return report
+    }
+
     /// Moves the frontmost window to the Space at the given 1-based number.
     /// `follow` switches to that Space afterwards, which is the difference
     /// between the `move` and `send` commands. Numbering follows the menu bar

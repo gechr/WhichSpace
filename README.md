@@ -294,6 +294,13 @@ osascript -e 'tell application "WhichSpace" to set badge of space 2 to ""'
 osascript -e 'tell application "WhichSpace" to reset all space badges'
 ```
 
+##### Diagnostics
+
+```bash
+# Copy a summary of your setup to the clipboard, and print it
+osascript -e 'tell application "WhichSpace" to copy diagnostics'
+```
+
 ##### Displays
 
 Displays are numbered in the same order as the display picker in WhichSpace settings.
@@ -338,4 +345,7 @@ open "whichspace://move/3"
 # Send or move the front window one Space to the left or right
 open "whichspace://send/left"
 open "whichspace://move/right"
+
+# Copy a summary of your setup, ready to paste into a bug report
+open "whichspace://diagnostics/copy"
 ```

@@ -10,6 +10,10 @@
             </parameter>
             <result type="integer" description="The count."/>
         </command>
+        <command name="copy diagnostics" code="WSpccpdg" description="Copy a summary of the current setup to the clipboard, and return it.">
+            <cocoa class="WhichSpace.CopyDiagnosticsCommand"/>
+            <result type="text" description="The diagnostics report."/>
+        </command>
         <command name="move front window left" code="WSpcmvlf" description="Move the frontmost window to the Space on the left, and switch to it.">
             <cocoa class="WhichSpace.MoveWindowLeftCommand"/>
         </command>
