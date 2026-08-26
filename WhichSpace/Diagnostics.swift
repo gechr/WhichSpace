@@ -203,7 +203,7 @@ enum Diagnostics {
             ("Skip empty Spaces (move)", string(store.hotkeysMoveSkipEmptySpaces)),
             ("Skip empty Spaces (send)", string(store.hotkeysSendSkipEmptySpaces)),
             ("Space picker style", store.spacePickerStyle.rawValue),
-            ("Beta updates", string(store.includeBetaUpdates)),
+            ("Nightly updates", string(store.includeNightlyUpdates)),
         ]
     }
 

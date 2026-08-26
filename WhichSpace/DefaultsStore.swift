@@ -98,7 +98,7 @@ enum KeySpecs {
     static let hotkeysMoveSkipEmptySpaces = TypedKeySpec(name: "hotkeysMoveSkipEmptySpaces", defaultValue: false)
     static let hotkeysSendSkipEmptySpaces = TypedKeySpec(name: "hotkeysSendSkipEmptySpaces", defaultValue: false)
     static let hotkeysSkipEmptySpaces = TypedKeySpec(name: "hotkeysSkipEmptySpaces", defaultValue: false)
-    static let includeBetaUpdates = TypedKeySpec(name: "includeBetaUpdates", defaultValue: false)
+    static let includeNightlyUpdates = TypedKeySpec(name: "includeNightlyUpdates", defaultValue: false)
     static let invertHorizontalScroll = TypedKeySpec(name: "invertHorizontalScroll", defaultValue: false)
     static let invertVerticalScroll = TypedKeySpec(name: "invertVerticalScroll", defaultValue: false)
     static let paddingScale = TypedKeySpec(name: "paddingScale", defaultValue: Layout.defaultPaddingScale)
@@ -186,7 +186,7 @@ enum KeySpecs {
         hotkeysMoveSkipEmptySpaces,
         hotkeysSendSkipEmptySpaces,
         hotkeysSkipEmptySpaces,
-        includeBetaUpdates,
+        includeNightlyUpdates,
         invertHorizontalScroll,
         invertVerticalScroll,
         localSpaceNumbers,
@@ -235,7 +235,7 @@ enum KeySpecs {
         hotkeysMoveSkipEmptySpaces.name,
         hotkeysSendSkipEmptySpaces.name,
         hotkeysSkipEmptySpaces.name,
-        includeBetaUpdates.name,
+        includeNightlyUpdates.name,
         invertHorizontalScroll.name,
         invertVerticalScroll.name,
         moveApplicationAlertSuppress.name,
@@ -535,9 +535,9 @@ final class DefaultsStore {
         set { self[KeySpecs.hotkeysSkipEmptySpaces] = newValue }
     }
 
-    var includeBetaUpdates: Bool {
-        get { self[KeySpecs.includeBetaUpdates] }
-        set { self[KeySpecs.includeBetaUpdates] = newValue }
+    var includeNightlyUpdates: Bool {
+        get { self[KeySpecs.includeNightlyUpdates] }
+        set { self[KeySpecs.includeNightlyUpdates] = newValue }
     }
 
     var invertHorizontalScroll: Bool {

@@ -26,6 +26,12 @@ struct AppInfoTests {
         #expect(AppInfo.releaseTag(for: "1.3.0-rc.1-2-gabc1234-dirty") == "v1.3.0-rc.1")
     }
 
+    @Test("a tip build names the rolling tag")
+    func tipBuildNamesRollingTag() {
+        #expect(AppInfo.releaseTag(for: "1.3.5-tip.616") == "tip")
+        #expect(AppInfo.releaseTag(for: "1.3.5-tip.616-2-gabc1234-dirty") == "tip")
+    }
+
     @Test("an unknown stamp names no tag")
     func unknownStampNamesNoTag() {
         #expect(AppInfo.releaseTag(for: "?") == nil)

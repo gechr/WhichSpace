@@ -73,11 +73,11 @@ struct GeneralPane: View {
                 // Applies to manual checks too, so not gated on the
                 // auto-check toggle
                 SettingsToggleRow(
-                    title: Localization.toggleBetaUpdates,
-                    isOn: model.binding(\.includeBetaUpdates),
-                    icon: "testtube.2",
-                    subtitle: Localization.tipBetaUpdates,
-                    anchor: .betaUpdates
+                    title: Localization.toggleNightlyUpdates,
+                    isOn: model.binding(\.includeNightlyUpdates),
+                    icon: "moon.stars",
+                    subtitle: Localization.tipNightlyUpdates,
+                    anchor: .nightlyUpdates
                 )
                 SettingsRowDivider()
                 SettingsRow(subtitle: lastCheckedCaption, anchor: .checkForUpdates) {

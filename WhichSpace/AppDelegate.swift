@@ -680,7 +680,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
     nonisolated func allowedChannels(for _: SPUUpdater) -> Set<String> {
         // Sparkle calls updater-delegate methods on the main thread
         MainActor.assumeIsolated {
-            store.includeBetaUpdates ? ["beta"] : []
+            store.includeNightlyUpdates ? ["nightly"] : []
         }
     }
 

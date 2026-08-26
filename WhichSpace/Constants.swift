@@ -117,6 +117,10 @@ enum AppInfo {
         guard value.first?.isNumber == true else {
             return nil
         }
+        // Tip builds are published under the rolling tag, not a version tag
+        if value.contains("-tip.") {
+            return "tip"
+        }
         return "v\(value)"
     }
 
@@ -536,7 +540,6 @@ enum Localization {
     static let tipBackup = String(localized: "tip_backup")
     static let tipBadgeInput = String(localized: "tip_badge_input")
     static let tipBadgePosition = String(localized: "tip_badge_position")
-    static let tipBetaUpdates = String(localized: "tip_beta_updates")
     static let tipCheckForUpdates = String(localized: "tip_check_for_updates")
     static let tipClassicSwitching = String(localized: "tip_classic_switching")
     static let tipCopyFrom = String(localized: "tip_copy_from")
@@ -570,6 +573,7 @@ enum Localization {
     static let tipLaunchAtLogin = String(localized: "tip_launch_at_login")
     static let tipLocalSpaceNumbers = String(localized: "tip_local_space_numbers")
     static let tipMoveSkipEmptySpaces = String(localized: "tip_move_skip_empty_spaces")
+    static let tipNightlyUpdates = String(localized: "tip_nightly_updates")
     static let tipPickerAppIcons = String(localized: "tip_picker_app_icons")
     static let tipPickerStyle = String(localized: "tip_picker_style")
     static let tipPreserveSystemSpaceNumbers = String(localized: "tip_preserve_system_space_numbers")
@@ -600,7 +604,6 @@ enum Localization {
     static let tipUseFForFullscreenApps = String(localized: "tip_use_f_for_fullscreen_apps")
     static let toggleAutoCheckUpdates = String(localized: "toggle_auto_check_updates")
     static let toggleAutoInstallUpdates = String(localized: "toggle_auto_install_updates")
-    static let toggleBetaUpdates = String(localized: "toggle_beta_updates")
     static let toggleClassicSwitching = String(localized: "toggle_classic_switching")
     static let toggleClickToSwitchSpaces = String(localized: "toggle_click_to_switch_spaces")
     static let toggleHideEmptySpaces = String(localized: "toggle_hide_empty_spaces")
@@ -608,6 +611,7 @@ enum Localization {
     static let toggleHideSingleSpace = String(localized: "toggle_hide_single_space")
     static let toggleLaunchAtLogin = String(localized: "toggle_launch_at_login")
     static let toggleLocalSpaceNumbers = String(localized: "toggle_local_space_numbers")
+    static let toggleNightlyUpdates = String(localized: "toggle_nightly_updates")
     static let togglePreserveSystemSpaceNumbers = String(localized: "toggle_preserve_system_space_numbers")
     static let toggleReduceMotionFallback = String(localized: "toggle_reduce_motion_fallback")
     static let toggleScrollHapticFeedback = String(localized: "toggle_scroll_haptic_feedback")

@@ -86,7 +86,7 @@ struct BackupSettings: Codable {
     var hotkeysMoveSkipEmptySpaces: Bool
     var hotkeysSendSkipEmptySpaces: Bool
     var hotkeysSkipEmptySpaces: Bool
-    var includeBetaUpdates: Bool
+    var includeNightlyUpdates: Bool
     var invertHorizontalScroll: Bool
     var invertVerticalScroll: Bool
     var launchAtLogin: Bool
@@ -121,7 +121,7 @@ struct BackupSettings: Codable {
         case hideEmptySpaces
         case hideFullscreenApps, hideSingleSpace, horizontalScrollEnabled
         case hotkeysMoveSkipEmptySpaces, hotkeysSendSkipEmptySpaces, hotkeysSkipEmptySpaces
-        case includeBetaUpdates
+        case includeNightlyUpdates
         case invertHorizontalScroll, invertVerticalScroll, launchAtLogin, localSpaceNumbers
         case inactiveSpaceOpacity
         // Raw value matches the legacy stored defaults key
@@ -157,7 +157,7 @@ struct BackupSettings: Codable {
         hotkeysSendSkipEmptySpaces = try container
             .decodeIfPresent(Bool.self, forKey: .hotkeysSendSkipEmptySpaces) ?? false
         hotkeysSkipEmptySpaces = try container.decodeIfPresent(Bool.self, forKey: .hotkeysSkipEmptySpaces) ?? false
-        includeBetaUpdates = try container.decodeIfPresent(Bool.self, forKey: .includeBetaUpdates) ?? false
+        includeNightlyUpdates = try container.decodeIfPresent(Bool.self, forKey: .includeNightlyUpdates) ?? false
         invertHorizontalScroll = try container.decodeIfPresent(Bool.self, forKey: .invertHorizontalScroll) ?? false
         invertVerticalScroll = try container.decodeIfPresent(Bool.self, forKey: .invertVerticalScroll) ?? false
         launchAtLogin = try container.decodeIfPresent(Bool.self, forKey: .launchAtLogin) ?? false
@@ -204,7 +204,7 @@ struct BackupSettings: Codable {
         hotkeysMoveSkipEmptySpaces: Bool,
         hotkeysSendSkipEmptySpaces: Bool,
         hotkeysSkipEmptySpaces: Bool,
-        includeBetaUpdates: Bool,
+        includeNightlyUpdates: Bool,
         invertHorizontalScroll: Bool,
         invertVerticalScroll: Bool,
         launchAtLogin: Bool,
@@ -242,7 +242,7 @@ struct BackupSettings: Codable {
         self.hotkeysMoveSkipEmptySpaces = hotkeysMoveSkipEmptySpaces
         self.hotkeysSendSkipEmptySpaces = hotkeysSendSkipEmptySpaces
         self.hotkeysSkipEmptySpaces = hotkeysSkipEmptySpaces
-        self.includeBetaUpdates = includeBetaUpdates
+        self.includeNightlyUpdates = includeNightlyUpdates
         self.invertHorizontalScroll = invertHorizontalScroll
         self.invertVerticalScroll = invertVerticalScroll
         self.launchAtLogin = launchAtLogin
@@ -620,7 +620,7 @@ enum BackupManager {
             hotkeysMoveSkipEmptySpaces: store.hotkeysMoveSkipEmptySpaces,
             hotkeysSendSkipEmptySpaces: store.hotkeysSendSkipEmptySpaces,
             hotkeysSkipEmptySpaces: store.hotkeysSkipEmptySpaces,
-            includeBetaUpdates: store.includeBetaUpdates,
+            includeNightlyUpdates: store.includeNightlyUpdates,
             invertHorizontalScroll: store.invertHorizontalScroll,
             invertVerticalScroll: store.invertVerticalScroll,
             launchAtLogin: launchAtLogin.isEnabled,
@@ -774,7 +774,7 @@ enum BackupManager {
         store.hotkeysMoveSkipEmptySpaces = backup.settings.hotkeysMoveSkipEmptySpaces
         store.hotkeysSendSkipEmptySpaces = backup.settings.hotkeysSendSkipEmptySpaces
         store.hotkeysSkipEmptySpaces = backup.settings.hotkeysSkipEmptySpaces
-        store.includeBetaUpdates = backup.settings.includeBetaUpdates
+        store.includeNightlyUpdates = backup.settings.includeNightlyUpdates
         store.invertHorizontalScroll = backup.settings.invertHorizontalScroll
         store.invertVerticalScroll = backup.settings.invertVerticalScroll
         var launchAtLogin = launchAtLogin

@@ -238,7 +238,7 @@ struct DefaultsIsolationGuardTests {
             "hotkeysMoveSkipEmptySpaces",
             "hotkeysSendSkipEmptySpaces",
             "hotkeysSkipEmptySpaces",
-            "includeBetaUpdates",
+            "includeNightlyUpdates",
             "invertHorizontalScroll",
             "invertVerticalScroll",
             "localSpaceNumbers",
