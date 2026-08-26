@@ -111,9 +111,15 @@ protocol FrontWindowLocating: Sendable {
 }
 
 /// Identifies the window to move from the window list rather than through
-/// Accessibility, so moving a window needs no permission of its own.
+/// Accessibility, so moving a window needs no permission of its own. When the
+/// Accessibility permission happens to be granted it is additionally used to
+/// tell which of the preferred application's windows has input focus.
 struct SystemFrontWindowLocator: FrontWindowLocating {
     private static let windowManagerBundleID = "com.apple.WindowManager"
+
+    /// Cap on the AX round-trip, which messages the owning process
+    /// synchronously from the main actor
+    private static let messagingTimeout: Float = 0.25
 
     func frontWindows(fallbackPID: pid_t?) -> [FrontWindow] {
         let options: CGWindowListOption = [.optionOnScreenOnly, .excludeDesktopElements]
@@ -136,16 +142,47 @@ struct SystemFrontWindowLocator: FrontWindowLocating {
         return Self.resolve(
             windowList: windowList,
             preferredPID: frontmostPID,
+            focusedWindowID: frontmostPID.flatMap(Self.focusedWindowID(ofApplication:)),
             excluding: windowManagerPIDs.union([ownPID])
         )
     }
 
+    /// The window with input focus in the given application, resolved through
+    /// Accessibility. The window list only carries WindowServer z-order, which
+    /// can disagree with input focus when one application owns several
+    /// windows, so this is the only reliable disambiguator. Without the
+    /// Accessibility permission the WindowServer order stands.
+    private static func focusedWindowID(ofApplication pid: pid_t) -> CGWindowID? {
+        guard AXIsProcessTrusted() else {
+            return nil
+        }
+        let application = AXUIElementCreateApplication(pid)
+        AXUIElementSetMessagingTimeout(application, messagingTimeout)
+        var value: CFTypeRef?
+        guard AXUIElementCopyAttributeValue(application, kAXFocusedWindowAttribute as CFString, &value) == .success,
+              let value, CFGetTypeID(value) == AXUIElementGetTypeID()
+        else {
+            return nil
+        }
+        var windowID = CGWindowID(0)
+        let element = value as! AXUIElement
+        // The timeout binds to the exact element it is set on, so the derived
+        // focused-window element needs its own
+        AXUIElementSetMessagingTimeout(element, messagingTimeout)
+        guard _AXUIElementGetWindow(element, &windowID) == .success, windowID != kCGNullWindowID else {
+            return nil
+        }
+        return windowID
+    }
+
     /// Returns regular windows in preference order: the most recently active
-    /// user application's windows first, then the remaining front-to-back
-    /// WindowServer order. Kept pure so tests cover it directly.
+    /// user application's windows first, with its focused window ahead of its
+    /// siblings, then the remaining front-to-back WindowServer order. Kept
+    /// pure so tests cover it directly.
     static func resolve(
         windowList: [[String: Any]],
         preferredPID: pid_t?,
+        focusedWindowID: CGWindowID? = nil,
         excluding excludedPIDs: Set<pid_t>
     ) -> [FrontWindow] {
         var candidates: [FrontWindow] = []
@@ -175,7 +212,13 @@ struct SystemFrontWindowLocator: FrontWindowLocating {
         guard let preferredPID else {
             return candidates
         }
-        let preferred = candidates.filter { $0.ownerPID == preferredPID }
+        var preferred = candidates.filter { $0.ownerPID == preferredPID }
+        // WindowServer z-order does not track input focus within one
+        // application, so when Accessibility identified the focused window it
+        // is promoted ahead of its siblings
+        if let focusedWindowID, let index = preferred.firstIndex(where: { $0.id == focusedWindowID }), index > 0 {
+            preferred.insert(preferred.remove(at: index), at: 0)
+        }
         return preferred + candidates.filter { $0.ownerPID != preferredPID }
     }
 }

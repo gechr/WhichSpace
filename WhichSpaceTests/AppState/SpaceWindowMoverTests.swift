@@ -730,6 +730,42 @@ struct SpaceWindowMoverTests {
         ])
     }
 
+    @Test("front window prefers the focused window over sibling windows")
+    func resolve_prefersFocusedWindow() {
+        let list = [window(number: 1, pid: 10), window(number: 2, pid: 20), window(number: 3, pid: 20)]
+
+        let resolved = SystemFrontWindowLocator.resolve(
+            windowList: list,
+            preferredPID: 20,
+            focusedWindowID: 3,
+            excluding: [99]
+        )
+
+        #expect(resolved == [
+            FrontWindow(id: 3, ownerPID: 20),
+            FrontWindow(id: 2, ownerPID: 20),
+            FrontWindow(id: 1, ownerPID: 10),
+        ], "The focused window moves even when WindowServer orders a sibling first")
+    }
+
+    @Test("a focused window outside the frontmost app leaves the order unchanged")
+    func resolve_ignoresForeignFocusedWindow() {
+        let list = [window(number: 1, pid: 10), window(number: 2, pid: 20), window(number: 3, pid: 20)]
+
+        let resolved = SystemFrontWindowLocator.resolve(
+            windowList: list,
+            preferredPID: 20,
+            focusedWindowID: 1,
+            excluding: [99]
+        )
+
+        #expect(resolved == [
+            FrontWindow(id: 2, ownerPID: 20),
+            FrontWindow(id: 3, ownerPID: 20),
+            FrontWindow(id: 1, ownerPID: 10),
+        ], "Stale focus data never promotes another application's window")
+    }
+
     @Test("front window falls back to front-to-back order")
     func resolve_fallsBackToWindowOrder() {
         let list = [window(number: 1, pid: 10), window(number: 2, pid: 20)]
