@@ -298,18 +298,21 @@ final class HotkeyCenter {
     /// the same reason `switchTo` swallows its own. Skipping empty Spaces has
     /// a preference per verb, separate from the switch hotkeys': landing a
     /// window on an empty Space is a normal way to start a fresh Desktop.
+    /// Occupancy is sampled by the provider once the command executes, so a
+    /// press queued behind another move sees that move's result.
     private func moveWindow(goRight: Bool, follow: Bool) {
         guard ensureAccessibility() else {
             return
         }
         Task { @MainActor in
-            let skips = follow ? store.hotkeysMoveSkipEmptySpaces : store.hotkeysSendSkipEmptySpaces
-            let skipped = skips ? appState.emptySpaceIDs() : []
             try? await ScriptingHelpers.moveWindowRelative(
                 goRight: goRight,
                 follow: follow,
                 wrap: store.scrollWrapAround,
-                skippingSpaceIDs: skipped,
+                skippingSpaceIDs: { [store, appState] in
+                    let skips = follow ? store.hotkeysMoveSkipEmptySpaces : store.hotkeysSendSkipEmptySpaces
+                    return skips ? appState.emptySpaceIDs() : []
+                },
                 appState: appState
             )
         }

@@ -276,6 +276,40 @@ struct SystemFrontWindowLocator: FrontWindowLocating {
     }
 }
 
+// MARK: - Move Serialization
+
+/// Runs move commands one at a time in arrival order. Hotkeys, AppleScript,
+/// URLs and Shortcuts each start their own task, and a second command while a
+/// move is still confirming or following its window would select the same
+/// window again or interleave backend mutations. Later commands wait rather
+/// than being refused, so a rapid hotkey sequence lands every move. An
+/// admitted operation runs in an unstructured task, so cancelling the surface
+/// task that queued it cannot abandon a move mid-mutation. An operation must
+/// not call `run` on its own serializer: the inner call would queue behind
+/// the operation awaiting it and deadlock.
+@MainActor
+final class MoveSerializer {
+    static let shared = MoveSerializer()
+
+    private var tail: Task<Void, Never>?
+
+    func run<T: Sendable>(_ operation: @escaping @MainActor () async -> T) async -> T {
+        let previous = tail
+        let current = Task { @MainActor in
+            await previous?.value
+            return await operation()
+        }
+        let wrapper = Task { _ = await current.value }
+        tail = wrapper
+        let result = await current.value
+        // Reset when the queue drains, so an idle serializer holds no task
+        if tail == wrapper {
+            tail = nil
+        }
+        return result
+    }
+}
+
 // MARK: - Space Window Mover
 
 /// Moves the front window to another Space, confirming the result before

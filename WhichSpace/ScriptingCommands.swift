@@ -341,40 +341,62 @@ enum ScriptingHelpers {
     /// Moves the frontmost window to the Space at the given 1-based number.
     /// `follow` switches to that Space afterwards, which is the difference
     /// between the `move` and `send` commands. Numbering follows the menu bar
-    /// preference, the same way `switchToSpace(number:)` resolves it.
+    /// preference, the same way `switchToSpace(number:)` resolves it. Every
+    /// surface funnels through the shared serializer, so overlapping commands
+    /// run one at a time.
     static func moveWindow(
         toSpace number: Int,
         follow: Bool,
         appState: AppState = AppEnvironment.shared.appState,
         store: DefaultsStore = AppEnvironment.shared.store,
-        mover: SpaceWindowMover = SpaceWindowMover()
+        mover: SpaceWindowMover = SpaceWindowMover(),
+        serializer: MoveSerializer = .shared
     ) async throws(MoveError) {
-        if store.localSpaceNumbers {
-            try await mover.move(toSpaceNumber: number, follow: follow, appState: appState)
-        } else {
-            try await mover.move(toGlobalDesktop: number, follow: follow, appState: appState)
+        let result: Result<Void, MoveError> = await serializer.run {
+            do throws(MoveError) {
+                if store.localSpaceNumbers {
+                    try await mover.move(toSpaceNumber: number, follow: follow, appState: appState)
+                } else {
+                    try await mover.move(toGlobalDesktop: number, follow: follow, appState: appState)
+                }
+                return .success(())
+            } catch {
+                return .failure(error)
+            }
         }
+        try result.get()
     }
 
     /// Moves the frontmost window one Space left or right, skipping fullscreen
-    /// Spaces and any whose IDs appear in `skippingSpaceIDs`. Without `wrap`
-    /// either edge is an error rather than a silent no-op, which is what the
-    /// scripting and URL surfaces want.
+    /// Spaces and any whose IDs the provider returns. The provider runs when
+    /// the command reaches the front of the queue, so a command queued behind
+    /// another move samples occupancy after that move rather than before it.
+    /// Without `wrap` either edge is an error rather than a silent no-op,
+    /// which is what the scripting and URL surfaces want.
     static func moveWindowRelative(
         goRight: Bool,
         follow: Bool,
         wrap: Bool = false,
-        skippingSpaceIDs: Set<Int> = [],
+        skippingSpaceIDs: @escaping @MainActor () -> Set<Int> = { [] },
         appState: AppState = AppEnvironment.shared.appState,
-        mover: SpaceWindowMover = SpaceWindowMover()
+        mover: SpaceWindowMover = SpaceWindowMover(),
+        serializer: MoveSerializer = .shared
     ) async throws(MoveError) {
-        try await mover.moveRelative(
-            goRight: goRight,
-            follow: follow,
-            wrap: wrap,
-            skippingSpaceIDs: skippingSpaceIDs,
-            appState: appState
-        )
+        let result: Result<Void, MoveError> = await serializer.run {
+            do throws(MoveError) {
+                try await mover.moveRelative(
+                    goRight: goRight,
+                    follow: follow,
+                    wrap: wrap,
+                    skippingSpaceIDs: skippingSpaceIDs(),
+                    appState: appState
+                )
+                return .success(())
+            } catch {
+                return .failure(error)
+            }
+        }
+        try result.get()
     }
 
     /// Switches to the Space at the given 1-based number. Numbering follows

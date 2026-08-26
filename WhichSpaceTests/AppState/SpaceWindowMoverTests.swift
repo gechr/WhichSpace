@@ -814,3 +814,94 @@ struct SpaceWindowMoverTests {
         #expect(SystemFrontWindowLocator.resolve(windowList: [], preferredPID: nil, excluding: [99]).isEmpty)
     }
 }
+
+/// Collects event markers on the main actor, so overlapping serializer
+/// operations can record their interleaving without a data race.
+@MainActor
+private final class EventLog {
+    private(set) var events: [Int] = []
+
+    func append(_ event: Int) {
+        events.append(event)
+    }
+}
+
+@MainActor
+struct MoveSerializerTests {
+    @Test("a second command waits for the first to finish")
+    func serializesOverlappingCommands() async {
+        let serializer = MoveSerializer()
+        let log = EventLog()
+        let (started, startSignal) = AsyncStream.makeStream(of: Void.self)
+        let (gate, release) = AsyncStream.makeStream(of: Void.self)
+
+        let first = Task { @MainActor in
+            await serializer.run {
+                log.append(1)
+                startSignal.yield(())
+                for await _ in gate {
+                    break
+                }
+                log.append(2)
+            }
+        }
+        var startIterator = started.makeAsyncIterator()
+        _ = await startIterator.next()
+        let second = Task { @MainActor in
+            await serializer.run {
+                log.append(3)
+            }
+        }
+        for _ in 0..<10 {
+            await Task.yield()
+        }
+        #expect(log.events == [1], "The second command must not start while the first is in flight")
+
+        release.yield(())
+        release.finish()
+        await first.value
+        await second.value
+        #expect(log.events == [1, 2, 3], "Commands complete in arrival order")
+    }
+
+    @Test("a command's result survives the queue")
+    func returnsOperationResult() async {
+        let serializer = MoveSerializer()
+
+        let value = await serializer.run { 42 }
+
+        #expect(value == 42)
+    }
+
+    @Test("cancelling the surface task does not abandon an admitted command")
+    func cancellationDoesNotAbandonOperation() async {
+        let serializer = MoveSerializer()
+        let log = EventLog()
+        let (started, startSignal) = AsyncStream.makeStream(of: Void.self)
+        let (gate, release) = AsyncStream.makeStream(of: Void.self)
+
+        let surface = Task { @MainActor in
+            await serializer.run {
+                log.append(1)
+                startSignal.yield(())
+                for await _ in gate {
+                    break
+                }
+                log.append(2)
+            }
+        }
+        var startIterator = started.makeAsyncIterator()
+        _ = await startIterator.next()
+        surface.cancel()
+        release.yield(())
+        release.finish()
+        _ = await surface.value
+
+        #expect(log.events == [1, 2], "A move already admitted runs to completion, never mid-mutation abandonment")
+
+        await serializer.run {
+            log.append(3)
+        }
+        #expect(log.events == [1, 2, 3], "The queue stays usable after a cancelled caller")
+    }
+}
