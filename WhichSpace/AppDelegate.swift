@@ -339,6 +339,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
             return
         }
 
+        // macOS 27 marks the accessory process eligible for automatic
+        // termination during launch window restoration and can silently
+        // reap it, killing the status item with it. Opt out both here and
+        // in Info.plist (NSSupportsAutomaticTermination)
+        ProcessInfo.processInfo.disableAutomaticTermination(
+            "menu bar app must stay resident"
+        )
+
         // AppKit's tooltip manager reads this key
         // register() keeps it session-only and yields to a user-set value
         UserDefaults.standard.register(defaults: ["NSInitialToolTipDelay": 500])
