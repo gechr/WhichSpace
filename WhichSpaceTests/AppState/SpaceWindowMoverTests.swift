@@ -852,7 +852,7 @@ struct MoveSerializerTests {
                 log.append(3)
             }
         }
-        for _ in 0..<10 {
+        for _ in 0 ..< 10 {
             await Task.yield()
         }
         #expect(log.events == [1], "The second command must not start while the first is in flight")

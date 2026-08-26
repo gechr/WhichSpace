@@ -1,4 +1,5 @@
 import AppKit
+import os.log
 
 // MARK: - Backends
 
@@ -115,6 +116,8 @@ protocol FrontWindowLocating: Sendable {
 /// Accessibility permission happens to be granted it is additionally used to
 /// tell which of the preferred application's windows has input focus.
 struct SystemFrontWindowLocator: FrontWindowLocating {
+    private static let logger = Logger(subsystem: "io.gechr.WhichSpace", category: "WindowMove")
+
     private static let windowManagerBundleID = "com.apple.WindowManager"
 
     /// Cap on the AX round-trip, which messages the owning process
@@ -130,19 +133,31 @@ struct SystemFrontWindowLocator: FrontWindowLocating {
         let windowManagerPIDs = ownerPIDs.filter {
             NSRunningApplication(processIdentifier: $0)?.bundleIdentifier == Self.windowManagerBundleID
         }
-        let frontmostPID = NSWorkspace.shared.frontmostApplication.flatMap { application in
+        let workspacePID: pid_t? = NSWorkspace.shared.frontmostApplication.flatMap { application in
             guard application.processIdentifier != ownPID,
                   application.bundleIdentifier != Self.windowManagerBundleID
             else {
-                return fallbackPID
+                return nil
             }
             return application.processIdentifier
-        } ?? fallbackPID
+        }
+        let preferredPID = workspacePID ?? fallbackPID
+        let focusedWindowID = preferredPID.flatMap(Self.focusedWindowID(ofApplication:))
+        if let preferredPID {
+            // The preferred PID's origin and the focused window separate "AX
+            // named the wrong sibling" from "AX failed and WindowServer order
+            // won" when a move picks unexpectedly
+            Self.logger.info("""
+            focus: preferred pid=\(preferredPID) \
+            source=\(workspacePID != nil ? "frontmost" : "fallback", privacy: .public) \
+            wid=\(focusedWindowID ?? 0)
+            """)
+        }
 
         return Self.resolve(
             windowList: windowList,
-            preferredPID: frontmostPID,
-            focusedWindowID: frontmostPID.flatMap(Self.focusedWindowID(ofApplication:)),
+            preferredPID: preferredPID,
+            focusedWindowID: focusedWindowID,
             excluding: windowManagerPIDs.union([ownPID])
         )
     }
@@ -151,7 +166,10 @@ struct SystemFrontWindowLocator: FrontWindowLocating {
     /// Accessibility. The window list only carries WindowServer z-order, which
     /// can disagree with input focus when one application owns several
     /// windows, so this is the only reliable disambiguator. Without the
-    /// Accessibility permission the WindowServer order stands.
+    /// Accessibility permission the WindowServer order stands. The logged AX
+    /// error codes separate a dead element (-25202) from an unresponsive
+    /// application (-25204), which point at different failures when a move
+    /// picks the wrong window.
     private static func focusedWindowID(ofApplication pid: pid_t) -> CGWindowID? {
         guard AXIsProcessTrusted() else {
             return nil
@@ -159,19 +177,23 @@ struct SystemFrontWindowLocator: FrontWindowLocating {
         let application = AXUIElementCreateApplication(pid)
         AXUIElementSetMessagingTimeout(application, messagingTimeout)
         var value: CFTypeRef?
-        guard AXUIElementCopyAttributeValue(application, kAXFocusedWindowAttribute as CFString, &value) == .success,
-              let value, CFGetTypeID(value) == AXUIElementGetTypeID()
-        else {
+        let focusResult = AXUIElementCopyAttributeValue(application, kAXFocusedWindowAttribute as CFString, &value)
+        guard focusResult == .success, let value, CFGetTypeID(value) == AXUIElementGetTypeID() else {
+            logger.info("focus: pid=\(pid) focused-window lookup failed error=\(focusResult.rawValue)")
             return nil
         }
         let element = value as! AXUIElement
         // The timeout binds to the exact element it is set on, so the derived
         // focused-window element needs its own
         AXUIElementSetMessagingTimeout(element, messagingTimeout)
+        guard let window = resolvingSheet(element) else {
+            logger.info("focus: pid=\(pid) focused sheet did not resolve to a window")
+            return nil
+        }
         var windowID = CGWindowID(0)
-        guard let window = resolvingSheet(element),
-              _AXUIElementGetWindow(window, &windowID) == .success, windowID != kCGNullWindowID
-        else {
+        let windowResult = _AXUIElementGetWindow(window, &windowID)
+        guard windowResult == .success, windowID != kCGNullWindowID else {
+            logger.info("focus: pid=\(pid) window id lookup failed error=\(windowResult.rawValue) wid=\(windowID)")
             return nil
         }
         return windowID
@@ -199,6 +221,9 @@ struct SystemFrontWindowLocator: FrontWindowLocating {
                 return nil
             }
             guard role == kAXSheetRole else {
+                if hops > 0 {
+                    logger.info("focus: sheet resolved to its owner after hops=\(hops)")
+                }
                 return current
             }
             guard hops < maxParentHops else {
@@ -222,10 +247,12 @@ struct SystemFrontWindowLocator: FrontWindowLocating {
 
     private static func role(of element: AXUIElement) -> String? {
         var value: CFTypeRef?
-        guard AXUIElementCopyAttributeValue(element, kAXRoleAttribute as CFString, &value) == .success else {
+        let result = AXUIElementCopyAttributeValue(element, kAXRoleAttribute as CFString, &value)
+        guard result == .success, let role = value as? String else {
+            logger.info("focus: role lookup failed error=\(result.rawValue)")
             return nil
         }
-        return value as? String
+        return role
     }
 
     /// Returns regular windows in preference order: the most recently active
@@ -317,6 +344,8 @@ final class MoveSerializer {
 /// nothing, so membership is the only trustworthy signal.
 @MainActor
 struct SpaceWindowMover {
+    private static let logger = Logger(subsystem: "io.gechr.WhichSpace", category: "WindowMove")
+
     /// How a follow switch addresses the target Space. Local numbered and
     /// relative moves stay on the active display and switch by space ID; a
     /// globally numbered move may land on another display, which only the
@@ -520,16 +549,33 @@ struct SpaceWindowMover {
         // Addressability is checked afterwards so a local command never
         // substitutes another display's window with a different candidate.
         let activeSpaceIDs = Set(appState.allDisplaysSpaceInfo.compactMap(\.activeSpaceID))
-        let located = locator.frontWindows(fallbackPID: appState.lastUserApplicationPID).lazy.compactMap { window in
+        var inspected = 0
+        var located: (window: FrontWindow, source: Set<Int>)?
+        for window in locator.frontWindows(fallbackPID: appState.lastUserApplicationPID) {
+            inspected += 1
             let source = Set(mover.spaceIDs(forWindow: window.id))
-            return source.isDisjoint(with: activeSpaceIDs) ? nil : (window, source)
-        }.first
+            if source.isDisjoint(with: activeSpaceIDs) {
+                Self.logger.info("""
+                move: rejected wid=\(window.id) pid=\(window.ownerPID) \
+                membership=\(source.sorted(), privacy: .public) not on an active Space
+                """)
+                continue
+            }
+            located = (window, source)
+            break
+        }
         guard let (window, source) = located else {
+            Self.logger.info("move: target=\(spaceID) no candidate on an active Space (inspected=\(inspected))")
             throw .noWindowToMove
         }
+        Self.logger.info("""
+        move: target=\(spaceID) follow=\(follow) selected wid=\(window.id) pid=\(window.ownerPID) \
+        source=\(source.sorted(), privacy: .public) active=\(activeSpaceIDs.sorted(), privacy: .public)
+        """)
 
         // A sticky window is already everywhere, so treat it as moved
         if source.contains(spaceID) {
+            Self.logger.info("move: wid=\(window.id) already on target \(spaceID)")
             raiseIfTrusted(window)
             await switchIfFollowing(follow, to: target, window: window, appState: appState)
             return
@@ -540,30 +586,44 @@ struct SpaceWindowMover {
         // display's entries so a window on another display is not moved
         // across displays unasked, global numbering passes every display's
         guard source.contains(where: { id in entries.contains { $0.id == id } }) else {
+            Self.logger.info("move: wid=\(window.id) membership is not addressable by this numbering")
             throw .noWindowToMove
         }
         // A window on a fullscreen Space is not a free-floating window, and the
         // private move leaves it in an unpredictable state
         guard !source.contains(where: { id in entries.contains { $0.id == id && $0.regularIndex == nil } }) else {
+            Self.logger.info("move: wid=\(window.id) is on a fullscreen Space")
             throw .windowIsFullscreen
         }
 
         let backends = permitted.filter { mover.isAvailable($0) }
         guard !backends.isEmpty else {
+            Self.logger.info("move: no backend available")
             throw .unsupported
         }
 
         for backend in backends {
             guard mover.perform(backend, windowID: window.id, spaceID: spaceID) else {
+                Self.logger
+                    .info("move: backend=\(String(describing: backend), privacy: .public) refused wid=\(window.id)")
                 continue
             }
-            if await confirm(window: window, spaceID: spaceID, leaving: source) {
+            let confirmed = await confirm(window: window, spaceID: spaceID, leaving: source)
+            // The post-attempt membership makes a partial mutation visible: a
+            // failed confirmation that still added the target is a copy or a
+            // half-applied move, not a no-op
+            Self.logger.info("""
+            move: backend=\(String(describing: backend), privacy: .public) issued wid=\(window.id) \
+            confirmed=\(confirmed) membership=\(mover.spaceIDs(forWindow: window.id).sorted(), privacy: .public)
+            """)
+            if confirmed {
                 raiseIfTrusted(window)
                 await switchIfFollowing(follow, to: target, window: window, appState: appState)
                 return
             }
         }
 
+        Self.logger.info("move: failed wid=\(window.id) target=\(spaceID)")
         throw .moveFailed(requested: requested)
     }
 
