@@ -71,6 +71,19 @@ final class HotkeyCenter {
         return bindings
     }
 
+    /// The recorded bindings as name to the chord the user presses, for the diagnostics report.
+    /// The rendering is glyphs and the layout's own character, so it does not vary by language.
+    static func describeBindings() -> [String: String] {
+        var bindings = [String: String]()
+        for name in allNames {
+            guard let shortcut = KeyboardShortcuts.getShortcut(for: name) else {
+                continue
+            }
+            bindings[name.rawValue] = shortcut.description
+        }
+        return bindings
+    }
+
     /// Replaces every binding with the imported set: names absent from the
     /// backup are cleared, matching how the rest of an import overwrites
     /// current state. Unreadable entries clear their binding rather than

@@ -221,6 +221,13 @@ enum SettingsSearchIndex {
             keywords: [.backup]
         ),
         SettingsSearchEntry(
+            anchor: .diagnostics,
+            section: nil,
+            title: Localization.labelDiagnostics,
+            subtitle: Localization.tipDiagnostics,
+            keywords: [.backup]
+        ),
+        SettingsSearchEntry(
             anchor: .resetSettings,
             section: nil,
             title: Localization.labelResetSettings,

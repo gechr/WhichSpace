@@ -279,6 +279,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
                     onCheckForUpdates: { [weak self] in self?.actionHandler.checkForUpdates() },
                     onImportSettings: { [weak self] in self?.actionHandler.importSettings() },
                     onExportSettings: { [weak self] in self?.actionHandler.exportSettings() },
+                    onCopyDiagnostics: { [weak self] in self?.actionHandler.copyDiagnostics() ?? false },
                     onResetAllSettings: { [weak self] in self?.actionHandler.resetAllSettings() }
                 )
                 .environment(highlighter)

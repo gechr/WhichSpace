@@ -14,6 +14,7 @@ struct GeneralPane: View {
     let onCheckForUpdates: () -> Void
     let onImportSettings: () -> Void
     let onExportSettings: () -> Void
+    let onCopyDiagnostics: () -> Bool
     let onResetAllSettings: () -> Void
 
     /// Only `canCheckForUpdates` is KVO-observable on the updater; bumped
@@ -23,6 +24,13 @@ struct GeneralPane: View {
 
     /// Mirrors the updater's in-flight state, driven by KVO below
     @State private var checkInProgress = false
+
+    /// Confirms the diagnostics copy, which is otherwise invisible. Reverts
+    /// after a moment so the button reads as repeatable.
+    @State private var diagnosticsCopied = false
+
+    /// Held so a second click cancels the first click's pending reset.
+    @State private var diagnosticsResetTask: Task<Void, Never>?
 
     var body: some View {
         let _ = updaterTick
@@ -94,6 +102,28 @@ struct GeneralPane: View {
                     }
                     Button(Localization.actionExportSettings) {
                         onExportSettings()
+                    }
+                }
+            }
+            SettingsSection {
+                SettingsRow(icon: "stethoscope", subtitle: Localization.tipDiagnostics, anchor: .diagnostics) {
+                    Text(Localization.labelDiagnostics)
+                } control: {
+                    Button(diagnosticsCopied ? Localization.actionCopied : Localization.buttonCopy) {
+                        guard onCopyDiagnostics() else {
+                            return
+                        }
+                        diagnosticsCopied = true
+                        // Cancel the previous reset, so a second click keeps
+                        // the confirmation up for its own two seconds
+                        diagnosticsResetTask?.cancel()
+                        diagnosticsResetTask = Task {
+                            try? await Task.sleep(for: .seconds(2))
+                            guard !Task.isCancelled else {
+                                return
+                            }
+                            diagnosticsCopied = false
+                        }
                     }
                 }
             }

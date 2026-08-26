@@ -53,6 +53,7 @@ enum SettingsAnchor: String, CaseIterable {
     case betaUpdates = "beta-updates"
     case checkForUpdates = "check-for-updates"
     case backup
+    case diagnostics
     case resetSettings = "reset-settings"
 
     case iconSize = "icon-size"
@@ -142,7 +143,7 @@ enum SettingsAnchor: String, CaseIterable {
     var pane: SettingsPaneID {
         switch self {
         case .launchAtLogin, .autoCheckUpdates, .autoInstallUpdates, .betaUpdates, .checkForUpdates,
-             .backup, .resetSettings:
+             .backup, .diagnostics, .resetSettings:
             .general
         case .iconSize, .iconPadding, .shrinkToFit, .localSpaceNumbers, .displayOrder,
              .preserveSystemSpaceNumbers, .separatorColor,

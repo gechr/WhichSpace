@@ -328,6 +328,7 @@ enum IconColors {
 
 enum Localization {
     static let accessibilityCurrentSpace = String(localized: "accessibility_current_space")
+    static let actionCopied = String(localized: "action_copied")
     static let actionCopyFrom = String(localized: "action_copy_from")
     static let actionCopyTo = String(localized: "action_copy_to")
     static let actionCheckForUpdates = String(localized: "action_check_for_updates")
@@ -428,6 +429,7 @@ enum Localization {
     static let labelDefaultStyle = String(localized: "label_default_style")
     static let labelDesktop = String(localized: "label_desktop")
     static let labelDesktopNumber = String(localized: "label_desktop_number")
+    static let labelDiagnostics = String(localized: "label_diagnostics")
     static let labelDisplayOrder = String(localized: "label_display_order")
     static let labelDisplays = String(localized: "label_displays")
     static let labelFont = String(localized: "label_font")
@@ -542,6 +544,7 @@ enum Localization {
     static let tipClearBadge = String(localized: "tip_clear_badge")
     static let tipClearLabel = String(localized: "tip_clear_label")
     static let tipClickToSwitchSpaces = String(localized: "tip_click_to_switch_spaces")
+    static let tipDiagnostics = String(localized: "tip_diagnostics")
     static let tipInactiveSpaceOpacity = String(localized: "tip_inactive_space_opacity")
     static let tipDisplayOrder = String(localized: "tip_display_order")
     static let tipFont = String(localized: "tip_font")

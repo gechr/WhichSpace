@@ -138,6 +138,38 @@ final class ActionHandler: NSObject {
         }
     }
 
+    /// Puts a bug-report summary on the pasteboard, ready to paste into a
+    /// GitHub issue. Separate from the settings export, which carries Space
+    /// labels and display identifiers that do not belong in a public thread.
+    /// Returns whether the pasteboard accepted it.
+    @discardableResult
+    @objc func copyDiagnostics() -> Bool {
+        let displays = appState.allDisplaysSpaceInfo
+        let activeDisplay = displays.firstIndex { $0.displayID == appState.currentDisplayID }
+        let activeEntry = activeDisplay
+            .flatMap { displays[$0].entries.firstIndex { $0.id == appState.currentSpaceID } }
+        let environment = DiagnosticsEnvironment.current(
+            spacesPerDisplay: displays.map(\.regularSpaceCount),
+            fullscreenSpaceCount: displays.reduce(0) { $0 + $1.entries.count - $1.regularSpaceCount },
+            shrinkLevel: appState.shrinkLevel,
+            // Ordinals rather than identifiers, and 1-based to line up with
+            // the counts they index into
+            activeDisplay: activeDisplay.map { $0 + 1 },
+            activeSpaceIndex: activeEntry.map { $0 + 1 },
+            activeDesktopNumber: appState.currentGlobalSpaceIndex > 0 ? appState.currentGlobalSpaceIndex : nil,
+            activeSpaceIsFullscreen: activeDisplay.flatMap { display in
+                activeEntry.map { displays[display].entries[$0].regularIndex == nil }
+            } ?? false
+        )
+        let report = Diagnostics.markdown(
+            environment: environment,
+            store: store,
+            hotkeys: HotkeyCenter.describeBindings()
+        )
+        NSPasteboard.general.clearContents()
+        return NSPasteboard.general.setString(report, forType: .string)
+    }
+
     // MARK: - Settings Reset
 
     /// Returns every preference to the value it ships with, per-Space styling
