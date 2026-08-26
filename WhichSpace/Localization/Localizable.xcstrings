@@ -71084,7 +71084,7 @@
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "خلاصه‌ای از پیکربندی خود را برای درج در گزارش اشکال کپی کنید"
+            "value" : "خلاصه‌ای از پیکربندی خود را کپی کنید تا در گزارش اشکال جای‌گذاری شود"
           }
         },
         "fi" : {
@@ -71138,7 +71138,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "버그 신고서에 붙여 넣을 설정 요약을 복사합니다"
+            "value" : "버그 리포트에 붙여넣을 설정 요약을 복사합니다"
           }
         },
         "mk" : {
@@ -71150,7 +71150,7 @@
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Salin ringkasan persediaan anda untuk ditampal dalam laporan pepijat"
+            "value" : "Salin ringkasan seting anda untuk ditampal dalam laporan pepijat"
           }
         },
         "nb" : {
@@ -71174,7 +71174,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "بگ رپورٹ وچ چیپکاؤن لئی اپنی ترتیب دا خلاصہ کاپی کرو"
+            "value" : "بگ رپورٹ وچ پیسٹ کرن لئی اپنی ترتیب دا خلاصہ کاپی کرو"
           }
         },
         "pl" : {
@@ -71186,7 +71186,7 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "د ستونزې راپور کې د نښلولو لپاره د خپلو تنظیماتو لنډیز کاپي کړئ"
+            "value" : "د ستونزې په راپور کې د سرېښلو لپاره د خپلو تنظیماتو لنډیز کاپي کړئ"
           }
         },
         "pt" : {
