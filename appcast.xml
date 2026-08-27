@@ -6,12 +6,12 @@
     <description>Most recent changes with links to updates.</description>
     <language>en</language>
     <item>
-        <title>Version 1.3.6-tip.620</title>
+        <title>Version 1.3.5-tip.620</title>
         <sparkle:channel>nightly</sparkle:channel>
         <description><![CDATA[
           <style>.sparkle-installed-version, .sparkle-installed-version ~ * { display: none }</style>
-          <section data-sparkle-version="1.3.6-tip.620">
-            <h3>v1.3.6-tip.620</h3>
+          <section data-sparkle-version="1.3.5-tip.620">
+            <h3>v1.3.5-tip.620</h3>
             <ul>
               <li>updates: Conditionally rank stable releases above nightlies</li>
               <li>spaces: Reindex preferences across Space insertion and removal</li>
@@ -1081,13 +1081,13 @@
           </section>
         ]]></description>
         <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/tip</sparkle:fullReleaseNotesLink>
-        <pubDate>Fri, 28 Aug 2026 00:25:45 +0100</pubDate>
+        <pubDate>Fri, 28 Aug 2026 00:33:51 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/tip/WhichSpace.zip"
-          sparkle:version="1.3.6-tip.620"
-          sparkle:shortVersionString="1.3.6-tip.620"
-          sparkle:edSignature="TSDQAtfxYwEqSbP9WNGreiPF8Lnsx/TqgdKrYQWkOvypKSXpMP9FzmO8ARz4Scz4mcOoGzWm1ZmME46UkVeKBQ=="
-          length="4200626"
+          sparkle:version="1.3.5-tip.620"
+          sparkle:shortVersionString="1.3.5-tip.620"
+          sparkle:edSignature="9T5W2iAdAsB+p0NP8ePeq5Yrrd8vdt4IXM25huA3IlUVhMulAB33ZjsR2x7ZKM3ggd1xKTBDBLx+VUbq2Lj2BA=="
+          length="4200950"
           type="application/octet-stream" />
         <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
       </item>
