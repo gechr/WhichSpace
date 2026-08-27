@@ -245,7 +245,6 @@ struct DefaultsIsolationGuardTests {
             "moveToApplicationsFolderAlertSuppress",
             "paddingScale",
             "preserveSystemSpaceNumbers",
-            "reduceMotionFallback",
             "scrollHapticFeedback",
             "scrollHapticIntensity",
             "scrollSensitivity",

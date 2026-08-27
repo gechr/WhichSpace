@@ -108,17 +108,6 @@ struct MousePane: View {
             )
             SettingsRowDivider()
             SettingsToggleRow(
-                title: Localization.toggleReduceMotionFallback,
-                isOn: model.binding(\.reduceMotionFallback),
-                icon: "figure.walk.motion",
-                // Classic switching posts no gestures, so the fallback can
-                // never engage while it is on
-                disabled: model.classicSpaceSwitchingBinding.wrappedValue,
-                subtitle: Localization.tipReduceMotionFallback,
-                anchor: .reduceMotionFallback
-            )
-            SettingsRowDivider()
-            SettingsToggleRow(
                 title: Localization.toggleScrollWrapAround,
                 isOn: model.binding(\.scrollWrapAround),
                 icon: "repeat",

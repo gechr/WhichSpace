@@ -94,7 +94,6 @@ struct BackupSettings: Codable {
     var moveApplicationAlertSuppress: Bool
     var paddingScale: Double?
     var preserveSystemSpaceNumbers: Bool
-    var reduceMotionFallback: Bool
     var scrollHapticFeedback: Bool
     var scrollHapticIntensity: Int
     var scrollSensitivity: Double
@@ -128,7 +127,6 @@ struct BackupSettings: Codable {
         case moveApplicationAlertSuppress = "moveToApplicationsFolderAlertSuppress"
         case paddingScale
         case preserveSystemSpaceNumbers
-        case reduceMotionFallback
         case scrollHapticFeedback, scrollHapticIntensity, scrollSensitivity, scrollWrapAround
         case separatorColor, separatorStyle, showAllDisplays, showAllSpaces, shrinkIconToFit
         case sizeScale, soundName, spacePickerMaxAppIcons, spacePickerStyle, uniqueIconsPerDisplay
@@ -174,7 +172,6 @@ struct BackupSettings: Codable {
             ?? Layout.defaultScrollHapticIntensity
         scrollSensitivity = try container.decodeIfPresent(Double.self, forKey: .scrollSensitivity)
             ?? Layout.defaultScrollSensitivity
-        reduceMotionFallback = try container.decodeIfPresent(Bool.self, forKey: .reduceMotionFallback) ?? false
         scrollWrapAround = try container.decodeIfPresent(Bool.self, forKey: .scrollWrapAround) ?? false
         separatorColor = try container.decodeIfPresent(CodableColor.self, forKey: .separatorColor)
         separatorStyle = try container.decodeIfPresent(String.self, forKey: .separatorStyle)
@@ -212,7 +209,6 @@ struct BackupSettings: Codable {
         moveApplicationAlertSuppress: Bool,
         paddingScale: Double?,
         preserveSystemSpaceNumbers: Bool,
-        reduceMotionFallback: Bool,
         scrollHapticFeedback: Bool,
         scrollHapticIntensity: Int,
         scrollSensitivity: Double,
@@ -250,7 +246,6 @@ struct BackupSettings: Codable {
         self.moveApplicationAlertSuppress = moveApplicationAlertSuppress
         self.paddingScale = paddingScale
         self.preserveSystemSpaceNumbers = preserveSystemSpaceNumbers
-        self.reduceMotionFallback = reduceMotionFallback
         self.scrollHapticFeedback = scrollHapticFeedback
         self.scrollHapticIntensity = scrollHapticIntensity
         self.scrollSensitivity = scrollSensitivity
@@ -628,7 +623,6 @@ enum BackupManager {
             moveApplicationAlertSuppress: store.moveApplicationAlertSuppress,
             paddingScale: store.paddingScale,
             preserveSystemSpaceNumbers: store.preserveSystemSpaceNumbers,
-            reduceMotionFallback: store.reduceMotionFallback,
             scrollHapticFeedback: store.scrollHapticFeedback,
             scrollHapticIntensity: store.scrollHapticIntensity,
             scrollSensitivity: store.scrollSensitivity,
@@ -784,7 +778,6 @@ enum BackupManager {
         store.paddingScale = (backup.settings.paddingScale ?? Layout.defaultPaddingScale)
             .clamped(to: Layout.paddingScaleRange)
         store.preserveSystemSpaceNumbers = backup.settings.preserveSystemSpaceNumbers
-        store.reduceMotionFallback = backup.settings.reduceMotionFallback
         store.scrollHapticFeedback = backup.settings.scrollHapticFeedback
         store.scrollHapticIntensity = backup.settings.scrollHapticIntensity
         store.scrollSensitivity = backup.settings.scrollSensitivity.clamped(to: Layout.scrollSensitivityRange)
