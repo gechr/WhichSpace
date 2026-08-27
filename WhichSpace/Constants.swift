@@ -118,10 +118,15 @@ enum AppInfo {
             return nil
         }
         // Tip builds are published under the rolling tag, not a version tag
-        if value.contains("-tip.") {
+        if isNightlyVersion(value) {
             return "tip"
         }
         return "v\(value)"
+    }
+
+    /// Whether the version string names a nightly (tip) build, e.g. 1.3.6-tip.619
+    static func isNightlyVersion(_ version: String) -> Bool {
+        version.contains("-tip.")
     }
 
     private static let dirtySuffix = "-dirty"

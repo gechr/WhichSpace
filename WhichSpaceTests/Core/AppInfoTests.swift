@@ -37,3 +37,47 @@ struct AppInfoTests {
         #expect(AppInfo.releaseTag(for: "?") == nil)
     }
 }
+
+@Suite("Nightly-aware version comparison")
+struct NightlyAwareVersionComparatorTests {
+    /// Nightly channel on
+    private let nightly = NightlyAwareVersionComparator(stableOutranksAnyNightly: false)
+    /// Nightly channel off
+    private let stable = NightlyAwareVersionComparator(stableOutranksAnyNightly: true)
+
+    @Test("with nightlies off, the base stable release ranks above its nightlies")
+    func stableRanksAboveOwnNightliesWhenLeaving() {
+        #expect(stable.compareVersion("1.3.5-tip.620", toVersion: "1.3.5") == .orderedAscending)
+        #expect(stable.compareVersion("1.3.5", toVersion: "1.3.5-tip.620") == .orderedDescending)
+    }
+
+    @Test("with nightlies on, a nightly ranks above the stable release it builds on")
+    func nightlyRanksAboveItsBaseStable() {
+        #expect(nightly.compareVersion("1.3.5", toVersion: "1.3.5-tip.620") == .orderedAscending)
+        #expect(nightly.compareVersion("1.3.5-tip.620", toVersion: "1.3.5") == .orderedDescending)
+    }
+
+    @Test("a newer stable release ranks above nightlies of the previous one")
+    func newerStableRanksAboveOlderNightlies() {
+        #expect(nightly.compareVersion("1.3.5-tip.620", toVersion: "1.3.6") == .orderedAscending)
+        #expect(stable.compareVersion("1.3.5-tip.620", toVersion: "1.3.6") == .orderedAscending)
+    }
+
+    @Test("two stable releases compare by version")
+    func stableReleasesCompareByVersion() {
+        #expect(stable.compareVersion("1.3.4", toVersion: "1.3.5") == .orderedAscending)
+        #expect(stable.compareVersion("1.3.5", toVersion: "1.3.5") == .orderedSame)
+    }
+
+    @Test("two nightlies compare by tip counter")
+    func nightliesCompareByTipCounter() {
+        #expect(nightly.compareVersion("1.3.5-tip.618", toVersion: "1.3.5-tip.619") == .orderedAscending)
+        #expect(nightly.compareVersion("1.3.5-tip.619", toVersion: "1.3.5-tip.619") == .orderedSame)
+        #expect(stable.compareVersion("1.3.5-tip.618", toVersion: "1.3.5-tip.619") == .orderedAscending)
+    }
+
+    @Test("nightlies of different base versions compare by base version")
+    func nightliesCompareByBaseVersionFirst() {
+        #expect(nightly.compareVersion("1.3.5-tip.619", toVersion: "1.3.6-tip.1") == .orderedAscending)
+    }
+}

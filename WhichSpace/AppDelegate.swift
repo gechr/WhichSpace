@@ -675,6 +675,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
         }
     }
 
+    /// Nightly-aware comparison, since Sparkle's standard comparator treats
+    /// every nightly of the same base version as equal. With nightlies off,
+    /// any stable release also outranks any nightly, so a user leaving the
+    /// nightly channel is offered the latest stable release even though its
+    /// version number is lower.
+    nonisolated func versionComparator(for _: SPUUpdater) -> SUVersionComparison? {
+        MainActor.assumeIsolated {
+            NightlyAwareVersionComparator(stableOutranksAnyNightly: !store.includeNightlyUpdates)
+        }
+    }
+
     // MARK: - SPUStandardUserDriverDelegate
 
     nonisolated var supportsGentleScheduledUpdateReminders: Bool {
@@ -1229,5 +1240,63 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
         // A separate single Space on each display still leaves nothing to
         // switch between on any one display.
         statusBarItem.isVisible = appState.hasMultipleRegularSpacesOnAnyDisplay
+    }
+}
+
+/// Version comparison that understands nightly (tip) builds. Sparkle's
+/// standard comparator discards everything after the first hyphen, which
+/// makes every 1.3.5-tip.N equal to 1.3.5 and to each other, so on its own
+/// it can neither update between nightlies nor leave the nightly channel.
+///
+/// Nightlies are numbered after the stable release they build on
+/// (1.3.5-tip.620 follows 1.3.5). Sparkle's out-of-process installer
+/// hard-refuses any install whose version is lower than the running one
+/// under the standard comparator; the shared base is what makes the
+/// channel-exit downgrade below compare as equal and install.
+///
+/// - Two nightlies with the same base version compare by tip counter.
+/// - A nightly outranks the stable release of the same base version,
+///   since it is built on top of it.
+/// - With `stableOutranksAnyNightly` (nightlies turned off), any stable
+///   release outranks any nightly, so the latest stable release presents
+///   as a regular update - an effective downgrade.
+final class NightlyAwareVersionComparator: SUVersionComparison, Sendable {
+    private let stableOutranksAnyNightly: Bool
+
+    init(stableOutranksAnyNightly: Bool) {
+        self.stableOutranksAnyNightly = stableOutranksAnyNightly
+    }
+
+    func compareVersion(_ versionA: String, toVersion versionB: String) -> ComparisonResult {
+        let nightlyA = AppInfo.isNightlyVersion(versionA)
+        let nightlyB = AppInfo.isNightlyVersion(versionB)
+        if nightlyA != nightlyB, stableOutranksAnyNightly {
+            return nightlyA ? .orderedAscending : .orderedDescending
+        }
+        let base = SUStandardVersionComparator.default.compareVersion(versionA, toVersion: versionB)
+        guard base == .orderedSame else {
+            return base
+        }
+        if nightlyA != nightlyB {
+            return nightlyA ? .orderedDescending : .orderedAscending
+        }
+        guard nightlyA, nightlyB else {
+            return .orderedSame
+        }
+        let counterA = Self.tipCounter(of: versionA)
+        let counterB = Self.tipCounter(of: versionB)
+        if counterA == counterB {
+            return .orderedSame
+        }
+        return counterA < counterB ? .orderedAscending : .orderedDescending
+    }
+
+    /// Build counter after the `-tip.` marker, e.g. 619 in 1.3.6-tip.619
+    private static func tipCounter(of version: String) -> Int {
+        guard let range = version.range(of: "-tip.") else {
+            return 0
+        }
+        let digits = version[range.upperBound...].prefix(while: \.isNumber)
+        return Int(digits) ?? 0
     }
 }
