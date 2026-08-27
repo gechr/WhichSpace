@@ -601,20 +601,28 @@ final class AppState {
     /// CGS reads can race display reconfiguration and briefly drop Spaces or
     /// whole displays, so a snapshot whose membership differs from the
     /// baseline is only a candidate: it must be observed twice in a row
-    /// before it replaces the baseline, and it never remaps. Only a pure
-    /// reorder - same displays, same Space sets - remaps, and immediately: a
-    /// partial read cannot fabricate one, and the settled baseline stays
-    /// intact underneath any transient in between.
+    /// before it replaces the baseline. When the confirmed change is a pure
+    /// insertion or a pure deletion on the same displays, stored preferences
+    /// are reindexed so they stay with their Spaces; any other membership
+    /// change (a display appearing or disappearing, an add together with a
+    /// remove, an insertion mixed with a reorder) adopts the new baseline
+    /// and moves nothing. Only a pure reorder - same displays, same Space
+    /// sets - remaps immediately: a partial read cannot fabricate one, and
+    /// the settled baseline stays intact underneath any transient in
+    /// between.
     ///
-    /// The double observation is a heuristic, not a proof of completeness: a
-    /// transient that survives two consecutive snapshots is adopted as a real
-    /// membership change. A reorder raced by one is then lost - preferences
-    /// stay at their old positions, the pre-tracking behavior - and, rarer
-    /// still, a further partial read showing the adopted reduced set in a
-    /// different order can remap against the poisoned baseline and move
-    /// preferences wrongly until the user rearranges them. Both need the
-    /// same incomplete CGS state to persist across multiple reads while the
-    /// Spaces change underneath, and the values themselves are never lost.
+    /// The double observation is a heuristic, not a proof of completeness:
+    /// a transient partial read that survives two consecutive snapshots is
+    /// indistinguishable from a real deletion. Beyond replacing the
+    /// baseline, it also moves values: surviving profiles compact into the
+    /// reduced positions and the dropped Spaces' profiles are cleared,
+    /// staying gone when those Spaces reappear as an insertion. A reorder
+    /// raced by such a transient is lost - preferences stay at their old
+    /// positions - and, rarer still, a further partial read showing the
+    /// adopted reduced set in a different order can remap against the
+    /// poisoned baseline and move preferences wrongly until the user
+    /// rearranges them. All of these need the same incomplete CGS state to
+    /// persist across multiple reads while the Spaces change underneath.
     /// A snapshot in which any display's UUIDs are missing or ambiguous is
     /// discarded outright, changing neither the baseline nor the candidate.
     private func reconcileSpaceOrders(with newSnapshot: SpaceSnapshot) {
@@ -655,6 +663,7 @@ final class AppState {
             }
         guard isPureReorder else {
             if pendingSpaceOrders == current {
+                reindexPreferences(from: baseline, to: current)
                 store.spaceOrders = current
                 pendingSpaceOrders = nil
             } else {
@@ -688,6 +697,134 @@ final class AppState {
             )
         }
         store.spaceOrders = current
+    }
+
+    /// Reindexes per-Space preferences after a confirmed membership change
+    /// that is a pure insertion or a pure deletion on the same displays,
+    /// detected by UUID against the baseline. Each surviving Space's
+    /// profile moves to the Space's new position, values stored past the
+    /// live Space count (a Space configured before it exists) shift by the
+    /// size of the change, and the positions a deletion vacates or an
+    /// insertion occupies are cleared, so a new Space starts unstyled
+    /// rather than inheriting a leftover profile. Any other change - a
+    /// display appearing or disappearing, an add together with a remove,
+    /// an insertion mixed with a reorder - is ambiguous and moves nothing.
+    private func reindexPreferences(
+        from baseline: [String: [String]],
+        to current: [String: [String]]
+    ) {
+        guard Set(current.keys) == Set(baseline.keys) else {
+            return
+        }
+        // A deletion embeds every new list in its baseline list; an
+        // insertion embeds every baseline list in its new one. The lists
+        // differ somewhere, so at most one direction can hold
+        let deletions = Self.embeddings(of: current, in: baseline)
+        let insertions = Self.embeddings(of: baseline, in: current)
+        // A shared-scope position spans every display, so it can only
+        // follow a membership change when a single display makes the
+        // association unambiguous
+        let includeShared = current.count == 1
+        if let survivorOldPositions = deletions, insertions == nil {
+            for (displayID, oldPositions) in survivorOldPositions {
+                guard let previousCount = baseline[displayID]?.count,
+                      previousCount > oldPositions.count
+                else {
+                    continue
+                }
+                let removedCount = previousCount - oldPositions.count
+                var mapping: [Int: Int] = [:]
+                for (index, oldPosition) in oldPositions.enumerated() where oldPosition != index + 1 {
+                    mapping[oldPosition] = index + 1
+                }
+                let highestStored = SpacePreferences.highestStoredPosition(
+                    display: displayID, includeShared: includeShared, store: store
+                )
+                if highestStored > previousCount {
+                    for position in (previousCount + 1) ... highestStored {
+                        mapping[position] = position - removedCount
+                    }
+                }
+                // After the shift no value's position exceeds
+                // highestOccupied - removedCount, so the top removedCount
+                // positions hold only stale copies
+                let highestOccupied = max(previousCount, highestStored)
+                let clearing = Set((highestOccupied - removedCount + 1) ... highestOccupied)
+                SpacePreferences.remapPositions(
+                    mapping,
+                    clearing: clearing,
+                    display: displayID,
+                    includeShared: includeShared,
+                    store: store
+                )
+            }
+        } else if let survivorNewPositions = insertions, deletions == nil {
+            for (displayID, newPositions) in survivorNewPositions {
+                guard let currentCount = current[displayID]?.count,
+                      currentCount > newPositions.count
+                else {
+                    continue
+                }
+                let previousCount = newPositions.count
+                let insertedCount = currentCount - previousCount
+                var mapping: [Int: Int] = [:]
+                for (index, newPosition) in newPositions.enumerated() where newPosition != index + 1 {
+                    mapping[index + 1] = newPosition
+                }
+                let highestStored = SpacePreferences.highestStoredPosition(
+                    display: displayID, includeShared: includeShared, store: store
+                )
+                if highestStored > previousCount {
+                    for position in (previousCount + 1) ... highestStored {
+                        mapping[position] = position + insertedCount
+                    }
+                }
+                let clearing = Set(1 ... currentCount).subtracting(newPositions)
+                SpacePreferences.remapPositions(
+                    mapping,
+                    clearing: clearing,
+                    display: displayID,
+                    includeShared: includeShared,
+                    store: store
+                )
+            }
+        }
+    }
+
+    /// For each display in `inner`, the 1-based positions at which its
+    /// Space list occurs, in order, within `outer`'s list for the same
+    /// display. Nil means some display's list is not an ordered
+    /// subsequence, which an empty map cannot express.
+    private static func embeddings(
+        of inner: [String: [String]],
+        in outer: [String: [String]]
+        // swiftlint:disable:next discouraged_optional_collection
+    ) -> [String: [Int]]? {
+        var positionsByDisplay: [String: [Int]] = [:]
+        for (displayID, uuids) in inner {
+            guard let positions = orderedPositions(of: uuids, in: outer[displayID] ?? []) else {
+                return nil
+            }
+            positionsByDisplay[displayID] = positions
+        }
+        return positionsByDisplay
+    }
+
+    /// The 1-based position in `outer` of each element of `inner`, matched
+    /// left to right. Nil means `inner` is not an ordered subsequence of
+    /// `outer`, which an empty list cannot express.
+    // swiftlint:disable:next discouraged_optional_collection
+    private static func orderedPositions(of inner: [String], in outer: [String]) -> [Int]? {
+        var positions: [Int] = []
+        var searchStart = outer.startIndex
+        for element in inner {
+            guard let index = outer[searchStart...].firstIndex(of: element) else {
+                return nil
+            }
+            positions.append(index + 1)
+            searchStart = index + 1
+        }
+        return positions
     }
 
     /// Remembers the Space just left, so `previousSpaceNumber` can offer it as

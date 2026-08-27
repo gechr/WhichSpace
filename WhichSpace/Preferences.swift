@@ -423,20 +423,33 @@ enum SpacePreferences {
 
         /// Moves stored values between positions. `mapping` is old position
         /// to new position for every position that moved; positions outside
-        /// it keep their values. The display's override map is always
-        /// permuted; the shared map only when `includeShared`.
-        func remap(_ mapping: [Int: Int], display: String, includeShared: Bool, store: DefaultsStore) {
+        /// it keep their values. `clearing` names positions the permutation
+        /// leaves stale, e.g. vacated by a deleted Space or occupied by an
+        /// inserted one; their values are removed after the moves apply. A
+        /// non-nil display's override map is permuted; the shared map only
+        /// when `includeShared`. With a nil display only the shared map is
+        /// touched.
+        func remap(
+            _ mapping: [Int: Int],
+            clearing: Set<Int> = [],
+            display: String?,
+            includeShared: Bool,
+            store: DefaultsStore
+        ) {
             if includeShared {
-                store[keyPath: shared] = applying(mapping, to: store[keyPath: shared])
+                store[keyPath: shared] = applying(mapping, clearing: clearing, to: store[keyPath: shared])
+            }
+            guard let display else {
+                return
             }
             var perDisplayMap = store[keyPath: perDisplay]
             if let spaceMap = perDisplayMap[display] {
-                perDisplayMap[display] = applying(mapping, to: spaceMap)
+                perDisplayMap[display] = applying(mapping, clearing: clearing, to: spaceMap)
                 store[keyPath: perDisplay] = perDisplayMap
             }
         }
 
-        private func applying(_ mapping: [Int: Int], to map: [Int: T]) -> [Int: T] {
+        private func applying(_ mapping: [Int: Int], clearing: Set<Int>, to map: [Int: T]) -> [Int: T] {
             var result = map
             for (source, destination) in mapping {
                 if let value = map[source] {
@@ -445,7 +458,26 @@ enum SpacePreferences {
                     result.removeValue(forKey: destination)
                 }
             }
+            for position in clearing {
+                result.removeValue(forKey: position)
+            }
             return result
+        }
+
+        /// The highest position holding a value in the scopes a remap with
+        /// the same `display` and `includeShared` would touch, or 0 when
+        /// none does. Position 0 is the positionless default-style template
+        /// and never counts.
+        func highestStoredPosition(display: String?, includeShared: Bool, store: DefaultsStore) -> Int {
+            var positions: Set<Int> = []
+            if includeShared {
+                positions.formUnion(store[keyPath: shared].keys)
+            }
+            if let display, let spaceMap = store[keyPath: perDisplay][display] {
+                positions.formUnion(spaceMap.keys)
+            }
+            positions.remove(SpacePreferences.defaultStyleSpace)
+            return positions.max() ?? 0
         }
 
         /// Removes a value from one storage family, bypassing the
@@ -1098,33 +1130,79 @@ enum SpacePreferences {
 
     // MARK: - Reordering
 
-    /// Moves every per-Space preference between positions after Mission
-    /// Control reorders Spaces, so customization follows the Space rather
-    /// than staying at its old position. `mapping` is old position to new
-    /// position for every Space that moved. The display's override map is
-    /// always permuted; the shared maps only when `includeShared` - on a
-    /// single display they are the live scope, while with several displays
-    /// a shared position applies to every display at once and cannot
-    /// follow one display's reorder. The default style template (space 0)
-    /// is positionless and never part of a mapping.
+    /// Every preference family that stores values by Space position, so
+    /// positional operations cover them all without repeating the list.
+    private static let positionalAccessors: [PositionalAccessor] = [
+        erasePositional(colorsAccessor),
+        erasePositional(iconStyles),
+        erasePositional(fonts),
+        erasePositional(symbols),
+        erasePositional(badges),
+        erasePositional(labels),
+        erasePositional(labelStyles),
+        erasePositional(skinTones),
+        erasePositional(symbolGaps),
+        erasePositional(symbolPositions),
+        erasePositional(symbolWraps),
+        erasePositional(sounds),
+    ]
+
+    /// Type-erased handle over one accessor's position-based operations.
+    private struct PositionalAccessor {
+        let remap: ([Int: Int], Set<Int>, String?, Bool, DefaultsStore) -> Void
+        let highestStoredPosition: (String?, Bool, DefaultsStore) -> Int
+    }
+
+    private static func erasePositional(_ accessor: Accessor<some Any>) -> PositionalAccessor {
+        PositionalAccessor(
+            remap: { mapping, clearing, display, includeShared, store in
+                accessor.remap(
+                    mapping, clearing: clearing, display: display, includeShared: includeShared, store: store
+                )
+            },
+            highestStoredPosition: { display, includeShared, store in
+                accessor.highestStoredPosition(display: display, includeShared: includeShared, store: store)
+            }
+        )
+    }
+
+    /// Moves every per-Space preference between positions when Spaces are
+    /// reordered, inserted, or deleted, so customization follows the Space
+    /// rather than staying at its old position. `mapping` is old position
+    /// to new position for every Space that moved, and `clearing` removes
+    /// positions the permutation leaves stale. A non-nil display's
+    /// override map is permuted; the shared maps only when `includeShared`
+    /// - on a single display they are the live scope, while with several
+    /// displays a shared position applies to every display at once and
+    /// cannot follow one display's change. With a nil display only the
+    /// shared maps are touched. The default style template (space 0) is
+    /// positionless and never part of a mapping.
     static func remapPositions(
         _ mapping: [Int: Int],
-        display: String,
+        clearing: Set<Int> = [],
+        display: String?,
         includeShared: Bool,
         store: DefaultsStore = AppEnvironment.shared.store
     ) {
-        colorsAccessor.remap(mapping, display: display, includeShared: includeShared, store: store)
-        iconStyles.remap(mapping, display: display, includeShared: includeShared, store: store)
-        fonts.remap(mapping, display: display, includeShared: includeShared, store: store)
-        symbols.remap(mapping, display: display, includeShared: includeShared, store: store)
-        badges.remap(mapping, display: display, includeShared: includeShared, store: store)
-        labels.remap(mapping, display: display, includeShared: includeShared, store: store)
-        labelStyles.remap(mapping, display: display, includeShared: includeShared, store: store)
-        skinTones.remap(mapping, display: display, includeShared: includeShared, store: store)
-        symbolGaps.remap(mapping, display: display, includeShared: includeShared, store: store)
-        symbolPositions.remap(mapping, display: display, includeShared: includeShared, store: store)
-        symbolWraps.remap(mapping, display: display, includeShared: includeShared, store: store)
-        sounds.remap(mapping, display: display, includeShared: includeShared, store: store)
+        for accessor in positionalAccessors {
+            accessor.remap(mapping, clearing, display, includeShared, store)
+        }
+    }
+
+    /// The highest position holding a value in any preference family, in
+    /// the scopes a remap with the same `display` and `includeShared`
+    /// would touch, or 0 when none does. Positions can exceed the live
+    /// Space count - a Space can be configured before it exists - so a
+    /// positional remap extends its mapping up to this bound. Position 0
+    /// is the positionless default-style template and never counts.
+    static func highestStoredPosition(
+        display: String?,
+        includeShared: Bool,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) -> Int {
+        positionalAccessors
+            .map { $0.highestStoredPosition(display, includeShared, store) }
+            .max() ?? 0
     }
 
     // MARK: - Default Style

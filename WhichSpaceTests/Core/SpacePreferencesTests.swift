@@ -790,4 +790,48 @@ struct SpacePreferencesTests {
         #expect(store.spaceLabels[2] == "One")
         #expect(store.spaceLabels[1] == nil)
     }
+
+    @Test("remapPositions clears stale positions after the permutation")
+    func remapPositionsClearsStalePositions() {
+        SpacePreferences.setLabel("Two", forSpace: 2, store: store)
+        SpacePreferences.setLabel("Three", forSpace: 3, store: store)
+
+        // Position 2's Space is deleted: position 3's value compacts down
+        // and the vacated position is cleared
+        SpacePreferences.remapPositions([3: 2], clearing: [3], display: "Main", includeShared: true, store: store)
+
+        #expect(store.spaceLabels == [2: "Three"])
+    }
+
+    @Test("remapPositions with a nil display touches only the shared maps")
+    func remapPositionsNilDisplayTouchesOnlyShared() {
+        SpacePreferences.setLabel("Shared", forSpace: 1, store: store)
+        SpacePreferences.setLabel("Override", forSpace: 1, display: "Display1", store: store)
+
+        SpacePreferences.remapPositions([1: 2, 2: 1], display: nil, includeShared: true, store: store)
+
+        #expect(store.spaceLabels == [2: "Shared"])
+        #expect(store.displaySpaceLabels["Display1"] == [1: "Override"])
+    }
+
+    // MARK: - highestStoredPosition Tests
+
+    @Test("highestStoredPosition spans families and scopes")
+    func highestStoredPositionSpansFamiliesAndScopes() {
+        SpacePreferences.setLabel("One", forSpace: 1, store: store)
+        SpacePreferences.setSymbol("star", forSpace: 4, store: store)
+        SpacePreferences.setLabel("Future", forSpace: 6, display: "Display1", store: store)
+
+        #expect(SpacePreferences.highestStoredPosition(display: nil, includeShared: true, store: store) == 4)
+        #expect(SpacePreferences.highestStoredPosition(display: "Display1", includeShared: true, store: store) == 6)
+        #expect(SpacePreferences.highestStoredPosition(display: "Display1", includeShared: false, store: store) == 6)
+        #expect(SpacePreferences.highestStoredPosition(display: "Display2", includeShared: false, store: store) == 0)
+    }
+
+    @Test("highestStoredPosition ignores the default style template")
+    func highestStoredPositionIgnoresTemplate() {
+        SpacePreferences.setLabel("Template", forSpace: SpacePreferences.defaultStyleSpace, store: store)
+
+        #expect(SpacePreferences.highestStoredPosition(display: nil, includeShared: true, store: store) == 0)
+    }
 }

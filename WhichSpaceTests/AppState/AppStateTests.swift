@@ -1006,29 +1006,417 @@ struct AppStateTests {
         #expect(SpacePreferences.label(forSpace: 2, store: store) == nil)
     }
 
-    @Test("adding a Space records the new order without remapping")
-    func spaceAdded_recordsOrderWithoutRemap() {
+    @Test("a confirmed middle insertion moves later preferences with their Spaces")
+    func spaceInsertedInMiddle_movesLaterPreferences() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [makeMainDisplay(uuids: ["A", "B"])]
         let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
         SpacePreferences.setLabel("Work", forSpace: 2, store: store)
 
-        // A new Space lands between the existing two - not a permutation
+        // A new Space lands between the existing two - not a permutation,
+        // so the first observation only records a candidate
         stub.displays = [makeMainDisplay(uuids: ["A", "C", "B"])]
         appState.forceSpaceUpdate()
 
         #expect(SpacePreferences.label(forSpace: 2, store: store) == "Work")
 
-        // A second observation confirms the candidate as the new baseline
+        // The second observation confirms the insertion: B's profile
+        // follows it to position 3 and the new Space starts unstyled
         appState.forceSpaceUpdate()
+
         #expect(store.spaceOrders["Main"] == ["A", "C", "B"])
+        #expect(SpacePreferences.label(forSpace: 3, store: store) == "Work")
+        #expect(SpacePreferences.label(forSpace: 2, store: store) == nil)
 
         // The confirmed order is the new baseline: a later reorder remaps
         stub.displays = [makeMainDisplay(uuids: ["A", "B", "C"])]
         appState.forceSpaceUpdate()
 
-        #expect(SpacePreferences.label(forSpace: 3, store: store) == "Work")
+        #expect(SpacePreferences.label(forSpace: 2, store: store) == "Work")
+        #expect(SpacePreferences.label(forSpace: 3, store: store) == nil)
+    }
+
+    @Test("a confirmed head insertion shifts every preference up")
+    func spaceInsertedAtHead_shiftsPreferences() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [makeMainDisplay(uuids: ["B", "C"], activeSpaceID: 101)]
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        SpacePreferences.setLabel("One", forSpace: 1, store: store)
+        SpacePreferences.setLabel("Two", forSpace: 2, store: store)
+
+        stub.displays = [makeMainDisplay(uuids: ["A", "B", "C"], activeSpaceID: 101)]
+        appState.forceSpaceUpdate()
+        appState.forceSpaceUpdate()
+
+        #expect(SpacePreferences.label(forSpace: 1, store: store) == nil)
+        #expect(SpacePreferences.label(forSpace: 2, store: store) == "One")
+        #expect(SpacePreferences.label(forSpace: 3, store: store) == "Two")
+    }
+
+    @Test("an appended Space starts unstyled and moves nothing")
+    func spaceAppendedAtTail_leavesPreferencesInPlace() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [makeMainDisplay(uuids: ["A", "B"])]
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        SpacePreferences.setLabel("One", forSpace: 1, store: store)
+        SpacePreferences.setLabel("Two", forSpace: 2, store: store)
+
+        stub.displays = [makeMainDisplay(uuids: ["A", "B", "C"])]
+        appState.forceSpaceUpdate()
+        appState.forceSpaceUpdate()
+
+        #expect(store.spaceOrders["Main"] == ["A", "B", "C"])
+        #expect(SpacePreferences.label(forSpace: 1, store: store) == "One")
+        #expect(SpacePreferences.label(forSpace: 2, store: store) == "Two")
+        #expect(SpacePreferences.label(forSpace: 3, store: store) == nil)
+    }
+
+    @Test("a confirmed middle deletion compacts later preferences")
+    func spaceDeletedInMiddle_compactsPreferences() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [makeMainDisplay(uuids: ["A", "B", "C"])]
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        SpacePreferences.setLabel("One", forSpace: 1, store: store)
+        SpacePreferences.setLabel("Two", forSpace: 2, store: store)
+        SpacePreferences.setLabel("Three", forSpace: 3, store: store)
+
+        stub.displays = [makeMainDisplay(uuids: ["A", "C"])]
+        appState.forceSpaceUpdate()
+
+        // The first observation is only a candidate and moves nothing
+        #expect(SpacePreferences.label(forSpace: 3, store: store) == "Three")
+
+        appState.forceSpaceUpdate()
+
+        #expect(store.spaceOrders["Main"] == ["A", "C"])
+        #expect(SpacePreferences.label(forSpace: 1, store: store) == "One")
+        #expect(SpacePreferences.label(forSpace: 2, store: store) == "Three")
+        #expect(SpacePreferences.label(forSpace: 3, store: store) == nil)
+    }
+
+    @Test("a confirmed head deletion compacts every preference")
+    func spaceDeletedAtHead_compactsPreferences() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [makeMainDisplay(uuids: ["A", "B", "C"], activeSpaceID: 101)]
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        SpacePreferences.setLabel("One", forSpace: 1, store: store)
+        SpacePreferences.setLabel("Two", forSpace: 2, store: store)
+        SpacePreferences.setLabel("Three", forSpace: 3, store: store)
+
+        stub.displays = [makeMainDisplay(uuids: ["B", "C"], activeSpaceID: 101)]
+        appState.forceSpaceUpdate()
+        appState.forceSpaceUpdate()
+
+        #expect(SpacePreferences.label(forSpace: 1, store: store) == "Two")
+        #expect(SpacePreferences.label(forSpace: 2, store: store) == "Three")
+        #expect(SpacePreferences.label(forSpace: 3, store: store) == nil)
+    }
+
+    @Test("a confirmed tail deletion clears the vacated position")
+    func spaceDeletedAtTail_clearsVacatedPosition() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [makeMainDisplay(uuids: ["A", "B", "C"])]
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        SpacePreferences.setLabel("One", forSpace: 1, store: store)
+        SpacePreferences.setLabel("Two", forSpace: 2, store: store)
+        SpacePreferences.setLabel("Three", forSpace: 3, store: store)
+
+        stub.displays = [makeMainDisplay(uuids: ["A", "B"])]
+        appState.forceSpaceUpdate()
+        appState.forceSpaceUpdate()
+
+        #expect(SpacePreferences.label(forSpace: 1, store: store) == "One")
+        #expect(SpacePreferences.label(forSpace: 2, store: store) == "Two")
+        #expect(SpacePreferences.label(forSpace: 3, store: store) == nil)
+    }
+
+    @Test("profiles stored past the live Space count shift with the change")
+    func profilesPastLiveCount_shiftBothWays() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [makeMainDisplay(uuids: ["A", "B"])]
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        SpacePreferences.setLabel("One", forSpace: 1, store: store)
+        SpacePreferences.setLabel("Two", forSpace: 2, store: store)
+        // Spaces configured before they exist
+        SpacePreferences.setLabel("Future", forSpace: 3, store: store)
+        SpacePreferences.setLabel("Later", forSpace: 4, store: store)
+
+        // An appended Space displaces the preconfigured positions rather
+        // than adopting or overwriting their values
+        stub.displays = [makeMainDisplay(uuids: ["A", "B", "C"])]
+        appState.forceSpaceUpdate()
+        appState.forceSpaceUpdate()
+
+        #expect(SpacePreferences.label(forSpace: 3, store: store) == nil)
+        #expect(SpacePreferences.label(forSpace: 4, store: store) == "Future")
+        #expect(SpacePreferences.label(forSpace: 5, store: store) == "Later")
+
+        // Deleting it shifts them back down
+        stub.displays = [makeMainDisplay(uuids: ["A", "B"])]
+        appState.forceSpaceUpdate()
+        appState.forceSpaceUpdate()
+
+        #expect(SpacePreferences.label(forSpace: 3, store: store) == "Future")
+        #expect(SpacePreferences.label(forSpace: 4, store: store) == "Later")
+        #expect(SpacePreferences.label(forSpace: 5, store: store) == nil)
+    }
+
+    @Test("a fullscreen Space insertion shifts fullscreen-inclusive positions")
+    func fullscreenInsertion_shiftsPositions() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                uuidSpaces: [(id: 100, uuid: "A", isFullscreen: false), (id: 101, uuid: "B", isFullscreen: false)],
+                activeSpaceID: 100
+            ),
+        ]
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        SpacePreferences.setLabel("One", forSpace: 1, store: store)
+        SpacePreferences.setLabel("Two", forSpace: 2, store: store)
+
+        // An app entering fullscreen creates a Space between the desktops
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                uuidSpaces: [
+                    (id: 100, uuid: "A", isFullscreen: false),
+                    (id: 150, uuid: "F", isFullscreen: true),
+                    (id: 101, uuid: "B", isFullscreen: false),
+                ],
+                activeSpaceID: 100
+            ),
+        ]
+        appState.forceSpaceUpdate()
+        appState.forceSpaceUpdate()
+
+        #expect(SpacePreferences.label(forSpace: 1, store: store) == "One")
         #expect(SpacePreferences.label(forSpace: 2, store: store) == nil)
+        #expect(SpacePreferences.label(forSpace: 3, store: store) == "Two")
+    }
+
+    @Test("a deletion on one display moves only that display's overrides")
+    func multiDisplayDeletion_keepsSharedAndOtherDisplays() {
+        stub.activeDisplayIdentifier = "DisplayA"
+        let displayA = CGSStub.makeDisplay(
+            displayID: "DisplayA",
+            uuidSpaces: [(id: 100, uuid: "A", isFullscreen: false), (id: 101, uuid: "B", isFullscreen: false)],
+            activeSpaceID: 100
+        )
+        stub.displays = [
+            displayA,
+            CGSStub.makeDisplay(
+                displayID: "DisplayB",
+                uuidSpaces: [(id: 200, uuid: "C", isFullscreen: false), (id: 201, uuid: "D", isFullscreen: false)],
+                activeSpaceID: 200
+            ),
+        ]
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        SpacePreferences.setLabel("Shared", forSpace: 2, store: store)
+        SpacePreferences.setLabel("Override", forSpace: 2, display: "DisplayB", store: store)
+        SpacePreferences.setLabel("KeepA", forSpace: 2, display: "DisplayA", store: store)
+
+        // DisplayB loses its first Space; DisplayA is untouched
+        stub.displays = [
+            displayA,
+            CGSStub.makeDisplay(
+                displayID: "DisplayB",
+                uuidSpaces: [(id: 201, uuid: "D", isFullscreen: false)],
+                activeSpaceID: 201
+            ),
+        ]
+        appState.forceSpaceUpdate()
+        appState.forceSpaceUpdate()
+
+        #expect(store.spaceLabels == [2: "Shared"])
+        #expect(store.displaySpaceLabels["DisplayB"] == [1: "Override"])
+        #expect(store.displaySpaceLabels["DisplayA"] == [2: "KeepA"])
+    }
+
+    @Test("a display disappearing alongside a deletion moves nothing")
+    func displayRemovedWithDeletion_movesNothing() {
+        stub.activeDisplayIdentifier = "DisplayA"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "DisplayA",
+                uuidSpaces: [(id: 100, uuid: "A", isFullscreen: false), (id: 101, uuid: "B", isFullscreen: false)],
+                activeSpaceID: 100
+            ),
+            CGSStub.makeDisplay(
+                displayID: "DisplayB",
+                uuidSpaces: [(id: 200, uuid: "C", isFullscreen: false)],
+                activeSpaceID: 200
+            ),
+        ]
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        SpacePreferences.setLabel("KeepA", forSpace: 2, display: "DisplayA", store: store)
+
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "DisplayA",
+                uuidSpaces: [(id: 100, uuid: "A", isFullscreen: false)],
+                activeSpaceID: 100
+            ),
+        ]
+        appState.forceSpaceUpdate()
+        appState.forceSpaceUpdate()
+
+        #expect(store.spaceOrders == ["DisplayA": ["A"]])
+        #expect(store.displaySpaceLabels["DisplayA"] == [2: "KeepA"])
+    }
+
+    @Test("a simultaneous add and remove moves nothing")
+    func simultaneousAddAndRemove_movesNothing() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [makeMainDisplay(uuids: ["A", "B", "C"])]
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        SpacePreferences.setLabel("One", forSpace: 1, store: store)
+        SpacePreferences.setLabel("Two", forSpace: 2, store: store)
+        SpacePreferences.setLabel("Three", forSpace: 3, store: store)
+
+        stub.displays = [makeMainDisplay(uuids: ["A", "D", "C"])]
+        appState.forceSpaceUpdate()
+        appState.forceSpaceUpdate()
+
+        #expect(store.spaceOrders["Main"] == ["A", "D", "C"])
+        #expect(store.spaceLabels == [1: "One", 2: "Two", 3: "Three"])
+    }
+
+    @Test("a noncontiguous deletion compacts across the gaps")
+    func noncontiguousDeletion_compactsAcrossGaps() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [makeMainDisplay(uuids: ["A", "B", "C", "D"])]
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        SpacePreferences.setLabel("One", forSpace: 1, store: store)
+        SpacePreferences.setLabel("Two", forSpace: 2, store: store)
+        SpacePreferences.setLabel("Three", forSpace: 3, store: store)
+        SpacePreferences.setLabel("Four", forSpace: 4, store: store)
+
+        // B and D vanish in the same confirmed change
+        stub.displays = [makeMainDisplay(uuids: ["A", "C"])]
+        appState.forceSpaceUpdate()
+        appState.forceSpaceUpdate()
+
+        #expect(store.spaceLabels == [1: "One", 2: "Three"])
+    }
+
+    @Test("a noncontiguous insertion shifts around the gaps")
+    func noncontiguousInsertion_shiftsAroundGaps() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [makeMainDisplay(uuids: ["A", "C"])]
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        SpacePreferences.setLabel("One", forSpace: 1, store: store)
+        SpacePreferences.setLabel("Two", forSpace: 2, store: store)
+
+        // B lands between the survivors and D after them, together
+        stub.displays = [makeMainDisplay(uuids: ["A", "B", "C", "D"])]
+        appState.forceSpaceUpdate()
+        appState.forceSpaceUpdate()
+
+        #expect(store.spaceLabels == [1: "One", 3: "Two"])
+    }
+
+    @Test("simultaneous deletions on two displays both remap")
+    func simultaneousDeletionsOnTwoDisplays_bothRemap() {
+        stub.activeDisplayIdentifier = "DisplayA"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "DisplayA",
+                uuidSpaces: [(id: 100, uuid: "A", isFullscreen: false), (id: 101, uuid: "B", isFullscreen: false)],
+                activeSpaceID: 100
+            ),
+            CGSStub.makeDisplay(
+                displayID: "DisplayB",
+                uuidSpaces: [(id: 200, uuid: "C", isFullscreen: false), (id: 201, uuid: "D", isFullscreen: false)],
+                activeSpaceID: 200
+            ),
+        ]
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        SpacePreferences.setLabel("Shared", forSpace: 2, store: store)
+        SpacePreferences.setLabel("GoneA", forSpace: 2, display: "DisplayA", store: store)
+        SpacePreferences.setLabel("OverB", forSpace: 2, display: "DisplayB", store: store)
+
+        // DisplayA loses its second Space and DisplayB its first, in the
+        // same confirmed change
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "DisplayA",
+                uuidSpaces: [(id: 100, uuid: "A", isFullscreen: false)],
+                activeSpaceID: 100
+            ),
+            CGSStub.makeDisplay(
+                displayID: "DisplayB",
+                uuidSpaces: [(id: 201, uuid: "D", isFullscreen: false)],
+                activeSpaceID: 201
+            ),
+        ]
+        appState.forceSpaceUpdate()
+        appState.forceSpaceUpdate()
+
+        #expect(store.spaceLabels == [2: "Shared"])
+        #expect(store.displaySpaceLabels["DisplayA"]?.isEmpty == true)
+        #expect(store.displaySpaceLabels["DisplayB"] == [1: "OverB"])
+    }
+
+    @Test("opposite-direction changes across displays move nothing")
+    func oppositeDirectionChangesAcrossDisplays_moveNothing() {
+        stub.activeDisplayIdentifier = "DisplayA"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "DisplayA",
+                uuidSpaces: [(id: 100, uuid: "A", isFullscreen: false), (id: 101, uuid: "B", isFullscreen: false)],
+                activeSpaceID: 100
+            ),
+            CGSStub.makeDisplay(
+                displayID: "DisplayB",
+                uuidSpaces: [(id: 200, uuid: "C", isFullscreen: false), (id: 201, uuid: "D", isFullscreen: false)],
+                activeSpaceID: 200
+            ),
+        ]
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        SpacePreferences.setLabel("OvA", forSpace: 2, display: "DisplayA", store: store)
+        SpacePreferences.setLabel("OvB", forSpace: 2, display: "DisplayB", store: store)
+
+        // DisplayA gains a Space while DisplayB loses one - neither a pure
+        // insertion nor a pure deletion, so nothing may move
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "DisplayA",
+                uuidSpaces: [
+                    (id: 100, uuid: "A", isFullscreen: false),
+                    (id: 101, uuid: "B", isFullscreen: false),
+                    (id: 102, uuid: "E", isFullscreen: false),
+                ],
+                activeSpaceID: 100
+            ),
+            CGSStub.makeDisplay(
+                displayID: "DisplayB",
+                uuidSpaces: [(id: 200, uuid: "C", isFullscreen: false)],
+                activeSpaceID: 200
+            ),
+        ]
+        appState.forceSpaceUpdate()
+        appState.forceSpaceUpdate()
+
+        #expect(store.spaceOrders == ["DisplayA": ["A", "B", "E"], "DisplayB": ["C"]])
+        #expect(store.displaySpaceLabels["DisplayA"] == [2: "OvA"])
+        #expect(store.displaySpaceLabels["DisplayB"] == [2: "OvB"])
+    }
+
+    @Test("an insertion combined with a reorder moves nothing")
+    func insertionCombinedWithReorder_movesNothing() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [makeMainDisplay(uuids: ["A", "B"])]
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        SpacePreferences.setLabel("One", forSpace: 1, store: store)
+        SpacePreferences.setLabel("Two", forSpace: 2, store: store)
+
+        stub.displays = [makeMainDisplay(uuids: ["B", "C", "A"])]
+        appState.forceSpaceUpdate()
+        appState.forceSpaceUpdate()
+
+        #expect(store.spaceOrders["Main"] == ["B", "C", "A"])
+        #expect(store.spaceLabels == [1: "One", 2: "Two"])
     }
 
     @Test("multi-display reorder remaps overrides but not shared positions")
@@ -1114,32 +1502,36 @@ struct AppStateTests {
         #expect(store.spaceOrders["Main"] == ["A", "C", "B"])
     }
 
-    @Test("a transient observed twice is adopted, losing the reorder but never remapping")
-    func transientObservedTwice_adoptsWithoutRemapping() {
+    @Test("a transient observed twice is adopted as a deletion and compacts profiles")
+    func transientObservedTwice_adoptsAsDeletionAndCompacts() {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [makeMainDisplay(uuids: ["A", "B", "C"])]
         let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
         SpacePreferences.setLabel("Work", forSpace: 2, store: store)
+        SpacePreferences.setLabel("Play", forSpace: 3, store: store)
 
         // The documented residual of the double-observation heuristic: a
         // partial read that survives two consecutive snapshots is
-        // indistinguishable from a real Space removal and becomes the
-        // baseline
+        // indistinguishable from a real Space removal, so it becomes the
+        // baseline and compacts profiles - the dropped Space's value is
+        // cleared and later values shift down
         stub.displays = [makeMainDisplay(uuids: ["A", "C"])]
         appState.forceSpaceUpdate()
         appState.forceSpaceUpdate()
+
         #expect(store.spaceOrders["Main"] == ["A", "C"])
-
-        // The settled reorder then reads as a membership change against the
-        // poisoned baseline: the reorder is lost and preferences keep their
-        // old positions, exactly the pre-tracking behavior
-        stub.displays = [makeMainDisplay(uuids: ["A", "C", "B"])]
-        appState.forceSpaceUpdate()
-        appState.forceSpaceUpdate()
-
-        #expect(SpacePreferences.label(forSpace: 2, store: store) == "Work")
+        #expect(SpacePreferences.label(forSpace: 2, store: store) == "Play")
         #expect(SpacePreferences.label(forSpace: 3, store: store) == nil)
-        #expect(store.spaceOrders["Main"] == ["A", "C", "B"])
+
+        // The dropped Space reappearing reads as an insertion: surviving
+        // profiles move back up, but the cleared value stays gone
+        stub.displays = [makeMainDisplay(uuids: ["A", "B", "C"])]
+        appState.forceSpaceUpdate()
+        appState.forceSpaceUpdate()
+
+        #expect(store.spaceOrders["Main"] == ["A", "B", "C"])
+        #expect(SpacePreferences.label(forSpace: 2, store: store) == nil)
+        #expect(SpacePreferences.label(forSpace: 3, store: store) == "Play")
     }
 
     @Test("a snapshot with an unreadable UUID changes neither baseline nor candidate")
