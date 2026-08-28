@@ -6,13 +6,14 @@
     <description>Most recent changes with links to updates.</description>
     <language>en</language>
     <item>
-        <title>Version 1.3.6-tip.622</title>
+        <title>Version 1.3.6-tip.623</title>
         <sparkle:channel>nightly</sparkle:channel>
         <description><![CDATA[
           <style>.sparkle-installed-version, .sparkle-installed-version ~ * { display: none }</style>
-          <section data-sparkle-version="1.3.6-tip.622">
-            <h3>Nightly (v1.3.6-tip.622)</h3>
+          <section data-sparkle-version="1.3.6-tip.623">
+            <h3>Nightly (v1.3.6-tip.623)</h3>
             <ul>
+              <li>updates: Check in background when nightly toggle changes</li>
               <li>spaces: Drop closed windows kept alive by apps</li>
             </ul>
           </section>
@@ -1087,13 +1088,13 @@
           </section>
         ]]></description>
         <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/tip</sparkle:fullReleaseNotesLink>
-        <pubDate>Fri, 28 Aug 2026 12:16:30 +0100</pubDate>
+        <pubDate>Fri, 28 Aug 2026 12:29:55 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/tip/WhichSpace.zip"
-          sparkle:version="1.3.6-tip.622"
-          sparkle:shortVersionString="1.3.6-tip.622"
-          sparkle:edSignature="1SB9ewvYw58y56Ycr2pjDuOHcVFrBMBp7oRr9SEgM+j9SCmZcTlPMHn8vPQf7D76nro0A7E7FtIRRPDYlmijBQ=="
-          length="4201615"
+          sparkle:version="1.3.6-tip.623"
+          sparkle:shortVersionString="1.3.6-tip.623"
+          sparkle:edSignature="7E1zPXCd8082j6+0AueLe0y9ys1wTwm/J5MAeoWVycTkj2lpjFb8BtcOW4qlze92i7m/qUiW19tpLyP72E/VBA=="
+          length="4202759"
           type="application/octet-stream" />
         <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
       </item>
