@@ -76,10 +76,54 @@ enum DisplayArrangement {
 
 /// Default implementation using the actual CGS/SLS functions
 struct CGSDisplaySpaceProvider: DisplaySpaceProvider {
+    /// Window server attribute bit set while a window is ordered in,
+    /// including windows on other Spaces and displays.
+    private static let orderedInAttribute: UInt64 = 0x2
+
+    /// Tag bits carried by windows that are ordered out yet still occupy
+    /// their Space: minimized to the Dock (bit 60, bit 58 on older
+    /// releases) or part of a hidden app (bit 39).
+    private static let orderedOutOccupantTags: UInt64 = 0x1400_0080_0000_0000
+
     private let conn: Int32
 
     init() {
         conn = _CGSDefaultConnection()
+    }
+
+    /// Whether iterator state describes a window that occupies its Space.
+    /// A closed window an app keeps alive in the window server clears the
+    /// ordered-in attribute and carries none of the minimized or hidden
+    /// tags, yet still reports the Space it was last on. Counting it kept
+    /// the app's icon on that Space until the app quit (issue #86).
+    static func isSpaceOccupant(attributes: UInt64, tags: UInt64) -> Bool {
+        attributes & orderedInAttribute != 0 || tags & orderedOutOccupantTags != 0
+    }
+
+    /// Filters `windowIDs` to windows that occupy their Space, dropping
+    /// closed windows the owning app never released. Returns the input
+    /// unchanged when the query fails so occupancy degrades to the
+    /// unfiltered behavior rather than reporting every Space empty.
+    private func spaceOccupantWindowIDs(_ windowIDs: [Int]) -> [Int] {
+        guard !windowIDs.isEmpty,
+              let query = SLSWindowQueryWindows(conn, windowIDs as CFArray, Int32(windowIDs.count))
+        else {
+            return windowIDs
+        }
+        let queryObject = query.takeRetainedValue()
+        guard let result = SLSWindowQueryResultCopyWindows(queryObject) else {
+            return windowIDs
+        }
+        let iterator = result.takeRetainedValue()
+        var occupants: Set<Int> = []
+        while SLSWindowIteratorAdvance(iterator) {
+            let attributes = SLSWindowIteratorGetAttributes(iterator)
+            let tags = SLSWindowIteratorGetTags(iterator)
+            if Self.isSpaceOccupant(attributes: attributes, tags: tags) {
+                occupants.insert(Int(SLSWindowIteratorGetWindowID(iterator)))
+            }
+        }
+        return windowIDs.filter(occupants.contains)
     }
 
     // swiftlint:disable:next discouraged_optional_collection
@@ -131,13 +175,14 @@ struct CGSDisplaySpaceProvider: DisplaySpaceProvider {
             }
         }
 
-        guard !windowIDs.isEmpty else {
+        let occupantIDs = spaceOccupantWindowIDs(windowIDs)
+        guard !occupantIDs.isEmpty else {
             return []
         }
 
         // Single batch call to get all spaces for all windows
         // Selector 0x7 = all spaces the windows are on
-        guard let result = SLSCopySpacesForWindows(conn, 0x7, windowIDs as CFArray) else {
+        guard let result = SLSCopySpacesForWindows(conn, 0x7, occupantIDs as CFArray) else {
             return []
         }
         let spaces = result.takeRetainedValue() as? [Int] ?? []
@@ -173,13 +218,15 @@ struct CGSDisplaySpaceProvider: DisplaySpaceProvider {
             windowsByPID[ownerPID, default: []].append(windowNumber)
         }
 
+        let occupantIDs = Set(spaceOccupantWindowIDs(Array(windowsByPID.values.joined())))
         var unresolved = Set(spaceIDs)
         var owners: [Int: pid_t] = [:]
         for pid in orderedPIDs {
             guard !unresolved.isEmpty else {
                 break
             }
-            guard let windowNumbers = windowsByPID[pid],
+            let windowNumbers = windowsByPID[pid, default: []].filter(occupantIDs.contains)
+            guard !windowNumbers.isEmpty,
                   let result = SLSCopySpacesForWindows(conn, 0x7, windowNumbers as CFArray)
             else {
                 continue
@@ -226,8 +273,9 @@ struct CGSDisplaySpaceProvider: DisplaySpaceProvider {
             windowsByPID[ownerPID, default: []].append(windowNumber)
         }
 
+        let occupantIDs = Set(spaceOccupantWindowIDs(Array(windowsByPID.values.joined())))
         let appWindows = orderedPIDs.map { pid in
-            (pid: pid, windowIDs: windowsByPID[pid] ?? [])
+            (pid: pid, windowIDs: windowsByPID[pid, default: []].filter(occupantIDs.contains))
         }
         return Self.resolveWindowOwners(appWindows: appWindows, spaceIDs: spaceIDs) { windowNumbers in
             guard let result = SLSCopySpacesForWindows(conn, 0x7, windowNumbers as CFArray) else {

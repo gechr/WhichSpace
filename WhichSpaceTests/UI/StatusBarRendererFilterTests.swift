@@ -782,6 +782,26 @@ struct SpacePickerTests {
         #expect(queries == 1)
     }
 
+    @Test("ordered-in, minimized, and hidden windows occupy their Space")
+    func spaceOccupantKeepsLiveWindows() {
+        // Ordered in: a normal window on any Space
+        #expect(CGSDisplaySpaceProvider.isSpaceOccupant(attributes: 0x2, tags: 0x300_0001_0048_2001))
+        // Minimized to the Dock: attribute cleared, tag bit 60 set
+        #expect(CGSDisplaySpaceProvider.isSpaceOccupant(attributes: 0, tags: 0x1300_0001_0048_0001))
+        // Minimized tag on older macOS releases: bit 58
+        #expect(CGSDisplaySpaceProvider.isSpaceOccupant(attributes: 0, tags: 0x400_0000_0000_0000))
+        // Hidden app: attribute cleared, tag bit 39 set
+        #expect(CGSDisplaySpaceProvider.isSpaceOccupant(attributes: 0, tags: 0x300_0081_0048_0001))
+    }
+
+    @Test("a closed window kept alive by its app does not occupy a Space")
+    func spaceOccupantDropsClosedWindows() {
+        // A never-released closed window clears the ordered-in attribute
+        // and carries none of the minimized or hidden tags
+        #expect(!CGSDisplaySpaceProvider.isSpaceOccupant(attributes: 0, tags: 0x300_0001_0048_0001))
+        #expect(!CGSDisplaySpaceProvider.isSpaceOccupant(attributes: 0, tags: 0x1_0008_0001))
+    }
+
     @Test("owners keep the front-to-back app order per Space")
     func ownersKeepAppOrder() {
         let owners = CGSDisplaySpaceProvider.resolveWindowOwners(

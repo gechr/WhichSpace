@@ -15,6 +15,18 @@ CFArrayRef CGSCopyManagedDisplaySpaces(int conn);
 CFStringRef CGSCopyActiveMenuBarDisplayIdentifier(int conn);
 CFArrayRef SLSCopySpacesForWindows(int conn, int selector, CFArrayRef windowIDs);
 
+// Private SLS window query APIs for reading per-window state the public
+// CGWindowList does not expose (no public alternative exists). Some apps
+// keep a closed window alive in the window server, where it still reports
+// the Space it was last on; the iterator attributes and tags are the only
+// way to tell such a window from a live one on another Space.
+CFTypeRef SLSWindowQueryWindows(int conn, CFArrayRef windowIDs, int count);
+CFTypeRef SLSWindowQueryResultCopyWindows(CFTypeRef query);
+Boolean SLSWindowIteratorAdvance(CFTypeRef iterator);
+uint32_t SLSWindowIteratorGetWindowID(CFTypeRef iterator);
+uint64_t SLSWindowIteratorGetTags(CFTypeRef iterator);
+uint64_t SLSWindowIteratorGetAttributes(CFTypeRef iterator);
+
 // Private AX API for resolving the CGWindowID behind an AX window element
 // (no public alternative exists)
 AXError _AXUIElementGetWindow(AXUIElementRef element, CGWindowID *windowID);
