@@ -74,7 +74,7 @@ struct GeneralPane: View {
                 // auto-check toggle
                 SettingsToggleRow(
                     title: Localization.toggleNightlyUpdates,
-                    isOn: model.binding(\.includeNightlyUpdates),
+                    isOn: nightlyUpdatesBinding,
                     icon: "moon.stars",
                     subtitle: Localization.tipNightlyUpdates,
                     anchor: .nightlyUpdates
@@ -160,6 +160,21 @@ struct GeneralPane: View {
             // so the caption re-reads on every session transition
             updaterTick += 1
         }
+    }
+
+    /// The store binding for the nightly toggle, with a side effect: any
+    /// change checks in the background straight away, so the latest nightly
+    /// (opting in) or latest stable release (opting out) is offered without
+    /// waiting for the next scheduled check.
+    private var nightlyUpdatesBinding: Binding<Bool> {
+        let stored = model.binding(\.includeNightlyUpdates)
+        return Binding(
+            get: { stored.wrappedValue },
+            set: { enabled in
+                stored.wrappedValue = enabled
+                updater?.checkForUpdatesInBackground()
+            }
+        )
     }
 
     /// KVO publisher for the updater's in-flight state: `canCheckForUpdates`
