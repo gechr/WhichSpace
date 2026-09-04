@@ -406,7 +406,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verplaats naar de map Apps"
+            "value" : "Verplaats naar de map Programma's"
           }
         },
         "nn" : {
@@ -448,7 +448,7 @@
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mută în folderul Aplicații"
+            "value" : "Mută în dosarul Aplicații"
           }
         },
         "ru" : {
@@ -536,13 +536,13 @@
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Затвори и замени"
+            "value" : "Излез и замени"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tanca i substitueix"
+            "value" : "Surt i substitueix"
           }
         },
         "cs" : {
@@ -614,7 +614,7 @@
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "बंद करें और बदलें"
+            "value" : "छोड़ें और बदलें"
           }
         },
         "hu" : {
@@ -632,7 +632,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chiudi e sostituisci"
+            "value" : "Esci e sostituisci"
           }
         },
         "ja" : {
@@ -680,7 +680,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "بند کرو تے بدل دو"
+            "value" : "چھڈو تے بدل دو"
           }
         },
         "pl" : {
@@ -692,7 +692,7 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "وتړئ او بدل یې کړئ"
+            "value" : "ووځئ او بدل یې کړئ"
           }
         },
         "pt" : {
@@ -716,7 +716,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Закрыть и заменить"
+            "value" : "Выйти и заменить"
           }
         },
         "sk" : {
@@ -746,7 +746,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kapat ve değiştir"
+            "value" : "Çık ve değiştir"
           }
         },
         "uk" : {
@@ -758,7 +758,7 @@
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "بند کریں اور بدلیں"
+            "value" : "باہر نکلیں اور بدلیں"
           }
         },
         "vi" : {
@@ -782,7 +782,7 @@
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "退出並取代"
+            "value" : "結束並取代"
           }
         }
       }
@@ -792,7 +792,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "تعذر النقل إلى مجلد التطبيقات"
+            "value" : "تعذر النقل إلى مجلد التطبيقات."
           }
         },
         "bg" : {
@@ -852,7 +852,7 @@
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "امکان انتقال به پوشهٔ برنامه‌ها وجود ندارد"
+            "value" : "امکان انتقال به پوشهٔ برنامه‌ها وجود ندارد."
           }
         },
         "fi" : {
@@ -912,7 +912,7 @@
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Не може да се премести во папката Апликации"
+            "value" : "Не може да се премести во папката Апликации."
           }
         },
         "ms" : {
@@ -972,13 +972,13 @@
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nu s-a putut muta în folderul Aplicații"
+            "value" : "Nu s-a putut muta în dosarul Aplicații"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Не удалось переместить в папку «Программы»"
+            "value" : "Не удалось переместить в папку «Программы»."
           }
         },
         "sk" : {
@@ -1234,7 +1234,7 @@
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Acest lucru va păstra folderul Descărcări ordonat."
+            "value" : "Acest lucru va păstra dosarul Descărcări ordonat."
           }
         },
         "ru" : {
@@ -1430,7 +1430,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@은(는) 응용 프로그램 폴더로 이동할 수 있습니다."
+            "value" : "%@ 앱을 응용 프로그램 폴더로 이동할 수 있습니다."
           }
         },
         "mk" : {
@@ -1496,7 +1496,7 @@
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ se poate muta în folderul Aplicații."
+            "value" : "%@ se poate muta în dosarul Aplicații."
           }
         },
         "ru" : {
@@ -1758,7 +1758,7 @@
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mutați în folderul Aplicații?"
+            "value" : "Mutați în dosarul Aplicații?"
           }
         },
         "ru" : {
@@ -1966,7 +1966,7 @@
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pindahkan ke folder Aplikasi dalam folder Rumah anda?"
+            "value" : "Pindahkan ke folder Aplikasi dalam folder utama anda?"
           }
         },
         "nb" : {
@@ -1984,7 +1984,7 @@
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Flytte til Programmer-mappa i Hjem-mappa di?"
+            "value" : "Flytte til Programmer-mappa i Heim-mappa di?"
           }
         },
         "pa" : {
@@ -2020,7 +2020,7 @@
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mutați în folderul Aplicații din folderul personal?"
+            "value" : "Mutați în dosarul Aplicații din dosarul personal?"
           }
         },
         "ru" : {
@@ -2108,13 +2108,13 @@
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Различна версия на %@ вече работи от папката Приложения. Затворете я, за да замените инсталираното копие."
+            "value" : "Различна версия на %@ вече работи от папката Приложения. Излезте от нея, за да замените инсталираното копие."
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ja s'està executant una versió diferent de %@ des de la carpeta Aplicacions. Tanqueu-la per substituir la còpia instal·lada."
+            "value" : "Ja s'està executant una versió diferent de %@ des de la carpeta Aplicacions. Sortiu-ne per substituir la còpia instal·lada."
           }
         },
         "cs" : {
@@ -2132,7 +2132,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eine andere Version von %@ läuft bereits aus dem Programme-Ordner. Beenden Sie sie, um die installierte Kopie zu ersetzen."
+            "value" : "Eine andere Version von %@ läuft bereits aus dem Programme-Ordner. Beende sie, um die installierte Kopie zu ersetzen."
           }
         },
         "el" : {
@@ -2156,7 +2156,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ya se está ejecutando una versión diferente de %@ desde la carpeta Aplicaciones. Ciérrela para reemplazar la copia instalada."
+            "value" : "Ya se está ejecutando una versión diferente de %@ desde la carpeta Aplicaciones. Salga de la aplicación para reemplazar la copia instalada."
           }
         },
         "fa" : {
@@ -2186,7 +2186,7 @@
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ का एक अलग संस्करण पहले से ही एप्लिकेशन फ़ोल्डर से चल रहा है। इंस्टॉल की गई कॉपी को बदलने के लिए इसे बंद करें।"
+            "value" : "%@ का एक अलग संस्करण पहले से ही एप्लिकेशन फ़ोल्डर से चल रहा है। इंस्टॉल की गई कॉपी को बदलने के लिए इसे छोड़ें।"
           }
         },
         "hu" : {
@@ -2216,13 +2216,13 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "다른 버전의 %@이(가) 응용 프로그램 폴더에서 이미 실행 중입니다. 설치된 앱을 교체하려면 해당 앱을 종료하세요."
+            "value" : "응용 프로그램 폴더에서 %@의 다른 버전이 이미 실행 중입니다. 설치된 사본을 교체하려면 해당 앱을 종료하세요."
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Поина верзија на %@ веќе работи од папката Апликации. Затворете ја за да ја замените инсталираната копија."
+            "value" : "Поина верзија на %@ веќе работи од папката Апликации. Излезете од неа за да ја замените инсталираната копија."
           }
         },
         "ms" : {
@@ -2252,7 +2252,7 @@
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ دا ہور ورژن ایپلیکیشنز فولڈر وچوں پہلے ہی چل ریا اے۔ انسٹال کیتی کاپی نوں بدلنے لئی اینوں بند کرو۔"
+            "value" : "%@ دا ہور ورژن ایپلیکیشنز فولڈر وچوں پہلے ہی چل ریا اے۔ انسٹال کیتی کاپی نوں بدلنے لئی ایہنوں چھڈ دو۔"
           }
         },
         "pl" : {
@@ -2264,13 +2264,13 @@
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "د %@ بله نسخه لا دمخه د غوښتنلیکونو فولډر څخه روانه ده. د نصب شوې کاپي د بدلولو لپاره یې وتړئ."
+            "value" : "د %@ بله نسخه لا دمخه د غوښتنلیکونو فولډر څخه روانه ده. د نصب شوې کاپي د بدلولو لپاره ترې ووځئ."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Uma versão diferente de %@ já está a ser executada a partir da pasta Aplicações. Termine-a para substituir a cópia instalada."
+            "value" : "Uma versão diferente de %@ já está a ser executada a partir da pasta Aplicações. Saia da aplicação para substituir a cópia instalada."
           }
         },
         "pt-BR" : {
@@ -2282,13 +2282,13 @@
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O versiune diferită a %@ rulează deja din folderul Aplicații. Închideți-o pentru a înlocui copia instalată."
+            "value" : "O versiune diferită a %@ rulează deja din dosarul Aplicații. Închideți-o pentru a înlocui copia instalată."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Другая версия %@ уже запущена из папки «Программы». Закройте её, чтобы заменить установленную копию."
+            "value" : "Другая версия %@ уже запущена из папки «Программы». Выйдите из неё, чтобы заменить установленную копию."
           }
         },
         "sk" : {
@@ -2318,19 +2318,19 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ uygulamasının farklı bir sürümü zaten Uygulamalar klasöründen çalışıyor. Yüklü kopyayı değiştirmek için onu kapatın."
+            "value" : "%@ uygulamasının farklı bir sürümü zaten Uygulamalar klasöründen çalışıyor. Yüklü kopyayı değiştirmek için uygulamadan çıkın."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Інша версія %@ уже запущена з папки «Програми». Закрийте її, щоб замінити встановлену копію."
+            "value" : "Інша версія %@ уже запущена з папки «Програми». Завершіть її, щоб замінити встановлену копію."
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ کا ایک مختلف ورژن پہلے سے ایپلیکیشنز فولڈر سے چل رہا ہے۔ انسٹال شدہ کاپی کو بدلنے کے لیے اسے بند کریں۔"
+            "value" : "%@ کا ایک مختلف ورژن پہلے سے ایپلیکیشنز فولڈر سے چل رہا ہے۔ انسٹال شدہ کاپی کو بدلنے کے لیے اس سے باہر نکلیں۔"
           }
         },
         "vi" : {
