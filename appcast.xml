@@ -6,13 +6,16 @@
     <description>Most recent changes with links to updates.</description>
     <language>en</language>
     <item>
-        <title>Version 1.3.7-tip.625</title>
+        <title>Version 1.3.7-tip.628</title>
         <sparkle:channel>nightly</sparkle:channel>
         <description><![CDATA[
           <style>.sparkle-installed-version, .sparkle-installed-version ~ * { display: none }</style>
-          <section data-sparkle-version="1.3.7-tip.625">
-            <h3>Nightly (v1.3.7-tip.625)</h3>
+          <section data-sparkle-version="1.3.7-tip.628">
+            <h3>Nightly (v1.3.7-tip.628)</h3>
             <ul>
+              <li>deps: Resolve vendored KeyboardShortcuts locally</li>
+              <li>updates: Foreground nightly channel checks</li>
+              <li>build(deps): bump zizmorcore/zizmor-action from 0.6.2 to 0.6.3 in the github-actions group (#87)</li>
               <li>l10n: Refine translations</li>
             </ul>
           </section>
@@ -1094,13 +1097,13 @@
           </section>
         ]]></description>
         <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/tip</sparkle:fullReleaseNotesLink>
-        <pubDate>Fri, 04 Sep 2026 22:00:47 +0100</pubDate>
+        <pubDate>Sun, 06 Sep 2026 19:52:57 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/tip/WhichSpace.zip"
-          sparkle:version="1.3.7-tip.625"
-          sparkle:shortVersionString="1.3.7-tip.625"
-          sparkle:edSignature="obtEjJ2wz1xlq+nBfM4N+Vo9sY/Zh5w3QkA63l7hXbffTC/SsX+rxnZJ4juC4p2VQVnzVtJ+5/z0y+Y3fyZiBQ=="
-          length="4202980"
+          sparkle:version="1.3.7-tip.628"
+          sparkle:shortVersionString="1.3.7-tip.628"
+          sparkle:edSignature="UyIPXJ15d3XHC30LyMKw7qFuWZtyvWFw1d2il3Bh6Dl34sfnnqMGHINiyOwArTu9pL9X/NAzOSMg4K6aPpCJDA=="
+          length="4203035"
           type="application/octet-stream" />
         <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
       </item>
