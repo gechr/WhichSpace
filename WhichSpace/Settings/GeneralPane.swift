@@ -163,16 +163,17 @@ struct GeneralPane: View {
     }
 
     /// The store binding for the nightly toggle, with a side effect: any
-    /// change checks in the background straight away, so the latest nightly
+    /// change starts a user-initiated check, so the latest nightly
     /// (opting in) or latest stable release (opting out) is offered without
-    /// waiting for the next scheduled check.
+    /// waiting for the next scheduled check. Use the foreground action so
+    /// Sparkle brings the update prompt in front of Settings.
     private var nightlyUpdatesBinding: Binding<Bool> {
         let stored = model.binding(\.includeNightlyUpdates)
         return Binding(
             get: { stored.wrappedValue },
             set: { enabled in
                 stored.wrappedValue = enabled
-                updater?.checkForUpdatesInBackground()
+                onCheckForUpdates()
             }
         )
     }
