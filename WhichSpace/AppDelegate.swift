@@ -75,7 +75,9 @@ enum ClickPermission {
 // MARK: - App Delegate
 
 @MainActor
-final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SPUStandardUserDriverDelegate {
+final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpdaterDelegate,
+    SPUStandardUserDriverDelegate
+{
     // MARK: - Properties
 
     private let confirmAction: ConfirmAction
@@ -858,11 +860,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
             return
         }
         if event.isRightClick {
-            guard let button = statusBarItem?.button else {
-                return
-            }
-            let position = NSPoint(x: 0, y: button.bounds.height + 5)
-            statusMenu.popUp(positioning: nil, at: position, in: button)
+            showStatusMenu(statusMenu)
         } else if event.isOptionClick {
             actionHandler.openSettingsWindow()
         } else {
@@ -925,7 +923,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
             let allSpaces = store.showAllSpaces
             let slotCount = layout.slots.count
             Self.logger.info("picker fallback: showAllSpaces \(allSpaces), slots \(slotCount)")
-            showSpacePickerMenu(from: button)
+            showSpacePickerMenu()
             return
         }
 
@@ -1157,7 +1155,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
 
     /// Pops up a menu listing every Space on the current display, each item
     /// rendered exactly like its status bar icon, with the active Space checked.
-    private func showSpacePickerMenu(from button: NSStatusBarButton) {
+    private func showSpacePickerMenu() {
         let entries = appState.spacePickerEntries()
         // A single Space leaves nothing to switch to
         guard entries.count > 1 else {
@@ -1171,8 +1169,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate, SP
             style = .name
         }
         let menu = MenuBuilder.buildSpacePickerMenu(entries: entries, style: style, target: actionHandler)
-        let position = NSPoint(x: 0, y: button.bounds.height + 5)
-        menu.popUp(positioning: nil, at: position, in: button)
+        showStatusMenu(menu)
+    }
+
+    /// Let AppKit anchor the menu below the status item and keep every row
+    /// visible. A manually positioned popup can start scrolled past its first row.
+    private func showStatusMenu(_ menu: NSMenu) {
+        guard let statusBarItem, let button = statusBarItem.button else {
+            return
+        }
+        menu.delegate = self
+        statusBarItem.menu = menu
+        button.performClick(nil)
+    }
+
+    func menuDidClose(_ menu: NSMenu) {
+        // Keep the menu attached until tracking ends, including on systems
+        // that present it asynchronously. Restore custom left/right clicks.
+        if statusBarItem?.menu === menu {
+            statusBarItem.menu = nil
+        }
+        menu.delegate = nil
     }
 
     // MARK: - Status Bar

@@ -623,7 +623,7 @@ struct SpacePickerTests {
 
         let menu = MenuBuilder.buildSpacePickerMenu(entries: entries, style: .both, target: target)
 
-        #expect(menu.items.count == 4)
+        #expect(menu.items.count == 3)
         let spaceItems = Array(menu.items.prefix(2))
         // No occupancy configured, so the combined style stays on the plain
         // titles the picker always had
@@ -647,9 +647,6 @@ struct SpacePickerTests {
         #expect(settingsItem.keyEquivalent == ",")
         #expect(settingsItem.keyEquivalentModifierMask == [.command])
         #expect(settingsItem.action == #selector(ActionHandler.openSettingsWindow))
-        // The trailing item is the invisible spacer restoring the bottom inset
-        #expect(menu.items.last?.view != nil)
-        #expect(menu.items.last?.representedObject == nil)
     }
 
     @Test("capped splits an ordered list at the app-icon limit")

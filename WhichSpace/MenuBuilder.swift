@@ -63,7 +63,6 @@ enum MenuBuilder {
             menu.addItem(item)
         }
         configureHiddenSettingsItem(in: menu, target: target)
-        addBottomSpacer(to: menu)
         return menu
     }
 
@@ -198,19 +197,6 @@ enum MenuBuilder {
         quitItem.image = NSImage(systemSymbolName: "xmark.rectangle", accessibilityDescription: nil)
         quitItem.toolTip = String(format: Localization.tipQuit, AppInfo.appName)
         menu.addItem(quitItem)
-
-        addBottomSpacer(to: menu)
-    }
-
-    // MARK: - Spacer
-
-    /// The popped-up menu clips its bottom padding, cutting into the last
-    /// item; an invisible spacer restores the inset.
-    private static func addBottomSpacer(to menu: NSMenu) {
-        let spacer = NSMenuItem()
-        spacer.isEnabled = false
-        spacer.view = NSView(frame: NSRect(x: 0, y: 0, width: 1, height: 5))
-        menu.addItem(spacer)
     }
 
     // MARK: - Helpers
