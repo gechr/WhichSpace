@@ -105,9 +105,7 @@ final class ActionHandler: NSObject {
         }
 
         do {
-            try BackupManager.load(from: url, store: store, launchAtLogin: launchAtLogin) {
-                HotkeyCenter.importBindings($0)
-            }
+            try ScriptingHelpers.importSettings(from: url, store: store, launchAtLogin: launchAtLogin)
             onStatusBarIconNeedsUpdate?()
         } catch {
             showImportFailedAlert(detail: error.localizedDescription)
@@ -127,11 +125,10 @@ final class ActionHandler: NSObject {
         }
 
         do {
-            try BackupManager.export(
+            try ScriptingHelpers.exportSettings(
                 to: url,
                 store: store,
-                launchAtLogin: launchAtLogin,
-                hotkeys: HotkeyCenter.exportBindings()
+                launchAtLogin: launchAtLogin
             )
         } catch {
             showExportFailedAlert(detail: error.localizedDescription)
@@ -170,11 +167,11 @@ final class ActionHandler: NSObject {
         onStatusBarIconNeedsUpdate?()
     }
 
-    private func showImportFailedAlert(detail: String? = nil) {
+    func showImportFailedAlert(detail: String? = nil) {
         showErrorAlert(message: Localization.alertImportFailed, detail: detail)
     }
 
-    private func showExportFailedAlert(detail: String? = nil) {
+    func showExportFailedAlert(detail: String? = nil) {
         showErrorAlert(message: Localization.alertExportFailed, detail: detail)
     }
 

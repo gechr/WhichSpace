@@ -301,6 +301,19 @@ osascript -e 'tell application "WhichSpace" to reset all space badges'
 osascript -e 'tell application "WhichSpace" to copy diagnostics'
 ```
 
+##### Settings import/export
+
+Export or restore a complete JSON backup without opening a file picker:
+
+```applescript
+tell application "WhichSpace"
+    export settings to POSIX file "/Users/george/Desktop/design.json"
+    import settings from POSIX file "/Users/george/Desktop/design.json"
+end tell
+```
+
+Import restores global settings, Space customizations, and hotkeys. Export overwrites an existing file. Failures are returned as AppleScript errors.
+
 ##### Displays
 
 Displays are numbered in the same order as the display picker in WhichSpace settings.
@@ -349,3 +362,12 @@ open "whichspace://move/right"
 # Copy a summary of your setup, ready to paste into a bug report
 open "whichspace://diagnostics/copy"
 ```
+
+Export and import the same backups through the URL scheme:
+
+```bash
+open "whichspace://settings/export?path=/Users/george/Desktop/design.json"
+open "whichspace://settings/import?path=/Users/george/Desktop/design.json"
+```
+
+Use an absolute path and percent-encode special characters, such as `%20` for a space or `%26` for `&`. These commands bypass file pickers and show an alert if the operation fails. URL commands run asynchronously - use AppleScript to wait for completion or handle errors.

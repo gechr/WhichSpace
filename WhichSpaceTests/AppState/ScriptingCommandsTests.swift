@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 @testable import WhichSpace
 
@@ -11,6 +12,49 @@ struct ScriptingCommandsTests {
         testSuite = TestSuiteFactory.createSuite()
         store = DefaultsStore(suite: testSuite.suite)
         stub = CGSStub()
+    }
+
+    @Test("settings files round trip preferences and hotkeys, overwriting existing exports")
+    func settingsFileRoundTrip() throws {
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".json")
+        defer { try? FileManager.default.removeItem(at: url) }
+        let login = StubLaunchAtLoginProvider()
+        let hotkeys = ["switchLeft": "test binding"]
+        store.spaceSymbols = [3: "curlybraces"]
+        store.showAllSpaces = true
+        try ScriptingHelpers.exportSettings(to: url, store: store, launchAtLogin: login, hotkeys: [:])
+        store.spaceSymbols = [3: "star.fill"]
+        try ScriptingHelpers.exportSettings(to: url, store: store, launchAtLogin: login, hotkeys: hotkeys)
+        store.spaceSymbols = [1: "heart"]
+        store.showAllSpaces = false
+        var restoredHotkeys: [String: String] = [:]
+        try ScriptingHelpers.importSettings(from: url, store: store, launchAtLogin: login) {
+            restoredHotkeys = $0
+        }
+        #expect(store.spaceSymbols == [3: "star.fill"])
+        #expect(store.showAllSpaces)
+        #expect(restoredHotkeys == hotkeys)
+    }
+
+    @Test("failed imports preserve preferences and never apply hotkeys")
+    func invalidSettingsImport() throws {
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".json")
+        defer { try? FileManager.default.removeItem(at: url) }
+        let login = StubLaunchAtLoginProvider()
+        store.spaceSymbols = [3: "curlybraces"]
+        var appliedHotkeys = false
+        for invalidJSON in [false, true] {
+            if invalidJSON {
+                try "invalid JSON".write(to: url, atomically: true, encoding: .utf8)
+            }
+            #expect(throws: (any Error).self) {
+                try ScriptingHelpers.importSettings(from: url, store: store, launchAtLogin: login) { _ in
+                    appliedHotkeys = true
+                }
+            }
+            #expect(store.spaceSymbols == [3: "curlybraces"])
+            #expect(!appliedHotkeys)
+        }
     }
 
     @Test("current space label resolves template with displayed number")

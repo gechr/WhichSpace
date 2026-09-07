@@ -14,6 +14,18 @@
             <cocoa class="WhichSpace.CopyDiagnosticsCommand"/>
             <result type="text" description="The diagnostics report."/>
         </command>
+        <command name="export settings" code="WSpcexst" description="Export all settings and hotkeys to a JSON file, overwriting an existing file.">
+            <cocoa class="WhichSpace.ExportSettingsCommand"/>
+            <parameter name="to" code="dstf" type="file" description="The destination file. Its parent folder must exist.">
+                <cocoa key="destination"/>
+            </parameter>
+        </command>
+        <command name="import settings" code="WSpcimst" description="Restore all settings and hotkeys from a JSON backup.">
+            <cocoa class="WhichSpace.ImportSettingsCommand"/>
+            <parameter name="from" code="srcf" type="file" description="The existing JSON backup file.">
+                <cocoa key="source"/>
+            </parameter>
+        </command>
         <command name="move front window left" code="WSpcmvlf" description="Move the frontmost window to the Space on the left, and switch to it.">
             <cocoa class="WhichSpace.MoveWindowLeftCommand"/>
         </command>

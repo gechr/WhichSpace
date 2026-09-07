@@ -11,6 +11,28 @@ struct URLCommandsTests {
         return URLCommand.parse(url)
     }
 
+    @Test("settings transfers decode absolute paths")
+    func settingsTransfersParse() {
+        let file = URL(fileURLWithPath: "/tmp/Design & Code #1.json")
+        #expect(parse("whichspace://settings/import?path=/tmp/Design%20%26%20Code%20%231.json") ==
+            .importSettings(file))
+        #expect(parse("whichspace://SETTINGS/EXPORT?PATH=/tmp/Design%20%26%20Code%20%231.json") ==
+            .exportSettings(file))
+    }
+
+    @Test("settings transfers reject missing or nonabsolute paths", arguments: [
+        "whichspace://settings/import",
+        "whichspace://settings/export?path=",
+        "whichspace://settings/import?path=relative.json",
+        "whichspace://settings/export?path=~/backup.json",
+        "whichspace://settings/import?path=https://example.com/backup.json",
+        "whichspace://settings/import/extra?path=/tmp/backup.json",
+        "whichspace://settings/export?path=/tmp/bad%00.json",
+    ])
+    func invalidSettingsTransfer(string: String) {
+        #expect(parse(string) == nil)
+    }
+
     @Test("switch with a number parses")
     func switchNumberParses() {
         #expect(parse("whichspace://switch/3") == .switchToSpace(number: 3, label: nil, badge: nil))

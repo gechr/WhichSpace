@@ -13,6 +13,24 @@ final class CopyDiagnosticsCommand: NSScriptCommand {
     }
 }
 
+/// Exports settings to a file, including a destination that does not exist yet.
+final class ExportSettingsCommand: NSScriptCommand {
+    override func performDefaultImplementation() -> Any? {
+        performSettingsTransfer(parameter: "destination") { url in
+            try ScriptingHelpers.exportSettings(to: url)
+        }
+    }
+}
+
+/// Restores the complete settings backup from a file.
+final class ImportSettingsCommand: NSScriptCommand {
+    override func performDefaultImplementation() -> Any? {
+        performSettingsTransfer(parameter: "source") { url in
+            try ScriptingHelpers.importSettings(from: url)
+        }
+    }
+}
+
 /// Command handler for AppleScript "move front window left" command.
 /// Usage: `tell application "WhichSpace" to move front window left`
 final class MoveWindowLeftCommand: NSScriptCommand {
@@ -96,6 +114,24 @@ final class SendWindowToSpaceCommand: NSScriptCommand {
 }
 
 extension NSScriptCommand {
+    fileprivate func performSettingsTransfer(
+        parameter: String,
+        work: @MainActor (URL) throws -> Void
+    ) -> Any? {
+        do {
+            guard let url = evaluatedArguments?[parameter] as? URL, url.isFileURL else {
+                throw BackupError.invalidData
+            }
+            try MainActor.assumeIsolated {
+                try work(url)
+            }
+        } catch {
+            scriptErrorNumber = errOSACantAssign
+            scriptErrorString = error.localizedDescription
+        }
+        return nil
+    }
+
     /// Reads the 1-based Space number, reporting a script error when it is
     /// missing or not an integer.
     fileprivate func spaceNumberParameter() -> Int? {
@@ -295,6 +331,29 @@ enum MoveError: LocalizedError {
 
 @MainActor
 enum ScriptingHelpers {
+    static func importSettings(
+        from url: URL,
+        store: DefaultsStore = AppEnvironment.shared.store,
+        launchAtLogin: LaunchAtLoginProvider = DefaultLaunchAtLoginProvider(),
+        applyHotkeys: @escaping ([String: String]) -> Void = { HotkeyCenter.importBindings($0) }
+    ) throws {
+        try BackupManager.load(
+            from: url,
+            store: store,
+            launchAtLogin: launchAtLogin,
+            applyHotkeys: applyHotkeys
+        )
+    }
+
+    static func exportSettings(
+        to url: URL,
+        store: DefaultsStore = AppEnvironment.shared.store,
+        launchAtLogin: LaunchAtLoginProvider = DefaultLaunchAtLoginProvider(),
+        hotkeys: [String: String] = HotkeyCenter.exportBindings()
+    ) throws {
+        try BackupManager.export(to: url, store: store, launchAtLogin: launchAtLogin, hotkeys: hotkeys)
+    }
+
     /// The bug-report summary, built the same way for the Settings button, the
     /// URL scheme and AppleScript.
     static func diagnosticsReport(

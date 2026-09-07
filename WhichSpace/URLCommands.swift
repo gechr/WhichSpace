@@ -13,6 +13,8 @@ import Foundation
 /// - `whichspace://send/3` - the same, without switching Space
 /// - `whichspace://diagnostics/copy` - copy a summary of the current setup
 ///   to the clipboard
+/// - `whichspace://settings/import?path=/absolute/backup.json` - restore settings
+/// - `whichspace://settings/export?path=/absolute/backup.json` - export settings
 /// - `whichspace://settings` - open settings on the last pane shown
 /// - `whichspace://settings/spaces` - open settings on a named pane
 /// - `whichspace://settings?highlight=icon-size` - open settings on whichever
@@ -27,6 +29,8 @@ enum URLCommand: Equatable {
     case moveWindowToSpace(number: Int, follow: Bool)
     case moveWindowRelative(goRight: Bool, follow: Bool)
     case openSettings(pane: SettingsPaneID?, focus: SettingsFocus?)
+    case importSettings(URL)
+    case exportSettings(URL)
     case copyDiagnostics
 
     /// Parses a `whichspace://` URL into a command, or nil when the URL
@@ -101,6 +105,13 @@ enum URLCommand: Equatable {
     private static func parseSettings(_ url: URL) -> Self? {
         // Dropping the root component treats a trailing slash as no pane
         let components = url.pathComponents.filter { $0 != "/" }
+        if components.count == 1, ["import", "export"].contains(components[0].lowercased()) {
+            guard let path = queryValue(url, "path"), path.hasPrefix("/"), !path.contains("\0") else {
+                return nil
+            }
+            let file = URL(fileURLWithPath: path)
+            return components[0].lowercased() == "import" ? .importSettings(file) : .exportSettings(file)
+        }
         var pane: SettingsPaneID?
         switch components.count {
         case 0:

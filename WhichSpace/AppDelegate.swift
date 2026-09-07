@@ -483,6 +483,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
                 try ScriptingHelpers.switchRelative(goRight: true)
             case .switchPrevious:
                 try ScriptingHelpers.switchToPreviousSpace(appState: appState)
+            case let .importSettings(url):
+                do {
+                    try ScriptingHelpers.importSettings(from: url, store: store, launchAtLogin: launchAtLogin)
+                    updateStatusBarIcon()
+                } catch {
+                    actionHandler.showImportFailedAlert(detail: error.localizedDescription)
+                }
+            case let .exportSettings(url):
+                do {
+                    try ScriptingHelpers.exportSettings(to: url, store: store, launchAtLogin: launchAtLogin)
+                } catch {
+                    actionHandler.showExportFailedAlert(detail: error.localizedDescription)
+                }
             case .copyDiagnostics:
                 ScriptingHelpers.copyDiagnostics(appState: appState, store: store)
             case let .moveWindowToSpace(number, follow):
