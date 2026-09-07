@@ -1097,13 +1097,13 @@
           </section>
         ]]></description>
         <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/tip</sparkle:fullReleaseNotesLink>
-        <pubDate>Sun, 06 Sep 2026 19:52:57 +0100</pubDate>
+        <pubDate>Mon, 07 Sep 2026 03:15:53 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/tip/WhichSpace.zip"
           sparkle:version="1.3.7-tip.628"
           sparkle:shortVersionString="1.3.7-tip.628"
-          sparkle:edSignature="UyIPXJ15d3XHC30LyMKw7qFuWZtyvWFw1d2il3Bh6Dl34sfnnqMGHINiyOwArTu9pL9X/NAzOSMg4K6aPpCJDA=="
-          length="4203035"
+          sparkle:edSignature="vkhR/20GhuaMtovVeJAnELaWeNaTcp2CEZftdx22EKeHajF63Agvumq81fqC/cI3LiNV30GqmuUBCtCnfPKECw=="
+          length="4202993"
           type="application/octet-stream" />
         <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
       </item>
