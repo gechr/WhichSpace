@@ -6,13 +6,16 @@
     <description>Most recent changes with links to updates.</description>
     <language>en</language>
     <item>
-        <title>Version 1.3.7-tip.628</title>
+        <title>Version 1.3.7-tip.631</title>
         <sparkle:channel>nightly</sparkle:channel>
         <description><![CDATA[
           <style>.sparkle-installed-version, .sparkle-installed-version ~ * { display: none }</style>
-          <section data-sparkle-version="1.3.7-tip.628">
-            <h3>Nightly (v1.3.7-tip.628)</h3>
+          <section data-sparkle-version="1.3.7-tip.631">
+            <h3>Nightly (v1.3.7-tip.631)</h3>
             <ul>
+              <li>menubar: Extend picker shortcuts up to 16 Spaces</li>
+              <li>build: Fix <code>make run</code> build version</li>
+              <li>menubar: Use native status item menus</li>
               <li>deps: Resolve vendored KeyboardShortcuts locally</li>
               <li>updates: Foreground nightly channel checks</li>
               <li>build(deps): bump zizmorcore/zizmor-action from 0.6.2 to 0.6.3 in the github-actions group (#87)</li>
@@ -1097,13 +1100,13 @@
           </section>
         ]]></description>
         <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/tip</sparkle:fullReleaseNotesLink>
-        <pubDate>Mon, 07 Sep 2026 03:15:53 +0100</pubDate>
+        <pubDate>Mon, 07 Sep 2026 11:29:26 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/tip/WhichSpace.zip"
-          sparkle:version="1.3.7-tip.628"
-          sparkle:shortVersionString="1.3.7-tip.628"
-          sparkle:edSignature="vkhR/20GhuaMtovVeJAnELaWeNaTcp2CEZftdx22EKeHajF63Agvumq81fqC/cI3LiNV30GqmuUBCtCnfPKECw=="
-          length="4202993"
+          sparkle:version="1.3.7-tip.631"
+          sparkle:shortVersionString="1.3.7-tip.631"
+          sparkle:edSignature="bWIMSyZJUxOxBjDYAT1wDqL0p+KCXNK3WDlgeCImf+Nfz3/jPepP98/y9EVcYCfHlAfCOUDPGJ9cPpH5rNPkCg=="
+          length="4205265"
           type="application/octet-stream" />
         <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
       </item>
