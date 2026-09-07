@@ -128,7 +128,7 @@ struct SymbolGridView: View {
             )
         }
         .buttonStyle(.plain)
-        .help(catalog == .symbols ? item : "")
+        .help(catalog == .symbols ? item : Emoji(item).localizedName)
         .previewHover { hovering in
             onHover?(item, hovering)
         }
