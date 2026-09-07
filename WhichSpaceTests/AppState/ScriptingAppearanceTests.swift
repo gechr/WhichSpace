@@ -204,6 +204,26 @@ struct ScriptingAppearanceTests {
         #expect(store.displaySpaceSymbols.isEmpty)
     }
 
+    @Test("symbols outside the picker are rejected even when macOS supports them")
+    func symbolOutsidePickerRejected() throws {
+        #expect(NSImage(systemSymbolName: "star", accessibilityDescription: nil) != nil)
+        #expect(!ItemData.symbols.contains("star"))
+        try ScriptingHelpers.setSymbol("curlybraces", at: key, store: store)
+
+        #expect(throws: AppearanceError.unknownSymbol) {
+            try ScriptingHelpers.setSymbol(" star ", at: key, store: store)
+        }
+        #expect(ScriptingHelpers.symbol(at: key, store: store) == "curlybraces")
+    }
+
+    @Test("every picker symbol can be set through scripting")
+    func pickerSymbolsAccepted() throws {
+        for symbol in ItemData.symbols {
+            try ScriptingHelpers.setSymbol(" \(symbol) ", at: key, store: store)
+            #expect(ScriptingHelpers.symbol(at: key, store: store) == symbol)
+        }
+    }
+
     @Test("emoji round-trip exactly as written", arguments: [
         "🎨", "👨‍👩‍👧‍👦", "🇬🇧", "1️⃣", "☀️", "🫱🏽‍🫲🏻", "👍🏽", "🏴󠁧󠁢󠁳󠁣󠁴󠁿",
     ])
@@ -363,6 +383,7 @@ struct ScriptingAppearanceTests {
 
     @Test("applyAppearance leaves every value unchanged when any field is invalid", arguments: [
         AppearancePatch(symbol: "not.a.symbol.name", foreground: "cc30e0", label: "Code"),
+        AppearancePatch(symbol: " star ", foreground: "cc30e0", label: "Code"),
         AppearancePatch(emoji: "ab", foreground: "cc30e0", label: "Code"),
         AppearancePatch(symbol: "curlybraces", foreground: "cc30e", label: "Code"),
         AppearancePatch(symbol: "curlybraces", background: "", label: "Code"),
@@ -370,7 +391,7 @@ struct ScriptingAppearanceTests {
         AppearancePatch(symbol: "curlybraces", foreground: "cc30e0", label: "Code", badge: "AB"),
     ])
     func applyAppearanceIsAtomic(patch: AppearancePatch) throws {
-        try ScriptingHelpers.setSymbol("star", at: key, store: store)
+        try ScriptingHelpers.setSymbol("star.fill", at: key, store: store)
         try ScriptingHelpers.setForegroundColor("111111", at: key, darkMode: false, store: store)
         ScriptingHelpers.setLabel("Before", at: key, store: store)
         let symbols = store.displaySpaceSymbols

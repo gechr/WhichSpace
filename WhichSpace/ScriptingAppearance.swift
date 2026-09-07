@@ -187,7 +187,7 @@ extension ScriptingHelpers {
     }
 
     private static func validateSymbol(_ name: String) throws(AppearanceError) {
-        guard NSImage(systemSymbolName: name, accessibilityDescription: nil) != nil else {
+        guard ItemData.symbols.contains(name) else {
             throw .unknownSymbol
         }
     }
