@@ -6,13 +6,14 @@
     <description>Most recent changes with links to updates.</description>
     <language>en</language>
     <item>
-        <title>Version 1.3.8-tip.635</title>
+        <title>Version 1.3.8-tip.636</title>
         <sparkle:channel>nightly</sparkle:channel>
         <description><![CDATA[
           <style>.sparkle-installed-version, .sparkle-installed-version ~ * { display: none }</style>
-          <section data-sparkle-version="1.3.8-tip.635">
-            <h3>Nightly (v1.3.8-tip.635)</h3>
+          <section data-sparkle-version="1.3.8-tip.636">
+            <h3>Nightly (v1.3.8-tip.636)</h3>
             <ul>
+              <li>scripting: Restrict symbols to picker catalog</li>
               <li>scripting: Add Space colors, symbols and emoji</li>
               <li>scripting: Add settings import and export</li>
               <li>picker: Show emoji names in hover tooltips</li>
@@ -1108,13 +1109,13 @@
           </section>
         ]]></description>
         <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/tip</sparkle:fullReleaseNotesLink>
-        <pubDate>Mon, 07 Sep 2026 20:20:01 +0100</pubDate>
+        <pubDate>Mon, 07 Sep 2026 20:32:02 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/tip/WhichSpace.zip"
-          sparkle:version="1.3.8-tip.635"
-          sparkle:shortVersionString="1.3.8-tip.635"
-          sparkle:edSignature="j7UuYJ0oxU3kkWnfD5Z+XN+yi0p95PXcuymH6yBUDZSUKHJ5QRKoQsjCSGNHC65wDatdTgmanough76ByLloAQ=="
-          length="4256304"
+          sparkle:version="1.3.8-tip.636"
+          sparkle:shortVersionString="1.3.8-tip.636"
+          sparkle:edSignature="H0c9NMO+qpYXJkAvAscsCG1wwIpe86wdGRoCguIrVZhGCn6pzg3m2GfXy7UfuEZTSNIa67aggYDUGYgp9wW3Aw=="
+          length="4256337"
           type="application/octet-stream" />
         <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
       </item>
