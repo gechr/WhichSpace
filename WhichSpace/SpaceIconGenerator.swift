@@ -926,7 +926,7 @@ enum SpaceIconGenerator {
         scale: Double,
         canvasSize: CGSize = statusItemSize
     ) -> NSImage {
-        let displayEmoji = SkinTone.apply(to: emoji, tone: skinTone)
+        let displayEmoji = SkinTone.display(emoji, tone: skinTone)
         return NSImage(size: canvasSize, flipped: false) { rect in
             // Use smaller font for emoji to fit nicely in the status bar
             let fontSize = 13.0 * scale
@@ -1109,7 +1109,7 @@ enum SpaceIconGenerator {
         let operation: NSCompositingOperation = knockout ? .destinationOut : .sourceOver
         if symbolName.containsEmoji {
             // Emoji are never tinted; matches generateEmojiIcon's font size
-            let displayEmoji = SkinTone.apply(to: symbolName, tone: skinTone)
+            let displayEmoji = SkinTone.display(symbolName, tone: skinTone)
             let attributes: [NSAttributedString.Key: Any] = [.font: NSFont.systemFont(ofSize: 13.0 * scale)]
             let size = displayEmoji.size(withAttributes: attributes)
             return SymbolContent(size: size) { rect in

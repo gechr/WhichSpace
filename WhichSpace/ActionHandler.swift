@@ -175,6 +175,10 @@ final class ActionHandler: NSObject {
         showErrorAlert(message: Localization.alertExportFailed, detail: detail)
     }
 
+    func showAppearanceFailedAlert(detail: String? = nil) {
+        showErrorAlert(message: Localization.alertAppearanceFailed, detail: detail)
+    }
+
     private func showErrorAlert(message: String, detail: String? = nil) {
         let alert = NSAlert()
         alert.messageText = message

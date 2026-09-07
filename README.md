@@ -294,6 +294,52 @@ osascript -e 'tell application "WhichSpace" to set badge of space 2 to ""'
 osascript -e 'tell application "WhichSpace" to reset all space badges'
 ```
 
+##### Symbols and emoji
+
+Hover over a symbol in the Settings picker to see its name.
+
+```bash
+# Show an SF Symbol instead of the Space number
+osascript -e 'tell application "WhichSpace" to set symbol of space 3 to "curlybraces"'
+
+# Show an emoji instead, exactly as written, including skin tones
+osascript -e 'tell application "WhichSpace" to set emoji of space 3 to "🎨"'
+
+# Read the symbol or emoji ("" when the Space shows the other kind, or none)
+osascript -e 'tell application "WhichSpace" to get symbol of space 3'
+osascript -e 'tell application "WhichSpace" to get emoji of space 3'
+
+# Remove the icon, so the Space shows its number or label again
+osascript -e 'tell application "WhichSpace" to set symbol of space 3 to ""'
+
+# Reset the icon to follow the shared or default style again
+osascript -e 'tell application "WhichSpace" to reset icon for space 3'
+```
+
+##### Colors
+
+Colors are `RRGGBB`, or `RRGGBBAA` with alpha. Reading returns `""` when no color is configured. Foreground and background are stored as a pair.
+
+```bash
+# Set the foreground and background colors of a Space
+osascript -e 'tell application "WhichSpace" to set foreground color of space 3 to "CC30E0"'
+osascript -e 'tell application "WhichSpace" to set background color of space 3 to "202020"'
+
+# Tint the symbol separately, with a translucent chip behind it
+osascript -e 'tell application "WhichSpace" to set symbol color of space 3 to "FFFFFF"'
+osascript -e 'tell application "WhichSpace" to set symbol background color of space 3 to "00000080"'
+
+# Let the symbol follow the foreground color again, and drop the chip
+osascript -e 'tell application "WhichSpace" to set symbol color of space 3 to ""'
+osascript -e 'tell application "WhichSpace" to set symbol background color of space 3 to ""'
+
+# Reset all colors of a Space to follow the shared or default style again
+osascript -e 'tell application "WhichSpace" to reset color for space 3'
+
+# Reset every customization of a Space, as the Reset button in Settings does
+osascript -e 'tell application "WhichSpace" to reset space 3'
+```
+
 ##### Diagnostics
 
 ```bash
@@ -371,3 +417,23 @@ open "whichspace://settings/import?path=/Users/george/Desktop/design.json"
 ```
 
 Use an absolute path and percent-encode special characters, such as `%20` for a space or `%26` for `&`. These commands bypass file pickers and show an alert if the operation fails. URL commands run asynchronously - use AppleScript to wait for completion or handle errors.
+
+`space/N` is the position on the current display, counting fullscreen Spaces, regardless of the numbering preference. Add `display=M` for another display. An invalid value shows an alert and nothing is applied.
+
+```bash
+# Set the symbol and colors of Space 3 on the current display
+open "whichspace://space/3?symbol=curlybraces&foreground=CC30E0&background=202020"
+
+# Set an emoji, symbol colors, label and badge of Space 2 on display 2 in one step
+open "whichspace://space/2?display=2&emoji=%F0%9F%8E%A8&symbol-color=FFFFFF&symbol-background=00000080&label=Art&badge=%23"
+
+# An empty symbol, emoji, label, badge or symbol color clears it, like setting "" in AppleScript
+open "whichspace://space/3?symbol=&symbol-color="
+
+# Reset every customization of a Space, as the Reset button in Settings does
+open "whichspace://space/3/reset"
+
+# Reset only the colors or the icon of a Space
+open "whichspace://space/3/reset/color"
+open "whichspace://space/3/reset/icon?display=2"
+```

@@ -498,6 +498,38 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
                 }
             case .copyDiagnostics:
                 ScriptingHelpers.copyDiagnostics(appState: appState, store: store)
+            case let .setSpaceAppearance(position, display, patch):
+                // A URL has no reply channel, so a bad value is shown rather
+                // than silently dropped
+                do {
+                    let key = try ScriptingHelpers.spaceKey(position: position, display: display, appState: appState)
+                    try ScriptingHelpers.applyAppearance(
+                        patch, at: key, darkMode: appState.darkModeEnabled, store: store
+                    )
+                } catch {
+                    actionHandler.showAppearanceFailedAlert(detail: error.localizedDescription)
+                }
+            case let .resetSpace(position, display):
+                do {
+                    let key = try ScriptingHelpers.spaceKey(position: position, display: display, appState: appState)
+                    ScriptingHelpers.resetSpace(at: key, store: store)
+                } catch {
+                    actionHandler.showAppearanceFailedAlert(detail: error.localizedDescription)
+                }
+            case let .resetSpaceColors(position, display):
+                do {
+                    let key = try ScriptingHelpers.spaceKey(position: position, display: display, appState: appState)
+                    ScriptingHelpers.resetColors(at: key, store: store)
+                } catch {
+                    actionHandler.showAppearanceFailedAlert(detail: error.localizedDescription)
+                }
+            case let .resetSpaceIcon(position, display):
+                do {
+                    let key = try ScriptingHelpers.spaceKey(position: position, display: display, appState: appState)
+                    ScriptingHelpers.resetIcon(at: key, store: store)
+                } catch {
+                    actionHandler.showAppearanceFailedAlert(detail: error.localizedDescription)
+                }
             case let .moveWindowToSpace(number, follow):
                 // A URL has no reply channel, so failures are only logged
                 Task {

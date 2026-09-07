@@ -468,8 +468,23 @@ final class SpaceEditorModel {
         )
     }
 
+    /// Previews the tone on the same bare emoji `setSkinTone` would store,
+    /// so hovering a scripted emoji that carries its own modifiers shows
+    /// what clicking commits.
     func previewSkinTone(_ tone: SkinTone, hovering: Bool) {
-        setPreview(IconPreviewOverrides(skinTone: tone), hovering: hovering)
+        setPreview(
+            IconPreviewOverrides(skinTone: tone, symbol: symbol.flatMap(Self.bareEmoji)),
+            hovering: hovering
+        )
+    }
+
+    /// The emoji stripped of its own skin tone modifiers, or nil when it
+    /// carries none and the stored value can stand as it is.
+    private static func bareEmoji(_ symbol: String) -> String? {
+        guard symbol.unicodeScalars.contains(where: { SkinTone.modifierScalars.contains($0) }) else {
+            return nil
+        }
+        return SkinTone.apply(to: symbol, tone: .default)
     }
 
     /// Previews removing the symbol, which clicking the selected symbol
@@ -694,7 +709,14 @@ final class SpaceEditorModel {
         tick += 1
     }
 
+    /// A scripted emoji carries its own modifiers and renders untouched
+    /// under the default tone, so choosing a tone here first rebases it to
+    /// the bare form: default then reads as yellow and any other tone
+    /// retints to that single tone, as it does for picker emoji.
     func setSkinTone(_ tone: SkinTone) {
+        if let bare = symbol.flatMap(Self.bareEmoji) {
+            SpacePreferences.setSymbol(bare, forSpace: editingSpace, display: editingDisplay, store: store)
+        }
         SpacePreferences.setSkinTone(tone, forSpace: editingSpace, display: editingDisplay, store: store)
         tick += 1
     }

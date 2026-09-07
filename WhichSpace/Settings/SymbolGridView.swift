@@ -113,7 +113,7 @@ struct SymbolGridView: View {
                     // The default tone must show the raw emoji: applying it
                     // strips the emoji-presentation selector along with the
                     // modifiers, downgrading some glyphs to monochrome text
-                    Text(pickerSkinTone == .default ? item : SkinTone.apply(to: item, tone: pickerSkinTone))
+                    Text(SkinTone.display(item, tone: pickerSkinTone))
                         .font(.system(size: 17))
                 }
             }

@@ -358,6 +358,7 @@ enum Localization {
     static let alertCustomSoundsDetail = String(localized: "alert_custom_sounds_detail")
     static let alertCustomSoundsTitle = String(localized: "alert_custom_sounds_title")
     static let alertDuplicateShortcut = String(localized: "alert_duplicate_shortcut")
+    static let alertAppearanceFailed = String(localized: "alert_appearance_failed")
     static let alertDuplicateShortcutDetail = String(localized: "alert_duplicate_shortcut_detail")
     static let alertExportFailed = String(localized: "alert_export_failed")
     static let alertImportFailed = String(localized: "alert_import_failed")
@@ -414,6 +415,10 @@ enum Localization {
     static let errorBackupInvalidData = String(localized: "error_backup_invalid_data")
     static let errorScriptingAccessibilityRequired = String(localized: "error_scripting_accessibility_required")
     static let errorScriptingBadgeSingleCharacter = String(localized: "error_scripting_badge_single_character")
+    static let errorScriptingColorResetRequired = String(localized: "error_scripting_color_reset_required")
+    static let errorScriptingDisplayOutOfRange = String(localized: "error_scripting_display_out_of_range")
+    static let errorScriptingExpectedHexColor = String(localized: "error_scripting_expected_hex_color")
+    static let errorScriptingExpectedSingleEmoji = String(localized: "error_scripting_expected_single_emoji")
     static let errorScriptingExpectedSpaceNumber = String(localized: "error_scripting_expected_space_number")
     static let errorScriptingMoveFailed = String(localized: "error_scripting_move_failed")
     static let errorScriptingMoveUnsupported = String(localized: "error_scripting_move_unsupported")
@@ -422,6 +427,7 @@ enum Localization {
     static let errorScriptingNoWindowToMove = String(localized: "error_scripting_no_window_to_move")
     static let errorScriptingSpaceIsFullscreen = String(localized: "error_scripting_space_is_fullscreen")
     static let errorScriptingSpaceOutOfRange = String(localized: "error_scripting_space_out_of_range")
+    static let errorScriptingUnknownSymbol = String(localized: "error_scripting_unknown_symbol")
     static let errorScriptingWindowIsFullscreen = String(localized: "error_scripting_window_is_fullscreen")
 
     static let labelAdjacentSpaces = String(localized: "label_adjacent_spaces")
@@ -680,6 +686,14 @@ enum SkinTone: Int, CaseIterable, Codable, Defaults.Serializable {
     private static let vs16: Unicode.Scalar = "\u{FE0F}"
     /// Zero Width Joiner - used in complex emoji sequences
     private static let zwj: Unicode.Scalar = "\u{200D}"
+
+    /// The emoji to draw for a stored symbol. An explicit default tone
+    /// leaves the string untouched, so a scripted emoji keeps its own
+    /// modifiers and presentation selectors; any other tone, including the
+    /// nil picker fallback, goes through `apply`.
+    static func display(_ emoji: String, tone: Self?) -> String {
+        tone == .default ? emoji : apply(to: emoji, tone: tone)
+    }
 
     /// Applies a skin tone modifier to an emoji.
     /// - Parameters:

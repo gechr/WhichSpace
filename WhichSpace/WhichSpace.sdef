@@ -36,11 +36,26 @@
             <cocoa class="WhichSpace.MoveWindowToSpaceCommand"/>
             <direct-parameter type="integer" description="The Space number to move the window to (1-based)."/>
         </command>
+        <command name="reset" code="WSpcrsps" description="Reset every customization of a Space so it follows the shared or default style again, as the Reset button in Settings does.">
+            <direct-parameter type="space" description="The Space to reset, e.g. space 3, space 2 of display 2, or current space."/>
+        </command>
         <command name="reset all space badges" code="WSpcrsab" description="Reset the badges of all Spaces on every display to their defaults.">
             <cocoa class="WhichSpace.ResetAllSpaceBadgesCommand"/>
         </command>
         <command name="reset all space labels" code="WSpcrsal" description="Reset the labels of all Spaces on every display to their defaults.">
             <cocoa class="WhichSpace.ResetAllSpaceLabelsCommand"/>
+        </command>
+        <command name="reset color" code="WSpcrscl" description="Reset the colors of a Space so it follows the shared or default style again.">
+            <cocoa class="WhichSpace.ResetSpaceColorsCommand"/>
+            <parameter name="for" code="rsfr" type="space" description="The Space to reset, e.g. space 3, space 2 of display 2, or current space.">
+                <cocoa key="target"/>
+            </parameter>
+        </command>
+        <command name="reset icon" code="WSpcrsic" description="Reset the symbol or emoji of a Space so it follows the shared or default style again.">
+            <cocoa class="WhichSpace.ResetSpaceIconCommand"/>
+            <parameter name="for" code="rsfr" type="space" description="The Space to reset, e.g. space 3, space 2 of display 2, or current space.">
+                <cocoa key="target"/>
+            </parameter>
         </command>
         <command name="send front window left" code="WSpcsdlf" description="Send the frontmost window to the Space on the left, without switching Space.">
             <cocoa class="WhichSpace.SendWindowLeftCommand"/>
@@ -109,6 +124,27 @@
             <property name="badge" code="WSbd" type="text" access="rw" description="The Space badge character, or an empty string when none. Set a single character to apply a badge (# shows the Space number); an empty string resets it.">
                 <cocoa key="badge"/>
             </property>
+            <property name="symbol" code="WSsy" type="text" access="rw" description="The SF Symbol name shown instead of the Space number, or an empty string when the Space shows an emoji or no symbol. Set a symbol name to apply it; an empty string removes the icon. Use reset icon to follow the shared or default style again.">
+                <cocoa key="symbol"/>
+            </property>
+            <property name="emoji" code="WSem" type="text" access="rw" description="The emoji shown instead of the Space number, or an empty string when the Space shows a symbol or no emoji. Set a single emoji to apply it; an empty string removes the icon. Use reset icon to follow the shared or default style again.">
+                <cocoa key="emoji"/>
+            </property>
+            <property name="foreground color" code="WSfg" type="text" access="rw" description="The foreground color as RRGGBB, or RRGGBBAA when translucent, or an empty string when no colors are configured for the Space, shared, or as the default style. Setting one of foreground or background keeps the other configured color, or fills it from the current appearance when none is configured. Use reset color to clear all colors of a Space.">
+                <cocoa key="foregroundColor"/>
+            </property>
+            <property name="background color" code="WSbg" type="text" access="rw" description="The background color as RRGGBB, or RRGGBBAA when translucent, or an empty string when no colors are configured for the Space, shared, or as the default style. Setting one of foreground or background keeps the other configured color, or fills it from the current appearance when none is configured. Use reset color to clear all colors of a Space.">
+                <cocoa key="backgroundColor"/>
+            </property>
+            <property name="symbol color" code="WSyc" type="text" access="rw" description="The symbol color as RRGGBB, or RRGGBBAA when translucent, or an empty string while the symbol follows the foreground color. Set an empty string to follow the foreground color again.">
+                <cocoa key="symbolColor"/>
+            </property>
+            <property name="symbol background color" code="WSyb" type="text" access="rw" description="The symbol background color as RRGGBB, or RRGGBBAA when translucent, or an empty string while the symbol has no background. Set an empty string to remove the background.">
+                <cocoa key="symbolBackgroundColor"/>
+            </property>
+            <responds-to command="reset">
+                <cocoa method="handleResetScriptCommand:"/>
+            </responds-to>
         </class>
     </suite>
 </dictionary>

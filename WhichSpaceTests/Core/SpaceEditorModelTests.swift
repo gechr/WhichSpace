@@ -838,6 +838,50 @@ struct SpaceEditorModelTests {
         #expect(model.hoverPreview == nil)
     }
 
+    @Test("hovering a tone over a scripted toned emoji previews what clicking commits")
+    func skinTonePreviewMatchesCommit() async throws {
+        let model = makeModel()
+        // Scripting writes the display tier, so edit that scope rather than
+        // the shared "All" scope a single display opens on
+        model.selectedDisplayID = "Main"
+        model.selection = .space(1)
+        let key: ScriptingHelpers.SpaceKey = (1, "Main")
+        try ScriptingHelpers.setEmoji("👍🏽", at: key, store: store)
+
+        model.previewSkinTone(.default, hovering: true)
+        await applied(model)
+        #expect(model.hoverPreview == IconPreviewOverrides(skinTone: .default, symbol: "👍"))
+        // Hovering leaves the stored values alone
+        #expect(store.displaySpaceSymbols["Main"]?[1] == "👍🏽")
+        #expect(store.displaySpaceSkinTones["Main"]?[1] == SkinTone.default)
+        model.previewSkinTone(.default, hovering: false)
+        await applied(model)
+
+        model.setSkinTone(.default)
+        #expect(store.displaySpaceSymbols["Main"]?[1] == "👍")
+        #expect(ScriptingHelpers.emoji(at: key, store: store) == "👍")
+
+        // A mixed-tone sequence rebases to its bare form for any tone
+        let mixed = "🫱🏽‍🫲🏻"
+        let bare = SkinTone.apply(to: mixed, tone: .default)
+        try ScriptingHelpers.setEmoji(mixed, at: key, store: store)
+        model.previewSkinTone(.dark, hovering: true)
+        await applied(model)
+        #expect(model.hoverPreview == IconPreviewOverrides(skinTone: .dark, symbol: bare))
+        #expect(store.displaySpaceSymbols["Main"]?[1] == mixed)
+        model.previewSkinTone(.dark, hovering: false)
+        await applied(model)
+        model.setSkinTone(.dark)
+        #expect(store.displaySpaceSymbols["Main"]?[1] == bare)
+        #expect(store.displaySpaceSkinTones["Main"]?[1] == SkinTone.dark)
+
+        // A picker emoji carries no modifiers, so the tone previews alone as before
+        model.setSymbol("👋")
+        model.previewSkinTone(.light, hovering: true)
+        await applied(model)
+        #expect(model.hoverPreview == IconPreviewOverrides(skinTone: .light))
+    }
+
     @Test("a fast sweep applies only the last hovered value")
     func sweepAppliesOnlyTheLastHover() async {
         let model = makeModel()

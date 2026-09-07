@@ -84,6 +84,8 @@
 		DB808F9A959C72ABCBAADCCE /* ErrorRecoveryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C010908C363337F4F938B12E /* ErrorRecoveryTests.swift */; };
 		DBC4285F4D36492E9CDC1FE0 /* InputValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4787B4288A4A48AC80AEC9C0 /* InputValidationTests.swift */; };
 		2835185212764A50B1A84F2E /* ScriptingCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035A09D63D8844FCA079A1C0 /* ScriptingCommands.swift */; };
+		6A01E545D226462CBA8515E4 /* ScriptingAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7160E52CD43B40668E72009B /* ScriptingAppearance.swift */; };
+		D4A4BA025E534347B7C62D7D /* ScriptingAppearanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC5B7C9DB3A4FEBB555501E /* ScriptingAppearanceTests.swift */; };
 		7D25B48A6C354C099FB171D6 /* ScriptableObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 765C841D18F7486CB8AD97A3 /* ScriptableObjects.swift */; };
 		9F7208519A55488C99F80221 /* URLCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = E133A52EB82B44829E4C3FFC /* URLCommands.swift */; };
 		A7D1E946AAB54055A5C5F559 /* URLCommandsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 860F2F6428234559874C54BF /* URLCommandsTests.swift */; };
@@ -214,6 +216,8 @@
 		4ECDD602992244C2A87B9753 /* ScriptingCommandsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptingCommandsTests.swift; sourceTree = "<group>"; };
 		DDA45BF086DC44798630F3D3 /* SpaceWindowMoverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceWindowMoverTests.swift; sourceTree = "<group>"; };
 		035A09D63D8844FCA079A1C0 /* ScriptingCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptingCommands.swift; sourceTree = "<group>"; };
+		7160E52CD43B40668E72009B /* ScriptingAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptingAppearance.swift; sourceTree = "<group>"; };
+		6FC5B7C9DB3A4FEBB555501E /* ScriptingAppearanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptingAppearanceTests.swift; sourceTree = "<group>"; };
 		765C841D18F7486CB8AD97A3 /* ScriptableObjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptableObjects.swift; sourceTree = "<group>"; };
 		E133A52EB82B44829E4C3FFC /* URLCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLCommands.swift; sourceTree = "<group>"; };
 		860F2F6428234559874C54BF /* URLCommandsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLCommandsTests.swift; sourceTree = "<group>"; };
@@ -330,6 +334,7 @@
 				5C8E0A2B6F3D49E6B7C1D2F3 /* Localization/AppShortcuts.xcstrings */,
 				765C841D18F7486CB8AD97A3 /* ScriptableObjects.swift */,
 				035A09D63D8844FCA079A1C0 /* ScriptingCommands.swift */,
+				7160E52CD43B40668E72009B /* ScriptingAppearance.swift */,
 				E133A52EB82B44829E4C3FFC /* URLCommands.swift */,
 				B27F1B6A56284EC7A38483EF /* WhichSpace.sdef */,
 			);
@@ -343,6 +348,7 @@
 				ECBBD91E2AF7486EB7F69842 /* SpaceUpdateCoordinatorTests.swift */,
 				DFB446EE552B31E1415C66B7 /* DynamicDisplayTests.swift */,
 				4ECDD602992244C2A87B9753 /* ScriptingCommandsTests.swift */,
+				6FC5B7C9DB3A4FEBB555501E /* ScriptingAppearanceTests.swift */,
 				DDA45BF086DC44798630F3D3 /* SpaceWindowMoverTests.swift */,
 				5EB458392EEDE9690021C6BD /* CGSStub.swift */,
 				2846E68501F241D1B6B97942 /* SpaceSnapshotServiceTests.swift */,
@@ -676,6 +682,7 @@
 				A487D73E80DD98FEC3974AB0 /* MenuBuilder.swift in Sources */,
 				7D25B48A6C354C099FB171D6 /* ScriptableObjects.swift in Sources */,
 				2835185212764A50B1A84F2E /* ScriptingCommands.swift in Sources */,
+				6A01E545D226462CBA8515E4 /* ScriptingAppearance.swift in Sources */,
 				9F7208519A55488C99F80221 /* URLCommands.swift in Sources */,
 				2343A9408B914B708A21AC08 /* StatusBarRenderer.swift in Sources */,
 				178A29C9ED824543943550A2 /* SpaceSnapshotService.swift in Sources */,
@@ -722,6 +729,7 @@
 				73FAA1ED7C2DED2E7295E6FB /* DynamicDisplayTests.swift in Sources */,
 				ABC98EC5F8E24F379B3B00FA /* LocalizationTests.swift in Sources */,
 				BBCA46A039B8465CBA84EE0B /* ScriptingCommandsTests.swift in Sources */,
+				D4A4BA025E534347B7C62D7D /* ScriptingAppearanceTests.swift in Sources */,
 				6F8F6624E8424F858C555FC4 /* SpaceWindowMoverTests.swift in Sources */,
 				A7D1E946AAB54055A5C5F559 /* URLCommandsTests.swift in Sources */,
 				60A10359545448879C213924 /* IntegrationTests.swift in Sources */,

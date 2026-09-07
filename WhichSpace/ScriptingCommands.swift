@@ -83,6 +83,34 @@ final class ResetAllSpaceLabelsCommand: NSScriptCommand {
     }
 }
 
+/// Command handler for AppleScript "reset color" command.
+/// Usage: `tell application "WhichSpace" to reset color for space 3`
+final class ResetSpaceColorsCommand: NSScriptCommand {
+    override func performDefaultImplementation() -> Any? {
+        guard let space = targetSpaceParameter() else {
+            return nil
+        }
+        MainActor.assumeIsolated {
+            ScriptingHelpers.resetColors(at: space.key, store: AppEnvironment.shared.store)
+        }
+        return nil
+    }
+}
+
+/// Command handler for AppleScript "reset icon" command.
+/// Usage: `tell application "WhichSpace" to reset icon for space 3`
+final class ResetSpaceIconCommand: NSScriptCommand {
+    override func performDefaultImplementation() -> Any? {
+        guard let space = targetSpaceParameter() else {
+            return nil
+        }
+        MainActor.assumeIsolated {
+            ScriptingHelpers.resetIcon(at: space.key, store: AppEnvironment.shared.store)
+        }
+        return nil
+    }
+}
+
 /// Command handler for AppleScript "send front window left" command.
 /// Usage: `tell application "WhichSpace" to send front window left`
 final class SendWindowLeftCommand: NSScriptCommand {
@@ -141,6 +169,17 @@ extension NSScriptCommand {
             return nil
         }
         return spaceNumber
+    }
+
+    /// The Space named by a command's `for` parameter. Cocoa scripting has
+    /// already evaluated the specifier, so anything but a Space object is
+    /// a type error.
+    fileprivate func targetSpaceParameter() -> ScriptableSpace? {
+        guard let space = evaluatedArguments?["target"] as? ScriptableSpace else {
+            scriptErrorNumber = Int(errAEWrongDataType)
+            return nil
+        }
+        return space
     }
 
     /// Runs an asynchronous move, suspending the script until the window has

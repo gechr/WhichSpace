@@ -166,14 +166,124 @@ final class ScriptableSpace: NSObject {
             )
         }
         set {
-            do {
-                try ScriptingHelpers.setBadge(newValue, at: (position, displayID), store: store)
-            } catch {
-                // KVC setters can't throw; report through the in-flight command
-                let command = NSScriptCommand.current()
-                command?.scriptErrorNumber = errOSACantAssign
-                command?.scriptErrorString = error.localizedDescription
+            report { try ScriptingHelpers.setBadge(newValue, at: key, store: store) }
+        }
+    }
+
+    /// Reading returns the SF Symbol name, or "" when the Space shows an
+    /// emoji or no symbol. Assigning a name applies it after checking the
+    /// symbol exists on this macOS; "" removes the icon.
+    /// Usage: `tell application "WhichSpace" to set symbol of space 2 to "curlybraces"`
+    @objc var symbol: String {
+        get {
+            ScriptingHelpers.symbol(at: key, store: store)
+        }
+        set {
+            report { try ScriptingHelpers.setSymbol(newValue, at: key, store: store) }
+        }
+    }
+
+    /// Reading returns the emoji exactly as it was set, or "" when the
+    /// Space shows an SF Symbol or no symbol. Assigning a single emoji
+    /// applies it; "" removes the icon.
+    /// Usage: `tell application "WhichSpace" to set emoji of space 2 to "🎨"`
+    @objc var emoji: String {
+        get {
+            ScriptingHelpers.emoji(at: key, store: store)
+        }
+        set {
+            report { try ScriptingHelpers.setEmoji(newValue, at: key, store: store) }
+        }
+    }
+
+    /// Reading returns the configured colour as "RRGGBB" ("RRGGBBAA" when
+    /// translucent), whether set on the Space, shared, or inherited from
+    /// the default style, or "" when none is configured. Assigning a hex
+    /// colour applies it; the background keeps its configured colour, or
+    /// fills from the appearance default when none is configured.
+    /// Usage: `tell application "WhichSpace" to set foreground color of space 2 to "CC30E0"`
+    @objc var foregroundColor: String {
+        get {
+            ScriptingHelpers.foregroundColor(at: key, store: store)
+        }
+        set {
+            report {
+                try ScriptingHelpers.setForegroundColor(
+                    newValue, at: key, darkMode: appState.darkModeEnabled, store: store
+                )
             }
+        }
+    }
+
+    /// Usage: `tell application "WhichSpace" to set background color of space 2 to "202020"`
+    @objc var backgroundColor: String {
+        get {
+            ScriptingHelpers.backgroundColor(at: key, store: store)
+        }
+        set {
+            report {
+                try ScriptingHelpers.setBackgroundColor(
+                    newValue, at: key, darkMode: appState.darkModeEnabled, store: store
+                )
+            }
+        }
+    }
+
+    /// Reading returns "" while the symbol follows the foreground colour.
+    /// Assigning "" restores that.
+    /// Usage: `tell application "WhichSpace" to set symbol color of space 2 to "FFFFFF"`
+    @objc var symbolColor: String {
+        get {
+            ScriptingHelpers.symbolColor(at: key, store: store)
+        }
+        set {
+            report {
+                try ScriptingHelpers.setSymbolColor(
+                    newValue, at: key, darkMode: appState.darkModeEnabled, store: store
+                )
+            }
+        }
+    }
+
+    /// Reading returns "" while the symbol has no background chip.
+    /// Assigning "" removes the chip.
+    /// Usage: `tell application "WhichSpace" to set symbol background color of space 2 to "00000080"`
+    @objc var symbolBackgroundColor: String {
+        get {
+            ScriptingHelpers.symbolBackgroundColor(at: key, store: store)
+        }
+        set {
+            report {
+                try ScriptingHelpers.setSymbolBackgroundColor(
+                    newValue, at: key, darkMode: appState.darkModeEnabled, store: store
+                )
+            }
+        }
+    }
+
+    /// The preference key every property reads and writes.
+    var key: ScriptingHelpers.SpaceKey {
+        (position, displayID)
+    }
+
+    /// Handles the `reset` command, which AppleScript sends to the Space
+    /// itself because the Space is its direct parameter. Clears every
+    /// customization of the Space, as the Reset button in Settings does.
+    /// Usage: `tell application "WhichSpace" to reset space 3`
+    @objc func handleResetScriptCommand(_: NSScriptCommand) -> Any? {
+        ScriptingHelpers.resetSpace(at: key, store: store)
+        return nil
+    }
+
+    /// KVC setters can't throw; failures are reported through the
+    /// in-flight command instead.
+    private func report(_ write: () throws -> Void) {
+        do {
+            try write()
+        } catch {
+            let command = NSScriptCommand.current()
+            command?.scriptErrorNumber = errOSACantAssign
+            command?.scriptErrorString = error.localizedDescription
         }
     }
 
