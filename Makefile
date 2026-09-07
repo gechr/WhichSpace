@@ -15,7 +15,7 @@ RUN_DERIVED_DATA := build/run
 RUN_APP          := $(RUN_DERIVED_DATA)/Build/Products/Debug/WhichSpace.app
 
 # Dev version stamp from git describe, e.g. 1.2.0-18-g6d9e2c7-dirty
-RUN_VERSION ?= $(patsubst v%,%,$(shell git describe --tags --dirty 2>/dev/null || echo v0.0.0-dev))
+RUN_VERSION ?= $(patsubst v%,%,$(shell git describe --tags --dirty --match 'v[0-9]*' 2>/dev/null || echo v0.0.0-dev))
 
 .PHONY: all
 all: clean fmt lint test
