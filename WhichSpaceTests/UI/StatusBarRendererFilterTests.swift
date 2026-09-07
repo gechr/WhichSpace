@@ -539,6 +539,26 @@ struct SpacePickerTests {
         #expect(entries.map(\.keyEquivalent) == ["1", "2", "3"])
     }
 
+    @Test("picker extends bare shortcuts past nine desktops without counting fullscreen spaces")
+    func extendedShortcuts() {
+        var spaces = (1 ... 16).map { (id: $0, isFullscreen: false) }
+        spaces.insert((id: 100, isFullscreen: true), at: 9)
+        let appState = makeAppState(spaces: spaces, activeSpaceID: 10)
+        let entries = appState.spacePickerEntries()
+        let menu = MenuBuilder.buildSpacePickerMenu(entries: entries, style: .name, target: NSObject())
+        let desktopItems = menu.items.filter { ($0.representedObject as? SpacePickerEntry)?.targetSpace != nil }
+
+        #expect(desktopItems.count == 16)
+        #expect(desktopItems[8].keyEquivalent == "9")
+        #expect(desktopItems[9].keyEquivalent == "0")
+        #expect(desktopItems[10].keyEquivalent == "a")
+        #expect(desktopItems[15].keyEquivalent == "f")
+        #expect(Set(desktopItems.map(\.keyEquivalent)).count == 16)
+        #expect(desktopItems.allSatisfy { $0.keyEquivalentModifierMask.rawValue == 0 })
+        #expect(menu.items[9].keyEquivalent.isEmpty)
+        #expect((desktopItems[9].representedObject as? SpacePickerEntry)?.spaceID == 10)
+    }
+
     @Test("picker ignores hide filters so hidden spaces stay reachable")
     func entriesIgnoreHideFilters() {
         store.hideEmptySpaces = true

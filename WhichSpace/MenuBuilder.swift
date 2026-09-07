@@ -38,7 +38,7 @@ enum MenuBuilder {
                 action: #selector(ActionHandler.switchToPickedSpace(_:)),
                 keyEquivalent: entry.keyEquivalent
             )
-            // Bare digits: the initializer defaults the mask to Command
+            // Bare digits and letters: the initializer defaults the mask to Command
             item.keyEquivalentModifierMask = []
             item.target = target
             item.image = entry.icon

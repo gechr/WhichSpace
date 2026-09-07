@@ -256,6 +256,7 @@ final class StatusBarRenderer {
         // Mission Control numbers Desktops only once there are two, so a
         // lone Desktop across all displays keeps the bare name
         let desktopCount = appState.allDisplaysSpaceInfo.reduce(0) { $0 + $1.regularSpaceCount }
+        let shortcutKeys = Array("1234567890abcdef")
         return renderedIcons.map { rendered in
             let icons = (ownersBySpace[rendered.slot.spaceID] ?? []).compactMap(appIconResolver)
             let (shown, overflow) = Self.capped(icons, limit: cap)
@@ -267,8 +268,9 @@ final class StatusBarRenderer {
                 title: rendered.slot.isFullscreen
                     ? (fullscreenAppName(forSpaceID: rendered.slot.spaceID) ?? "")
                     : desktopName,
-                keyEquivalent: !rendered.slot.isFullscreen && (1 ... 9).contains(rendered.slot.displayNumber)
-                    ? String(rendered.slot.displayNumber)
+                keyEquivalent: !rendered.slot.isFullscreen && (1 ... shortcutKeys.count)
+                    .contains(rendered.slot.displayNumber)
+                    ? String(shortcutKeys[rendered.slot.displayNumber - 1])
                     : "",
                 isActive: rendered.slot.isActive,
                 targetSpace: rendered.slot.isFullscreen ? nil : rendered.slot.globalIndex,
