@@ -66,6 +66,30 @@ struct SettingsConstraintsTests {
         #expect(!store.showAllDisplays)
     }
 
+    // MARK: - Dock
+
+    @Test("hideMenuBarIcon only holds while showInDock is on")
+    func hideMenuBarIcon_requiresShowInDock() {
+        SettingsConstraints.setHideMenuBarIcon(true, store: store)
+        #expect(!store.hideMenuBarIcon)
+
+        SettingsConstraints.setShowInDock(true, store: store)
+        SettingsConstraints.setHideMenuBarIcon(true, store: store)
+        #expect(store.showInDock)
+        #expect(store.hideMenuBarIcon)
+    }
+
+    @Test("disabling showInDock restores the menu bar icon")
+    func disablingShowInDock_restoresMenuBarIcon() {
+        SettingsConstraints.setShowInDock(true, store: store)
+        SettingsConstraints.setHideMenuBarIcon(true, store: store)
+
+        SettingsConstraints.setShowInDock(false, store: store)
+
+        #expect(!store.showInDock)
+        #expect(!store.hideMenuBarIcon)
+    }
+
     // MARK: - Switching Preferences Record Intent
 
     @Test("scroll switching defaults to disabled")

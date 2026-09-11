@@ -44,6 +44,27 @@ struct GeneralPane: View {
                     anchor: .launchAtLogin
                 )
             }
+            SettingsSection(Localization.labelDock) {
+                SettingsToggleRow(
+                    title: Localization.toggleShowInDock,
+                    isOn: model.showInDockBinding,
+                    icon: "dock.rectangle",
+                    subtitle: Localization.tipShowInDock,
+                    anchor: .showInDock
+                )
+                SettingsRowDivider()
+                SettingsToggleRow(
+                    title: Localization.toggleHideMenuBarIcon,
+                    isOn: model.hideMenuBarIconBinding,
+                    icon: "menubar.rectangle",
+                    indented: true,
+                    disabled: !model.value(\.showInDock),
+                    subtitle: Localization.tipHideMenuBarIcon,
+                    anchor: .hideMenuBarIcon
+                )
+                SettingsRowDivider()
+                dockBadgeRow
+            }
             SettingsSection {
                 SettingsToggleRow(
                     title: Localization.toggleAutoCheckUpdates,
@@ -160,6 +181,53 @@ struct GeneralPane: View {
             // so the caption re-reads on every session transition
             updaterTick += 1
         }
+    }
+
+    /// Fill and text colour of the Dock tile's number badge and label pill,
+    /// nested under the Dock toggle that makes them visible.
+    private var dockBadgeRow: some View {
+        let disabled = !model.value(\.showInDock)
+        let stored = (
+            fill: model.binding(\.dockBadgeBackgroundColor),
+            text: model.binding(\.dockBadgeForegroundColor)
+        )
+        return SettingsRow(
+            icon: "paintpalette",
+            subtitle: Localization.tipDockBadge,
+            disabled: disabled,
+            indented: true,
+            anchor: .dockBadgeColors
+        ) {
+            Text(Localization.labelDockBadge)
+                .foregroundStyle(disabled ? .tertiary : .primary)
+        } control: {
+            ColorPicker(
+                Localization.labelDockBadge,
+                selection: colorBinding(stored.fill, fallback: IconColors.dockBadgeBackground)
+            )
+            .labelsHidden()
+            ColorPicker(
+                Localization.labelDockBadge,
+                selection: colorBinding(stored.text, fallback: IconColors.dockBadgeForeground)
+            )
+            .labelsHidden()
+            Button {
+                stored.fill.wrappedValue = nil
+                stored.text.wrappedValue = nil
+            } label: {
+                Image(systemName: "arrow.counterclockwise")
+            }
+            .buttonStyle(.borderless)
+            .disabled(stored.fill.wrappedValue == nil && stored.text.wrappedValue == nil)
+            .help(Localization.buttonReset)
+        }
+    }
+
+    private func colorBinding(_ stored: Binding<NSColor?>, fallback: NSColor) -> Binding<Color> {
+        Binding(
+            get: { Color(nsColor: stored.wrappedValue ?? fallback) },
+            set: { stored.wrappedValue = NSColor($0) }
+        )
     }
 
     /// The store binding for the nightly toggle, with a side effect: any

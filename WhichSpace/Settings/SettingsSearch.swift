@@ -186,6 +186,27 @@ enum SettingsSearchIndex {
             keywords: [.startup]
         ),
         SettingsSearchEntry(
+            anchor: .showInDock,
+            section: Localization.labelDock,
+            title: Localization.toggleShowInDock,
+            subtitle: Localization.tipShowInDock,
+            keywords: [.icon, .space]
+        ),
+        SettingsSearchEntry(
+            anchor: .hideMenuBarIcon,
+            section: Localization.labelDock,
+            title: Localization.toggleHideMenuBarIcon,
+            subtitle: Localization.tipHideMenuBarIcon,
+            keywords: [.icon, .hide]
+        ),
+        SettingsSearchEntry(
+            anchor: .dockBadgeColors,
+            section: Localization.labelDock,
+            title: Localization.labelDockBadge,
+            subtitle: Localization.tipDockBadge,
+            keywords: [.icon, .color, .label]
+        ),
+        SettingsSearchEntry(
             anchor: .autoCheckUpdates,
             section: nil,
             title: Localization.toggleAutoCheckUpdates,

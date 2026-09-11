@@ -315,6 +315,9 @@ enum IconColors {
     static let outlineDark = NSColor(calibratedWhite: 0.7, alpha: 1)
     static let outlineLight = NSColor(calibratedWhite: 0.3, alpha: 1)
     static let separatorDark = NSColor(calibratedWhite: 0.5, alpha: 0.6)
+    /// Dock tile badge and label pill: white with a dark blue number
+    static let dockBadgeBackground = NSColor(calibratedWhite: 1, alpha: 1)
+    static let dockBadgeForeground = NSColor(calibratedRed: 0.10, green: 0.22, blue: 0.50, alpha: 1)
     static let separatorLight = NSColor(calibratedWhite: 0.4, alpha: 0.6)
 
     static func defaultSeparator(darkMode: Bool) -> NSColor {
@@ -447,6 +450,8 @@ enum Localization {
     static let labelDiagnostics = String(localized: "label_diagnostics")
     static let labelDisplayOrder = String(localized: "label_display_order")
     static let labelDisplays = String(localized: "label_displays")
+    static let labelDock = String(localized: "label_dock")
+    static let labelDockBadge = String(localized: "label_dock_badge")
     static let labelFont = String(localized: "label_font")
     static let labelGlyph = String(localized: "label_glyph")
     static let labelHapticLight = String(localized: "label_haptic_light")
@@ -607,6 +612,9 @@ enum Localization {
     static let tipShowAllDisplays = String(localized: "tip_show_all_displays")
     static let tipShrinkToFit = String(localized: "tip_shrink_to_fit")
     static let tipShowAllSpaces = String(localized: "tip_show_all_spaces")
+    static let tipShowInDock = String(localized: "tip_show_in_dock")
+    static let tipDockBadge = String(localized: "tip_dock_badge")
+    static let tipHideMenuBarIcon = String(localized: "tip_hide_menu_bar_icon")
     static let tipSound = String(localized: "tip_sound")
     static let tipSoundSpace = String(localized: "tip_sound_space")
     static let tipSpacePlaceholder = String(localized: "tip_space_placeholder")
@@ -628,6 +636,8 @@ enum Localization {
     static let toggleScrollWrapAround = String(localized: "toggle_scroll_wrap_around")
     static let toggleShowAllDisplays = String(localized: "toggle_show_all_displays")
     static let toggleShowAllSpaces = String(localized: "toggle_show_all_spaces")
+    static let toggleShowInDock = String(localized: "toggle_show_in_dock")
+    static let toggleHideMenuBarIcon = String(localized: "toggle_hide_menu_bar_icon")
     static let toggleShrinkToFit = String(localized: "toggle_shrink_to_fit")
     static let toggleSkipEmptySpaces = String(localized: "toggle_skip_empty_spaces")
     static let toggleUseFForFullscreenApps = String(localized: "toggle_use_f_for_fullscreen_apps")

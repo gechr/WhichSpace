@@ -362,8 +362,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
             AppMover.moveIfNecessary(appName: AppInfo.appName)
         #endif
 
-        // Menu bar only - no Dock icon or app-switcher entry
-        NSApp.setActivationPolicy(.accessory)
+        // Menu bar only unless the Dock tile is turned on
+        applyActivationPolicy()
 
         // Register recorded global hotkeys; inert until the user records one
         hotkeyCenter = HotkeyCenter(appState: appState, store: store)
@@ -448,8 +448,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
     }
 
     func applicationShouldHandleReopen(_: NSApplication, hasVisibleWindows _: Bool) -> Bool {
+        // A click on the Dock tile lands here: offer the Space picker, the
+        // way a left click on the single status item does
+        if store.showInDock {
+            showDockSpacePickerMenu()
+        }
         // Prevent macOS/SwiftUI from opening any windows when the app is relaunched
-        false
+        return false
+    }
+
+    /// The Dock tile's right-click menu: every Space by name, then Settings.
+    func applicationDockMenu(_: NSApplication) -> NSMenu? {
+        guard store.showInDock else {
+            return nil
+        }
+        return MenuBuilder.buildDockMenu(entries: appState.spacePickerEntries(), target: actionHandler)
     }
 
     func application(_: NSApplication, open urls: [URL]) {
@@ -671,6 +684,26 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
             }
         })
 
+        // The Dock keys change where the icon is shown rather than how it
+        // is drawn: take or give up the Dock tile and show or hide the
+        // status item.
+        let dockKeys: [Defaults._AnyKey] = [
+            KeySpecs.showInDock.anyKey(suite: store.suite),
+            KeySpecs.hideMenuBarIcon.anyKey(suite: store.suite),
+            KeySpecs.dockBadgeBackgroundColor.anyKey(suite: store.suite),
+            KeySpecs.dockBadgeForegroundColor.anyKey(suite: store.suite),
+        ]
+        preferenceObservationTasks.append(Task { [weak self] in
+            for await _ in Defaults.updates(dockKeys, initial: false) {
+                guard !Task.isCancelled
+                else { return }
+                // An external defaults write lands here before the memo
+                // observer below drops the stale value, so drop it first
+                self?.store.invalidateCachedValues()
+                self?.applyDockPreferences()
+            }
+        })
+
         // Non-icon keys are read through the memo cache too (e.g. per scroll
         // event), so external defaults writes must still drop the cache even
         // though no icon rebuild is needed
@@ -750,8 +783,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
     }
 
     nonisolated func standardUserDriverWillFinishUpdateSession() {
-        DispatchQueue.main.async {
-            NSApp.setActivationPolicy(.accessory)
+        // Back to whichever policy the Dock preference asks for, not
+        // unconditionally to accessory
+        Task { @MainActor [weak self] in
+            self?.applyActivationPolicy()
         }
     }
 
@@ -1201,11 +1236,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
     /// Pops up a menu listing every Space on the current display, each item
     /// rendered exactly like its status bar icon, with the active Space checked.
     private func showSpacePickerMenu() {
+        guard let menu = makeSpacePickerMenu() else {
+            return
+        }
+        showStatusMenu(menu)
+    }
+
+    /// Builds the picker, or returns nil when a single Space leaves nothing
+    /// to switch to.
+    private func makeSpacePickerMenu() -> NSMenu? {
         let entries = appState.spacePickerEntries()
-        // A single Space leaves nothing to switch to
         guard entries.count > 1 else {
             Self.logger.info("no picker: \(entries.count) Space(s) available")
-            return
+            return nil
         }
         // A cap of 0 turns the app icons off entirely, so icon styles fall
         // back to the name; the none style shows no icons to begin with
@@ -1213,8 +1256,57 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
         if style != .none, appState.store.spacePickerMaxAppIcons == 0 {
             style = .name
         }
-        let menu = MenuBuilder.buildSpacePickerMenu(entries: entries, style: style, target: actionHandler)
-        showStatusMenu(menu)
+        return MenuBuilder.buildSpacePickerMenu(entries: entries, style: style, target: actionHandler)
+    }
+
+    // MARK: - Dock
+
+    /// The Dock tile is opt-in: the app is a menu bar utility by default and
+    /// only takes a Dock tile (and the app-switcher entry macOS ties to it)
+    /// while the preference is on. Sparkle's update prompts flip the policy
+    /// to regular for their duration; this is what they return to.
+    func applyActivationPolicy() {
+        let policy: NSApplication.ActivationPolicy = store.showInDock ? .regular : .accessory
+        guard NSApp.activationPolicy() != policy else {
+            return
+        }
+        let changed = NSApp.setActivationPolicy(policy)
+        Self.logger.info("activation policy -> \(policy == .regular ? "regular" : "accessory"): \(changed)")
+    }
+
+    /// Applies both Dock preferences at once: takes or gives up the tile,
+    /// then refreshes the status item so it shows or hides to match.
+    func applyDockPreferences() {
+        let showInDock = store.showInDock
+        let hideMenuBarIcon = store.hideMenuBarIcon
+        Self.logger.info("dock preferences: showInDock \(showInDock), hideMenuBarIcon \(hideMenuBarIcon)")
+        applyActivationPolicy()
+        if store.showInDock {
+            // The badge colours are outside the status item's cache key
+            appState.renderer.invalidateIconCache()
+            updateDockTile()
+        } else {
+            DockTile.clear()
+        }
+        updateStatusBarVisibility()
+    }
+
+    /// Keeps the Dock tile drawing the current Space; a no-op while the
+    /// tile is off.
+    private func updateDockTile() {
+        guard store.showInDock else {
+            return
+        }
+        DockTile.show(appState.dockTileIcon)
+    }
+
+    /// Pops the Space picker up at the pointer, which a Dock click leaves
+    /// over the tile. There is no status item to anchor it to.
+    private func showDockSpacePickerMenu() {
+        guard let menu = makeSpacePickerMenu() else {
+            return
+        }
+        menu.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
     }
 
     /// Let AppKit anchor the menu below the status item and keep every row
@@ -1255,6 +1347,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
         // Ahead of the unchanged-icon check: the same icon can outlive a
         // change of Space, and the announced label has to follow the Space
         updateStatusBarAccessibilityLabel()
+        updateDockTile()
         let icon = appState.statusBarIcon
         // Skip the assignment and forced redraw when the cached icon is
         // already installed (e.g. every submenu open triggers an update)
@@ -1293,6 +1386,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
 
     private func updateStatusBarVisibility() {
         guard let statusBarItem else {
+            return
+        }
+        // Withdrawn in favour of the Dock tile; the constraint setter keeps
+        // this from being on without the tile, but a defaults write can
+        guard !(store.showInDock && store.hideMenuBarIcon) else {
+            statusBarItem.isVisible = false
             return
         }
         guard store.hideSingleSpace else {

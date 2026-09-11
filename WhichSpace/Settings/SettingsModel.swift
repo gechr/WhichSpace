@@ -90,6 +90,34 @@ final class SettingsModel {
         )
     }
 
+    /// Routed through `SettingsConstraints` so turning the Dock tile off
+    /// also brings the status item back.
+    var showInDockBinding: Binding<Bool> {
+        Binding(
+            get: { [self] in
+                _ = tick
+                return store.showInDock
+            },
+            set: { [self] in
+                SettingsConstraints.setShowInDock($0, store: store)
+                tick += 1
+            }
+        )
+    }
+
+    var hideMenuBarIconBinding: Binding<Bool> {
+        Binding(
+            get: { [self] in
+                _ = tick
+                return store.hideMenuBarIcon
+            },
+            set: { [self] in
+                SettingsConstraints.setHideMenuBarIcon($0, store: store)
+                tick += 1
+            }
+        )
+    }
+
     /// Presents the two-case display-order preference as a switch: enabled
     /// uses the physical left-to-right arrangement; disabled follows macOS.
     var physicalDisplayOrderBinding: Binding<Bool> {

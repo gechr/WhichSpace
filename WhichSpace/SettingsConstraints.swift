@@ -13,6 +13,21 @@ enum SettingsConstraints {
         store.showAllDisplays = value
     }
 
+    /// Sets `showInDock`. Turning the Dock tile off also restores the status
+    /// item, so the app is never left without a visible surface.
+    static func setShowInDock(_ value: Bool, store: DefaultsStore) {
+        store.showInDock = value
+        if !value {
+            store.hideMenuBarIcon = false
+        }
+    }
+
+    /// Sets `hideMenuBarIcon`, which only takes effect while the Dock tile
+    /// is shown; without it the status item is the only way to reach the app.
+    static func setHideMenuBarIcon(_ value: Bool, store: DefaultsStore) {
+        store.hideMenuBarIcon = value && store.showInDock
+    }
+
     /// Sets `clickToSwitchSpaces` - switching paths gate on permission at use
     /// time.
     static func setClickToSwitchSpaces(_ value: Bool, store: DefaultsStore) {

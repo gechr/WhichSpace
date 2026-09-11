@@ -149,6 +149,10 @@ final class StatusBarRenderer {
 
     private var cachedIcon: NSImage?
     private var cachedIconKey: IconCacheKey?
+    /// The Dock tile draws the current Space alone whatever the status
+    /// item shows, so it keeps a cache of its own
+    private var cachedDockIcon: NSImage?
+    private var cachedDockIconKey: IconCacheKey?
 
     init(appState: AppState, displaySpaceProvider: DisplaySpaceProvider, store: DefaultsStore) {
         self.appState = appState
@@ -177,6 +181,61 @@ final class StatusBarRenderer {
         cachedIcon = icon
         cachedIconKey = key
         return icon
+    }
+
+    /// The icon for the Dock tile: the current Space alone at full detail,
+    /// whatever the status item is showing. The tile is square, so a row of
+    /// Spaces would shrink to illegibility there, and it is never short of
+    /// room, so the shrink ladder does not apply.
+    func dockTileIcon() -> NSImage {
+        let key = buildIconCacheKey(level: .full)
+
+        if let cachedDockIcon, cachedDockIconKey == key {
+            return cachedDockIcon
+        }
+
+        let icon = DockTileRenderer.image(for: dockTileSpec(darkMode: key.isDarkMode))
+        cachedDockIcon = icon
+        cachedDockIconKey = key
+        return icon
+    }
+
+    /// Resolves the current Space's preferences the same way the status
+    /// item does, then reduces them to what the Dock tile draws: the symbol
+    /// or emoji as the icon, the label in a pill, the number in a badge.
+    func dockTileSpec(darkMode: Bool) -> DockTileSpec {
+        let displayID = appState.currentDisplayID
+        let labels = fetchLabels(displayID: displayID ?? "")
+        let displayNumber = appState.currentSpaceDisplayNumber
+        let rawLabel = labels[appState.currentSpace].flatMap { $0.isEmpty ? nil : $0 }
+        let label = rawLabel.map { LabelTemplate.resolve($0, space: displayNumber) }
+            ?? appState.currentSpaceLabel
+        let spec = resolveIconSpec(
+            forSpace: appState.currentSpace,
+            spaceID: appState.currentSpaceID,
+            displayNumber: displayNumber,
+            label: label,
+            labels: labels,
+            displayID: displayID,
+            darkMode: darkMode,
+            level: .full
+        )
+        let defaults = IconColors.filledColors(darkMode: darkMode)
+        let foreground = spec.colors?.foreground ?? defaults.foreground
+        return DockTileSpec(
+            number: displayNumber,
+            centerText: spec.hasCustomLabel ? String(displayNumber) : spec.text,
+            label: spec.hasCustomLabel ? spec.text : nil,
+            symbol: spec.symbol,
+            skinTone: spec.skinTone,
+            appIcon: spec.appIcon,
+            foreground: foreground,
+            background: spec.colors?.background ?? defaults.background,
+            symbolTint: spec.colors?.symbol ?? foreground,
+            font: spec.font,
+            badgeBackground: store.dockBadgeBackgroundColor ?? IconColors.dockBadgeBackground,
+            badgeForeground: store.dockBadgeForegroundColor ?? IconColors.dockBadgeForeground
+        )
     }
 
     /// Returns the layout of visible icons in the status bar for the current mode
@@ -383,6 +442,8 @@ final class StatusBarRenderer {
     func invalidateIconCache() {
         cachedIcon = nil
         cachedIconKey = nil
+        cachedDockIcon = nil
+        cachedDockIconKey = nil
     }
 
     /// Refreshes window data in the background without dropping the current

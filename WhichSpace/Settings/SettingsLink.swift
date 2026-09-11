@@ -48,6 +48,9 @@ enum SettingsPaneID: String, CaseIterable {
 /// renamed freely, but changing a raw value breaks links already published.
 enum SettingsAnchor: String, CaseIterable {
     case launchAtLogin = "launch-at-login"
+    case showInDock = "show-in-dock"
+    case hideMenuBarIcon = "hide-menu-bar-icon"
+    case dockBadgeColors = "dock-badge-colors"
     case autoCheckUpdates = "auto-check-updates"
     case autoInstallUpdates = "auto-install-updates"
     case nightlyUpdates = "nightly-updates"
@@ -142,7 +145,8 @@ enum SettingsAnchor: String, CaseIterable {
     /// The pane the row lives on, letting a link name the setting alone.
     var pane: SettingsPaneID {
         switch self {
-        case .launchAtLogin, .autoCheckUpdates, .autoInstallUpdates, .nightlyUpdates, .checkForUpdates,
+        case .launchAtLogin, .showInDock, .hideMenuBarIcon, .dockBadgeColors, .autoCheckUpdates, .autoInstallUpdates,
+             .nightlyUpdates, .checkForUpdates,
              .backup, .diagnostics, .resetSettings:
             .general
         case .iconSize, .iconPadding, .shrinkToFit, .localSpaceNumbers, .displayOrder,

@@ -76,6 +76,19 @@ brew install --cask whichspace
 
 ---
 
+### Dock
+
+#### Show the current Space in the Dock, with or without the menu bar item
+
+<img src="Screenshots/Dock.png" width="500">
+
+> [!NOTE]
+> The Dock tile shows the Space's symbol or emoji, its label in a pill, and its number in a badge. Without a symbol, the label or number fills the tile instead.
+>
+> Right-click the tile to jump to any Space; left-click opens the Space picker. The badge colors can be changed in Settings > General.
+
+---
+
 ### Colors
 
 #### Choose foreground and background colors for each Space, or apply one color to all Spaces

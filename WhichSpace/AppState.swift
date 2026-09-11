@@ -1000,6 +1000,11 @@ final class AppState {
         renderer.statusBarIcon(level: shrinkLevel)
     }
 
+    /// The current Space's icon for the Dock tile
+    var dockTileIcon: NSImage {
+        renderer.dockTileIcon()
+    }
+
     /// Returns the layout of visible icons in the status bar for the current mode
     func statusBarLayout() -> StatusBarLayout {
         renderer.statusBarLayout(level: shrinkLevel)

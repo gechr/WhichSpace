@@ -66,6 +66,37 @@ enum MenuBuilder {
         return menu
     }
 
+    // MARK: - Dock Menu
+
+    /// Builds the Dock tile's menu: one row per Space on the current display
+    /// with the active one checked, then Settings. The Dock draws titles
+    /// only, so the icons and app-icon rows of the status bar picker are
+    /// left out; a checked row still names where you are.
+    static func buildDockMenu(entries: [SpacePickerEntry], target: AnyObject) -> NSMenu {
+        let menu = NSMenu()
+        for entry in entries {
+            let item = NSMenuItem(
+                title: entry.title,
+                action: #selector(ActionHandler.switchToPickedSpace(_:)),
+                keyEquivalent: ""
+            )
+            item.target = target
+            item.state = entry.isActive ? .on : .off
+            item.representedObject = entry
+            menu.addItem(item)
+        }
+        if !entries.isEmpty {
+            menu.addItem(.separator())
+        }
+        addMenuItem(
+            to: menu,
+            title: Localization.menuSettingsWindow,
+            action: #selector(ActionHandler.openSettingsWindow),
+            target: target
+        )
+        return menu
+    }
+
     /// Hidden items still match key equivalents, so Cmd+, keeps opening the
     /// settings window while this menu is tracking instead of falling through
     /// to the app's hidden main menu.

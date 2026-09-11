@@ -177,6 +177,8 @@ enum Diagnostics {
         [
             ("Show all Spaces", string(store.showAllSpaces)),
             ("Show all displays", string(store.showAllDisplays)),
+            ("Show in Dock", string(store.showInDock)),
+            ("Hide menu bar icon", string(store.hideMenuBarIcon)),
             ("Local Space numbers", string(store.localSpaceNumbers)),
             ("Preserve system Space numbers", string(store.preserveSystemSpaceNumbers)),
             ("Display order", store.displayOrder.rawValue),

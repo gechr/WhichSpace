@@ -77,10 +77,13 @@ struct BackupSettings: Codable {
     private var dimInactiveSpaces: Bool?
     var inactiveSpaceOpacity: Double
     var displayOrder: String?
+    var dockBadgeBackgroundColor: CodableColor?
+    var dockBadgeForegroundColor: CodableColor?
     var emojiPickerSkinTone: Int
     var fullscreenIconStyle: String?
     var hideEmptySpaces: Bool
     var hideFullscreenApps: Bool
+    var hideMenuBarIcon: Bool
     var hideSingleSpace: Bool
     var horizontalScrollEnabled: Bool
     var hotkeysMoveSkipEmptySpaces: Bool
@@ -102,6 +105,7 @@ struct BackupSettings: Codable {
     var separatorStyle: String?
     var showAllDisplays: Bool
     var showAllSpaces: Bool
+    var showInDock: Bool
     var shrinkIconToFit: Bool
     var sizeScale: Double
     var soundName: String
@@ -116,9 +120,10 @@ struct BackupSettings: Codable {
 
     private enum CodingKeys: String, CodingKey {
         case classicSpaceSwitching
-        case clickToSwitchSpaces, dimInactiveSpaces, displayOrder, emojiPickerSkinTone, fullscreenIconStyle
+        case clickToSwitchSpaces, dimInactiveSpaces, displayOrder, dockBadgeBackgroundColor
+        case dockBadgeForegroundColor, emojiPickerSkinTone, fullscreenIconStyle
         case hideEmptySpaces
-        case hideFullscreenApps, hideSingleSpace, horizontalScrollEnabled
+        case hideFullscreenApps, hideMenuBarIcon, hideSingleSpace, horizontalScrollEnabled
         case hotkeysMoveSkipEmptySpaces, hotkeysSendSkipEmptySpaces, hotkeysSkipEmptySpaces
         case includeNightlyUpdates
         case invertHorizontalScroll, invertVerticalScroll, launchAtLogin, localSpaceNumbers
@@ -128,7 +133,7 @@ struct BackupSettings: Codable {
         case paddingScale
         case preserveSystemSpaceNumbers
         case scrollHapticFeedback, scrollHapticIntensity, scrollSensitivity, scrollWrapAround
-        case separatorColor, separatorStyle, showAllDisplays, showAllSpaces, shrinkIconToFit
+        case separatorColor, separatorStyle, showAllDisplays, showAllSpaces, showInDock, shrinkIconToFit
         case sizeScale, soundName, spacePickerMaxAppIcons, spacePickerStyle, uniqueIconsPerDisplay
         case verticalScrollEnabled
     }
@@ -143,12 +148,15 @@ struct BackupSettings: Codable {
         inactiveSpaceOpacity = try container.decodeIfPresent(Double.self, forKey: .inactiveSpaceOpacity)
             ?? (legacyDimInactiveSpaces == false ? 100 : Layout.defaultInactiveSpaceOpacity)
         displayOrder = try container.decodeIfPresent(String.self, forKey: .displayOrder)
+        dockBadgeBackgroundColor = try container.decodeIfPresent(CodableColor.self, forKey: .dockBadgeBackgroundColor)
+        dockBadgeForegroundColor = try container.decodeIfPresent(CodableColor.self, forKey: .dockBadgeForegroundColor)
         emojiPickerSkinTone = try container.decodeIfPresent(Int.self, forKey: .emojiPickerSkinTone)
             ?? SkinTone.default.rawValue
         fullscreenIconStyle = try container.decodeIfPresent(String.self, forKey: .fullscreenIconStyle)
         hideEmptySpaces = try container.decodeIfPresent(Bool.self, forKey: .hideEmptySpaces) ?? false
         hideFullscreenApps = try container.decodeIfPresent(Bool.self, forKey: .hideFullscreenApps) ?? false
         hideSingleSpace = try container.decodeIfPresent(Bool.self, forKey: .hideSingleSpace) ?? false
+        hideMenuBarIcon = try container.decodeIfPresent(Bool.self, forKey: .hideMenuBarIcon) ?? false
         horizontalScrollEnabled = try container.decodeIfPresent(Bool.self, forKey: .horizontalScrollEnabled) ?? false
         hotkeysMoveSkipEmptySpaces = try container
             .decodeIfPresent(Bool.self, forKey: .hotkeysMoveSkipEmptySpaces) ?? false
@@ -177,6 +185,7 @@ struct BackupSettings: Codable {
         separatorStyle = try container.decodeIfPresent(String.self, forKey: .separatorStyle)
         showAllDisplays = try container.decodeIfPresent(Bool.self, forKey: .showAllDisplays) ?? false
         showAllSpaces = try container.decodeIfPresent(Bool.self, forKey: .showAllSpaces) ?? false
+        showInDock = try container.decodeIfPresent(Bool.self, forKey: .showInDock) ?? false
         shrinkIconToFit = try container.decodeIfPresent(Bool.self, forKey: .shrinkIconToFit) ?? false
         sizeScale = try container.decodeIfPresent(Double.self, forKey: .sizeScale) ?? Layout.defaultSizeScale
         soundName = try container.decodeIfPresent(String.self, forKey: .soundName) ?? ""
@@ -192,10 +201,13 @@ struct BackupSettings: Codable {
         clickToSwitchSpaces: Bool,
         inactiveSpaceOpacity: Double,
         displayOrder: String?,
+        dockBadgeBackgroundColor: CodableColor? = nil,
+        dockBadgeForegroundColor: CodableColor? = nil,
         emojiPickerSkinTone: Int,
         fullscreenIconStyle: String?,
         hideEmptySpaces: Bool,
         hideFullscreenApps: Bool,
+        hideMenuBarIcon: Bool = false,
         hideSingleSpace: Bool,
         horizontalScrollEnabled: Bool,
         hotkeysMoveSkipEmptySpaces: Bool,
@@ -217,6 +229,7 @@ struct BackupSettings: Codable {
         separatorStyle: String?,
         showAllDisplays: Bool,
         showAllSpaces: Bool,
+        showInDock: Bool = false,
         shrinkIconToFit: Bool,
         sizeScale: Double,
         soundName: String,
@@ -229,10 +242,13 @@ struct BackupSettings: Codable {
         dimInactiveSpaces = nil
         self.inactiveSpaceOpacity = inactiveSpaceOpacity
         self.displayOrder = displayOrder
+        self.dockBadgeBackgroundColor = dockBadgeBackgroundColor
+        self.dockBadgeForegroundColor = dockBadgeForegroundColor
         self.emojiPickerSkinTone = emojiPickerSkinTone
         self.fullscreenIconStyle = fullscreenIconStyle
         self.hideEmptySpaces = hideEmptySpaces
         self.hideFullscreenApps = hideFullscreenApps
+        self.hideMenuBarIcon = hideMenuBarIcon
         self.hideSingleSpace = hideSingleSpace
         self.horizontalScrollEnabled = horizontalScrollEnabled
         self.hotkeysMoveSkipEmptySpaces = hotkeysMoveSkipEmptySpaces
@@ -254,6 +270,7 @@ struct BackupSettings: Codable {
         self.separatorStyle = separatorStyle
         self.showAllDisplays = showAllDisplays
         self.showAllSpaces = showAllSpaces
+        self.showInDock = showInDock
         self.shrinkIconToFit = shrinkIconToFit
         self.sizeScale = sizeScale
         self.soundName = soundName
@@ -606,10 +623,13 @@ enum BackupManager {
             clickToSwitchSpaces: store.clickToSwitchSpaces,
             inactiveSpaceOpacity: store.inactiveSpaceOpacity,
             displayOrder: store.displayOrder.rawValue,
+            dockBadgeBackgroundColor: store.dockBadgeBackgroundColor.map { CodableColor(from: $0) },
+            dockBadgeForegroundColor: store.dockBadgeForegroundColor.map { CodableColor(from: $0) },
             emojiPickerSkinTone: store.emojiPickerSkinTone.rawValue,
             fullscreenIconStyle: store.fullscreenIconStyle.rawValue,
             hideEmptySpaces: store.hideEmptySpaces,
             hideFullscreenApps: store.hideFullscreenApps,
+            hideMenuBarIcon: store.hideMenuBarIcon,
             hideSingleSpace: store.hideSingleSpace,
             horizontalScrollEnabled: store.horizontalScrollEnabled,
             hotkeysMoveSkipEmptySpaces: store.hotkeysMoveSkipEmptySpaces,
@@ -631,6 +651,7 @@ enum BackupManager {
             separatorStyle: store.separatorStyle.rawValue,
             showAllDisplays: store.showAllDisplays,
             showAllSpaces: store.showAllSpaces,
+            showInDock: store.showInDock,
             shrinkIconToFit: store.shrinkIconToFit,
             sizeScale: store.sizeScale,
             soundName: store.soundName,
@@ -783,11 +804,16 @@ enum BackupManager {
         store.scrollSensitivity = backup.settings.scrollSensitivity.clamped(to: Layout.scrollSensitivityRange)
         store.scrollWrapAround = backup.settings.scrollWrapAround
         store.separatorColor = backup.settings.separatorColor?.toNSColor()
+        store.dockBadgeBackgroundColor = backup.settings.dockBadgeBackgroundColor?.toNSColor()
+        store.dockBadgeForegroundColor = backup.settings.dockBadgeForegroundColor?.toNSColor()
         store.separatorStyle = backup.settings.separatorStyle
             .flatMap { SeparatorStyle(rawValue: $0) } ?? .line
         // Route through SettingsConstraints so a hand-edited backup can't enable both
         SettingsConstraints.setShowAllDisplays(backup.settings.showAllDisplays, store: store)
         SettingsConstraints.setShowAllSpaces(backup.settings.showAllSpaces, store: store)
+        // The Dock toggle first: the menu bar toggle only holds while it is on
+        SettingsConstraints.setShowInDock(backup.settings.showInDock, store: store)
+        SettingsConstraints.setHideMenuBarIcon(backup.settings.hideMenuBarIcon, store: store)
         store.shrinkIconToFit = backup.settings.shrinkIconToFit
         store.sizeScale = backup.settings.sizeScale.clamped(to: Layout.sizeScaleRange)
         store.soundName = backup.settings.soundName
