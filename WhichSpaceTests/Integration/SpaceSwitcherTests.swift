@@ -32,6 +32,14 @@ struct SpaceSwitcherTests {
         ))
     }
 
+    @Test("macOS 27 gestures are mirrored only while natural scrolling is off")
+    func augmentedSwipe_followsNaturalScrolling() {
+        #expect(SpaceSwitcher.augmentedSwipeGoesRight(goRight: true, naturalScrollingEnabled: true))
+        #expect(!SpaceSwitcher.augmentedSwipeGoesRight(goRight: false, naturalScrollingEnabled: true))
+        #expect(!SpaceSwitcher.augmentedSwipeGoesRight(goRight: true, naturalScrollingEnabled: false))
+        #expect(SpaceSwitcher.augmentedSwipeGoesRight(goRight: false, naturalScrollingEnabled: false))
+    }
+
     @Test("any enabled horizontal trackpad gesture satisfies macOS 27")
     func spaceSwipeGestureSetting_anyNonzeroValueIsEnabled() {
         #expect(!SpaceSwitcher.hasEnabledSpaceSwipeGesture([nil, 0, 0, nil]))

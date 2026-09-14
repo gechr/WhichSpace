@@ -847,9 +847,36 @@ enum SpaceSwitcher {
                 && postDockSwipe(phase: Phase.changed, goRight: goRight, velocity: velocity)
                 && postDockSwipe(phase: Phase.ended, goRight: goRight, velocity: velocity)
         }
-        return postAugmentedDockSwipe(phase: Phase.began, goRight: goRight, velocity: velocity)
-            && postAugmentedDockSwipe(phase: Phase.changed, goRight: goRight, velocity: velocity)
-            && postAugmentedDockSwipe(phase: Phase.ended, goRight: goRight, velocity: velocity)
+        let swipeRight = augmentedSwipeGoesRight(
+            goRight: goRight,
+            naturalScrollingEnabled: naturalScrollingEnabled
+        )
+        return postAugmentedDockSwipe(phase: Phase.began, goRight: swipeRight, velocity: velocity)
+            && postAugmentedDockSwipe(phase: Phase.changed, goRight: swipeRight, velocity: velocity)
+            && postAugmentedDockSwipe(phase: Phase.ended, goRight: swipeRight, velocity: velocity)
+    }
+
+    /// The macOS 27 release maps a swipe to a Space direction the way it
+    /// does for a real trackpad, honouring the natural scrolling setting;
+    /// the betas the payload was built against did not. With natural
+    /// scrolling off a swipe therefore moves the opposite way, so the
+    /// gesture is mirrored to keep the switch pointing at its target.
+    static func augmentedSwipeGoesRight(goRight: Bool, naturalScrollingEnabled: Bool) -> Bool {
+        naturalScrollingEnabled ? goRight : !goRight
+    }
+
+    /// The system-wide natural scrolling setting shared by trackpad and
+    /// mouse. Absent means the default, which is on.
+    private static var naturalScrollingEnabled: Bool {
+        guard let value = CFPreferencesCopyValue(
+            "com.apple.swipescrolldirection" as CFString,
+            kCFPreferencesAnyApplication,
+            kCFPreferencesCurrentUser,
+            kCFPreferencesAnyHost
+        ) as? NSNumber else {
+            return true
+        }
+        return value.boolValue
     }
 
     // MARK: - Window Parking
