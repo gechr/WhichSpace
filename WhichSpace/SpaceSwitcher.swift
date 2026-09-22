@@ -847,9 +847,39 @@ enum SpaceSwitcher {
                 && postDockSwipe(phase: Phase.changed, goRight: goRight, velocity: velocity)
                 && postDockSwipe(phase: Phase.ended, goRight: goRight, velocity: velocity)
         }
+        // Dock applies the Natural scrolling inversion to HID-backed swipes.
+        // The preference is read once per gesture so all three phases agree
+        // and a live System Settings change takes effect on the next switch.
+        let goRight = augmentedSwipeGoesRight(
+            requested: goRight,
+            naturalScrollingEnabled: naturalScrollingEnabled
+        )
         return postAugmentedDockSwipe(phase: Phase.began, goRight: goRight, velocity: velocity)
             && postAugmentedDockSwipe(phase: Phase.changed, goRight: goRight, velocity: velocity)
             && postAugmentedDockSwipe(phase: Phase.ended, goRight: goRight, velocity: velocity)
+    }
+
+    /// Whether Natural scrolling is on. The key is absent until the user
+    /// changes the setting, and the system default is on. A `defaults write`
+    /// updates this plist without updating Dock's live state, so the two can
+    /// disagree until the next login.
+    private static var naturalScrollingEnabled: Bool {
+        isNaturalScrollingEnabled(preferenceInt(
+            key: "com.apple.swipescrolldirection",
+            applicationID: kCFPreferencesAnyApplication,
+            host: kCFPreferencesAnyHost
+        ))
+    }
+
+    static func isNaturalScrollingEnabled(_ value: Int?) -> Bool {
+        (value ?? 1) != 0
+    }
+
+    /// The direction to post for a HID-backed swipe. Dock reverses those
+    /// swipes when Natural scrolling is off, so the posted direction is
+    /// flipped to land on the requested Space.
+    static func augmentedSwipeGoesRight(requested goRight: Bool, naturalScrollingEnabled: Bool) -> Bool {
+        naturalScrollingEnabled ? goRight : !goRight
     }
 
     // MARK: - Window Parking

@@ -39,6 +39,18 @@ struct SpaceSwitcherTests {
         #expect(SpaceSwitcher.hasEnabledSpaceSwipeGesture([1]))
     }
 
+    @Test("HID-backed swipes flip direction when Natural scrolling is off")
+    func augmentedSwipe_flipsDirectionWithoutNaturalScrolling() {
+        #expect(SpaceSwitcher.isNaturalScrollingEnabled(nil))
+        #expect(SpaceSwitcher.isNaturalScrollingEnabled(1))
+        #expect(!SpaceSwitcher.isNaturalScrollingEnabled(0))
+
+        #expect(SpaceSwitcher.augmentedSwipeGoesRight(requested: true, naturalScrollingEnabled: true))
+        #expect(!SpaceSwitcher.augmentedSwipeGoesRight(requested: false, naturalScrollingEnabled: true))
+        #expect(!SpaceSwitcher.augmentedSwipeGoesRight(requested: true, naturalScrollingEnabled: false))
+        #expect(SpaceSwitcher.augmentedSwipeGoesRight(requested: false, naturalScrollingEnabled: false))
+    }
+
     @Test("global Desktop five routes to the second display")
     func globalDesktopFive_routesAcrossDisplays() throws {
         let displays = try twoDisplays()
