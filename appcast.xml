@@ -6,13 +6,15 @@
     <description>Most recent changes with links to updates.</description>
     <language>en</language>
     <item>
-        <title>Version 1.3.8-tip.636</title>
+        <title>Version 1.3.8-tip.638</title>
         <sparkle:channel>nightly</sparkle:channel>
         <description><![CDATA[
           <style>.sparkle-installed-version, .sparkle-installed-version ~ * { display: none }</style>
-          <section data-sparkle-version="1.3.8-tip.636">
-            <h3>Nightly (v1.3.8-tip.636)</h3>
+          <section data-sparkle-version="1.3.8-tip.638">
+            <h3>Nightly (v1.3.8-tip.638)</h3>
             <ul>
+              <li>switching: Honor Natural scrolling on macOS 27</li>
+              <li>build(deps): bump zizmorcore/zizmor-action from 0.6.3 to 0.6.4 in the github-actions group (#92)</li>
               <li>scripting: Restrict symbols to picker catalog</li>
               <li>scripting: Add Space colors, symbols and emoji</li>
               <li>scripting: Add settings import and export</li>
@@ -1109,13 +1111,13 @@
           </section>
         ]]></description>
         <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/tip</sparkle:fullReleaseNotesLink>
-        <pubDate>Mon, 07 Sep 2026 20:32:02 +0100</pubDate>
+        <pubDate>Tue, 22 Sep 2026 01:23:10 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/tip/WhichSpace.zip"
-          sparkle:version="1.3.8-tip.636"
-          sparkle:shortVersionString="1.3.8-tip.636"
-          sparkle:edSignature="H0c9NMO+qpYXJkAvAscsCG1wwIpe86wdGRoCguIrVZhGCn6pzg3m2GfXy7UfuEZTSNIa67aggYDUGYgp9wW3Aw=="
-          length="4256337"
+          sparkle:version="1.3.8-tip.638"
+          sparkle:shortVersionString="1.3.8-tip.638"
+          sparkle:edSignature="speC5fumF3dxQkQJHAUC5X/Y02g0ARsq3Ttae+5V8hRRLI7v6VPQh98jtn4smkYTZeRuZ1U2SPH1tqtkxXXTAg=="
+          length="4256683"
           type="application/octet-stream" />
         <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
       </item>
