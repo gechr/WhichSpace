@@ -124,6 +124,9 @@ brew install --cask whichspace
 > [!NOTE]
 > Use `{#}` in a label to insert the current Space number, e.g. `{#} - Work` → `3 - Work`.
 
+> [!TIP]
+> If your Spaces keep changing order by themselves, turn off **Automatically rearrange Spaces based on most recent use** under **System Settings → Desktop & Dock → Mission Control**. With it on, macOS moves the Space you switch to towards the front on every switch. WhichSpace keeps each Space's colors, icon and label with it either way.
+
 ---
 
 ### Size
