@@ -1479,6 +1479,43 @@ struct AppStateTests {
         #expect(SpacePreferences.label(forSpace: 2, store: store) == "Work")
     }
 
+    @Test("an empty first Desktop uuid does not disable order tracking")
+    func emptyFirstUUID_stillTracksReorders() {
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                uuidSpaces: [
+                    (id: 100, uuid: "", isFullscreen: false),
+                    (id: 101, uuid: "B", isFullscreen: false),
+                    (id: 102, uuid: "C", isFullscreen: false),
+                ],
+                activeSpaceID: 100
+            ),
+        ]
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        SpacePreferences.setLabel("Work", forSpace: 3, store: store)
+        #expect(store.spaceOrders["Main"] == ["id:100", "B", "C"])
+
+        // Space C moves from position 3 to position 2
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "Main",
+                uuidSpaces: [
+                    (id: 100, uuid: "", isFullscreen: false),
+                    (id: 102, uuid: "C", isFullscreen: false),
+                    (id: 101, uuid: "B", isFullscreen: false),
+                ],
+                activeSpaceID: 100
+            ),
+        ]
+        appState.forceSpaceUpdate()
+
+        #expect(store.spaceOrders["Main"] == ["id:100", "C", "B"])
+        #expect(SpacePreferences.label(forSpace: 2, store: store) == "Work")
+        #expect(SpacePreferences.label(forSpace: 3, store: store) == nil)
+    }
+
     @Test("a transient partial snapshot cannot poison the order baseline")
     func transientPartialSnapshot_keepsBaselineAndRemapsWhenSettled() {
         stub.activeDisplayIdentifier = "Main"

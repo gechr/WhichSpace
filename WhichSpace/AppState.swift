@@ -10,6 +10,18 @@ struct SpaceEntry: Equatable {
     /// CGS Space UUID; Space renaming tools key their custom names by it
     let uuid: String?
 
+    /// Identity used to follow the Space across reorders: the CGS UUID, or
+    /// the managed Space ID when the UUID is empty. The first Desktop carries
+    /// an empty uuid on some systems, and the Dock persists managed IDs
+    /// across logins as well. Nil when the uuid key is missing altogether,
+    /// which marks the read as unreliable rather than the Space as unnamed.
+    var orderIdentity: String? {
+        guard let uuid else {
+            return nil
+        }
+        return uuid.isEmpty ? "id:\(id)" : uuid
+    }
+
     init(id: Int, label: String, regularIndex: Int?, uuid: String? = nil) {
         self.id = id
         self.label = label
@@ -592,7 +604,7 @@ final class AppState {
     // swiftlint:disable:next discouraged_optional_collection
     private var pendingSpaceOrders: [String: [String]]?
 
-    /// Tracks each display's Space order by CGS UUID and, when a snapshot
+    /// Tracks each display's Space order by `orderIdentity` and, when a snapshot
     /// shows the same Spaces in a different order (a Mission Control
     /// reorder), moves per-Space preferences so they follow their Spaces.
     /// Orders persist in defaults, so a reorder done while the app is not
@@ -623,22 +635,22 @@ final class AppState {
     /// poisoned baseline and move preferences wrongly until the user
     /// rearranges them. All of these need the same incomplete CGS state to
     /// persist across multiple reads while the Spaces change underneath.
-    /// A snapshot in which any display's UUIDs are missing or ambiguous is
-    /// discarded outright, changing neither the baseline nor the candidate.
+    /// A snapshot in which any display's Space identities are missing or
+    /// collide is discarded outright, changing neither the baseline nor the
+    /// candidate.
     private func reconcileSpaceOrders(with newSnapshot: SpaceSnapshot) {
         guard !newSnapshot.allDisplaysSpaceInfo.isEmpty else {
             return
         }
         var current: [String: [String]] = [:]
         for display in newSnapshot.allDisplaysSpaceInfo {
-            let uuids = display.entries.compactMap(\.uuid)
-            guard uuids.count == display.entries.count,
-                  !uuids.contains(""),
-                  Set(uuids).count == uuids.count
+            let identities = display.entries.compactMap(\.orderIdentity)
+            guard identities.count == display.entries.count,
+                  Set(identities).count == identities.count
             else {
                 return
             }
-            current[display.displayID] = uuids
+            current[display.displayID] = identities
         }
         let baseline = store.spaceOrders
         guard current != baseline else {
