@@ -40,10 +40,17 @@ struct DiagnosticsEnvironment {
     var stageManagerEnabled: DiagnosticsFlag
     var reduceMotionEnabled: Bool
     var separateSpaces: DiagnosticsFlag
+    /// The Dock writes this key only once the user changes it, so an absent
+    /// key means the macOS default, which is on.
+    var autoRearrangeSpaces: DiagnosticsFlag
     /// Space count per display, in the order the app orders displays. The
     /// length is the display count.
     var spacesPerDisplay: [Int]
     var fullscreenSpaceCount: Int
+    /// Spaces whose CGS uuid is empty or missing. Order tracking follows an
+    /// empty one by managed ID and skips reads with a missing one, so a
+    /// non-zero count explains preferences that fail to follow a reorder.
+    var spacesWithoutUUID: Int
     /// How far the status item has degraded, which `shrinkIconToFit` alone
     /// does not show.
     var shrinkLevel: IconShrinkLevel
@@ -84,6 +91,7 @@ struct DiagnosticsEnvironment {
     static func current(
         spacesPerDisplay: [Int],
         fullscreenSpaceCount: Int,
+        spacesWithoutUUID: Int,
         shrinkLevel: IconShrinkLevel,
         activeDisplay: Int?,
         activeSpaceIndex: Int?,
@@ -100,8 +108,10 @@ struct DiagnosticsEnvironment {
             // The spaces plist records the inverse, so spanning displays is
             // the same setting turned off.
             separateSpaces: flag(suite: "com.apple.spaces", key: "spans-displays").inverted,
+            autoRearrangeSpaces: flag(suite: "com.apple.dock", key: "mru-spaces", absent: .yes),
             spacesPerDisplay: spacesPerDisplay,
             fullscreenSpaceCount: fullscreenSpaceCount,
+            spacesWithoutUUID: spacesWithoutUUID,
             shrinkLevel: shrinkLevel,
             activeDisplay: activeDisplay,
             activeSpaceIndex: activeSpaceIndex,
@@ -111,10 +121,15 @@ struct DiagnosticsEnvironment {
         )
     }
 
-    /// Unknown when the key is absent or holds something other than a boolean,
-    /// so a failed probe is never reported as a deliberate off.
-    static func flag(suite: String, key: String) -> DiagnosticsFlag {
-        guard let value = UserDefaults(suiteName: suite)?.object(forKey: key) as? Bool else {
+    /// `absent` when the key is missing and unknown when it holds something
+    /// other than a boolean, so a failed probe is never reported as a
+    /// deliberate off. Pass the macOS default as `absent` for keys the system
+    /// writes only once the user changes them.
+    static func flag(suite: String, key: String, absent: DiagnosticsFlag = .unknown) -> DiagnosticsFlag {
+        guard let object = UserDefaults(suiteName: suite)?.object(forKey: key) else {
+            return absent
+        }
+        guard let value = object as? Bool else {
             return .unknown
         }
         return DiagnosticsFlag(value)
@@ -246,7 +261,9 @@ enum Diagnostics {
                 ("Displays", string(environment.spacesPerDisplay.count)),
                 ("Spaces per display", environment.spacesPerDisplay.map(String.init).joined(separator: ", ")),
                 ("Fullscreen Spaces", string(environment.fullscreenSpaceCount)),
+                ("Spaces without UUID", string(environment.spacesWithoutUUID)),
                 ("Separate Spaces", environment.separateSpaces.rawValue),
+                ("Auto-rearrange Spaces", environment.autoRearrangeSpaces.rawValue),
             ],
             [
                 ("Active display", string(environment.activeDisplay)),

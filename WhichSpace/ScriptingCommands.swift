@@ -406,6 +406,7 @@ enum ScriptingHelpers {
         let environment = DiagnosticsEnvironment.current(
             spacesPerDisplay: displays.map(\.regularSpaceCount),
             fullscreenSpaceCount: displays.reduce(0) { $0 + $1.entries.count - $1.regularSpaceCount },
+            spacesWithoutUUID: displays.reduce(0) { $0 + $1.entries.count { ($0.uuid ?? "").isEmpty } },
             shrinkLevel: appState.shrinkLevel,
             // Ordinals rather than identifiers, and 1-based to line up with
             // the counts they index into

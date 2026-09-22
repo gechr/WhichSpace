@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 @testable import WhichSpace
 
@@ -17,9 +18,11 @@ struct DiagnosticsTests {
 
     private func makeEnvironment(
         spacesPerDisplay: [Int] = [3],
+        spacesWithoutUUID: Int = 0,
         thirdPartyApps: [String] = [],
         stageManagerEnabled: DiagnosticsFlag = .no,
         separateSpaces: DiagnosticsFlag = .yes,
+        autoRearrangeSpaces: DiagnosticsFlag = .no,
         shrinkLevel: IconShrinkLevel = .full,
         activeDisplay: Int? = 1,
         activeSpaceIndex: Int? = 1,
@@ -34,8 +37,10 @@ struct DiagnosticsTests {
             stageManagerEnabled: stageManagerEnabled,
             reduceMotionEnabled: false,
             separateSpaces: separateSpaces,
+            autoRearrangeSpaces: autoRearrangeSpaces,
             spacesPerDisplay: spacesPerDisplay,
             fullscreenSpaceCount: 0,
+            spacesWithoutUUID: spacesWithoutUUID,
             shrinkLevel: shrinkLevel,
             activeDisplay: activeDisplay,
             activeSpaceIndex: activeSpaceIndex,
@@ -189,6 +194,19 @@ struct DiagnosticsTests {
         #expect(DiagnosticsEnvironment.flag(suite: "io.gechr.WhichSpace.absent", key: "nope") == .unknown)
     }
 
+    @Test("a probe with a system default reads that default when absent")
+    func probes_reportDefaultWhenAbsent() {
+        let suite = "io.gechr.WhichSpace.tests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)
+        defer { defaults?.removePersistentDomain(forName: suite) }
+
+        #expect(DiagnosticsEnvironment.flag(suite: suite, key: "mru-spaces", absent: .yes) == .yes)
+        defaults?.set(false, forKey: "mru-spaces")
+        #expect(DiagnosticsEnvironment.flag(suite: suite, key: "mru-spaces", absent: .yes) == .no)
+        defaults?.set("nope", forKey: "mru-spaces")
+        #expect(DiagnosticsEnvironment.flag(suite: suite, key: "mru-spaces", absent: .yes) == .unknown)
+    }
+
     @Test("report carries the live shrink level, not just the setting")
     func report_carriesShrinkLevel() {
         let report = Diagnostics.markdown(
@@ -259,5 +277,6 @@ struct DiagnosticsTests {
         #expect(report.contains("arm64"))
         #expect(report.contains("Displays"))
         #expect(report.contains("Separate Spaces"))
+        #expect(report.contains("Auto-rearrange Spaces"))
     }
 }
