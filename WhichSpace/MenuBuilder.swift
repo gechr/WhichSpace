@@ -153,6 +153,7 @@ enum MenuBuilder {
                 return true
             }
             versionItem.image = resized
+            showImage(of: versionItem)
         }
         menu.addItem(versionItem)
         menu.addItem(.separator())
@@ -200,6 +201,7 @@ enum MenuBuilder {
         )
         quitItem.keyEquivalentModifierMask = [.command]
         quitItem.image = NSImage(systemSymbolName: "xmark.rectangle", accessibilityDescription: nil)
+        showImage(of: quitItem)
         quitItem.toolTip = String(format: Localization.tipQuit, AppInfo.appName)
         menu.addItem(quitItem)
     }
@@ -219,9 +221,21 @@ enum MenuBuilder {
         item.target = target
         if let symbolName {
             item.image = NSImage(systemSymbolName: symbolName, accessibilityDescription: nil)
+            showImage(of: item)
         }
         item.toolTip = toolTip
         menu.addItem(item)
         return item
+    }
+
+    /// macOS 27 hides item images unless the system setting shows them;
+    /// the status menu shows its own regardless. Builds against an older
+    /// SDK, which has no such setting, skip it.
+    private static func showImage(of item: NSMenuItem) {
+        #if compiler(>=6.4)
+            if #available(macOS 27.0, *) {
+                item.preferredImageVisibility = .visible
+            }
+        #endif
     }
 }
