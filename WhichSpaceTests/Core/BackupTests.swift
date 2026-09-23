@@ -348,6 +348,17 @@ struct BackupSpacePreferencesTests {
 
 // MARK: - BackupManager Tests
 
+@MainActor
+private final class StubUpdaterSettings: UpdaterSettingsProvider {
+    var automaticallyChecksForUpdates: Bool
+    var automaticallyDownloadsUpdates: Bool
+
+    init(checks: Bool, downloads: Bool) {
+        automaticallyChecksForUpdates = checks
+        automaticallyDownloadsUpdates = downloads
+    }
+}
+
 final class BackupManagerTests: IsolatedDefaultsTestCase {
     // swiftlint:disable line_length
     // MARK: - Encode/Decode Tests
@@ -449,6 +460,56 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         }
 
         XCTAssertEqual(received, bindings)
+    }
+
+    func testUpdaterSettingsRoundTripAndAreOmittedWithoutAnUpdater() throws {
+        let updater = StubUpdaterSettings(checks: false, downloads: true)
+
+        let json = try BackupManager.encode(store: store, updaterSettings: updater)
+        let backup = try BackupManager.decode(jsonString: json)
+        XCTAssertFalse(try XCTUnwrap(backup.settings.automaticallyChecksForUpdates))
+        XCTAssertTrue(try XCTUnwrap(backup.settings.automaticallyDownloadsUpdates))
+
+        let bareJson = try BackupManager.encode(store: store)
+        XCTAssertFalse(bareJson.contains("automaticallyChecksForUpdates"))
+        XCTAssertFalse(bareJson.contains("automaticallyDownloadsUpdates"))
+        let bareBackup = try BackupManager.decode(jsonString: bareJson)
+        XCTAssertNil(bareBackup.settings.automaticallyChecksForUpdates)
+        XCTAssertNil(bareBackup.settings.automaticallyDownloadsUpdates)
+    }
+
+    func testApplyRestoresUpdaterSettingsAndLeavesThemWhenAbsent() throws {
+        let updater = StubUpdaterSettings(checks: true, downloads: false)
+        let json = try BackupManager.encode(
+            store: store,
+            updaterSettings: StubUpdaterSettings(checks: false, downloads: true)
+        )
+
+        try BackupManager.apply(BackupManager.decode(jsonString: json), to: store, updaterSettings: updater)
+        XCTAssertFalse(updater.automaticallyChecksForUpdates)
+        XCTAssertTrue(updater.automaticallyDownloadsUpdates)
+
+        // A backup from a version without the keys keeps the live values
+        let legacy = try BackupManager.decode(jsonString: BackupManager.encode(store: store))
+        BackupManager.apply(legacy, to: store, updaterSettings: updater)
+        XCTAssertFalse(updater.automaticallyChecksForUpdates)
+        XCTAssertTrue(updater.automaticallyDownloadsUpdates)
+    }
+
+    func testApplyWithOneUpdaterSettingLeavesTheOtherAlone() throws {
+        let updater = StubUpdaterSettings(checks: true, downloads: true)
+        let json = """
+        {
+            "bundleId": "com.test.app",
+            "version": "1.0.0",
+            "settings": { "automaticallyChecksForUpdates": false }
+        }
+        """
+
+        try BackupManager.apply(BackupManager.decode(jsonString: json), to: store, updaterSettings: updater)
+
+        XCTAssertFalse(updater.automaticallyChecksForUpdates)
+        XCTAssertTrue(updater.automaticallyDownloadsUpdates)
     }
 
     func testEncodeCoversEveryScalarDefaultsKey() throws {

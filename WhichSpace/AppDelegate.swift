@@ -39,6 +39,11 @@ extension NSEvent {
     }
 }
 
+// MARK: - Updater Settings
+
+/// Sparkle exposes both preferences under the seam's names.
+extension SPUUpdater: UpdaterSettingsProvider {}
+
 // MARK: - Launch at Login Protocol
 
 /// Protocol for abstracting LaunchAtLogin for testability
@@ -379,6 +384,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
             updaterDelegate: self,
             userDriverDelegate: self
         )
+        ScriptingHelpers.liveUpdaterSettings = updaterController.updater
 
         // Create the status item and keep its icon in sync with renderer state
         statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)

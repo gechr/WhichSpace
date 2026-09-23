@@ -370,17 +370,23 @@ enum MoveError: LocalizedError {
 
 @MainActor
 enum ScriptingHelpers {
+    /// The running app's updater, registered once Sparkle starts. Nil in
+    /// tests.
+    static var liveUpdaterSettings: (any UpdaterSettingsProvider)?
+
     static func importSettings(
         from url: URL,
         store: DefaultsStore = AppEnvironment.shared.store,
         launchAtLogin: LaunchAtLoginProvider = DefaultLaunchAtLoginProvider(),
-        applyHotkeys: @escaping ([String: String]) -> Void = { HotkeyCenter.importBindings($0) }
+        applyHotkeys: @escaping ([String: String]) -> Void = { HotkeyCenter.importBindings($0) },
+        updaterSettings: (any UpdaterSettingsProvider)? = liveUpdaterSettings
     ) throws {
         try BackupManager.load(
             from: url,
             store: store,
             launchAtLogin: launchAtLogin,
-            applyHotkeys: applyHotkeys
+            applyHotkeys: applyHotkeys,
+            updaterSettings: updaterSettings
         )
     }
 
@@ -388,9 +394,16 @@ enum ScriptingHelpers {
         to url: URL,
         store: DefaultsStore = AppEnvironment.shared.store,
         launchAtLogin: LaunchAtLoginProvider = DefaultLaunchAtLoginProvider(),
-        hotkeys: [String: String] = HotkeyCenter.exportBindings()
+        hotkeys: [String: String] = HotkeyCenter.exportBindings(),
+        updaterSettings: (any UpdaterSettingsProvider)? = liveUpdaterSettings
     ) throws {
-        try BackupManager.export(to: url, store: store, launchAtLogin: launchAtLogin, hotkeys: hotkeys)
+        try BackupManager.export(
+            to: url,
+            store: store,
+            launchAtLogin: launchAtLogin,
+            hotkeys: hotkeys,
+            updaterSettings: updaterSettings
+        )
     }
 
     /// The bug-report summary, built the same way for the Settings button, the

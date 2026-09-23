@@ -70,6 +70,13 @@ struct Backup: Codable {
 
 /// Global settings that apply to the entire app.
 struct BackupSettings: Codable {
+    /// Sparkle's update preferences; nil when the exporter had no updater or
+    /// the backup predates them. Omitted from the JSON when nil, and left
+    /// untouched on import when absent.
+    // swiftlint:disable:next discouraged_optional_boolean
+    var automaticallyChecksForUpdates: Bool?
+    // swiftlint:disable:next discouraged_optional_boolean
+    var automaticallyDownloadsUpdates: Bool?
     var classicSpaceSwitching: Bool
     var clickToSwitchSpaces: Bool
     /// Decode-only compatibility with backups exported before opacity was adjustable.
@@ -115,6 +122,7 @@ struct BackupSettings: Codable {
     var verticalScrollEnabled: Bool
 
     private enum CodingKeys: String, CodingKey {
+        case automaticallyChecksForUpdates, automaticallyDownloadsUpdates
         case classicSpaceSwitching
         case clickToSwitchSpaces, dimInactiveSpaces, displayOrder, emojiPickerSkinTone, fullscreenIconStyle
         case hideEmptySpaces
@@ -136,6 +144,12 @@ struct BackupSettings: Codable {
     /// Tolerates missing keys so backups exported by older app versions still import.
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        automaticallyChecksForUpdates = try container.decodeIfPresent(
+            Bool.self, forKey: .automaticallyChecksForUpdates
+        )
+        automaticallyDownloadsUpdates = try container.decodeIfPresent(
+            Bool.self, forKey: .automaticallyDownloadsUpdates
+        )
         classicSpaceSwitching = try container.decodeIfPresent(Bool.self, forKey: .classicSpaceSwitching) ?? false
         clickToSwitchSpaces = try container.decodeIfPresent(Bool.self, forKey: .clickToSwitchSpaces) ?? false
         dimInactiveSpaces = nil
@@ -188,6 +202,10 @@ struct BackupSettings: Codable {
     }
 
     init(
+        // swiftlint:disable:next discouraged_optional_boolean
+        automaticallyChecksForUpdates: Bool? = nil,
+        // swiftlint:disable:next discouraged_optional_boolean
+        automaticallyDownloadsUpdates: Bool? = nil,
         classicSpaceSwitching: Bool,
         clickToSwitchSpaces: Bool,
         inactiveSpaceOpacity: Double,
@@ -224,6 +242,8 @@ struct BackupSettings: Codable {
         spacePickerStyle: String?,
         verticalScrollEnabled: Bool
     ) {
+        self.automaticallyChecksForUpdates = automaticallyChecksForUpdates
+        self.automaticallyDownloadsUpdates = automaticallyDownloadsUpdates
         self.classicSpaceSwitching = classicSpaceSwitching
         self.clickToSwitchSpaces = clickToSwitchSpaces
         dimInactiveSpaces = nil
@@ -580,6 +600,16 @@ enum BackupError: LocalizedError {
     }
 }
 
+// MARK: - UpdaterSettingsProvider
+
+/// The General pane's two update preferences, which Sparkle keeps in its
+/// own defaults. The live updater conforms; tests inject a stub.
+@MainActor
+protocol UpdaterSettingsProvider: AnyObject {
+    var automaticallyChecksForUpdates: Bool { get set }
+    var automaticallyDownloadsUpdates: Bool { get set }
+}
+
 // MARK: - BackupManager
 
 /// Handles encoding and decoding of WhichSpace configuration.
@@ -595,13 +625,16 @@ enum BackupManager {
     static func encode(
         store: DefaultsStore = AppEnvironment.shared.store,
         launchAtLogin: LaunchAtLoginProvider = DefaultLaunchAtLoginProvider(),
-        hotkeys: [String: String] = [:]
+        hotkeys: [String: String] = [:],
+        updaterSettings: (any UpdaterSettingsProvider)? = nil
     ) throws -> String {
         guard let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String else {
             throw BackupError.encodingFailed
         }
 
         let settings = BackupSettings(
+            automaticallyChecksForUpdates: updaterSettings?.automaticallyChecksForUpdates,
+            automaticallyDownloadsUpdates: updaterSettings?.automaticallyDownloadsUpdates,
             classicSpaceSwitching: store.classicSpaceSwitching,
             clickToSwitchSpaces: store.clickToSwitchSpaces,
             inactiveSpaceOpacity: store.inactiveSpaceOpacity,
@@ -731,7 +764,8 @@ enum BackupManager {
         from url: URL,
         store: DefaultsStore = AppEnvironment.shared.store,
         launchAtLogin: LaunchAtLoginProvider = DefaultLaunchAtLoginProvider(),
-        applyHotkeys: (([String: String]) -> Void)? = nil
+        applyHotkeys: (([String: String]) -> Void)? = nil,
+        updaterSettings: (any UpdaterSettingsProvider)? = nil
     ) throws {
         let jsonString: String
         do {
@@ -741,7 +775,13 @@ enum BackupManager {
         }
 
         let config = try decode(jsonString: jsonString)
-        apply(config, to: store, launchAtLogin: launchAtLogin, applyHotkeys: applyHotkeys)
+        apply(
+            config,
+            to: store,
+            launchAtLogin: launchAtLogin,
+            applyHotkeys: applyHotkeys,
+            updaterSettings: updaterSettings
+        )
     }
 
     /// Applies a config to the defaults store.
@@ -749,9 +789,18 @@ enum BackupManager {
         _ backup: Backup,
         to store: DefaultsStore,
         launchAtLogin: LaunchAtLoginProvider = DefaultLaunchAtLoginProvider(),
-        applyHotkeys: (([String: String]) -> Void)? = nil
+        applyHotkeys: (([String: String]) -> Void)? = nil,
+        updaterSettings: (any UpdaterSettingsProvider)? = nil
     ) {
         // Apply global settings
+        if let updaterSettings {
+            if let checks = backup.settings.automaticallyChecksForUpdates {
+                updaterSettings.automaticallyChecksForUpdates = checks
+            }
+            if let downloads = backup.settings.automaticallyDownloadsUpdates {
+                updaterSettings.automaticallyDownloadsUpdates = downloads
+            }
+        }
         store.classicSpaceSwitching = backup.settings.classicSpaceSwitching
         store.clickToSwitchSpaces = backup.settings.clickToSwitchSpaces
         store.inactiveSpaceOpacity = backup.settings.inactiveSpaceOpacity
@@ -869,9 +918,15 @@ enum BackupManager {
         to url: URL,
         store: DefaultsStore = AppEnvironment.shared.store,
         launchAtLogin: LaunchAtLoginProvider = DefaultLaunchAtLoginProvider(),
-        hotkeys: [String: String] = [:]
+        hotkeys: [String: String] = [:],
+        updaterSettings: (any UpdaterSettingsProvider)? = nil
     ) throws {
-        let jsonString = try encode(store: store, launchAtLogin: launchAtLogin, hotkeys: hotkeys)
+        let jsonString = try encode(
+            store: store,
+            launchAtLogin: launchAtLogin,
+            hotkeys: hotkeys,
+            updaterSettings: updaterSettings
+        )
         do {
             try jsonString.write(to: url, atomically: true, encoding: .utf8)
         } catch {

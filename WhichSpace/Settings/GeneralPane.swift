@@ -99,6 +99,8 @@ struct GeneralPane: View {
                 } control: {
                     Button(Localization.actionImportSettings) {
                         onImportSettings()
+                        // The update toggles bind to the updater, so re-read
+                        updaterTick += 1
                     }
                     Button(Localization.actionExportSettings) {
                         onExportSettings()
