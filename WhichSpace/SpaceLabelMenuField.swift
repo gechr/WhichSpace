@@ -12,13 +12,19 @@ final class SpaceLabelMenuField: NSView, NSSearchFieldDelegate {
     private var onRevert: (() -> Void)?
 
     override init(frame _: CGRect) {
+        // The row is at least wide enough for the minimum character count
+        // plus the text inset and clear button; the menu stretches it
+        let font = NSFont.menuFont(ofSize: 0)
+        let digits = String(repeating: "0", count: Layout.menuLabelFieldMinimumCharacters)
+        let textWidth = (digits as NSString).size(withAttributes: [.font: font]).width
+        let fieldWidth = ceil(textWidth + Layout.menuLabelFieldTextInset + Layout.menuLabelFieldClearButtonWidth)
         super.init(frame: CGRect(
             x: 0,
             y: 0,
-            width: Layout.menuLabelFieldRowWidth,
+            width: fieldWidth + Layout.menuLabelFieldInset * 2,
             height: Layout.menuLabelFieldRowHeight
         ))
-        field.font = NSFont.menuFont(ofSize: 0)
+        field.font = font
         field.placeholderString = Localization.menuLabel
         // A search field for the rounded shape and clear button
         field.sendsWholeSearchString = true
@@ -30,14 +36,12 @@ final class SpaceLabelMenuField: NSView, NSSearchFieldDelegate {
         field.target = self
         field.action = #selector(fieldAction)
         addSubview(field)
-        let inset = Layout.menuLabelFieldInset
         field.frame = CGRect(
-            x: inset,
+            x: Layout.menuLabelFieldInset,
             y: (bounds.height - Layout.menuLabelFieldHeight) / 2,
-            width: bounds.width - inset * 2,
+            width: fieldWidth,
             height: Layout.menuLabelFieldHeight
         )
-        // The menu stretches a width-resizable item view to its own width
         autoresizingMask = [.width]
         field.autoresizingMask = [.width]
     }
@@ -51,16 +55,19 @@ final class SpaceLabelMenuField: NSView, NSSearchFieldDelegate {
         field.stringValue
     }
 
-    /// Fills the row for one presentation: the label in effect, the edit
-    /// callback, and the revert callback Escape uses after an edit. Disabled
-    /// before the first snapshot names a Space.
+    /// Fills the row for one presentation: the label in effect, the label
+    /// the Space falls back to as the placeholder, the edit callback, and
+    /// the revert callback Escape uses after an edit. Disabled before the
+    /// first snapshot names a Space.
     func configure(
         currentLabel: String?,
+        placeholder: String = Localization.menuLabel,
         isEnabled: Bool = true,
         onChange: @escaping (String) -> Void,
         onRevert: @escaping () -> Void
     ) {
         field.stringValue = isEnabled ? currentLabel ?? "" : ""
+        field.placeholderString = placeholder
         field.isEnabled = isEnabled
         edited = false
         self.onChange = onChange

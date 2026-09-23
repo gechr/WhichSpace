@@ -231,6 +231,25 @@ final class AppState {
         allDisplaysSpaceInfo.reduce(0) { $0 + $1.regularSpaceCount }
     }
 
+    /// The Space behind a CGS Space ID, keyed the way its preferences are
+    /// stored, with the label it shows without a custom one: its number in
+    /// the current numbering mode, or the fullscreen marker.
+    func spaceTarget(forSpaceID spaceID: Int) -> (displayID: String, position: Int, defaultLabel: String)? {
+        for display in allDisplaysSpaceInfo {
+            guard let index = display.entries.firstIndex(where: { $0.id == spaceID }) else {
+                continue
+            }
+            let entry = display.entries[index]
+            let position = index + 1
+            guard let regularIndex = entry.regularIndex else {
+                return (display.displayID, position, Labels.fullscreen)
+            }
+            let number = store.localSpaceNumbers ? regularIndex : display.globalStartIndex + regularIndex - 1
+            return (display.displayID, position, String(number))
+        }
+        return nil
+    }
+
     /// Regular Spaces across every display in Desktop-number order, so index
     /// N-1 is the Space that global Desktop number N addresses. Each carries
     /// the display and 1-based fullscreen-inclusive entry position that key

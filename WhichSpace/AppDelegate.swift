@@ -912,7 +912,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
             return
         }
         if event.isRightClick {
-            prepareStatusMenuLabelField()
+            prepareStatusMenuLabelField(spaceID: slotSpaceID(under: event, button: button))
             showStatusMenu(statusMenu)
         } else if event.isOptionClick {
             actionHandler.openSettingsWindow()
@@ -1225,35 +1225,42 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
         showStatusMenu(menu)
     }
 
-    /// Targets the field at the current Space, captured at open so a Space
-    /// change while the menu is up cannot retarget it. Scope is the display
-    /// override when several displays are attached or one already exists,
-    /// else the shared map, so the field edits the value the menu bar shows.
-    /// Escape restores the stored value untouched.
-    func prepareStatusMenuLabelField() {
+    /// Targets the field at the right-clicked Space, or the current one when
+    /// the click landed on no slot, captured at open so a Space change while
+    /// the menu is up cannot retarget it. Scope is the display override when
+    /// several displays are attached or one already exists, else the shared
+    /// map, so the field edits the value the menu bar shows. Escape restores
+    /// the stored value untouched.
+    func prepareStatusMenuLabelField(spaceID: Int? = nil) {
         let store = store
-        let position = appState.currentSpace
-        let currentDisplay = appState.currentDisplayID
-        let hasOverride = currentDisplay.flatMap { store.displaySpaceLabels[$0]?[position] } != nil
+        guard let target = appState.spaceTarget(forSpaceID: spaceID ?? appState.currentSpaceID) else {
+            statusMenuLabelField.configure(currentLabel: nil, isEnabled: false, onChange: { _ in }, onRevert: {})
+            return
+        }
+        let hasOverride = store.displaySpaceLabels[target.displayID]?[target.position] != nil
         let usesDisplayScope = appState.allDisplaysSpaceInfo.count > 1 || hasOverride
-        let key = (position: position, displayID: usesDisplayScope ? currentDisplay : nil)
+        let key = (position: target.position, displayID: usesDisplayScope ? target.displayID : nil)
         let stored = SpacePreferences.storedLabel(forSpace: key.position, display: key.displayID, store: store)
         statusMenuLabelField.configure(
             currentLabel: SpacePreferences.label(forSpace: key.position, display: key.displayID, store: store),
-            isEnabled: key.position > 0,
+            placeholder: target.defaultLabel,
             onChange: { text in
-                guard key.position > 0 else {
-                    return
-                }
                 ScriptingHelpers.setLabel(text, at: key, store: store)
             },
             onRevert: {
-                guard key.position > 0 else {
-                    return
-                }
                 SpacePreferences.setLabel(stored, forSpace: key.position, display: key.displayID, store: store)
             }
         )
+    }
+
+    /// The Space whose icon is under the pointer, when each Space has its
+    /// own slot; nil in single-icon and shrunk layouts.
+    private func slotSpaceID(under event: NSEvent, button: NSStatusBarButton) -> Int? {
+        guard store.showAllSpaces, appState.shrinkLevel.showsInactiveSpaces else {
+            return nil
+        }
+        let location = button.convert(event.statusItemLocation(in: button.window), from: nil)
+        return appState.statusBarLayout().slot(at: Double(location.x))?.spaceID
     }
 
     /// Let AppKit anchor the menu below the status item and keep every row

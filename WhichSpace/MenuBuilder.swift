@@ -6,13 +6,18 @@ import AppKit
 /// configuration lives in the settings window.
 @MainActor
 enum MenuBuilder {
-    /// Builds the right-click status menu: version header, label field,
-    /// Settings, Check for Updates, and Quit. The caller owns the field and
-    /// fills it before each presentation.
+    /// Builds the right-click status menu: version header, a "Label" header
+    /// over the label field, Settings, Check for Updates, and Quit. The
+    /// caller owns the field and fills it before each presentation.
     static func buildMenu(target: AnyObject, labelField: SpaceLabelMenuField) -> NSMenu {
         let menu = NSMenu()
 
         configureVersionHeader(in: menu)
+        let labelHeader = NSMenuItem(title: Localization.menuLabel, action: nil, keyEquivalent: "")
+        labelHeader.isEnabled = false
+        labelHeader.image = NSImage(systemSymbolName: "character.textbox", accessibilityDescription: nil)
+        showImage(of: labelHeader)
+        menu.addItem(labelHeader)
         let labelItem = NSMenuItem()
         labelItem.view = labelField
         menu.addItem(labelItem)
