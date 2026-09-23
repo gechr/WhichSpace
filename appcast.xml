@@ -6,13 +6,16 @@
     <description>Most recent changes with links to updates.</description>
     <language>en</language>
     <item>
-        <title>Version 1.3.8-tip.641</title>
+        <title>Version 1.3.8-tip.644</title>
         <sparkle:channel>nightly</sparkle:channel>
         <description><![CDATA[
           <style>.sparkle-installed-version, .sparkle-installed-version ~ * { display: none }</style>
-          <section data-sparkle-version="1.3.8-tip.641">
-            <h3>Nightly (v1.3.8-tip.641)</h3>
+          <section data-sparkle-version="1.3.8-tip.644">
+            <h3>Nightly (v1.3.8-tip.644)</h3>
             <ul>
+              <li>deps: Update all versions</li>
+              <li>backup: Include update preferences</li>
+              <li>menubar: Add label field to right-click menu</li>
               <li>readme: Explain automatic Space rearrangement</li>
               <li>diagnostics: Report <code>mru-spaces</code> and missing Space UUIDs</li>
               <li>spaces: Follow Spaces with empty UUIDs by managed ID</li>
@@ -1114,13 +1117,13 @@
           </section>
         ]]></description>
         <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/tip</sparkle:fullReleaseNotesLink>
-        <pubDate>Tue, 22 Sep 2026 01:55:34 +0100</pubDate>
+        <pubDate>Wed, 23 Sep 2026 12:03:42 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/tip/WhichSpace.zip"
-          sparkle:version="1.3.8-tip.641"
-          sparkle:shortVersionString="1.3.8-tip.641"
-          sparkle:edSignature="p8lJizfkYdliK7YeM23ZQZXmHx3iqpo+JgeNB5YZPtg+j/CCTZmHKr9gPnx47OxwglTJGezV6es1P59Ju+OADA=="
-          length="4256683"
+          sparkle:version="1.3.8-tip.644"
+          sparkle:shortVersionString="1.3.8-tip.644"
+          sparkle:edSignature="1HGr/iT+NCizL4mEjnrdr4d/kOghzznluikUHgALEtPekP7a+gU1NVGYPZNmLMFedMrVSRmMd0fMaIrFyINzCw=="
+          length="4243731"
           type="application/octet-stream" />
         <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
       </item>
