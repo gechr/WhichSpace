@@ -139,6 +139,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
     private(set) var observationTask: Task<Void, Never>?
     private(set) var statusBarIconUpdateCount = 0
     private(set) var statusMenu: NSMenu!
+    private(set) var statusMenuLabelField = SpaceLabelMenuField()
 
     /// Convenience accessor for the store via appState
     private var store: DefaultsStore {
@@ -759,7 +760,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
 
     /// Test hook to configure the menu bar icon. In production, this is called from applicationDidFinishLaunching.
     func configureMenuBarIcon() {
-        statusMenu = MenuBuilder.buildMenu(target: actionHandler)
+        statusMenu = MenuBuilder.buildMenu(target: actionHandler, labelField: statusMenuLabelField)
         statusBarItem?.button?.toolTip = AppInfo.appName
         statusBarItem?.button?.target = self
         statusBarItem?.button?.action = #selector(statusBarButtonClicked(_:))
@@ -905,6 +906,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
             return
         }
         if event.isRightClick {
+            prepareStatusMenuLabelField()
             showStatusMenu(statusMenu)
         } else if event.isOptionClick {
             actionHandler.openSettingsWindow()
@@ -1215,6 +1217,37 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
         }
         let menu = MenuBuilder.buildSpacePickerMenu(entries: entries, style: style, target: actionHandler)
         showStatusMenu(menu)
+    }
+
+    /// Targets the field at the current Space, captured at open so a Space
+    /// change while the menu is up cannot retarget it. Scope is the display
+    /// override when several displays are attached or one already exists,
+    /// else the shared map, so the field edits the value the menu bar shows.
+    /// Escape restores the stored value untouched.
+    func prepareStatusMenuLabelField() {
+        let store = store
+        let position = appState.currentSpace
+        let currentDisplay = appState.currentDisplayID
+        let hasOverride = currentDisplay.flatMap { store.displaySpaceLabels[$0]?[position] } != nil
+        let usesDisplayScope = appState.allDisplaysSpaceInfo.count > 1 || hasOverride
+        let key = (position: position, displayID: usesDisplayScope ? currentDisplay : nil)
+        let stored = SpacePreferences.storedLabel(forSpace: key.position, display: key.displayID, store: store)
+        statusMenuLabelField.configure(
+            currentLabel: SpacePreferences.label(forSpace: key.position, display: key.displayID, store: store),
+            isEnabled: key.position > 0,
+            onChange: { text in
+                guard key.position > 0 else {
+                    return
+                }
+                ScriptingHelpers.setLabel(text, at: key, store: store)
+            },
+            onRevert: {
+                guard key.position > 0 else {
+                    return
+                }
+                SpacePreferences.setLabel(stored, forSpace: key.position, display: key.displayID, store: store)
+            }
+        )
     }
 
     /// Let AppKit anchor the menu below the status item and keep every row

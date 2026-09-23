@@ -685,6 +685,16 @@ enum SpacePreferences {
         return label?.isEmpty == false ? label : nil
     }
 
+    /// The label stored at exactly this scope, without the cascade: nil for
+    /// nothing, "" for the plain-number sentinel.
+    static func storedLabel(
+        forSpace spaceNumber: Int,
+        display: String? = nil,
+        store: DefaultsStore = AppEnvironment.shared.store
+    ) -> String? {
+        labels.raw(forSpace: spaceNumber, context: display, store: store)
+    }
+
     static func setLabel(
         _ label: String?,
         forSpace spaceNumber: Int,

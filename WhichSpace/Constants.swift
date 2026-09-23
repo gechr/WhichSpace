@@ -179,6 +179,15 @@ enum Layout {
     /// Point size of the app icons embedded in picker menu item titles
     static let spacePickerAppIconSize = 16.0
 
+    /// Status menu label field row; the menu stretches the width
+    static let menuLabelFieldRowWidth = 200.0
+    static let menuLabelFieldRowHeight = 28.0
+    static let menuLabelFieldHeight = 22.0
+    /// Matches the text inset of neighbouring rows
+    static let menuLabelFieldInset = 14.0
+    /// Gap between the rounded end and the text
+    static let menuLabelFieldTextInset = 8.0
+
     /// Mission Control's per-display Space limit
     static let maxSpacesPerDisplay = 16
 

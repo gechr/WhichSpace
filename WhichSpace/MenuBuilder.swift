@@ -6,12 +6,17 @@ import AppKit
 /// configuration lives in the settings window.
 @MainActor
 enum MenuBuilder {
-    /// Builds the right-click status menu: version header, Settings, Check
-    /// for Updates, and Quit.
-    static func buildMenu(target: AnyObject) -> NSMenu {
+    /// Builds the right-click status menu: version header, label field,
+    /// Settings, Check for Updates, and Quit. The caller owns the field and
+    /// fills it before each presentation.
+    static func buildMenu(target: AnyObject, labelField: SpaceLabelMenuField) -> NSMenu {
         let menu = NSMenu()
 
         configureVersionHeader(in: menu)
+        let labelItem = NSMenuItem()
+        labelItem.view = labelField
+        menu.addItem(labelItem)
+        menu.addItem(.separator())
         configureSettingsMenuItem(in: menu, target: target)
         menu.addItem(.separator())
         configureUpdateMenuItem(in: menu, target: target)
