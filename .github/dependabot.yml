@@ -2,6 +2,8 @@ version: 2
 
 updates:
   - package-ecosystem: github-actions
+    commit-message:
+      prefix: deps
     cooldown:
       default-days: 7
     directory: /
@@ -13,6 +15,8 @@ updates:
           - "*"
 
   - package-ecosystem: swift
+    commit-message:
+      prefix: deps
     cooldown:
       default-days: 7
     directory: /
