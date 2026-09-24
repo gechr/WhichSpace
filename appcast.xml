@@ -6,13 +6,15 @@
     <description>Most recent changes with links to updates.</description>
     <language>en</language>
     <item>
-        <title>Version 1.3.8-tip.646</title>
+        <title>Version 1.3.8-tip.648</title>
         <sparkle:channel>nightly</sparkle:channel>
         <description><![CDATA[
           <style>.sparkle-installed-version, .sparkle-installed-version ~ * { display: none }</style>
-          <section data-sparkle-version="1.3.8-tip.646">
-            <h3>Nightly (v1.3.8-tip.646)</h3>
+          <section data-sparkle-version="1.3.8-tip.648">
+            <h3>Nightly (v1.3.8-tip.648)</h3>
             <ul>
+              <li>menubar: Ask once before enabling click to switch</li>
+              <li>dependabot: Prefix commits with <code>deps</code></li>
               <li>menubar: Label the right-clicked Space</li>
               <li>menubar: Show status menu icons on macOS 27</li>
               <li>deps: Update all versions</li>
@@ -1117,13 +1119,13 @@
           </section>
         ]]></description>
         <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases/tag/tip</sparkle:fullReleaseNotesLink>
-        <pubDate>Wed, 23 Sep 2026 13:02:47 +0100</pubDate>
+        <pubDate>Thu, 24 Sep 2026 01:45:13 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/tip/WhichSpace.zip"
-          sparkle:version="1.3.8-tip.646"
-          sparkle:shortVersionString="1.3.8-tip.646"
-          sparkle:edSignature="zhSOt1gFD3tBdLmMPN9E0oV7cxCq2Ldg3mCUPit5Twi/rg868EYpDhUgA9fvkOThmuM82eOBcXqR8QdcMn3cBA=="
-          length="4244926"
+          sparkle:version="1.3.8-tip.648"
+          sparkle:shortVersionString="1.3.8-tip.648"
+          sparkle:edSignature="nWn5nowzTidMyko/J/7GQX1Rp/L5AAYn1Km/VAQQZ2cm/6B84KPxVnGImD+aysZIFIeB+QUD6nemiLJzNowoCA=="
+          length="4254898"
           type="application/octet-stream" />
         <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
       </item>
