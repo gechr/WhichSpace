@@ -78,7 +78,9 @@ struct BackupSettings: Codable {
     // swiftlint:disable:next discouraged_optional_boolean
     var automaticallyDownloadsUpdates: Bool?
     var classicSpaceSwitching: Bool
-    var clickToSwitchSpaces: Bool
+    /// Absent when nothing has set it, so a restore keeps the first-click enable
+    // swiftlint:disable:next discouraged_optional_boolean
+    var clickToSwitchSpaces: Bool?
     /// Decode-only compatibility with backups exported before opacity was adjustable.
     // swiftlint:disable:next discouraged_optional_boolean
     private var dimInactiveSpaces: Bool?
@@ -151,7 +153,7 @@ struct BackupSettings: Codable {
             Bool.self, forKey: .automaticallyDownloadsUpdates
         )
         classicSpaceSwitching = try container.decodeIfPresent(Bool.self, forKey: .classicSpaceSwitching) ?? false
-        clickToSwitchSpaces = try container.decodeIfPresent(Bool.self, forKey: .clickToSwitchSpaces) ?? false
+        clickToSwitchSpaces = try container.decodeIfPresent(Bool.self, forKey: .clickToSwitchSpaces)
         dimInactiveSpaces = nil
         let legacyDimInactiveSpaces = try container.decodeIfPresent(Bool.self, forKey: .dimInactiveSpaces)
         inactiveSpaceOpacity = try container.decodeIfPresent(Double.self, forKey: .inactiveSpaceOpacity)
@@ -207,7 +209,8 @@ struct BackupSettings: Codable {
         // swiftlint:disable:next discouraged_optional_boolean
         automaticallyDownloadsUpdates: Bool? = nil,
         classicSpaceSwitching: Bool,
-        clickToSwitchSpaces: Bool,
+        // swiftlint:disable:next discouraged_optional_boolean
+        clickToSwitchSpaces: Bool?,
         inactiveSpaceOpacity: Double,
         displayOrder: String?,
         emojiPickerSkinTone: Int,
@@ -636,7 +639,7 @@ enum BackupManager {
             automaticallyChecksForUpdates: updaterSettings?.automaticallyChecksForUpdates,
             automaticallyDownloadsUpdates: updaterSettings?.automaticallyDownloadsUpdates,
             classicSpaceSwitching: store.classicSpaceSwitching,
-            clickToSwitchSpaces: store.clickToSwitchSpaces,
+            clickToSwitchSpaces: store.clickToSwitchSpacesChoice,
             inactiveSpaceOpacity: store.inactiveSpaceOpacity,
             displayOrder: store.displayOrder.rawValue,
             emojiPickerSkinTone: store.emojiPickerSkinTone.rawValue,
@@ -802,7 +805,7 @@ enum BackupManager {
             }
         }
         store.classicSpaceSwitching = backup.settings.classicSpaceSwitching
-        store.clickToSwitchSpaces = backup.settings.clickToSwitchSpaces
+        store.clickToSwitchSpacesChoice = backup.settings.clickToSwitchSpaces
         store.inactiveSpaceOpacity = backup.settings.inactiveSpaceOpacity
         store.displayOrder = backup.settings.displayOrder
             .flatMap { DisplayOrder(rawValue: $0) } ?? .system

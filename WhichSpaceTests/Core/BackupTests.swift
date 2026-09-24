@@ -397,7 +397,7 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
 
         XCTAssertEqual(backup.bundleId, "com.test.app")
         XCTAssertEqual(backup.version, "1.0.0")
-        XCTAssertTrue(backup.settings.clickToSwitchSpaces)
+        XCTAssertTrue(try XCTUnwrap(backup.settings.clickToSwitchSpaces))
         XCTAssertEqual(backup.settings.inactiveSpaceOpacity, 100)
         XCTAssertEqual(backup.settings.sizeScale, 80.0)
         XCTAssertEqual(backup.settings.soundName, "Pop")
@@ -419,7 +419,7 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
 
         let backup = try BackupManager.decode(jsonString: json)
 
-        XCTAssertTrue(backup.settings.clickToSwitchSpaces)
+        XCTAssertTrue(try XCTUnwrap(backup.settings.clickToSwitchSpaces))
         XCTAssertEqual(backup.settings.sizeScale, 80.0)
         XCTAssertEqual(backup.settings.inactiveSpaceOpacity, Layout.defaultInactiveSpaceOpacity)
         XCTAssertFalse(backup.settings.hideEmptySpaces)
@@ -512,9 +512,27 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         XCTAssertTrue(updater.automaticallyDownloadsUpdates)
     }
 
+    func testClickToSwitchRoundTripsOffAndUnset() throws {
+        store.clickToSwitchSpaces = false
+        let offJson = try BackupManager.encode(store: store)
+
+        store.clickToSwitchSpacesChoice = nil
+        let unsetJson = try BackupManager.encode(store: store)
+        XCTAssertFalse(unsetJson.contains("clickToSwitchSpaces"))
+
+        try BackupManager.apply(BackupManager.decode(jsonString: offJson), to: store)
+        XCTAssertFalse(try XCTUnwrap(store.clickToSwitchSpacesChoice))
+
+        // An unset backup keeps the first left click able to enable it
+        try BackupManager.apply(BackupManager.decode(jsonString: unsetJson), to: store)
+        XCTAssertNil(store.clickToSwitchSpacesChoice)
+    }
+
     func testEncodeCoversEveryScalarDefaultsKey() throws {
-        // separatorColor is optional in the JSON and omitted when nil
+        // separatorColor and clickToSwitchSpaces are optional in the JSON and
+        // omitted when nil
         store.separatorColor = .systemRed
+        store.clickToSwitchSpaces = true
 
         let json = try BackupManager.encode(store: store)
         let data = try XCTUnwrap(json.data(using: .utf8))

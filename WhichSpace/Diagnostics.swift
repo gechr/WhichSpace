@@ -201,7 +201,7 @@ enum Diagnostics {
             ("Shrink to fit", string(store.shrinkIconToFit)),
             ("Size scale", string(store.sizeScale)),
             ("Classic switching", string(store.classicSpaceSwitching)),
-            ("Click to switch", string(store.clickToSwitchSpaces)),
+            ("Click to switch", store.clickToSwitchSpacesChoice.map(string) ?? "unset"),
             ("Vertical scroll", string(store.verticalScrollEnabled)),
             ("Horizontal scroll", string(store.horizontalScrollEnabled)),
             ("Invert vertical scroll", string(store.invertVerticalScroll)),

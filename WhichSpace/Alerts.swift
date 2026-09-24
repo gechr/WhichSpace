@@ -20,6 +20,31 @@ extension NSAlert {
             icon = smallIcon
         }
     }
+
+    /// Runs the alert modally with the app active. An accessory app with
+    /// nothing on screen can be refused activation, leaving the alert
+    /// inactive, so the request repeats once the alert is showing.
+    ///
+    /// The repeat is a timer in the modal panel mode, which fires inside the
+    /// alert's session whichever run loop source or queue started it. The
+    /// main queue does not drain there when the alert runs from a main-queue
+    /// block, so a queued block would fire after the alert closed.
+    @discardableResult
+    func runActivatedModal() -> NSApplication.ModalResponse {
+        NSApp.activate(ignoringOtherApps: true)
+        let windowID = ObjectIdentifier(window)
+        let retry = Timer(timeInterval: 0, repeats: false) { _ in
+            MainActor.assumeIsolated {
+                guard let modalWindow = NSApp.modalWindow, ObjectIdentifier(modalWindow) == windowID else {
+                    return
+                }
+                NSApp.activate(ignoringOtherApps: true)
+            }
+        }
+        RunLoop.main.add(retry, forMode: .modalPanel)
+        defer { retry.invalidate() }
+        return runModal()
+    }
 }
 
 /// An informational alert with a primary action and dismiss button
@@ -47,8 +72,6 @@ struct InfoAlert {
     /// Shows the alert and returns true if the user clicked the primary button
     func runModal() -> Bool {
         runAlertOnMain {
-            NSApp.activate(ignoringOtherApps: true)
-
             let alert = NSAlert()
             alert.messageText = message
             alert.informativeText = detail
@@ -61,7 +84,7 @@ struct InfoAlert {
             alert.addButton(withTitle: primaryButtonTitle)
             alert.addButton(withTitle: dismissButtonTitle)
 
-            return alert.runModal() == .alertFirstButtonReturn
+            return alert.runActivatedModal() == .alertFirstButtonReturn
         }
     }
 }
@@ -75,8 +98,6 @@ enum SpaceSwipeGestureAlertResponse: Sendable {
 struct SpaceSwipeGestureAlert {
     func runModal() -> SpaceSwipeGestureAlertResponse {
         runAlertOnMain {
-            NSApp.activate(ignoringOtherApps: true)
-
             let alert = NSAlert()
             alert.messageText = Localization.alertSpaceSwipeGestureTitle
             alert.informativeText = String(
@@ -88,9 +109,29 @@ struct SpaceSwipeGestureAlert {
             alert.addButton(withTitle: Localization.buttonEnableSwipeGestures)
             alert.addButton(withTitle: Localization.buttonUseClassicSwitching)
 
-            return alert.runModal() == .alertFirstButtonReturn
+            return alert.runActivatedModal() == .alertFirstButtonReturn
                 ? .enableInstantSwitching
                 : .useClassicSwitching
+        }
+    }
+}
+
+/// Asks whether a left click should switch Spaces.
+struct ClickToSwitchAlert {
+    /// Shows the alert and returns true if the user turned click-to-switch on
+    func runModal() -> Bool {
+        runAlertOnMain {
+            let alert = NSAlert()
+            alert.messageText = Localization.alertClickToSwitchTitle
+            alert.informativeText = Localization.alertClickToSwitchDetail
+            alert.alertStyle = .informational
+            alert.useSmallAppIcon()
+            alert.addButton(withTitle: Localization.buttonTurnOn)
+            let keepOffButton = alert.addButton(withTitle: Localization.buttonKeepOff)
+            // AppKit gives Escape only to a button titled Cancel
+            keepOffButton.keyEquivalent = "\u{1b}"
+
+            return alert.runActivatedModal() == .alertFirstButtonReturn
         }
     }
 }
@@ -112,8 +153,6 @@ struct ConfirmationAlert {
     /// Shows the alert and returns true if the user confirmed
     func runModal() -> Bool {
         runAlertOnMain {
-            NSApp.activate(ignoringOtherApps: true)
-
             let alert = NSAlert()
             alert.messageText = message
             alert.informativeText = detail
@@ -127,7 +166,7 @@ struct ConfirmationAlert {
                 alert.buttons[1].keyEquivalent = "\r"
             }
 
-            return alert.runModal() == .alertFirstButtonReturn
+            return alert.runActivatedModal() == .alertFirstButtonReturn
         }
     }
 }

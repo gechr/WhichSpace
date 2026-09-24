@@ -70,6 +70,12 @@ typealias ConfirmAction = (
 
 /// Whether a left click may switch Spaces, or has to ask for permission first.
 enum ClickPermission {
+    /// The user turned click-to-switch off, so the click does nothing
+    case disabled
+    /// The click's prompt turned click-to-switch on. The click ends there,
+    /// since the menu bar may have changed while the prompt was up, and the
+    /// next click switches.
+    case enabled
     case granted
     case needsRequest
     /// Permission was revoked while the app runs; the frozen trust flag
@@ -86,6 +92,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
     // MARK: - Properties
 
     private let confirmAction: ConfirmAction
+    /// Asks whether a left click should switch Spaces and returns the
+    /// answer. Injected so tests never open the alert.
+    private let clickToSwitchPrompt: @MainActor () -> Bool
     private let appState: AppState
     private let missionControlNotificationSender: (CFString) -> Void
     private(set) var actionHandler: ActionHandler!
@@ -160,6 +169,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
         confirmAction = {
             ConfirmationAlert(message: $0, detail: $1, confirmTitle: $2, isDestructive: $3).runModal()
         }
+        clickToSwitchPrompt = { ClickToSwitchAlert().runModal() }
         launchAtLogin = DefaultLaunchAtLoginProvider()
         missionControlNotificationSender = { notification in
             _ = CoreDockSendNotification(notification)
@@ -184,6 +194,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
     init(
         appState: AppState,
         confirmAction: @escaping ConfirmAction,
+        clickToSwitchPrompt: @escaping @MainActor () -> Bool = { ClickToSwitchAlert().runModal() },
         launchAtLogin: LaunchAtLoginProvider = DefaultLaunchAtLoginProvider(),
         missionControlNotificationSender: @escaping (CFString) -> Void = { notification in
             _ = CoreDockSendNotification(notification)
@@ -206,6 +217,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
     ) {
         self.appState = appState
         self.confirmAction = confirmAction
+        self.clickToSwitchPrompt = clickToSwitchPrompt
         self.launchAtLogin = launchAtLogin
         self.missionControlNotificationSender = missionControlNotificationSender
         self.relativeSpaceSwitchAction = relativeSpaceSwitchAction
@@ -907,6 +919,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
     }
 
     @objc private func statusBarButtonClicked(_ button: NSStatusBarButton) {
+        // Status item clicks still arrive while an alert runs modally, and a
+        // second click would stack another alert on the one awaiting an answer
+        guard NSApp.modalWindow == nil else {
+            Self.logger.info("click ignored: alert open")
+            return
+        }
         guard let event = NSApp.currentEvent else {
             Self.logger.info("click ignored: no current event")
             return
@@ -921,10 +939,30 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
         }
     }
 
-    /// Resolves what a left click is allowed to do, enabling click-to-switch
-    /// on the first trusted left click. Without permission the preference is
-    /// left alone and the click leads to the permission request.
+    /// Resolves what a left click is allowed to do. A preference set to off
+    /// stays off without asking. The first click with nothing set asks
+    /// whether to turn click-to-switch on and records the answer, so a
+    /// decline is never asked again and never leads to a permission request.
+    /// Turning it on moves straight to any permission step still needed, but
+    /// that click switches nothing. Without permission the click leads to the
+    /// permission request, which records the answer itself.
     func resolveClickPermission() -> ClickPermission {
+        guard store.clickToSwitchSpacesChoice != false else {
+            Self.logger.info("click ignored: click to switch is off")
+            return .disabled
+        }
+
+        var enabledByPrompt = false
+        if store.clickToSwitchSpacesChoice == nil {
+            let accepted = clickToSwitchPrompt()
+            SettingsConstraints.setClickToSwitchSpaces(accepted, store: store)
+            Self.logger.info("click to switch prompt accepted: \(accepted)")
+            guard accepted else {
+                return .disabled
+            }
+            enabledByPrompt = true
+        }
+
         guard isProcessTrusted() else {
             Self.logger.info("click needs accessibility permission")
             return .needsRequest
@@ -935,16 +973,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
             return .revoked
         }
 
-        // Auto-enable click-to-switch on first trusted left click
-        if !store.clickToSwitchSpaces {
-            SettingsConstraints.setClickToSwitchSpaces(true, store: store)
-        }
-
-        return .granted
+        return enabledByPrompt ? .enabled : .granted
     }
 
     private func handleLeftClick(_ event: NSEvent, button: NSStatusBarButton) {
         switch resolveClickPermission() {
+        case .disabled, .enabled:
+            return
         case .granted:
             break
         case .needsRequest:

@@ -23,10 +23,6 @@ enum AppMover {
         Task { @MainActor in
             let fileManager = FileManager.default
             let destinationURL = preferred.url.appendingPathComponent(bundleURL.lastPathComponent)
-            if !NSApp.isActive {
-                NSApp.activate(ignoringOtherApps: true)
-            }
-
             let alert = NSAlert()
             alert.messageText = preferred.isUserApplications
                 ? String(localized: "question_title_home", table: "AppMover")
@@ -49,7 +45,7 @@ enum AppMover {
                 cell.font = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
             }
 
-            let response = alert.runModal()
+            let response = alert.runActivatedModal()
             if response != .alertFirstButtonReturn {
                 if alert.suppressionButton?.state == .on {
                     store.moveApplicationAlertSuppress = true
@@ -228,7 +224,7 @@ enum AppMover {
         alert.addButton(withTitle: String(localized: "button_quit_and_replace", table: "AppMover"))
         let cancelButton = alert.addButton(withTitle: String(localized: "button_do_not_move", table: "AppMover"))
         cancelButton.keyEquivalent = "\u{1b}"
-        return alert.runModal() == .alertFirstButtonReturn
+        return alert.runActivatedModal() == .alertFirstButtonReturn
     }
 
     private static func relaunch(from sourceURL: URL, to destinationURL: URL) async {
@@ -267,6 +263,6 @@ enum AppMover {
     private static func showFailureAlert() {
         let alert = NSAlert()
         alert.messageText = String(localized: "error_could_not_move", table: "AppMover")
-        alert.runModal()
+        alert.runActivatedModal()
     }
 }

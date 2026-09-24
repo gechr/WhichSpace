@@ -212,15 +212,35 @@ final class AppDelegateActionsTests: XCTestCase {
         ))
     }
 
-    private func makeDelegate(trusted: Bool, capability: Bool = true) -> AppDelegate {
+    /// Answers a prompt with a fixed reply and counts how often it was asked.
+    private final class StubPrompt {
+        var answer: Bool
+        private(set) var count = 0
+
+        init(answer: Bool = true) {
+            self.answer = answer
+        }
+
+        func callAsFunction() -> Bool {
+            count += 1
+            return answer
+        }
+    }
+
+    private func makeDelegate(
+        trusted: Bool,
+        capability: Bool = true,
+        prompt: StubPrompt = StubPrompt()
+    ) -> AppDelegate {
         // Bound to locals first: a trailing closure here would bind to
-        // `missionControlNotificationSender`, the initializer's first closure
-        // parameter.
+        // `clickToSwitchPrompt`, the initializer's first closure parameter.
         let isProcessTrusted: () -> Bool = { trusted }
         let isCapabilityTrusted: () -> Bool = { capability }
+        let clickToSwitchPrompt: @MainActor () -> Bool = { prompt() }
         return AppDelegate(
             appState: appState,
             confirmAction: confirmStub.callAsFunction,
+            clickToSwitchPrompt: clickToSwitchPrompt,
             launchAtLogin: launchAtLoginStub,
             isProcessTrusted: isProcessTrusted,
             isCapabilityTrusted: isCapabilityTrusted
@@ -229,42 +249,157 @@ final class AppDelegateActionsTests: XCTestCase {
 
     func testResolveClickPermission_untrustedWithSettingOn_keepsSettingOnAndAsks() {
         store.clickToSwitchSpaces = true
-        let localSut = makeDelegate(trusted: false)
+        let prompt = StubPrompt()
+        let localSut = makeDelegate(trusted: false, prompt: prompt)
 
         XCTAssertEqual(localSut.resolveClickPermission(), .needsRequest)
         XCTAssertTrue(store.clickToSwitchSpaces, "The pref records intent even when the grant went away")
+        XCTAssertEqual(prompt.count, 0)
     }
 
-    func testResolveClickPermission_untrustedWithSettingOff_leavesSettingOffAndAsks() {
-        store.clickToSwitchSpaces = false
-        let localSut = makeDelegate(trusted: false)
+    func testResolveClickPermission_untrustedWithSettingUnset_turnOnLeadsToPermissionRequest() throws {
+        store.clickToSwitchSpacesChoice = nil
+        let prompt = StubPrompt(answer: true)
+        let localSut = makeDelegate(trusted: false, prompt: prompt)
 
-        XCTAssertEqual(localSut.resolveClickPermission(), .needsRequest)
-        XCTAssertFalse(store.clickToSwitchSpaces)
+        XCTAssertEqual(localSut.resolveClickPermission(), .needsRequest, "Turning it on asks for permission next")
+        XCTAssertTrue(try XCTUnwrap(store.clickToSwitchSpacesChoice))
+        XCTAssertEqual(prompt.count, 1)
     }
 
-    func testResolveClickPermission_trustedWithSettingOff_enablesSetting() {
+    func testResolveClickPermission_untrustedWithSettingUnset_keepOffSkipsPermissionRequest() throws {
+        store.clickToSwitchSpacesChoice = nil
+        let prompt = StubPrompt(answer: false)
+        let localSut = makeDelegate(trusted: false, prompt: prompt)
+
+        XCTAssertEqual(localSut.resolveClickPermission(), .disabled, "A decline never asks for permission")
+        XCTAssertFalse(try XCTUnwrap(store.clickToSwitchSpacesChoice))
+
+        XCTAssertEqual(localSut.resolveClickPermission(), .disabled)
+        XCTAssertEqual(prompt.count, 1)
+    }
+
+    func testResolveClickPermission_untrustedWithSettingOff_disablesWithoutAsking() throws {
         store.clickToSwitchSpaces = false
-        let localSut = makeDelegate(trusted: true)
+        let prompt = StubPrompt()
+        let localSut = makeDelegate(trusted: false, prompt: prompt)
+
+        XCTAssertEqual(localSut.resolveClickPermission(), .disabled)
+        XCTAssertFalse(try XCTUnwrap(store.clickToSwitchSpacesChoice))
+        XCTAssertEqual(prompt.count, 0)
+    }
+
+    func testResolveClickPermission_trustedWithSettingUnset_asksAndEnablesOnAccept() throws {
+        store.clickToSwitchSpacesChoice = nil
+        let prompt = StubPrompt(answer: true)
+        let localSut = makeDelegate(trusted: true, prompt: prompt)
+
+        XCTAssertEqual(localSut.resolveClickPermission(), .enabled, "The prompting click switches nothing")
+        XCTAssertTrue(try XCTUnwrap(store.clickToSwitchSpacesChoice))
 
         XCTAssertEqual(localSut.resolveClickPermission(), .granted)
-        XCTAssertTrue(store.clickToSwitchSpaces, "The first click should enable click-to-switch")
+        XCTAssertEqual(prompt.count, 1, "An accepted prompt is not shown again")
+    }
+
+    func testResolveClickPermission_trustedWithSettingUnset_declineTurnsOffAndNeverAsksAgain() throws {
+        store.clickToSwitchSpacesChoice = nil
+        let prompt = StubPrompt(answer: false)
+        let localSut = makeDelegate(trusted: true, prompt: prompt)
+
+        XCTAssertEqual(localSut.resolveClickPermission(), .disabled)
+        XCTAssertFalse(try XCTUnwrap(store.clickToSwitchSpacesChoice))
+
+        prompt.answer = true
+        XCTAssertEqual(localSut.resolveClickPermission(), .disabled)
+        XCTAssertEqual(prompt.count, 1, "A declined prompt is not shown again")
+        XCTAssertFalse(try XCTUnwrap(store.clickToSwitchSpacesChoice))
+    }
+
+    func testResolveClickPermission_trustedWithSettingOff_keepsSettingOff() throws {
+        store.clickToSwitchSpaces = false
+        let prompt = StubPrompt()
+        let localSut = makeDelegate(trusted: true, prompt: prompt)
+
+        XCTAssertEqual(localSut.resolveClickPermission(), .disabled)
+        XCTAssertFalse(try XCTUnwrap(store.clickToSwitchSpacesChoice), "A click must not undo turning it off")
+        XCTAssertEqual(prompt.count, 0)
     }
 
     func testResolveClickPermission_trustedWithSettingOn_grants() {
         store.clickToSwitchSpaces = true
-        let localSut = makeDelegate(trusted: true)
+        let prompt = StubPrompt()
+        let localSut = makeDelegate(trusted: true, prompt: prompt)
 
         XCTAssertEqual(localSut.resolveClickPermission(), .granted)
         XCTAssertTrue(store.clickToSwitchSpaces)
+        XCTAssertEqual(prompt.count, 0)
     }
 
-    func testResolveClickPermission_revokedWhileRunning_blocksWithoutTouchingSetting() {
-        store.clickToSwitchSpaces = false
-        let localSut = makeDelegate(trusted: true, capability: false)
+    func testResolveClickPermission_revokedWhileRunning_blocksWithoutTouchingSetting() throws {
+        store.clickToSwitchSpaces = true
+        let prompt = StubPrompt()
+        let localSut = makeDelegate(trusted: true, capability: false, prompt: prompt)
 
         XCTAssertEqual(localSut.resolveClickPermission(), .revoked)
-        XCTAssertFalse(store.clickToSwitchSpaces, "A revoked click must not auto-enable click-to-switch")
+        XCTAssertTrue(try XCTUnwrap(store.clickToSwitchSpacesChoice))
+        XCTAssertEqual(prompt.count, 0)
+    }
+
+    func testResolveClickPermission_revokedWithSettingUnset_asksBeforeRecovering() throws {
+        store.clickToSwitchSpacesChoice = nil
+        let prompt = StubPrompt(answer: false)
+        let localSut = makeDelegate(trusted: true, capability: false, prompt: prompt)
+
+        XCTAssertEqual(localSut.resolveClickPermission(), .disabled, "A decline skips the revocation recovery")
+        XCTAssertFalse(try XCTUnwrap(store.clickToSwitchSpacesChoice))
+        XCTAssertEqual(prompt.count, 1)
+    }
+
+    func testResolveClickPermission_revokedWithSettingUnset_turnOnLeadsToRecovery() throws {
+        store.clickToSwitchSpacesChoice = nil
+        let prompt = StubPrompt(answer: true)
+        let localSut = makeDelegate(trusted: true, capability: false, prompt: prompt)
+
+        XCTAssertEqual(localSut.resolveClickPermission(), .revoked)
+        XCTAssertTrue(try XCTUnwrap(store.clickToSwitchSpacesChoice))
+        XCTAssertEqual(localSut.resolveClickPermission(), .revoked)
+        XCTAssertEqual(prompt.count, 1)
+    }
+
+    // MARK: - Accessibility Request
+
+    private func makeActionHandler(prompt: StubPrompt) -> ActionHandler {
+        // Bound to a local first: a trailing closure here would bind to
+        // `confirmAction`, the initializer's first closure parameter.
+        let accessibilityPermissionPrompt: @MainActor () -> Bool = { prompt() }
+        return ActionHandler(
+            appState: appState,
+            launchAtLogin: StubLaunchAtLoginProvider(),
+            accessibilityPermissionPrompt: accessibilityPermissionPrompt
+        )
+    }
+
+    func testRequestAccessibilityForClickToSwitch_continueTurnsItOn() throws {
+        store.clickToSwitchSpacesChoice = nil
+        let prompt = StubPrompt(answer: true)
+        makeActionHandler(prompt: prompt).requestAccessibilityForClickToSwitch()
+
+        XCTAssertTrue(try XCTUnwrap(store.clickToSwitchSpacesChoice))
+        XCTAssertEqual(prompt.count, 1)
+    }
+
+    func testRequestAccessibilityForClickToSwitch_cancelTurnsItOff() throws {
+        store.clickToSwitchSpacesChoice = nil
+        makeActionHandler(prompt: StubPrompt(answer: false)).requestAccessibilityForClickToSwitch()
+
+        XCTAssertFalse(try XCTUnwrap(store.clickToSwitchSpacesChoice))
+    }
+
+    func testRequestAccessibilityForClickToSwitch_cancelTurnsOffAnEarlierOn() throws {
+        store.clickToSwitchSpaces = true
+        makeActionHandler(prompt: StubPrompt(answer: false)).requestAccessibilityForClickToSwitch()
+
+        XCTAssertFalse(try XCTUnwrap(store.clickToSwitchSpacesChoice), "Cancel is an opt-out")
     }
 
     func testHandleMiddleClickEvent_consumesMiddleClickInsideButtonAndSendsNotification() throws {

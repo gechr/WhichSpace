@@ -83,6 +83,18 @@ struct SettingsConstraintsTests {
         #expect(!store.clickToSwitchSpaces)
     }
 
+    @Test("clickToSwitchSpaces is unset until written and after a reset")
+    func clickToSwitchSpaces_unsetUntilWritten() {
+        #expect(store.clickToSwitchSpacesChoice == nil)
+        #expect(!store.clickToSwitchSpaces)
+
+        SettingsConstraints.setClickToSwitchSpaces(false, store: store)
+        #expect(DefaultsStore(suite: testSuite.suite).clickToSwitchSpacesChoice == false)
+
+        store.resetAll()
+        #expect(store.clickToSwitchSpacesChoice == nil)
+    }
+
     @Test("scroll switching persists in both directions")
     func scrollSwitching_persists() {
         SettingsConstraints.setScrollSwitching(true, axis: \.verticalScrollEnabled, store: store)

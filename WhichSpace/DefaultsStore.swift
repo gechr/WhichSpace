@@ -35,7 +35,11 @@ extension TypedKeySpec: AnyKeySpec {
 /// 3. Tests will automatically pick up the new key
 enum KeySpecs {
     static let classicSpaceSwitching = TypedKeySpec(name: "classicSpaceSwitching", defaultValue: false)
-    static let clickToSwitchSpaces = TypedKeySpec(name: "clickToSwitchSpaces", defaultValue: false)
+    /// Unset until the user chooses in Settings or answers the first left
+    /// click's prompt, so a click can tell a choice of off apart from no
+    /// choice at all
+    // swiftlint:disable:next discouraged_optional_boolean
+    static let clickToSwitchSpaces = TypedKeySpec<Bool?>(name: "clickToSwitchSpaces", defaultValue: nil)
     static let inactiveSpaceOpacity = TypedKeySpec(
         name: "inactiveSpaceOpacity",
         defaultValue: Layout.defaultInactiveSpaceOpacity
@@ -413,6 +417,13 @@ final class DefaultsStore {
     }
 
     var clickToSwitchSpaces: Bool {
+        get { clickToSwitchSpacesChoice ?? false }
+        set { clickToSwitchSpacesChoice = newValue }
+    }
+
+    /// The stored click-to-switch choice, `nil` when nothing has set it yet.
+    // swiftlint:disable:next discouraged_optional_boolean
+    var clickToSwitchSpacesChoice: Bool? {
         get { self[KeySpecs.clickToSwitchSpaces] }
         set { self[KeySpecs.clickToSwitchSpaces] = newValue }
     }

@@ -12,6 +12,11 @@ final class ActionHandler: NSObject {
     private var launchAtLogin: LaunchAtLoginProvider
     private let confirmAction: ConfirmAction
 
+    /// Shows the accessibility permission alert, starts the request when the
+    /// user continues, and returns whether they did. Injected so tests never
+    /// open the alert or reset the permission.
+    private let accessibilityPermissionPrompt: @MainActor () -> Bool
+
     /// Callback invoked whenever an action needs the status-bar icon refreshed.
     let onStatusBarIconNeedsUpdate: (() -> Void)?
 
@@ -44,6 +49,7 @@ final class ActionHandler: NSObject {
         confirmAction: @escaping ConfirmAction = {
             ConfirmationAlert(message: $0, detail: $1, confirmTitle: $2, isDestructive: $3).runModal()
         },
+        accessibilityPermissionPrompt: @escaping @MainActor () -> Bool = ActionHandler.showAccessibilityPermissionAlert,
         onStatusBarIconNeedsUpdate: (() -> Void)? = nil,
         onCheckForUpdates: (() -> Void)? = nil,
         onOpenSettings: (() -> Void)? = nil,
@@ -53,6 +59,7 @@ final class ActionHandler: NSObject {
         self.appState = appState
         self.launchAtLogin = launchAtLogin
         self.confirmAction = confirmAction
+        self.accessibilityPermissionPrompt = accessibilityPermissionPrompt
         self.onStatusBarIconNeedsUpdate = onStatusBarIconNeedsUpdate
         self.onCheckForUpdates = onCheckForUpdates
         self.onOpenSettings = onOpenSettings
@@ -187,15 +194,19 @@ final class ActionHandler: NSObject {
         }
         alert.alertStyle = .warning
         alert.addButton(withTitle: Localization.buttonOK)
-        alert.runModal()
+        alert.runActivatedModal()
     }
 
     // MARK: - Accessibility
 
-    /// Requests accessibility permission for click-to-switch, showing the permission alert.
-    /// Called when the user left-clicks the status bar and click-to-switch is not yet enabled.
+    /// Requests accessibility permission for a left click, recording the
+    /// answer as the click-to-switch choice straight away: Continue turns it
+    /// on and Cancel turns it off, so a declined click is never asked again.
+    /// Recording it at the answer rather than at the grant keeps a later
+    /// grant from overriding an off set in Settings meanwhile.
     func requestAccessibilityForClickToSwitch() {
-        showAccessibilityPermissionAlert()
+        let accepted = accessibilityPermissionPrompt()
+        SettingsConstraints.setClickToSwitchSpaces(accepted, store: store)
     }
 
     // MARK: - Space Picker
@@ -206,7 +217,7 @@ final class ActionHandler: NSObject {
             return
         }
         guard AXIsProcessTrusted() else {
-            showAccessibilityPermissionAlert()
+            _ = accessibilityPermissionPrompt()
             return
         }
         // Fullscreen spaces don't have a targetSpace - activate the app instead
@@ -217,11 +228,9 @@ final class ActionHandler: NSObject {
         }
     }
 
-    /// Shows the accessibility permission alert; `onGranted` applies the
-    /// setting that triggered the request once permission comes through.
-    private func showAccessibilityPermissionAlert(
-        onGranted: @escaping (DefaultsStore) -> Void = { $0.clickToSwitchSpaces = true }
-    ) {
+    /// Shows the accessibility permission alert and starts the request when
+    /// the user continues. Returns whether they continued.
+    static func showAccessibilityPermissionAlert() -> Bool {
         let alert = NSAlert()
         alert.messageText = Localization.alertAccessibilityRequired
         alert.informativeText = String(format: Localization.alertAccessibilityDetail, AppInfo.appName)
@@ -229,16 +238,10 @@ final class ActionHandler: NSObject {
         alert.addButton(withTitle: Localization.buttonContinue)
         alert.addButton(withTitle: Localization.buttonCancel)
 
-        NSApp.activate(ignoringOtherApps: true)
-        let response = alert.runModal()
-
-        if response == .alertFirstButtonReturn {
-            Accessibility.requestPermission { [weak self] in
-                guard let self else {
-                    return
-                }
-                onGranted(store)
-            }
+        guard alert.runActivatedModal() == .alertFirstButtonReturn else {
+            return false
         }
+        Accessibility.requestPermission {}
+        return true
     }
 }
