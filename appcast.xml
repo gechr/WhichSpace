@@ -13,10 +13,8 @@
             <h3>v1.4.0</h3>
             <ul>
               <li>menubar: Ask once before enabling click to switch</li>
-              <li>dependabot: Prefix commits with <code>deps</code></li>
               <li>menubar: Label the right-clicked Space</li>
               <li>menubar: Show status menu icons on macOS 27</li>
-              <li>deps: Update all versions</li>
               <li>backup: Include update preferences</li>
               <li>menubar: Add label field to right-click menu</li>
               <li>diagnostics: Report <code>mru-spaces</code> and missing Space UUIDs</li>
@@ -34,9 +32,7 @@
               <li>menubar: Extend picker shortcuts up to 16 Spaces</li>
               <li>build: Fix <code>make run</code> build version</li>
               <li>menubar: Use native status item menus</li>
-              <li>deps: Resolve vendored KeyboardShortcuts locally</li>
               <li>updates: Foreground nightly channel checks</li>
-              <li>build(deps): bump zizmorcore/zizmor-action from 0.6.2 to 0.6.3 in the github-actions group (#87)</li>
               <li>l10n: Refine translations</li>
             </ul>
           </section>
@@ -110,9 +106,7 @@
               <li>windows: Harden front window selection</li>
               <li>settings: Add inactive Space opacity control</li>
               <li>spaces: Fix instant switching on macOS 27</li>
-              <li>deps: Vendor <code>KeyboardShortcuts</code> to fix record on macOS 27</li>
               <li>settings: Make style grid cells fully clickable</li>
-              <li>deps: Update all versions</li>
               <li>menubar: Fix click handling on macOS 27</li>
             </ul>
           </section>
@@ -162,7 +156,6 @@
           <section data-sparkle-version="1.2.15">
             <h3>v1.2.15</h3>
             <ul>
-              <li>deps: Update all versions</li>
               <li>picker: Make app icon sizes consistent</li>
             </ul>
           </section>
@@ -1136,9 +1129,7 @@
             <li>menubar: Extend picker shortcuts up to 16 Spaces</li>
             <li>build: Fix <code>make run</code> build version</li>
             <li>menubar: Use native status item menus</li>
-            <li>deps: Resolve vendored KeyboardShortcuts locally</li>
             <li>updates: Foreground nightly channel checks</li>
-            <li>build(deps): bump zizmorcore/zizmor-action from 0.6.2 to 0.6.3 in the github-actions group (#87)</li>
             <li>l10n: Refine translations</li>
           </ul>
         ]]></description>
@@ -1316,9 +1307,7 @@
             <li>windows: Harden front window selection</li>
             <li>settings: Add inactive Space opacity control</li>
             <li>spaces: Fix instant switching on macOS 27</li>
-            <li>deps: Vendor <code>KeyboardShortcuts</code> to fix record on macOS 27</li>
             <li>settings: Make style grid cells fully clickable</li>
-            <li>deps: Update all versions</li>
             <li>menubar: Fix click handling on macOS 27</li>
           </ul>
         ]]></description>
@@ -1446,7 +1435,6 @@
         <description><![CDATA[
           <h3>v1.2.15</h3>
           <ul>
-            <li>deps: Update all versions</li>
             <li>picker: Make app icon sizes consistent</li>
           </ul>
         ]]></description>
