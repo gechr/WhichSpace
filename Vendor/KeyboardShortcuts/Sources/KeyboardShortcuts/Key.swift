@@ -165,7 +165,7 @@ extension KeyboardShortcuts.Key {
 	/**
 	All the function keys.
 	*/
-	static let functionKeys: Set<Self> = [
+	nonisolated static let functionKeys: Set<Self> = [
 		.f1,
 		.f2,
 		.f3,
@@ -189,8 +189,31 @@ extension KeyboardShortcuts.Key {
 	]
 
 	/**
+	Keys whose system event representations intrinsically include the Fn modifier, even when Fn was not pressed.
+	*/
+	nonisolated static let keysWithSynthesizedFunctionModifier = functionKeys.union([
+		.help,
+		.deleteForward,
+		// AppKit synthesizes Fn for keypad Clear, while keypad Enter carries only the numeric-pad modifier.
+		.keypadClear,
+		.home,
+		.end,
+		.pageUp,
+		.pageDown,
+		.upArrow,
+		.rightArrow,
+		.downArrow,
+		.leftArrow
+	])
+
+	/**
 	Returns true if the key is a function key. For example, `F1`.
 	*/
 	var isFunctionKey: Bool { Self.functionKeys.contains(self) }
+
+	/**
+	Returns true if the key's system event representations intrinsically include the Fn modifier.
+	*/
+	nonisolated var hasSynthesizedFunctionModifier: Bool { Self.keysWithSynthesizedFunctionModifier.contains(self) }
 }
 #endif

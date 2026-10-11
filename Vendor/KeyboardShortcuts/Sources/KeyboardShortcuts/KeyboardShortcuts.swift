@@ -57,9 +57,9 @@ public enum KeyboardShortcuts {
 	private static var isInitialized = false
 
 	/**
-	When `true`, event handlers will not be called for registered keyboard shortcuts, and the Carbon registrations are suspended.
+	When `true`, the registered keyboard shortcuts are temporarily unregistered so the key events reach the app instead of being consumed as hot keys.
 
-	Gating the handler alone is not enough: a registered hotkey consumes the keystroke before it can reach a recorder's local event monitor, so recording a combination already bound to another name would silently do nothing.
+	This is used while recording so the user can press a shortcut that is already registered, for example, re-recording the current shortcut.
 	*/
 	static var isPaused = false {
 		didSet {
@@ -67,7 +67,7 @@ public enum KeyboardShortcuts {
 				return
 			}
 
-			HotKeyCenter.shared.setPaused(isPaused)
+			updateHotKeyMode()
 		}
 	}
 
@@ -115,7 +115,8 @@ public enum KeyboardShortcuts {
 	}
 
 	private static func updateHotKeyMode() {
-		HotKeyCenter.shared.setEnabled(isEnabled)
+		// Carbon consumes the key press while its hot key remains registered. Suppressing callbacks alone would leave the recorder unable to receive the shortcut.
+		HotKeyCenter.shared.setEnabled(isEnabled && !isPaused)
 	}
 
 	private static var namesWithKeyHandlers: Set<Name> {
@@ -662,7 +663,11 @@ public enum KeyboardShortcuts {
 	}
 
 	static func userDefaultsDidChange(name: Name) {
-		// TODO: Use proper UserDefaults observation instead of this.
+		/*
+		We broadcast changes manually instead of observing `UserDefaults` directly. This means observers only react to changes made through this package's API, not to direct or external writes to the underlying keys.
+
+		`UserDefaults` KVO was intentionally not adopted: the keys are dynamic per shortcut name, so it would require managing a per-key observer lifecycle, and its main benefit (cross-process observation for an App Group helper) requires a shared `UserDefaults` suite, which this package does not support.
+		*/
 		NotificationCenter.default.post(name: .shortcutByNameDidChange, object: nil, userInfo: [NotificationUserInfoKey.name: name])
 	}
 

@@ -69,11 +69,7 @@ eventMonitor = LocalEventMonitor(events: [.leftMouseDown, .rightMouseDown]) { ev
 final class LocalEventMonitor {
 	private let events: NSEvent.EventTypeMask
 	private let callback: (NSEvent) -> NSEvent?
-	// Must be a STRONG reference. `NSEvent.addLocalMonitorForEvents` hands back an autoreleased
-	// token that the caller is required to own until it passes it to `removeMonitor`. Held
-	// weakly, nothing retains it, so it dies when the autorelease pool drains at the end of the
-	// current event-loop turn — taking the monitor with it. The recorder then looks focused but
-	// captures nothing, and keystrokes fall through to the search field as plain text.
+	// Must be strong. The object returned by `addLocalMonitorForEvents` is owned by the caller and must be kept alive until it's passed to `removeMonitor`. It used to be weak, which worked only because AppKit happened to retain it internally. On some macOS 26/27 builds it was deallocated as soon as the autorelease pool drained, so the monitor silently stopped receiving events and `stop()` never removed it.
 	private var monitor: AnyObject?
 
 	init(events: NSEvent.EventTypeMask, callback: @escaping (NSEvent) -> NSEvent?) {
@@ -87,6 +83,10 @@ final class LocalEventMonitor {
 
 	@discardableResult
 	func start() -> Self {
+		guard monitor == nil else {
+			return self
+		}
+
 		monitor = NSEvent.addLocalMonitorForEvents(matching: events, handler: callback) as AnyObject
 		return self
 	}
@@ -115,32 +115,31 @@ final class RunLoopLocalEventMonitor {
 	) {
 		self.runLoopMode = runLoopMode
 		self.callback = callback
-		let handledEventTypes = events.rawValue
 		var pendingEvents = [NSEvent]()
 
 		self.observer = CFRunLoopObserverCreateWithHandler(nil, CFRunLoopActivity.beforeSources.rawValue, true, 0) { _, _ in
-			// Pull all events from the queue and handle the ones matching the given types.
-			// Non-matching events are left untouched, maintaining their order in the queue.
+			// Peek the head of the queue without dequeuing, and only pull an event when the head is one we handle.
+			// While a menu is tracking, the queue is a flood of mouse-moved events. Asking `nextEvent(matching: keyMask, dequeue: true)` to return the key events forces AppKit to scan and drain that whole flood out of the window-server port on every run-loop iteration, which starves the menu's own event tracking and makes the highlight lag badly. Peeking the head stops the moment a mouse-moved event is in front, so the menu keeps consuming its events undisturbed, while any key event that reaches the head is still handled.
+			// Trade-off: a key event queued behind mouse-moved events is handled on a later pass, once the menu drains the events ahead of it. In practice the pointer is still while a shortcut is pressed, so the flood clears and the key surfaces within a pass or two.
 			pendingEvents.removeAll(keepingCapacity: true)
 
-			// Retrieve all events from the event queue to preserve their order (instead of using the `matching` parameter).
-			while let event = NSApp.nextEvent(matching: .any, until: nil, inMode: runLoopMode, dequeue: true) {
-				pendingEvents.append(event)
+			// Collect the leading run of handled events, then re-post the unconsumed ones after the loop. Re-posting inside the loop would send an unconsumed event back to the head and immediately re-peek it, spinning forever.
+			while
+				// Only the peek (`dequeue: false`) is cheap. Guard on the head's type first so we dequeue nothing while a mouse-moved event is in front.
+				let head = NSApp.nextEvent(matching: .any, until: nil, inMode: runLoopMode, dequeue: false),
+				events.contains(NSEvent.EventTypeMask(rawValue: 1 << head.type.rawValue)),
+				// The head matches, so this dequeues that same event.
+				let event = NSApp.nextEvent(matching: events, until: nil, inMode: runLoopMode, dequeue: true)
+			{
+				// The callback returns `nil` when it consumes the event (a matching shortcut), otherwise the event to re-post for normal handling.
+				if let handledEvent = callback(event) {
+					pendingEvents.append(handledEvent)
+				}
 			}
 
-			// Iterate over the gathered events, instead of doing it directly in the `while` loop, to avoid potential infinite loops caused by re-retrieving undiscarded events.
-			for eventToHandle in pendingEvents {
-				let handledEvent = if handledEventTypes & (1 << eventToHandle.type.rawValue) == 0 {
-					eventToHandle
-				} else {
-					callback(eventToHandle)
-				}
-
-				guard let handledEvent else {
-					continue
-				}
-
-				NSApp.postEvent(handledEvent, atStart: false)
+			// Restore unconsumed events ahead of the untouched queue, preserving their original order.
+			for eventToRepost in pendingEvents.reversed() {
+				NSApp.postEvent(eventToRepost, atStart: true)
 			}
 		}
 	}

@@ -29,6 +29,8 @@ extension KeyboardShortcuts {
 		/**
 		Behavior when the shortcut is already used by a menu item in the app's main menu.
 
+		Only applies when recording a different shortcut. Re-recording the current shortcut skips menu conflict handling, while system and custom validation still apply.
+
 		Default: `.block`
 		*/
 		public var menuItem: ConflictBehavior

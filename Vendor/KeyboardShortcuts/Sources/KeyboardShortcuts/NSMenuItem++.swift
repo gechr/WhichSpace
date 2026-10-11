@@ -21,14 +21,6 @@ extension NSMenuItem {
 	private enum AssociatedKeys {
 		static let observer = ObjectAssociation<NSObjectProtocol>()
 		static let fallback = ObjectAssociation<FallbackShortcut>()
-		static let boundName = ObjectAssociation<KeyboardShortcuts.Name>()
-	}
-
-	/**
-	Returns the shortcut name currently bound with `setShortcut(for:)`.
-	*/
-	var keyboardShortcutsBoundName: KeyboardShortcuts.Name? {
-		AssociatedKeys.boundName[self]
 	}
 
 	private func clearShortcut() {
@@ -53,6 +45,9 @@ extension NSMenuItem {
 		}
 	}
 
+	/**
+	Applies a shortcut without changing the menu item's name binding.
+	*/
 	private func applyShortcut(_ shortcut: KeyboardShortcuts.Shortcut?) {
 		guard let shortcut else {
 			clearShortcut()
@@ -108,7 +103,6 @@ extension NSMenuItem {
 	public func setShortcut(for name: KeyboardShortcuts.Name?) {
 		guard let name else {
 			restoreShortcut()
-			AssociatedKeys.boundName[self] = nil
 			AssociatedKeys.fallback[self] = nil
 			removeShortcutObserver()
 			return
@@ -130,7 +124,6 @@ extension NSMenuItem {
 			restoreShortcut()
 		}
 
-		AssociatedKeys.boundName[self] = name
 		let menuItemReference = WeakMenuItem(self)
 
 		// TODO: Use AsyncStream when targeting macOS 15.
@@ -149,6 +142,7 @@ extension NSMenuItem {
 
 				let shortcut = KeyboardShortcuts.Shortcut(name: name)
 				if let shortcut {
+					// Keep the binding alive across updates. The public setter would detach this observer and discard the original fallback.
 					menuItem.applyShortcut(shortcut)
 				} else {
 					menuItem.restoreShortcut()
@@ -166,12 +160,14 @@ extension NSMenuItem {
 
 	This method overrides `.keyEquivalent` and `.keyEquivalentModifierMask`.
 
+	Any previous shortcut name binding is removed.
+
 	- Important: You will have to disable the global keyboard shortcut while the menu is open, as otherwise, the keyboard events will be buffered up and triggered when the menu closes. This is because `NSMenu` puts the thread in tracking-mode, which prevents the keyboard events from being received. You can listen to whether a menu is open by implementing `NSMenuDelegate#menuWillOpen` and `NSMenuDelegate#menuDidClose`. You then use `KeyboardShortcuts.disable` and `KeyboardShortcuts.enable`.
 	*/
 	@_disfavoredOverload
 	public func setShortcut(_ shortcut: KeyboardShortcuts.Shortcut?) {
+		// Direct assignment ends the old binding, including when clearing the shortcut. A later named binding must capture this new value as its fallback.
 		removeShortcutObserver()
-		AssociatedKeys.boundName[self] = nil
 		AssociatedKeys.fallback[self] = nil
 		applyShortcut(shortcut)
 	}
