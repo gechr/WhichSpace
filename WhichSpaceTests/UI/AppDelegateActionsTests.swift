@@ -797,6 +797,21 @@ final class AppDelegateActionsTests: XCTestCase {
 
     // MARK: - Observer/Task Lifecycle Tests
 
+    func testUnchangedRefreshes_preservePendingEvictionCheck() async throws {
+        store.shrinkIconToFit = true
+        sut.scheduleEvictionCheck()
+        let firstCheck = try XCTUnwrap(sut.pendingEvictionCheck)
+
+        // Sustained no-op refreshes must let the original settling check run.
+        for _ in 0 ..< 10 {
+            sut.scheduleEvictionCheck(afterLayoutChange: false)
+            XCTAssertFalse(firstCheck.isCancelled)
+            try await Task.sleep(for: .milliseconds(20))
+        }
+        await firstCheck.value
+        XCTAssertNil(sut.pendingEvictionCheck)
+    }
+
     func testStartObservingAppState_createsObservationTask() {
         XCTAssertNil(sut.observationTask, "Task should not exist before starting observation")
 

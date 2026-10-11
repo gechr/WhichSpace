@@ -365,6 +365,105 @@ struct IconShrinkTests {
 
     // MARK: - Probe Fallback
 
+    @Test("a failed probe preserves a shrunk icon and its pending recovery")
+    func probe_failureKeepsRecoveryPending() {
+        var detector = MenuBarEvictionDetector()
+        _ = detector.apply(Self.evicted, now: Self.now)
+        _ = detector.apply(Self.onScreen, now: Self.now)
+        detector.beginSpaceTransition(now: Self.now)
+        let settled = Self.now.addingTimeInterval(2)
+
+        #expect(detector.apply(.unavailable, now: settled) == nil)
+        #expect(detector.level == .compact)
+        #expect(detector.awaitingSettledReading)
+
+        let roomAppeared = StatusWindowSnapshot(
+            ownWindowIsOnScreen: true,
+            otherStatusWindowCount: 2,
+            sessionIsActive: true
+        )
+        #expect(detector.apply(roomAppeared, now: settled) == .full)
+    }
+
+    @Test("a failed probe cannot shrink an off-screen icon")
+    func probe_failureCannotCauseEviction() {
+        var detector = MenuBarEvictionDetector()
+        let unavailable = StatusWindowSnapshot(
+            ownWindowIsOnScreen: false,
+            otherStatusWindowCount: nil,
+            sessionIsActive: true
+        )
+        #expect(detector.apply(unavailable, now: Self.now) == nil)
+        #expect(detector.level == .full)
+    }
+
+    @Test("a successful zero-neighbour reading can restore the full icon")
+    func probe_zeroNeighboursIsValidRecoveryEvidence() {
+        var detector = MenuBarEvictionDetector()
+        _ = detector.apply(Self.evicted, now: Self.now)
+        _ = detector.apply(Self.onScreen, now: Self.now)
+        detector.beginSpaceTransition(now: Self.now)
+        let noNeighbours = StatusWindowSnapshot(
+            ownWindowIsOnScreen: true,
+            otherStatusWindowCount: 0,
+            sessionIsActive: true
+        )
+        #expect(detector.apply(noNeighbours, now: Self.now.addingTimeInterval(2)) == .full)
+    }
+
+    // MARK: - Width Recovery
+
+    @Test("a narrower full icon can recover from the bottom of the ladder")
+    func widthRecovery_retriesAtTheFloor() {
+        var detector = MenuBarEvictionDetector()
+        detector.recordFullIconWidth(200)
+        while detector.apply(Self.evicted, now: Self.now) != nil {}
+        _ = detector.apply(Self.onScreen, now: Self.now)
+        #expect(detector.level == .currentOnly)
+        #expect(!detector.awaitingSettledReading)
+
+        detector.recordFullIconWidth(100)
+        #expect(detector.awaitingSettledReading)
+        #expect(detector.apply(Self.onScreen, now: Self.now) == .full)
+    }
+
+    @Test("a failed width retry records the new width and stays shrunk")
+    func widthRecovery_failedAttemptDoesNotRepeat() {
+        var detector = MenuBarEvictionDetector()
+        detector.recordFullIconWidth(200)
+        _ = detector.apply(Self.evicted, now: Self.now)
+        detector.recordFullIconWidth(150)
+        #expect(detector.apply(Self.onScreen, now: Self.now) == .full)
+
+        detector.recordFullIconWidth(150)
+        #expect(detector.apply(Self.evicted, now: Self.now) == .compact)
+        _ = detector.apply(Self.onScreen, now: Self.now)
+        detector.recordFullIconWidth(150)
+        detector.beginSpaceTransition(now: Self.now)
+        #expect(detector.apply(Self.onScreen, now: Self.now.addingTimeInterval(2)) == nil)
+        #expect(detector.level == .compact)
+    }
+
+    @Test("width recovery waits for an active session and a visible menu bar")
+    func widthRecovery_waitsForReliableVisibility() {
+        var detector = MenuBarEvictionDetector()
+        detector.recordFullIconWidth(200)
+        _ = detector.apply(Self.evicted, now: Self.now)
+        detector.recordFullIconWidth(100)
+
+        #expect(detector.apply(Self.barHidden, now: Self.now) == nil)
+        #expect(detector.apply(.unavailable, now: Self.now) == nil)
+        let locked = StatusWindowSnapshot(
+            ownWindowIsOnScreen: true,
+            otherStatusWindowCount: 3,
+            sessionIsActive: false
+        )
+        #expect(detector.apply(locked, now: Self.now) == nil)
+        #expect(detector.level == .compact)
+        #expect(detector.awaitingSettledReading)
+        #expect(detector.apply(Self.onScreen, now: Self.now) == .full)
+    }
+
     @Test("an unavailable window list reads as fitting")
     func probe_unavailableSnapshotNeverShrinks() {
         var detector = MenuBarEvictionDetector()
@@ -391,12 +490,12 @@ struct ShrinkResetRoutingTests {
         stub = CGSStub()
     }
 
-    private func setDisplays(activeSpaceID: Int) {
+    private func setDisplays(activeSpaceID: Int, spaceIDs: [Int] = [100, 101]) {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(
                 displayID: "Main",
-                spaces: [(id: 100, isFullscreen: false), (id: 101, isFullscreen: false)],
+                spaces: spaceIDs.map { (id: $0, isFullscreen: false) },
                 activeSpaceID: activeSpaceID
             ),
         ]
@@ -440,5 +539,38 @@ struct ShrinkResetRoutingTests {
         appState.shrinkLevel = .currentOnly
 
         #expect(appState.statusBarIcon.size.width < full)
+    }
+
+    @Test("removing a Space restores styling without losing the shrunk image cache")
+    func spaceRemoval_recoversWithUnchangedNeighbours() {
+        store.showAllSpaces = true
+        setDisplays(activeSpaceID: 100)
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        var detector = MenuBarEvictionDetector()
+        detector.recordFullIconWidth(appState.renderer.fullSizeIconWidth())
+        let now = Date(timeIntervalSinceReferenceDate: 1000)
+        let evicted = StatusWindowSnapshot(
+            ownWindowIsOnScreen: false,
+            otherStatusWindowCount: 3,
+            sessionIsActive: true
+        )
+        let visible = StatusWindowSnapshot(
+            ownWindowIsOnScreen: true,
+            otherStatusWindowCount: 3,
+            sessionIsActive: true
+        )
+        #expect(detector.apply(evicted, now: now) == .compact)
+        appState.shrinkLevel = .compact
+        _ = detector.apply(visible, now: now)
+
+        setDisplays(activeSpaceID: 100, spaceIDs: [100])
+        appState.forceSpaceUpdate()
+        detector.beginSpaceTransition(now: now)
+        let shrunkIcon = appState.statusBarIcon
+        let width = appState.renderer.fullSizeIconWidth()
+        #expect(appState.renderer.fullSizeIconWidth() == width)
+        #expect(appState.statusBarIcon === shrunkIcon)
+        detector.recordFullIconWidth(width)
+        #expect(detector.apply(visible, now: now.addingTimeInterval(2)) == .full)
     }
 }

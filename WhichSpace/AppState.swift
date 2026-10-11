@@ -184,8 +184,8 @@ final class AppState {
     var shrinkLevel: IconShrinkLevel = .full
 
     /// Invoked when a new snapshot lands, meaning the Space, its display, or
-    /// the display arrangement changed. Drives the status item back to full
-    /// size so a layout that has room again gets it back.
+    /// the display arrangement changed. Lets the status item settle before
+    /// judging eviction or retrying full size when room has opened.
     @ObservationIgnored var onSnapshotDidChange: (() -> Void)?
 
     /// Space info for all displays (used when showAllDisplays is enabled)

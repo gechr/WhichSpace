@@ -134,7 +134,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
     /// Reads whether anyone else's status items are still drawn
     private let menuBarVisibilityProbe: MenuBarVisibilityProbe
     private var evictionDetector = MenuBarEvictionDetector()
-    private var pendingEvictionCheck: Task<Void, Never>?
+    private(set) var pendingEvictionCheck: Task<Void, Never>?
     private var evictionObservationTasks: [Task<Void, Never>] = []
     /// The display the status item was last seen drawn on. `NSWindow.screen`
     /// can go nil once the window is hidden, which is exactly when the display
@@ -1045,9 +1045,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
     ///
     /// Assigning an image relayouts the bar and the item reads as off screen
     /// while that happens, so the reading waits for it to settle. Each render
-    /// replaces any pending reading, and the reading itself renders when it
-    /// shrinks, so the levels cascade until one fits.
-    private func scheduleEvictionCheck() {
+    /// replaces any pending reading after a layout change. Unchanged refreshes
+    /// keep the pending reading so a notification burst cannot postpone it.
+    /// Internal so tests can exercise scheduling without a real status item.
+    func scheduleEvictionCheck(afterLayoutChange: Bool = true) {
+        if !afterLayoutChange, pendingEvictionCheck != nil {
+            return
+        }
         pendingEvictionCheck?.cancel()
         pendingEvictionCheck = nil
         // Nothing to schedule once the icon is as small as it goes, unless
@@ -1058,7 +1062,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
         else {
             return
         }
-        evictionDetector.beginSettling(now: Date())
+        if afterLayoutChange {
+            evictionDetector.beginSettling(now: Date())
+        }
         let delay = max(0, evictionDetector.evictionCheckDate.timeIntervalSinceNow)
         pendingEvictionCheck = Task { [weak self] in
             try? await Task.sleep(for: .seconds(delay))
@@ -1071,7 +1077,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
     }
 
     /// Applies a settled menu-bar reading, shrinking an evicted icon or
-    /// restoring one after enough neighbours have disappeared.
+    /// restoring one after neighbours disappear or its full width decreases.
     ///
     /// The reading that matters is a relative one. Running out of room takes
     /// this app's item off screen and leaves its neighbours behind, so the
@@ -1330,16 +1336,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
         guard let statusBarItem else {
             return
         }
-        // Every refresh re-arms the reading, including the unchanged-icon path
-        // below: the room around the item can change without the icon doing so
-        scheduleEvictionCheck()
         // Ahead of the unchanged-icon check: the same icon can outlive a
         // change of Space, and the announced label has to follow the Space
         updateStatusBarAccessibilityLabel()
         let icon = appState.statusBarIcon
+        let imageChanged = statusBarItem.button?.image !== icon
+        let wasVisible = statusBarItem.isVisible
+        if store.shrinkIconToFit {
+            evictionDetector.recordFullIconWidth(appState.renderer.fullSizeIconWidth())
+        }
+        // Unchanged refreshes can still notice eviction, but only actual
+        // layout changes earn another settling window.
+        defer {
+            scheduleEvictionCheck(afterLayoutChange: imageChanged || wasVisible != statusBarItem.isVisible)
+        }
         // Skip the assignment and forced redraw when the cached icon is
         // already installed (e.g. every submenu open triggers an update)
-        guard statusBarItem.button?.image !== icon else {
+        guard imageChanged else {
             updateStatusBarVisibility()
             return
         }

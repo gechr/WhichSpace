@@ -149,6 +149,8 @@ final class StatusBarRenderer {
 
     private var cachedIcon: NSImage?
     private var cachedIconKey: IconCacheKey?
+    private var cachedFullIconWidth: Double?
+    private var cachedFullIconWidthKey: IconCacheKey?
 
     init(appState: AppState, displaySpaceProvider: DisplaySpaceProvider, store: DefaultsStore) {
         self.appState = appState
@@ -177,6 +179,22 @@ final class StatusBarRenderer {
         cachedIcon = icon
         cachedIconKey = key
         return icon
+    }
+
+    /// Measures the full icon without disturbing the installed shrink-level
+    /// image cache. Recovery checks reuse the width until rendering inputs change.
+    func fullSizeIconWidth() -> Double {
+        let key = buildIconCacheKey(level: .full)
+        if let cachedIcon, cachedIconKey == key {
+            return Double(cachedIcon.size.width)
+        }
+        if let cachedFullIconWidth, cachedFullIconWidthKey == key {
+            return cachedFullIconWidth
+        }
+        let width = Double(generateStatusBarIcon(isDark: key.isDarkMode, level: .full).size.width)
+        cachedFullIconWidth = width
+        cachedFullIconWidthKey = key
+        return width
     }
 
     /// Returns the layout of visible icons in the status bar for the current mode
@@ -383,6 +401,8 @@ final class StatusBarRenderer {
     func invalidateIconCache() {
         cachedIcon = nil
         cachedIconKey = nil
+        cachedFullIconWidth = nil
+        cachedFullIconWidthKey = nil
     }
 
     /// Refreshes window data in the background without dropping the current

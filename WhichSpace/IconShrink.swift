@@ -4,8 +4,8 @@ import AppKit
 
 /// How far the status item has been degraded to keep it on the menu bar.
 ///
-/// The ladder only ever descends. It returns to `full` when the user switches
-/// Space, clicks the status item, changes a setting, or the display
+/// The ladder descends until the icon fits. It returns to `full` when room
+/// opens, the full icon gets narrower, a width setting changes, or the display
 /// configuration changes.
 enum IconShrinkLevel: Int, CaseIterable, Comparable, Sendable {
     /// Every Space rendered with the user's own labels, symbols and badges
@@ -73,8 +73,9 @@ enum IconShrinkLevel: Int, CaseIterable, Comparable, Sendable {
 struct StatusWindowSnapshot: Equatable, Sendable {
     /// Whether this app's own status item is drawn
     let ownWindowIsOnScreen: Bool
-    /// How many other processes' status items are drawn on the same display
-    let otherStatusWindowCount: Int
+    /// How many other processes' status items are drawn on the same display,
+    /// or nil when the window-list query failed.
+    let otherStatusWindowCount: Int?
     /// Whether the screen is showing the desktop, rather than the lock screen,
     /// the screensaver, or a sleeping display.
     ///
@@ -86,14 +87,14 @@ struct StatusWindowSnapshot: Equatable, Sendable {
 
     /// Whether the menu bar is drawing anything at all besides this app.
     var otherMenuBarWindowIsOnScreen: Bool {
-        otherStatusWindowCount > 0
+        (otherStatusWindowCount ?? 0) > 0
     }
 
-    /// The reading that keeps the icon at full size, used when a source is
-    /// unavailable so a failed query never shrinks anything.
+    /// An unavailable reading preserves the current level and any pending
+    /// recovery attempt until a reliable reading arrives.
     static let unavailable = Self(
         ownWindowIsOnScreen: true,
-        otherStatusWindowCount: 0,
+        otherStatusWindowCount: nil,
         sessionIsActive: true
     )
 }
@@ -104,8 +105,8 @@ protocol MenuBarVisibilityProbe: Sendable {
     ///
     /// A count rather than a flag: zero answers whether the bar is drawn at
     /// all, and a drop in the count is the only cheap evidence that room may
-    /// have opened up.
-    func otherStatusWindowCount(onDisplay bounds: CGRect) -> Int
+    /// have opened up. Nil means the query failed, not that room opened.
+    func otherStatusWindowCount(onDisplay bounds: CGRect) -> Int?
 }
 
 /// Default implementation backed by the window list.
@@ -122,11 +123,11 @@ struct CGMenuBarVisibilityProbe: MenuBarVisibilityProbe {
     /// would report a drawn bar where there is none.
     private static let statusLevel = Int(CGWindowLevelForKey(.statusWindow))
 
-    func otherStatusWindowCount(onDisplay bounds: CGRect) -> Int {
+    func otherStatusWindowCount(onDisplay bounds: CGRect) -> Int? {
         guard let windowList = CGWindowListCopyWindowInfo([.optionOnScreenOnly], kCGNullWindowID)
             as? [[String: Any]]
         else {
-            return 0
+            return nil
         }
 
         let ownPID = ProcessInfo.processInfo.processIdentifier
@@ -191,6 +192,17 @@ struct MenuBarEvictionDetector {
     /// Whether a Space change should use its next reliable reading to see if
     /// enough neighbours disappeared for the full icon to fit again.
     private var fullSizeRetryIsPending = false
+    private var fullIconWidth: Double?
+    private var fullIconWidthWhenShrunk: Double?
+
+    /// A narrower full icon deserves another attempt even when the menu bar
+    /// holds the same neighbours, for example after a Space is removed.
+    mutating func recordFullIconWidth(_ width: Double) {
+        fullIconWidth = width
+        if level != .full, let fullIconWidthWhenShrunk, width < fullIconWidthWhenShrunk {
+            fullSizeRetryIsPending = true
+        }
+    }
 
     /// Holds readings off until the status item has been laid out again.
     mutating func beginSettling(now: Date) {
@@ -230,14 +242,15 @@ struct MenuBarEvictionDetector {
     /// leave the icon as it is.
     mutating func apply(_ snapshot: StatusWindowSnapshot, now: Date) -> IconShrinkLevel? {
         guard now >= settleDeadline,
-              snapshot.sessionIsActive
+              snapshot.sessionIsActive,
+              let otherStatusWindowCount = snapshot.otherStatusWindowCount
         else {
             return nil
         }
 
         if snapshot.ownWindowIsOnScreen {
             if fullSizeRetryIsPending,
-               shouldRetryFullSize(otherStatusWindowCount: snapshot.otherStatusWindowCount)
+               shouldRetryFullSize(otherStatusWindowCount: otherStatusWindowCount)
             {
                 reset()
                 return .full
@@ -251,7 +264,7 @@ struct MenuBarEvictionDetector {
             if neighbourCountIsProvisional {
                 neighbourCountWhenShrunk = max(
                     neighbourCountWhenShrunk ?? 0,
-                    snapshot.otherStatusWindowCount
+                    otherStatusWindowCount
                 )
                 neighbourCountIsProvisional = false
             }
@@ -271,8 +284,9 @@ struct MenuBarEvictionDetector {
         }
 
         level = next
-        neighbourCountWhenShrunk = snapshot.otherStatusWindowCount
+        neighbourCountWhenShrunk = otherStatusWindowCount
         neighbourCountIsProvisional = true
+        fullIconWidthWhenShrunk = fullIconWidth
         return next
     }
 
@@ -281,12 +295,17 @@ struct MenuBarEvictionDetector {
     /// A Space switch on its own is not evidence: the menu bar holds the same
     /// items either way, so expanding would only widen the item, reflow every
     /// icon to its left, and collapse again a moment later. A status item
-    /// going away is evidence, and it is the case the user is waiting on.
+    /// going away or the full icon getting narrower is evidence.
     func shouldRetryFullSize(otherStatusWindowCount: Int) -> Bool {
         guard level != .full, let neighbourCountWhenShrunk else {
             return false
         }
-        return otherStatusWindowCount < neighbourCountWhenShrunk
+        let iconGotNarrower = if let fullIconWidth, let fullIconWidthWhenShrunk {
+            fullIconWidth < fullIconWidthWhenShrunk
+        } else {
+            false
+        }
+        return otherStatusWindowCount < neighbourCountWhenShrunk || iconGotNarrower
     }
 
     /// Returns the icon to full size.
@@ -303,5 +322,7 @@ struct MenuBarEvictionDetector {
         neighbourCountWhenShrunk = nil
         neighbourCountIsProvisional = false
         fullSizeRetryIsPending = false
+        fullIconWidth = nil
+        fullIconWidthWhenShrunk = nil
     }
 }
