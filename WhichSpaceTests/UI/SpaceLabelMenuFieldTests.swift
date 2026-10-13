@@ -145,6 +145,17 @@ struct SpaceLabelMenuFieldTests {
         #expect(reverts == 1)
     }
 
+    @Test("an unbound key such as a menu shortcut is absorbed without an edit")
+    func unboundKeyIsAbsorbed() {
+        let field = SpaceLabelMenuField()
+        var applied: [String] = []
+        configure(field, currentLabel: "Work") { applied.append($0) }
+
+        #expect(press(Selector(("noop:")), on: field))
+        #expect(applied.isEmpty)
+        #expect(field.text == "Work")
+    }
+
     @Test("the clear button applies an empty label and counts as an edit")
     func clearButtonAppliesEmptyLabel() {
         let field = SpaceLabelMenuField()

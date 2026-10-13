@@ -117,6 +117,11 @@ final class SpaceLabelMenuField: NSView, NSSearchFieldDelegate {
             }
             enclosingMenuItem?.menu?.cancelTracking()
             return true
+        case Selector(("noop:")):
+            // The menu hands Command shortcuts such as Cmd+, to the field as
+            // well as running the matching item, and the field editor beeps
+            // at a key it has no binding for
+            return true
         default:
             return false
         }
