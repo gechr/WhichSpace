@@ -148,6 +148,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
     private var preferenceObservationTasks: [Task<Void, Never>] = []
     private var settingsCoordinator: SettingsWindowCoordinator?
     private var updaterController: SPUStandardUpdaterController!
+    private var isProbingChannel = false
+    private var channelProbeFoundUpdate = false
+    /// Reruns the channel probe when the current session ends
+    private var channelProbePending = false
+    /// Between Sparkle's show-update and finish-session callbacks
+    private var isShowingUpdate = false
     private var hotkeyCenter: HotkeyCenter?
 
     private(set) var observationTask: Task<Void, Never>?
@@ -297,6 +303,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
                     model: model,
                     updater: updaterController?.updater,
                     onCheckForUpdates: { [weak self] in self?.actionHandler.checkForUpdates() },
+                    onUpdateChannelChanged: { [weak self] in self?.probeUpdateChannel() },
                     onImportSettings: { [weak self] in self?.actionHandler.importSettings() },
                     onExportSettings: { [weak self] in self?.actionHandler.exportSettings() },
                     onCopyDiagnostics: { [weak self] in self?.actionHandler.copyDiagnostics() ?? false },
@@ -346,7 +353,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
                 models: [model, editorModel],
                 panes: [generalPane, menuBarPane, spacesPane, mousePane, keyboardPane],
                 highlighter: highlighter
-            )
+            ) { [weak self] in
+                self?.restoreAccessoryPolicyIfIdle()
+            }
         }
         settingsCoordinator?.show(pane: pane, focus: focus)
     }
@@ -752,6 +761,48 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
         }
     }
 
+    /// Opens the update window only if the new channel has something newer
+    private func probeUpdateChannel() {
+        guard let updater = updaterController?.updater else {
+            return
+        }
+        guard !updater.sessionInProgress else {
+            channelProbePending = true
+            return
+        }
+        channelProbePending = false
+        isProbingChannel = true
+        channelProbeFoundUpdate = false
+        updater.checkForUpdateInformation()
+    }
+
+    nonisolated func updater(_: SPUUpdater, didFindValidUpdate _: SUAppcastItem) {
+        MainActor.assumeIsolated {
+            if isProbingChannel {
+                channelProbeFoundUpdate = true
+            }
+        }
+    }
+
+    nonisolated func updater(
+        _: SPUUpdater,
+        didFinishUpdateCycleFor updateCheck: SPUUpdateCheck,
+        error _: (any Error)?
+    ) {
+        MainActor.assumeIsolated {
+            if updateCheck == .updateInformation, isProbingChannel {
+                isProbingChannel = false
+                if channelProbeFoundUpdate {
+                    actionHandler.checkForUpdates()
+                    return
+                }
+            }
+            if channelProbePending {
+                probeUpdateChannel()
+            }
+        }
+    }
+
     // MARK: - SPUStandardUserDriverDelegate
 
     nonisolated var supportsGentleScheduledUpdateReminders: Bool {
@@ -763,15 +814,28 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
         forUpdate _: SUAppcastItem,
         state _: SPUUserUpdateState
     ) {
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            self?.isShowingUpdate = true
             NSApp.setActivationPolicy(.regular)
         }
     }
 
     nonisolated func standardUserDriverWillFinishUpdateSession() {
-        DispatchQueue.main.async {
-            NSApp.setActivationPolicy(.accessory)
+        DispatchQueue.main.async { [weak self] in
+            self?.isShowingUpdate = false
+            self?.restoreAccessoryPolicyIfIdle()
         }
+    }
+
+    /// Demoting deactivates the app, so wait until Settings closes
+    private func restoreAccessoryPolicyIfIdle() {
+        guard NSApp.activationPolicy() == .regular,
+              !isShowingUpdate,
+              settingsCoordinator?.isWindowVisible != true
+        else {
+            return
+        }
+        NSApp.setActivationPolicy(.accessory)
     }
 
     // MARK: - Menu Configuration

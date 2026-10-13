@@ -78,6 +78,7 @@ final class SettingsWindowCoordinator {
     private let models: [SettingsObservingModel]
     private let panes: [SettingsPane]
     private let highlighter: SettingsHighlighter
+    private let onClose: () -> Void
     private var windowController: SettingsWindowController?
     private var closeObserver: NSObjectProtocol?
     private var shortcutMonitor: Any?
@@ -87,10 +88,20 @@ final class SettingsWindowCoordinator {
     /// Margin past the package's 0.25 s tab crossfade before repairing.
     private static let transitionSettleDelay: Duration = .milliseconds(400)
 
-    init(models: [SettingsObservingModel], panes: [SettingsPane], highlighter: SettingsHighlighter) {
+    init(
+        models: [SettingsObservingModel],
+        panes: [SettingsPane],
+        highlighter: SettingsHighlighter,
+        onClose: @escaping () -> Void = {}
+    ) {
         self.models = models
         self.panes = panes
         self.highlighter = highlighter
+        self.onClose = onClose
+    }
+
+    var isWindowVisible: Bool {
+        windowController?.window?.isVisible ?? false
     }
 
     /// Shows and fronts the settings window, creating it on first use.
@@ -135,6 +146,7 @@ final class SettingsWindowCoordinator {
                         }
                         self?.search?.reset()
                         ColorPanelCoordinator.closeSharedPanel()
+                        self?.onClose()
                     }
                 }
                 // The window is retitled on every tab activation, including

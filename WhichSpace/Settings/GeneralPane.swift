@@ -12,6 +12,7 @@ struct GeneralPane: View {
     /// bind straight to the updater rather than `DefaultsStore`
     let updater: SPUUpdater?
     let onCheckForUpdates: () -> Void
+    let onUpdateChannelChanged: () -> Void
     let onImportSettings: () -> Void
     let onExportSettings: () -> Void
     let onCopyDiagnostics: () -> Bool
@@ -71,11 +72,12 @@ struct GeneralPane: View {
                 )
                 SettingsRowDivider()
                 // Applies to manual checks too, so not gated on the
-                // auto-check toggle
+                // auto-check toggle. Locked mid-check, which reads the channel late
                 SettingsToggleRow(
                     title: Localization.toggleNightlyUpdates,
                     isOn: nightlyUpdatesBinding,
                     icon: "moon.stars",
+                    disabled: checkInProgress,
                     subtitle: Localization.tipNightlyUpdates,
                     anchor: .nightlyUpdates
                 )
@@ -164,18 +166,14 @@ struct GeneralPane: View {
         }
     }
 
-    /// The store binding for the nightly toggle, with a side effect: any
-    /// change starts a user-initiated check, so the latest nightly
-    /// (opting in) or latest stable release (opting out) is offered without
-    /// waiting for the next scheduled check. Use the foreground action so
-    /// Sparkle brings the update prompt in front of Settings.
+    /// The nightly toggle binding, probing the new channel on change
     private var nightlyUpdatesBinding: Binding<Bool> {
         let stored = model.binding(\.includeNightlyUpdates)
         return Binding(
             get: { stored.wrappedValue },
             set: { enabled in
                 stored.wrappedValue = enabled
-                onCheckForUpdates()
+                onUpdateChannelChanged()
             }
         )
     }
