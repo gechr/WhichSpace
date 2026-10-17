@@ -106,7 +106,7 @@ final class SpaceLabelMenuField: NSView, NSSearchFieldDelegate {
         onChange?(clamped)
     }
 
-    func control(_: NSControl, textView _: NSTextView, doCommandBy selector: Selector) -> Bool {
+    func control(_: NSControl, textView: NSTextView, doCommandBy selector: Selector) -> Bool {
         switch selector {
         case #selector(NSResponder.insertNewline(_:)):
             enclosingMenuItem?.menu?.cancelTracking()
@@ -118,6 +118,9 @@ final class SpaceLabelMenuField: NSView, NSSearchFieldDelegate {
             enclosingMenuItem?.menu?.cancelTracking()
             return true
         case Selector(("noop:")):
+            if let event = NSApp.currentEvent {
+                _ = LabelSearchField.performEditingShortcut(with: event, in: textView)
+            }
             // The menu hands Command shortcuts such as Cmd+, to the field as
             // well as running the matching item, and the field editor beeps
             // at a key it has no binding for
@@ -148,6 +151,39 @@ final class LabelSearchField: NSSearchField {
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
         nil
+    }
+
+    override func performKeyEquivalent(with event: NSEvent) -> Bool {
+        if let editor = currentEditor() as? NSTextView,
+           Self.performEditingShortcut(with: event, in: editor)
+        {
+            return true
+        }
+        return super.performKeyEquivalent(with: event)
+    }
+
+    /// Menu tracking can deliver shortcuts either as key equivalents or as
+    /// unbound field-editor commands. Both paths use the native editing actions;
+    /// this accessory app has no main Edit menu to supply their key equivalents.
+    static func performEditingShortcut(with event: NSEvent, in editor: NSTextView) -> Bool {
+        guard event.type == .keyDown,
+              event.modifierFlags.intersection([.command, .control, .option, .shift]) == .command
+        else {
+            return false
+        }
+        switch event.charactersIgnoringModifiers?.lowercased() {
+        case "a":
+            editor.selectAll(nil)
+        case "c":
+            editor.copy(nil)
+        case "v":
+            editor.paste(nil)
+        case "x":
+            editor.cut(nil)
+        default:
+            return false
+        }
+        return true
     }
 
     override var searchButtonBounds: CGRect {

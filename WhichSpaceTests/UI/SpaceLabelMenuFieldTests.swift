@@ -3,6 +3,27 @@ import Testing
 @testable import WhichSpace
 
 @MainActor
+private final class EditingShortcutTextView: NSTextView {
+    var actions: [String] = []
+
+    override func selectAll(_: Any?) {
+        actions.append("a")
+    }
+
+    override func copy(_: Any?) {
+        actions.append("c")
+    }
+
+    override func paste(_: Any?) {
+        actions.append("v")
+    }
+
+    override func cut(_: Any?) {
+        actions.append("x")
+    }
+}
+
+@MainActor
 struct SpaceLabelMenuFieldTests {
     private let store: DefaultsStore
     private let testSuite: TestSuite
@@ -71,6 +92,68 @@ struct SpaceLabelMenuFieldTests {
     private func clear(_ field: SpaceLabelMenuField) {
         field.field.stringValue = ""
         _ = field.field.sendAction(field.field.action, to: field.field.target)
+    }
+
+    private func keyEvent(_ character: String, modifiers: NSEvent.ModifierFlags = .command) throws -> NSEvent {
+        try #require(NSEvent.keyEvent(
+            with: .keyDown,
+            location: .zero,
+            modifierFlags: modifiers,
+            timestamp: 0,
+            windowNumber: 0,
+            context: nil,
+            characters: character,
+            charactersIgnoringModifiers: character,
+            isARepeat: false,
+            keyCode: 0
+        ))
+    }
+
+    @Test("Command editing shortcuts invoke the native field-editor actions", arguments: ["a", "c", "v", "x"])
+    func editingShortcutsInvokeNativeActions(character: String) throws {
+        let editor = EditingShortcutTextView()
+
+        #expect(try LabelSearchField.performEditingShortcut(with: keyEvent(character), in: editor))
+        #expect(editor.actions == [character])
+    }
+
+    @Test("editing shortcuts leave other modifiers and menu commands alone", arguments: [
+        NSEvent.ModifierFlags(), .shift, .control, .option,
+        [.command, .shift], [.command, .control], [.command, .option],
+    ])
+    func editingShortcutsRequireCommandOnly(modifiers: NSEvent.ModifierFlags) throws {
+        let editor = EditingShortcutTextView()
+
+        for character in ["a", "c", "v", "x"] {
+            #expect(try !LabelSearchField.performEditingShortcut(
+                with: keyEvent(character, modifiers: modifiers),
+                in: editor
+            ))
+        }
+        #expect(editor.actions.isEmpty)
+    }
+
+    @Test("menu shortcuts are not handled as editing shortcuts", arguments: [",", "u", "q"])
+    func menuShortcutsPassThrough(character: String) throws {
+        let editor = EditingShortcutTextView()
+
+        #expect(try !LabelSearchField.performEditingShortcut(with: keyEvent(character), in: editor))
+        #expect(editor.actions.isEmpty)
+    }
+
+    @Test("Command-A selects the text in the focused native search-field editor")
+    func keyEquivalentReachesFocusedEditor() throws {
+        let field = SpaceLabelMenuField()
+        configure(field, currentLabel: "Work")
+        let window = NSWindow(contentRect: field.bounds, styleMask: .borderless, backing: .buffered, defer: false)
+        window.contentView = field
+        defer { window.contentView = nil }
+        #expect(window.makeFirstResponder(field.field))
+        let editor = try #require(field.field.currentEditor())
+        editor.selectedRange = NSRange(location: 2, length: 0)
+
+        #expect(try field.field.performKeyEquivalent(with: keyEvent("a")))
+        #expect(editor.selectedRange == NSRange(location: 0, length: 4))
     }
 
     @Test("status menu places a Label header and the field between the version header and Settings")
