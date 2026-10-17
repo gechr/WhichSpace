@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   swiftlint:
-    runs-on: macos-26
+    runs-on: xcode-27
     permissions:
       contents: read
     steps:
@@ -33,7 +33,7 @@ jobs:
         run: make lint
 
   swiftformat:
-    runs-on: macos-26
+    runs-on: xcode-27
     permissions:
       contents: read
     steps:
