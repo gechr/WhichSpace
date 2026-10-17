@@ -776,12 +776,13 @@ enum ScriptingHelpers {
 }
 
 /// Extension to make the application scriptable for property access.
+@MainActor
 extension NSApplication {
     /// Returns the current space number, following the local or global
     /// numbering preference. Fullscreen Spaces have no displayed number, so
     /// they yield their position among the current display's Spaces.
     /// Usage: `tell application "WhichSpace" to get current space number`
-    @MainActor @objc var currentSpaceNumber: Int {
+    @objc var currentSpaceNumber: Int {
         AppEnvironment.shared.appState.currentSpaceDisplayNumber
     }
 }

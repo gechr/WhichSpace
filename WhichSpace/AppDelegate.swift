@@ -443,11 +443,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
 
     func showSpaceSwipeGestureGuidanceIfNeeded() {
         let requiresSetting = SpaceSwitcher.requiresSpaceSwipeGestureSetting
-        guard requiresSetting else {
-            return
-        }
-
-        guard Self.shouldShowSpaceSwipeGestureGuidance(
+        guard requiresSetting, Self.shouldShowSpaceSwipeGestureGuidance(
             requiresSetting: requiresSetting,
             usesClassicSwitching: store.classicSpaceSwitching,
             gestureEnabled: SpaceSwitcher.spaceSwipeGestureSettingEnabled

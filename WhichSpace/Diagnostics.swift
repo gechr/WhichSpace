@@ -151,10 +151,10 @@ struct DiagnosticsEnvironment {
             return nil
         }
         var buffer = [UInt8](repeating: 0, count: size)
-        guard sysctlbyname(name, &buffer, &size, nil, 0) == 0 else {
-            return nil
-        }
-        guard let value = String(bytes: buffer.prefix { $0 != 0 }, encoding: .utf8), !value.isEmpty else {
+        guard sysctlbyname(name, &buffer, &size, nil, 0) == 0,
+              let value = String(bytes: buffer.prefix { $0 != 0 }, encoding: .utf8),
+              !value.isEmpty
+        else {
             return nil
         }
         return value

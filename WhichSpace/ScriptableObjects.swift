@@ -462,10 +462,11 @@ extension ScriptingHelpers {
 }
 
 /// Extension exposing the element containers of the sdef object model.
+@MainActor
 extension NSApplication {
     /// The display elements, in the same order as the Settings display picker.
     /// Usage: `tell application "WhichSpace" to get name of every display`
-    @MainActor @objc var scriptableDisplays: [ScriptableDisplay] {
+    @objc var scriptableDisplays: [ScriptableDisplay] {
         ScriptingHelpers.scriptableDisplays(
             appState: AppEnvironment.shared.appState,
             store: AppEnvironment.shared.store
@@ -474,7 +475,7 @@ extension NSApplication {
 
     /// The current display's Space elements, backing app-level `space N`.
     /// Usage: `tell application "WhichSpace" to get label of space 2`
-    @MainActor @objc var scriptableSpaces: [ScriptableSpace] {
+    @objc var scriptableSpaces: [ScriptableSpace] {
         ScriptingHelpers.scriptableSpaces(
             appState: AppEnvironment.shared.appState,
             store: AppEnvironment.shared.store
@@ -483,7 +484,7 @@ extension NSApplication {
 
     /// The current Space as an element.
     /// Usage: `tell application "WhichSpace" to get label of current space`
-    @MainActor @objc var currentScriptableSpace: ScriptableSpace? {
+    @objc var currentScriptableSpace: ScriptableSpace? {
         ScriptingHelpers.currentScriptableSpace(
             appState: AppEnvironment.shared.appState,
             store: AppEnvironment.shared.store

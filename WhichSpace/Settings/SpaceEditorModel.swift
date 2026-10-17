@@ -980,10 +980,7 @@ final class SpaceEditorModel {
     /// Copies the edited entry's preferences onto one other Space at the
     /// edited scope, replacing that Space's own style after confirming.
     func copyToSpace(_ number: Int) {
-        guard number != editingSpace else {
-            return
-        }
-        guard confirmCopyIfNeeded(
+        guard number != editingSpace, confirmCopyIfNeeded(
             targetHasModifications: SpacePreferences.hasAnyScopedPreference(
                 forSpace: number,
                 context: selectedDisplayID,
@@ -1016,10 +1013,7 @@ final class SpaceEditorModel {
     /// rather than blending with it: a copy alone carries only the keys the
     /// source holds, leaving the rest of the edited entry standing.
     func copyFromSpace(_ number: Int) {
-        guard number != editingSpace else {
-            return
-        }
-        guard confirmCopyIfNeeded(
+        guard number != editingSpace, confirmCopyIfNeeded(
             targetHasModifications: SpacePreferences.hasAnyScopedPreference(
                 forSpace: editingSpace,
                 context: editingDisplay,
@@ -1122,10 +1116,7 @@ final class SpaceEditorModel {
 
     /// Saves the edited Space's preferences as the template for new Spaces.
     func saveAsDefaultStyle() {
-        guard !isEditingDefaultStyle else {
-            return
-        }
-        guard confirmAction(
+        guard !isEditingDefaultStyle, confirmAction(
             Localization.confirmSetDefaultStyle,
             Localization.detailSetDefaultStyle,
             Localization.buttonOK,

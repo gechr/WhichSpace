@@ -38,6 +38,7 @@ jobs:
         run: make test
 
   test-xcode-27:
+    name: test (xcode-27)
     runs-on: xcode-27
     steps:
       # @clover

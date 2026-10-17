@@ -92,9 +92,9 @@ struct ClearCellRules: Equatable {
 
 // MARK: - Preference Loading
 
+@MainActor
 extension ClearCellRules {
     /// Builds the rules from a Space's stored preferences.
-    @MainActor
     init(forSpace space: Int, display: String?, store: DefaultsStore) {
         let label = SpacePreferences.label(forSpace: space, display: display, store: store)
         self.init(
