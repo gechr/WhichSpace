@@ -6,12 +6,12 @@
     <description>Most recent changes with links to updates.</description>
     <language>en</language>
     <item>
-        <title>Version 1.4.1-tip.654</title>
+        <title>Version 1.4.1-tip.656</title>
         <sparkle:channel>nightly</sparkle:channel>
         <description><![CDATA[
           <style>.sparkle-installed-version, .sparkle-installed-version ~ * { display: none }</style>
-          <section data-sparkle-version="1.4.1-tip.654">
-            <h3>Nightly (v1.4.1-tip.654)</h3>
+          <section data-sparkle-version="1.4.1-tip.656">
+            <h3>Nightly (v1.4.1-tip.656)</h3>
             <ul>
               <li>menubar: Stop label field beeping at menu shortcuts</li>
             </ul>
@@ -1125,13 +1125,13 @@
           </section>
         ]]></description>
         <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases</sparkle:fullReleaseNotesLink>
-        <pubDate>Tue, 13 Oct 2026 02:22:33 +0100</pubDate>
+        <pubDate>Sat, 17 Oct 2026 21:41:53 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/tip/WhichSpace.zip"
-          sparkle:version="1.4.1-tip.654"
-          sparkle:shortVersionString="1.4.1-tip.654"
-          sparkle:edSignature="yXwXT+B90peerdPfqtdEzx2QZcndujoedhZI58z1qE7KnsuOyL6gciX8u47RqDTmmZNxtD3cZthHGcbG0pgqBw=="
-          length="4260204"
+          sparkle:version="1.4.1-tip.656"
+          sparkle:shortVersionString="1.4.1-tip.656"
+          sparkle:edSignature="T5vsHXJQMLkmZFLZdYmAn85K+evwJ6SySCh5xihQq+zVizknLutbPUWRcYCKbFwR1i1LSfYzrInie0f3SGTODQ=="
+          length="4260260"
           type="application/octet-stream" />
         <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
       </item>
