@@ -196,6 +196,27 @@ struct DefaultsIsolationGuardTests {
         #expect(store.sizeScale == Layout.defaultSizeScale)
     }
 
+    @Test("numbering picker maps onto both stored keys")
+    func spaceNumberingMapsOntoStoredKeys() {
+        #expect(store.spaceNumbering == .acrossDisplays)
+
+        store.spaceNumbering = .acrossDisplaysScreenOrder
+        #expect(!store.localSpaceNumbers)
+        #expect(store.screenOrderNumbering)
+
+        store.spaceNumbering = .perDisplay
+        #expect(store.localSpaceNumbers)
+        #expect(!store.screenOrderNumbering)
+
+        // Restarted numbering wins over a stray screen order flag
+        store.screenOrderNumbering = true
+        #expect(store.spaceNumbering == .perDisplay)
+
+        store.spaceNumbering = .acrossDisplays
+        #expect(!store.localSpaceNumbers)
+        #expect(!store.screenOrderNumbering)
+    }
+
     @Test("legacy dimming preference migrates to opacity")
     func legacyDimmingPreferenceMigratesToOpacity() {
         let legacySuite = TestSuiteFactory.createSuite()
@@ -245,6 +266,7 @@ struct DefaultsIsolationGuardTests {
             "moveToApplicationsFolderAlertSuppress",
             "paddingScale",
             "preserveSystemSpaceNumbers",
+            "screenOrderNumbering",
             "scrollHapticFeedback",
             "scrollHapticIntensity",
             "scrollSensitivity",

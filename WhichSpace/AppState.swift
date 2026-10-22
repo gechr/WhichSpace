@@ -559,12 +559,16 @@ final class AppState {
     /// data. The display order settings sit greyed out under the
     /// show-all-displays toggle, so turning it off suspends their effect on
     /// numbering rather than leaving a disabled row still changing the icon.
+    /// Screen order numbering is greyed out by restarted numbering instead.
     private func buildSnapshot() -> SpaceSnapshot {
         SpaceSnapshotService.buildSnapshot(
             provider: displaySpaceProvider,
             localSpaceNumbers: store.localSpaceNumbers,
             displayOrder: store.showAllDisplays ? store.displayOrder : .system,
-            preserveSystemSpaceNumbers: store.preserveSystemSpaceNumbers
+            preserveSystemSpaceNumbers: store.preserveSystemSpaceNumbers,
+            screenOrder: store.screenOrderNumbering && !store.localSpaceNumbers
+                ? displaySpaceProvider.screenOrder()
+                : []
         )
     }
 

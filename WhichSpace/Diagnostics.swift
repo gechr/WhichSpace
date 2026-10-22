@@ -46,6 +46,12 @@ struct DiagnosticsEnvironment {
     /// Space count per display, in the order the app orders displays. The
     /// length is the display count.
     var spacesPerDisplay: [Int]
+    /// The displays in CGS order and in `NSScreen.screens` order, as ordinals
+    /// into `spacesPerDisplay`. Nil marks a display missing from the
+    /// snapshot. A mismatch between the two is what screen order numbering
+    /// corrects.
+    var cgsDisplayOrder: [Int?]
+    var screenOrder: [Int?]
     var fullscreenSpaceCount: Int
     /// Spaces whose CGS uuid is empty or missing. Order tracking follows an
     /// empty one by managed ID and skips reads with a missing one, so a
@@ -90,6 +96,7 @@ struct DiagnosticsEnvironment {
     @MainActor
     static func current(
         spacesPerDisplay: [Int],
+        displayIdentifiers: [String],
         fullscreenSpaceCount: Int,
         spacesWithoutUUID: Int,
         shrinkLevel: IconShrinkLevel,
@@ -110,6 +117,12 @@ struct DiagnosticsEnvironment {
             separateSpaces: flag(suite: "com.apple.spaces", key: "spans-displays").inverted,
             autoRearrangeSpaces: flag(suite: "com.apple.dock", key: "mru-spaces", absent: .yes),
             spacesPerDisplay: spacesPerDisplay,
+            cgsDisplayOrder: ordinals(
+                of: CGSDisplaySpaceProvider().copyManagedDisplaySpaces()?
+                    .compactMap { $0["Display Identifier"] as? String } ?? [],
+                in: displayIdentifiers
+            ),
+            screenOrder: ordinals(of: DisplayGeometry.screenOrder(), in: displayIdentifiers),
             fullscreenSpaceCount: fullscreenSpaceCount,
             spacesWithoutUUID: spacesWithoutUUID,
             shrinkLevel: shrinkLevel,
@@ -119,6 +132,16 @@ struct DiagnosticsEnvironment {
             activeSpaceIsFullscreen: activeSpaceIsFullscreen,
             thirdPartyApps: runningKnownApps()
         )
+    }
+
+    /// 1-based positions in `displayIdentifiers` of each identifier in `order`,
+    /// matched case-insensitively, so the report names displays without
+    /// their UUIDs.
+    static func ordinals(of order: [String], in displayIdentifiers: [String]) -> [Int?] {
+        let positions = Dictionary(
+            displayIdentifiers.enumerated().map { ($1.uppercased(), $0 + 1) }
+        ) { first, _ in first }
+        return order.map { positions[$0.uppercased()] }
     }
 
     /// `absent` when the key is missing and unknown when it holds something
@@ -194,6 +217,7 @@ enum Diagnostics {
             ("Show all displays", string(store.showAllDisplays)),
             ("Local Space numbers", string(store.localSpaceNumbers)),
             ("Preserve system Space numbers", string(store.preserveSystemSpaceNumbers)),
+            ("Screen order numbering", string(store.screenOrderNumbering)),
             ("Display order", store.displayOrder.rawValue),
             ("Hide empty Spaces", string(store.hideEmptySpaces)),
             ("Hide fullscreen apps", string(store.hideFullscreenApps)),
@@ -260,6 +284,8 @@ enum Diagnostics {
             [
                 ("Displays", string(environment.spacesPerDisplay.count)),
                 ("Spaces per display", environment.spacesPerDisplay.map(String.init).joined(separator: ", ")),
+                ("CGS display order", string(environment.cgsDisplayOrder)),
+                ("Screen order", string(environment.screenOrder)),
                 ("Fullscreen Spaces", string(environment.fullscreenSpaceCount)),
                 ("Spaces without UUID", string(environment.spacesWithoutUUID)),
                 ("Separate Spaces", environment.separateSpaces.rawValue),
@@ -321,6 +347,11 @@ enum Diagnostics {
 
     private static func string(_ value: Int) -> String {
         String(value)
+    }
+
+    /// "?" marks a display missing from the snapshot.
+    private static func string(_ value: [Int?]) -> String {
+        value.isEmpty ? "unknown" : value.map { $0.map(String.init) ?? "?" }.joined(separator: ", ")
     }
 
     private static func string(_ value: Int?) -> String {

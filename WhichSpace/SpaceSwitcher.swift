@@ -313,7 +313,7 @@ enum SpaceSwitcher {
         }
         let activeDisplayID = activeDisplayRef.takeRetainedValue() as String
 
-        let displays = managedDisplays(connection: conn)
+        let displays = systemOrdered(managedDisplays(connection: conn))
         guard let activeDisplay = displays.first(
             where: { $0.identifier == activeDisplayID }
         ) ?? displays.first else {
@@ -518,6 +518,22 @@ enum SpaceSwitcher {
         )
     }
 
+    /// The displays in the order macOS numbers their Desktops: CGS order, or
+    /// screen order when the user has chosen it because CGS order disagrees
+    /// with Mission Control. Restarted numbering ignores display order, so
+    /// the preference only applies to global numbers, matching the snapshot.
+    @MainActor private static func systemOrdered(_ displays: [ManagedDisplay]) -> [ManagedDisplay] {
+        let store = AppEnvironment.shared.store
+        guard store.screenOrderNumbering, !store.localSpaceNumbers else {
+            return displays
+        }
+        return DisplayArrangement.screenOrdered(
+            displays,
+            identifier: \.identifier,
+            screenOrder: DisplayGeometry.screenOrder()
+        )
+    }
+
     private static func managedDisplays(connection: Int32) -> [ManagedDisplay] {
         guard let rawRef = CGSCopyManagedDisplaySpaces(connection),
               let raw = rawRef.takeRetainedValue() as? [[String: Any]]
@@ -537,9 +553,9 @@ enum SpaceSwitcher {
     }
 
     /// `displays` is in the order the menu bar numbers Desktops, which the
-    /// display order preference can reorder. `cgsDisplays` stays in raw CGS
-    /// order for the cross-display route, whose symbolic hotkey addresses
-    /// macOS's own numbering; empty means the two orders are the same.
+    /// display order preference can reorder. `cgsDisplays` stays in macOS's
+    /// numbering order for the cross-display route, whose symbolic hotkey
+    /// addresses that numbering; empty means the two orders are the same.
     static func desktopSwitchRoute(
         number: Int,
         activeDisplayID: String,
@@ -745,14 +761,14 @@ enum SpaceSwitcher {
         return true
     }
 
-    private static func desktopNumber(forSpaceID spaceID: Int, connection: Int32) -> Int? {
-        desktopNumber(forSpaceID: spaceID, displays: managedDisplays(connection: connection))
+    @MainActor private static func desktopNumber(forSpaceID spaceID: Int, connection: Int32) -> Int? {
+        desktopNumber(forSpaceID: spaceID, displays: systemOrdered(managedDisplays(connection: connection)))
     }
 
     /// The 1-based Mission Control Desktop number for a space ID, counting
     /// regular Spaces across every display, or nil for fullscreen Spaces.
-    /// Callers pass displays in raw CGS order: this number addresses macOS's
-    /// own numbering rather than the menu bar's.
+    /// Callers pass displays in `systemOrdered` order: this number addresses
+    /// macOS's own numbering rather than the menu bar's.
     static func desktopNumber(forSpaceID spaceID: Int, displays: [ManagedDisplay]) -> Int? {
         var number = 0
         for display in displays {

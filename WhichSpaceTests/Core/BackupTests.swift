@@ -942,6 +942,18 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         XCTAssertTrue(store.preserveSystemSpaceNumbers)
     }
 
+    func testScreenOrderNumberingRoundTrip() throws {
+        store.screenOrderNumbering = true
+
+        let json = try BackupManager.encode(store: store)
+        store.resetAll()
+        XCTAssertFalse(store.screenOrderNumbering)
+
+        let backup = try BackupManager.decode(jsonString: json)
+        BackupManager.apply(backup, to: store)
+        XCTAssertTrue(store.screenOrderNumbering)
+    }
+
     func testSpacePickerRoundTrip() throws {
         store.spacePickerMaxAppIcons = 8
         store.spacePickerStyle = .both

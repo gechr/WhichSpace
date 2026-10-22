@@ -12,7 +12,8 @@ enum SpaceSnapshotService {
         provider: DisplaySpaceProvider,
         localSpaceNumbers: Bool,
         displayOrder: DisplayOrder = .system,
-        preserveSystemSpaceNumbers: Bool = false
+        preserveSystemSpaceNumbers: Bool = false,
+        screenOrder: [String] = []
     ) -> SpaceSnapshot {
         guard let displays = provider.copyManagedDisplaySpaces(),
               let activeDisplay = provider.copyActiveMenuBarDisplayIdentifier()
@@ -76,6 +77,15 @@ enum SpaceSnapshotService {
                 ))
             }
         }
+
+        // CGS order disagrees with Mission Control on some multi-display
+        // setups, so the user can number displays in screen order instead.
+        // An empty screen order keeps CGS order.
+        parsedDisplays = DisplayArrangement.screenOrdered(
+            parsedDisplays,
+            identifier: \.displayID,
+            screenOrder: screenOrder
+        )
 
         // Capture macOS's numbering before an optional presentation reorder.
         // The preserved offsets let a physical order read, for example, 5 | 1.

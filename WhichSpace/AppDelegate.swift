@@ -685,6 +685,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
             KeySpecs.localSpaceNumbers.anyKey(suite: store.suite),
             KeySpecs.displayOrder.anyKey(suite: store.suite),
             KeySpecs.preserveSystemSpaceNumbers.anyKey(suite: store.suite),
+            KeySpecs.screenOrderNumbering.anyKey(suite: store.suite),
             KeySpecs.showAllDisplays.anyKey(suite: store.suite),
         ]
         preferenceObservationTasks.append(Task { [weak self] in

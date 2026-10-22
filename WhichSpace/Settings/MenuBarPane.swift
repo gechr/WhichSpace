@@ -135,13 +135,7 @@ struct MenuBarPane: View {
                 anchor: .iconPadding
             )
             SettingsRowDivider()
-            SettingsToggleRow(
-                title: Localization.toggleLocalSpaceNumbers,
-                isOn: model.binding(\.localSpaceNumbers),
-                icon: "1.square",
-                subtitle: Localization.tipLocalSpaceNumbers,
-                anchor: .localSpaceNumbers
-            )
+            numberingRow
             SettingsRowDivider()
             SettingsToggleRow(
                 title: Localization.toggleUseFForFullscreenApps,
@@ -218,6 +212,29 @@ struct MenuBarPane: View {
                 Divider()
                 ForEach(SpacePickerStyle.allCases.filter { $0 != .none }, id: \.self) { style in
                     Text(style.localizedName).tag(style)
+                }
+            }
+            .pickerStyle(.menu)
+            .labelsHidden()
+            .fixedSize()
+        }
+    }
+
+    // MARK: - Numbering Row
+
+    /// One picker for whether numbering continues across displays, and in
+    /// which order, so screen order is only offered where it applies.
+    private var numberingRow: some View {
+        SettingsRow(
+            icon: "1.square",
+            subtitle: model.value(\.spaceNumbering).localizedTip,
+            anchor: .localSpaceNumbers
+        ) {
+            Text(Localization.labelNumbering)
+        } control: {
+            Picker(Localization.labelNumbering, selection: model.binding(\.spaceNumbering)) {
+                ForEach(SpaceNumbering.allCases, id: \.self) { numbering in
+                    Text(numbering.localizedName).tag(numbering)
                 }
             }
             .pickerStyle(.menu)

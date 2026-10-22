@@ -8,6 +8,7 @@ protocol DisplaySpaceProvider: Sendable {
     func copyManagedDisplaySpaces() -> [NSDictionary]?
     func copyActiveMenuBarDisplayIdentifier() -> String?
     func displayBounds(forIdentifier identifier: String) -> CGRect?
+    @MainActor func screenOrder() -> [String]
     func fullscreenOwnerPIDs(forSpaceIDs spaceIDs: [Int]) -> [Int: pid_t]
     func spacesWithWindows(forSpaceIDs spaceIDs: [Int]) -> Set<Int>
     func windowOwnerPIDs(forSpaceIDs spaceIDs: [Int]) -> [Int: [pid_t]]
@@ -28,6 +29,20 @@ enum DisplayGeometry {
             return nil
         }
         return CGDisplayBounds(displayID)
+    }
+
+    /// UUID strings of the displays in `NSScreen.screens` order, menu bar
+    /// screen first.
+    @MainActor static func screenOrder() -> [String] {
+        NSScreen.screens.compactMap { screen in
+            let key = NSDeviceDescriptionKey("NSScreenNumber")
+            guard let displayID = screen.deviceDescription[key] as? CGDirectDisplayID,
+                  let uuid = CGDisplayCreateUUIDFromDisplayID(displayID)?.takeRetainedValue()
+            else {
+                return nil
+            }
+            return CFUUIDCreateString(nil, uuid) as String?
+        }
     }
 }
 
@@ -67,6 +82,31 @@ enum DisplayArrangement {
             // Swift's sort is not guaranteed stable; equal frames (e.g.
             // mirrored displays) keep their CGS relative order.
             return lhs < rhs
+        }
+        return order.map { items[$0] }
+    }
+
+    /// Stable sort by each item's position in `screenOrder`. Returns `items`
+    /// unchanged when any identifier is missing from it, including the
+    /// literal "Main", keeping CGS order rather than sorting a partial set.
+    static func screenOrdered<Element>(
+        _ items: [Element],
+        identifier: (Element) -> String,
+        screenOrder: [String]
+    ) -> [Element] {
+        guard items.count > 1 else {
+            return items
+        }
+        let positions = Dictionary(screenOrder.enumerated().map { ($1.uppercased(), $0) }) { first, _ in first }
+        var ranks: [Int] = []
+        for item in items {
+            guard let rank = positions[identifier(item).uppercased()] else {
+                return items
+            }
+            ranks.append(rank)
+        }
+        let order = items.indices.sorted { lhs, rhs in
+            ranks[lhs] != ranks[rhs] ? ranks[lhs] < ranks[rhs] : lhs < rhs
         }
         return order.map { items[$0] }
     }
@@ -143,6 +183,10 @@ struct CGSDisplaySpaceProvider: DisplaySpaceProvider {
 
     func displayBounds(forIdentifier identifier: String) -> CGRect? {
         DisplayGeometry.bounds(forDisplayIdentifier: identifier)
+    }
+
+    @MainActor func screenOrder() -> [String] {
+        DisplayGeometry.screenOrder()
     }
 
     func spacesWithWindows(forSpaceIDs spaceIDs: [Int]) -> Set<Int> {

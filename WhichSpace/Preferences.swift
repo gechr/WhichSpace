@@ -104,10 +104,46 @@ enum SeparatorStyle: String, CaseIterable, Defaults.Serializable {
 /// numbering. String-backed so future orders can be added without a key
 /// migration; an absent key resolves to `.system`.
 enum DisplayOrder: String, CaseIterable, Defaults.Serializable {
-    /// macOS's managed-display order, matching Mission Control's numbering
+    /// The order macOS numbers Desktops in: CGS managed-display order, or
+    /// screen order when `screenOrderNumbering` is on
     case system
     /// Physical left-to-right monitor arrangement
     case physical
+}
+
+// MARK: - SpaceNumbering
+
+/// How Desktops are numbered: continuously across displays, in CGS or screen
+/// order, or restarting on each display. One setting stored as two keys,
+/// `localSpaceNumbers` and `screenOrderNumbering`, so screen order only
+/// exists alongside continuous numbering.
+enum SpaceNumbering: CaseIterable {
+    case acrossDisplays
+    case acrossDisplaysScreenOrder
+    case perDisplay
+
+    var localizedName: String {
+        switch self {
+        case .acrossDisplays:
+            Localization.labelNumberingAcrossDisplays
+        case .acrossDisplaysScreenOrder:
+            Localization.labelNumberingScreenOrder
+        case .perDisplay:
+            Localization.labelNumberingPerDisplay
+        }
+    }
+
+    /// What the selected choice does, shown under the picker.
+    var localizedTip: String {
+        switch self {
+        case .acrossDisplays:
+            Localization.tipNumberingAcrossDisplays
+        case .acrossDisplaysScreenOrder:
+            Localization.tipNumberingScreenOrder
+        case .perDisplay:
+            String(format: Localization.tipNumberingPerDisplay, 1)
+        }
+    }
 }
 
 // MARK: - SpacePickerStyle

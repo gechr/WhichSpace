@@ -14,10 +14,12 @@ struct DiagnosticsTests {
 
     /// A display identifier that looks like the CGS ones the app really
     /// handles, so a leak would be recognisable in the assertions below.
-    private static let displayID = "37D8832A-2D66-02CA-B9F7-8F30A301B230"
+    private static let displayID = "CCCCCCCC-0000-0000-0000-000000000003"
 
     private func makeEnvironment(
         spacesPerDisplay: [Int] = [3],
+        cgsDisplayOrder: [Int?] = [1],
+        screenOrder: [Int?] = [1],
         spacesWithoutUUID: Int = 0,
         thirdPartyApps: [String] = [],
         stageManagerEnabled: DiagnosticsFlag = .no,
@@ -39,6 +41,8 @@ struct DiagnosticsTests {
             separateSpaces: separateSpaces,
             autoRearrangeSpaces: autoRearrangeSpaces,
             spacesPerDisplay: spacesPerDisplay,
+            cgsDisplayOrder: cgsDisplayOrder,
+            screenOrder: screenOrder,
             fullscreenSpaceCount: 0,
             spacesWithoutUUID: spacesWithoutUUID,
             shrinkLevel: shrinkLevel,
@@ -84,6 +88,33 @@ struct DiagnosticsTests {
         // Topology survives without the identifier
         #expect(report.contains("Spaces per display"))
         #expect(report.contains("3, 2"))
+    }
+
+    @Test("report lists both display orders as ordinals")
+    func report_listsDisplayOrders() {
+        let report = Diagnostics.markdown(
+            environment: makeEnvironment(
+                spacesPerDisplay: [4, 1, 1, 1],
+                cgsDisplayOrder: [1, 2, 3, 4],
+                screenOrder: [1, 3, 2, nil]
+            ),
+            store: store,
+            hotkeys: [:]
+        )
+
+        let lines = report.split(separator: "\n")
+        #expect(lines.contains { $0.hasPrefix("CGS display order ") && $0.hasSuffix("  1, 2, 3, 4") })
+        #expect(lines.contains { $0.hasPrefix("Screen order ") && $0.hasSuffix("  1, 3, 2, ?") })
+    }
+
+    @Test("display order ordinals match identifiers case-insensitively")
+    func ordinals_matchCaseInsensitively() {
+        let ordinals = DiagnosticsEnvironment.ordinals(
+            of: ["b-uuid", "MISSING", "A-UUID"],
+            in: ["A-UUID", "B-UUID"]
+        )
+
+        #expect(ordinals == [2, nil, 1])
     }
 
     @Test("report pairs each bound shortcut with its chord")

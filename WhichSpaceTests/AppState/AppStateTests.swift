@@ -973,6 +973,36 @@ struct AppStateTests {
         #expect(appState.currentGlobalSpaceIndex == 3)
     }
 
+    @Test("screen order numbering is suspended while numbering restarts per display")
+    func screenOrderNumbering_suspendedWithLocalSpaceNumbers() {
+        stub.activeDisplayIdentifier = "DisplayB"
+        stub.displays = [
+            CGSStub.makeDisplay(
+                displayID: "DisplayB",
+                spaces: [(id: 200, isFullscreen: false), (id: 201, isFullscreen: false)],
+                activeSpaceID: 200
+            ),
+            CGSStub.makeDisplay(
+                displayID: "DisplayA",
+                spaces: [(id: 100, isFullscreen: false), (id: 101, isFullscreen: false)],
+                activeSpaceID: 100
+            ),
+        ]
+        stub.screenOrderList = ["DisplayA", "DisplayB"]
+        store.screenOrderNumbering = true
+        store.localSpaceNumbers = true
+        let appState = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+
+        // The greyed-out toggle keeps its stored value but stops reordering
+        #expect(appState.allDisplaysSpaceInfo.map(\.displayID) == ["DisplayB", "DisplayA"])
+
+        store.localSpaceNumbers = false
+        appState.forceSpaceUpdate()
+
+        #expect(appState.allDisplaysSpaceInfo.map(\.displayID) == ["DisplayA", "DisplayB"])
+        #expect(appState.currentGlobalSpaceIndex == 3)
+    }
+
     // MARK: - Space Order Reconciliation
 
     /// Builds a "Main" display whose Space IDs stay glued to their UUIDs, so

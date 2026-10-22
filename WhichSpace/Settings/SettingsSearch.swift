@@ -319,8 +319,8 @@ enum SettingsSearchIndex {
         SettingsSearchEntry(
             anchor: .localSpaceNumbers,
             section: Localization.labelAppearance,
-            title: Localization.toggleLocalSpaceNumbers,
-            subtitle: Localization.tipLocalSpaceNumbers,
+            title: Localization.labelNumbering,
+            subtitle: Localization.tipNumberingScreenOrder,
             keywords: [.space, .display]
         ),
         SettingsSearchEntry(

@@ -16,6 +16,7 @@ final class CGSStub: DisplaySpaceProvider, @unchecked Sendable {
     var displays: [NSDictionary] = []
     var activeDisplayIdentifier: String?
     var displayBoundsMap: [String: CGRect] = [:]
+    var screenOrderList: [String] = []
 
     var spacesWithWindowsSet: Set<Int> {
         get { withLock { spacesWithWindowsValue } }
@@ -46,6 +47,10 @@ final class CGSStub: DisplaySpaceProvider, @unchecked Sendable {
 
     func displayBounds(forIdentifier identifier: String) -> CGRect? {
         displayBoundsMap[identifier]
+    }
+
+    func screenOrder() -> [String] {
+        screenOrderList
     }
 
     var fullscreenOwnerPIDsMap: [Int: pid_t] {

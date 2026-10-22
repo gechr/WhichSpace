@@ -297,6 +297,65 @@ struct SpaceSnapshotServiceTests {
         #expect(snapshot.currentSpaceLabel == "1")
     }
 
+    @Test("screen order numbering reorders displays and global numbering")
+    func screenOrder_reordersDisplaysAndGlobalNumbering() {
+        let stub = makeArrangementStub()
+
+        let snapshot = SpaceSnapshotService.buildSnapshot(
+            provider: stub,
+            localSpaceNumbers: false,
+            screenOrder: ["DisplayA", "DisplayB"]
+        )
+
+        #expect(snapshot.allDisplaysSpaceInfo.map(\.displayID) == ["DisplayA", "DisplayB"])
+        #expect(snapshot.allDisplaysSpaceInfo.map(\.globalStartIndex) == [1, 4])
+        #expect(snapshot.currentGlobalSpaceIndex == 4)
+        #expect(snapshot.currentSpaceLabel == "4")
+    }
+
+    @Test("screen order numbering is what preserved numbers keep")
+    func screenOrder_isPreservedUnderPhysicalOrder() {
+        let stub = makeArrangementStub()
+        // Screen order [B, A] disagrees with the physical order [A, B]
+        stub.displays = stub.displays.reversed()
+
+        let snapshot = SpaceSnapshotService.buildSnapshot(
+            provider: stub,
+            localSpaceNumbers: false,
+            displayOrder: .physical,
+            preserveSystemSpaceNumbers: true,
+            screenOrder: ["DisplayB", "DisplayA"]
+        )
+
+        #expect(snapshot.allDisplaysSpaceInfo.map(\.displayID) == ["DisplayA", "DisplayB"])
+        #expect(snapshot.allDisplaysSpaceInfo.map(\.globalStartIndex) == [3, 1])
+    }
+
+    @Test("screen order numbering falls back to CGS order for an unknown display")
+    func screenOrder_unknownDisplay_fallsBackToCGSOrder() {
+        let stub = makeArrangementStub()
+
+        let snapshot = SpaceSnapshotService.buildSnapshot(
+            provider: stub,
+            localSpaceNumbers: false,
+            screenOrder: ["DisplayA"]
+        )
+
+        #expect(snapshot.allDisplaysSpaceInfo.map(\.displayID) == ["DisplayB", "DisplayA"])
+        #expect(snapshot.currentGlobalSpaceIndex == 1)
+    }
+
+    @Test("screen order matches display identifiers case-insensitively")
+    func screenOrder_matchesCaseInsensitively() {
+        let ordered = DisplayArrangement.screenOrdered(
+            ["aaaaaaaa-0000-0000-0000-000000000001", "BBBBBBBB-0000-0000-0000-000000000002"],
+            identifier: { $0 },
+            screenOrder: ["BBBBBBBB-0000-0000-0000-000000000002", "AAAAAAAA-0000-0000-0000-000000000001"]
+        )
+
+        #expect(ordered == ["BBBBBBBB-0000-0000-0000-000000000002", "aaaaaaaa-0000-0000-0000-000000000001"])
+    }
+
     @Test("system order keeps CGS order with bounds available")
     func system_keepsCGSOrder() {
         let stub = makeArrangementStub()

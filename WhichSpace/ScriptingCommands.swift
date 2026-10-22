@@ -418,6 +418,7 @@ enum ScriptingHelpers {
             .flatMap { displays[$0].entries.firstIndex { $0.id == appState.currentSpaceID } }
         let environment = DiagnosticsEnvironment.current(
             spacesPerDisplay: displays.map(\.regularSpaceCount),
+            displayIdentifiers: displays.map(\.displayID),
             fullscreenSpaceCount: displays.reduce(0) { $0 + $1.entries.count - $1.regularSpaceCount },
             spacesWithoutUUID: displays.reduce(0) { $0 + $1.entries.count { ($0.uuid ?? "").isEmpty } },
             shrinkLevel: appState.shrinkLevel,

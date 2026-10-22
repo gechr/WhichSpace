@@ -107,6 +107,7 @@ enum KeySpecs {
     static let invertVerticalScroll = TypedKeySpec(name: "invertVerticalScroll", defaultValue: false)
     static let paddingScale = TypedKeySpec(name: "paddingScale", defaultValue: Layout.defaultPaddingScale)
     static let preserveSystemSpaceNumbers = TypedKeySpec(name: "preserveSystemSpaceNumbers", defaultValue: false)
+    static let screenOrderNumbering = TypedKeySpec(name: "screenOrderNumbering", defaultValue: false)
     static let hideEmptySpaces = TypedKeySpec(name: "hideEmptySpaces", defaultValue: false)
     static let hideFullscreenApps = TypedKeySpec(name: "hideFullscreenApps", defaultValue: false)
     static let hideSingleSpace = TypedKeySpec(name: "hideSingleSpace", defaultValue: false)
@@ -196,6 +197,7 @@ enum KeySpecs {
         moveApplicationAlertSuppress,
         paddingScale,
         preserveSystemSpaceNumbers,
+        screenOrderNumbering,
         scrollHapticFeedback,
         scrollHapticIntensity,
         scrollSensitivity,
@@ -576,6 +578,26 @@ final class DefaultsStore {
     var preserveSystemSpaceNumbers: Bool {
         get { self[KeySpecs.preserveSystemSpaceNumbers] }
         set { self[KeySpecs.preserveSystemSpaceNumbers] = newValue }
+    }
+
+    var screenOrderNumbering: Bool {
+        get { self[KeySpecs.screenOrderNumbering] }
+        set { self[KeySpecs.screenOrderNumbering] = newValue }
+    }
+
+    /// The numbering picker's view of `localSpaceNumbers` and
+    /// `screenOrderNumbering`. Restarted numbering wins when both are set.
+    var spaceNumbering: SpaceNumbering {
+        get {
+            if localSpaceNumbers {
+                return .perDisplay
+            }
+            return screenOrderNumbering ? .acrossDisplaysScreenOrder : .acrossDisplays
+        }
+        set {
+            localSpaceNumbers = newValue == .perDisplay
+            screenOrderNumbering = newValue == .acrossDisplaysScreenOrder
+        }
     }
 
     var scrollHapticFeedback: Bool {
