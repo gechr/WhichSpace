@@ -112,9 +112,9 @@ struct DiagnosticsEnvironment {
             accessibilityTrusted: AXIsProcessTrusted(),
             stageManagerEnabled: flag(suite: "com.apple.WindowManager", key: "GloballyEnabled"),
             reduceMotionEnabled: NSWorkspace.shared.accessibilityDisplayShouldReduceMotion,
-            // The spaces plist records the inverse, so spanning displays is
-            // the same setting turned off.
-            separateSpaces: flag(suite: "com.apple.spaces", key: "spans-displays").inverted,
+            // The setting in effect since login, which is what Spaces follow.
+            // The spaces plist key is written only once the user changes it.
+            separateSpaces: DiagnosticsFlag(NSScreen.screensHaveSeparateSpaces),
             autoRearrangeSpaces: flag(suite: "com.apple.dock", key: "mru-spaces", absent: .yes),
             spacesPerDisplay: spacesPerDisplay,
             cgsDisplayOrder: ordinals(
