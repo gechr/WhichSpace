@@ -6,13 +6,14 @@
     <description>Most recent changes with links to updates.</description>
     <language>en</language>
     <item>
-        <title>Version 1.4.2-tip.660</title>
+        <title>Version 1.4.2-tip.661</title>
         <sparkle:channel>nightly</sparkle:channel>
         <description><![CDATA[
           <style>.sparkle-installed-version, .sparkle-installed-version ~ * { display: none }</style>
-          <section data-sparkle-version="1.4.2-tip.660">
-            <h3>Nightly (v1.4.2-tip.660)</h3>
+          <section data-sparkle-version="1.4.2-tip.661">
+            <h3>Nightly (v1.4.2-tip.661)</h3>
             <ul>
+              <li>diagnostics: Read separate Spaces from <code>NSScreen</code></li>
               <li>menubar: Add screen order numbering option</li>
             </ul>
           </section>
@@ -1132,13 +1133,13 @@
           </section>
         ]]></description>
         <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases</sparkle:fullReleaseNotesLink>
-        <pubDate>Thu, 22 Oct 2026 23:44:23 +0100</pubDate>
+        <pubDate>Thu, 22 Oct 2026 23:51:41 +0100</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/tip/WhichSpace.zip"
-          sparkle:version="1.4.2-tip.660"
-          sparkle:shortVersionString="1.4.2-tip.660"
-          sparkle:edSignature="oiDOsezn0nNcCauxx3IQSgJGyyXTUCY29btZ3nlR+s/Bjqwn0KOvtGZjpgj2f7kNlz7yXQweiAsNNQex9J9BDg=="
-          length="4277800"
+          sparkle:version="1.4.2-tip.661"
+          sparkle:shortVersionString="1.4.2-tip.661"
+          sparkle:edSignature="DgBRe2VidWpDe312r7sJ8MtPd+qtDSbDszLORJ11+Q1XU+bB0ohbuTe+L3LAjllY+IsHJop0VR/kT4wlI53jAA=="
+          length="4277602"
           type="application/octet-stream" />
         <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
       </item>
