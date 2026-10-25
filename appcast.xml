@@ -12,7 +12,6 @@
           <section data-sparkle-version="1.4.3">
             <h3>v1.4.3</h3>
             <ul>
-              <li>tests: Clear modifier flags on synthetic scroll events</li>
               <li>diagnostics: Read separate Spaces from <code>NSScreen</code></li>
               <li>menubar: Add screen order numbering option</li>
             </ul>
@@ -52,7 +51,6 @@
             <h3>v1.3.8</h3>
             <ul>
               <li>menubar: Extend picker shortcuts up to 16 Spaces</li>
-              <li>build: Fix <code>make run</code> build version</li>
               <li>menubar: Use native status item menus</li>
               <li>updates: Foreground nightly channel checks</li>
               <li>l10n: Refine translations</li>
@@ -88,7 +86,6 @@
           <section data-sparkle-version="1.3.4">
             <h3>v1.3.4</h3>
             <ul>
-              <li>github: Add issue forms</li>
               <li>diagnostics: Add copy button</li>
             </ul>
           </section>
@@ -117,7 +114,6 @@
             <ul>
               <li>settings: Select panes with Command-digit</li>
               <li>spaces: Fix stranded menu bar on macOS 27</li>
-              <li>cleanup: Strip license headers</li>
               <li>menubar: Fix scroll switching on macOS 27</li>
             </ul>
           </section>
@@ -144,7 +140,6 @@
               <li>settings: Title the window after the app</li>
               <li>settings: Link the version to its release tag</li>
               <li>settings: Size the window to the pane on show</li>
-              <li>build: Optimize Release builds for size</li>
             </ul>
           </section>
           <section data-sparkle-version="1.2.18">
@@ -216,7 +211,6 @@
             <ul>
               <li>settings: Collapse the Jump list to real Spaces</li>
               <li>settings: Always show the last-checked caption</li>
-              <li>localization: Drop unused <code>buttonLearnMore</code> string</li>
               <li>settings: Store the move-prompt suppression flag</li>
               <li>settings: Anchor the display picker for deep links</li>
               <li>menubar: Open settings on option-click</li>
@@ -229,14 +223,12 @@
             <ul>
               <li>settings: Refresh text fields on external writes</li>
               <li>settings: Lead the label style grid with Box</li>
-              <li>readme: Refresh all screenshots</li>
             </ul>
           </section>
           <section data-sparkle-version="1.2.9">
             <h3>v1.2.9</h3>
             <ul>
               <li>hotkeys: Use global Desktop numbers</li>
-              <li>readme: Refresh keybinds screenshot</li>
             </ul>
           </section>
           <section data-sparkle-version="1.2.8">
@@ -328,13 +320,11 @@
             <h3>v1.2.0</h3>
             <ul>
               <li>settings: Fit the window to the Space list</li>
-              <li>readme: Refresh screenshots</li>
               <li>preferences: Inherit the Default Style live</li>
               <li>settings: Add <code>whichspace://settings</code> deep links</li>
               <li>settings: Style Spaces before they exist</li>
               <li>settings: Add per-Space sound overrides</li>
               <li>localization: Correct translations across locales</li>
-              <li>renderer: Retire preview machinery</li>
               <li>menu: Slim to essentials</li>
               <li>settings: Add Spaces pane</li>
               <li>settings: Add Menu Bar and Switching panes</li>
@@ -349,10 +339,7 @@
             <ul>
               <li>colors: Add conditional transparency swatches</li>
               <li>scripting: Add Space enumeration properties</li>
-              <li>github: Update all versions</li>
-              <li>ci: Test with Xcode 27</li>
               <li>symbols: Add per-Space symbol background color</li>
-              <li>readme: Round screenshot corners</li>
               <li>labels: Allow combining labels with symbols</li>
               <li>symbols: Add more symbols</li>
               <li>labels: Raise character limit to 20</li>
@@ -390,7 +377,6 @@
             <h3>v1.1.4</h3>
             <ul>
               <li>display: Combine Space and display visibility modes</li>
-              <li>README: Add hyperlinks</li>
             </ul>
           </section>
           <section data-sparkle-version="1.1.3">
@@ -412,22 +398,13 @@
               <li>url: Add <code>whichspace://</code> switching scheme</li>
               <li>scripting: Add next and previous Space switching</li>
               <li>scroll: Switch Spaces by scrolling over the icon</li>
-              <li>README: Fix "F" reference</li>
             </ul>
           </section>
           <section data-sparkle-version="1.1.0">
             <h3>v1.1.0</h3>
             <ul>
               <li>render: Show app icons on fullscreen Spaces</li>
-              <li>build: Sign debug builds</li>
               <li>intents: Expose scripting surface to Shortcuts</li>
-              <li>tests: Cover icon preview coordination</li>
-              <li>render: Split icon resolution from drawing</li>
-              <li>defaults: Derive key lists from single registry</li>
-              <li>preview: Extract <code>IconPreviewCoordinator</code></li>
-              <li>state: Remove <code>updateActiveSpaceNumber</code> alias</li>
-              <li>monitor: Emit change ticks through update coordinator</li>
-              <li>tests: Poll for trailing debounce updates</li>
             </ul>
           </section>
           <section data-sparkle-version="1.0.9">
@@ -448,15 +425,12 @@
               <li>localization: Translate scripting errors</li>
               <li>scripting: Allow setting current Space badge</li>
               <li>scripting: Allow setting current Space label</li>
-              <li>build: Disable code signing</li>
-              <li>Makefile: Add clover format and run</li>
             </ul>
           </section>
           <section data-sparkle-version="1.0.6">
             <h3>v1.0.6</h3>
             <ul>
               <li>Improve Space switching</li>
-              <li>README: Showcase instant switching</li>
             </ul>
           </section>
           <section data-sparkle-version="1.0.5">
@@ -580,7 +554,6 @@
               <li>Remove XCTest detection from AppEnvironment</li>
               <li>Bump github.com/danielsaidi/emojikit from 2.3.5 to 2.4.0 in the swift-packages group (#63)</li>
               <li>Bump zizmorcore/zizmor-action from 0.5.2 to 0.5.3 in the github-actions group (#62)</li>
-              <li>github: Enable Zizmor pedantic mode</li>
             </ul>
           </section>
           <section data-sparkle-version="0.18.1">
@@ -595,7 +568,6 @@
             <ul>
               <li>Implement instant Space switching via synthetic dock-swipe gestures</li>
               <li>Bump the swift-packages group with 2 updates (#61)</li>
-              <li>README: Update gif</li>
               <li>Bump maxim-lobanov/setup-xcode from 1.6.0 to 1.7.0 in the github-actions group (#60)</li>
             </ul>
           </section>
@@ -641,10 +613,8 @@
             <h3>v0.17.3</h3>
             <ul>
               <li>Scan user sounds asynchronously on menu open</li>
-              <li>README: Add Sounds section</li>
               <li>Add tooltips to badge and label input fields</li>
               <li>Set badge placeholder to <code>#</code></li>
-              <li>README: Update Size screenshot</li>
             </ul>
           </section>
           <section data-sparkle-version="0.17.2">
@@ -720,7 +690,6 @@
             <h3>v0.14.3</h3>
             <ul>
               <li>Add support for switching to full-screen apps</li>
-              <li>Apply swiftformat and test lint fixes</li>
             </ul>
           </section>
           <section data-sparkle-version="0.14.2">
@@ -752,7 +721,6 @@
             <h3>v0.13.3</h3>
             <ul>
               <li>Attempt to reset stale Accessibility permissions</li>
-              <li>README: Add AppleScript support</li>
             </ul>
           </section>
           <section data-sparkle-version="0.13.2">
@@ -773,7 +741,6 @@
             <ul>
               <li>Disable Sparkle if installed via Homebrew</li>
               <li>Add Homebrew tap</li>
-              <li>README: Update <code>xattr</code> command</li>
               <li>Replace <code>PFMoveApplication</code> with Swift implementation</li>
               <li>Switch to modern localization structure</li>
             </ul>
@@ -834,8 +801,7 @@
           <section data-sparkle-version="0.12.5">
             <h3>v0.12.5</h3>
             <ul>
-              <li>Add translations (c451de3):</li>
-              <li>Add more tests</li>
+              <li>Add translations</li>
             </ul>
           </section>
           <section data-sparkle-version="0.12.4">
@@ -895,7 +861,6 @@
             <h3>v0.11.1</h3>
             <ul>
               <li>Add option to change Space fonts</li>
-              <li>README: Add "Show all Displays" screenshot</li>
             </ul>
           </section>
           <section data-sparkle-version="0.11.0">
@@ -1219,7 +1184,6 @@
           <h3>v1.3.8</h3>
           <ul>
             <li>menubar: Extend picker shortcuts up to 16 Spaces</li>
-            <li>build: Fix <code>make run</code> build version</li>
             <li>menubar: Use native status item menus</li>
             <li>updates: Foreground nightly channel checks</li>
             <li>l10n: Refine translations</li>
@@ -1307,7 +1271,6 @@
         <description><![CDATA[
           <h3>v1.3.4</h3>
           <ul>
-            <li>github: Add issue forms</li>
             <li>diagnostics: Add copy button</li>
           </ul>
         ]]></description>
@@ -1375,7 +1338,6 @@
           <ul>
             <li>settings: Select panes with Command-digit</li>
             <li>spaces: Fix stranded menu bar on macOS 27</li>
-            <li>cleanup: Strip license headers</li>
             <li>menubar: Fix scroll switching on macOS 27</li>
           </ul>
         ]]></description>
@@ -1441,7 +1403,6 @@
             <li>settings: Title the window after the app</li>
             <li>settings: Link the version to its release tag</li>
             <li>settings: Size the window to the pane on show</li>
-            <li>build: Optimize Release builds for size</li>
           </ul>
         ]]></description>
         <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases</sparkle:fullReleaseNotesLink>
@@ -1617,7 +1578,6 @@
           <ul>
             <li>settings: Collapse the Jump list to real Spaces</li>
             <li>settings: Always show the last-checked caption</li>
-            <li>localization: Drop unused <code>buttonLearnMore</code> string</li>
             <li>settings: Store the move-prompt suppression flag</li>
             <li>settings: Anchor the display picker for deep links</li>
             <li>menubar: Open settings on option-click</li>
@@ -1643,7 +1603,6 @@
           <ul>
             <li>settings: Refresh text fields on external writes</li>
             <li>settings: Lead the label style grid with Box</li>
-            <li>readme: Refresh all screenshots</li>
           </ul>
         ]]></description>
         <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases</sparkle:fullReleaseNotesLink>
@@ -1663,7 +1622,6 @@
           <h3>v1.2.9</h3>
           <ul>
             <li>hotkeys: Use global Desktop numbers</li>
-            <li>readme: Refresh keybinds screenshot</li>
           </ul>
         ]]></description>
         <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases</sparkle:fullReleaseNotesLink>
@@ -1872,13 +1830,11 @@
           <h3>v1.2.0</h3>
           <ul>
             <li>settings: Fit the window to the Space list</li>
-            <li>readme: Refresh screenshots</li>
             <li>preferences: Inherit the Default Style live</li>
             <li>settings: Add <code>whichspace://settings</code> deep links</li>
             <li>settings: Style Spaces before they exist</li>
             <li>settings: Add per-Space sound overrides</li>
             <li>localization: Correct translations across locales</li>
-            <li>renderer: Retire preview machinery</li>
             <li>menu: Slim to essentials</li>
             <li>settings: Add Spaces pane</li>
             <li>settings: Add Menu Bar and Switching panes</li>
@@ -1906,10 +1862,7 @@
           <ul>
             <li>colors: Add conditional transparency swatches</li>
             <li>scripting: Add Space enumeration properties</li>
-            <li>github: Update all versions</li>
-            <li>ci: Test with Xcode 27</li>
             <li>symbols: Add per-Space symbol background color</li>
-            <li>readme: Round screenshot corners</li>
             <li>labels: Allow combining labels with symbols</li>
             <li>symbols: Add more symbols</li>
             <li>labels: Raise character limit to 20</li>
@@ -2012,7 +1965,6 @@
           <h3>v1.1.4</h3>
           <ul>
             <li>display: Combine Space and display visibility modes</li>
-            <li>README: Add hyperlinks</li>
           </ul>
         ]]></description>
         <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases</sparkle:fullReleaseNotesLink>
@@ -2073,7 +2025,6 @@
             <li>url: Add <code>whichspace://</code> switching scheme</li>
             <li>scripting: Add next and previous Space switching</li>
             <li>scroll: Switch Spaces by scrolling over the icon</li>
-            <li>README: Fix "F" reference</li>
           </ul>
         ]]></description>
         <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases</sparkle:fullReleaseNotesLink>
@@ -2093,15 +2044,7 @@
           <h3>v1.1.0</h3>
           <ul>
             <li>render: Show app icons on fullscreen Spaces</li>
-            <li>build: Sign debug builds</li>
             <li>intents: Expose scripting surface to Shortcuts</li>
-            <li>tests: Cover icon preview coordination</li>
-            <li>render: Split icon resolution from drawing</li>
-            <li>defaults: Derive key lists from single registry</li>
-            <li>preview: Extract <code>IconPreviewCoordinator</code></li>
-            <li>state: Remove <code>updateActiveSpaceNumber</code> alias</li>
-            <li>monitor: Emit change ticks through update coordinator</li>
-            <li>tests: Poll for trailing debounce updates</li>
           </ul>
         ]]></description>
         <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases</sparkle:fullReleaseNotesLink>
@@ -2161,8 +2104,6 @@
             <li>localization: Translate scripting errors</li>
             <li>scripting: Allow setting current Space badge</li>
             <li>scripting: Allow setting current Space label</li>
-            <li>build: Disable code signing</li>
-            <li>Makefile: Add clover format and run</li>
           </ul>
         ]]></description>
         <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases</sparkle:fullReleaseNotesLink>
@@ -2182,7 +2123,6 @@
           <h3>v1.0.6</h3>
           <ul>
             <li>Improve Space switching</li>
-            <li>README: Showcase instant switching</li>
           </ul>
         ]]></description>
         <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases</sparkle:fullReleaseNotesLink>
@@ -2423,7 +2363,6 @@
             <li>Remove XCTest detection from AppEnvironment</li>
             <li>Bump github.com/danielsaidi/emojikit from 2.3.5 to 2.4.0 in the swift-packages group (#63)</li>
             <li>Bump zizmorcore/zizmor-action from 0.5.2 to 0.5.3 in the github-actions group (#62)</li>
-            <li>github: Enable Zizmor pedantic mode</li>
           </ul>
         ]]></description>
         <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases</sparkle:fullReleaseNotesLink>
@@ -2464,7 +2403,6 @@
           <ul>
             <li>Implement instant Space switching via synthetic dock-swipe gestures</li>
             <li>Bump the swift-packages group with 2 updates (#61)</li>
-            <li>README: Update gif</li>
             <li>Bump maxim-lobanov/setup-xcode from 1.6.0 to 1.7.0 in the github-actions group (#60)</li>
           </ul>
         ]]></description>
@@ -2588,10 +2526,8 @@
           <h3>v0.17.3</h3>
           <ul>
             <li>Scan user sounds asynchronously on menu open</li>
-            <li>README: Add Sounds section</li>
             <li>Add tooltips to badge and label input fields</li>
             <li>Set badge placeholder to <code>#</code></li>
-            <li>README: Update Size screenshot</li>
           </ul>
         ]]></description>
         <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases</sparkle:fullReleaseNotesLink>
@@ -2810,7 +2746,6 @@
           <h3>v0.14.3</h3>
           <ul>
             <li>Add support for switching to full-screen apps</li>
-            <li>Apply swiftformat and test lint fixes</li>
           </ul>
         ]]></description>
         <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases</sparkle:fullReleaseNotesLink>
@@ -2907,7 +2842,6 @@
           <h3>v0.13.3</h3>
           <ul>
             <li>Attempt to reset stale Accessibility permissions</li>
-            <li>README: Add AppleScript support</li>
           </ul>
         ]]></description>
         <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases</sparkle:fullReleaseNotesLink>
@@ -2967,7 +2901,6 @@
           <ul>
             <li>Disable Sparkle if installed via Homebrew</li>
             <li>Add Homebrew tap</li>
-            <li>README: Update <code>xattr</code> command</li>
             <li>Replace <code>PFMoveApplication</code> with Swift implementation</li>
             <li>Switch to modern localization structure</li>
           </ul>
@@ -3132,8 +3065,7 @@
       <description><![CDATA[
         <h3>v0.12.5</h3>
         <ul>
-          <li>Add translations (c451de3):</li>
-          <li>Add more tests</li>
+          <li>Add translations</li>
         </ul>
       ]]></description>
       <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases</sparkle:fullReleaseNotesLink>
@@ -3310,7 +3242,6 @@
         <h3>v0.11.1</h3>
         <ul>
           <li>Add option to change Space fonts</li>
-          <li>README: Add "Show all Displays" screenshot</li>
         </ul>
       ]]></description>
       <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases</sparkle:fullReleaseNotesLink>
