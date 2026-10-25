@@ -27,14 +27,14 @@ enum HapticActuator {
 
     private static let api: API? = {
         guard let handle = dlopen(
-            "/System/Library/PrivateFrameworks/MultitouchSupport.framework/MultitouchSupport",
-            RTLD_NOW
-        ),
-            let createList = dlsym(handle, "MTDeviceCreateList"),
-            let getDeviceID = dlsym(handle, "MTDeviceGetDeviceID"),
-            let createActuator = dlsym(handle, "MTActuatorCreateFromDeviceID"),
-            let open = dlsym(handle, "MTActuatorOpen"),
-            let actuate = dlsym(handle, "MTActuatorActuate")
+                  "/System/Library/PrivateFrameworks/MultitouchSupport.framework/MultitouchSupport",
+                  RTLD_NOW
+              ),
+              let createList = dlsym(handle, "MTDeviceCreateList"),
+              let getDeviceID = dlsym(handle, "MTDeviceGetDeviceID"),
+              let createActuator = dlsym(handle, "MTActuatorCreateFromDeviceID"),
+              let open = dlsym(handle, "MTActuatorOpen"),
+              let actuate = dlsym(handle, "MTActuatorActuate")
         else {
             return nil
         }

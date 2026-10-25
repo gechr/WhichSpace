@@ -274,13 +274,13 @@ struct SpaceColors: Equatable, Defaults.Serializable {
             }
             do {
                 guard let foreground = try NSKeyedUnarchiver.unarchivedObject(
-                    ofClass: NSColor.self,
-                    from: foregroundData
-                ),
-                    let background = try NSKeyedUnarchiver.unarchivedObject(
-                        ofClass: NSColor.self,
-                        from: backgroundData
-                    )
+                          ofClass: NSColor.self,
+                          from: foregroundData
+                      ),
+                      let background = try NSKeyedUnarchiver.unarchivedObject(
+                          ofClass: NSColor.self,
+                          from: backgroundData
+                      )
                 else {
                     return nil
                 }
