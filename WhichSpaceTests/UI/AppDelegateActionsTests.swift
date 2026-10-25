@@ -468,6 +468,7 @@ final class AppDelegateActionsTests: XCTestCase {
             wheel3: 0
         ))
         cgEvent.location = CGPoint(x: 12, y: 12)
+        cgEvent.flags = []
         cgEvent.timestamp = CGEventTimestamp(timestamp * 1_000_000_000)
         if momentum {
             cgEvent.setIntegerValueField(.scrollWheelEventMomentumPhase, value: 1)
