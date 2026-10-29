@@ -13,6 +13,8 @@ updates:
       github-actions:
         patterns:
           - "*"
+    ignore:
+      - dependency-name: gechr/actions
 
   - package-ecosystem: swift
     commit-message:
@@ -27,6 +29,6 @@ updates:
         patterns:
           - "*"
     ignore:
-      # EmojiKit 3.x requires macOS 15; stay on 2.x until we drop macOS 14 support.
-      - dependency-name: "github.com/danielsaidi/EmojiKit"
-        update-types: ["version-update:semver-major"]
+      - dependency-name: github.com/danielsaidi/EmojiKit
+        update-types:
+          - version-update:semver-major

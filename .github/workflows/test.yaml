@@ -6,7 +6,7 @@ on:
       - main
   pull_request:
     branches:
-      - main
+      - "**"
 
 permissions: {}
 
@@ -16,38 +16,10 @@ concurrency:
 
 jobs:
   test:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - macos-15
-          - macos-26
-    steps:
-      # @clover
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      # @clover
-      - uses: maxim-lobanov/setup-xcode@ed7a3b1fda3918c0306d1b724322adc0b8cc0a90 # v1.7.0
-        with:
-          xcode-version: latest-stable
-
-      - name: Run Tests
-        run: make test
-
-  test-xcode-27:
-    name: test (xcode-27)
-    runs-on: xcode-27
-    steps:
-      # @clover
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - name: Xcode Version
-        run: xcodebuild -version
-
-      - name: Run Tests
-        run: make test
+    permissions:
+      contents: read
+    # @clover
+    uses: gechr/actions/.github/workflows/test.yaml@9c4087072c6cce173946d4546aa18625a317a7b0 # v0.2.11
+    with:
+      language: swift
+      runs-on: '["macos-15","macos-26","xcode-27"]'
