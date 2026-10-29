@@ -16,20 +16,9 @@ concurrency:
 
 jobs:
   zizmor:
-    runs-on: ubuntu-latest
     permissions:
+      contents: read
+      actions: read
       security-events: write
-    steps:
-      - name: Checkout repository
-        # @clover
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - name: Run zizmor 🌈
-        # @clover
-        uses: zizmorcore/zizmor-action@53290badfa369cb0bf7ad16342cb62c2fa47ac7b # v0.8.0
-        with:
-          inputs: ./.github/
-          persona: pedantic
-          min-severity: low
+    # @clover
+    uses: gechr/actions/.github/workflows/zizmor.yaml@9c4087072c6cce173946d4546aa18625a317a7b0 # v0.2.11

@@ -6,7 +6,7 @@ on:
       - main
   pull_request:
     branches:
-      - main
+      - "**"
 
 permissions: {}
 
@@ -15,36 +15,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  swiftlint:
-    runs-on: xcode-27
+  lint:
     permissions:
       contents: read
-    steps:
-      # @clover
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - name: Install SwiftLint
-        run: |
-          brew update
-          brew install swiftlint
-          swiftlint --version
-      - name: Run SwiftLint
-        run: make lint
-
-  swiftformat:
-    runs-on: xcode-27
-    permissions:
-      contents: read
-    steps:
-      # @clover
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - name: Install SwiftFormat
-        run: |
-          brew update
-          brew install swiftformat
-          swiftformat --version
-      - name: Run SwiftFormat
-        run: make check
+    # @clover
+    uses: gechr/actions/.github/workflows/lint.yaml@9c4087072c6cce173946d4546aa18625a317a7b0 # v0.2.11
+    with:
+      language: swift
+      runs-on: xcode-27
