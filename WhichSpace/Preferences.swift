@@ -423,12 +423,10 @@ enum SpacePreferences {
                 }
                 perDisplayMap[display] = spaceMap
                 store[keyPath: perDisplay] = perDisplayMap
+            } else if let value {
+                store[keyPath: shared][spaceNumber] = value
             } else {
-                if let value {
-                    store[keyPath: shared][spaceNumber] = value
-                } else {
-                    store[keyPath: shared].removeValue(forKey: spaceNumber)
-                }
+                store[keyPath: shared].removeValue(forKey: spaceNumber)
             }
         }
 
