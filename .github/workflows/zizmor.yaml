@@ -21,6 +21,6 @@ jobs:
       actions: read
       security-events: write
     # @clover
-    uses: gechr/actions/.github/workflows/zizmor.yaml@9c4087072c6cce173946d4546aa18625a317a7b0 # v0.2.11
+    uses: gechr/actions/.github/workflows/zizmor.yaml@b90a8ef9841510cc6325daf17d38e768d57d17b3 # v0.2.12
     with:
       advanced-security: "true"
