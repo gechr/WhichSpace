@@ -14,6 +14,19 @@ protocol DisplaySpaceProvider: Sendable {
     func windowOwnerPIDs(forSpaceIDs spaceIDs: [Int]) -> [Int: [pid_t]]
 }
 
+// MARK: - Managed Space Kind
+
+/// Classifies raw space dictionaries returned by `CGSCopyManagedDisplaySpaces`.
+enum ManagedSpaceKind {
+    /// `CGSSpaceTypeSystem`, including legacy Dashboard spaces.
+    private static let systemType = 2
+
+    /// System spaces are excluded from Mission Control's Desktop list.
+    static func isSystemSpace(_ space: [String: Any]) -> Bool {
+        (space["type"] as? Int) == systemType
+    }
+}
+
 // MARK: - Display Geometry
 
 /// Resolves a CGS "Display Identifier" UUID string to its global CG frame.

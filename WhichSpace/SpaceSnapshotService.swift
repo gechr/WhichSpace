@@ -48,6 +48,10 @@ enum SpaceSnapshotService {
                     continue
                 }
 
+                guard !ManagedSpaceKind.isSystemSpace(space) else {
+                    continue
+                }
+
                 let isFullscreen = space["TileLayoutManager"] is [String: Any]
                 let label: String
                 let regularIndex: Int?

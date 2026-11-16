@@ -474,7 +474,7 @@ enum SpaceSwitcher {
         let isFullscreen: Bool
 
         init?(dict: [String: Any]) {
-            guard let id = dict["ManagedSpaceID"] as? Int else {
+            guard let id = dict["ManagedSpaceID"] as? Int, !ManagedSpaceKind.isSystemSpace(dict) else {
                 return nil
             }
             self.id = id

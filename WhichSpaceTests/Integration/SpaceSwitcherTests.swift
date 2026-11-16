@@ -51,6 +51,43 @@ struct SpaceSwitcherTests {
         #expect(SpaceSwitcher.augmentedSwipeGoesRight(requested: false, naturalScrollingEnabled: false))
     }
 
+    @Test("system spaces are excluded from Desktop switching routes")
+    func systemSpaces_excludedFromSwitching() throws {
+        let display = try #require(SpaceSwitcher.ManagedDisplay(dict: [
+            "Display Identifier": "DisplayA",
+            "Spaces": [
+                ["ManagedSpaceID": 90, "type": 2],
+                ["ManagedSpaceID": 100, "type": 0],
+                ["ManagedSpaceID": 150, "type": 4, "TileLayoutManager": [String: Any]()],
+                ["ManagedSpaceID": 101],
+            ],
+            "Current Space": ["ManagedSpaceID": 100],
+        ]))
+        let displays = try [
+            display,
+            managedDisplay(identifier: "DisplayB", spaces: [(200, false)], currentSpaceID: 200),
+        ]
+
+        #expect(display.spaces.map(\.id) == [100, 150, 101])
+        #expect(display.spaces.map(\.isFullscreen) == [false, true, false])
+        #expect(SpaceSwitcher.desktopNumber(forSpaceID: 90, displays: displays) == nil)
+        #expect(SpaceSwitcher.desktopNumber(forSpaceID: 101, displays: displays) == 2)
+        #expect(SpaceSwitcher.desktopNumber(forSpaceID: 200, displays: displays) == 3)
+        #expect(
+            SpaceSwitcher.desktopSwitchRoute(number: 1, activeDisplayID: "DisplayA", displays: displays)
+                == .activeDisplay(spaceID: 100)
+        )
+        #expect(
+            SpaceSwitcher.desktopSwitchRoute(number: 2, activeDisplayID: "DisplayA", displays: displays)
+                == .activeDisplay(spaceID: 101)
+        )
+        #expect(
+            SpaceSwitcher.desktopSwitchRoute(number: 3, activeDisplayID: "DisplayA", displays: displays)
+                == .otherDisplay(hotKey: 120)
+        )
+        #expect(SpaceSwitcher.desktopSwitchRoute(number: 4, activeDisplayID: "DisplayA", displays: displays) == nil)
+    }
+
     @Test("global Desktop five routes to the second display")
     func globalDesktopFive_routesAcrossDisplays() throws {
         let displays = try twoDisplays()

@@ -172,6 +172,45 @@ struct SpaceSnapshotServiceTests {
         #expect(snapshot.allSpaceEntries.map(\.label) == ["1", "2"])
     }
 
+    @Test("system spaces do not consume local or global Desktop numbers", arguments: [true, false])
+    func systemSpaces_skipped(localSpaceNumbers: Bool) {
+        let stub = CGSStub()
+        stub.activeDisplayIdentifier = "DisplayB"
+        stub.displays = [
+            [
+                "Display Identifier": "DisplayA",
+                "Spaces": [
+                    ["ManagedSpaceID": 90, "type": 2],
+                    ["ManagedSpaceID": 100, "type": 0],
+                ],
+                "Current Space": ["ManagedSpaceID": 100],
+            ] as NSDictionary,
+            [
+                "Display Identifier": "DisplayB",
+                "Spaces": [
+                    ["ManagedSpaceID": 190, "type": 2],
+                    ["ManagedSpaceID": 200, "type": 0],
+                    ["ManagedSpaceID": 250, "type": 4, "TileLayoutManager": [String: Any]()],
+                    ["ManagedSpaceID": 201],
+                ],
+                "Current Space": ["ManagedSpaceID": 201],
+            ] as NSDictionary,
+        ]
+
+        let snapshot = SpaceSnapshotService.buildSnapshot(provider: stub, localSpaceNumbers: localSpaceNumbers)
+
+        #expect(snapshot.allDisplaysSpaceInfo.map(\.regularSpaceCount) == [1, 2])
+        #expect(snapshot.allDisplaysSpaceInfo.map(\.globalStartIndex) == [1, 2])
+        #expect(snapshot.allDisplaysSpaceInfo[0].entries.map(\.id) == [100])
+        #expect(snapshot.allSpaceEntries.map(\.id) == [200, 250, 201])
+        #expect(snapshot.allSpaceEntries.map(\.label) == ["1", Labels.fullscreen, "2"])
+        #expect(snapshot.allSpaceEntries.map(\.regularIndex) == [1, nil, 2])
+        #expect(snapshot.currentSpace == 3)
+        #expect(snapshot.currentSpaceID == 201)
+        #expect(snapshot.currentGlobalSpaceIndex == 3)
+        #expect(snapshot.currentSpaceLabel == (localSpaceNumbers ? "2" : "3"))
+    }
+
     // MARK: - Fullscreen Space Numbering
 
     @Test("fullscreen spaces are labeled 'F' and don't increment regular index")
