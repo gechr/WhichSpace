@@ -35,8 +35,10 @@ struct IconShrinkTests {
 
     @Test("levels order from full rendering down to the current Space alone")
     func level_ordering() {
-        #expect(IconShrinkLevel.allCases == [.full, .compact, .activePerDisplay, .currentOnly])
-        #expect(IconShrinkLevel.full.next == .compact)
+        #expect(IconShrinkLevel.allCases == [.full, .tight, .small, .compact, .activePerDisplay, .currentOnly])
+        #expect(IconShrinkLevel.full.next == .tight)
+        #expect(IconShrinkLevel.tight.next == .small)
+        #expect(IconShrinkLevel.small.next == .compact)
         #expect(IconShrinkLevel.compact.next == .activePerDisplay)
         #expect(IconShrinkLevel.activePerDisplay.next == .currentOnly)
         #expect(IconShrinkLevel.currentOnly.next == nil)
@@ -80,6 +82,8 @@ struct IconShrinkTests {
         var detector = MenuBarEvictionDetector()
         detector.reset()
 
+        #expect(detector.apply(Self.evicted, now: Self.now) == .tight)
+        #expect(detector.apply(Self.evicted, now: Self.now) == .small)
         #expect(detector.apply(Self.evicted, now: Self.now) == .compact)
         #expect(detector.apply(Self.evicted, now: Self.now) == .activePerDisplay)
         #expect(detector.apply(Self.evicted, now: Self.now) == .currentOnly)
@@ -88,6 +92,16 @@ struct IconShrinkTests {
         // The floor holds: further readings change nothing
         #expect(detector.apply(Self.evicted, now: Self.now) == nil)
         #expect(detector.level == .currentOnly)
+    }
+
+    @Test("eviction skips layouts that save no width")
+    func apply_skipsWiderCandidates() {
+        var detector = MenuBarEvictionDetector()
+        let next = detector.apply(Self.evicted, now: Self.now) { $0 == .small }
+        #expect(next == .small)
+        let unchanged = detector.apply(Self.evicted, now: Self.now) { _ in false }
+        #expect(unchanged == nil)
+        #expect(detector.level == .small)
     }
 
     @Test("a hidden menu bar never shrinks the icon")
@@ -139,7 +153,7 @@ struct IconShrinkTests {
         #expect(detector.level == .full)
 
         let afterWindow = Self.now.addingTimeInterval(MenuBarEvictionDetector.settleInterval)
-        #expect(detector.apply(Self.evicted, now: afterWindow) == .compact)
+        #expect(detector.apply(Self.evicted, now: afterWindow) == .tight)
     }
 
     @Test("a Space transition holds off a transient eviction reading")
@@ -157,7 +171,7 @@ struct IconShrinkTests {
         let afterTransition = Self.now.addingTimeInterval(
             MenuBarEvictionDetector.spaceTransitionSettleInterval
         )
-        #expect(detector.apply(Self.evicted, now: afterTransition) == .compact)
+        #expect(detector.apply(Self.evicted, now: afterTransition) == .tight)
     }
 
     @Test("an icon relayout does not shorten the Space transition window")
@@ -184,7 +198,7 @@ struct IconShrinkTests {
         var detector = MenuBarEvictionDetector()
         detector.reset()
         _ = detector.apply(Self.evicted, now: Self.now)
-        #expect(detector.level == .compact)
+        #expect(detector.level == .tight)
 
         detector.reset()
         #expect(detector.level == .full)
@@ -197,7 +211,7 @@ struct IconShrinkTests {
         detector.beginSettling(now: Self.now)
         detector.reset()
 
-        #expect(detector.apply(Self.evicted, now: Self.now) == .compact)
+        #expect(detector.apply(Self.evicted, now: Self.now) == .tight)
     }
 
     @Test("every reset walks the ladder again from the top")
@@ -211,7 +225,7 @@ struct IconShrinkTests {
         // applied without testing the one above it, so a stale entry could
         // never discover that the shallower level now fits.
         detector.reset()
-        #expect(detector.apply(Self.evicted, now: Self.now) == .compact)
+        #expect(detector.apply(Self.evicted, now: Self.now) == .tight)
     }
 
     // MARK: - Growing Back
@@ -253,7 +267,7 @@ struct IconShrinkTests {
             sessionIsActive: true
         )
         #expect(detector.apply(roomAppeared, now: duringTransition) == nil)
-        #expect(detector.level == .compact)
+        #expect(detector.level == .tight)
 
         let afterTransition = Self.now.addingTimeInterval(
             MenuBarEvictionDetector.spaceTransitionSettleInterval
@@ -273,7 +287,7 @@ struct IconShrinkTests {
             MenuBarEvictionDetector.spaceTransitionSettleInterval
         )
         #expect(detector.apply(Self.barHidden, now: afterTransition) == nil)
-        #expect(detector.level == .compact)
+        #expect(detector.level == .tight)
         #expect(detector.awaitingSettledReading)
 
         let barReturned = StatusWindowSnapshot(
@@ -311,7 +325,7 @@ struct IconShrinkTests {
             otherStatusWindowCount: 12,
             sessionIsActive: true
         )
-        #expect(detector.apply(evicted, now: Self.now) == .compact)
+        #expect(detector.apply(evicted, now: Self.now) == .tight)
         #expect(detector.awaitingSettledNeighbourCount)
         #expect(detector.apply(settled, now: Self.now) == nil)
         #expect(!detector.awaitingSettledNeighbourCount)
@@ -374,7 +388,7 @@ struct IconShrinkTests {
         let settled = Self.now.addingTimeInterval(2)
 
         #expect(detector.apply(.unavailable, now: settled) == nil)
-        #expect(detector.level == .compact)
+        #expect(detector.level == .tight)
         #expect(detector.awaitingSettledReading)
 
         let roomAppeared = StatusWindowSnapshot(
@@ -436,12 +450,12 @@ struct IconShrinkTests {
         #expect(detector.apply(Self.onScreen, now: Self.now) == .full)
 
         detector.recordFullIconWidth(150)
-        #expect(detector.apply(Self.evicted, now: Self.now) == .compact)
+        #expect(detector.apply(Self.evicted, now: Self.now) == .tight)
         _ = detector.apply(Self.onScreen, now: Self.now)
         detector.recordFullIconWidth(150)
         detector.beginSpaceTransition(now: Self.now)
         #expect(detector.apply(Self.onScreen, now: Self.now.addingTimeInterval(2)) == nil)
-        #expect(detector.level == .compact)
+        #expect(detector.level == .tight)
     }
 
     @Test("width recovery waits for an active session and a visible menu bar")
@@ -459,7 +473,7 @@ struct IconShrinkTests {
             sessionIsActive: false
         )
         #expect(detector.apply(locked, now: Self.now) == nil)
-        #expect(detector.level == .compact)
+        #expect(detector.level == .tight)
         #expect(detector.awaitingSettledReading)
         #expect(detector.apply(Self.onScreen, now: Self.now) == .full)
     }
@@ -559,8 +573,8 @@ struct ShrinkResetRoutingTests {
             otherStatusWindowCount: 3,
             sessionIsActive: true
         )
-        #expect(detector.apply(evicted, now: now) == .compact)
-        appState.shrinkLevel = .compact
+        #expect(detector.apply(evicted, now: now) == .tight)
+        appState.shrinkLevel = .tight
         _ = detector.apply(visible, now: now)
 
         setDisplays(activeSpaceID: 100, spaceIDs: [100])

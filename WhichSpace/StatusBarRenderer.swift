@@ -190,6 +190,11 @@ final class StatusBarRenderer {
         return icon
     }
 
+    /// Measures an eviction candidate without replacing the installed image in the cache.
+    func iconWidth(at level: IconShrinkLevel) -> Double {
+        generateStatusBarIcon(isDark: appState.darkModeEnabled, level: level).size.width
+    }
+
     /// Measures the full icon without disturbing the installed shrink-level
     /// image cache. Recovery checks reuse the width until rendering inputs change.
     func fullSizeIconWidth() -> Double {
@@ -491,8 +496,8 @@ final class StatusBarRenderer {
     }
 
     /// Picks the rendering for the mode the user chose, narrowed by how far
-    /// the icon has had to shrink. Each level gives up one thing: first the
-    /// custom styling, then the inactive Spaces, then the other displays.
+    /// the icon has had to shrink. Padding and size go first, followed by
+    /// custom labels, inactive Spaces and other displays.
     private func generateStatusBarIcon(isDark: Bool, level: IconShrinkLevel) -> NSImage {
         // Show all displays mode takes precedence (shows spaces from all displays with separators)
         if showAllDisplays, level.showsOtherDisplays, !appState.allDisplaysSpaceInfo.isEmpty {
@@ -712,6 +717,7 @@ final class StatusBarRenderer {
         /// Horizontal padding percentage; a shrunk icon gives up its padding
         /// before it gives up a Space
         let paddingScale: Double
+        let sizeScale: Double
 
         /// Explicit colors, including inherited defaults, remain user artwork.
         var supportsNativeTint: Bool {
@@ -858,7 +864,8 @@ final class StatusBarRenderer {
                 symbolPosition: symbolPosition,
                 symbolWrap: symbolWrap,
                 symbolGap: symbolGap,
-                paddingScale: paddingScale
+                paddingScale: paddingScale,
+                sizeScale: level.sizeScale(for: store.sizeScale)
             )
         }
 
@@ -901,7 +908,8 @@ final class StatusBarRenderer {
             symbolPosition: symbolPosition,
             symbolWrap: symbolWrap,
             symbolGap: symbolGap,
-            paddingScale: paddingScale
+            paddingScale: paddingScale,
+            sizeScale: level.sizeScale(for: store.sizeScale)
         )
     }
 
@@ -910,7 +918,7 @@ final class StatusBarRenderer {
         if let appIcon = spec.appIcon {
             return SpaceIconGenerator.generateAppIcon(
                 appIcon,
-                sizeScale: store.sizeScale,
+                sizeScale: spec.sizeScale,
                 paddingScale: spec.paddingScale
             )
         }
@@ -927,7 +935,7 @@ final class StatusBarRenderer {
                     customFont: spec.font,
                     style: spec.style,
                     skinTone: spec.skinTone,
-                    sizeScale: store.sizeScale,
+                    sizeScale: spec.sizeScale,
                     paddingScale: spec.paddingScale,
                     badge: spec.badge
                 )
@@ -937,7 +945,7 @@ final class StatusBarRenderer {
                 darkMode: spec.darkMode,
                 customColors: spec.colors,
                 skinTone: spec.skinTone,
-                sizeScale: store.sizeScale,
+                sizeScale: spec.sizeScale,
                 paddingScale: spec.paddingScale
             )
         }
@@ -947,7 +955,7 @@ final class StatusBarRenderer {
             customColors: nativeTint ? SpaceColors(foreground: .clear, background: .black) : spec.colors,
             customFont: spec.font,
             style: spec.style,
-            sizeScale: store.sizeScale,
+            sizeScale: spec.sizeScale,
             paddingScale: spec.paddingScale,
             badge: spec.badge
         )

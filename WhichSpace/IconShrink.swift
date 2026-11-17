@@ -10,12 +10,16 @@ import AppKit
 enum IconShrinkLevel: Int, CaseIterable, Comparable, Sendable {
     /// Every Space rendered with the user's own labels, symbols and badges
     case full = 0
-    /// Every Space reduced to a bare numeral with no padding
-    case compact = 1
+    /// Keep every configured slot and tighten its padding
+    case tight
+    /// Keep the same content at a smaller size
+    case small
+    /// Reduce regular Spaces to their numbers
+    case compact
     /// One numeral per display, showing that display's active Space
-    case activePerDisplay = 2
+    case activePerDisplay
     /// The current Space alone
-    case currentOnly = 3
+    case currentOnly
 
     static func < (lhs: Self, rhs: Self) -> Bool {
         lhs.rawValue < rhs.rawValue
@@ -26,16 +30,14 @@ enum IconShrinkLevel: Int, CaseIterable, Comparable, Sendable {
         Self(rawValue: rawValue + 1)
     }
 
-    /// Whether per-Space labels, symbols and badges still apply. Shrunk icons
-    /// render the Space number alone, which is both narrower and cheaper: the
-    /// preference lookups behind those values are skipped entirely.
+    /// Whether per-Space labels, symbols and badges still apply.
     var usesCustomStyling: Bool {
-        self == .full
+        self <= .small
     }
 
     /// Whether fullscreen Spaces keep a slot of their own.
     var showsFullscreenSpaces: Bool {
-        self == .full
+        self <= .small
     }
 
     /// Whether Spaces other than each display's active one keep a slot.
@@ -48,6 +50,11 @@ enum IconShrinkLevel: Int, CaseIterable, Comparable, Sendable {
     /// reporting a Space the user can see.
     var showsOtherDisplays: Bool {
         self != .currentOnly
+    }
+
+    /// A tighter rendering respects the minimum available in Settings.
+    func sizeScale(for preferred: Double) -> Double {
+        self < .small ? preferred : min(preferred, max(Layout.sizeScaleRange.lowerBound, preferred * 0.85))
     }
 
     /// The padding scale to render at, or nil to use the user's preference.
@@ -240,7 +247,11 @@ struct MenuBarEvictionDetector {
 
     /// Applies a probe reading, returning the level to render at, or nil to
     /// leave the icon as it is.
-    mutating func apply(_ snapshot: StatusWindowSnapshot, now: Date) -> IconShrinkLevel? {
+    mutating func apply(
+        _ snapshot: StatusWindowSnapshot,
+        now: Date,
+        isNarrower: (IconShrinkLevel) -> Bool = { _ in true }
+    ) -> IconShrinkLevel? {
         guard now >= settleDeadline,
               snapshot.sessionIsActive,
               let otherStatusWindowCount = snapshot.otherStatusWindowCount
@@ -279,7 +290,7 @@ struct MenuBarEvictionDetector {
         }
         fullSizeRetryIsPending = false
 
-        guard let next = level.next else {
+        guard let next = IconShrinkLevel.allCases.first(where: { $0 > level && isNarrower($0) }) else {
             return nil
         }
 

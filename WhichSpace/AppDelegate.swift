@@ -1171,7 +1171,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
             otherStatusWindowCount: menuBarVisibilityProbe.otherStatusWindowCount(onDisplay: bounds),
             sessionIsActive: sessionIsActive
         )
-        guard let level = evictionDetector.apply(snapshot, now: Date()) else {
+        let installedWidth = statusBarItem.length
+        guard let level = evictionDetector.apply(snapshot, now: Date(), isNarrower: { candidate in
+            appState.renderer.iconWidth(at: candidate) < installedWidth
+        }) else {
             return
         }
         if level == .full {
@@ -1202,7 +1205,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
     /// Defers eviction detection until an animated Space transition has
     /// finished. Mission Control can hide this status window a frame before
     /// its neighbours; sampling that transient state strips custom styling by
-    /// incorrectly advancing the shrink ladder to `.compact`.
+    /// incorrectly advancing the shrink ladder.
     private func handleSnapshotDidChange() {
         evictionDetector.beginSpaceTransition(now: Date())
         scheduleEvictionCheck()

@@ -372,6 +372,10 @@ extension IconShrinkLevel {
         switch self {
         case .full:
             "full"
+        case .tight:
+            "tight"
+        case .small:
+            "small"
         case .compact:
             "compact"
         case .activePerDisplay:

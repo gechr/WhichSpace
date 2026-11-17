@@ -329,6 +329,15 @@ struct StatusBarShrinkLevelTests {
 
         #expect(appState.statusBarLayout().slots.map(\.label) == ["1", "Work", "3"])
 
+        for level in [IconShrinkLevel.tight, .small] {
+            appState.shrinkLevel = level
+            let layout = appState.statusBarLayout()
+            #expect(layout.slots.map(\.label) == ["1", "Work", "3"])
+            let hitWidth = layout.slots.reduce(0) { $0 + $1.width }
+            let iconWidth = Double(appState.statusBarIcon.size.width)
+            #expect(hitWidth == iconWidth, "Hit width \(hitWidth), image width \(iconWidth)")
+        }
+
         appState.shrinkLevel = .compact
         #expect(appState.statusBarLayout().slots.map(\.label) == ["1", "2", "3"])
     }
@@ -399,9 +408,10 @@ struct StatusBarShrinkLevelTests {
         let appState = makeAppState(spaces: Self.plainSpaces, activeSpaceID: 100)
         let fullWidth = appState.statusBarIcon.size.width
 
-        appState.shrinkLevel = .compact
-
+        appState.shrinkLevel = .tight
         #expect(appState.statusBarIcon.size.width == fullWidth)
+        appState.shrinkLevel = .compact
+        #expect(appState.statusBarIcon.size.width <= fullWidth)
     }
 
     @Test("shrinking drops padding but keeps every Space")
@@ -429,6 +439,15 @@ struct StatusBarShrinkLevelTests {
         )
 
         #expect(appState.statusBarLayout().slots.map(\.label) == ["1", "F", "2"])
+
+        for level in [IconShrinkLevel.tight, .small] {
+            appState.shrinkLevel = level
+            let layout = appState.statusBarLayout()
+            #expect(layout.slots.map(\.label) == ["1", "F", "2"])
+            let hitWidth = layout.slots.reduce(0) { $0 + $1.width }
+            let iconWidth = Double(appState.statusBarIcon.size.width)
+            #expect(hitWidth == iconWidth, "Hit width \(hitWidth), image width \(iconWidth)")
+        }
 
         appState.shrinkLevel = .compact
         #expect(appState.statusBarLayout().slots.map(\.label) == ["1", "2"])
