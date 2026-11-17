@@ -92,6 +92,15 @@ final class StatusBarRenderer {
         return StatusBarRenderer.pickerAppIcon(for: app)
     }
 
+    /// Original fullscreen artwork, independently injectable from the
+    /// normalized app icons shown in the Space picker.
+    var fullscreenAppIconResolver: (pid_t) -> NSImage? = { pid in
+        guard let app = NSRunningApplication(processIdentifier: pid) else {
+            return nil
+        }
+        return StatusBarRenderer.appIconArtwork(for: app)
+    }
+
     /// Normalized picker icons keyed by bundle identifier, so the pixel
     /// scan runs once per app rather than on every menu open.
     private static var pickerAppIconCache: [String: NSImage] = [:]
@@ -467,12 +476,7 @@ final class StatusBarRenderer {
     /// The icon of the app occupying a fullscreen space, or nil to fall back
     /// to the "F" glyph.
     private func fullscreenAppIcon(forSpaceID spaceID: Int) -> NSImage? {
-        guard let pid = fullscreenOwners()[spaceID],
-              let app = NSRunningApplication(processIdentifier: pid)
-        else {
-            return nil
-        }
-        return Self.appIconArtwork(for: app)
+        fullscreenOwners()[spaceID].flatMap(fullscreenAppIconResolver)
     }
 
     /// The localized name of the app occupying a fullscreen space, or nil
@@ -515,29 +519,9 @@ final class StatusBarRenderer {
             : nil
         let label = rawLabel.map { LabelTemplate.resolve($0, space: displayNumber) }
             ?? appState.currentSpaceLabel
-        return generateSingleIcon(
-            for: appState.currentSpace,
+        let spec = resolveIconSpec(
+            forSpace: appState.currentSpace,
             spaceID: appState.currentSpaceID,
-            displayNumber: displayNumber,
-            label: label,
-            labels: labels,
-            darkMode: darkMode,
-            level: level
-        )
-    }
-
-    private func generateSingleIcon(
-        for space: Int,
-        spaceID: Int,
-        displayNumber: Int,
-        label: String,
-        labels: [Int: String],
-        darkMode: Bool,
-        level: IconShrinkLevel
-    ) -> NSImage {
-        generateIcon(
-            forSpace: space,
-            spaceID: spaceID,
             displayNumber: displayNumber,
             label: label,
             labels: labels,
@@ -545,53 +529,75 @@ final class StatusBarRenderer {
             darkMode: darkMode,
             level: level
         )
+        return render(spec, nativeTint: spec.supportsNativeTint)
     }
 
     private func renderedCurrentDisplayIcons(
         darkMode: Bool,
         includeHidden: Bool = false,
-        level: IconShrinkLevel = .full
+        level: IconShrinkLevel = .full,
+        nativeTint: Bool = false
     ) -> [RenderedSlotIcon] {
-        let labels = fetchLabels(displayID: appState.currentDisplayID ?? "")
-        return resolveCurrentDisplaySlots(includeHidden: includeHidden, level: level).map { slot in
-            RenderedSlotIcon(
-                slot: slot,
-                icon: generateSingleIcon(
-                    for: slot.localIndex,
+        renderSlotGroups(
+            [resolveCurrentDisplaySlots(includeHidden: includeHidden, level: level)],
+            darkMode: darkMode,
+            level: level,
+            nativeTint: nativeTint
+        ).flatMap(\.self)
+    }
+
+    private func renderedCrossDisplayIcons(
+        darkMode: Bool,
+        level: IconShrinkLevel,
+        nativeTint: Bool = false
+    ) -> [[RenderedSlotIcon]] {
+        renderSlotGroups(
+            resolveCrossDisplaySlots(level: level),
+            darkMode: darkMode,
+            level: level,
+            nativeTint: nativeTint
+        )
+    }
+
+    /// Decide for the entire strip before drawing any slot, so a fallback
+    /// preserves every configured color. Only visible separators matter.
+    private func renderSlotGroups(
+        _ groups: [[ResolvedSlot]],
+        darkMode: Bool,
+        level: IconShrinkLevel,
+        nativeTint: Bool
+    ) -> [[RenderedSlotIcon]] {
+        let specs = groups.map { slots in
+            let labels = slots.first.map { fetchLabels(displayID: $0.displayID) } ?? [:]
+            return slots.map { slot in
+                resolveIconSpec(
+                    forSpace: slot.localIndex,
                     spaceID: slot.spaceID,
                     displayNumber: slot.displayNumber,
                     label: slot.displayLabel,
                     labels: labels,
+                    displayID: slot.displayID,
                     darkMode: darkMode,
                     level: level
                 )
-            )
+            }
         }
-    }
-
-    private func renderedCrossDisplayIcons(darkMode: Bool, level: IconShrinkLevel) -> [[RenderedSlotIcon]] {
-        resolveCrossDisplaySlots(level: level).map { displaySlots in
-            let labels = displaySlots.first.map { fetchLabels(displayID: $0.displayID) } ?? [:]
-            return displaySlots.map { slot in
-                RenderedSlotIcon(
-                    slot: slot,
-                    icon: generateSingleIconForCrossDisplay(
-                        label: slot.displayLabel,
-                        labels: labels,
-                        displayID: slot.displayID,
-                        localIndex: slot.localIndex,
-                        spaceID: slot.spaceID,
-                        displayNumber: slot.displayNumber,
-                        darkMode: darkMode,
-                        level: level
-                    )
-                )
+        let useTint = nativeTint
+            && (groups.count < 2 || store.separatorStyle == .blank || store.separatorColor == nil)
+            && specs.joined().allSatisfy(\.supportsNativeTint)
+        return zip(groups, specs).map { slots, specs in
+            zip(slots, specs).map { slot, spec in
+                RenderedSlotIcon(slot: slot, icon: render(spec, nativeTint: useTint))
             }
         }
     }
 
     private func generateCombinedIcon(darkMode: Bool, level: IconShrinkLevel) -> NSImage {
-        let renderedIcons = renderedCurrentDisplayIcons(darkMode: darkMode, level: level)
+        let renderedIcons = renderedCurrentDisplayIcons(
+            darkMode: darkMode,
+            level: level,
+            nativeTint: true
+        )
 
         // If no spaces to show, show just the current space
         guard !renderedIcons.isEmpty else {
@@ -601,7 +607,7 @@ final class StatusBarRenderer {
         let totalWidth = renderedIcons.reduce(0) { $0 + $1.icon.size.width }
         let imageSize = NSSize(width: totalWidth, height: Layout.statusItemHeight)
         let inactiveAlpha = store.inactiveSpaceOpacity / 100
-        return Self.drawDeferred(size: imageSize) {
+        let image = Self.drawDeferred(size: imageSize) {
             var xOffset: Double = 0
             for rendered in renderedIcons {
                 let drawRect = NSRect(
@@ -621,10 +627,16 @@ final class StatusBarRenderer {
                 xOffset += rendered.icon.size.width
             }
         }
+        image.isTemplate = renderedIcons.allSatisfy(\.icon.isTemplate)
+        return image
     }
 
     private func generateCrossDisplayIcon(darkMode: Bool, level: IconShrinkLevel) -> NSImage {
-        let renderedDisplays = renderedCrossDisplayIcons(darkMode: darkMode, level: level)
+        let renderedDisplays = renderedCrossDisplayIcons(
+            darkMode: darkMode,
+            level: level,
+            nativeTint: true
+        )
 
         // If no spaces to show at all, return single icon
         guard !renderedDisplays.isEmpty else {
@@ -640,10 +652,11 @@ final class StatusBarRenderer {
 
         let imageSize = NSSize(width: totalWidth, height: Layout.statusItemHeight)
         let inactiveAlpha = store.inactiveSpaceOpacity / 100
-        let separatorColor = store.separatorColor
-            ?? IconColors.defaultSeparator(darkMode: darkMode)
+        let isTemplate = renderedDisplays.flatMap(\.self).allSatisfy(\.icon.isTemplate)
+        let separatorColor = isTemplate ? NSColor.black.withAlphaComponent(0.6)
+            : store.separatorColor ?? IconColors.defaultSeparator(darkMode: darkMode)
         let separatorStyle = store.separatorStyle
-        return Self.drawDeferred(size: imageSize) {
+        let image = Self.drawDeferred(size: imageSize) {
             var xOffset: Double = 0
 
             for (displayIndex, displayIcons) in renderedDisplays.enumerated() {
@@ -672,29 +685,8 @@ final class StatusBarRenderer {
                 }
             }
         }
-    }
-
-    /// Generates a single icon for cross-display mode, looking up preferences by display and local index
-    private func generateSingleIconForCrossDisplay(
-        label: String,
-        labels: [Int: String],
-        displayID: String,
-        localIndex: Int,
-        spaceID: Int,
-        displayNumber: Int,
-        darkMode: Bool,
-        level: IconShrinkLevel
-    ) -> NSImage {
-        generateIcon(
-            forSpace: localIndex,
-            spaceID: spaceID,
-            displayNumber: displayNumber,
-            label: label,
-            labels: labels,
-            displayID: displayID,
-            darkMode: darkMode,
-            level: level
-        )
+        image.isTemplate = isTemplate
+        return image
     }
 
     /// Fully resolved inputs for one space icon, computed from preferences
@@ -720,30 +712,12 @@ final class StatusBarRenderer {
         /// Horizontal padding percentage; a shrunk icon gives up its padding
         /// before it gives up a Space
         let paddingScale: Double
-    }
 
-    /// Shared icon generation: resolves preferences into an IconSpec, then
-    /// draws it.
-    private func generateIcon(
-        forSpace space: Int,
-        spaceID: Int,
-        displayNumber: Int,
-        label: String,
-        labels: [Int: String],
-        displayID: String?,
-        darkMode: Bool,
-        level: IconShrinkLevel
-    ) -> NSImage {
-        render(resolveIconSpec(
-            forSpace: space,
-            spaceID: spaceID,
-            displayNumber: displayNumber,
-            label: label,
-            labels: labels,
-            displayID: displayID,
-            darkMode: darkMode,
-            level: level
-        ))
+        /// Explicit colors, including inherited defaults, remain user artwork.
+        var supportsNativeTint: Bool {
+            style.isFilled && colors == nil && symbol == nil && appIcon == nil
+                && !text.containsEmoji && badge?.character.containsEmoji != true
+        }
     }
 
     /// Resolves preferences and preview overrides into final rendering
@@ -932,7 +906,7 @@ final class StatusBarRenderer {
     }
 
     /// Draws a fully resolved spec, dispatching to SpaceIconGenerator.
-    private func render(_ spec: IconSpec) -> NSImage {
+    private func render(_ spec: IconSpec, nativeTint: Bool = false) -> NSImage {
         if let appIcon = spec.appIcon {
             return SpaceIconGenerator.generateAppIcon(
                 appIcon,
@@ -967,16 +941,18 @@ final class StatusBarRenderer {
                 paddingScale: spec.paddingScale
             )
         }
-        return SpaceIconGenerator.generateIcon(
+        let image = SpaceIconGenerator.generateIcon(
             for: spec.text,
             darkMode: spec.darkMode,
-            customColors: spec.colors,
+            customColors: nativeTint ? SpaceColors(foreground: .clear, background: .black) : spec.colors,
             customFont: spec.font,
             style: spec.style,
             sizeScale: store.sizeScale,
             paddingScale: spec.paddingScale,
             badge: spec.badge
         )
+        image.isTemplate = nativeTint
+        return image
     }
 
     /// Creates an NSImage whose drawing block runs at display time, so the
