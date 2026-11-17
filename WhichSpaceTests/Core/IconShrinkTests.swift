@@ -2,6 +2,16 @@ import Foundation
 import Testing
 @testable import WhichSpace
 
+private extension StatusWindowSnapshot {
+    init(ownWindowIsOnScreen: Bool, otherStatusWindowCount: Int?, sessionIsActive: Bool) {
+        self.init(
+            ownWindowIsOnScreen: ownWindowIsOnScreen,
+            neighbours: otherStatusWindowCount.map { MenuBarNeighbours(displayBounds: .zero, count: $0) },
+            sessionIsActive: sessionIsActive
+        )
+    }
+}
+
 struct IconShrinkTests {
     // MARK: - Helpers
 
@@ -423,6 +433,30 @@ struct IconShrinkTests {
             sessionIsActive: true
         )
         #expect(detector.apply(noNeighbours, now: Self.now.addingTimeInterval(2)) == .full)
+    }
+
+    @Test("a narrower neighbour restores a shrunk icon on the same display")
+    func retry_neighbourWidthOpensRoom() {
+        var detector = MenuBarEvictionDetector()
+        while detector.apply(Self.evicted, now: Self.now) != nil {}
+        let display = CGRect(x: 0, y: 0, width: 800, height: 600)
+        func reading(width: Double, bounds: CGRect) -> StatusWindowSnapshot {
+            StatusWindowSnapshot(
+                ownWindowIsOnScreen: true,
+                neighbours: MenuBarNeighbours(displayBounds: bounds, count: 3, totalWidth: width),
+                sessionIsActive: true
+            )
+        }
+
+        #expect(detector.apply(reading(width: 150, bounds: display), now: Self.now) == nil)
+        #expect(detector.apply(reading(width: 160, bounds: display), now: Self.now) == nil)
+        #expect(detector.apply(reading(width: 149.9, bounds: display), now: Self.now) == nil)
+        #expect(detector.apply(reading(width: 120, bounds: display.offsetBy(dx: 800, dy: 0)), now: Self.now) == nil)
+        #expect(detector.apply(reading(width: 120, bounds: display), now: Self.now) == .full)
+
+        _ = detector.apply(Self.evicted, now: Self.now)
+        #expect(detector.apply(reading(width: 120, bounds: display), now: Self.now) == nil)
+        #expect(detector.apply(reading(width: 120, bounds: display), now: Self.now) == nil)
     }
 
     // MARK: - Width Recovery

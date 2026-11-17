@@ -798,6 +798,32 @@ final class AppDelegateActionsTests: XCTestCase {
 
     // MARK: - Observer/Task Lifecycle Tests
 
+    func testShrinkObservationFollowsPreference() async throws {
+        sut.startObservingPreferences()
+        XCTAssertNil(appState.onSnapshotDidChange)
+        XCTAssertNil(sut.pendingEvictionCheck)
+
+        store.shrinkIconToFit = true
+        let enabledDeadline = ContinuousClock.now.advanced(by: .seconds(2))
+        while appState.onSnapshotDidChange == nil, ContinuousClock.now < enabledDeadline {
+            try await Task.sleep(for: .milliseconds(10))
+        }
+        let onChange = try XCTUnwrap(appState.onSnapshotDidChange)
+        onChange()
+        let pending = try XCTUnwrap(sut.pendingEvictionCheck)
+        appState.shrinkLevel = .small
+
+        store.shrinkIconToFit = false
+        let disabledDeadline = ContinuousClock.now.advanced(by: .seconds(2))
+        while appState.onSnapshotDidChange != nil, ContinuousClock.now < disabledDeadline {
+            try await Task.sleep(for: .milliseconds(10))
+        }
+        XCTAssertNil(appState.onSnapshotDidChange)
+        XCTAssertTrue(pending.isCancelled)
+        XCTAssertNil(sut.pendingEvictionCheck)
+        XCTAssertEqual(appState.shrinkLevel, .full)
+    }
+
     func testUnchangedRefreshes_preservePendingEvictionCheck() async throws {
         store.shrinkIconToFit = true
         sut.scheduleEvictionCheck()

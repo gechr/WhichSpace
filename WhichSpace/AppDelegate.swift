@@ -135,6 +135,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
     private let menuBarVisibilityProbe: MenuBarVisibilityProbe
     private var evictionDetector = MenuBarEvictionDetector()
     private(set) var pendingEvictionCheck: Task<Void, Never>?
+    private var neighbourWidthTask: Task<Void, Never>?
     private var evictionObservationTasks: [Task<Void, Never>] = []
     /// The display the status item was last seen drawn on. `NSWindow.screen`
     /// can go nil once the window is hidden, which is exactly when the display
@@ -413,12 +414,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
         appState.renderer.onIconNeedsUpdate = { [weak self] in
             self?.updateStatusBarIcon()
         }
-        // Space transitions briefly give an unreliable status-window reading;
-        // once one lands, wait for its animation to settle before judging fit.
-        appState.onSnapshotDidChange = { [weak self] in
-            self?.handleSnapshotDidChange()
-        }
-        startObservingIconVisibility()
 
         // Begin observing app state, Space changes, and preference edits
         startObservingAppState()
@@ -614,12 +609,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
     func stopObservingAppState() {
         observationTask?.cancel()
         observationTask = nil
-        pendingEvictionCheck?.cancel()
-        pendingEvictionCheck = nil
-        for task in evictionObservationTasks {
-            task.cancel()
-        }
-        evictionObservationTasks.removeAll()
+        stopObservingIconVisibility()
         stopObservingPreferences()
     }
 
@@ -675,6 +665,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
         // cache before this observer runs, so both readings would be of the
         // width the change already produced.
         observePreferences(store.widthAffectingKeys, resettingShrinkLevel: true)
+        updateShrinkObservation()
         observePreferences(store.widthNeutralIconKeys, resettingShrinkLevel: false)
 
         // Numbering and display order are decided while the snapshot is built,
@@ -719,8 +710,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
     /// memo - an external `defaults write` - and is harmless for the writes
     /// that went through it.
     private func observePreferences(_ keys: [Defaults._AnyKey], resettingShrinkLevel: Bool) {
+        let updates = Defaults.updates(keys, initial: false)
         preferenceObservationTasks.append(Task { [weak self] in
-            for await _ in Defaults.updates(keys, initial: false) {
+            for await _ in updates {
                 // 16ms ≈ one frame at 60 FPS; coalesces rapid changes into a single update
                 try? await Task.sleep(for: .milliseconds(16))
                 guard !Task.isCancelled
@@ -728,6 +720,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
                 self?.store.invalidateCachedValues()
                 self?.appState.renderer.invalidateIconCache()
                 if resettingShrinkLevel {
+                    self?.updateShrinkObservation()
                     self?.resetShrinkLevel()
                 }
                 self?.updateStatusBarIcon()
@@ -1168,7 +1161,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
 
         let snapshot = StatusWindowSnapshot(
             ownWindowIsOnScreen: ownIsOnScreen,
-            otherStatusWindowCount: menuBarVisibilityProbe.otherStatusWindowCount(onDisplay: bounds),
+            neighbours: menuBarVisibilityProbe.neighbours(onDisplay: bounds),
             sessionIsActive: sessionIsActive
         )
         let installedWidth = statusBarItem.length
@@ -1183,6 +1176,34 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
             Self.logger.info("menu bar dropped the icon, shrinking to level \(level.rawValue)")
         }
         appState.shrinkLevel = level
+    }
+
+    /// Neighbours can resize on either side without moving or hiding our window.
+    /// Sample only while the icon is shrunk and the menu bar is visible.
+    private func observeNeighbourWidths() {
+        guard store.shrinkIconToFit, appState.shrinkLevel != .full else {
+            stopObservingNeighbourWidths()
+            return
+        }
+        guard neighbourWidthTask == nil else {
+            return
+        }
+        neighbourWidthTask = Task { [weak self] in
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(5), tolerance: .seconds(1))
+                guard !Task.isCancelled, let self else {
+                    return
+                }
+                if sessionIsActive, statusBarItem?.button?.window?.occlusionState.contains(.visible) == true {
+                    applyEvictionReading()
+                }
+            }
+        }
+    }
+
+    private func stopObservingNeighbourWidths() {
+        neighbourWidthTask?.cancel()
+        neighbourWidthTask = nil
     }
 
     /// The display a screen occupies, in the coordinate system the window list
@@ -1211,6 +1232,28 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
         scheduleEvictionCheck()
     }
 
+    private func updateShrinkObservation() {
+        if store.shrinkIconToFit {
+            if evictionObservationTasks.isEmpty {
+                startObservingIconVisibility()
+            }
+        } else if !evictionObservationTasks.isEmpty {
+            stopObservingIconVisibility()
+        }
+    }
+
+    private func stopObservingIconVisibility() {
+        appState.onSnapshotDidChange = nil
+        stopObservingNeighbourWidths()
+        pendingEvictionCheck?.cancel()
+        pendingEvictionCheck = nil
+        for task in evictionObservationTasks {
+            task.cancel()
+        }
+        evictionObservationTasks.removeAll()
+        lastKnownStatusDisplay = nil
+    }
+
     /// Watches for the icon being dropped by something other than this app.
     ///
     /// Eviction is usually somebody else's doing: another app adds a status
@@ -1223,10 +1266,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
     /// available without necessarily changing the Space snapshot, which
     /// `AppState.applySnapshot` drops when equal.
     private func startObservingIconVisibility() {
-        for task in evictionObservationTasks {
-            task.cancel()
+        let session = CGSessionCopyCurrentDictionary() as? [String: Any]
+        sessionIsActive = session?["CGSSessionScreenIsLocked"] as? Bool != true
+        appState.onSnapshotDidChange = { [weak self] in
+            self?.handleSnapshotDidChange()
         }
-        evictionObservationTasks.removeAll()
 
         if let window = statusBarItem?.button?.window {
             let occlusionChanges = Self.notifications(
@@ -1407,12 +1451,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
         let imageChanged = statusBarItem.button?.image !== icon
         let wasVisible = statusBarItem.isVisible
         if store.shrinkIconToFit {
+            observeNeighbourWidths()
             evictionDetector.recordFullIconWidth(appState.renderer.fullSizeIconWidth())
         }
         // Unchanged refreshes can still notice eviction, but only actual
         // layout changes earn another settling window.
         defer {
-            scheduleEvictionCheck(afterLayoutChange: imageChanged || wasVisible != statusBarItem.isVisible)
+            if store.shrinkIconToFit {
+                scheduleEvictionCheck(afterLayoutChange: imageChanged || wasVisible != statusBarItem.isVisible)
+            }
         }
         // Skip the assignment and forced redraw when the cached icon is
         // already installed (e.g. every submenu open triggers an update)

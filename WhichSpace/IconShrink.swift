@@ -68,6 +68,20 @@ enum IconShrinkLevel: Int, CaseIterable, Comparable, Sendable {
 
 // MARK: - Status Window Probe
 
+/// Visible status items belonging to other processes on one display.
+struct MenuBarNeighbours: Equatable, Sendable {
+    let displayBounds: CGRect
+    var count = 0
+    var totalWidth = 0.0
+
+    func isNarrower(than earlier: Self?) -> Bool {
+        guard let earlier, displayBounds == earlier.displayBounds, count == earlier.count else {
+            return false
+        }
+        return earlier.totalWidth - totalWidth >= 1
+    }
+}
+
 /// What the menu bar looked like at the moment of a reading.
 ///
 /// The two halves come from different places on purpose. Whether this app's
@@ -80,9 +94,8 @@ enum IconShrinkLevel: Int, CaseIterable, Comparable, Sendable {
 struct StatusWindowSnapshot: Equatable, Sendable {
     /// Whether this app's own status item is drawn
     let ownWindowIsOnScreen: Bool
-    /// How many other processes' status items are drawn on the same display,
-    /// or nil when the window-list query failed.
-    let otherStatusWindowCount: Int?
+    /// The other status items on the same display, or nil if the query failed.
+    let neighbours: MenuBarNeighbours?
     /// Whether the screen is showing the desktop, rather than the lock screen,
     /// the screensaver, or a sleeping display.
     ///
@@ -94,26 +107,21 @@ struct StatusWindowSnapshot: Equatable, Sendable {
 
     /// Whether the menu bar is drawing anything at all besides this app.
     var otherMenuBarWindowIsOnScreen: Bool {
-        (otherStatusWindowCount ?? 0) > 0
+        (neighbours?.count ?? 0) > 0
     }
 
     /// An unavailable reading preserves the current level and any pending
     /// recovery attempt until a reliable reading arrives.
     static let unavailable = Self(
         ownWindowIsOnScreen: true,
-        otherStatusWindowCount: nil,
+        neighbours: nil,
         sessionIsActive: true
     )
 }
 
 /// Reports what else the menu bar is drawing; stubbed in tests.
 protocol MenuBarVisibilityProbe: Sendable {
-    /// How many other processes' status items are drawn on the given display.
-    ///
-    /// A count rather than a flag: zero answers whether the bar is drawn at
-    /// all, and a drop in the count is the only cheap evidence that room may
-    /// have opened up. Nil means the query failed, not that room opened.
-    func otherStatusWindowCount(onDisplay bounds: CGRect) -> Int?
+    func neighbours(onDisplay bounds: CGRect) -> MenuBarNeighbours?
 }
 
 /// Default implementation backed by the window list.
@@ -130,7 +138,7 @@ struct CGMenuBarVisibilityProbe: MenuBarVisibilityProbe {
     /// would report a drawn bar where there is none.
     private static let statusLevel = Int(CGWindowLevelForKey(.statusWindow))
 
-    func otherStatusWindowCount(onDisplay bounds: CGRect) -> Int? {
+    func neighbours(onDisplay bounds: CGRect) -> MenuBarNeighbours? {
         guard let windowList = CGWindowListCopyWindowInfo([.optionOnScreenOnly], kCGNullWindowID)
             as? [[String: Any]]
         else {
@@ -138,18 +146,20 @@ struct CGMenuBarVisibilityProbe: MenuBarVisibilityProbe {
         }
 
         let ownPID = ProcessInfo.processInfo.processIdentifier
-        return windowList.count { window in
+        return windowList.reduce(into: MenuBarNeighbours(displayBounds: bounds)) { neighbours, window in
             guard window[kCGWindowLayer as String] as? Int == Self.statusLevel,
                   window[kCGWindowOwnerPID as String] as? pid_t != ownPID,
                   let frame = window[kCGWindowBounds as String] as? [String: Any],
-                  let rect = CGRect(dictionaryRepresentation: frame as CFDictionary)
+                  let rect = CGRect(dictionaryRepresentation: frame as CFDictionary),
+                  rect.intersects(bounds)
             else {
-                return false
+                return
             }
             // Scoped to one display: a fullscreen Space hides that display's
             // bar while another display keeps drawing its own, so a global
             // count reads as a drawn bar when ours is gone
-            return rect.intersects(bounds)
+            neighbours.count += 1
+            neighbours.totalWidth += rect.intersection(bounds).width
         }
     }
 }
@@ -199,6 +209,7 @@ struct MenuBarEvictionDetector {
     /// Whether a Space change should use its next reliable reading to see if
     /// enough neighbours disappeared for the full icon to fit again.
     private var fullSizeRetryIsPending = false
+    private var settledNeighbours: MenuBarNeighbours?
     private var fullIconWidth: Double?
     private var fullIconWidthWhenShrunk: Double?
 
@@ -254,15 +265,16 @@ struct MenuBarEvictionDetector {
     ) -> IconShrinkLevel? {
         guard now >= settleDeadline,
               snapshot.sessionIsActive,
-              let otherStatusWindowCount = snapshot.otherStatusWindowCount
+              let neighbours = snapshot.neighbours
         else {
             return nil
         }
 
+        let otherStatusWindowCount = neighbours.count
         if snapshot.ownWindowIsOnScreen {
-            if fullSizeRetryIsPending,
-               shouldRetryFullSize(otherStatusWindowCount: otherStatusWindowCount)
-            {
+            let retryPending = fullSizeRetryIsPending &&
+                shouldRetryFullSize(otherStatusWindowCount: otherStatusWindowCount)
+            if retryPending || neighbours.isNarrower(than: settledNeighbours) {
                 reset()
                 return .full
             }
@@ -277,6 +289,7 @@ struct MenuBarEvictionDetector {
                     neighbourCountWhenShrunk ?? 0,
                     otherStatusWindowCount
                 )
+                settledNeighbours = neighbours
                 neighbourCountIsProvisional = false
             }
             return nil
@@ -296,6 +309,7 @@ struct MenuBarEvictionDetector {
 
         level = next
         neighbourCountWhenShrunk = otherStatusWindowCount
+        settledNeighbours = nil
         neighbourCountIsProvisional = true
         fullIconWidthWhenShrunk = fullIconWidth
         return next
@@ -330,6 +344,7 @@ struct MenuBarEvictionDetector {
     mutating func reset() {
         level = .full
         settleDeadline = .distantPast
+        settledNeighbours = nil
         neighbourCountWhenShrunk = nil
         neighbourCountIsProvisional = false
         fullSizeRetryIsPending = false
