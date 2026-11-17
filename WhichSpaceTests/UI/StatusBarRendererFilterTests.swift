@@ -392,6 +392,18 @@ struct StatusBarShrinkLevelTests {
         #expect(slots.map(\.spaceID) == [101, 201])
     }
 
+    @Test("a compact numeral respects tighter user padding", arguments: [0.0, 10.0, 25.0])
+    func compact_respectsTighterPadding(padding: Double) {
+        store.paddingScale = padding
+        store.showAllSpaces = true
+        let appState = makeAppState(spaces: Self.plainSpaces, activeSpaceID: 100)
+        let fullWidth = appState.statusBarIcon.size.width
+
+        appState.shrinkLevel = .compact
+
+        #expect(appState.statusBarIcon.size.width == fullWidth)
+    }
+
     @Test("shrinking drops padding but keeps every Space")
     func compact_keepsEverySpace() {
         store.showAllSpaces = true

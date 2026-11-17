@@ -740,7 +740,7 @@ final class StatusBarRenderer {
         overrides: IconPreviewOverrides? = nil
     ) -> IconSpec {
         let labels = level.usesCustomStyling ? labels : [:]
-        let paddingScale = level.paddingScaleOverride ?? store.paddingScale
+        let paddingScale = min(level.paddingScaleOverride ?? store.paddingScale, store.paddingScale)
         // A number style preview forces the plain number, which never
         // combines with a label or symbol; committing the style clears both
         let isStylePreview = overrides?.style != nil
