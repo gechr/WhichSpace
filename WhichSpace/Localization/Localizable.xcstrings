@@ -31446,259 +31446,259 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "إذن تسهيلات الاستخدام مطلوب. امنحه في إعدادات النظام → الخصوصية والأمان → تسهيلات الاستخدام."
+            "value" : "إذن تسهيلات الاستخدام مطلوب. امنحه في إعدادات النظام → الخصوصية والأمان%@."
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Изисква се разрешение за Достъпност. Дайте го в Системни настройки → Поверителност и сигурност → Достъпност."
+            "value" : "Изисква се разрешение за Достъпност. Дайте го в Системни настройки → Поверителност и сигурност%@."
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cal el permís d'accessibilitat. Concediu-lo a Configuració del Sistema → Privacitat i seguretat → Accessibilitat."
+            "value" : "Cal el permís d'accessibilitat. Concediu-lo a Configuració del Sistema → Privacitat i seguretat%@."
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vyžaduje se oprávnění pro Zpřístupnění. Udělte je v Nastavení systému → Soukromí a zabezpečení → Zpřístupnění."
+            "value" : "Vyžaduje se oprávnění pro Zpřístupnění. Udělte je v Nastavení systému → Soukromí a zabezpečení%@."
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kræver tilgængelighedstilladelse. Giv den i Systemindstillinger → Anonymitet & sikkerhed → Tilgængelighed."
+            "value" : "Kræver tilgængelighedstilladelse. Giv den i Systemindstillinger → Anonymitet & sikkerhed%@."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bedienungshilfen-Berechtigung erforderlich. Erteile sie in den Systemeinstellungen → Datenschutz & Sicherheit → Bedienungshilfen."
+            "value" : "Bedienungshilfen-Berechtigung erforderlich. Erteile sie in den Systemeinstellungen → Datenschutz & Sicherheit%@."
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Απαιτείται άδεια προσβασιμότητας. Παραχωρήστε την στις Ρυθμίσεις συστήματος → Απόρρητο και ασφάλεια → Προσβασιμότητα."
+            "value" : "Απαιτείται άδεια προσβασιμότητας. Παραχωρήστε την στις Ρυθμίσεις συστήματος → Απόρρητο και ασφάλεια%@."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Accessibility permission required. Grant it in System Settings → Privacy & Security → Accessibility."
+            "value" : "Accessibility permission required. Grant it in System Settings → Privacy & Security%@."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Accessibility permission required. Grant it in System Settings → Privacy & Security → Accessibility."
+            "value" : "Accessibility permission required. Grant it in System Settings → Privacy & Security%@."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se requiere permiso de accesibilidad. Concédelo en Ajustes del Sistema → Privacidad y seguridad → Accesibilidad."
+            "value" : "Se requiere permiso de accesibilidad. Concédelo en Ajustes del Sistema → Privacidad y seguridad%@."
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "اجازه دسترسی‌پذیری لازم است. آن را در تنظیمات سیستم → حریم خصوصی و امنیت → دسترسی‌پذیری بدهید."
+            "value" : "اجازه دسترسی‌پذیری لازم است. آن را در تنظیمات سیستم → حریم خصوصی و امنیت%@ بدهید."
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Käyttöapu-oikeus vaaditaan. Myönnä se kohdassa Järjestelmäasetukset → Tietosuoja ja suojaus → Käyttöapu."
+            "value" : "Käyttöapu-oikeus vaaditaan. Myönnä se kohdassa Järjestelmäasetukset → Tietosuoja ja suojaus%@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Autorisation d'accessibilité requise. Accordez-la dans Réglages Système → Confidentialité et sécurité → Accessibilité."
+            "value" : "Autorisation d'accessibilité requise. Accordez-la dans Réglages Système → Confidentialité et sécurité%@."
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "נדרשת הרשאת נגישות. הענק אותה בהגדרות המערכת → פרטיות ואבטחה → נגישות."
+            "value" : "נדרשת הרשאת נגישות. הענק אותה בהגדרות המערכת → פרטיות ואבטחה%@."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "एक्सेसिबिलिटी अनुमति आवश्यक है। इसे सिस्टम सेटिंग्स → गोपनीयता और सुरक्षा → एक्सेसिबिलिटी में दें।"
+            "value" : "एक्सेसिबिलिटी अनुमति आवश्यक है। इसे सिस्टम सेटिंग्स → गोपनीयता और सुरक्षा%@ में दें।"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kisegítő lehetőségek engedélye szükséges. Adja meg a Rendszerbeállítások → Adatvédelem és biztonság → Kisegítő lehetőségek menüben."
+            "value" : "Kisegítő lehetőségek engedélye szükséges. Adja meg a Rendszerbeállítások → Adatvédelem és biztonság%@ menüben."
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Izin aksesibilitas diperlukan. Berikan di Pengaturan Sistem → Privasi & Keamanan → Aksesibilitas."
+            "value" : "Izin aksesibilitas diperlukan. Berikan di Pengaturan Sistem → Privasi & Keamanan%@."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Autorizzazione di accessibilità necessaria. Concedila in Impostazioni di Sistema → Privacy e sicurezza → Accessibilità."
+            "value" : "Autorizzazione di accessibilità necessaria. Concedila in Impostazioni di Sistema → Privacy e sicurezza%@."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "アクセシビリティの許可が必要です。システム設定 → プライバシーとセキュリティ → アクセシビリティで許可してください。"
+            "value" : "アクセシビリティの許可が必要です。システム設定 → プライバシーとセキュリティ%@で許可してください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "손쉬운 사용 권한이 필요합니다. 시스템 설정 → 개인정보 보호 및 보안 → 손쉬운 사용에서 권한을 허용하세요."
+            "value" : "손쉬운 사용 권한이 필요합니다. 시스템 설정 → 개인정보 보호 및 보안%@에서 권한을 허용하세요."
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Потребна е дозвола за пристапност. Дајте ја во Системски поставки → Приватност и безбедност → Пристапност."
+            "value" : "Потребна е дозвола за пристапност. Дајте ја во Системски поставки → Приватност и безбедност%@."
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kebenaran kebolehcapaian diperlukan. Berikannya dalam Tetapan Sistem → Privasi & Keselamatan → Kebolehcapaian."
+            "value" : "Kebenaran kebolehcapaian diperlukan. Berikannya dalam Tetapan Sistem → Privasi & Keselamatan%@."
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tilgjengelighetstillatelse kreves. Gi den i Systeminnstillinger → Personvern og sikkerhet → Tilgjengelighet."
+            "value" : "Tilgjengelighetstillatelse kreves. Gi den i Systeminnstillinger → Personvern og sikkerhet%@."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toegankelijkheidstoegang vereist. Verleen deze in Systeeminstellingen → Privacy en beveiliging → Toegankelijkheid."
+            "value" : "Toegankelijkheidstoegang vereist. Verleen deze in Systeeminstellingen → Privacy en beveiliging%@."
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tilgjengelegheitsløyve krevst. Gi det i Systeminnstillingar → Personvern og tryggleik → Tilgjengelegheit."
+            "value" : "Tilgjengelegheitsløyve krevst. Gi det i Systeminnstillingar → Personvern og tryggleik%@."
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "رسائی دی اجازت لوڑیدی اے۔ ایہنوں سسٹم سیٹنگز → پرائیویسی تے سیکیورٹی → رسائی وچ دیو۔"
+            "value" : "رسائی دی اجازت لوڑیدی اے۔ ایہنوں سسٹم سیٹنگز → پرائیویسی تے سیکیورٹی%@ وچ دیو۔"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wymagane uprawnienie dostępności. Przyznaj je w Ustawieniach systemowych → Prywatność i ochrona → Dostępność."
+            "value" : "Wymagane uprawnienie dostępności. Przyznaj je w Ustawieniach systemowych → Prywatność i ochrona%@."
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "د لاسرسي اجازه اړینه ده. په سیسټم تنظیمات → محرمیت او امنیت → لاسرسي کې یې ورکړئ."
+            "value" : "د لاسرسي اجازه اړینه ده. په سیسټم تنظیمات → محرمیت او امنیت%@ کې یې ورکړئ."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "É necessária a permissão de acessibilidade. Conceda-a em Definições do Sistema → Privacidade e segurança → Acessibilidade."
+            "value" : "É necessária a permissão de acessibilidade. Conceda-a em Definições do Sistema → Privacidade e segurança%@."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Permissão de acessibilidade necessária. Conceda-a em Ajustes do Sistema → Privacidade e Segurança → Acessibilidade."
+            "value" : "Permissão de acessibilidade necessária. Conceda-a em Ajustes do Sistema → Privacidade e Segurança%@."
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Este necesară permisiunea de accesibilitate. Acordați-o în Configurări de sistem → Confidențialitate și securitate → Accesibilitate."
+            "value" : "Este necesară permisiunea de accesibilitate. Acordați-o în Configurări de sistem → Confidențialitate și securitate%@."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Требуется разрешение Универсального доступа. Предоставьте его в Системных настройках → Конфиденциальность и безопасность → Универсальный доступ."
+            "value" : "Требуется разрешение Универсального доступа. Предоставьте его в Системных настройках → Конфиденциальность и безопасность%@."
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vyžaduje sa povolenie prístupnosti. Udeľte ho v Nastaveniach systému → Súkromie a bezpečnosť → Prístupnosť."
+            "value" : "Vyžaduje sa povolenie prístupnosti. Udeľte ho v Nastaveniach systému → Súkromie a bezpečnosť%@."
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Potrebna je dozvola za pristupačnost. Dodelite je u Podešavanja sistema → Privatnost i bezbednost → Pristupačnost."
+            "value" : "Potrebna je dozvola za pristupačnost. Dodelite je u Podešavanja sistema → Privatnost i bezbednost%@."
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hjälpmedelsbehörighet krävs. Ge den i Systeminställningar → Integritet och säkerhet → Hjälpmedel."
+            "value" : "Hjälpmedelsbehörighet krävs. Ge den i Systeminställningar → Integritet och säkerhet%@."
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ต้องมีการอนุญาตช่วยการเข้าถึง ให้สิทธิ์ในการตั้งค่าระบบ → ความเป็นส่วนตัวและความปลอดภัย → ช่วยการเข้าถึง"
+            "value" : "ต้องมีการอนุญาตช่วยการเข้าถึง ให้สิทธิ์ในการตั้งค่าระบบ → ความเป็นส่วนตัวและความปลอดภัย%@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erişilebilirlik izni gerekli. İzni Sistem Ayarları → Gizlilik ve Güvenlik → Erişilebilirlik bölümünden verin."
+            "value" : "Erişilebilirlik izni gerekli. İzni Sistem Ayarları → Gizlilik ve Güvenlik%@ bölümünden verin."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Потрібен дозвіл на доступність. Надайте його в Системних параметрах → Конфіденційність і безпека → Доступність."
+            "value" : "Потрібен дозвіл на доступність. Надайте його в Системних параметрах → Конфіденційність і безпека%@."
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "رسائی کی اجازت درکار ہے۔ اسے سسٹم سیٹنگز → پرائیویسی اور سیکیورٹی → رسائی میں دیں۔"
+            "value" : "رسائی کی اجازت درکار ہے۔ اسے سسٹم سیٹنگز → پرائیویسی اور سیکیورٹی%@ میں دیں۔"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cần quyền trợ năng. Cấp quyền trong Cài đặt Hệ thống → Quyền riêng tư & Bảo mật → Trợ năng."
+            "value" : "Cần quyền trợ năng. Cấp quyền trong Cài đặt Hệ thống → Quyền riêng tư & Bảo mật%@."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "需要辅助功能权限。请在系统设置 → 隐私与安全性 → 辅助功能中授予权限。"
+            "value" : "需要辅助功能权限。请在系统设置 → 隐私与安全性%@中授予权限。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "需要輔助使用權限。請在系統設定 → 隱私權與安全性 → 輔助使用中授予權限。"
+            "value" : "需要輔助使用權限。請在系統設定 → 隱私權與安全性%@中授予權限。"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "需要輔助使用權限。請在系統設定 → 私隱與保安 → 輔助使用中授予權限。"
+            "value" : "需要輔助使用權限。請在系統設定 → 私隱與保安%@中授予權限。"
           }
         }
       }
@@ -35629,6 +35629,268 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "最前面的視窗處於全螢幕狀態，無法在空間之間移動。"
+          }
+        }
+      }
+    },
+    "label_accessibility_pane" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تسهيلات الاستخدام"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Достъпност"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accessibilitat"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zpřístupnění"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tilgængelighed"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bedienungshilfen"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Προσβασιμότητα"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accessibility"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accessibility"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accesibilidad"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "دسترسی‌پذیری"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Käyttöapu"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accessibilité"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "נגישות"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "एक्सेसिबिलिटी"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kisegítő lehetőségek"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aksesibilitas"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accessibilità"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アクセシビリティ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "손쉬운 사용"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пристапност"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kebolehcapaian"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tilgjengelighet"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toegankelijkheid"
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tilgjengelegheit"
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "رسائی"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dostępność"
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "لاسرسي"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acessibilidade"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acessibilidade"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accesibilitate"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Универсальный доступ"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prístupnosť"
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pristupačnost"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hjälpmedel"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ช่วยการเข้าถึง"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erişilebilirlik"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Доступність"
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "رسائی"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trợ năng"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "辅助功能"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "輔助使用"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "輔助使用"
           }
         }
       }

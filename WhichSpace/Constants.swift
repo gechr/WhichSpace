@@ -429,7 +429,20 @@ enum Localization {
     static let errorBackupFileReadFailed = String(localized: "error_backup_file_read_failed")
     static let errorBackupFileWriteFailed = String(localized: "error_backup_file_write_failed")
     static let errorBackupInvalidData = String(localized: "error_backup_invalid_data")
-    static let errorScriptingAccessibilityRequired = String(localized: "error_scripting_accessibility_required")
+    static let errorScriptingAccessibilityRequired: String = {
+        let pane: String?
+        if #available(macOS 27, *) {
+            // The pane's name also changes between point releases. Use the title shown by System Settings.
+            let settings = Bundle(path: "/System/Library/ExtensionKit/Extensions/SecurityPrivacyExtension.appex")
+            let title = settings?.localizedString(forKey: "ACCESSIBILITY", value: nil, table: "Localizable")
+            pane = title == "ACCESSIBILITY" ? nil : title
+        } else {
+            pane = String(localized: "label_accessibility_pane")
+        }
+        let pathSuffix = pane.map { " → \($0)" } ?? ""
+        return String(format: String(localized: "error_scripting_accessibility_required"), pathSuffix)
+    }()
+
     static let errorScriptingBadgeSingleCharacter = String(localized: "error_scripting_badge_single_character")
     static let errorScriptingColorResetRequired = String(localized: "error_scripting_color_reset_required")
     static let errorScriptingDisplayOutOfRange = String(localized: "error_scripting_display_out_of_range")
