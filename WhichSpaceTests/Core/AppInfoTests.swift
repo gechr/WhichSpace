@@ -26,10 +26,11 @@ struct AppInfoTests {
         #expect(AppInfo.releaseTag(for: "1.3.0-rc.1-2-gabc1234-dirty") == "v1.3.0-rc.1")
     }
 
-    @Test("a tip build names the rolling tag")
-    func tipBuildNamesRollingTag() {
-        #expect(AppInfo.releaseTag(for: "1.3.5-tip.616") == "tip")
-        #expect(AppInfo.releaseTag(for: "1.3.5-tip.616-2-gabc1234-dirty") == "tip")
+    @Test("a nightly build links to the nightly release tag")
+    func nightlyBuildNamesRollingTag() {
+        #expect(AppInfo.releaseTag(for: "2.0.1-nightly.42") == "nightly")
+        #expect(AppInfo.releaseTag(for: "1.3.5-tip.616") == "nightly")
+        #expect(AppInfo.releaseTag(for: "1.3.5-tip.616-2-gabc1234-dirty") == "nightly")
     }
 
     @Test("an unknown stamp names no tag")
@@ -74,6 +75,15 @@ struct NightlyAwareVersionComparatorTests {
         #expect(nightly.compareVersion("1.3.5-tip.618", toVersion: "1.3.5-tip.619") == .orderedAscending)
         #expect(nightly.compareVersion("1.3.5-tip.619", toVersion: "1.3.5-tip.619") == .orderedSame)
         #expect(stable.compareVersion("1.3.5-tip.618", toVersion: "1.3.5-tip.619") == .orderedAscending)
+    }
+
+    @Test("both nightly suffixes share a build counter")
+    func nightlySuffixTransition() {
+        #expect(nightly.compareVersion("2.0.1-tip.9", toVersion: "2.0.1-nightly.10") == .orderedAscending)
+        #expect(nightly.compareVersion("2.0.1-nightly.10", toVersion: "2.0.1-tip.10") == .orderedSame)
+        #expect(nightly.compareVersion("2.0.1-nightly.11", toVersion: "2.0.1-nightly.10") == .orderedDescending)
+        #expect(nightly.compareVersion("2.0.1", toVersion: "2.0.1-nightly.10") == .orderedAscending)
+        #expect(stable.compareVersion("2.0.1", toVersion: "2.0.1-nightly.10") == .orderedDescending)
     }
 
     @Test("nightlies of different base versions compare by base version")

@@ -1510,7 +1510,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
     }
 }
 
-/// Version comparison that understands nightly (tip) builds. Sparkle's
+/// Version comparison that understands nightly builds. Sparkle's
 /// standard comparator discards everything after the first hyphen, which
 /// makes every 1.3.5-tip.N equal to 1.3.5 and to each other, so on its own
 /// it can neither update between nightlies nor leave the nightly channel.
@@ -1521,7 +1521,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
 /// under the standard comparator; the shared base is what makes the
 /// channel-exit downgrade below compare as equal and install.
 ///
-/// - Two nightlies with the same base version compare by tip counter.
+/// - Two nightlies with the same base version compare by build counter.
 /// - A nightly outranks the stable release of the same base version,
 ///   since it is built on top of it.
 /// - With `stableOutranksAnyNightly` (nightlies turned off), any stable
@@ -1535,8 +1535,10 @@ final class NightlyAwareVersionComparator: SUVersionComparison, Sendable {
     }
 
     func compareVersion(_ versionA: String, toVersion versionB: String) -> ComparisonResult {
-        let nightlyA = AppInfo.isNightlyVersion(versionA)
-        let nightlyB = AppInfo.isNightlyVersion(versionB)
+        let counterA = AppInfo.nightlyBuildNumber(in: versionA)
+        let counterB = AppInfo.nightlyBuildNumber(in: versionB)
+        let nightlyA = counterA != nil
+        let nightlyB = counterB != nil
         if nightlyA != nightlyB, stableOutranksAnyNightly {
             return nightlyA ? .orderedAscending : .orderedDescending
         }
@@ -1547,23 +1549,9 @@ final class NightlyAwareVersionComparator: SUVersionComparison, Sendable {
         if nightlyA != nightlyB {
             return nightlyA ? .orderedDescending : .orderedAscending
         }
-        guard nightlyA, nightlyB else {
-            return .orderedSame
-        }
-        let counterA = Self.tipCounter(of: versionA)
-        let counterB = Self.tipCounter(of: versionB)
-        if counterA == counterB {
+        guard let counterA, let counterB, counterA != counterB else {
             return .orderedSame
         }
         return counterA < counterB ? .orderedAscending : .orderedDescending
-    }
-
-    /// Build counter after the `-tip.` marker, e.g. 619 in 1.3.6-tip.619
-    private static func tipCounter(of version: String) -> Int {
-        guard let range = version.range(of: "-tip.") else {
-            return 0
-        }
-        let digits = version[range.upperBound...].prefix(while: \.isNumber)
-        return Int(digits) ?? 0
     }
 }

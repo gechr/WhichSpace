@@ -117,16 +117,20 @@ enum AppInfo {
         guard value.first?.isNumber == true else {
             return nil
         }
-        // Tip builds are published under the rolling tag, not a version tag
-        if isNightlyVersion(value) {
-            return "tip"
+        // Nightly builds share a rolling release tag.
+        if nightlyBuildNumber(in: value) != nil {
+            return "nightly"
         }
         return "v\(value)"
     }
 
-    /// Whether the version string names a nightly (tip) build, e.g. 1.3.6-tip.619
-    static func isNightlyVersion(_ version: String) -> Bool {
-        version.contains("-tip.")
+    /// The build counter shared by current and legacy nightly version stamps.
+    static func nightlyBuildNumber(in version: String) -> Int? {
+        guard let marker = version.range(of: "-nightly.") ?? version.range(of: "-tip.") else {
+            return nil
+        }
+        let digits = version[marker.upperBound...].prefix(while: \.isNumber)
+        return Int(digits) ?? 0
     }
 
     private static let dirtySuffix = "-dirty"
