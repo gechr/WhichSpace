@@ -1102,6 +1102,33 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         try? FileManager.default.removeItem(at: tempURL)
     }
 
+    func testExportOnlyConfirmsReplacement() throws {
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: url) }
+        let login = StubLaunchAtLoginProvider()
+        store.showAllSpaces = false
+        try BackupManager.export(to: url, store: store, launchAtLogin: login) {
+            XCTFail("Creating a backup prompted for replacement")
+            return false
+        }
+        let original = try Data(contentsOf: url)
+        store.showAllSpaces = true
+
+        var prompts = 0
+        for allow in [false, true] {
+            try BackupManager.export(to: url, store: store, launchAtLogin: login) {
+                prompts += 1
+                return allow
+            }
+            let data = try Data(contentsOf: url)
+            XCTAssertEqual(try JSONDecoder().decode(Backup.self, from: data).settings.showAllSpaces, allow)
+            if !allow {
+                XCTAssertEqual(data, original)
+            }
+        }
+        XCTAssertEqual(prompts, 2)
+    }
+
     // MARK: - Default Filename Test
 
     func testDefaultFilename() {

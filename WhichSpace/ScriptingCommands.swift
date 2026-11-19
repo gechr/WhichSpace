@@ -395,14 +395,16 @@ enum ScriptingHelpers {
         store: DefaultsStore = AppEnvironment.shared.store,
         launchAtLogin: LaunchAtLoginProvider = DefaultLaunchAtLoginProvider(),
         hotkeys: [String: String] = HotkeyCenter.exportBindings(),
-        updaterSettings: (any UpdaterSettingsProvider)? = liveUpdaterSettings
+        updaterSettings: (any UpdaterSettingsProvider)? = liveUpdaterSettings,
+        confirmOverwrite: (() -> Bool)? = nil
     ) throws {
         try BackupManager.export(
             to: url,
             store: store,
             launchAtLogin: launchAtLogin,
             hotkeys: hotkeys,
-            updaterSettings: updaterSettings
+            updaterSettings: updaterSettings,
+            confirmOverwrite: confirmOverwrite
         )
     }
 

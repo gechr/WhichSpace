@@ -929,7 +929,8 @@ enum BackupManager {
         store: DefaultsStore = AppEnvironment.shared.store,
         launchAtLogin: LaunchAtLoginProvider = DefaultLaunchAtLoginProvider(),
         hotkeys: [String: String] = [:],
-        updaterSettings: (any UpdaterSettingsProvider)? = nil
+        updaterSettings: (any UpdaterSettingsProvider)? = nil,
+        confirmOverwrite: (() -> Bool)? = nil
     ) throws {
         let jsonString = try encode(
             store: store,
@@ -937,8 +938,19 @@ enum BackupManager {
             hotkeys: hotkeys,
             updaterSettings: updaterSettings
         )
+        let data = Data(jsonString.utf8)
         do {
-            try jsonString.write(to: url, atomically: true, encoding: .utf8)
+            if let confirmOverwrite {
+                do {
+                    try data.write(to: url, options: .withoutOverwriting)
+                    return
+                } catch CocoaError.fileWriteFileExists {
+                    guard confirmOverwrite() else {
+                        return
+                    }
+                }
+            }
+            try data.write(to: url, options: .atomic)
         } catch {
             throw BackupError.fileWriteFailed(url, error)
         }

@@ -10,6 +10,7 @@ final class ActionHandler: NSObject {
 
     private let appState: AppState
     private var launchAtLogin: LaunchAtLoginProvider
+    private let chooseFile: @MainActor (NSSavePanel) -> URL?
     private let confirmAction: ConfirmAction
 
     /// Shows the accessibility permission alert, starts the request when the
@@ -49,6 +50,7 @@ final class ActionHandler: NSObject {
         confirmAction: @escaping ConfirmAction = {
             ConfirmationAlert(message: $0, detail: $1, confirmTitle: $2, isDestructive: $3).runModal()
         },
+        chooseFile: @escaping @MainActor (NSSavePanel) -> URL? = ActionHandler.chooseSettingsFile,
         accessibilityPermissionPrompt: @escaping @MainActor () -> Bool = ActionHandler.showAccessibilityPermissionAlert,
         onStatusBarIconNeedsUpdate: (() -> Void)? = nil,
         onCheckForUpdates: (() -> Void)? = nil,
@@ -58,6 +60,7 @@ final class ActionHandler: NSObject {
     ) {
         self.appState = appState
         self.launchAtLogin = launchAtLogin
+        self.chooseFile = chooseFile
         self.confirmAction = confirmAction
         self.accessibilityPermissionPrompt = accessibilityPermissionPrompt
         self.onStatusBarIconNeedsUpdate = onStatusBarIconNeedsUpdate
@@ -98,16 +101,24 @@ final class ActionHandler: NSObject {
 
     // MARK: - Settings Import/Export
 
-    @objc func importSettings() {
+    static func chooseSettingsFile(_ panel: NSSavePanel) -> URL? {
+        NSApp.activate(ignoringOtherApps: true)
+        return panel.runModal() == .OK ? panel.url : nil
+    }
+
+    func importSettings(suggestedURL: URL? = nil) {
         let openPanel = NSOpenPanel()
         openPanel.allowedContentTypes = [.json]
         openPanel.allowsMultipleSelection = false
         openPanel.canChooseDirectories = false
 
-        NSApp.activate(ignoringOtherApps: true)
-        let response = openPanel.runModal()
+        openPanel.prompt = Localization.actionImportSettings
+        if let suggestedURL {
+            openPanel.directoryURL = suggestedURL.deletingLastPathComponent()
+            openPanel.message = "\(Localization.labelBackup): \(suggestedURL.lastPathComponent)"
+        }
 
-        guard response == .OK, let url = openPanel.url else {
+        guard let url = chooseFile(openPanel) else {
             return
         }
 
@@ -119,23 +130,38 @@ final class ActionHandler: NSObject {
         }
     }
 
-    @objc func exportSettings() {
-        let savePanel = NSSavePanel()
-        savePanel.allowedContentTypes = [.json]
-        savePanel.nameFieldStringValue = BackupManager.defaultFilename
-
-        NSApp.activate(ignoringOtherApps: true)
-        let response = savePanel.runModal()
-
-        guard response == .OK, let url = savePanel.url else {
+    func exportSettings(to destination: URL? = nil) {
+        if let destination {
+            writeSettings(to: destination) {
+                self.confirmAction(
+                    Localization.actionExportSettings,
+                    destination.path,
+                    Localization.buttonReplace,
+                    true
+                )
+            }
             return
         }
 
+        let savePanel = NSSavePanel()
+        savePanel.allowedContentTypes = [.json]
+        savePanel.prompt = Localization.actionExportSettings
+        savePanel.nameFieldStringValue = BackupManager.defaultFilename
+
+        guard let url = chooseFile(savePanel) else {
+            return
+        }
+
+        writeSettings(to: url)
+    }
+
+    private func writeSettings(to url: URL, confirmOverwrite: (() -> Bool)? = nil) {
         do {
             try ScriptingHelpers.exportSettings(
                 to: url,
                 store: store,
-                launchAtLogin: launchAtLogin
+                launchAtLogin: launchAtLogin,
+                confirmOverwrite: confirmOverwrite
             )
         } catch {
             showExportFailedAlert(detail: error.localizedDescription)

@@ -419,7 +419,9 @@ open "whichspace://settings/export?path=/Users/george/Desktop/design.json"
 open "whichspace://settings/import?path=/Users/george/Desktop/design.json"
 ```
 
-Use an absolute path and percent-encode special characters, such as `%20` for a space or `%26` for `&`. These commands bypass file pickers and show an alert if the operation fails. URL commands run asynchronously - use AppleScript to wait for completion or handle errors.
+Use an absolute path and encode spaces as `%20`.
+
+Imports and overwrites require confirmation.
 
 `space/N` is the position on the current display, counting fullscreen Spaces, regardless of the numbering preference. Add `display=M` for another display. An invalid value shows an alert and nothing is applied.
 

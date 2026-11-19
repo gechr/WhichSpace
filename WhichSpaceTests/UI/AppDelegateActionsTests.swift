@@ -93,6 +93,41 @@ final class AppDelegateActionsTests: XCTestCase {
         try await super.tearDown()
     }
 
+    func testCancellingSettingsURLsPreservesBackupAndSettings() throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let backup = directory.appendingPathComponent("settings.json")
+        store.showAllSpaces = true
+        try BackupManager.export(to: backup, store: store, launchAtLogin: launchAtLoginStub)
+        let original = try Data(contentsOf: backup)
+        store.showAllSpaces = false
+
+        confirmStub.shouldConfirm = false
+        var openPanels = [Bool]()
+        let cancel: @MainActor (NSSavePanel) -> URL? = { panel in
+            openPanels.append(panel is NSOpenPanel)
+            return nil
+        }
+        let delegate = AppDelegate(
+            appState: appState,
+            confirmAction: confirmStub.callAsFunction,
+            launchAtLogin: launchAtLoginStub,
+            chooseSettingsFile: cancel
+        )
+        for operation in ["import", "export"] {
+            var request = try XCTUnwrap(URLComponents(string: "whichspace://settings/\(operation)"))
+            request.queryItems = [URLQueryItem(name: "path", value: backup.path)]
+            try delegate.application(NSApp, open: [XCTUnwrap(request.url)])
+        }
+
+        XCTAssertEqual(openPanels, [true])
+        XCTAssertEqual(confirmStub.alertsShown.map(\.detail), [backup.path])
+        XCTAssertEqual(confirmStub.alertsShown.first?.confirmTitle, Localization.buttonReplace)
+        XCTAssertFalse(store.showAllSpaces)
+        XCTAssertEqual(try Data(contentsOf: backup), original)
+    }
+
     // MARK: - Helper Methods
 
     /// Waits for statusBarIconUpdateCount to change from the given value.

@@ -216,6 +216,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
         isProcessTrusted: @escaping () -> Bool = { AXIsProcessTrusted() },
         isCapabilityTrusted: @escaping () -> Bool = { Accessibility.liveStatus.capabilityTrusted },
         menuBarVisibilityProbe: MenuBarVisibilityProbe = CGMenuBarVisibilityProbe(),
+        chooseSettingsFile: @escaping @MainActor (NSSavePanel) -> URL? = ActionHandler.chooseSettingsFile,
         // Defaults to a no-op: the hotkey library stores bindings in the host
         // app's standard defaults domain, so a test resetting through the
         // real action would wipe the developer's recorded hotkeys
@@ -235,14 +236,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
         self.resetHotkeysAction = resetHotkeysAction
         self.resetUpdaterSettingsAction = resetUpdaterSettingsAction
         super.init()
-        configureActionHandler()
+        configureActionHandler(chooseSettingsFile: chooseSettingsFile)
     }
 
-    private func configureActionHandler() {
+    private func configureActionHandler(
+        chooseSettingsFile: @escaping @MainActor (NSSavePanel) -> URL? = ActionHandler.chooseSettingsFile
+    ) {
         actionHandler = ActionHandler(
             appState: appState,
             launchAtLogin: launchAtLogin,
             confirmAction: confirmAction,
+            chooseFile: chooseSettingsFile,
             onStatusBarIconNeedsUpdate: { [weak self] in
                 self?.updateStatusBarIcon()
             },
@@ -503,18 +507,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
             case .switchPrevious:
                 try ScriptingHelpers.switchToPreviousSpace(appState: appState)
             case let .importSettings(url):
-                do {
-                    try ScriptingHelpers.importSettings(from: url, store: store, launchAtLogin: launchAtLogin)
-                    updateStatusBarIcon()
-                } catch {
-                    actionHandler.showImportFailedAlert(detail: error.localizedDescription)
-                }
+                actionHandler.importSettings(suggestedURL: url)
             case let .exportSettings(url):
-                do {
-                    try ScriptingHelpers.exportSettings(to: url, store: store, launchAtLogin: launchAtLogin)
-                } catch {
-                    actionHandler.showExportFailedAlert(detail: error.localizedDescription)
-                }
+                actionHandler.exportSettings(to: url)
             case .copyDiagnostics:
                 ScriptingHelpers.copyDiagnostics(appState: appState, store: store)
             case let .setSpaceAppearance(position, display, patch):
