@@ -26,7 +26,7 @@ final class ExportSettingsCommand: NSScriptCommand {
 final class ImportSettingsCommand: NSScriptCommand {
     override func performDefaultImplementation() -> Any? {
         performSettingsTransfer(parameter: "source") { url in
-            try ScriptingHelpers.importSettings(from: url)
+            try await ScriptingHelpers.importSettings(from: url)
         }
     }
 }
@@ -35,7 +35,7 @@ final class ImportSettingsCommand: NSScriptCommand {
 /// Usage: `tell application "WhichSpace" to move front window left`
 final class MoveWindowLeftCommand: NSScriptCommand {
     override func performDefaultImplementation() -> Any? {
-        performMove { try await ScriptingHelpers.moveWindowRelative(goRight: false, follow: true) }
+        performAsync { try await ScriptingHelpers.moveWindowRelative(goRight: false, follow: true) }
         return nil
     }
 }
@@ -44,7 +44,7 @@ final class MoveWindowLeftCommand: NSScriptCommand {
 /// Usage: `tell application "WhichSpace" to move front window right`
 final class MoveWindowRightCommand: NSScriptCommand {
     override func performDefaultImplementation() -> Any? {
-        performMove { try await ScriptingHelpers.moveWindowRelative(goRight: true, follow: true) }
+        performAsync { try await ScriptingHelpers.moveWindowRelative(goRight: true, follow: true) }
         return nil
     }
 }
@@ -56,7 +56,7 @@ final class MoveWindowToSpaceCommand: NSScriptCommand {
         guard let spaceNumber = spaceNumberParameter() else {
             return nil
         }
-        performMove { try await ScriptingHelpers.moveWindow(toSpace: spaceNumber, follow: true) }
+        performAsync { try await ScriptingHelpers.moveWindow(toSpace: spaceNumber, follow: true) }
         return nil
     }
 }
@@ -115,7 +115,7 @@ final class ResetSpaceIconCommand: NSScriptCommand {
 /// Usage: `tell application "WhichSpace" to send front window left`
 final class SendWindowLeftCommand: NSScriptCommand {
     override func performDefaultImplementation() -> Any? {
-        performMove { try await ScriptingHelpers.moveWindowRelative(goRight: false, follow: false) }
+        performAsync { try await ScriptingHelpers.moveWindowRelative(goRight: false, follow: false) }
         return nil
     }
 }
@@ -124,7 +124,7 @@ final class SendWindowLeftCommand: NSScriptCommand {
 /// Usage: `tell application "WhichSpace" to send front window right`
 final class SendWindowRightCommand: NSScriptCommand {
     override func performDefaultImplementation() -> Any? {
-        performMove { try await ScriptingHelpers.moveWindowRelative(goRight: true, follow: false) }
+        performAsync { try await ScriptingHelpers.moveWindowRelative(goRight: true, follow: false) }
         return nil
     }
 }
@@ -136,7 +136,7 @@ final class SendWindowToSpaceCommand: NSScriptCommand {
         guard let spaceNumber = spaceNumberParameter() else {
             return nil
         }
-        performMove { try await ScriptingHelpers.moveWindow(toSpace: spaceNumber, follow: false) }
+        performAsync { try await ScriptingHelpers.moveWindow(toSpace: spaceNumber, follow: false) }
         return nil
     }
 }
@@ -144,19 +144,14 @@ final class SendWindowToSpaceCommand: NSScriptCommand {
 extension NSScriptCommand {
     fileprivate func performSettingsTransfer(
         parameter: String,
-        work: @MainActor (URL) throws -> Void
+        work: @escaping @MainActor (URL) async throws -> Void
     ) -> Any? {
-        do {
-            guard let url = evaluatedArguments?[parameter] as? URL, url.isFileURL else {
-                throw BackupError.invalidData
-            }
-            try MainActor.assumeIsolated {
-                try work(url)
-            }
-        } catch {
+        guard let url = evaluatedArguments?[parameter] as? URL, url.isFileURL else {
             scriptErrorNumber = errOSACantAssign
-            scriptErrorString = error.localizedDescription
+            scriptErrorString = BackupError.invalidData.localizedDescription
+            return nil
         }
+        performAsync { try await work(url) }
         return nil
     }
 
@@ -182,10 +177,8 @@ extension NSScriptCommand {
         return space
     }
 
-    /// Runs an asynchronous move, suspending the script until the window has
-    /// actually landed so callers can act on the result. Moves are confirmed
-    /// against the window server, so they cannot report success early.
-    fileprivate func performMove(_ work: @escaping @MainActor () async throws -> Void) {
+    /// Suspends the script until the operation completes or reports an error.
+    fileprivate func performAsync(_ work: @escaping @MainActor () async throws -> Void) {
         suspendExecution()
         // Apple Events are delivered on the main thread and the work below runs
         // on the main actor, so the command is never touched concurrently
@@ -380,8 +373,8 @@ enum ScriptingHelpers {
         launchAtLogin: LaunchAtLoginProvider = DefaultLaunchAtLoginProvider(),
         applyHotkeys: @escaping ([String: String]) -> Void = { HotkeyCenter.importBindings($0) },
         updaterSettings: (any UpdaterSettingsProvider)? = liveUpdaterSettings
-    ) throws {
-        try BackupManager.load(
+    ) async throws {
+        try await BackupManager.load(
             from: url,
             store: store,
             launchAtLogin: launchAtLogin,

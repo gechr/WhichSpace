@@ -122,11 +122,13 @@ final class ActionHandler: NSObject {
             return
         }
 
-        do {
-            try ScriptingHelpers.importSettings(from: url, store: store, launchAtLogin: launchAtLogin)
-            onStatusBarIconNeedsUpdate?()
-        } catch {
-            showImportFailedAlert(detail: error.localizedDescription)
+        Task {
+            do {
+                try await ScriptingHelpers.importSettings(from: url, store: store, launchAtLogin: launchAtLogin)
+                onStatusBarIconNeedsUpdate?()
+            } catch {
+                showImportFailedAlert(detail: error.localizedDescription)
+            }
         }
     }
 

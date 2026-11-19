@@ -15,7 +15,7 @@ struct ScriptingCommandsTests {
     }
 
     @Test("settings files round trip preferences and hotkeys, overwriting existing exports")
-    func settingsFileRoundTrip() throws {
+    func settingsFileRoundTrip() async throws {
         let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".json")
         defer { try? FileManager.default.removeItem(at: url) }
         let login = StubLaunchAtLoginProvider()
@@ -28,7 +28,7 @@ struct ScriptingCommandsTests {
         store.spaceSymbols = [1: "heart"]
         store.showAllSpaces = false
         var restoredHotkeys: [String: String] = [:]
-        try ScriptingHelpers.importSettings(from: url, store: store, launchAtLogin: login) {
+        try await ScriptingHelpers.importSettings(from: url, store: store, launchAtLogin: login) {
             restoredHotkeys = $0
         }
         #expect(store.spaceSymbols == [3: "star.fill"])
@@ -37,7 +37,7 @@ struct ScriptingCommandsTests {
     }
 
     @Test("failed imports preserve preferences and never apply hotkeys")
-    func invalidSettingsImport() throws {
+    func invalidSettingsImport() async throws {
         let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".json")
         defer { try? FileManager.default.removeItem(at: url) }
         let login = StubLaunchAtLoginProvider()
@@ -47,13 +47,51 @@ struct ScriptingCommandsTests {
             if invalidJSON {
                 try "invalid JSON".write(to: url, atomically: true, encoding: .utf8)
             }
-            #expect(throws: (any Error).self) {
-                try ScriptingHelpers.importSettings(from: url, store: store, launchAtLogin: login) { _ in
+            await #expect(throws: (any Error).self) {
+                try await ScriptingHelpers.importSettings(from: url, store: store, launchAtLogin: login) { _ in
                     appliedHotkeys = true
                 }
             }
             #expect(store.spaceSymbols == [3: "curlybraces"])
             #expect(!appliedHotkeys)
+        }
+    }
+
+    @Test("a backup at the byte limit imports and a larger backup leaves settings intact")
+    func settingsImportSizeLimit() async throws {
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: url) }
+        let login = StubLaunchAtLoginProvider()
+        store.showAllSpaces = true
+        let json = try BackupManager.encode(store: store, launchAtLogin: login)
+        var backup = Data(json.utf8)
+        backup.append(Data(repeating: 0x20, count: BackupManager.maximumImportBytes - backup.count))
+        try backup.write(to: url)
+        store.showAllSpaces = false
+        try await ScriptingHelpers.importSettings(from: url, store: store, launchAtLogin: login) { _ in }
+        #expect(store.showAllSpaces)
+
+        backup.append(0x20)
+        try backup.write(to: url)
+        store.showAllSpaces = false
+        do {
+            try await ScriptingHelpers.importSettings(from: url, store: store, launchAtLogin: login) { _ in
+                Issue.record("An oversized backup applied hotkeys")
+            }
+            Issue.record("An oversized backup was accepted")
+        } catch let BackupError.fileReadFailed(_, error as CocoaError) {
+            #expect(error.code == .fileReadTooLarge)
+        }
+        #expect(!store.showAllSpaces)
+    }
+
+    @Test("import rejects directories before decoding")
+    func settingsImportRequiresRegularFile() async throws {
+        do {
+            try await BackupManager.load(from: FileManager.default.temporaryDirectory, store: store)
+            Issue.record("A directory was accepted as a backup")
+        } catch let BackupError.fileReadFailed(_, error as POSIXError) {
+            #expect(error.code == .EFTYPE)
         }
     }
 

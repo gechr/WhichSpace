@@ -987,7 +987,7 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         XCTAssertEqual(store.spacePickerStyle, .icons)
     }
 
-    func testExportAndLoadRoundTrip() throws {
+    func testExportAndLoadRoundTrip() async throws {
         // Set up some settings
         store.showAllSpaces = true
         store.inactiveSpaceOpacity = 72
@@ -1020,7 +1020,7 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         XCTAssertEqual(store.sizeScale, Layout.defaultSizeScale)
 
         // Load from file
-        try BackupManager.load(from: tempURL, store: store)
+        try await BackupManager.load(from: tempURL, store: store)
 
         // Verify settings restored
         XCTAssertTrue(store.showAllSpaces)
@@ -1079,27 +1079,29 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         XCTAssertEqual(store.spaceLabels[1], "Work")
     }
 
-    func testLoadFromNonexistentFileThrows() {
+    func testLoadFromNonexistentFileThrows() async throws {
         let fakeURL = URL(fileURLWithPath: "/nonexistent/path/settings.json")
-        XCTAssertThrowsError(try BackupManager.load(from: fakeURL, store: store)) { error in
-            guard case BackupError.fileReadFailed = error else {
-                XCTFail("Expected fileReadFailed, got \(error)")
-                return
-            }
+        do {
+            try await BackupManager.load(from: fakeURL, store: store)
+            XCTFail("Missing backup was accepted")
+        } catch BackupError.fileReadFailed {
+            return
         }
     }
 
-    func testLoadFromInvalidJSONThrows() throws {
+    func testLoadFromInvalidJSONThrows() async throws {
         let tempURL = FileManager.default.temporaryDirectory
             .appendingPathComponent("invalid_backup.json")
 
         try "{ invalid json }".write(to: tempURL, atomically: true, encoding: .utf8)
 
-        XCTAssertThrowsError(try BackupManager.load(from: tempURL, store: store)) { error in
-            XCTAssertTrue(error is BackupError)
+        defer { try? FileManager.default.removeItem(at: tempURL) }
+        do {
+            try await BackupManager.load(from: tempURL, store: store)
+            XCTFail("Invalid JSON was accepted")
+        } catch BackupError.decodingFailed {
+            return
         }
-
-        try? FileManager.default.removeItem(at: tempURL)
     }
 
     func testExportOnlyConfirmsReplacement() throws {

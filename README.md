@@ -361,7 +361,7 @@ tell application "WhichSpace"
 end tell
 ```
 
-Import restores global settings, update preferences, Space customizations, and hotkeys. Export overwrites an existing file. Failures are returned as AppleScript errors.
+Import accepts regular backup files up to 4 MiB and restores global settings, update preferences, Space customizations, and hotkeys. Export overwrites an existing file. Failures are returned as AppleScript errors.
 
 ##### Displays
 

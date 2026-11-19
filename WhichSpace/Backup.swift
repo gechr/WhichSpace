@@ -618,11 +618,66 @@ protocol UpdaterSettingsProvider: AnyObject {
     var automaticallyDownloadsUpdates: Bool { get set }
 }
 
+/// Serializes file reads and JSON decoding off the main actor.
+private actor BackupFileReader {
+    static let shared = BackupFileReader()
+
+    func read(_ url: URL) throws -> Backup {
+        let data: Data
+        do {
+            data = try readData(from: url)
+        } catch {
+            throw BackupError.fileReadFailed(url, error)
+        }
+        return try BackupManager.decode(data)
+    }
+
+    private func readData(from url: URL) throws -> Data {
+        // Open nonblocking so inspecting a pipe never waits for a writer.
+        let descriptor = try url.withUnsafeFileSystemRepresentation { path in
+            guard let path else {
+                throw CocoaError(.fileReadInvalidFileName)
+            }
+            let fd = Darwin.open(path, O_RDONLY | O_NONBLOCK | O_NOCTTY | O_CLOEXEC)
+            guard fd >= 0 else {
+                throw NSError(domain: NSPOSIXErrorDomain, code: Int(errno))
+            }
+            return fd
+        }
+        let handle = FileHandle(fileDescriptor: descriptor, closeOnDealloc: true)
+        defer { try? handle.close() }
+
+        var info = stat()
+        guard fstat(descriptor, &info) == 0 else {
+            throw NSError(domain: NSPOSIXErrorDomain, code: Int(errno))
+        }
+        guard info.st_mode & S_IFMT == S_IFREG else {
+            throw POSIXError(.EFTYPE)
+        }
+        let limit = BackupManager.maximumImportBytes
+        guard info.st_size <= limit else {
+            throw CocoaError(.fileReadTooLarge)
+        }
+
+        // Enforce the limit on the open file even if it grows after fstat.
+        var data = Data()
+        while let chunk = try handle.read(upToCount: min(64 * 1024, limit + 1 - data.count)), !chunk.isEmpty {
+            data.append(chunk)
+            guard data.count <= limit else {
+                throw CocoaError(.fileReadTooLarge)
+            }
+        }
+        return data
+    }
+}
+
 // MARK: - BackupManager
 
 /// Handles encoding and decoding of WhichSpace configuration.
 @MainActor
 enum BackupManager {
+    nonisolated static let maximumImportBytes = 4 * 1024 * 1024
+
     /// Default filename for exported backup.
     static let defaultFilename = "WhichSpaceSettings.json"
 
@@ -755,9 +810,10 @@ enum BackupManager {
 
     /// Decodes a JSON string to a Backup object.
     static func decode(jsonString: String) throws -> Backup {
-        guard let data = jsonString.data(using: .utf8) else {
-            throw BackupError.invalidData
-        }
+        try decode(Data(jsonString.utf8))
+    }
+
+    nonisolated static func decode(_ data: Data) throws -> Backup {
         do {
             return try JSONDecoder().decode(Backup.self, from: data)
         } catch {
@@ -775,15 +831,8 @@ enum BackupManager {
         launchAtLogin: LaunchAtLoginProvider = DefaultLaunchAtLoginProvider(),
         applyHotkeys: (([String: String]) -> Void)? = nil,
         updaterSettings: (any UpdaterSettingsProvider)? = nil
-    ) throws {
-        let jsonString: String
-        do {
-            jsonString = try String(contentsOf: url, encoding: .utf8)
-        } catch {
-            throw BackupError.fileReadFailed(url, error)
-        }
-
-        let config = try decode(jsonString: jsonString)
+    ) async throws {
+        let config = try await BackupFileReader.shared.read(url)
         apply(
             config,
             to: store,
