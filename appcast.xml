@@ -6,13 +6,21 @@
     <description>Most recent changes with links to updates.</description>
     <language>en</language>
     <item>
-        <title>Version 1.4.5-nightly.680</title>
+        <title>Version 1.4.5-nightly.688</title>
         <sparkle:channel>nightly</sparkle:channel>
         <description><![CDATA[
           <style>.sparkle-installed-version, .sparkle-installed-version ~ * { display: none }</style>
-          <section data-sparkle-version="1.4.5-nightly.680">
-            <h3>Nightly (v1.4.5-nightly.680)</h3>
+          <section data-sparkle-version="1.4.5-nightly.688">
+            <h3>Nightly (v1.4.5-nightly.688)</h3>
             <ul>
+              <li>menubar: Cache rendered fullscreen icons</li>
+              <li>hotkeys: Bind full-screen Spaces</li>
+              <li>menubar: Combine Split View app icons</li>
+              <li>spaces: Retry stalled fullscreen activation</li>
+              <li>menubar: Retain fullscreen artwork during dismissal</li>
+              <li>spaces: Exclude WhichSpace from fullscreen owners</li>
+              <li>menubar: Match fullscreen artwork to Space icon size</li>
+              <li>picker: Prefer custom Space labels</li>
               <li>backup: Bound and offload settings imports</li>
               <li>backup: Confirm URL imports and overwrites</li>
             </ul>
@@ -1123,13 +1131,13 @@
           </section>
         ]]></description>
         <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases</sparkle:fullReleaseNotesLink>
-        <pubDate>Thu, 19 Nov 2026 20:40:06 +0000</pubDate>
+        <pubDate>Fri, 20 Nov 2026 14:36:35 +0000</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/nightly/WhichSpace.zip"
-          sparkle:version="1.4.5-nightly.680"
-          sparkle:shortVersionString="1.4.5-nightly.680"
-          sparkle:edSignature="greDOVwqaAMAbbfMhK6iXJM6062B2BIqpiy1KVc9CcQVwEW82bPp2g6AjahK4VdHUvncsm03QcQoOzr3qQ9jCw=="
-          length="4304923"
+          sparkle:version="1.4.5-nightly.688"
+          sparkle:shortVersionString="1.4.5-nightly.688"
+          sparkle:edSignature="Zx7xlZ4pTSQnR4QUL8GuQc35g0GCZeKNQJN70PsG65RemQXbGDyXihMnVDQKRZBdbE7gXO944QUjWVsn17iHBA=="
+          length="4384085"
           type="application/octet-stream" />
         <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
       </item>
