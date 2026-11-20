@@ -797,31 +797,37 @@ enum SpaceIconGenerator {
     /// faint drop shadow does not inflate the measured artwork bounds.
     private static let appIconAlphaThreshold: UInt8 = 25
 
-    /// Redraws an app icon so its opaque artwork spans the icon grid
-    /// fraction of a square canvas, centered on the artwork rather than
-    /// the canvas. Margins vary between apps and even between the small
-    /// and large representations of one icon, so the content is measured
-    /// and rebaked at the raster size the icon will actually display at
-    /// (2x for Retina). Returns the icon unchanged when it cannot be
+    /// Centers the opaque artwork and scales it to the requested fraction
+    /// of the canvas. Margins vary between apps and even between the small
+    /// and large representations of one icon. Measure at higher resolution
+    /// so fractional edges survive scaling, then bake a 2x Retina image.
+    /// Returns the icon unchanged when it cannot be
     /// rasterized or has no opaque pixels.
-    static func normalizedAppIcon(_ icon: NSImage, side: Double) -> NSImage {
+    static func normalizedAppIcon(
+        _ icon: NSImage,
+        side: Double,
+        artworkFraction: Double = appIconGridFraction
+    ) -> NSImage {
         let sample = Int(side.rounded(.up)) * 2
-        let canvas = CGRect(x: 0, y: 0, width: Double(sample), height: Double(sample))
+        let measurementSize = sample * 4
+        let canvas = CGRect(x: 0, y: 0, width: Double(measurementSize), height: Double(measurementSize))
         guard sample > 0,
               icon.size.width > 0, icon.size.height > 0,
-              let measured = rasterizedAppIcon(icon, sample: sample, in: canvas),
-              let content = opaqueBounds(of: measured, sample: sample)
+              let measured = rasterizedAppIcon(icon, sample: measurementSize, in: canvas),
+              let content = opaqueBounds(of: measured, sample: measurementSize),
+              let source = measured.makeImage()
         else {
             return icon
         }
-        let factor = appIconGridFraction * Double(sample) / max(content.width, content.height)
+        let factor = artworkFraction * Double(sample) / max(content.width, content.height)
         let normalizedRect = CGRect(
-            x: canvas.midX - content.midX * factor,
-            y: canvas.midY - content.midY * factor,
+            x: Double(sample) / 2 - content.midX * factor,
+            y: Double(sample) / 2 - content.midY * factor,
             width: canvas.width * factor,
             height: canvas.height * factor
         )
-        guard let normalized = rasterizedAppIcon(icon, sample: sample, in: normalizedRect),
+        let artwork = NSImage(cgImage: source, size: canvas.size)
+        guard let normalized = rasterizedAppIcon(artwork, sample: sample, in: normalizedRect),
               let image = normalized.makeImage()
         else {
             return icon
@@ -896,17 +902,13 @@ enum SpaceIconGenerator {
         paddingScale: Double = Layout.defaultPaddingScale
     ) -> NSImage {
         let scale = sizeScale / 100.0
-        let defaultContentWidth = min(Layout.baseSquareSize * scale, Layout.statusItemHeight - 1)
+        let side = squareSize(scale: scale)
         let canvasSize = effectiveStatusItemSize(
-            contentWidth: defaultContentWidth,
+            contentWidth: side,
             sizeScale: scale,
             paddingScale: paddingScale
         )
-        // App icons carry built-in transparent margins (normalized to the
-        // icon grid fraction), so draw slightly larger than the square
-        // style to match its visual weight
-        let side = min((Layout.baseSquareSize + 3) * scale, maxIconSize)
-        let icon = normalizedAppIcon(appIcon, side: side)
+        let icon = normalizedAppIcon(appIcon, side: side, artworkFraction: 1)
         return NSImage(size: canvasSize, flipped: false) { rect in
             let iconRect = centeredRect(size: CGSize(width: side, height: side), in: rect)
             icon.draw(

@@ -899,6 +899,26 @@ struct SpaceIconGeneratorTests {
         #expect(fullBleed.size == NSSize(width: 16, height: 16))
     }
 
+    @Test("fullscreen app artwork matches the numbered square at each menu bar size", arguments: [60.0, 100.0, 120.0])
+    func fullscreenArtworkMatchesSquare(scale: Double) throws {
+        let square = SpaceIconGenerator.generateIcon(for: "2", darkMode: true, sizeScale: scale)
+        let expected = try #require(nonTransparentBounds(of: square, alphaThreshold: 0.5))
+        for fraction in [0.5, 0.8, 1.0] {
+            let app = SpaceIconGenerator.generateAppIcon(
+                syntheticAppIcon(canvas: 64, contentFraction: fraction),
+                sizeScale: scale
+            )
+            let artwork = try #require(nonTransparentBounds(of: app, alphaThreshold: 0.5))
+            #expect(app.size == square.size)
+            // Fractional slot origins can put an antialiased edge on either
+            // side of the threshold. Compare each edge to within one pixel.
+            #expect(abs(artwork.minX - expected.minX) <= 1)
+            #expect(abs(artwork.maxX - expected.maxX) <= 1)
+            #expect(abs(artwork.minY - expected.minY) <= 1)
+            #expect(abs(artwork.maxY - expected.maxY) <= 1)
+        }
+    }
+
     @Test("off-center artwork is recentered on the canvas")
     func normalizedAppIconRecentersContent() throws {
         let offCenter = NSImage(size: NSSize(width: 64, height: 64), flipped: false) { rect in
