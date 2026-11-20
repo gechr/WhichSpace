@@ -239,16 +239,14 @@ enum SpaceSwitcher {
     @discardableResult
     @MainActor static func switchToSpace(
         id targetSpaceID: Int,
-        fromStatusItemClick: Bool = false,
-        onDisplay displayID: String? = nil
+        fromStatusItemClick: Bool = false
     ) -> Bool {
-        switchToTarget(.id(targetSpaceID), fromStatusItemClick: fromStatusItemClick, onDisplay: displayID)
+        switchToTarget(.id(targetSpaceID), fromStatusItemClick: fromStatusItemClick)
     }
 
     @MainActor private static func switchToTarget(
         _ target: SwitchTarget,
-        fromStatusItemClick: Bool = false,
-        onDisplay displayID: String? = nil
+        fromStatusItemClick: Bool = false
     ) -> Bool {
         fullscreenActivation.cancel()
         let conn = _CGSDefaultConnection()
@@ -256,7 +254,6 @@ enum SpaceSwitcher {
         let classic = requiresClassicPath(fromStatusItemClick: fromStatusItemClick)
         let focus = CGSDisplaySpaceProvider().copyActiveMenuBarDisplayIdentifier()
         guard let receiving = switchingDisplay(in: displays, classic: classic, focusedDisplay: focus),
-              displayID == nil || displayID == receiving.identifier,
               let route = desktopSwitchRoute(
                   to: target,
                   activeDisplayID: receiving.identifier,
@@ -476,13 +473,16 @@ enum SpaceSwitcher {
     struct ManagedSpace {
         let id: Int
         let isFullscreen: Bool
+        let tileOwners: [pid_t]
 
         init?(dict: [String: Any]) {
             guard let id = dict["ManagedSpaceID"] as? Int, !ManagedSpaceKind.isSystemSpace(dict) else {
                 return nil
             }
             self.id = id
-            isFullscreen = dict["TileLayoutManager"] is [String: Any]
+            let layout = dict["TileLayoutManager"] as? [String: Any]
+            isFullscreen = layout != nil
+            tileOwners = layout.map(SpaceSnapshotService.tileOwners(in:)) ?? []
         }
     }
 
@@ -1195,59 +1195,50 @@ enum SpaceSwitcher {
 
     @MainActor private static let fullscreenActivation = FullscreenActivation()
 
-    /// App activation normally takes the user to the window. It can also
-    /// change just the menu bar, leaving the original Space visible.
-    @MainActor static func selectFullscreenSpace(_ spaceID: Int) {
+    @MainActor static func selectFullscreenSpace(_ spaceID: Int, fromStatusItemClick: Bool = false) {
         let conn = _CGSDefaultConnection()
         let provider = CGSDisplaySpaceProvider()
-        func targetDisplay() -> ManagedDisplay? {
-            managedDisplays(connection: conn).first { display in
-                display.spaces.contains { $0.id == spaceID && $0.isFullscreen }
+        func step(on display: ManagedDisplay) -> Bool {
+            let classic = requiresClassicPath(fromStatusItemClick: fromStatusItemClick)
+            let pointerOnTarget = CGEvent(source: nil).map {
+                provider.displayBounds(forIdentifier: display.identifier)?.contains($0.location) == true
+            } ?? false
+            guard canStepToFullscreen(
+                displayID: display.identifier,
+                pointerOnTarget: pointerOnTarget,
+                classic: classic,
+                focusedDisplay: provider.copyActiveMenuBarDisplayIdentifier()
+            ) else {
+                return false
             }
+            return switchToSpace(id: spaceID, on: display, classic: classic, connection: conn)
         }
+
+        func activate(on display: ManagedDisplay) -> Bool {
+            let owners = display.spaces.first { $0.id == spaceID }?.tileOwners ?? []
+            return focusFullscreenWindow(on: spaceID, owners: owners) || activateAppOnSpace(spaceID)
+        }
+
         fullscreenActivation.select(
             target: spaceID,
-            targetDisplay: targetDisplay,
-            activate: { activateAppOnSpace(spaceID) }
-        ) { display in
-            // Relative gestures follow the pointer, and keyboard steps
-            // follow focus. Never send the fallback to a different display.
-            if display.identifier != "Main" {
-                guard provider.copyActiveMenuBarDisplayIdentifier() == display.identifier,
-                      let bounds = provider.displayBounds(forIdentifier: display.identifier),
-                      let pointer = CGEvent(source: nil)?.location, bounds.contains(pointer)
-                else {
-                    return
+            targetDisplay: {
+                managedDisplays(connection: conn).first { display in
+                    display.spaces.contains { $0.id == spaceID && $0.isFullscreen }
                 }
-            }
-            predictions.removeValue(forKey: display.identifier)
-            switchToSpace(id: spaceID)
-        }
+            },
+            step: step(on:),
+            activate: activate(on:)
+        ) { predictions.removeValue(forKey: $0.identifier) }
     }
 
-    @MainActor static func switchToFullscreen(_ target: FullscreenShortcutTarget) {
-        fullscreenActivation.cancel()
-        let provider = CGSDisplaySpaceProvider()
-        let pointerOnTarget = CGEvent(source: nil).map {
-            provider.displayBounds(forIdentifier: target.displayID)?.contains($0.location) == true
-        } ?? false
-        let canStep = canStepToFullscreen(
-            displayID: target.displayID,
-            pointerOnTarget: pointerOnTarget,
-            classic: requiresClassicPath(),
-            focusedDisplay: provider.copyActiveMenuBarDisplayIdentifier()
-        )
-        if canStep, switchToSpace(id: target.entry.id, onDisplay: target.displayID) {
-            return
-        }
-
+    @MainActor private static func focusFullscreenWindow(on spaceID: Int, owners: [pid_t]) -> Bool {
         let options: CGWindowListOption = [.optionAll, .excludeDesktopElements]
         guard let list = CGWindowListCopyWindowInfo(options, kCGNullWindowID) as? [[String: Any]] else {
-            return
+            return false
         }
         let mover = SkyLightWindowMover()
-        focusFullscreenWindow(
-            on: target.entry.id, owners: target.entry.tileOwners, windows: list, membership: mover.spaceIDs(forWindow:)
+        return focusFullscreenWindow(
+            on: spaceID, owners: owners, windows: list, membership: mover.spaceIDs(forWindow:)
         ) { window in
             guard AXWindowRaiser().raise(window) else {
                 return false
@@ -1275,7 +1266,7 @@ enum SpaceSwitcher {
         windows: [[String: Any]],
         membership: (CGWindowID) -> [Int],
         focus: (FrontWindow) -> Bool
-    ) {
+    ) -> Bool {
         let excluded = FullscreenSpaceOwners.excludedPIDs
         let candidates = windows.compactMap { info -> FrontWindow? in
             guard info[kCGWindowLayer as String] as? Int == 0,
@@ -1294,9 +1285,10 @@ enum SpaceSwitcher {
         }
         for window in ordered where membership(window.id) == [spaceID] {
             if focus(window) {
-                return
+                return true
             }
         }
+        return false
     }
 
     /// Returns whether an application accepted activation.
@@ -1334,7 +1326,7 @@ enum SpaceSwitcher {
     }
 }
 
-/// Verifies the Space after native app activation has had time to switch.
+/// Tries the other switching method if the target display stays on its original Space.
 @MainActor
 final class FullscreenActivation {
     private(set) var pending: Task<Void, Never>?
@@ -1347,15 +1339,17 @@ final class FullscreenActivation {
     func select(
         target: Int,
         targetDisplay: @escaping () -> SpaceSwitcher.ManagedDisplay?,
-        activate: () -> Bool,
+        step: @escaping (SpaceSwitcher.ManagedDisplay) -> Bool,
+        activate: @escaping (SpaceSwitcher.ManagedDisplay) -> Bool,
         delay: Duration = .milliseconds(750),
-        fallback: @escaping (SpaceSwitcher.ManagedDisplay) -> Void
+        onStall: @escaping (SpaceSwitcher.ManagedDisplay) -> Void = { _ in }
     ) {
         cancel()
         guard let origin = targetDisplay() else {
             return
         }
-        let accepted = activate()
+        let stepped = step(origin)
+        let accepted = stepped || activate(origin)
         guard origin.currentSpaceID != target else {
             return
         }
@@ -1370,7 +1364,12 @@ final class FullscreenActivation {
             if let display = targetDisplay(), display.identifier == origin.identifier,
                display.currentSpaceID == origin.currentSpaceID
             {
-                fallback(display)
+                onStall(display)
+                if stepped {
+                    _ = activate(display)
+                } else {
+                    _ = step(display)
+                }
             }
         }
     }

@@ -53,13 +53,22 @@ struct SpaceSwitcherTests {
         ]
         let membership: [CGWindowID: [Int]] = [1: [70], 2: [70, 71], 3: [71], 4: [71], 5: [71]]
         var attempted: [CGWindowID] = []
-        SpaceSwitcher.focusFullscreenWindow(on: 71, owners: [ownPID, 15, 22], windows: windows, membership: {
-            membership[$0] ?? []
-        }) { window in
+        let focused = SpaceSwitcher.focusFullscreenWindow(
+            on: 71,
+            owners: [ownPID, 15, 22],
+            windows: windows,
+            membership: {
+                membership[$0] ?? []
+            }
+        ) { window in
             attempted.append(window.id)
             return window.id == 4
         }
+        #expect(focused)
         #expect(attempted == [3, 4])
+        #expect(!SpaceSwitcher.focusFullscreenWindow(on: 72, owners: [15], windows: windows, membership: {
+            membership[$0] ?? []
+        }) { _ in true })
     }
 
     @Test("status-item mouse-up stays instant only on macOS 27")
@@ -551,8 +560,8 @@ struct SpaceSwitcherTests {
         #expect(!result, "Should return false for nonexistent space ID")
     }
 
-    @Test("retry app activation only when the original Space is still visible", arguments: [21, 22, 23, nil])
-    func verifyFullscreenActivation(current: Int?) async throws {
+    @Test("stalled full-screen selection retries with the other method", arguments: [true, false], [21, 22, 23, nil])
+    func verifyFullscreenActivation(stepAccepted: Bool, current: Int?) async throws {
         let selection = FullscreenActivation()
         let spaces = [(21, false), (22, true), (23, false)]
         var display: SpaceSwitcher.ManagedDisplay? = try managedDisplay(
@@ -562,16 +571,22 @@ struct SpaceSwitcherTests {
         selection.select(
             target: 22,
             targetDisplay: { display },
-            activate: {
+            step: { _ in
+                events.append("step")
+                return stepAccepted
+            },
+            activate: { _ in
                 events.append("activate")
                 return true
             },
             delay: .zero
-        ) { _ in events.append("switch") }
-        #expect(events == ["activate"])
+        ) { _ in events.append("stall") }
+        let initial = stepAccepted ? ["step"] : ["step", "activate"]
+        #expect(events == initial)
         display = try current.map { try managedDisplay(identifier: "Main", spaces: spaces, currentSpaceID: $0) }
         await selection.pending?.value
-        #expect(events == (current == 21 ? ["activate", "switch"] : ["activate"]))
+        let retry = ["stall", stepAccepted ? "activate" : "step"]
+        #expect(events == (current == 21 ? initial + retry : initial))
     }
 
     @Test("a new selection cancels an earlier fullscreen retry")
@@ -579,11 +594,18 @@ struct SpaceSwitcherTests {
         let selection = FullscreenActivation()
         let display = try managedDisplay(identifier: "Main", spaces: [(21, true), (22, true)], currentSpaceID: 21)
         var retried = false
-        selection.select(target: 22, targetDisplay: { display }, activate: { true }, delay: .zero) { _ in
-            retried = true
-        }
+        selection.select(
+            target: 22,
+            targetDisplay: { display },
+            step: { _ in true },
+            activate: { _ in
+                retried = true
+                return true
+            },
+            delay: .zero
+        )
         let pending = try #require(selection.pending)
-        selection.select(target: 21, targetDisplay: { display }, activate: { true }) { _ in retried = true }
+        selection.select(target: 21, targetDisplay: { display }, step: { _ in true }, activate: { _ in true })
         await pending.value
         #expect(!retried)
         #expect(selection.pending == nil)

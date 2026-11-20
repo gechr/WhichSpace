@@ -1080,7 +1080,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
 
         // Fullscreen Spaces are addressed by their managed Space ID.
         if slot.targetSpace == nil {
-            SpaceSwitcher.selectFullscreenSpace(slot.spaceID)
+            SpaceSwitcher.selectFullscreenSpace(slot.spaceID, fromStatusItemClick: true)
             return
         }
 

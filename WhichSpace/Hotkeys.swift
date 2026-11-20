@@ -307,7 +307,7 @@ final class HotkeyCenter {
             return
         }
         performSwitch(forwardsKeyEvents: SpaceSwitcher.requiresClassicPath()) {
-            SpaceSwitcher.switchToFullscreen(target)
+            SpaceSwitcher.selectFullscreenSpace(target.entry.id)
         }
     }
 
