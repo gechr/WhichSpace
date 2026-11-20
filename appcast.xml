@@ -6,13 +6,16 @@
     <description>Most recent changes with links to updates.</description>
     <language>en</language>
     <item>
-        <title>Version 1.4.5-nightly.692</title>
+        <title>Version 1.4.5-nightly.695</title>
         <sparkle:channel>nightly</sparkle:channel>
         <description><![CDATA[
           <style>.sparkle-installed-version, .sparkle-installed-version ~ * { display: none }</style>
-          <section data-sparkle-version="1.4.5-nightly.692">
-            <h3>Nightly (v1.4.5-nightly.692)</h3>
+          <section data-sparkle-version="1.4.5-nightly.695">
+            <h3>Nightly (v1.4.5-nightly.695)</h3>
             <ul>
+              <li>scripting: Switch to a Space by label</li>
+              <li>spaces: Cover relative switching across display edges</li>
+              <li>preferences: Preserve explicit opacity during migration</li>
               <li>menubar: Deduplicate Split View app titles and icons</li>
               <li>hotkeys: Suspend bindings matching forwarded shortcuts</li>
               <li>spaces: Unify full-screen selection across shortcuts and menus</li>
@@ -1135,13 +1138,13 @@
           </section>
         ]]></description>
         <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases</sparkle:fullReleaseNotesLink>
-        <pubDate>Fri, 20 Nov 2026 18:38:41 +0000</pubDate>
+        <pubDate>Fri, 20 Nov 2026 21:51:15 +0000</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/nightly/WhichSpace.zip"
-          sparkle:version="1.4.5-nightly.692"
-          sparkle:shortVersionString="1.4.5-nightly.692"
-          sparkle:edSignature="5bNdr643SyXSspFQPSS5C+EnY68En5q/5rB7/gIFqgDuLGnxjkepqwzPlQdIGgUFmszI8tc4TlrJacMf4emcBw=="
-          length="4391455"
+          sparkle:version="1.4.5-nightly.695"
+          sparkle:shortVersionString="1.4.5-nightly.695"
+          sparkle:edSignature="AE8XmyZTPtfHtPw7XbNsHmTkm27ENjCO6Ns/3SqltKbMS/EPqctCz1Yn+ek4Y2pnyD5E5ZXx9MzwUEwTpBrIAA=="
+          length="4399776"
           type="application/octet-stream" />
         <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
       </item>
