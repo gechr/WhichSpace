@@ -433,6 +433,44 @@ struct SpaceSwitcherTests {
         #expect(!result, "Should return false for nonexistent space ID")
     }
 
+    @Test("retry app activation only when the original Space is still visible", arguments: [21, 22, 23, nil])
+    func verifyFullscreenActivation(current: Int?) async throws {
+        let selection = FullscreenActivation()
+        let spaces = [(21, false), (22, true), (23, false)]
+        var display: SpaceSwitcher.ManagedDisplay? = try managedDisplay(
+            identifier: "Main", spaces: spaces, currentSpaceID: 21
+        )
+        var events: [String] = []
+        selection.select(
+            target: 22,
+            targetDisplay: { display },
+            activate: {
+                events.append("activate")
+                return true
+            },
+            delay: .zero
+        ) { _ in events.append("switch") }
+        #expect(events == ["activate"])
+        display = try current.map { try managedDisplay(identifier: "Main", spaces: spaces, currentSpaceID: $0) }
+        await selection.pending?.value
+        #expect(events == (current == 21 ? ["activate", "switch"] : ["activate"]))
+    }
+
+    @Test("a new selection cancels an earlier fullscreen retry")
+    func supersedeFullscreenActivation() async throws {
+        let selection = FullscreenActivation()
+        let display = try managedDisplay(identifier: "Main", spaces: [(21, true), (22, true)], currentSpaceID: 21)
+        var retried = false
+        selection.select(target: 22, targetDisplay: { display }, activate: { true }, delay: .zero) { _ in
+            retried = true
+        }
+        let pending = try #require(selection.pending)
+        selection.select(target: 21, targetDisplay: { display }, activate: { true }) { _ in retried = true }
+        await pending.value
+        #expect(!retried)
+        #expect(selection.pending == nil)
+    }
+
     private func twoDisplays() throws -> [SpaceSwitcher.ManagedDisplay] {
         try [
             managedDisplay(

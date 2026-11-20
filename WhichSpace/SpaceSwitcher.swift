@@ -110,6 +110,7 @@ enum SpaceSwitcher {
     /// bounce detection sees exactly the snapshot that triggered the call
     /// rather than a fresh CGS read that may already show a newer transition.
     @MainActor static func resetPredictions(appliedDisplays: [DisplaySpaceInfo]) {
+        fullscreenActivation.cancel()
         detectGestureBounces(in: appliedDisplays)
         predictions.removeAll()
         restoreParkedWindowIfReady()
@@ -237,6 +238,7 @@ enum SpaceSwitcher {
     /// Posts synthetic dock-swipe gestures to move from the current space to the target.
     @discardableResult
     @MainActor static func switchToSpace(id targetSpaceID: Int, fromStatusItemClick: Bool = false) -> Bool {
+        fullscreenActivation.cancel()
         let conn = _CGSDefaultConnection()
 
         guard let activeDisplayRef = CGSCopyActiveMenuBarDisplayIdentifier(conn) else {
@@ -306,6 +308,7 @@ enum SpaceSwitcher {
     /// which addresses Desktops globally rather than relative to focus.
     @discardableResult
     @MainActor static func switchToDesktop(number: Int) -> Bool {
+        fullscreenActivation.cancel()
         let conn = _CGSDefaultConnection()
         guard let activeDisplayRef = CGSCopyActiveMenuBarDisplayIdentifier(conn) else {
             NSLog("SpaceSwitcher: failed to get active menu bar display")
@@ -350,6 +353,7 @@ enum SpaceSwitcher {
         wrap: Bool = false,
         skippingSpaceIDs: Set<Int> = []
     ) -> Bool {
+        fullscreenActivation.cancel()
         let conn = _CGSDefaultConnection()
 
         guard let activeDisplayRef = CGSCopyActiveMenuBarDisplayIdentifier(conn) else {
@@ -1133,9 +1137,39 @@ enum SpaceSwitcher {
 
     // MARK: - Fullscreen Space Switching
 
-    /// Activates an app that has a window on the given space ID (used for fullscreen spaces).
-    /// macOS will automatically switch to the fullscreen space when the app is activated.
-    /// Returns true if an app was found and activated.
+    @MainActor private static let fullscreenActivation = FullscreenActivation()
+
+    /// App activation normally takes the user to the window. It can also
+    /// change just the menu bar, leaving the original Space visible.
+    @MainActor static func selectFullscreenSpace(_ spaceID: Int) {
+        let conn = _CGSDefaultConnection()
+        let provider = CGSDisplaySpaceProvider()
+        func targetDisplay() -> ManagedDisplay? {
+            managedDisplays(connection: conn).first { display in
+                display.spaces.contains { $0.id == spaceID && $0.isFullscreen }
+            }
+        }
+        fullscreenActivation.select(
+            target: spaceID,
+            targetDisplay: targetDisplay,
+            activate: { activateAppOnSpace(spaceID) }
+        ) { display in
+            // Relative gestures follow the pointer, and keyboard steps
+            // follow focus. Never send the fallback to a different display.
+            if display.identifier != "Main" {
+                guard provider.copyActiveMenuBarDisplayIdentifier() == display.identifier,
+                      let bounds = provider.displayBounds(forIdentifier: display.identifier),
+                      let pointer = CGEvent(source: nil)?.location, bounds.contains(pointer)
+                else {
+                    return
+                }
+            }
+            predictions.removeValue(forKey: display.identifier)
+            switchToSpace(id: spaceID)
+        }
+    }
+
+    /// Returns whether an application accepted activation.
     static func activateAppOnSpace(_ spaceID: Int) -> Bool {
         let conn = _CGSDefaultConnection()
 
@@ -1167,5 +1201,47 @@ enum SpaceSwitcher {
 
         NSLog("SpaceSwitcher: no app found on space \(spaceID)")
         return false
+    }
+}
+
+/// Verifies the Space after native app activation has had time to switch.
+@MainActor
+final class FullscreenActivation {
+    private(set) var pending: Task<Void, Never>?
+
+    func cancel() {
+        pending?.cancel()
+        pending = nil
+    }
+
+    func select(
+        target: Int,
+        targetDisplay: @escaping () -> SpaceSwitcher.ManagedDisplay?,
+        activate: () -> Bool,
+        delay: Duration = .milliseconds(750),
+        fallback: @escaping (SpaceSwitcher.ManagedDisplay) -> Void
+    ) {
+        cancel()
+        guard let origin = targetDisplay() else {
+            return
+        }
+        let accepted = activate()
+        guard origin.currentSpaceID != target else {
+            return
+        }
+        pending = Task {
+            if accepted {
+                try? await Task.sleep(for: delay)
+            }
+            guard !Task.isCancelled else {
+                return
+            }
+            pending = nil
+            if let display = targetDisplay(), display.identifier == origin.identifier,
+               display.currentSpaceID == origin.currentSpaceID
+            {
+                fallback(display)
+            }
+        }
     }
 }

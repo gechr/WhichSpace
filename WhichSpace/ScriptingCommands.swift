@@ -537,7 +537,7 @@ enum ScriptingHelpers {
         if entry.regularIndex != nil {
             SpaceSwitcher.switchToSpace(id: entry.id)
         } else {
-            _ = SpaceSwitcher.activateAppOnSpace(entry.id)
+            SpaceSwitcher.selectFullscreenSpace(entry.id)
         }
     }
 
@@ -569,7 +569,7 @@ enum ScriptingHelpers {
         if entry.regularIndex != nil {
             SpaceSwitcher.switchToSpace(id: entry.id)
         } else {
-            _ = SpaceSwitcher.activateAppOnSpace(entry.id)
+            SpaceSwitcher.selectFullscreenSpace(entry.id)
         }
     }
 

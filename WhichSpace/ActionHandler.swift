@@ -248,9 +248,9 @@ final class ActionHandler: NSObject {
             _ = accessibilityPermissionPrompt()
             return
         }
-        // Fullscreen spaces don't have a targetSpace - activate the app instead
+        // Fullscreen Spaces are addressed by their managed Space ID.
         if entry.targetSpace == nil {
-            _ = SpaceSwitcher.activateAppOnSpace(entry.spaceID)
+            SpaceSwitcher.selectFullscreenSpace(entry.spaceID)
         } else {
             SpaceSwitcher.switchToSpace(id: entry.spaceID)
         }
