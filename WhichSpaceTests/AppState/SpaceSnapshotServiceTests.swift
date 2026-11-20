@@ -3,6 +3,14 @@ import Testing
 
 @MainActor
 struct SpaceSnapshotServiceTests {
+    @Test("tile order follows geometry and incomplete layouts fall back to window order")
+    func tileOwnersFollowGeometry() {
+        let right: [String: Any] = ["pid": 74, "TileRect": ["X": 640]]
+        let left: [String: Any] = ["pid": 83, "TileRect": ["X": 0.0]]
+        #expect(SpaceSnapshotService.tileOwners(in: ["TileSpaces": [right, left]]) == [83, 74])
+        #expect(SpaceSnapshotService.tileOwners(in: ["TileSpaces": [right, ["pid": 83]]]).isEmpty)
+    }
+
     // MARK: - Nil CGS Data
 
     @Test("nil displays returns empty snapshot")

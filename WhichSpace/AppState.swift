@@ -9,6 +9,9 @@ struct SpaceEntry: Equatable {
     let regularIndex: Int?
     /// CGS Space UUID; Space renaming tools key their custom names by it
     let uuid: String?
+    /// Tile owners in left-to-right layout order, independent of window focus.
+    let tileOwners: [pid_t]
+    let hasOnlyExcludedTileOwners: Bool
 
     /// Identity used to follow the Space across reorders: the CGS UUID, or
     /// the managed Space ID when the UUID is empty. The first Desktop carries
@@ -22,11 +25,20 @@ struct SpaceEntry: Equatable {
         return uuid.isEmpty ? "id:\(id)" : uuid
     }
 
-    init(id: Int, label: String, regularIndex: Int?, uuid: String? = nil) {
+    init(
+        id: Int,
+        label: String,
+        regularIndex: Int?,
+        uuid: String? = nil,
+        tileOwners: [pid_t] = [],
+        excludingOwners: Set<pid_t> = []
+    ) {
         self.id = id
         self.label = label
         self.regularIndex = regularIndex
         self.uuid = uuid
+        self.tileOwners = tileOwners.filter { !excludingOwners.contains($0) }
+        hasOnlyExcludedTileOwners = !tileOwners.isEmpty && self.tileOwners.isEmpty
     }
 }
 

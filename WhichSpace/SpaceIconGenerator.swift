@@ -895,9 +895,10 @@ enum SpaceIconGenerator {
         )
     }
 
-    /// Generates a status bar icon showing a fullscreen app's icon
+    /// A Split View shares one slot. Crop both icons at their midpoint
+    /// after normalization so the artwork keeps its normal menu bar scale.
     static func generateAppIcon(
-        _ appIcon: NSImage,
+        _ appIcons: [NSImage],
         sizeScale: Double = Layout.defaultSizeScale,
         paddingScale: Double = Layout.defaultPaddingScale
     ) -> NSImage {
@@ -908,15 +909,21 @@ enum SpaceIconGenerator {
             sizeScale: scale,
             paddingScale: paddingScale
         )
-        let icon = normalizedAppIcon(appIcon, side: side, artworkFraction: 1)
+        let icons = appIcons.map { normalizedAppIcon($0, side: side, artworkFraction: 1) }
         return NSImage(size: canvasSize, flipped: false) { rect in
             let iconRect = centeredRect(size: CGSize(width: side, height: side), in: rect)
-            icon.draw(
-                in: iconRect,
-                from: NSRect(origin: .zero, size: icon.size),
-                operation: .sourceOver,
-                fraction: 1
-            )
+            for (index, icon) in icons.enumerated() {
+                let width = side / Double(icons.count)
+                let sourceWidth = icon.size.width / Double(icons.count)
+                let source = NSRect(x: Double(index) * sourceWidth, y: 0, width: sourceWidth, height: icon.size.height)
+                let slice = NSRect(
+                    x: iconRect.minX + Double(index) * width,
+                    y: iconRect.minY,
+                    width: width,
+                    height: side
+                )
+                icon.draw(in: slice, from: source, operation: .sourceOver, fraction: 1)
+            }
             return true
         }
     }

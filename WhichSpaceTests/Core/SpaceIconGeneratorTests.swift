@@ -905,7 +905,7 @@ struct SpaceIconGeneratorTests {
         let expected = try #require(nonTransparentBounds(of: square, alphaThreshold: 0.5))
         for fraction in [0.5, 0.8, 1.0] {
             let app = SpaceIconGenerator.generateAppIcon(
-                syntheticAppIcon(canvas: 64, contentFraction: fraction),
+                [syntheticAppIcon(canvas: 64, contentFraction: fraction)],
                 sizeScale: scale
             )
             let artwork = try #require(nonTransparentBounds(of: app, alphaThreshold: 0.5))
@@ -916,6 +916,35 @@ struct SpaceIconGeneratorTests {
             #expect(abs(artwork.maxX - expected.maxX) <= 1)
             #expect(abs(artwork.minY - expected.minY) <= 1)
             #expect(abs(artwork.maxY - expected.maxY) <= 1)
+        }
+    }
+
+    @Test("Split View crops each app at the center of a single slot", arguments: [60.0, 100.0, 120.0])
+    func splitViewArtwork(scale: Double) throws {
+        func stripedIcon(_ first: NSColor, _ second: NSColor) -> NSImage {
+            NSImage(size: NSSize(width: 32, height: 32), flipped: false) { rect in
+                let halves = rect.divided(atDistance: rect.width / 2, from: .minXEdge)
+                first.setFill()
+                halves.slice.fill()
+                second.setFill()
+                halves.remainder.fill()
+                return true
+            }
+        }
+        func rendered(_ icons: [NSImage]) throws -> NSBitmapImageRep {
+            try #require(bitmap(SpaceIconGenerator.generateAppIcon(icons, sizeScale: scale), sampling: 2))
+        }
+        let left = stripedIcon(.red, .green)
+        let right = stripedIcon(.yellow, .blue)
+        let pair = try rendered([left, right])
+        let leftOnly = try rendered([left])
+        let rightOnly = try rendered([right])
+        #expect(pair.size == leftOnly.size)
+        let y = pair.pixelsHigh / 2
+        for fraction in [0.25, 0.4, 0.6, 0.75] {
+            let x = Int(Double(pair.pixelsWide) * fraction)
+            let single = x < pair.pixelsWide / 2 ? leftOnly : rightOnly
+            #expect(pair.colorAt(x: x, y: y) == single.colorAt(x: x, y: y))
         }
     }
 

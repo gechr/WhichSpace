@@ -666,6 +666,33 @@ struct SpacePickerTests {
         #expect(entries[1].keyEquivalent.isEmpty)
     }
 
+    @Test("Split View resolves both tiles from left to right without a window scan")
+    func splitViewIconUsesBothTiles() {
+        store.fullscreenIconStyle = .appIcon
+        stub.activeDisplayIdentifier = "Main"
+        let tiles: [[String: Any]] = [
+            ["pid": ProcessInfo.processInfo.processIdentifier, "TileRect": ["X": -600]],
+            ["pid": 43, "TileRect": ["X": 900]],
+            ["pid": 52, "TileRect": ["X": 0]],
+        ]
+        let display: NSDictionary = [
+            "Display Identifier": "Main",
+            "Current Space": ["ManagedSpaceID": 62],
+            "Spaces": [["ManagedSpaceID": 62, "TileLayoutManager": ["TileSpaces": tiles]]],
+        ]
+        stub.displays = [display]
+        let state = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        var owners: [pid_t] = []
+        state.renderer.fullscreenAppIconResolver = { pid in
+            owners.append(pid)
+            return nil
+        }
+        let entries = state.spacePickerEntries()
+        #expect(entries.map(\.spaceID) == [62])
+        #expect(owners == [52, 43])
+        #expect(stub.fullscreenOwnerPIDsCallCount == 0)
+    }
+
     @Test("a lone Desktop keeps the bare Mission Control name")
     func loneDesktopStaysUnnumbered() {
         let appState = makeAppState(

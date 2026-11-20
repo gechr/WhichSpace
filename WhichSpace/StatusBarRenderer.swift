@@ -70,7 +70,7 @@ final class StatusBarRenderer {
         let currentDisplayID: String?
         let currentSpace: Int
         let currentSpaceID: Int
-        let fullscreenOwners: [Int: pid_t]
+        let fullscreenOwners: [Int: [pid_t]]
         let isDarkMode: Bool
         let shrinkLevel: IconShrinkLevel
         let spacesWithWindows: Set<Int>
@@ -152,9 +152,9 @@ final class StatusBarRenderer {
 
     private var backgroundScanTask: Task<Void, Never>?
     private var pendingBackgroundScan: WindowScanRequest?
-    private var cachedFullscreenOwners: [Int: pid_t] = [:]
+    private var cachedFullscreenOwners: [Int: [pid_t]] = [:]
     private var cachedFullscreenOwnersPopulated = false
-    private var fullscreenArtwork: [Int: FullscreenArtwork] = [:]
+    private var fullscreenArtwork: [Int: [FullscreenArtwork]] = [:]
     private var cachedSpacesWithWindows: Set<Int> = []
     private var cachedSpacesWithWindowsPopulated = false
     private var cachedSpacesWithWindowsSpaceIDs: [Int] = []
@@ -467,54 +467,56 @@ final class StatusBarRenderer {
     /// The owner PIDs when the fullscreen icon style needs them, empty
     /// otherwise so the icon cache key does not churn on owner changes the
     /// rendering never reads.
-    private func fullscreenOwners() -> [Int: pid_t] {
+    private func fullscreenOwners() -> [Int: [pid_t]] {
         guard store.fullscreenIconStyle == .appIcon else {
             return [:]
         }
         return scanFullscreenOwners()
     }
 
-    /// Returns the owning app PID for each fullscreen space, scanning at most
+    /// Returns the owning apps in tile order for each fullscreen Space, scanning at most
     /// once per snapshot: fullscreen membership only changes with topology,
     /// which routes through `spaceSnapshotDidChange()`.
-    private func scanFullscreenOwners() -> [Int: pid_t] {
+    private func scanFullscreenOwners() -> [Int: [pid_t]] {
         if !cachedFullscreenOwnersPopulated {
-            var fullscreenSpaceIDs = appState.allDisplaysSpaceInfo
-                .flatMap(\.entries)
-                .filter { $0.label == Labels.fullscreen }
-                .map(\.id)
-            if fullscreenSpaceIDs.isEmpty {
-                fullscreenSpaceIDs = appState.allSpaceEntries
-                    .filter { $0.label == Labels.fullscreen }
-                    .map(\.id)
+            let displayed = appState.allDisplaysSpaceInfo.flatMap(\.entries)
+            let entries = displayed.isEmpty ? appState.allSpaceEntries : displayed
+            var unresolved: [Int] = []
+            for entry in entries where entry.label == Labels.fullscreen {
+                if !entry.tileOwners.isEmpty {
+                    cachedFullscreenOwners[entry.id] = entry.tileOwners
+                } else if !entry.hasOnlyExcludedTileOwners {
+                    unresolved.append(entry.id)
+                }
             }
-            cachedFullscreenOwners = fullscreenSpaceIDs.isEmpty
-                ? [:]
-                : displaySpaceProvider.fullscreenOwnerPIDs(forSpaceIDs: fullscreenSpaceIDs)
+            if !unresolved.isEmpty {
+                let scanned = displaySpaceProvider.fullscreenOwnerPIDs(forSpaceIDs: unresolved)
+                cachedFullscreenOwners.merge(scanned.mapValues { [$0] }) { existing, _ in existing }
+            }
             cachedFullscreenOwnersPopulated = true
         }
         return cachedFullscreenOwners
     }
 
-    /// The icon of the app occupying a fullscreen space, or nil to fall back
-    /// to the "F" glyph.
-    private func fullscreenAppIcon(forSpaceID spaceID: Int) -> NSImage? {
+    private func fullscreenAppIcons(forSpaceID spaceID: Int) -> [NSImage] {
         guard store.fullscreenIconStyle == .appIcon else {
-            return nil
+            return []
         }
-        // The tile can lose its owner while the same fullscreen Space is
-        // still visible. Its removal from the snapshot ends that interval.
-        guard let owner = scanFullscreenOwners()[spaceID] else {
-            return fullscreenArtwork[spaceID]?.image
+        let previous = fullscreenArtwork[spaceID] ?? []
+        // WindowServer can clear the tile owners before removing their Space.
+        guard let owners = scanFullscreenOwners()[spaceID] else {
+            return previous.map(\.image)
         }
-        if let image = fullscreenAppIconResolver(owner) {
-            fullscreenArtwork[spaceID] = FullscreenArtwork(owner: owner, image: image)
-            return image
+        var artwork: [FullscreenArtwork] = []
+        for owner in owners.prefix(2) where artwork.last?.owner != owner {
+            if let image = fullscreenAppIconResolver(owner) {
+                artwork.append(FullscreenArtwork(owner: owner, image: image))
+            } else if let cached = previous.first(where: { $0.owner == owner }) {
+                artwork.append(cached)
+            }
         }
-        if fullscreenArtwork[spaceID]?.owner != owner {
-            fullscreenArtwork.removeValue(forKey: spaceID)
-        }
-        return fullscreenArtwork[spaceID]?.image
+        fullscreenArtwork[spaceID] = artwork
+        return artwork.map(\.image)
     }
 
     /// The localized name of the app occupying a fullscreen space, or nil
@@ -522,7 +524,7 @@ final class StatusBarRenderer {
     /// ignores the fullscreen icon style: the picker names the app even when
     /// the bar shows the glyph.
     private func fullscreenAppName(forSpaceID spaceID: Int) -> String? {
-        guard let pid = scanFullscreenOwners()[spaceID] else {
+        guard let pid = scanFullscreenOwners()[spaceID]?.first else {
             return nil
         }
         return NSRunningApplication(processIdentifier: pid)?.localizedName
@@ -737,8 +739,8 @@ final class StatusBarRenderer {
         let symbol: String?
         let skinTone: SkinTone
         let badge: SpaceBadge?
-        /// App icon drawn for fullscreen spaces; takes precedence over text/symbol
-        let appIcon: NSImage?
+        /// Fullscreen artwork in left-to-right tile order.
+        let appIcons: [NSImage]
         let darkMode: Bool
         /// True only when text came from a user label; a symbol combines
         /// with a custom label but never with the plain space number
@@ -754,7 +756,7 @@ final class StatusBarRenderer {
 
         /// Explicit colors, including inherited defaults, remain user artwork.
         var supportsNativeTint: Bool {
-            style.isFilled && colors == nil && symbol == nil && appIcon == nil
+            style.isFilled && colors == nil && symbol == nil && appIcons.isEmpty
                 && !text.containsEmoji && badge?.character.containsEmoji != true
         }
     }
@@ -891,7 +893,7 @@ final class StatusBarRenderer {
                 symbol: nil,
                 skinTone: .default,
                 badge: nil,
-                appIcon: fullscreenAppIcon(forSpaceID: spaceID),
+                appIcons: fullscreenAppIcons(forSpaceID: spaceID),
                 darkMode: darkMode,
                 hasCustomLabel: false,
                 symbolPosition: symbolPosition,
@@ -935,7 +937,7 @@ final class StatusBarRenderer {
             symbol: symbol,
             skinTone: skinTone,
             badge: badge,
-            appIcon: nil,
+            appIcons: [],
             darkMode: darkMode,
             hasCustomLabel: hasCustomLabel,
             symbolPosition: symbolPosition,
@@ -948,9 +950,9 @@ final class StatusBarRenderer {
 
     /// Draws a fully resolved spec, dispatching to SpaceIconGenerator.
     private func render(_ spec: IconSpec, nativeTint: Bool = false) -> NSImage {
-        if let appIcon = spec.appIcon {
+        if !spec.appIcons.isEmpty {
             return SpaceIconGenerator.generateAppIcon(
-                appIcon,
+                spec.appIcons,
                 sizeScale: spec.sizeScale,
                 paddingScale: spec.paddingScale
             )

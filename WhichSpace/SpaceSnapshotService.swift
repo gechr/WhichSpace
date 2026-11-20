@@ -7,6 +7,25 @@ import Foundation
 enum SpaceSnapshotService {
     private static let mainDisplay = "Main"
 
+    /// A partial layout cannot identify the left tile reliably. Let the
+    /// existing window scan handle that case as well as older layouts.
+    static func tileOwners(in layout: [String: Any]) -> [pid_t] {
+        guard let tiles = layout["TileSpaces"] as? [[String: Any]] else {
+            return []
+        }
+        var owners: [(x: Double, pid: pid_t)] = []
+        for tile in tiles {
+            guard let value = tile["pid"] as? NSNumber, let pid = pid_t(exactly: value), pid > 0,
+                  let rect = tile["TileRect"] as? [String: Any],
+                  let x = rect["X"] as? NSNumber, x.doubleValue.isFinite
+            else {
+                return []
+            }
+            owners.append((x.doubleValue, pid))
+        }
+        return owners.sorted { $0.x < $1.x }.map(\.pid)
+    }
+
     /// Builds an immutable snapshot of the current space state from system data
     static func buildSnapshot(
         provider: DisplaySpaceProvider,
@@ -30,6 +49,7 @@ enum SpaceSnapshotService {
             regularSpaceCount: Int
         )] = []
 
+        lazy var excludedOwners = FullscreenSpaceOwners.excludedPIDs
         for display in displays {
             guard let spaces = display["Spaces"] as? [[String: Any]],
                   let displayID = display["Display Identifier"] as? String
@@ -52,10 +72,10 @@ enum SpaceSnapshotService {
                     continue
                 }
 
-                let isFullscreen = space["TileLayoutManager"] is [String: Any]
+                let layout = space["TileLayoutManager"] as? [String: Any]
                 let label: String
                 let regularIndex: Int?
-                if isFullscreen {
+                if layout != nil {
                     label = Labels.fullscreen
                     regularIndex = nil
                 } else {
@@ -64,11 +84,14 @@ enum SpaceSnapshotService {
                     regularIndex = regularSpaceIndex
                 }
 
+                let owners = layout.map(tileOwners(in:)) ?? []
                 entries.append(SpaceEntry(
                     id: spaceID,
                     label: label,
                     regularIndex: regularIndex,
-                    uuid: space["uuid"] as? String
+                    uuid: space["uuid"] as? String,
+                    tileOwners: owners,
+                    excludingOwners: owners.isEmpty ? [] : excludedOwners
                 ))
             }
 
