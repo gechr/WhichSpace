@@ -74,6 +74,77 @@ extension AppState {
     }
 }
 
+/// Keeps overlapping posts registered until WindowServer has matched the last event.
+@MainActor
+final class ForwardedHotKeys {
+    typealias Name = KeyboardShortcuts.Name
+
+    private var forceEnabled: Set<CGSSymbolicHotKey> = []
+    private var suspended: Set<Name> = []
+    private(set) var pending: Task<Void, Never>?
+    private let delay: Duration
+    private let setSystemEnabled: (CGSSymbolicHotKey, Bool) -> Bool
+    private let setBindingsEnabled: ([Name], Bool) -> Void
+
+    init(
+        delay: Duration = .milliseconds(250),
+        setSystemEnabled: @escaping (CGSSymbolicHotKey, Bool) -> Bool = {
+            CGSSetSymbolicHotKeyEnabled($0, $1) == .success
+        },
+        setBindingsEnabled: @escaping ([Name], Bool) -> Void = { names, enabled in
+            if enabled {
+                KeyboardShortcuts.enable(names)
+            } else {
+                KeyboardShortcuts.disable(names)
+            }
+        }
+    ) {
+        self.delay = delay
+        self.setSystemEnabled = setSystemEnabled
+        self.setBindingsEnabled = setBindingsEnabled
+    }
+
+    func post(
+        _ hotKey: CGSSymbolicHotKey,
+        suspending bindings: [Name],
+        systemEnabled: @autoclosure () -> Bool,
+        action: () -> Void
+    ) -> Bool {
+        setBindingsEnabled(bindings, false)
+        if !systemEnabled() {
+            guard setSystemEnabled(hotKey, true) else {
+                setBindingsEnabled(bindings, true)
+                NSLog("SpaceSwitcher: failed to enable hot key %d", Int(hotKey))
+                return false
+            }
+            forceEnabled.insert(hotKey)
+        }
+        action()
+        suspended.formUnion(bindings)
+        if !forceEnabled.isEmpty || !suspended.isEmpty {
+            scheduleRestore()
+        }
+        return true
+    }
+
+    private func scheduleRestore() {
+        pending?.cancel()
+        pending = Task {
+            try? await Task.sleep(for: delay)
+            guard !Task.isCancelled else {
+                return
+            }
+            for key in forceEnabled {
+                _ = setSystemEnabled(key, false)
+            }
+            forceEnabled.removeAll()
+            setBindingsEnabled(Array(suspended), true)
+            suspended.removeAll()
+            pending = nil
+        }
+    }
+}
+
 extension KeyboardShortcuts.Name {
     static let switchLeft = Self("switchLeft")
     static let switchRight = Self("switchRight")
@@ -110,11 +181,6 @@ final class HotkeyCenter {
     /// Mission Control shortcut range and the per-display Space limit.
     nonisolated static let maxJumpTargets = Layout.maxSpacesPerDisplay
 
-    /// Keep WhichSpace's Carbon registrations out of the way long enough for
-    /// a forwarded Mission Control key event to reach macOS instead of
-    /// recursively invoking another WhichSpace binding.
-    private static let forwardedHotKeySettleDelay: Duration = .milliseconds(20)
-
     private static var fixedNames: [KeyboardShortcuts.Name] {
         [.switchLeft, .switchRight, .switchPrevious, .sendLeft, .sendRight, .moveLeft, .moveRight]
             + KeyboardShortcuts.Name.jumpToSpace
@@ -129,6 +195,28 @@ final class HotkeyCenter {
     static var storedFullscreenNames: [KeyboardShortcuts.Name] {
         KeyboardShortcuts.storedNames.filter { $0.rawValue.hasPrefix(FullscreenShortcutTarget.prefix) }
             .sorted { $0.rawValue < $1.rawValue }
+    }
+
+    static func enabledBindings(for unmodified: NSEvent, flags: CGSModifierFlags) -> [KeyboardShortcuts.Name] {
+        let chords = forwardedChords(for: unmodified, flags: flags)
+        return KeyboardShortcuts.storedNames.filter { name in
+            guard let shortcut = KeyboardShortcuts.getShortcut(for: name), chords.contains(shortcut) else {
+                return false
+            }
+            return KeyboardShortcuts.isEnabled(for: name)
+        }
+    }
+
+    static func forwardedChords(for unmodified: NSEvent, flags: CGSModifierFlags) -> Set<KeyboardShortcuts.Shortcut> {
+        let key = KeyboardShortcuts.Key(rawValue: Int(unmodified.keyCode))
+        let modifiers = NSEvent.ModifierFlags(rawValue: UInt(flags))
+        guard unmodified.modifierFlags.contains(.function) else {
+            return [.init(key, modifiers: modifiers)]
+        }
+        return [
+            .init(key, modifiers: modifiers.union(.function)),
+            .init(key, modifiers: modifiers.subtracting(.function)),
+        ]
     }
 
     /// Clears every recorded binding, returning the pane to its fresh state.
@@ -306,9 +394,7 @@ final class HotkeyCenter {
         else {
             return
         }
-        performSwitch(forwardsKeyEvents: SpaceSwitcher.requiresClassicPath()) {
-            SpaceSwitcher.selectFullscreenSpace(target.entry.id)
-        }
+        SpaceSwitcher.selectFullscreenSpace(target.entry.id)
     }
 
     /// Whether a press has already triggered the permission flow this launch.
@@ -341,30 +427,6 @@ final class HotkeyCenter {
         return false
     }
 
-    /// Whether the next switch will post Mission Control key events: by
-    /// preference, or because a held mouse button forces the classic
-    /// fallback in SpaceSwitcher.
-    private var switchForwardsKeyEvents: Bool {
-        store.classicSpaceSwitching || NSEvent.pressedMouseButtons != 0
-    }
-
-    /// Runs a switch action. When the switch forwards Mission Control key
-    /// events, the Carbon registrations step aside long enough for them to
-    /// reach macOS instead of recursively invoking another binding.
-    private func performSwitch(forwardsKeyEvents: Bool, _ action: () -> Void) {
-        guard forwardsKeyEvents else {
-            action()
-            return
-        }
-        let names = Self.fixedNames + fullscreenHandlers.names.values
-        KeyboardShortcuts.disable(names)
-        action()
-        Task { @MainActor in
-            try? await Task.sleep(for: Self.forwardedHotKeySettleDelay)
-            KeyboardShortcuts.enable(names)
-        }
-    }
-
     /// Wrapping follows the same preference as scroll switching, so the two
     /// relative surfaces agree about what happens at the edges. Skipping
     /// empty Spaces is a hotkey-only preference: scroll and the scripting
@@ -373,14 +435,12 @@ final class HotkeyCenter {
         guard ensureAccessibility() else {
             return
         }
-        performSwitch(forwardsKeyEvents: switchForwardsKeyEvents) {
-            let skipped = store.hotkeysSkipEmptySpaces ? appState.emptySpaceIDs() : []
-            _ = SpaceSwitcher.switchRelative(
-                goRight: goRight,
-                wrap: store.scrollWrapAround,
-                skippingSpaceIDs: skipped
-            )
-        }
+        let skipped = store.hotkeysSkipEmptySpaces ? appState.emptySpaceIDs() : []
+        _ = SpaceSwitcher.switchRelative(
+            goRight: goRight,
+            wrap: store.scrollWrapAround,
+            skippingSpaceIDs: skipped
+        )
     }
 
     /// Nothing to go back to before the first Space change of the session, so
@@ -389,9 +449,7 @@ final class HotkeyCenter {
         guard ensureAccessibility() else {
             return
         }
-        performSwitch(forwardsKeyEvents: switchForwardsKeyEvents) {
-            try? ScriptingHelpers.switchToPreviousSpace(appState: appState)
-        }
+        try? ScriptingHelpers.switchToPreviousSpace(appState: appState)
     }
 
     /// Out-of-range failures stay silent: a hotkey has no caller to report
@@ -401,9 +459,7 @@ final class HotkeyCenter {
         guard ensureAccessibility() else {
             return
         }
-        performSwitch(forwardsKeyEvents: true) {
-            _ = SpaceSwitcher.switchToDesktop(number: number, local: store.localSpaceNumbers)
-        }
+        SpaceSwitcher.switchToDesktop(number: number, local: store.localSpaceNumbers)
     }
 
     /// Wrapping follows the same preference as the switch hotkeys, so both

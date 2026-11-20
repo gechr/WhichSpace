@@ -1,3 +1,4 @@
+import AppKit
 import KeyboardShortcuts
 import Testing
 @testable import WhichSpace
@@ -22,6 +23,66 @@ struct HotkeyConflictTests {
             #expect(FullscreenShortcutTarget.storedName(target.id + ".unknown") == nil)
         }
         #expect(FullscreenShortcutTarget.storedName("switchLeft") == nil)
+    }
+
+    @Test("forwarded navigation keys tolerate implicit Fn and letter shortcuts retain explicit Fn")
+    func forwardedChords() throws {
+        func chords(
+            _ key: KeyboardShortcuts.Key, modifiers: NSEvent.ModifierFlags = .control
+        ) throws -> Set<KeyboardShortcuts.Shortcut> {
+            let event = try #require(CGEvent(
+                keyboardEventSource: nil,
+                virtualKey: CGKeyCode(key.rawValue),
+                keyDown: true
+            ))
+            event.flags = []
+            return try HotkeyCenter.forwardedChords(
+                for: #require(NSEvent(cgEvent: event)), flags: CGSModifierFlags(modifiers.rawValue)
+            )
+        }
+        #expect(try chords(.leftArrow) == [
+            .init(.leftArrow, modifiers: .control),
+            .init(.leftArrow, modifiers: [.control, .function]),
+        ])
+        #expect(try chords(.a) == [.init(.a, modifiers: .control)])
+        #expect(try chords(.a, modifiers: [.control, .function]) == [.init(.a, modifiers: [.control, .function])])
+    }
+
+    @Test("overlapping posts restore bindings together and failed posts roll back only their own binding")
+    func restoreOverlappingHotKeys() async throws {
+        var disabled = Set<KeyboardShortcuts.Name>()
+        var systemRestores: [CGSSymbolicHotKey] = []
+        var bindingRestores: [Set<KeyboardShortcuts.Name>] = []
+        let forwarding = ForwardedHotKeys(
+            delay: .zero,
+            setSystemEnabled: { key, enabled in
+                if !enabled {
+                    systemRestores.append(key)
+                }
+                return key != 3
+            }
+        ) { names, enabled in
+            if enabled {
+                bindingRestores.append(Set(names))
+                disabled.subtract(names)
+            } else {
+                disabled.formUnion(names)
+            }
+        }
+        var posts = 0
+        let first = forwarding.post(1, suspending: [.switchLeft], systemEnabled: false) { posts += 1 }
+        let earlier = try #require(forwarding.pending)
+        let second = forwarding.post(2, suspending: [.switchRight], systemEnabled: true) { posts += 1 }
+        let failed = forwarding.post(3, suspending: [.switchPrevious], systemEnabled: false) { posts += 1 }
+        #expect(first && second && !failed)
+        #expect(posts == 2)
+        #expect(earlier.isCancelled)
+        #expect(disabled == [.switchLeft, .switchRight])
+        #expect(bindingRestores == [[.switchPrevious]])
+        await forwarding.pending?.value
+        #expect(systemRestores == [1])
+        #expect(bindingRestores == [[.switchPrevious], [.switchLeft, .switchRight]])
+        #expect(disabled.isEmpty)
     }
 
     @Test("nothing recorded means nothing conflicts")
