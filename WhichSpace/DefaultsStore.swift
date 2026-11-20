@@ -319,20 +319,23 @@ final class DefaultsStore {
     private var cachedValues: [String: Any] = [:]
     private var cachedSeparatorColor: NSColor??
 
-    init(suite: UserDefaults) {
+    init(suite: UserDefaults, domainName: String? = Bundle.main.bundleIdentifier) {
         self.suite = suite
-        migrateDimInactiveSpaces()
+        migrateDimInactiveSpaces(in: domainName)
     }
 
     /// Converts the former on/off preference to its equivalent opacity. The
     /// legacy default (on) already matches 35%; off becomes fully opaque.
-    private func migrateDimInactiveSpaces() {
+    private func migrateDimInactiveSpaces(in domainName: String?) {
         let legacyName = "dimInactiveSpaces"
-        guard let legacy = suite.object(forKey: legacyName) as? NSNumber else {
+        guard suite.object(forKey: legacyName) != nil, let domainName,
+              let saved = suite.persistentDomain(forName: domainName),
+              let legacy = saved[legacyName] as? NSNumber
+        else {
             return
         }
 
-        if !legacy.boolValue {
+        if !legacy.boolValue, saved[KeySpecs.inactiveSpaceOpacity.name] == nil {
             Defaults[KeySpecs.inactiveSpaceOpacity.key(suite: suite)] = 100
         }
         suite.removeObject(forKey: legacyName)

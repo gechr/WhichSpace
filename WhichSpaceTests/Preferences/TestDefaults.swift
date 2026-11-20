@@ -222,12 +222,25 @@ struct DefaultsIsolationGuardTests {
         let legacySuite = TestSuiteFactory.createSuite()
         legacySuite.suite.set(false, forKey: "dimInactiveSpaces")
 
-        let migratedStore = DefaultsStore(suite: legacySuite.suite)
+        let migratedStore = DefaultsStore(suite: legacySuite.suite, domainName: legacySuite.suiteName)
 
         #expect(migratedStore.inactiveSpaceOpacity == 100)
         #expect(legacySuite.suite.object(forKey: "dimInactiveSpaces") == nil)
         migratedStore.resetAll()
         TestSuiteFactory.destroySuite(legacySuite)
+    }
+
+    @Test("explicit opacity survives legacy dimming migration")
+    func explicitOpacitySurvivesMigration() {
+        let legacySuite = TestSuiteFactory.createSuite()
+        defer { TestSuiteFactory.destroySuite(legacySuite) }
+        legacySuite.suite.set(false, forKey: "dimInactiveSpaces")
+        legacySuite.suite.set(65.0, forKey: "inactiveSpaceOpacity")
+
+        let store = DefaultsStore(suite: legacySuite.suite, domainName: legacySuite.suiteName)
+
+        #expect(store.inactiveSpaceOpacity == 65)
+        #expect(legacySuite.suite.object(forKey: "dimInactiveSpaces") == nil)
     }
 
     /// Verifies that KeySpecs matches Defaults.Keys definitions.
