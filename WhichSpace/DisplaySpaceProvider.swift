@@ -14,6 +14,43 @@ protocol DisplaySpaceProvider: Sendable {
     func windowOwnerPIDs(forSpaceIDs spaceIDs: [Int]) -> [Int: [pid_t]]
 }
 
+// MARK: - Fullscreen Space Owners
+
+enum FullscreenSpaceOwners {
+    /// Settings and picker windows can briefly belong to another app's
+    /// fullscreen Space. Exclude every running copy, including debug builds.
+    static var excludedPIDs: Set<pid_t> {
+        var pids: Set<pid_t> = [ProcessInfo.processInfo.processIdentifier]
+        if let bundleID = Bundle.main.bundleIdentifier {
+            let copies = NSRunningApplication.runningApplications(withBundleIdentifier: bundleID)
+            pids.formUnion(copies.map(\.processIdentifier))
+        }
+        return pids
+    }
+
+    /// Front-to-back owner order matters when a fullscreen Space has several
+    /// windows. Ignore our panels before picking the first matching owner.
+    static func candidates(in windowList: [[String: Any]]) -> [(pid: pid_t, windows: [Int])] {
+        let excluded = excludedPIDs
+        var windowsByPID: [pid_t: [Int]] = [:]
+        var orderedPIDs: [pid_t] = []
+        for window in windowList {
+            guard window[kCGWindowLayer as String] as? Int == 0,
+                  let id = window[kCGWindowNumber as String] as? Int,
+                  let pid = window[kCGWindowOwnerPID as String] as? pid_t,
+                  !excluded.contains(pid)
+            else {
+                continue
+            }
+            if windowsByPID[pid] == nil {
+                orderedPIDs.append(pid)
+            }
+            windowsByPID[pid, default: []].append(id)
+        }
+        return orderedPIDs.map { ($0, windowsByPID[$0, default: []]) }
+    }
+}
+
 // MARK: - Managed Space Kind
 
 /// Classifies raw space dictionaries returned by `CGSCopyManagedDisplaySpaces`.
@@ -260,29 +297,15 @@ struct CGSDisplaySpaceProvider: DisplaySpaceProvider {
             return [:]
         }
 
-        var windowsByPID: [pid_t: [Int]] = [:]
-        var orderedPIDs: [pid_t] = []
-        for window in windowList {
-            guard let layer = window[kCGWindowLayer as String] as? Int, layer == 0,
-                  let windowNumber = window[kCGWindowNumber as String] as? Int,
-                  let ownerPID = window[kCGWindowOwnerPID as String] as? pid_t
-            else {
-                continue
-            }
-            if windowsByPID[ownerPID] == nil {
-                orderedPIDs.append(ownerPID)
-            }
-            windowsByPID[ownerPID, default: []].append(windowNumber)
-        }
-
-        let occupantIDs = Set(spaceOccupantWindowIDs(Array(windowsByPID.values.joined())))
+        let candidates = FullscreenSpaceOwners.candidates(in: windowList)
+        let occupantIDs = Set(spaceOccupantWindowIDs(candidates.flatMap(\.windows)))
         var unresolved = Set(spaceIDs)
         var owners: [Int: pid_t] = [:]
-        for pid in orderedPIDs {
+        for (pid, windows) in candidates {
             guard !unresolved.isEmpty else {
                 break
             }
-            let windowNumbers = windowsByPID[pid, default: []].filter(occupantIDs.contains)
+            let windowNumbers = windows.filter(occupantIDs.contains)
             guard !windowNumbers.isEmpty,
                   let result = SLSCopySpacesForWindows(conn, 0x7, windowNumbers as CFArray)
             else {

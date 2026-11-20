@@ -528,6 +528,19 @@ struct StatusBarShrinkLevelTests {
 
 @MainActor
 struct SpacePickerTests {
+    @Test("a settings window cannot claim a fullscreen Space during teardown")
+    func fullscreenOwnerCandidatesExcludePanels() {
+        func window(_ id: Int, pid: pid_t) -> [String: Any] {
+            [kCGWindowLayer as String: 0, kCGWindowNumber as String: id, kCGWindowOwnerPID as String: pid]
+        }
+        let panel = window(18, pid: ProcessInfo.processInfo.processIdentifier)
+        let other = window(29, pid: 67)
+        let candidates = FullscreenSpaceOwners.candidates(in: [panel, other])
+        #expect(candidates.map(\.pid) == [67])
+        #expect(candidates.map(\.windows) == [[29]])
+        #expect(FullscreenSpaceOwners.candidates(in: [panel]).isEmpty)
+    }
+
     private let store: DefaultsStore
     private let testSuite: TestSuite
     private let stub: CGSStub
