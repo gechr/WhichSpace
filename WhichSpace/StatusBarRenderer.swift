@@ -507,7 +507,10 @@ final class StatusBarRenderer {
         return cachedFullscreenOwners
     }
 
-    private func fullscreenAppIcons(forSpaceID spaceID: Int) -> [NSImage] {
+    func fullscreenAppIcons(
+        forSpaceID spaceID: Int,
+        bundleIdentifier: (pid_t) -> String? = FullscreenSpaceOwners.bundleIdentifier(for:)
+    ) -> [NSImage] {
         guard store.fullscreenIconStyle == .appIcon else {
             return []
         }
@@ -516,16 +519,17 @@ final class StatusBarRenderer {
         guard let owners = scanFullscreenOwners()[spaceID] else {
             return previous.map(\.image)
         }
-        var artwork: [FullscreenArtwork] = []
-        for owner in owners.prefix(2) where artwork.last?.owner != owner {
+        let artwork: [FullscreenArtwork] = FullscreenSpaceOwners.uniqueAppValues(
+            for: Array(owners.prefix(2)), bundleIdentifier: bundleIdentifier
+        ) { owner in
             let cached = previous.first { $0.owner == owner }
             if let cached, cached.darkMode == appState.darkModeEnabled {
-                artwork.append(cached)
-            } else if let image = fullscreenAppIconResolver(owner) {
-                artwork.append(FullscreenArtwork(owner: owner, image: image, darkMode: appState.darkModeEnabled))
-            } else if let cached {
-                artwork.append(cached)
+                return cached
             }
+            if let image = fullscreenAppIconResolver(owner) {
+                return FullscreenArtwork(owner: owner, image: image, darkMode: appState.darkModeEnabled)
+            }
+            return cached
         }
         fullscreenArtwork[spaceID] = artwork
         return artwork.map(\.image)

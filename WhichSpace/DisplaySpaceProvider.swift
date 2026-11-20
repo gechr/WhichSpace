@@ -28,6 +28,37 @@ enum FullscreenSpaceOwners {
         return pids
     }
 
+    static func bundleIdentifier(for owner: pid_t) -> String? {
+        NSRunningApplication(processIdentifier: owner)?.bundleIdentifier
+    }
+
+    /// Keep the first available value for each app in tile order. A second
+    /// instance can supply the value if the first has already exited.
+    static func uniqueAppValues<Value>(
+        for owners: [pid_t],
+        bundleIdentifier: (pid_t) -> String?,
+        resolve: (pid_t) -> Value?
+    ) -> [Value] {
+        guard owners.count > 1 else {
+            return owners.compactMap(resolve)
+        }
+        var processes = Set<pid_t>()
+        var bundles = Set<String>()
+        return owners.compactMap { owner in
+            guard processes.insert(owner).inserted else {
+                return nil
+            }
+            let bundle = bundleIdentifier(owner)
+            guard bundle.map(bundles.contains) != true, let value = resolve(owner) else {
+                return nil
+            }
+            if let bundle {
+                bundles.insert(bundle)
+            }
+            return value
+        }
+    }
+
     /// Front-to-back owner order matters when a fullscreen Space has several
     /// windows. During dismissal WindowServer can own the frontmost window
     /// while it animates the outgoing Space. Only apps can own the tile.

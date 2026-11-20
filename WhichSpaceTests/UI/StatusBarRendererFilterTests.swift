@@ -705,6 +705,31 @@ struct SpacePickerTests {
         #expect(stub.fullscreenOwnerPIDsCallCount == 0)
     }
 
+    @Test("Split View shows one title and icon per app", arguments: [true, false], [true, false])
+    func splitViewAppIdentity(sameProcess: Bool, sharedBundle: Bool) async {
+        let owners: [pid_t] = [.max, sameProcess ? .max : .max - 1]
+        let count = sameProcess || sharedBundle ? 1 : 2
+        store.fullscreenIconStyle = .appIcon
+        stub.activeDisplayIdentifier = "Main"
+        let tiles: [[String: Any]] = owners.enumerated().map { ["pid": $0.element, "TileRect": ["X": $0.offset]] }
+        let display: NSDictionary = [
+            "Display Identifier": "Main",
+            "Current Space": ["ManagedSpaceID": 35],
+            "Spaces": [["ManagedSpaceID": 35, "TileLayoutManager": ["TileSpaces": tiles]]],
+        ]
+        stub.displays = [display]
+        let state = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        let bundle: (pid_t) -> String? = { _ in sharedBundle ? "example.editor" : nil }
+        let titles = await state.fullscreenShortcutTitles(
+            for: state.fullscreenShortcutTargets,
+            bundleIdentifier: bundle
+        ) { _ in "Editor" }
+        #expect(titles[35] == (count == 1 ? "Editor" : "Editor + Editor"))
+
+        state.renderer.fullscreenAppIconResolver = { _ in NSImage(size: NSSize(width: 16, height: 16)) }
+        #expect(state.renderer.fullscreenAppIcons(forSpaceID: 35, bundleIdentifier: bundle).count == count)
+    }
+
     @Test("a lone Desktop keeps the bare Mission Control name")
     func loneDesktopStaysUnnumbered() {
         let appState = makeAppState(
