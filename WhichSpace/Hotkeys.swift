@@ -401,10 +401,8 @@ final class HotkeyCenter {
         guard ensureAccessibility() else {
             return
         }
-        // The global route may forward a numbered Mission Control key event
-        // even outside the classic path, so it always steps aside.
-        performSwitch(forwardsKeyEvents: !store.localSpaceNumbers || switchForwardsKeyEvents) {
-            try? ScriptingHelpers.switchToSpace(number: number, appState: appState, store: store)
+        performSwitch(forwardsKeyEvents: true) {
+            _ = SpaceSwitcher.switchToDesktop(number: number, local: store.localSpaceNumbers)
         }
     }
 

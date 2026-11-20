@@ -132,18 +132,78 @@ struct SpaceSwitcherTests {
         #expect(SpaceSwitcher.desktopNumber(forSpaceID: 101, displays: displays) == 2)
         #expect(SpaceSwitcher.desktopNumber(forSpaceID: 200, displays: displays) == 3)
         #expect(
-            SpaceSwitcher.desktopSwitchRoute(number: 1, activeDisplayID: "DisplayA", displays: displays)
+            SpaceSwitcher.desktopSwitchRoute(to: .global(1), activeDisplayID: "DisplayA", displays: displays)
                 == .activeDisplay(spaceID: 100)
         )
         #expect(
-            SpaceSwitcher.desktopSwitchRoute(number: 2, activeDisplayID: "DisplayA", displays: displays)
+            SpaceSwitcher.desktopSwitchRoute(to: .global(2), activeDisplayID: "DisplayA", displays: displays)
                 == .activeDisplay(spaceID: 101)
         )
         #expect(
-            SpaceSwitcher.desktopSwitchRoute(number: 3, activeDisplayID: "DisplayA", displays: displays)
+            SpaceSwitcher.desktopSwitchRoute(to: .global(3), activeDisplayID: "DisplayA", displays: displays)
                 == .otherDisplay(hotKey: 120)
         )
-        #expect(SpaceSwitcher.desktopSwitchRoute(number: 4, activeDisplayID: "DisplayA", displays: displays) == nil)
+        #expect(SpaceSwitcher
+            .desktopSwitchRoute(to: .global(4), activeDisplayID: "DisplayA", displays: displays) == nil)
+    }
+
+    @Test("gesture routing follows the pointer and falls back to focus")
+    func receivingDisplay() throws {
+        let displays = try twoDisplays()
+        let bounds = { (id: String) -> CGRect? in
+            CGRect(x: id == "DisplayA" ? 0 : 100, y: 0, width: 100, height: 100)
+        }
+        func display(at pointer: CGPoint?, classic: Bool = false) -> String? {
+            SpaceSwitcher.switchingDisplay(
+                in: displays,
+                classic: classic,
+                pointer: pointer,
+                focusedDisplay: "DisplayA",
+                bounds: bounds
+            )?
+                .identifier
+        }
+        let pointerDisplay = try #require(display(at: CGPoint(x: 125, y: 50)))
+        #expect(pointerDisplay == "DisplayB")
+        #expect(SpaceSwitcher.desktopSwitchRoute(to: .global(5), activeDisplayID: pointerDisplay, displays: displays)
+            == .activeDisplay(spaceID: 200))
+        #expect(display(at: CGPoint(x: 125, y: 50), classic: true) == "DisplayA")
+        #expect(display(at: nil) == "DisplayA")
+        #expect(display(at: CGPoint(x: -50, y: 50)) == "DisplayA")
+
+        let shared = try managedDisplay(identifier: "Main", spaces: [(1, false)], currentSpaceID: 1)
+        let display = SpaceSwitcher.switchingDisplay(
+            in: [shared],
+            classic: false,
+            pointer: .zero,
+            focusedDisplay: "A"
+        ) { _ in nil }
+        #expect(display?.identifier == "Main")
+    }
+
+    @Test("numbered and absolute targets distinguish the pointer display from keyboard focus")
+    func pointerAndFocusRoutes() throws {
+        let displays = try [
+            managedDisplay(identifier: "A", spaces: [(10, false), (11, false)], currentSpaceID: 11),
+            managedDisplay(identifier: "B", spaces: [(20, false), (21, false), (22, true)], currentSpaceID: 20),
+            managedDisplay(identifier: "C", spaces: [(30, false)], currentSpaceID: 30),
+        ]
+        func route(_ target: SpaceSwitcher.SwitchTarget) -> SpaceSwitcher.DesktopSwitchRoute? {
+            SpaceSwitcher.desktopSwitchRoute(
+                to: target,
+                activeDisplayID: "B",
+                focusedDisplayID: "A",
+                displays: displays
+            )
+        }
+        #expect(route(.local(2)) == .activeDisplay(spaceID: 21))
+        #expect(route(.local(3)) == .fullscreen(spaceID: 22))
+        #expect(route(.local(4)) == nil)
+        #expect(route(.global(1)) == .focusedDisplay(spaceID: 10))
+        #expect(route(.id(10)) == .focusedDisplay(spaceID: 10))
+        #expect(route(.id(20)) == .otherDisplay(hotKey: 120))
+        #expect(route(.global(3)) == .otherDisplay(hotKey: 120))
+        #expect(route(.id(30)) == .otherDisplay(hotKey: 122))
     }
 
     @Test("global Desktop five routes to the second display")
@@ -152,7 +212,7 @@ struct SpaceSwitcherTests {
 
         #expect(
             SpaceSwitcher.desktopSwitchRoute(
-                number: 5,
+                to: .global(5),
                 activeDisplayID: "DisplayA",
                 displays: displays
             ) == .otherDisplay(hotKey: 122)
@@ -165,7 +225,7 @@ struct SpaceSwitcherTests {
 
         #expect(
             SpaceSwitcher.desktopSwitchRoute(
-                number: 1,
+                to: .global(1),
                 activeDisplayID: "DisplayB",
                 displays: displays
             ) == .otherDisplay(hotKey: 118)
@@ -178,7 +238,7 @@ struct SpaceSwitcherTests {
 
         #expect(
             SpaceSwitcher.desktopSwitchRoute(
-                number: 2,
+                to: .global(2),
                 activeDisplayID: "DisplayA",
                 displays: displays
             ) == .activeDisplay(spaceID: 101)
@@ -207,14 +267,14 @@ struct SpaceSwitcherTests {
 
         #expect(
             SpaceSwitcher.desktopSwitchRoute(
-                number: 5,
+                to: .global(5),
                 activeDisplayID: "DisplayA",
                 displays: displays
             ) == .otherDisplay(hotKey: 122)
         )
         #expect(
             SpaceSwitcher.desktopSwitchRoute(
-                number: 6,
+                to: .global(6),
                 activeDisplayID: "DisplayC",
                 displays: displays
             ) == .activeDisplay(spaceID: 301)
@@ -231,14 +291,14 @@ struct SpaceSwitcherTests {
 
         #expect(
             SpaceSwitcher.desktopSwitchRoute(
-                number: 2,
+                to: .global(2),
                 activeDisplayID: "DisplayA",
                 displays: [display]
             ) == .activeDisplay(spaceID: 101)
         )
         #expect(
             SpaceSwitcher.desktopSwitchRoute(
-                number: 3,
+                to: .global(3),
                 activeDisplayID: "DisplayA",
                 displays: [display]
             ) == nil
@@ -254,7 +314,7 @@ struct SpaceSwitcherTests {
         // Space, which macOS still numbers Desktop 1
         #expect(
             SpaceSwitcher.desktopSwitchRoute(
-                number: 5,
+                to: .global(5),
                 activeDisplayID: "DisplayB",
                 displays: reordered,
                 cgsDisplays: cgsDisplays
@@ -269,7 +329,7 @@ struct SpaceSwitcherTests {
 
         #expect(
             SpaceSwitcher.desktopSwitchRoute(
-                number: 2,
+                to: .global(2),
                 activeDisplayID: "DisplayB",
                 displays: reordered,
                 cgsDisplays: cgsDisplays
@@ -302,7 +362,7 @@ struct SpaceSwitcherTests {
         // numbers Desktop 17 - past the numbered shortcuts
         #expect(
             SpaceSwitcher.desktopSwitchRoute(
-                number: 1,
+                to: .global(1),
                 activeDisplayID: "DisplayA",
                 displays: reordered,
                 cgsDisplays: cgsDisplays

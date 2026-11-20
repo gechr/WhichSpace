@@ -234,7 +234,7 @@ enum SpaceSwitcher {
 
     // MARK: - Public API
 
-    /// Switches to the space with the given CGS space ID on the menu bar display.
+    /// Switches to the space with the given CGS space ID.
     /// Posts synthetic dock-swipe gestures to move from the current space to the target.
     @discardableResult
     @MainActor static func switchToSpace(
@@ -242,25 +242,53 @@ enum SpaceSwitcher {
         fromStatusItemClick: Bool = false,
         onDisplay displayID: String? = nil
     ) -> Bool {
+        switchToTarget(.id(targetSpaceID), fromStatusItemClick: fromStatusItemClick, onDisplay: displayID)
+    }
+
+    @MainActor private static func switchToTarget(
+        _ target: SwitchTarget,
+        fromStatusItemClick: Bool = false,
+        onDisplay displayID: String? = nil
+    ) -> Bool {
         fullscreenActivation.cancel()
         let conn = _CGSDefaultConnection()
-
-        let displays = managedDisplays(connection: conn)
-        let targetDisplay: ManagedDisplay?
-        if let displayID {
-            targetDisplay = displays.first { $0.identifier == displayID }
-        } else if let activeDisplayRef = CGSCopyActiveMenuBarDisplayIdentifier(conn) {
-            let activeID = activeDisplayRef.takeRetainedValue() as String
-            targetDisplay = displays.first { $0.identifier == activeID } ?? displays.first
-        } else {
-            NSLog("SpaceSwitcher: failed to get active menu bar display")
+        let displays = systemOrdered(managedDisplays(connection: conn))
+        let classic = requiresClassicPath(fromStatusItemClick: fromStatusItemClick)
+        let focus = CGSDisplaySpaceProvider().copyActiveMenuBarDisplayIdentifier()
+        guard let receiving = switchingDisplay(in: displays, classic: classic, focusedDisplay: focus),
+              displayID == nil || displayID == receiving.identifier,
+              let route = desktopSwitchRoute(
+                  to: target,
+                  activeDisplayID: receiving.identifier,
+                  focusedDisplayID: focus,
+                  displays: presentationOrdered(displays),
+                  cgsDisplays: displays
+              )
+        else {
             return false
         }
-        guard let display = targetDisplay else {
-            NSLog("SpaceSwitcher: no display found")
-            return false
+        switch route {
+        case let .activeDisplay(spaceID):
+            return switchToSpace(id: spaceID, on: receiving, classic: classic, connection: conn)
+        case let .focusedDisplay(spaceID):
+            guard let display = displays.first(where: { $0.identifier == focus }) else {
+                return false
+            }
+            return switchToSpace(id: spaceID, on: display, classic: true, connection: conn)
+        case let .otherDisplay(hotKey):
+            return postHotKey(hotKey)
+        case let .fullscreen(spaceID):
+            selectFullscreenSpace(spaceID)
+            return true
         }
+    }
 
+    @MainActor private static func switchToSpace(
+        id targetSpaceID: Int,
+        on display: ManagedDisplay,
+        classic: Bool,
+        connection conn: Int32
+    ) -> Bool {
         guard let cgsCurrentIndex = display.spaces.firstIndex(where: { $0.id == display.currentSpaceID }),
               let targetIndex = display.spaces.firstIndex(where: { $0.id == targetSpaceID })
         else {
@@ -275,10 +303,10 @@ enum SpaceSwitcher {
         let currentIndex = prediction(for: display.identifier) ?? cgsCurrentIndex
 
         guard currentIndex != targetIndex else {
-            if let displayID, let focused = CGSCopyActiveMenuBarDisplayIdentifier(conn) {
+            if display.identifier != "Main", let focused = CGSCopyActiveMenuBarDisplayIdentifier(conn) {
                 // Already visible on a different display: let the shortcut
                 // focus its window rather than reporting an empty switch.
-                return focused.takeRetainedValue() as String == displayID
+                return focused.takeRetainedValue() as String == display.identifier
             }
             return true
         }
@@ -286,7 +314,7 @@ enum SpaceSwitcher {
         let steps = abs(targetIndex - currentIndex)
         let goRight = targetIndex > currentIndex
 
-        if requiresClassicPath(fromStatusItemClick: fromStatusItemClick) {
+        if classic {
             guard classicSwitch(toSpaceID: targetSpaceID, goRight: goRight, steps: steps, connection: conn) else {
                 return false
             }
@@ -315,45 +343,14 @@ enum SpaceSwitcher {
         return true
     }
 
-    /// Switches to a globally numbered regular Desktop. A target on the
-    /// active display keeps the configured instant/classic behavior; a target
-    /// on another display uses macOS's numbered Mission Control shortcut,
-    /// which addresses Desktops globally rather than relative to focus.
+    /// Local shortcuts count every Space on the display receiving the event.
+    /// Global shortcuts count regular Desktops in presentation order.
     @discardableResult
-    @MainActor static func switchToDesktop(number: Int) -> Bool {
-        fullscreenActivation.cancel()
-        let conn = _CGSDefaultConnection()
-        guard let activeDisplayRef = CGSCopyActiveMenuBarDisplayIdentifier(conn) else {
-            NSLog("SpaceSwitcher: failed to get active menu bar display")
-            return false
-        }
-        let activeDisplayID = activeDisplayRef.takeRetainedValue() as String
-
-        let displays = systemOrdered(managedDisplays(connection: conn))
-        guard let activeDisplay = displays.first(
-            where: { $0.identifier == activeDisplayID }
-        ) ?? displays.first else {
-            NSLog("SpaceSwitcher: no display found")
-            return false
-        }
-        guard let route = desktopSwitchRoute(
-            number: number,
-            activeDisplayID: activeDisplay.identifier,
-            displays: presentationOrdered(displays),
-            cgsDisplays: displays
-        ) else {
-            return false
-        }
-
-        switch route {
-        case let .activeDisplay(spaceID):
-            return switchToSpace(id: spaceID)
-        case let .otherDisplay(hotKey):
-            return postHotKey(hotKey)
-        }
+    @MainActor static func switchToDesktop(number: Int, local: Bool = false) -> Bool {
+        switchToTarget(local ? .local(number) : .global(number))
     }
 
-    /// Switches one Space left or right on the menu bar display, clamped at the
+    /// Switches one Space left or right on the receiving display, clamped at the
     /// edges unless `wrap` is true, in which case scrolling past either edge
     /// wraps around to the opposite end. Spaces whose IDs appear in
     /// `skippingSpaceIDs` are jumped over, landing on the nearest remaining
@@ -369,15 +366,8 @@ enum SpaceSwitcher {
         fullscreenActivation.cancel()
         let conn = _CGSDefaultConnection()
 
-        guard let activeDisplayRef = CGSCopyActiveMenuBarDisplayIdentifier(conn) else {
-            NSLog("SpaceSwitcher: failed to get active menu bar display")
-            return false
-        }
-        let activeDisplayID = activeDisplayRef.takeRetainedValue() as String
-
-        let displays = managedDisplays(connection: conn)
-        guard let display = displays.first(where: { $0.identifier == activeDisplayID }) ?? displays.first else {
-            NSLog("SpaceSwitcher: no display found")
+        let classicRoute = requiresClassicPath()
+        guard let display = switchingDisplay(in: managedDisplays(connection: conn), classic: classicRoute) else {
             return false
         }
 
@@ -403,9 +393,6 @@ enum SpaceSwitcher {
         let steps = abs(targetIndex - currentIndex)
         let stepsRight = targetIndex > currentIndex
         let target = display.spaces[targetIndex].id
-        // The route is resolved once and passed down, so the posted
-        // mechanism and the bounce record always agree
-        let classicRoute = requiresClassicPath()
         if !classicRoute {
             parkKeyWindowIfNeeded(
                 currentSpaceID: display.currentSpaceID
@@ -519,6 +506,36 @@ enum SpaceSwitcher {
         }
     }
 
+    /// Gestures land under the pointer. Classic key events go to the focused display.
+    @MainActor private static func switchingDisplay(
+        in displays: [ManagedDisplay],
+        classic: Bool,
+        focusedDisplay: String? = CGSDisplaySpaceProvider().copyActiveMenuBarDisplayIdentifier()
+    ) -> ManagedDisplay? {
+        switchingDisplay(
+            in: displays,
+            classic: classic,
+            pointer: CGEvent(source: nil)?.location,
+            focusedDisplay: focusedDisplay,
+            bounds: DisplayGeometry.bounds(forDisplayIdentifier:)
+        )
+    }
+
+    static func switchingDisplay(
+        in displays: [ManagedDisplay],
+        classic: Bool,
+        pointer: @autoclosure () -> CGPoint?,
+        focusedDisplay: String?,
+        bounds: (String) -> CGRect?
+    ) -> ManagedDisplay? {
+        if !classic, let pointer = pointer(),
+           let display = displays.first(where: { bounds($0.identifier)?.contains(pointer) == true })
+        {
+            return display
+        }
+        return displays.first { $0.identifier == focusedDisplay } ?? displays.first
+    }
+
     /// The displays in the order the menu bar numbers their Desktops. A
     /// physical presentation reorder only affects numbering when the menu bar
     /// shows every display and the user has not chosen to preserve the
@@ -564,7 +581,34 @@ enum SpaceSwitcher {
     /// A pure routing decision kept separate from event posting so
     /// multi-display numbering can be covered without changing the test
     /// runner's active Space.
+    enum SwitchTarget {
+        case id(Int)
+        case local(Int)
+        case global(Int)
+
+        func space(in displays: [ManagedDisplay], receivingDisplayID: String) -> ManagedSpace? {
+            switch self {
+            case let .id(id):
+                return displays.lazy.compactMap { $0.spaces.first { $0.id == id } }.first
+            case let .local(position):
+                guard let display = displays.first(where: { $0.identifier == receivingDisplayID }),
+                      position > 0, position <= display.spaces.count
+                else {
+                    return nil
+                }
+                return display.spaces[position - 1]
+            case let .global(number):
+                guard (1 ... HotKey.maxDesktops).contains(number) else {
+                    return nil
+                }
+                return displays.lazy.flatMap(\.spaces).lazy.filter { !$0.isFullscreen }.dropFirst(number - 1).first
+            }
+        }
+    }
+
     enum DesktopSwitchRoute: Equatable {
+        case focusedDisplay(spaceID: Int)
+        case fullscreen(spaceID: Int)
         case activeDisplay(spaceID: Int)
         case otherDisplay(hotKey: CGSSymbolicHotKey)
     }
@@ -574,39 +618,38 @@ enum SpaceSwitcher {
     /// numbering order for the cross-display route, whose symbolic hotkey
     /// addresses that numbering; empty means the two orders are the same.
     static func desktopSwitchRoute(
-        number: Int,
+        to target: SwitchTarget,
         activeDisplayID: String,
+        focusedDisplayID: String? = nil,
         displays: [ManagedDisplay],
         cgsDisplays: [ManagedDisplay] = []
     ) -> DesktopSwitchRoute? {
-        guard number >= 1, number <= HotKey.maxDesktops else {
+        guard let space = target.space(in: displays, receivingDisplayID: activeDisplayID),
+              let display = displays.first(where: { $0.spaces.contains { $0.id == space.id } })
+        else {
             return nil
         }
-
-        var counted = 0
-        for display in displays {
-            for space in display.spaces where !space.isFullscreen {
-                counted += 1
-                guard counted == number else {
-                    continue
-                }
-                if display.identifier == activeDisplayID {
-                    return .activeDisplay(spaceID: space.id)
-                }
-                // A reordered number can point at a Desktop macOS numbers
-                // beyond its last numbered shortcut, which has no route
-                guard let cgsNumber = desktopNumber(
-                    forSpaceID: space.id,
-                    displays: cgsDisplays.isEmpty ? displays : cgsDisplays
-                ), cgsNumber <= HotKey.maxDesktops else {
-                    return nil
-                }
-                return .otherDisplay(
-                    hotKey: HotKey.firstDesktop + CGSSymbolicHotKey(cgsNumber - 1)
-                )
-            }
+        if space.isFullscreen, case .local = target {
+            return .fullscreen(spaceID: space.id)
         }
-        return nil
+        let focused = display.identifier == "Main" || display.identifier == (focusedDisplayID ?? activeDisplayID)
+        if display.identifier == activeDisplayID,
+           focused || display.currentSpaceID != space.id || space.isFullscreen
+        {
+            return .activeDisplay(spaceID: space.id)
+        }
+        guard !space.isFullscreen else {
+            return nil
+        }
+        if focused {
+            return .focusedDisplay(spaceID: space.id)
+        }
+        guard let number = desktopNumber(forSpaceID: space.id, displays: cgsDisplays.isEmpty ? displays : cgsDisplays),
+              number <= HotKey.maxDesktops
+        else {
+            return nil
+        }
+        return .otherDisplay(hotKey: HotKey.firstDesktop + CGSSymbolicHotKey(number - 1))
     }
 
     // MARK: - Classic Switching
