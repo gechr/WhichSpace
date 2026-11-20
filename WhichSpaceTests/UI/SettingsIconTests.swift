@@ -482,6 +482,54 @@ struct NativeMenuBarTintTests {
 
         appState.renderer.fullscreenAppIconResolver = { _ in nil }
         appState.renderer.invalidateIconCache()
+        #expect(!appState.renderer.statusBarIcon(level: .full).isTemplate)
+
+        store.fullscreenIconStyle = .letter
+        #expect(appState.renderer.statusBarIcon(level: .full).isTemplate)
+        store.fullscreenIconStyle = .appIcon
+        #expect(!appState.renderer.statusBarIcon(level: .full).isTemplate)
+        stub.fullscreenOwnerPIDsMap = [101: 53]
+        appState.renderer.spaceSnapshotDidChange()
+        #expect(appState.renderer.statusBarIcon(level: .full).isTemplate)
+    }
+
+    @Test("closing a fullscreen window keeps its artwork until its Space disappears")
+    func fullscreenArtworkDuringRemoval() async throws {
+        store.showAllSpaces = true
+        let desktop = (id: 18, isFullscreen: false)
+        let fullscreen = (id: 27, isFullscreen: true)
+        func setSpaces(_ spaces: [(id: Int, isFullscreen: Bool)], current: Int) {
+            stub.displays = [CGSStub.makeDisplay(displayID: "Main", spaces: spaces, activeSpaceID: current)]
+        }
+        setSpaces([desktop, fullscreen], current: fullscreen.id)
+        stub.fullscreenOwnerPIDsMap = [fullscreen.id: 73]
+        let appState = makeAppState()
+        appState.renderer.fullscreenAppIconResolver = { _ in
+            NSImage(size: NSSize(width: 16, height: 16), flipped: false) { rect in
+                NSColor.green.setFill()
+                rect.fill()
+                return true
+            }
+        }
+        appState.renderer.invalidateIconCache()
+        let before = appState.renderer.statusBarIcon(level: .full)
+        #expect(!before.isTemplate)
+
+        stub.fullscreenOwnerPIDsMap = [:]
+        appState.renderer.spaceSnapshotDidChange()
+        #expect(appState.renderer.statusBarIcon(level: .full).tiffRepresentation == before.tiffRepresentation)
+        try await Task.sleep(for: .milliseconds(1200))
+        appState.renderer.invalidateIconCache()
+        #expect(appState.renderer.statusBarIcon(level: .full).tiffRepresentation == before.tiffRepresentation)
+
+        setSpaces([desktop, fullscreen], current: desktop.id)
+        appState.forceSpaceUpdate()
+        #expect(!appState.renderer.statusBarIcon(level: .full).isTemplate)
+        setSpaces([desktop], current: desktop.id)
+        appState.forceSpaceUpdate()
+        #expect(appState.renderer.statusBarIcon(level: .full).isTemplate)
+        setSpaces([desktop, fullscreen], current: desktop.id)
+        appState.forceSpaceUpdate()
         #expect(appState.renderer.statusBarIcon(level: .full).isTemplate)
     }
 

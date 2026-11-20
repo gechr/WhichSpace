@@ -29,16 +29,20 @@ enum FullscreenSpaceOwners {
     }
 
     /// Front-to-back owner order matters when a fullscreen Space has several
-    /// windows. Ignore our panels before picking the first matching owner.
-    static func candidates(in windowList: [[String: Any]]) -> [(pid: pid_t, windows: [Int])] {
-        let excluded = excludedPIDs
+    /// windows. During dismissal WindowServer can own the frontmost window
+    /// while it animates the outgoing Space. Only apps can own the tile.
+    static func candidates(
+        in windowList: [[String: Any]],
+        runningAppPIDs: Set<pid_t> = Set(NSWorkspace.shared.runningApplications.map(\.processIdentifier))
+    ) -> [(pid: pid_t, windows: [Int])] {
+        let eligible = runningAppPIDs.subtracting(excludedPIDs)
         var windowsByPID: [pid_t: [Int]] = [:]
         var orderedPIDs: [pid_t] = []
         for window in windowList {
             guard window[kCGWindowLayer as String] as? Int == 0,
                   let id = window[kCGWindowNumber as String] as? Int,
                   let pid = window[kCGWindowOwnerPID as String] as? pid_t,
-                  !excluded.contains(pid)
+                  eligible.contains(pid)
             else {
                 continue
             }

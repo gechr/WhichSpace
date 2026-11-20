@@ -52,6 +52,11 @@ final class StatusBarRenderer {
         let spaceIDs: [Int]
     }
 
+    private struct FullscreenArtwork {
+        let owner: pid_t
+        let image: NSImage
+    }
+
     /// Captures all state that affects icon rendering so we can detect changes and serve a cached image.
     ///
     /// Preferences are represented by `storeMutationCount` - a token bumped on every
@@ -149,6 +154,7 @@ final class StatusBarRenderer {
     private var pendingBackgroundScan: WindowScanRequest?
     private var cachedFullscreenOwners: [Int: pid_t] = [:]
     private var cachedFullscreenOwnersPopulated = false
+    private var fullscreenArtwork: [Int: FullscreenArtwork] = [:]
     private var cachedSpacesWithWindows: Set<Int> = []
     private var cachedSpacesWithWindowsPopulated = false
     private var cachedSpacesWithWindowsSpaceIDs: [Int] = []
@@ -415,6 +421,11 @@ final class StatusBarRenderer {
         cachedSpacesWithWindowsTime = .distantPast
         cachedFullscreenOwners = [:]
         cachedFullscreenOwnersPopulated = false
+        if !fullscreenArtwork.isEmpty {
+            let entries = appState.allDisplaysSpaceInfo.flatMap(\.entries) + appState.allSpaceEntries
+            let live = Set(entries.lazy.filter { $0.label == Labels.fullscreen }.map(\.id))
+            fullscreenArtwork = fullscreenArtwork.filter { live.contains($0.key) }
+        }
         invalidateIconCache()
     }
 
@@ -488,7 +499,22 @@ final class StatusBarRenderer {
     /// The icon of the app occupying a fullscreen space, or nil to fall back
     /// to the "F" glyph.
     private func fullscreenAppIcon(forSpaceID spaceID: Int) -> NSImage? {
-        fullscreenOwners()[spaceID].flatMap(fullscreenAppIconResolver)
+        guard store.fullscreenIconStyle == .appIcon else {
+            return nil
+        }
+        // The tile can lose its owner while the same fullscreen Space is
+        // still visible. Its removal from the snapshot ends that interval.
+        guard let owner = scanFullscreenOwners()[spaceID] else {
+            return fullscreenArtwork[spaceID]?.image
+        }
+        if let image = fullscreenAppIconResolver(owner) {
+            fullscreenArtwork[spaceID] = FullscreenArtwork(owner: owner, image: image)
+            return image
+        }
+        if fullscreenArtwork[spaceID]?.owner != owner {
+            fullscreenArtwork.removeValue(forKey: spaceID)
+        }
+        return fullscreenArtwork[spaceID]?.image
     }
 
     /// The localized name of the app occupying a fullscreen space, or nil
