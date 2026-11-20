@@ -190,6 +190,30 @@ struct SpaceSwitcherTests {
         #expect(display?.identifier == "Main")
     }
 
+    @Test("relative switches clamp at the edge of the receiving display")
+    func relativeSwitchAtPointerDisplayEdge() throws {
+        let displays = try [
+            managedDisplay(identifier: "Left", spaces: [(41, false), (42, false)], currentSpaceID: 41),
+            managedDisplay(identifier: "Right", spaces: [(51, false), (52, false)], currentSpaceID: 52),
+        ]
+        func target(classic: Bool) -> Int? {
+            let route = SpaceSwitcher.relativeSwitchRoute(
+                in: displays,
+                classic: classic,
+                goRight: true,
+                wrap: false,
+                pointer: CGPoint(x: 140, y: 30),
+                focusedDisplay: "Left"
+            ) { id in
+                CGRect(x: id == "Right" ? 100 : 0, y: 0, width: 100, height: 100)
+            }
+            return route.map { $0.display.spaces[$0.targetIndex].id }
+        }
+
+        #expect(target(classic: false) == nil)
+        #expect(target(classic: true) == 42)
+    }
+
     @Test("numbered and absolute targets distinguish the pointer display from keyboard focus")
     func pointerAndFocusRoutes() throws {
         let displays = try [

@@ -364,21 +364,11 @@ enum SpaceSwitcher {
         let conn = _CGSDefaultConnection()
 
         let classicRoute = requiresClassicPath()
-        guard let display = switchingDisplay(in: managedDisplays(connection: conn), classic: classicRoute) else {
-            return false
-        }
-
-        guard let cgsCurrentIndex = display.spaces.firstIndex(where: { $0.id == display.currentSpaceID }) else {
-            NSLog("SpaceSwitcher: could not find current space (%d)", display.currentSpaceID)
-            return false
-        }
-
-        let currentIndex = prediction(for: display.identifier) ?? cgsCurrentIndex
-        guard let targetIndex = relativeTargetIndex(
-            from: currentIndex,
+        guard let (display, currentIndex, targetIndex) = relativeSwitchRoute(
+            in: managedDisplays(connection: conn),
+            classic: classicRoute,
             goRight: goRight,
             wrap: wrap,
-            spaceIDs: display.spaces.map(\.id),
             skipping: skippingSpaceIDs
         ) else {
             return false
@@ -430,6 +420,34 @@ enum SpaceSwitcher {
 
         recordPrediction(targetIndex, for: display.identifier)
         return true
+    }
+
+    @MainActor static func relativeSwitchRoute(
+        in displays: [ManagedDisplay],
+        classic: Bool,
+        goRight: Bool,
+        wrap: Bool,
+        skipping: Set<Int> = [],
+        pointer: @autoclosure () -> CGPoint? = CGEvent(source: nil)?.location,
+        focusedDisplay: String? = CGSDisplaySpaceProvider().copyActiveMenuBarDisplayIdentifier(),
+        bounds: (String) -> CGRect? = DisplayGeometry.bounds(forDisplayIdentifier:)
+    ) -> (display: ManagedDisplay, currentIndex: Int, targetIndex: Int)? {
+        guard let display = switchingDisplay(
+            in: displays, classic: classic, pointer: pointer(), focusedDisplay: focusedDisplay, bounds: bounds
+        ) else {
+            return nil
+        }
+        guard let observed = display.spaces.firstIndex(where: { $0.id == display.currentSpaceID }) else {
+            NSLog("SpaceSwitcher: could not find current space (%d)", display.currentSpaceID)
+            return nil
+        }
+        let current = prediction(for: display.identifier) ?? observed
+        guard let target = relativeTargetIndex(
+            from: current, goRight: goRight, wrap: wrap, spaceIDs: display.spaces.map(\.id), skipping: skipping
+        ) else {
+            return nil
+        }
+        return (display, current, target)
     }
 
     /// The index a relative switch lands on: the nearest index in the
