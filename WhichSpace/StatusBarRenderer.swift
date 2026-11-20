@@ -55,6 +55,7 @@ final class StatusBarRenderer {
     private struct FullscreenArtwork {
         let owner: pid_t
         let image: NSImage
+        let darkMode: Bool
     }
 
     /// Captures all state that affects icon rendering so we can detect changes and serve a cached image.
@@ -155,6 +156,14 @@ final class StatusBarRenderer {
     private var cachedFullscreenOwners: [Int: [pid_t]] = [:]
     private var cachedFullscreenOwnersPopulated = false
     private var fullscreenArtwork: [Int: [FullscreenArtwork]] = [:]
+    /// Picker, layout and shrink-level probes can render the same tile
+    /// artwork at several sizes before the status item itself is updated.
+    private let fullscreenIconCache: NSCache<NSArray, NSImage> = {
+        let cache = NSCache<NSArray, NSImage>()
+        cache.countLimit = 64
+        return cache
+    }()
+
     private var cachedSpacesWithWindows: Set<Int> = []
     private var cachedSpacesWithWindowsPopulated = false
     private var cachedSpacesWithWindowsSpaceIDs: [Int] = []
@@ -509,9 +518,12 @@ final class StatusBarRenderer {
         }
         var artwork: [FullscreenArtwork] = []
         for owner in owners.prefix(2) where artwork.last?.owner != owner {
-            if let image = fullscreenAppIconResolver(owner) {
-                artwork.append(FullscreenArtwork(owner: owner, image: image))
-            } else if let cached = previous.first(where: { $0.owner == owner }) {
+            let cached = previous.first { $0.owner == owner }
+            if let cached, cached.darkMode == appState.darkModeEnabled {
+                artwork.append(cached)
+            } else if let image = fullscreenAppIconResolver(owner) {
+                artwork.append(FullscreenArtwork(owner: owner, image: image, darkMode: appState.darkModeEnabled))
+            } else if let cached {
                 artwork.append(cached)
             }
         }
@@ -951,11 +963,17 @@ final class StatusBarRenderer {
     /// Draws a fully resolved spec, dispatching to SpaceIconGenerator.
     private func render(_ spec: IconSpec, nativeTint: Bool = false) -> NSImage {
         if !spec.appIcons.isEmpty {
-            return SpaceIconGenerator.generateAppIcon(
+            let key: NSArray = [spec.appIcons, spec.sizeScale, spec.paddingScale, spec.darkMode]
+            if let image = fullscreenIconCache.object(forKey: key) {
+                return image
+            }
+            let image = SpaceIconGenerator.generateAppIcon(
                 spec.appIcons,
                 sizeScale: spec.sizeScale,
                 paddingScale: spec.paddingScale
             )
+            fullscreenIconCache.setObject(image, forKey: key)
+            return image
         }
         if let symbol = spec.symbol {
             if spec.hasCustomLabel {

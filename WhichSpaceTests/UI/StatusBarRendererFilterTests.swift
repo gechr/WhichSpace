@@ -667,7 +667,7 @@ struct SpacePickerTests {
     }
 
     @Test("Split View resolves both tiles from left to right without a window scan")
-    func splitViewIconUsesBothTiles() {
+    func splitViewIconUsesBothTiles() throws {
         store.fullscreenIconStyle = .appIcon
         stub.activeDisplayIdentifier = "Main"
         let tiles: [[String: Any]] = [
@@ -685,10 +685,22 @@ struct SpacePickerTests {
         var owners: [pid_t] = []
         state.renderer.fullscreenAppIconResolver = { pid in
             owners.append(pid)
-            return nil
+            return NSImage(size: NSSize(width: 32, height: 32), flipped: false) { rect in
+                (pid == 52 ? NSColor.red : NSColor.blue).setFill()
+                rect.fill()
+                return true
+            }
         }
         let entries = state.spacePickerEntries()
         #expect(entries.map(\.spaceID) == [62])
+        let first = try #require(entries.first?.icon)
+        state.renderer.invalidateIconCache()
+        #expect(state.spacePickerEntries().first?.icon === first)
+        store.sizeScale = 80
+        let smaller = try #require(state.spacePickerEntries().first?.icon)
+        #expect(smaller.size.width < first.size.width)
+        store.sizeScale = 100
+        #expect(state.spacePickerEntries().first?.icon === first)
         #expect(owners == [52, 43])
         #expect(stub.fullscreenOwnerPIDsCallCount == 0)
     }
