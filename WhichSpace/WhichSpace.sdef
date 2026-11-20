@@ -76,6 +76,10 @@
         <command name="switch to previous space" code="WSpcswpv" description="Switch back to the Space last visited on the current display.">
             <cocoa class="WhichSpace.SwitchToPreviousSpaceCommand"/>
         </command>
+        <command name="switch to space named" code="WSpcswsn" description="Switch to the Space with this label on the current display. Surrounding whitespace is ignored. Exact case takes precedence. If several Spaces still match, the command returns an error.">
+            <cocoa class="WhichSpace.SwitchToNamedSpaceCommand"/>
+            <direct-parameter type="text" description="The label as returned by the Space's label property."/>
+        </command>
         <command name="switch to space number" code="WSpcswsp" description="Switch to a Space by number. Numbering follows the menu bar&apos;s local or global preference; global numbering addresses at most 16 Desktops, matching macOS&apos;s numbered Mission Control shortcuts.">
             <cocoa class="WhichSpace.SwitchToSpaceCommand"/>
             <direct-parameter type="integer" description="The Space number to switch to (1-based)."/>

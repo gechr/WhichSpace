@@ -208,6 +208,9 @@ AppleScript exposes the same state through `space` and `display` objects. Settin
 # Switch to a specific Space by number
 osascript -e 'tell application "WhichSpace" to switch to space number 3'
 
+# Switch by label on the current display
+osascript -e 'tell application "WhichSpace" to switch to space named "Studio"'
+
 # Switch to a Space and apply a label in one step
 osascript -e 'tell application "WhichSpace" to switch to space number 3 label "Work"'
 

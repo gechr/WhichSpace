@@ -243,6 +243,40 @@ final class SwitchToPreviousSpaceCommand: NSScriptCommand {
     }
 }
 
+final class SwitchToNamedSpaceCommand: NSScriptCommand {
+    override func performDefaultImplementation() -> Any? {
+        guard let label = directParameter as? String else {
+            scriptErrorNumber = Int(errAEWrongDataType)
+            return nil
+        }
+        do {
+            try MainActor.assumeIsolated {
+                let environment = AppEnvironment.shared
+                let entry = try ScriptingHelpers.space(
+                    named: label, appState: environment.appState, store: environment.store
+                )
+                guard AXIsProcessTrusted() else {
+                    throw SwitchError.accessibilityNotTrusted
+                }
+                guard entry.id != environment.appState.currentSpaceID else {
+                    return
+                }
+                if entry.regularIndex == nil {
+                    SpaceSwitcher.selectFullscreenSpace(entry.id)
+                } else if !SpaceSwitcher.switchToSpace(id: entry.id) {
+                    throw NSError(domain: NSOSStatusErrorDomain, code: Int(errAEEventFailed))
+                }
+            }
+        } catch let error as SwitchError {
+            scriptErrorNumber = errOSACantAssign
+            scriptErrorString = error.localizedDescription
+        } catch {
+            scriptErrorNumber = (error as NSError).code
+        }
+        return nil
+    }
+}
+
 /// Command handler for AppleScript "switch to space number" command.
 /// Usage: `tell application "WhichSpace" to switch to space number 3`
 /// Usage: `tell application "WhichSpace" to switch to space number 3 label "Work"`
@@ -505,6 +539,26 @@ enum ScriptingHelpers {
             }
         }
         try result.get()
+    }
+
+    static func space(named label: String, appState: AppState, store: DefaultsStore) throws -> SpaceEntry {
+        let label = label.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !label.isEmpty, let displayID = appState.currentDisplayID else {
+            throw NSError(domain: NSOSStatusErrorDomain, code: Int(errAENoSuchObject))
+        }
+        let spaces = appState.allSpaceEntries.enumerated().map { index, entry in
+            let name = resolveLabel(atEntry: index + 1, displayID: displayID, appState: appState, store: store)
+            return (entry: entry, name: name.trimmingCharacters(in: .whitespacesAndNewlines))
+        }
+        let exact = spaces.filter { $0.name == label }
+        let matches = exact.isEmpty ? spaces.filter { $0.name.caseInsensitiveCompare(label) == .orderedSame } : exact
+        guard let match = matches.first else {
+            throw NSError(domain: NSOSStatusErrorDomain, code: Int(errAENoSuchObject))
+        }
+        guard matches.count == 1 else {
+            throw NSError(domain: NSOSStatusErrorDomain, code: Int(errAENotASingleObject))
+        }
+        return match.entry
     }
 
     /// Switches to the Space at the given 1-based number. Numbering follows

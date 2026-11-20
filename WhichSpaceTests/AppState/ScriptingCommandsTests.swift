@@ -739,8 +739,8 @@ struct ScriptingCommandsTests {
 
     // MARK: - Global Numbering Tests
 
-    private func makeMultiDisplayAppState() -> AppState {
-        stub.activeDisplayIdentifier = "Main"
+    private func makeMultiDisplayAppState(activeDisplay: String = "Main") -> AppState {
+        stub.activeDisplayIdentifier = activeDisplay
         stub.displays = [
             CGSStub.makeDisplay(
                 displayID: "Main",
@@ -758,6 +758,35 @@ struct ScriptingCommandsTests {
             ),
         ]
         return AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+    }
+
+    @Test("named switches match resolved labels only on the current display")
+    func namedSpace() throws {
+        store.localSpaceNumbers = false
+        let appState = makeMultiDisplayAppState(activeDisplay: "Side")
+        SpacePreferences.setLabel("Desk {#}", forSpace: 3, display: "Side", store: store)
+        SpacePreferences.setLabel("Desk 4", forSpace: 1, display: "Main", store: store)
+
+        func lookup(_ label: String) throws -> SpaceEntry {
+            try ScriptingHelpers.space(named: label, appState: appState, store: store)
+        }
+
+        #expect(try lookup("desk 4").id == 202)
+        #expect(try lookup("  desk 4 ").id == 202)
+        #expect(try lookup("3").id == 201)
+        #expect(throws: NSError(domain: NSOSStatusErrorDomain, code: Int(errAENoSuchObject))) {
+            try lookup("Desk 2")
+        }
+        SpacePreferences.setLabel("DESK 4", forSpace: 1, display: "Side", store: store)
+        #expect(try lookup("Desk 4").id == 202)
+        #expect(try lookup(" DESK 4 ").id == 200)
+        #expect(throws: NSError(domain: NSOSStatusErrorDomain, code: Int(errAENotASingleObject))) {
+            try lookup("desk 4")
+        }
+        SpacePreferences.setLabel("Desk 4", forSpace: 1, display: "Side", store: store)
+        #expect(throws: NSError(domain: NSOSStatusErrorDomain, code: Int(errAENotASingleObject))) {
+            try lookup("Desk 4")
+        }
     }
 
     @Test("global numbering enumerates Desktops across displays")
