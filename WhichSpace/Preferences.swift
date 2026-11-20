@@ -155,7 +155,7 @@ enum SpacePickerStyle: String, CaseIterable, Defaults.Serializable {
     /// The Space icon alone, with no title beside it
     // swiftlint:disable:next discouraged_none_name
     case none
-    /// The "Desktop N" name only
+    /// The Space name only, using its custom label when available
     case name
     /// The app icons only; an empty Space shows a dim "(empty)" placeholder
     case icons

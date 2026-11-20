@@ -4,8 +4,8 @@ import Cocoa
 /// exactly as it would appear in the status bar.
 struct SpacePickerEntry {
     let icon: NSImage
-    /// The menu item title: a localized "Desktop N" name, or the owning
-    /// app's name for fullscreen apps (empty when the owner is unknown)
+    /// The custom label or localized Desktop name for a regular Space, or
+    /// the owning app's name for a fullscreen Space (empty if unknown)
     let title: String
     /// The bare digit that picks this Space while the menu is open, or
     /// empty when the Space number is not a single digit
@@ -292,14 +292,9 @@ final class StatusBarRenderer {
         return renderedIcons.map { rendered in
             let icons = (ownersBySpace[rendered.slot.spaceID] ?? []).compactMap(appIconResolver)
             let (shown, overflow) = Self.capped(icons, limit: cap)
-            let desktopName = desktopCount == 1
-                ? Localization.labelDesktop
-                : String(format: Localization.labelDesktopNumber, rendered.slot.displayNumber)
             return SpacePickerEntry(
                 icon: rendered.icon,
-                title: rendered.slot.isFullscreen
-                    ? (fullscreenAppName(forSpaceID: rendered.slot.spaceID) ?? "")
-                    : desktopName,
+                title: pickerTitle(for: rendered.slot, desktopCount: desktopCount),
                 keyEquivalent: !rendered.slot.isFullscreen && (1 ... shortcutKeys.count)
                     .contains(rendered.slot.displayNumber)
                     ? String(shortcutKeys[rendered.slot.displayNumber - 1])
@@ -311,6 +306,18 @@ final class StatusBarRenderer {
                 overflowCount: overflow
             )
         }
+    }
+
+    private func pickerTitle(for slot: ResolvedSlot, desktopCount: Int) -> String {
+        if slot.isFullscreen {
+            return fullscreenAppName(forSpaceID: slot.spaceID) ?? ""
+        }
+        if let label = SpacePreferences.label(forSpace: slot.localIndex, display: slot.displayID, store: store) {
+            return LabelTemplate.resolve(label, space: slot.displayNumber)
+        }
+        return desktopCount == 1
+            ? Localization.labelDesktop
+            : String(format: Localization.labelDesktopNumber, slot.displayNumber)
     }
 
     /// Splits an ordered list at the app-icon cap: the leading items shown

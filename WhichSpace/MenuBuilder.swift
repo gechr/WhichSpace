@@ -34,7 +34,7 @@ enum MenuBuilder {
 
     /// Builds the transient menu shown on left-click in single-icon mode: one
     /// item per Space, rendered exactly like its status bar icon, titled with
-    /// its Desktop name and the icons of the apps on it per the picker style,
+    /// its Space name and the icons of the apps on it per the picker style,
     /// with a checkmark on the active Space.
     static func buildSpacePickerMenu(
         entries: [SpacePickerEntry],
@@ -57,7 +57,7 @@ enum MenuBuilder {
             if let attributed = attributedTitle(for: entry, style: style) {
                 // AppKit draws the plain title in place of an empty
                 // attributed one, so a blanked row clears the title itself
-                // and keeps the Desktop name as a tooltip
+                // and keeps the Space name as a tooltip
                 if attributed.length == 0 {
                     item.title = ""
                     item.toolTip = entry.title

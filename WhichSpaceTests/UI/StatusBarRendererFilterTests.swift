@@ -570,6 +570,26 @@ struct SpacePickerTests {
         #expect(entries.map(\.keyEquivalent) == ["1", "2", "3"])
     }
 
+    @Test("picker names respect display overrides, label templates, and explicit empty labels")
+    func entriesPreferCustomLabels() {
+        store.spaceLabels = [0: "Desk {#}", 1: "Shared"]
+        store.displaySpaceLabels = ["Main": [1: "Draft", 2: "Fullscreen", 4: ""]]
+        let appState = makeAppState(
+            spaces: [
+                (id: 100, isFullscreen: false),
+                (id: 101, isFullscreen: true),
+                (id: 102, isFullscreen: false),
+                (id: 103, isFullscreen: false),
+            ],
+            activeSpaceID: 100
+        )
+
+        let entries = appState.spacePickerEntries()
+
+        #expect(entries.map(\.title) == ["Draft", "", "Desk 2", String(format: Localization.labelDesktopNumber, 3)])
+        #expect(entries.map(\.keyEquivalent) == ["1", "", "2", "3"])
+    }
+
     @Test("picker extends bare shortcuts past nine desktops without counting fullscreen spaces")
     func extendedShortcuts() {
         var spaces = (1 ... 16).map { (id: $0, isFullscreen: false) }
