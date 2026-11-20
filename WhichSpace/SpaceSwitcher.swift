@@ -237,18 +237,26 @@ enum SpaceSwitcher {
     /// Switches to the space with the given CGS space ID on the menu bar display.
     /// Posts synthetic dock-swipe gestures to move from the current space to the target.
     @discardableResult
-    @MainActor static func switchToSpace(id targetSpaceID: Int, fromStatusItemClick: Bool = false) -> Bool {
+    @MainActor static func switchToSpace(
+        id targetSpaceID: Int,
+        fromStatusItemClick: Bool = false,
+        onDisplay displayID: String? = nil
+    ) -> Bool {
         fullscreenActivation.cancel()
         let conn = _CGSDefaultConnection()
 
-        guard let activeDisplayRef = CGSCopyActiveMenuBarDisplayIdentifier(conn) else {
+        let displays = managedDisplays(connection: conn)
+        let targetDisplay: ManagedDisplay?
+        if let displayID {
+            targetDisplay = displays.first { $0.identifier == displayID }
+        } else if let activeDisplayRef = CGSCopyActiveMenuBarDisplayIdentifier(conn) {
+            let activeID = activeDisplayRef.takeRetainedValue() as String
+            targetDisplay = displays.first { $0.identifier == activeID } ?? displays.first
+        } else {
             NSLog("SpaceSwitcher: failed to get active menu bar display")
             return false
         }
-        let activeDisplayID = activeDisplayRef.takeRetainedValue() as String
-
-        let displays = managedDisplays(connection: conn)
-        guard let display = displays.first(where: { $0.identifier == activeDisplayID }) ?? displays.first else {
+        guard let display = targetDisplay else {
             NSLog("SpaceSwitcher: no display found")
             return false
         }
@@ -267,6 +275,11 @@ enum SpaceSwitcher {
         let currentIndex = prediction(for: display.identifier) ?? cgsCurrentIndex
 
         guard currentIndex != targetIndex else {
+            if let displayID, let focused = CGSCopyActiveMenuBarDisplayIdentifier(conn) {
+                // Already visible on a different display: let the shortcut
+                // focus its window rather than reporting an empty switch.
+                return focused.takeRetainedValue() as String == displayID
+            }
             return true
         }
 
@@ -710,7 +723,7 @@ enum SpaceSwitcher {
     /// button is released. Key events still get delivered during a drag,
     /// and the switch carries the held window to the target Space. A session
     /// whose gesture switches bounced stays on the classic route throughout.
-    @MainActor private static func requiresClassicPath(fromStatusItemClick: Bool = false) -> Bool {
+    @MainActor static func requiresClassicPath(fromStatusItemClick: Bool = false) -> Bool {
         let heldButtonIsDrag = heldButtonRequiresClassicPath(
             buttonIsPressed: NSEvent.pressedMouseButtons != 0,
             fromStatusItemClick: fromStatusItemClick,
@@ -1166,6 +1179,80 @@ enum SpaceSwitcher {
             }
             predictions.removeValue(forKey: display.identifier)
             switchToSpace(id: spaceID)
+        }
+    }
+
+    @MainActor static func switchToFullscreen(_ target: FullscreenShortcutTarget) {
+        fullscreenActivation.cancel()
+        let provider = CGSDisplaySpaceProvider()
+        let pointerOnTarget = CGEvent(source: nil).map {
+            provider.displayBounds(forIdentifier: target.displayID)?.contains($0.location) == true
+        } ?? false
+        let canStep = canStepToFullscreen(
+            displayID: target.displayID,
+            pointerOnTarget: pointerOnTarget,
+            classic: requiresClassicPath(),
+            focusedDisplay: provider.copyActiveMenuBarDisplayIdentifier()
+        )
+        if canStep, switchToSpace(id: target.entry.id, onDisplay: target.displayID) {
+            return
+        }
+
+        let options: CGWindowListOption = [.optionAll, .excludeDesktopElements]
+        guard let list = CGWindowListCopyWindowInfo(options, kCGNullWindowID) as? [[String: Any]] else {
+            return
+        }
+        let mover = SkyLightWindowMover()
+        focusFullscreenWindow(
+            on: target.entry.id, owners: target.entry.tileOwners, windows: list, membership: mover.spaceIDs(forWindow:)
+        ) { window in
+            guard AXWindowRaiser().raise(window) else {
+                return false
+            }
+            return NSRunningApplication(processIdentifier: window.ownerPID)?.activate(options: []) == true
+        }
+    }
+
+    /// Gestures follow the pointer. Classic relative key events also need
+    /// keyboard focus on this display. A shared Space spans every display.
+    static func canStepToFullscreen(
+        displayID: String,
+        pointerOnTarget: Bool,
+        classic: Bool,
+        focusedDisplay: String?
+    ) -> Bool {
+        displayID == "Main" || (pointerOnTarget && (!classic || focusedDisplay == displayID))
+    }
+
+    /// Two windows of the same application may occupy different fullscreen
+    /// Spaces. Only raise a window belonging exclusively to this target.
+    static func focusFullscreenWindow(
+        on spaceID: Int,
+        owners: [pid_t],
+        windows: [[String: Any]],
+        membership: (CGWindowID) -> [Int],
+        focus: (FrontWindow) -> Bool
+    ) {
+        let excluded = FullscreenSpaceOwners.excludedPIDs
+        let candidates = windows.compactMap { info -> FrontWindow? in
+            guard info[kCGWindowLayer as String] as? Int == 0,
+                  let pid = info[kCGWindowOwnerPID as String] as? pid_t,
+                  !excluded.contains(pid),
+                  let id = info[kCGWindowNumber as String] as? CGWindowID
+            else {
+                return nil
+            }
+            return FrontWindow(id: id, ownerPID: pid)
+        }
+        // Stable sorting preserves front-to-back order when private tile
+        // metadata is missing, incomplete or stale.
+        let ordered = candidates.sorted {
+            (owners.firstIndex(of: $0.ownerPID) ?? owners.count) < (owners.firstIndex(of: $1.ownerPID) ?? owners.count)
+        }
+        for window in ordered where membership(window.id) == [spaceID] {
+            if focus(window) {
+                return
+            }
         }
     }
 

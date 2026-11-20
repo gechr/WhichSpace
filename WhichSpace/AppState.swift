@@ -308,6 +308,25 @@ final class AppState {
 
     private let displaySpaceProvider: DisplaySpaceProvider
 
+    func fullscreenShortcutTitles(for targets: [FullscreenShortcutTarget]) async -> [Int: String] {
+        let unresolved = targets.filter(\.entry.tileOwners.isEmpty).map(\.entry.id)
+        let fallback = await Task.detached(priority: .userInitiated) { [displaySpaceProvider] in
+            displaySpaceProvider.windowOwnerPIDs(forSpaceIDs: unresolved)
+        }.value
+        let excluded = FullscreenSpaceOwners.excludedPIDs
+        var titles: [Int: String] = [:]
+        for target in targets {
+            let entry = target.entry
+            let owners = entry.tileOwners.isEmpty ? fallback[entry.id] ?? [] : entry.tileOwners
+            let names = owners.filter { !excluded.contains($0) }
+                .compactMap { NSRunningApplication(processIdentifier: $0)?.localizedName }
+            if !names.isEmpty {
+                titles[entry.id] = names.joined(separator: " + ")
+            }
+        }
+        return titles
+    }
+
     let store: DefaultsStore
 
     /// Lazily created to avoid referencing `self` before init completes

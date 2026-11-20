@@ -32,6 +32,8 @@ struct KeyboardPane: View {
 
     @State private var directionalVerb = Verb.switchTo
     @State private var numberedVerb = Verb.switchTo
+    @State private var fullscreenTitles: [Int: String] = [:]
+    @State private var savedFullscreenBindings: [KeyboardShortcuts.Name: String] = [:]
 
     /// Read to flip a card's picker to the verb a deep link or search hit
     /// targets, since the other verbs' rows are not in the hierarchy.
@@ -55,7 +57,15 @@ struct KeyboardPane: View {
         }
         // Revealing the hidden numbered rows grows the pane after the window
         // was sized to it, so the window has to follow
-        .fitsSettingsWindow(measuring: CGSize(width: 0, height: Double(visibleNumbers.count)))
+        .fitsSettingsWindow(measuring: CGSize(
+            width: 0, height: Double(visibleNumbers.count + fullscreenTargets.count + unavailableNames.count)
+        ))
+        .onReceive(NotificationCenter.default.publisher(
+            for: UserDefaults.didChangeNotification,
+            object: UserDefaults.standard
+        )
+        .receive(on: RunLoop.main)) { _ in refreshFullscreenBindings() }
+        .onAppear { refreshFullscreenBindings() }
     }
 
     @ViewBuilder
@@ -76,6 +86,7 @@ struct KeyboardPane: View {
             unsupportedNote
         }
         numberedSection
+        fullscreenSection
         behaviorNote
     }
 
@@ -206,6 +217,85 @@ struct KeyboardPane: View {
         .padding(.leading, 4)
     }
 
+    // MARK: - Full-Screen Spaces
+
+    private var fullscreenTargets: [FullscreenShortcutTarget] {
+        appState.fullscreenShortcutTargets
+    }
+
+    private var unavailableNames: [KeyboardShortcuts.Name] {
+        let live = Set(fullscreenTargets.map(\.id))
+        return savedFullscreenBindings.keys.filter { !live.contains($0.rawValue) }
+            .sorted { $0.rawValue < $1.rawValue }
+    }
+
+    private func refreshFullscreenBindings() {
+        var bindings: [KeyboardShortcuts.Name: String] = [:]
+        for name in HotkeyCenter.storedFullscreenNames {
+            bindings[name] = KeyboardShortcuts.getShortcut(for: name)?.description
+        }
+        savedFullscreenBindings = bindings
+    }
+
+    private func fullscreenPosition(for target: FullscreenShortcutTarget) -> String {
+        let space = String(format: Localization.labelSpaceNumber, target.position)
+        guard appState.allDisplaysSpaceInfo.count > 1 else {
+            return space
+        }
+        let display = editorModel.displayName(for: target.displayID) ?? Localization.labelDisplays
+        return "\(target.displayNumber) · \(display) › \(space)"
+    }
+
+    private func fullscreenTitle(for target: FullscreenShortcutTarget) -> String {
+        let position = fullscreenPosition(for: target)
+        return fullscreenTitles[target.entry.id].map { "\($0) · \(position)" } ?? position
+    }
+
+    @ViewBuilder private var fullscreenSection: some View {
+        let targets = fullscreenTargets
+        let unavailable = unavailableNames
+        if !targets.isEmpty || !unavailable.isEmpty {
+            SettingsSection(Localization.labelFullscreenSpaces) {
+                ForEach(targets) { target in
+                    let title = fullscreenTitles[target.entry.id]
+                    let position = fullscreenPosition(for: target)
+                    let split = target.entry.tileOwners.count > 1
+                    if target.id != targets.first?.id {
+                        SettingsRowDivider()
+                    }
+                    SettingsRow(
+                        icon: split ? "rectangle.split.2x1" : "arrow.up.left.and.arrow.down.right",
+                        subtitle: title == nil ? nil : position
+                    ) {
+                        Text(title ?? position)
+                    } control: {
+                        recorder(for: .init(target.id))
+                    }
+                }
+                ForEach(unavailable, id: \.self) { name in
+                    if !targets.isEmpty || name != unavailable.first {
+                        SettingsRowDivider()
+                    }
+                    SettingsRow(icon: "rectangle.dashed") {
+                        Text(Localization.labelUnavailableSpace)
+                    } control: {
+                        Text(savedFullscreenBindings[name] ?? "")
+                        Button(Localization.actionReset) {
+                            KeyboardShortcuts.reset(name)
+                            refreshFullscreenBindings()
+                        }
+                    }
+                }
+            }
+            .task(id: targets) {
+                let titles = await appState.fullscreenShortcutTitles(for: targets)
+                if !Task.isCancelled {
+                    fullscreenTitles = titles
+                }
+            }
+        }
+    }
+
     // MARK: - Rows
 
     /// The rows outside the numbered list, which differ only in what they say
@@ -278,6 +368,12 @@ struct KeyboardPane: View {
             if name == directional.right {
                 return path(verb.title, Localization.labelRight)
             }
+        }
+        if let target = fullscreenTargets.first(where: { $0.id == name.rawValue }) {
+            return fullscreenTitle(for: target)
+        }
+        if name.rawValue.hasPrefix(FullscreenShortcutTarget.prefix) {
+            return Localization.labelUnavailableSpace
         }
         return name.rawValue
     }

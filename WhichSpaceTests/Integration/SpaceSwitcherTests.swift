@@ -1,9 +1,67 @@
-import Foundation
+import AppKit
 import Testing
 @testable import WhichSpace
 
 @MainActor
 struct SpaceSwitcherTests {
+    @Test("fullscreen gestures follow the target display and classic steps require focus there")
+    func fullscreenDisplayRouting() {
+        #expect(SpaceSwitcher.canStepToFullscreen(
+            displayID: "B",
+            pointerOnTarget: true,
+            classic: false,
+            focusedDisplay: "A"
+        ))
+        #expect(!SpaceSwitcher.canStepToFullscreen(
+            displayID: "B",
+            pointerOnTarget: false,
+            classic: false,
+            focusedDisplay: "B"
+        ))
+        #expect(!SpaceSwitcher.canStepToFullscreen(
+            displayID: "B",
+            pointerOnTarget: true,
+            classic: true,
+            focusedDisplay: "A"
+        ))
+        #expect(SpaceSwitcher.canStepToFullscreen(
+            displayID: "B",
+            pointerOnTarget: true,
+            classic: true,
+            focusedDisplay: "B"
+        ))
+        #expect(SpaceSwitcher.canStepToFullscreen(
+            displayID: "Main",
+            pointerOnTarget: false,
+            classic: true,
+            focusedDisplay: nil
+        ))
+    }
+
+    @Test("a fullscreen jump focuses the matching window and can fall back to the other tile")
+    func fullscreenFocusUsesWindowMembership() {
+        func window(_ id: CGWindowID, pid: pid_t) -> [String: Any] {
+            [kCGWindowLayer as String: 0, kCGWindowNumber as String: id, kCGWindowOwnerPID as String: pid]
+        }
+        let ownPID = ProcessInfo.processInfo.processIdentifier
+        let windows = [
+            window(5, pid: ownPID),
+            window(4, pid: 22),
+            window(1, pid: 15),
+            window(2, pid: 15),
+            window(3, pid: 15),
+        ]
+        let membership: [CGWindowID: [Int]] = [1: [70], 2: [70, 71], 3: [71], 4: [71], 5: [71]]
+        var attempted: [CGWindowID] = []
+        SpaceSwitcher.focusFullscreenWindow(on: 71, owners: [ownPID, 15, 22], windows: windows, membership: {
+            membership[$0] ?? []
+        }) { window in
+            attempted.append(window.id)
+            return window.id == 4
+        }
+        #expect(attempted == [3, 4])
+    }
+
     @Test("status-item mouse-up stays instant only on macOS 27")
     func statusItemMouseUp_ignoresHeldButtonOnlyWhenPayloadIsRequired() {
         #expect(!SpaceSwitcher.heldButtonRequiresClassicPath(

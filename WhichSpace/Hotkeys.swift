@@ -1,5 +1,78 @@
 import AppKit
 import KeyboardShortcuts
+import Observation
+
+/// A binding identifies a Space independently of its display or position.
+/// Without a UUID, a managed ID is only safe to reuse during this launch.
+struct FullscreenShortcutTarget: Identifiable, Equatable {
+    private static let session = UUID().uuidString
+    static let prefix = "fullscreenSpace-"
+
+    let entry: SpaceEntry
+    let displayID: String
+    let displayNumber: Int
+    let position: Int
+
+    var id: String {
+        let identity = entry.uuid.flatMap(UUID.init(uuidString:))?.uuidString
+            ?? "\(Self.session)-\(entry.id)"
+        return Self.prefix + identity
+    }
+
+    static func storedName(_ raw: String) -> KeyboardShortcuts.Name? {
+        guard raw.hasPrefix(prefix) else {
+            return nil
+        }
+        let suffix = raw.dropFirst(prefix.count)
+        let uuid = String(suffix.prefix(36))
+        guard UUID(uuidString: uuid)?.uuidString == uuid else {
+            return nil
+        }
+        let rest = suffix.dropFirst(36)
+        guard rest.isEmpty || (rest.first == "-" && Int(rest.dropFirst()).map { $0 > 0 } == true) else {
+            return nil
+        }
+        return .init(raw)
+    }
+}
+
+/// Keep recorded bindings available for a disconnected display, but release
+/// their global key registrations as soon as their targets disappear.
+struct FullscreenShortcutHandlers {
+    private(set) var names: [String: KeyboardShortcuts.Name] = [:]
+
+    mutating func update(
+        _ targets: [FullscreenShortcutTarget],
+        remove: (KeyboardShortcuts.Name) -> Void,
+        register: (KeyboardShortcuts.Name) -> Void
+    ) {
+        let live = Set(targets.map(\.id))
+        for (id, name) in names where !live.contains(id) {
+            remove(name)
+            names.removeValue(forKey: id)
+        }
+        for id in live where names[id] == nil {
+            let name = KeyboardShortcuts.Name(id)
+            register(name)
+            names[id] = name
+        }
+    }
+}
+
+extension AppState {
+    var fullscreenShortcutTargets: [FullscreenShortcutTarget] {
+        allDisplaysSpaceInfo.enumerated().flatMap { screen, display in
+            display.entries.enumerated().compactMap { index, entry in
+                guard entry.regularIndex == nil, !entry.hasOnlyExcludedTileOwners else {
+                    return nil
+                }
+                return FullscreenShortcutTarget(
+                    entry: entry, displayID: display.displayID, displayNumber: screen + 1, position: index + 1
+                )
+            }
+        }
+    }
+}
 
 extension KeyboardShortcuts.Name {
     static let switchLeft = Self("switchLeft")
@@ -42,12 +115,20 @@ final class HotkeyCenter {
     /// recursively invoking another WhichSpace binding.
     private static let forwardedHotKeySettleDelay: Duration = .milliseconds(20)
 
-    /// Every bindable name, for whole-surface operations like a full reset.
-    static var allNames: [KeyboardShortcuts.Name] {
+    private static var fixedNames: [KeyboardShortcuts.Name] {
         [.switchLeft, .switchRight, .switchPrevious, .sendLeft, .sendRight, .moveLeft, .moveRight]
             + KeyboardShortcuts.Name.jumpToSpace
             + KeyboardShortcuts.Name.sendToSpace
             + KeyboardShortcuts.Name.moveToSpace
+    }
+
+    static var allNames: [KeyboardShortcuts.Name] {
+        fixedNames + storedFullscreenNames
+    }
+
+    static var storedFullscreenNames: [KeyboardShortcuts.Name] {
+        KeyboardShortcuts.storedNames.filter { $0.rawValue.hasPrefix(FullscreenShortcutTarget.prefix) }
+            .sorted { $0.rawValue < $1.rawValue }
     }
 
     /// Clears every recorded binding, returning the pane to its fresh state.
@@ -75,11 +156,17 @@ final class HotkeyCenter {
     /// The rendering is glyphs and the layout's own character, so it does not vary by language.
     static func describeBindings() -> [String: String] {
         var bindings = [String: String]()
+        var fullscreenIndex = 0
         for name in allNames {
             guard let shortcut = KeyboardShortcuts.getShortcut(for: name) else {
                 continue
             }
-            bindings[name.rawValue] = shortcut.description
+            if name.rawValue.hasPrefix(FullscreenShortcutTarget.prefix) {
+                fullscreenIndex += 1
+                bindings["fullscreenSpace\(fullscreenIndex)"] = shortcut.description
+            } else {
+                bindings[name.rawValue] = shortcut.description
+            }
         }
         return bindings
     }
@@ -89,7 +176,8 @@ final class HotkeyCenter {
     /// current state. Unreadable entries clear their binding rather than
     /// keeping a value the backup meant to change.
     static func importBindings(_ bindings: [String: String]) {
-        for name in allNames {
+        let imported = bindings.keys.compactMap(FullscreenShortcutTarget.storedName)
+        for name in Set(allNames).union(imported) {
             if let encoded = bindings[name.rawValue],
                let shortcut = try? JSONDecoder().decode(
                    KeyboardShortcuts.Shortcut.self, from: Data(encoded.utf8)
@@ -126,11 +214,12 @@ final class HotkeyCenter {
         excluding name: KeyboardShortcuts.Name,
         bindings: [KeyboardShortcuts.Name: KeyboardShortcuts.Shortcut]
     ) -> KeyboardShortcuts.Name? {
-        allNames.first { $0 != name && bindings[$0] == shortcut }
+        bindings.first { $0.key != name && $0.value == shortcut }?.key
     }
 
     private let appState: AppState
     private let store: DefaultsStore
+    private var fullscreenHandlers = FullscreenShortcutHandlers()
 
     init(appState: AppState, store: DefaultsStore) {
         self.appState = appState
@@ -195,6 +284,31 @@ final class HotkeyCenter {
                 }
             }
         }
+        observeFullscreenTargets()
+    }
+
+    private func observeFullscreenTargets() {
+        let targets = withObservationTracking {
+            appState.fullscreenShortcutTargets
+        } onChange: { [weak self] in
+            Task { @MainActor in self?.observeFullscreenTargets() }
+        }
+        fullscreenHandlers.update(targets, remove: KeyboardShortcuts.removeHandler(for:)) { name in
+            KeyboardShortcuts.onKeyDown(for: name) { [weak self] in
+                Task { @MainActor in self?.switchToFullscreen(name) }
+            }
+        }
+    }
+
+    private func switchToFullscreen(_ name: KeyboardShortcuts.Name) {
+        guard let target = appState.fullscreenShortcutTargets.first(where: { $0.id == name.rawValue }),
+              ensureAccessibility()
+        else {
+            return
+        }
+        performSwitch(forwardsKeyEvents: SpaceSwitcher.requiresClassicPath()) {
+            SpaceSwitcher.switchToFullscreen(target)
+        }
     }
 
     /// Whether a press has already triggered the permission flow this launch.
@@ -242,11 +356,12 @@ final class HotkeyCenter {
             action()
             return
         }
-        KeyboardShortcuts.disable(Self.allNames)
+        let names = Self.fixedNames + fullscreenHandlers.names.values
+        KeyboardShortcuts.disable(names)
         action()
         Task { @MainActor in
             try? await Task.sleep(for: Self.forwardedHotKeySettleDelay)
-            KeyboardShortcuts.enable(Self.allNames)
+            KeyboardShortcuts.enable(names)
         }
     }
 

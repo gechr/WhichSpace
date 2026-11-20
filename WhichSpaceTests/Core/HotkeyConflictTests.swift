@@ -11,6 +11,19 @@ struct HotkeyConflictTests {
     private let combination = KeyboardShortcuts.Shortcut(.one, modifiers: [.command])
     private let other = KeyboardShortcuts.Shortcut(.two, modifiers: [.command])
 
+    @Test("fullscreen bindings round trip through backup names and participate in conflict detection")
+    func fullscreenNames() throws {
+        for uuid in [UUID().uuidString, nil] {
+            let entry = SpaceEntry(id: 46, label: Labels.fullscreen, regularIndex: nil, uuid: uuid)
+            let target = FullscreenShortcutTarget(entry: entry, displayID: "Second", displayNumber: 2, position: 3)
+            let name = try #require(FullscreenShortcutTarget.storedName(target.id))
+            #expect(name.rawValue == target.id)
+            #expect(HotkeyCenter.owner(of: combination, excluding: .moveLeft, bindings: [name: combination]) == name)
+            #expect(FullscreenShortcutTarget.storedName(target.id + ".unknown") == nil)
+        }
+        #expect(FullscreenShortcutTarget.storedName("switchLeft") == nil)
+    }
+
     @Test("nothing recorded means nothing conflicts")
     func emptyBindingsHaveNoOwner() {
         let owner = HotkeyCenter.owner(of: combination, excluding: .switchLeft, bindings: [:])

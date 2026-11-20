@@ -151,6 +151,8 @@ brew install --cask whichspace
 
 <img src="Screenshots/SectionKeybinds.png" width="500">
 
+In **Keyboard → Full-Screen Spaces**, assign a shortcut to an open full-screen window or Split View pair on any display. The shortcut follows the Space when you reorder it. Closing the Space releases the shortcut for other apps. You can clear its saved binding in Keyboard settings or reuse the same keys for another Space.
+
 > [!NOTE]
 > The **Window** shortcuts move the front window between Spaces.
 >

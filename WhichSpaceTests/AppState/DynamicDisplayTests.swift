@@ -18,6 +18,63 @@ struct DynamicDisplayTests {
 
     // MARK: - Multiple Display Configurations
 
+    @Test("a fullscreen Space owned only by excluded tiles has no shortcut row")
+    func excludedFullscreenOwnerIsNotBindable() {
+        let tiles = [["pid": ProcessInfo.processInfo.processIdentifier, "TileRect": ["X": 0]] as [String: Any]]
+        let display: NSDictionary = [
+            "Display Identifier": "Main",
+            "Current Space": ["ManagedSpaceID": 35],
+            "Spaces": [["ManagedSpaceID": 35, "TileLayoutManager": ["TileSpaces": tiles]]],
+        ]
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [display]
+        let state = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        #expect(state.allSpaceEntries.first?.hasOnlyExcludedTileOwners == true)
+        #expect(state.fullscreenShortcutTargets.isEmpty)
+        #expect(state.spacePickerEntries().first?.title.isEmpty == true)
+        #expect(stub.fullscreenOwnerPIDsCallCount == 0)
+    }
+
+    @Test("fullscreen bindings follow identity across displays and release their keys on removal")
+    func fullscreenShortcutLifecycle() throws {
+        let uuid = UUID().uuidString
+        let desktop = (id: 31, uuid: Optional(UUID().uuidString), isFullscreen: false)
+        let pair = (id: 32, uuid: Optional(uuid), isFullscreen: true)
+        func display(_ id: String, _ spaces: [(id: Int, uuid: String?, isFullscreen: Bool)]) -> NSDictionary {
+            CGSStub.makeDisplay(displayID: id, uuidSpaces: spaces, activeSpaceID: spaces[0].id)
+        }
+        stub.activeDisplayIdentifier = "Main"
+        stub.displays = [display("Main", [desktop, pair])]
+        let state = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        var handlers = FullscreenShortcutHandlers()
+        var added: [String] = []
+        var removed: [String] = []
+        func sync() {
+            handlers.update(state.fullscreenShortcutTargets, remove: { removed.append($0.rawValue) }) {
+                added.append($0.rawValue)
+            }
+        }
+        let name = try #require(state.fullscreenShortcutTargets.first?.id)
+        sync()
+        stub.displays = [display("Main", [desktop]), display("External", [pair])]
+        state.forceSpaceUpdate()
+        sync()
+        #expect(state.fullscreenShortcutTargets.map(\.position) == [1])
+        #expect(added == [name])
+        #expect(removed.isEmpty)
+
+        stub.displays = [display("Main", [desktop])]
+        state.forceSpaceUpdate()
+        sync()
+        #expect(removed == [name])
+        #expect(handlers.names.isEmpty)
+
+        stub.displays = [display("Main", [desktop, pair])]
+        state.forceSpaceUpdate()
+        sync()
+        #expect(added == [name, name])
+    }
+
     @Test("two displays: main display active")
     func twoDisplaysWithMainActive() {
         stub.activeDisplayIdentifier = "Main"
