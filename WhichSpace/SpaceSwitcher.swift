@@ -259,7 +259,9 @@ enum SpaceSwitcher {
                   activeDisplayID: receiving.identifier,
                   focusedDisplayID: focus,
                   displays: presentationOrdered(displays),
-                  cgsDisplays: displays
+                  cgsDisplays: displays,
+                  predictedIndex: prediction(for:),
+                  gestureBounds: { classic ? nil : DisplayGeometry.bounds(forDisplayIdentifier: $0) }
               )
         else {
             return false
@@ -267,6 +269,11 @@ enum SpaceSwitcher {
         switch route {
         case let .activeDisplay(spaceID):
             return switchToSpace(id: spaceID, on: receiving, classic: classic, connection: conn)
+        case let .targetedGesture(displayID, spaceID, location):
+            guard let display = displays.first(where: { $0.identifier == displayID }) else {
+                return false
+            }
+            return switchToSpace(id: spaceID, on: display, classic: false, connection: conn, gestureLocation: location)
         case let .focusedDisplay(spaceID):
             guard let display = displays.first(where: { $0.identifier == focus }) else {
                 return false
@@ -284,7 +291,8 @@ enum SpaceSwitcher {
         id targetSpaceID: Int,
         on display: ManagedDisplay,
         classic: Bool,
-        connection conn: Int32
+        connection conn: Int32,
+        gestureLocation: CGPoint? = nil
     ) -> Bool {
         guard let cgsCurrentIndex = display.spaces.firstIndex(where: { $0.id == display.currentSpaceID }),
               let targetIndex = display.spaces.firstIndex(where: { $0.id == targetSpaceID })
@@ -297,7 +305,7 @@ enum SpaceSwitcher {
             return false
         }
 
-        let currentIndex = prediction(for: display.identifier) ?? cgsCurrentIndex
+        let currentIndex = display.predictedIndex(prediction(for: display.identifier)) ?? cgsCurrentIndex
 
         guard currentIndex != targetIndex else {
             if display.identifier != "Main", let focused = CGSCopyActiveMenuBarDisplayIdentifier(conn) {
@@ -316,16 +324,14 @@ enum SpaceSwitcher {
                 return false
             }
         } else {
-            parkKeyWindowIfNeeded(
-                currentSpaceID: display.currentSpaceID
-            )
+            parkKeyWindowIfNeeded(currentSpaceID: display.currentSpaceID, gestureLocation: gestureLocation)
             let velocity = swipeVelocity * Double(steps)
             let direction = goRight ? 1 : -1
             // Each completed gesture moves one Space, so recording per step
             // keeps a partial multi-step failure attributable to the Space
             // the posted gestures actually reached
             for step in 1 ... steps {
-                guard postSwipeGesture(goRight: goRight, velocity: velocity) else {
+                guard postSwipeGesture(goRight: goRight, velocity: velocity, at: gestureLocation) else {
                     return false
                 }
                 recordGestureSwitch(
@@ -522,9 +528,13 @@ enum SpaceSwitcher {
             spaces = spacesRaw.compactMap(ManagedSpace.init(dict:))
             self.currentSpaceID = currentSpaceID
         }
+
+        func predictedIndex(_ index: Int?) -> Int? {
+            index.flatMap { spaces.indices.contains($0) ? $0 : nil }
+        }
     }
 
-    /// Gestures land under the pointer. Classic key events go to the focused display.
+    /// Untargeted gestures land under the pointer. Classic key events go to the focused display.
     @MainActor private static func switchingDisplay(
         in displays: [ManagedDisplay],
         classic: Bool,
@@ -629,6 +639,7 @@ enum SpaceSwitcher {
         case fullscreen(spaceID: Int)
         case activeDisplay(spaceID: Int)
         case otherDisplay(hotKey: CGSSymbolicHotKey)
+        case targetedGesture(displayID: String, spaceID: Int, location: CGPoint)
     }
 
     /// `displays` is in the order the menu bar numbers Desktops, which the
@@ -640,7 +651,9 @@ enum SpaceSwitcher {
         activeDisplayID: String,
         focusedDisplayID: String? = nil,
         displays: [ManagedDisplay],
-        cgsDisplays: [ManagedDisplay] = []
+        cgsDisplays: [ManagedDisplay] = [],
+        predictedIndex: (String) -> Int? = { _ in nil },
+        gestureBounds: (String) -> CGRect? = { _ in nil }
     ) -> DesktopSwitchRoute? {
         guard let space = target.space(in: displays, receivingDisplayID: activeDisplayID),
               let display = displays.first(where: { $0.spaces.contains { $0.id == space.id } })
@@ -650,14 +663,24 @@ enum SpaceSwitcher {
         if space.isFullscreen, case .local = target {
             return .fullscreen(spaceID: space.id)
         }
+        let currentSpaceID = display.predictedIndex(predictedIndex(display.identifier))
+            .map { display.spaces[$0].id } ?? display.currentSpaceID
         let focused = display.identifier == "Main" || display.identifier == (focusedDisplayID ?? activeDisplayID)
         if display.identifier == activeDisplayID,
-           focused || display.currentSpaceID != space.id || space.isFullscreen
+           focused || currentSpaceID != space.id || space.isFullscreen
         {
             return .activeDisplay(spaceID: space.id)
         }
         guard !space.isFullscreen else {
             return nil
+        }
+        // An already-visible Desktop still needs the native shortcut to focus its display.
+        if display.identifier != activeDisplayID, currentSpaceID != space.id,
+           let bounds = gestureBounds(display.identifier), !bounds.isEmpty, !bounds.isInfinite
+        {
+            return .targetedGesture(
+                displayID: display.identifier, spaceID: space.id, location: CGPoint(x: bounds.midX, y: bounds.midY)
+            )
         }
         if focused {
             return .focusedDisplay(spaceID: space.id)
@@ -905,22 +928,28 @@ enum SpaceSwitcher {
     /// Posts a single synthetic dock-swipe gesture that moves one space left or right.
     /// All three phases (began, changed, ended) are required - with only two,
     /// switching does not work while Mission Control is open.
-    private static func postSwipeGesture(goRight: Bool, velocity: Double) -> Bool {
-        guard requiresIOHIDPayload else {
-            return postDockSwipe(phase: Phase.began, goRight: goRight, velocity: velocity)
-                && postDockSwipe(phase: Phase.changed, goRight: goRight, velocity: velocity)
-                && postDockSwipe(phase: Phase.ended, goRight: goRight, velocity: velocity)
+    static func postSwipeGesture(
+        goRight: Bool,
+        velocity: Double,
+        at location: CGPoint? = nil,
+        usesHIDPayload: Bool = requiresIOHIDPayload,
+        post: (CGEvent) -> Void = { $0.post(tap: .cgSessionEventTap) }
+    ) -> Bool {
+        // Only HID-backed swipes follow the Natural scrolling preference.
+        let direction = usesHIDPayload ? augmentedSwipeGoesRight(
+            requested: goRight, naturalScrollingEnabled: naturalScrollingEnabled
+        ) : goRight
+        let makeEvent = usesHIDPayload ? augmentedDockSwipe : dockSwipe
+        for phase in [Phase.began, Phase.changed, Phase.ended] {
+            guard let event = makeEvent(phase, direction, velocity) else {
+                return false
+            }
+            if let location {
+                event.location = location
+            }
+            post(event)
         }
-        // Dock applies the Natural scrolling inversion to HID-backed swipes.
-        // The preference is read once per gesture so all three phases agree
-        // and a live System Settings change takes effect on the next switch.
-        let goRight = augmentedSwipeGoesRight(
-            requested: goRight,
-            naturalScrollingEnabled: naturalScrollingEnabled
-        )
-        return postAugmentedDockSwipe(phase: Phase.began, goRight: goRight, velocity: velocity)
-            && postAugmentedDockSwipe(phase: Phase.changed, goRight: goRight, velocity: velocity)
-            && postAugmentedDockSwipe(phase: Phase.ended, goRight: goRight, velocity: velocity)
+        return true
     }
 
     /// Whether Natural scrolling is on. The key is absent until the user
@@ -957,7 +986,7 @@ enum SpaceSwitcher {
     /// that window from the ordering before the switch prevents the bad
     /// WindowServer state; lowering or deactivating it does not.
     @MainActor private static func parkKeyWindowIfNeeded(
-        currentSpaceID: Int
+        currentSpaceID: Int, gestureLocation: CGPoint? = nil
     ) {
         guard requiresIOHIDPayload,
               trackedWindow == nil,
@@ -966,6 +995,14 @@ enum SpaceSwitcher {
               window.isVisible
         else {
             return
+        }
+        if let gestureLocation {
+            let screenNumber = NSDeviceDescriptionKey("NSScreenNumber")
+            guard let screen = window.screen?.deviceDescription[screenNumber] as? CGDirectDisplayID,
+                  CGDisplayBounds(screen).contains(gestureLocation)
+            else {
+                return
+            }
         }
         window.orderOut(nil)
         trackedWindow = (window, currentSpaceID)
@@ -987,9 +1024,9 @@ enum SpaceSwitcher {
         tracked.window.orderFront(nil)
     }
 
-    private static func postDockSwipe(phase: Int64, goRight: Bool, velocity: Double) -> Bool {
+    private static func dockSwipe(phase: Int64, goRight: Bool, velocity: Double) -> CGEvent? {
         guard let event = CGEvent(source: nil) else {
-            return false
+            return nil
         }
 
         let progress = goRight ? swipeProgress : -swipeProgress
@@ -1003,8 +1040,7 @@ enum SpaceSwitcher {
         event.setDoubleValueField(Field.gestureSwipeVelocityX, value: signedVelocity)
         event.setDoubleValueField(Field.gestureSwipeVelocityY, value: signedVelocity)
 
-        event.post(tap: .cgSessionEventTap)
-        return true
+        return event
     }
 
     // MARK: - macOS 27 IOHID Payload
@@ -1052,9 +1088,9 @@ enum SpaceSwitcher {
         var eventCount: UInt32
     }
 
-    private static func postAugmentedDockSwipe(phase: Int64, goRight: Bool, velocity: Double) -> Bool {
+    private static func augmentedDockSwipe(phase: Int64, goRight: Bool, velocity: Double) -> CGEvent? {
         guard let event = CGEvent(source: nil) else {
-            return false
+            return nil
         }
 
         let progress = goRight ? 1.0 : -1.0
@@ -1072,11 +1108,7 @@ enum SpaceSwitcher {
         event.setDoubleValueField(Field.eventTimestamp, value: Double(mach_absolute_time()))
         event.setDoubleValueField(Field.gestureSwipePositionX, value: 0.1)
 
-        guard let augmented = withIOHIDPayload(event, phase: phase, velocity: signedVelocity) else {
-            return false
-        }
-        augmented.post(tap: .cgSessionEventTap)
-        return true
+        return withIOHIDPayload(event, phase: phase, velocity: signedVelocity)
     }
 
     private static func withIOHIDPayload(_ event: CGEvent, phase: Int64, velocity: Double) -> CGEvent? {

@@ -239,6 +239,88 @@ struct SpaceSwitcherTests {
         #expect(route(.id(30)) == .otherDisplay(hotKey: 122))
     }
 
+    @Test("cross-display gestures target the destination Desktop in global coordinates")
+    func crossDisplayGestureRoute() throws {
+        let displays = try [
+            managedDisplay(identifier: "East", spaces: [(28, false), (29, false)], currentSpaceID: 28),
+            managedDisplay(identifier: "North", spaces: [(31, false)], currentSpaceID: 31),
+            managedDisplay(identifier: "South", spaces: [(40, false)], currentSpaceID: 40),
+            managedDisplay(identifier: "West", spaces: [(14, false), (15, false)], currentSpaceID: 14),
+        ]
+        let west = CGRect(x: -900, y: -200, width: 900, height: 600)
+        func route(_ target: SpaceSwitcher.SwitchTarget, focus: String, bounds: CGRect?) -> SpaceSwitcher
+            .DesktopSwitchRoute?
+        {
+            let targetBounds = { (id: String) in id == "West" ? bounds : nil }
+            return SpaceSwitcher.desktopSwitchRoute(
+                to: target,
+                activeDisplayID: "East",
+                focusedDisplayID: focus,
+                displays: displays,
+                gestureBounds: targetBounds
+            )
+        }
+
+        let gesture = SpaceSwitcher.DesktopSwitchRoute.targetedGesture(
+            displayID: "West", spaceID: 15, location: CGPoint(x: -450, y: 100)
+        )
+        #expect(route(.global(6), focus: "North", bounds: west) == gesture)
+        #expect(route(.id(15), focus: "West", bounds: west) == gesture)
+        #expect(route(.global(5), focus: "North", bounds: west) == .otherDisplay(hotKey: 122))
+        #expect(route(.global(6), focus: "North", bounds: nil) == .otherDisplay(hotKey: 123))
+        #expect(route(.global(6), focus: "West", bounds: .zero) == .focusedDisplay(spaceID: 15))
+
+        // A quick return to the original Desktop can precede the snapshot of the outward switch.
+        let back = SpaceSwitcher.desktopSwitchRoute(
+            to: .id(14),
+            activeDisplayID: "East",
+            focusedDisplayID: "North",
+            displays: displays,
+            predictedIndex: { $0 == "West" ? 1 : nil },
+            gestureBounds: { _ in west }
+        )
+        #expect(back == .targetedGesture(displayID: "West", spaceID: 14, location: CGPoint(x: -450, y: 100)))
+    }
+
+    @Test("an unfocused pointer display routes from its predicted Desktop")
+    func pointerDisplayPrediction() throws {
+        let displays = try [
+            managedDisplay(identifier: "A", spaces: [(11, false)], currentSpaceID: 11),
+            managedDisplay(identifier: "B", spaces: [(21, false), (22, false)], currentSpaceID: 21),
+        ]
+        let prediction = { (display: String) in display == "B" ? 1 : nil }
+        func route(to id: Int) -> SpaceSwitcher.DesktopSwitchRoute? {
+            SpaceSwitcher.desktopSwitchRoute(
+                to: .id(id),
+                activeDisplayID: "B",
+                focusedDisplayID: "A",
+                displays: displays,
+                predictedIndex: prediction
+            )
+        }
+        #expect(route(to: 21) == .activeDisplay(spaceID: 21))
+        #expect(route(to: 22) == .otherDisplay(hotKey: 120))
+    }
+
+    @Test("every phase of a targeted swipe carries the destination point")
+    func targetedSwipeEvents() throws {
+        let point = CGPoint(x: -415, y: 210)
+        let phase = try #require(CGEventField(rawValue: 132))
+        func verify(_ usesHIDPayload: Bool) {
+            var events: [CGEvent] = []
+            let posted = SpaceSwitcher.postSwipeGesture(
+                goRight: true, velocity: 2000, at: point, usesHIDPayload: usesHIDPayload
+            ) { events.append($0) }
+            #expect(posted)
+            #expect(events.map { $0.getIntegerValueField(phase) } == [1, 2, 4])
+            #expect(events.map(\.location) == [point, point, point])
+        }
+        verify(false)
+        if #available(macOS 27, *) {
+            verify(true)
+        }
+    }
+
     @Test("global Desktop five routes to the second display")
     func globalDesktopFive_routesAcrossDisplays() throws {
         let displays = try twoDisplays()
