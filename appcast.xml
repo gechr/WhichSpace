@@ -6,13 +6,14 @@
     <description>Most recent changes with links to updates.</description>
     <language>en</language>
     <item>
-        <title>Version 1.4.5-nightly.697</title>
+        <title>Version 1.4.5-nightly.698</title>
         <sparkle:channel>nightly</sparkle:channel>
         <description><![CDATA[
           <style>.sparkle-installed-version, .sparkle-installed-version ~ * { display: none }</style>
-          <section data-sparkle-version="1.4.5-nightly.697">
-            <h3>Nightly (v1.4.5-nightly.697)</h3>
+          <section data-sparkle-version="1.4.5-nightly.698">
+            <h3>Nightly (v1.4.5-nightly.698)</h3>
             <ul>
+              <li>menubar: Filter displays by Space count</li>
               <li>spaces: Target full-screen swipes across displays</li>
               <li>spaces: Target fast swipes across displays</li>
               <li>scripting: Switch to a Space by label</li>
@@ -1140,13 +1141,13 @@
           </section>
         ]]></description>
         <sparkle:fullReleaseNotesLink>https://github.com/gechr/WhichSpace/releases</sparkle:fullReleaseNotesLink>
-        <pubDate>Mon, 23 Nov 2026 01:46:51 +0000</pubDate>
+        <pubDate>Mon, 23 Nov 2026 16:30:22 +0000</pubDate>
         <enclosure
           url="https://github.com/gechr/WhichSpace/releases/download/nightly/WhichSpace.zip"
-          sparkle:version="1.4.5-nightly.697"
-          sparkle:shortVersionString="1.4.5-nightly.697"
-          sparkle:edSignature="DX7qEojs6wvwOSa7c/U1WPan+uKxNW5FnRBT5w4Wsbg7nQ3jvSpuWOXhetVyXiOek7VpUr+PseaiHBkYQmVkCg=="
-          length="4400574"
+          sparkle:version="1.4.5-nightly.698"
+          sparkle:shortVersionString="1.4.5-nightly.698"
+          sparkle:edSignature="RuAej33/16VEZW1k4TEaYQ/ebo/ArKaU6b8mAVlrh9PxtATVZUnylR0vG1LoA7shttkbCpqzqhZdX6Zxhn7vAg=="
+          length="4427435"
           type="application/octet-stream" />
         <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
       </item>
