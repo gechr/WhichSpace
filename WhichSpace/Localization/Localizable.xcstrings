@@ -18084,211 +18084,211 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "يتطلب التبديل بين المساحات إذن تسهيلات الاستخدام."
+            "value" : "يتطلب التبديل بين المساحات إذن تسهيلات الاستخدام"
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Превключването на Пространства изисква разрешение за достъпност."
+            "value" : "Превключването на Пространства изисква разрешение за достъпност"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Canviar d'Espai requereix permís d'accessibilitat."
+            "value" : "Canviar d'Espai requereix permís d'accessibilitat"
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Přepínání Spaces vyžaduje oprávnění přístupnosti."
+            "value" : "Přepínání Spaces vyžaduje oprávnění přístupnosti"
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Skift mellem Spaces kræver tilladelse til Tilgængelighed."
+            "value" : "Skift mellem Spaces kræver tilladelse til Tilgængelighed"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das Wechseln von Spaces erfordert die Bedienungshilfen-Berechtigung."
+            "value" : "Das Wechseln von Spaces erfordert die Bedienungshilfen-Berechtigung"
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Η εναλλαγή Χώρων απαιτεί άδεια Προσβασιμότητας."
+            "value" : "Η εναλλαγή Χώρων απαιτεί άδεια Προσβασιμότητας"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Switching Spaces requires Accessibility permission."
+            "value" : "Switching Spaces requires Accessibility permission"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Switching Spaces requires Accessibility permission."
+            "value" : "Switching Spaces requires Accessibility permission"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cambiar de Espacio requiere permiso de Accesibilidad."
+            "value" : "Cambiar de Espacio requiere permiso de Accesibilidad"
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "جابه‌جایی بین فضاها به مجوز دسترس‌پذیری نیاز دارد."
+            "value" : "جابه‌جایی بین فضاها به مجوز دسترس‌پذیری نیاز دارد"
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spacejen vaihtaminen vaatii Käyttöapu-luvan."
+            "value" : "Spacejen vaihtaminen vaatii Käyttöapu-luvan"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le changement d'Espace nécessite l'autorisation d'accessibilité."
+            "value" : "Le changement d'Espace nécessite l'autorisation d'accessibilité"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "מעבר בין מרחבים דורש הרשאת נגישות."
+            "value" : "מעבר בין מרחבים דורש הרשאת נגישות"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "स्पेसेस बदलने के लिए एक्सेसिबिलिटी अनुमति आवश्यक है।"
+            "value" : "स्पेसेस बदलने के लिए एक्सेसिबिलिटी अनुमति आवश्यक है"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A Space-ek közötti váltáshoz engedélyezni kell a Kisegítő lehetőségeket."
+            "value" : "A Space-ek közötti váltáshoz engedélyezni kell a Kisegítő lehetőségeket"
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Beralih Space memerlukan izin Aksesibilitas."
+            "value" : "Beralih Space memerlukan izin Aksesibilitas"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il passaggio tra Spazi richiede l'autorizzazione Accessibilità."
+            "value" : "Il passaggio tra Spazi richiede l'autorizzazione Accessibilità"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "スペースの切り替えには、アクセシビリティの許可が必要です。"
+            "value" : "スペースの切り替えには、アクセシビリティの許可が必要です"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "스페이스 전환에는 손쉬운 사용 권한이 필요합니다."
+            "value" : "스페이스 전환에는 손쉬운 사용 권한이 필요합니다"
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Менувањето на Простори бара дозвола за пристапност."
+            "value" : "Менувањето на Простори бара дозвола за пристапност"
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Menukar Ruang memerlukan kebenaran Kebolehcapaian."
+            "value" : "Menukar Ruang memerlukan kebenaran Kebolehcapaian"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bytte mellom Spaces krever tilgjengelighetstillatelse."
+            "value" : "Bytte mellom Spaces krever tilgjengelighetstillatelse"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Voor het wisselen van Spaces is toestemming voor Toegankelijkheid vereist."
+            "value" : "Voor het wisselen van Spaces is toestemming voor Toegankelijkheid vereist"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Byte mellom Spaces krev tilgjengelegheitsløyve."
+            "value" : "Byte mellom Spaces krev tilgjengelegheitsløyve"
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "سپیسز بدلن لئی ایکسیسبلٹی اجازت دی لوڑ ہے۔"
+            "value" : "سپیسز بدلن لئی ایکسیسبلٹی اجازت دی لوڑ ہے"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przełączanie Spaces wymaga uprawnienia Dostępności."
+            "value" : "Przełączanie Spaces wymaga uprawnienia Dostępności"
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "د سپېسونو بدلول د لاسرسي اجازې ته اړتیا لري."
+            "value" : "د سپېسونو بدلول د لاسرسي اجازې ته اړتیا لري"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mudar de Espaço requer permissão de Acessibilidade."
+            "value" : "Mudar de Espaço requer permissão de Acessibilidade"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trocar de Espaço requer permissão de Acessibilidade."
+            "value" : "Trocar de Espaço requer permissão de Acessibilidade"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comutarea între Spații necesită permisiunea de Accesibilitate."
+            "value" : "Comutarea între Spații necesită permisiunea de Accesibilitate"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Для переключения Пространств требуется разрешение Универсального доступа."
+            "value" : "Для переключения Пространств требуется разрешение Универсального доступа"
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prepínanie Priestorov vyžaduje povolenie Prístupnosti."
+            "value" : "Prepínanie Priestorov vyžaduje povolenie Prístupnosti"
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prebacivanje Prostora zahteva dozvolu pristupačnosti."
+            "value" : "Prebacivanje Prostora zahteva dozvolu pristupačnosti"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Att byta Spaces kräver hjälpmedelsbehörighet."
+            "value" : "Att byta Spaces kräver hjälpmedelsbehörighet"
           }
         },
         "th" : {
@@ -18300,43 +18300,43 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alan değiştirmek Erişilebilirlik izni gerektirir."
+            "value" : "Alan değiştirmek Erişilebilirlik izni gerektirir"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Перемикання Просторів потребує дозволу Доступності."
+            "value" : "Перемикання Просторів потребує дозволу Доступності"
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "اسپیسز تبدیل کرنے کے لیے ایکسیسبلٹی اجازت درکار ہے۔"
+            "value" : "اسپیسز تبدیل کرنے کے لیے ایکسیسبلٹی اجازت درکار ہے"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chuyển đổi Không gian yêu cầu quyền Trợ năng."
+            "value" : "Chuyển đổi Không gian yêu cầu quyền Trợ năng"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "切换空间需要辅助功能权限。"
+            "value" : "切换空间需要辅助功能权限"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "切換空間需要輔助使用權限。"
+            "value" : "切換空間需要輔助使用權限"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "切換空間需要輔助使用權限。"
+            "value" : "切換空間需要輔助使用權限"
           }
         }
       }
@@ -18346,211 +18346,211 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ستستخدم المساحات هذا النمط ما لم تكن قد خُصّصت من قبل."
+            "value" : "ستستخدم المساحات هذا النمط ما لم تكن قد خُصّصت من قبل"
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Пространствата ще използват този стил, освен ако вече не са персонализирани."
+            "value" : "Пространствата ще използват този стил, освен ако вече не са персонализирани"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Els Espais faran servir aquest estil llevat que ja s'hagin personalitzat."
+            "value" : "Els Espais faran servir aquest estil llevat que ja s'hagin personalitzat"
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spaces budou používat tento styl, pokud již nebyly upraveny."
+            "value" : "Spaces budou používat tento styl, pokud již nebyly upraveny"
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spaces bruger denne stil, medmindre de allerede er blevet tilpasset."
+            "value" : "Spaces bruger denne stil, medmindre de allerede er blevet tilpasset"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spaces verwenden diesen Stil, sofern sie nicht bereits angepasst wurden."
+            "value" : "Spaces verwenden diesen Stil, sofern sie nicht bereits angepasst wurden"
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Οι Χώροι θα χρησιμοποιούν αυτό το στιλ, εκτός αν έχουν ήδη προσαρμοστεί."
+            "value" : "Οι Χώροι θα χρησιμοποιούν αυτό το στιλ, εκτός αν έχουν ήδη προσαρμοστεί"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spaces will use this style unless they have already been customized."
+            "value" : "Spaces will use this style unless they have already been customized"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spaces will use this style unless they have already been customised."
+            "value" : "Spaces will use this style unless they have already been customised"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Los Espacios usarán este estilo a menos que ya se hayan personalizado."
+            "value" : "Los Espacios usarán este estilo a menos que ya se hayan personalizado"
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "فضاها از این سبک استفاده می‌کنند، مگر اینکه قبلاً سفارشی شده باشند."
+            "value" : "فضاها از این سبک استفاده می‌کنند، مگر اینکه قبلاً سفارشی شده باشند"
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spacet käyttävät tätä tyyliä, elleivät ne ole jo mukautettuja."
+            "value" : "Spacet käyttävät tätä tyyliä, elleivät ne ole jo mukautettuja"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les Espaces utiliseront ce style, sauf s'ils ont déjà été personnalisés."
+            "value" : "Les Espaces utiliseront ce style, sauf s'ils ont déjà été personnalisés"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "מרחבים ישתמשו בסגנון זה, אלא אם כבר הותאמו."
+            "value" : "מרחבים ישתמשו בסגנון זה, אלא אם כבר הותאמו"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "स्पेसेस इस शैली का उपयोग करेंगे, जब तक कि वे पहले से अनुकूलित न हों।"
+            "value" : "स्पेसेस इस शैली का उपयोग करेंगे, जब तक कि वे पहले से अनुकूलित न हों"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A Space-ek ezt a stílust használják, hacsak nem lettek már testreszabva."
+            "value" : "A Space-ek ezt a stílust használják, hacsak nem lettek már testreszabva"
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Space akan menggunakan gaya ini kecuali sudah pernah dikustomisasi."
+            "value" : "Space akan menggunakan gaya ini kecuali sudah pernah dikustomisasi"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gli Spazi useranno questo stile, a meno che non siano già stati personalizzati."
+            "value" : "Gli Spazi useranno questo stile, a meno che non siano già stati personalizzati"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "スペースは、すでにカスタマイズされている場合を除き、このスタイルを使用します。"
+            "value" : "スペースは、すでにカスタマイズされている場合を除き、このスタイルを使用します"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "스페이스는 이미 사용자 지정된 경우가 아니면 이 스타일을 사용합니다."
+            "value" : "스페이스는 이미 사용자 지정된 경우가 아니면 이 스타일을 사용합니다"
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Просторите ќе го користат овој стил, освен ако веќе не се прилагодени."
+            "value" : "Просторите ќе го користат овој стил, освен ако веќе не се прилагодени"
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ruang akan menggunakan gaya ini melainkan sudah disesuaikan."
+            "value" : "Ruang akan menggunakan gaya ini melainkan sudah disesuaikan"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spaces bruker denne stilen med mindre de allerede har blitt tilpasset."
+            "value" : "Spaces bruker denne stilen med mindre de allerede har blitt tilpasset"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spaces gebruiken deze stijl, tenzij ze al zijn aangepast."
+            "value" : "Spaces gebruiken deze stijl, tenzij ze al zijn aangepast"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spaces brukar denne stilen med mindre dei allereie har vorte tilpassa."
+            "value" : "Spaces brukar denne stilen med mindre dei allereie har vorte tilpassa"
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "سپیسز ایہ سٹائل ورتن گیاں جے اوہناں دی پہلاں کسٹمائزیشن نہیں ہوئی۔"
+            "value" : "سپیسز ایہ سٹائل ورتن گیاں جے اوہناں دی پہلاں کسٹمائزیشن نہیں ہوئی"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spaces będą używać tego stylu, chyba że zostały już dostosowane."
+            "value" : "Spaces będą używać tego stylu, chyba że zostały już dostosowane"
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "سپېسونه به دا سټایل کاروي، مګر که دمخه سمون شوي وي."
+            "value" : "سپېسونه به دا سټایل کاروي، مګر که دمخه سمون شوي وي"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Os Espaços irão usar este estilo, a menos que já tenham sido personalizados."
+            "value" : "Os Espaços irão usar este estilo, a menos que já tenham sido personalizados"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Os Espaços usarão este estilo, a menos que já tenham sido personalizados."
+            "value" : "Os Espaços usarão este estilo, a menos que já tenham sido personalizados"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spațiile vor folosi acest stil, cu excepția cazului în care au fost deja personalizate."
+            "value" : "Spațiile vor folosi acest stil, cu excepția cazului în care au fost deja personalizate"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Пространства будут использовать этот стиль, если только они уже не были настроены."
+            "value" : "Пространства будут использовать этот стиль, если только они уже не были настроены"
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Priestory budú používať tento štýl, pokiaľ už neboli prispôsobené."
+            "value" : "Priestory budú používať tento štýl, pokiaľ už neboli prispôsobené"
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prostori će koristiti ovaj stil osim ako već nisu prilagođeni."
+            "value" : "Prostori će koristiti ovaj stil osim ako već nisu prilagođeni"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spaces använder den här stilen om de inte redan har anpassats."
+            "value" : "Spaces använder den här stilen om de inte redan har anpassats"
           }
         },
         "th" : {
@@ -18562,43 +18562,43 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alanlar, daha önce özelleştirilmedikleri sürece bu stili kullanır."
+            "value" : "Alanlar, daha önce özelleştirilmedikleri sürece bu stili kullanır"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Простори використовуватимуть цей стиль, якщо вони ще не налаштовувалися."
+            "value" : "Простори використовуватимуть цей стиль, якщо вони ще не налаштовувалися"
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "اسپیسز یہ اسٹائل استعمال کریں گی جب تک کہ وہ پہلے سے تخصیص شدہ نہ ہوں۔"
+            "value" : "اسپیسز یہ اسٹائل استعمال کریں گی جب تک کہ وہ پہلے سے تخصیص شدہ نہ ہوں"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Không gian sẽ dùng kiểu này trừ khi đã được tùy chỉnh."
+            "value" : "Không gian sẽ dùng kiểu này trừ khi đã được tùy chỉnh"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "空间将使用此样式，除非已经自定义过。"
+            "value" : "空间将使用此样式，除非已经自定义过"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "空間將使用此樣式，除非已經自訂過。"
+            "value" : "空間將使用此樣式，除非已經自訂過"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "空間將使用此樣式，除非已經自訂過。"
+            "value" : "空間將使用此樣式，除非已經自訂過"
           }
         }
       }
@@ -44803,6 +44803,268 @@
         }
       }
     },
+    "label_minimum_spaces_per_display" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الحد الأدنى لعدد المساحات لكل شاشة"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Минимален брой Пространства на дисплей"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mínim d'Espais per pantalla"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minimální počet Spaces na displej"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mindste antal Spaces pr. skærm"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mindestanzahl der Spaces pro Display"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ελάχιστος αριθμός Χώρων ανά οθόνη"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minimum Spaces per display"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minimum Spaces per display"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mínimo de Espacios por pantalla"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "حداقل تعداد فضاها در هر نمایشگر"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spacejen vähimmäismäärä näyttöä kohden"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nombre minimal d'Espaces par écran"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "מספר המרחבים המזערי לצג"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "प्रति डिस्प्ले स्पेस की न्यूनतम संख्या"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Space-ek minimális száma kijelzőnként"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jumlah minimum Space per layar"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Numero minimo di Spazi per monitor"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ディスプレイごとの最小スペース数"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "디스플레이당 최소 스페이스 수"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Минимален број Простори по дисплеј"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bilangan minimum Ruang bagi setiap paparan"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minste antall Spaces per skjerm"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minimumaantal Spaces per scherm"
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minste tal på Spaces per skjerm"
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ہر ڈسپلے لئی سپیساں دی گھٹ توں گھٹ گنتی"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minimalna liczba Spaces na ekran"
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "په هر ډیسپلې کې د سپېسونو لږ تر لږه شمېر"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Número mínimo de Espaços por monitor"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Número mínimo de Espaços por tela"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Număr minim de Spații pe ecran"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Минимальное число Пространств на дисплее"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minimálny počet Priestorov na displej"
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Najmanji broj Prostora po ekranu"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minsta antal Spaces per skärm"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "จำนวน Space ขั้นต่ำต่อจอภาพ"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ekran başına en az Alan sayısı"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Мінімальна кількість Просторів на дисплеї"
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "فی ڈسپلے اسپیسز کی کم از کم تعداد"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Số Không gian tối thiểu trên mỗi màn hình"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每台显示器的最少空间数"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每部顯示器的最少空間數"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每部顯示器的最少空間數"
+          }
+        }
+      }
+    },
     "label_move_window" : {
       "localizations" : {
         "ar" : {
@@ -47943,6 +48205,514 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "關閉"
+          }
+        }
+      }
+    },
+    "label_only_show_displays" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "عرض الشاشات التي يبلغ عدد مساحاتها %lld على الأقل فقط"
+          }
+        },
+        "bg" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Показвай само дисплеи с поне %lld Пространство"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Показвай само дисплеи с поне %lld Пространства"
+                }
+              }
+            }
+          }
+        },
+        "ca" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Mostra només les pantalles amb almenys %lld Espai"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Mostra només les pantalles amb almenys %lld Espais"
+                }
+              }
+            }
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zobrazit pouze displeje s počtem Spaces alespoň %lld"
+          }
+        },
+        "da" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Vis kun skærme med mindst %lld Space"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Vis kun skærme med mindst %lld Spaces"
+                }
+              }
+            }
+          }
+        },
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Nur Displays mit mindestens %lld Space anzeigen"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Nur Displays mit mindestens %lld Spaces anzeigen"
+                }
+              }
+            }
+          }
+        },
+        "el" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Εμφάνιση μόνο οθονών με τουλάχιστον %lld Χώρο"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Εμφάνιση μόνο οθονών με τουλάχιστον %lld Χώρους"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Only show displays with at least %lld Space"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Only show displays with at least %lld Spaces"
+                }
+              }
+            }
+          }
+        },
+        "en-GB" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Only show displays with at least %lld Space"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Only show displays with at least %lld Spaces"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Mostrar solo pantallas con al menos %lld Espacio"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Mostrar solo pantallas con al menos %lld Espacios"
+                }
+              }
+            }
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "فقط نمایشگرهایی با حداقل %lld فضا نمایش داده شوند"
+          }
+        },
+        "fi" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Näytä vain näytöt, joissa on vähintään %lld Space"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Näytä vain näytöt, joissa on vähintään %lld Spacea"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Afficher uniquement les écrans ayant au moins %lld Espace"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Afficher uniquement les écrans ayant au moins %lld Espaces"
+                }
+              }
+            }
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הצגת צגים רק אם מספר המרחבים בהם הוא %lld לפחות"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "केवल वे डिस्प्ले दिखाएँ जिनमें कम से कम %lld स्पेस हों"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Csak a legalább %lld Space-t tartalmazó kijelzők megjelenítése"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hanya tampilkan layar dengan setidaknya %lld Space"
+          }
+        },
+        "it" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Mostra solo i monitor con almeno %lld Spazio"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Mostra solo i monitor con almeno %lld Spazi"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "スペースが%lld個以上あるディスプレイのみ表示"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "스페이스가 %lld개 이상인 디스플레이만 표시"
+          }
+        },
+        "mk" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Прикажи само дисплеи со најмалку %lld Простор"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Прикажи само дисплеи со најмалку %lld Простори"
+                }
+              }
+            }
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tunjukkan hanya paparan dengan sekurang-kurangnya %lld Ruang"
+          }
+        },
+        "nb" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Vis bare skjermer med minst %lld Space"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Vis bare skjermer med minst %lld Spaces"
+                }
+              }
+            }
+          }
+        },
+        "nl" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Toon alleen schermen met minstens %lld Space"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Toon alleen schermen met minstens %lld Spaces"
+                }
+              }
+            }
+          }
+        },
+        "nn" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Vis berre skjermar med minst %lld Space"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Vis berre skjermar med minst %lld Spaces"
+                }
+              }
+            }
+          }
+        },
+        "pa" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "صرف اوہ ڈسپلے وکھاؤ جنہاں وچ گھٹ توں گھٹ %lld سپیس ہووے"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "صرف اوہ ڈسپلے وکھاؤ جنہاں وچ گھٹ توں گھٹ %lld سپیس ہون"
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pokazuj tylko ekrany, na których liczba Spaces wynosi co najmniej %lld"
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "یوازې هغه ډیسپلې ښکاره کړئ چې د سپېسونو شمېر یې لږ تر لږه %lld وي"
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Mostrar apenas os monitores com pelo menos %lld Espaço"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Mostrar apenas os monitores com pelo menos %lld Espaços"
+                }
+              }
+            }
+          }
+        },
+        "pt-BR" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Mostrar apenas telas com pelo menos %lld Espaço"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Mostrar apenas telas com pelo menos %lld Espaços"
+                }
+              }
+            }
+          }
+        },
+        "ro" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Afișează doar ecranele cu cel puțin %lld Spațiu"
+                }
+              },
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Afișează doar ecranele cu cel puțin %lld Spații"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Afișează doar ecranele cu cel puțin %lld Spații"
+                }
+              }
+            }
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показывать только дисплеи, на которых число Пространств не меньше %lld"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zobraziť len displeje s počtom Priestorov aspoň %lld"
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prikaži samo ekrane na kojima je broj Prostora najmanje %lld"
+          }
+        },
+        "sv" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Visa endast skärmar med minst %lld Space"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Visa endast skärmar med minst %lld Spaces"
+                }
+              }
+            }
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "แสดงเฉพาะจอภาพที่มี Space อย่างน้อย %lld รายการ"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yalnızca en az %lld Alan içeren ekranları göster"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показувати лише дисплеї, на яких кількість Просторів становить щонайменше %lld"
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "صرف وہ ڈسپلے دکھائیں جن پر اسپیسز کی تعداد کم از کم %lld ہو"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chỉ hiển thị màn hình có ít nhất %lld Không gian"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅显示至少有 %lld 个空间的显示器"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "只顯示至少有 %lld 個空間的顯示器"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "只顯示至少有 %lld 個空間的顯示器"
           }
         }
       }
@@ -72596,211 +73366,211 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "حرف واحد يُعرض فوق الأيقونة.\nاستخدم # لرقم المساحة."
+            "value" : "حرف واحد يُعرض فوق الأيقونة.\nاستخدم # لرقم المساحة"
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Единичен знак върху иконата.\nИзползвай # за номера на Пространството."
+            "value" : "Единичен знак върху иконата.\nИзползвай # за номера на Пространството"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un sol caràcter superposat a la icona.\nUsa # per al número de l'Espai."
+            "value" : "Un sol caràcter superposat a la icona.\nUsa # per al número de l'Espai"
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jeden znak překrývající ikonu.\nPoužijte # pro číslo Space."
+            "value" : "Jeden znak překrývající ikonu.\nPoužijte # pro číslo Space"
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Et enkelt tegn oven på ikonet.\nBrug # for Space-nummeret."
+            "value" : "Et enkelt tegn oven på ikonet.\nBrug # for Space-nummeret"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Einzelnes Zeichen über dem Icon.\n# für die Space-Nummer verwenden."
+            "value" : "Einzelnes Zeichen über dem Icon.\n# für die Space-Nummer verwenden"
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Μεμονωμένος χαρακτήρας πάνω στο εικονίδιο.\nΧρησιμοποιήστε το # για τον αριθμό του Χώρου."
+            "value" : "Μεμονωμένος χαρακτήρας πάνω στο εικονίδιο.\nΧρησιμοποιήστε το # για τον αριθμό του Χώρου"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Single character overlay on the icon.\nUse # for the Space number."
+            "value" : "Single character overlay on the icon.\nUse # for the Space number"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Single character overlay on the icon.\nUse # for the Space number."
+            "value" : "Single character overlay on the icon.\nUse # for the Space number"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un carácter superpuesto en el icono.\nUse # para el número del Espacio."
+            "value" : "Un carácter superpuesto en el icono.\nUse # para el número del Espacio"
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "یک کاراکتر روی آیکون.\nاز # برای شماره فضا استفاده کنید."
+            "value" : "یک کاراکتر روی آیکون.\nاز # برای شماره فضا استفاده کنید"
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Yksittäinen merkki kuvakkeen päällä.\nKäytä #-merkintää Spacen numerolle."
+            "value" : "Yksittäinen merkki kuvakkeen päällä.\nKäytä #-merkintää Spacen numerolle"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un seul caractère superposé sur l'icône.\nUtilisez # pour le numéro d'Espace."
+            "value" : "Un seul caractère superposé sur l'icône.\nUtilisez # pour le numéro d'Espace"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "תו בודד המוצג מעל הסמל.\nהשתמש ב-# עבור מספר המרחב."
+            "value" : "תו בודד המוצג מעל הסמל.\nהשתמש ב-# עבור מספר המרחב"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "आइकन पर एकल वर्ण ओवरले।\nस्पेस नंबर के लिए # उपयोग करें।"
+            "value" : "आइकन पर एकल वर्ण ओवरले।\nस्पेस नंबर के लिए # उपयोग करें"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Egyetlen karakter az ikonon.\nHasználja a # helyőrzőt a Space számához."
+            "value" : "Egyetlen karakter az ikonon.\nHasználja a # helyőrzőt a Space számához"
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Satu karakter yang ditampilkan di atas ikon.\nGunakan # untuk nomor Space."
+            "value" : "Satu karakter yang ditampilkan di atas ikon.\nGunakan # untuk nomor Space"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un singolo carattere sovrapposto all'icona.\nUsa # per il numero dello Spazio."
+            "value" : "Un singolo carattere sovrapposto all'icona.\nUsa # per il numero dello Spazio"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "アイコンに重ねて表示する1文字。\nスペース番号には#を使用。"
+            "value" : "アイコンに重ねて表示する1文字。\nスペース番号には#を使用"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "아이콘 위에 표시되는 단일 문자.\n스페이스 번호에는 # 사용."
+            "value" : "아이콘 위에 표시되는 단일 문자.\n스페이스 번호에는 # 사용"
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Еден знак прикажан врз иконата.\nКористи # за бројот на Просторот."
+            "value" : "Еден знак прикажан врз иконата.\nКористи # за бројот на Просторот"
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Satu aksara yang bertindih pada ikon.\nGunakan # untuk nombor Ruang."
+            "value" : "Satu aksara yang bertindih pada ikon.\nGunakan # untuk nombor Ruang"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ett tegn som vises over ikonet.\nBruk # for Space-nummeret."
+            "value" : "Ett tegn som vises over ikonet.\nBruk # for Space-nummeret"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eén teken als overlay op het pictogram.\nGebruik # voor het Space-nummer."
+            "value" : "Eén teken als overlay op het pictogram.\nGebruik # voor het Space-nummer"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eitt teikn vist over ikonet.\nBruk # for Space-nummeret."
+            "value" : "Eitt teikn vist over ikonet.\nBruk # for Space-nummeret"
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "آئیکن اُتے اِک اکھر دی اوورلے۔\nسپیس نمبر لئی # ورتو۔"
+            "value" : "آئیکن اُتے اِک اکھر دی اوورلے۔\nسپیس نمبر لئی # ورتو"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pojedynczy znak nałożony na ikonę.\nUżyj # dla numeru Space."
+            "value" : "Pojedynczy znak nałożony na ikonę.\nUżyj # dla numeru Space"
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "د نښې پر سر یو واحد کرکټر.\nد سپېس شمېرې لپاره # وکاروئ."
+            "value" : "د نښې پر سر یو واحد کرکټر.\nد سپېس شمېرې لپاره # وکاروئ"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Um único carácter sobreposto no ícone.\nUse # para o número do Espaço."
+            "value" : "Um único carácter sobreposto no ícone.\nUse # para o número do Espaço"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Um único caractere sobreposto no ícone.\nUse # para o número do Espaço."
+            "value" : "Um único caractere sobreposto no ícone.\nUse # para o número do Espaço"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un singur caracter afișat peste pictogramă.\nFolosiți # pentru numărul Spațiului."
+            "value" : "Un singur caracter afișat peste pictogramă.\nFolosiți # pentru numărul Spațiului"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Один символ поверх значка.\nИспользуйте # для номера Пространства."
+            "value" : "Один символ поверх значка.\nИспользуйте # для номера Пространства"
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jeden znak zobrazený cez ikonu.\nPoužite # pre číslo Priestoru."
+            "value" : "Jeden znak zobrazený cez ikonu.\nPoužite # pre číslo Priestoru"
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jedan znak prikazan preko ikone.\nKoristite # za broj Prostora."
+            "value" : "Jedan znak prikazan preko ikone.\nKoristite # za broj Prostora"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ett enskilt tecken ovanpå ikonen.\nAnvänd # för Space-numret."
+            "value" : "Ett enskilt tecken ovanpå ikonen.\nAnvänd # för Space-numret"
           }
         },
         "th" : {
@@ -72812,43 +73582,43 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Simgenin üzerinde tek karakter.\nAlan numarası için # kullanın."
+            "value" : "Simgenin üzerinde tek karakter.\nAlan numarası için # kullanın"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Один символ поверх значка.\nВикористовуйте # для номера Простору."
+            "value" : "Один символ поверх значка.\nВикористовуйте # для номера Простору"
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "آئیکن پر ایک حرف کی اوورلے۔\nاسپیس نمبر کے لیے # استعمال کریں۔"
+            "value" : "آئیکن پر ایک حرف کی اوورلے۔\nاسپیس نمبر کے لیے # استعمال کریں"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Một ký tự hiển thị đè lên biểu tượng.\nDùng # cho số Không gian."
+            "value" : "Một ký tự hiển thị đè lên biểu tượng.\nDùng # cho số Không gian"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "叠加在图标上的单个字符。\n用 # 表示空间编号。"
+            "value" : "叠加在图标上的单个字符。\n用 # 表示空间编号"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "疊加在圖示上的單一字元。\n用 # 代表空間編號。"
+            "value" : "疊加在圖示上的單一字元。\n用 # 代表空間編號"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "疊加在圖示上的單一字元。\n用 # 代表空間編號。"
+            "value" : "疊加在圖示上的單一字元。\n用 # 代表空間編號"
           }
         }
       }
@@ -76783,268 +77553,6 @@
         }
       }
     },
-    "tip_hide_single_space" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "إخفاء أيقونة شريط القوائم عندما توجد مساحة واحدة فقط على كل شاشة"
-          }
-        },
-        "bg" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Скрий иконата в лентата с менюта, когато има само едно Пространство на всеки дисплей"
-          }
-        },
-        "ca" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Amaga la icona de la barra de menús quan només hi ha un Espai per pantalla"
-          }
-        },
-        "cs" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Skrýt ikonu v řádku nabídek, když je na každém displeji pouze jeden Space"
-          }
-        },
-        "da" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Skjul menulinjeikon, når der kun er ét Space pr. skærm"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Menüleistensymbol ausblenden, wenn nur ein Space pro Display vorhanden ist"
-          }
-        },
-        "el" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Απόκρυψη του εικονιδίου γραμμής μενού όταν υπάρχει μόνο ένας Χώρος ανά οθόνη"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hide the menu bar icon when there is only one Space per display"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hide the menu bar icon when there is only one Space per display"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ocultar el icono de la barra de menús cuando solo hay un Espacio por pantalla"
-          }
-        },
-        "fa" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "آیکون نوار منو را وقتی در هر نمایشگر فقط یک فضا وجود دارد مخفی کنید"
-          }
-        },
-        "fi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Piilota valikkorivin kuvake, kun Spaceja on vain yksi näyttöä kohden"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Masquer l'icône de la barre des menus quand il n'y a qu'un seul Espace par écran"
-          }
-        },
-        "he" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "הסתר את סמל שורת התפריטים כשיש רק מרחב אחד בכל צג"
-          }
-        },
-        "hi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "जब प्रति डिस्प्ले केवल एक स्पेस हो तो मेनू बार आइकन छिपाएँ"
-          }
-        },
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A menüsor ikonjának elrejtése, ha kijelzőnként csak egy Space van"
-          }
-        },
-        "id" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sembunyikan ikon bilah menu saat hanya ada satu Space per layar"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nascondi l'icona della barra dei menu quando c'è un solo Spazio per ogni schermo"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ディスプレイごとにスペースが1つだけの場合はメニューバーアイコンを隠す"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "디스플레이별로 스페이스가 하나만 있을 때 메뉴 막대 아이콘 숨기기"
-          }
-        },
-        "mk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Сокриј ја иконата во лентата со менија кога има само еден Простор на секој екран"
-          }
-        },
-        "ms" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sembunyikan ikon bar menu apabila hanya ada satu Ruang bagi setiap paparan"
-          }
-        },
-        "nb" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Skjul menylinjeikon når det bare er ett Space per skjerm"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Het menubalkpictogram verbergen wanneer er maar één Space per beeldscherm is"
-          }
-        },
-        "nn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gøym menylinjeikon når det berre er eitt Space per skjerm"
-          }
-        },
-        "pa" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "جدوں ہر ڈسپلے تے صرف اک سپیس ہووے تاں مینیو بار آئیکن لکاؤ"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ukryj ikonę paska menu, gdy na każdym ekranie jest tylko jeden Space"
-          }
-        },
-        "ps" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "کله چې پر هر ډیسپلې یوازې یو سپېس وي، د مېنو پټې نښه پټه کړئ"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ocultar o ícone da barra de menus quando só há um Espaço por ecrã"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ocultar o ícone da barra de menus quando há apenas um Espaço por tela"
-          }
-        },
-        "ro" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ascunde pictograma din bara de meniu când există un singur Spațiu pe fiecare ecran"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Скрыть значок в строке меню, когда на каждом дисплее только одно Пространство"
-          }
-        },
-        "sk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Skryť ikonu v lište ponúk, keď je na každom displeji len jeden Priestor"
-          }
-        },
-        "sr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sakrij ikonu trake menija kada postoji samo jedan Prostor na svakom ekranu"
-          }
-        },
-        "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dölj menyradsikonen när det bara finns ett Space per skärm"
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ซ่อนไอคอนแถบเมนูเมื่อมี Space เพียงหนึ่งเดียวต่อจอแสดงผล"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Her ekranda yalnızca bir Alan olduğunda menü çubuğu simgesini gizle"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Приховати значок у смузі меню, коли на кожному дисплеї є лише один Простір"
-          }
-        },
-        "ur" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "جب ہر ڈسپلے پر صرف ایک اسپیس ہو تو مینو بار آئیکن چھپائیں"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ẩn biểu tượng thanh menu khi chỉ có một Không gian trên mỗi màn hình"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "当每台显示器只有一个空间时隐藏菜单栏图标"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "當每部顯示器只有一個空間時隱藏選單列圖示"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "當每部顯示器只有一個空間時隱藏選單列圖示"
-          }
-        }
-      }
-    },
     "tip_hotkey_move_left" : {
       "localizations" : {
         "ar" : {
@@ -80189,217 +80697,479 @@
         }
       }
     },
+    "tip_keep_one_icon_visible" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "إذا لم تبلغ أي شاشة الحد الأدنى، فاعرض المساحة الحالية للشاشة الرئيسية"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ако никой дисплей не достига минимума, покажи текущото Пространство на основния дисплей"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si cap pantalla no arriba al mínim, mostra l'Espai actual de la pantalla principal"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pokud žádný displej nedosáhne minima, zobrazit aktuální Space hlavního displeje"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vis hovedskærmens aktuelle Space, hvis ingen skærm når minimumsantallet"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erreicht kein Display die Mindestanzahl, den aktuellen Space des Hauptdisplays anzeigen"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Αν καμία οθόνη δεν φτάνει το ελάχιστο όριο, εμφάνιση του τρέχοντος Χώρου της κύριας οθόνης"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If no display meets the minimum, show the main display's current Space"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If no display meets the minimum, show the main display's current Space"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si ninguna pantalla alcanza el mínimo, mostrar el Espacio actual de la pantalla principal"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "اگر هیچ نمایشگری به حداقل نرسد، فضای فعلی نمایشگر اصلی نشان داده شود"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jos yksikään näyttö ei saavuta vähimmäismäärää, näytä päänäytön nykyinen Space"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si aucun écran n'atteint le minimum, afficher l'Espace actuel de l'écran principal"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "אם אף צג אינו מגיע למינימום, יוצג המרחב הנוכחי של הצג הראשי"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "अगर कोई भी डिस्प्ले न्यूनतम संख्या तक न पहुँचे, तो मुख्य डिस्प्ले का मौजूदा स्पेस दिखाएँ"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ha egyik kijelző sem éri el a minimumot, a fő kijelző aktuális Space-ének megjelenítése"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jika tidak ada layar yang mencapai jumlah minimum, tampilkan Space yang aktif di layar utama"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se nessun monitor raggiunge il minimo, mostra lo Spazio attuale del monitor principale"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最小数に達するディスプレイがない場合は、メインディスプレイの現在のスペースを表示"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "최소 개수를 충족하는 디스플레이가 없으면 주 디스플레이의 현재 스페이스 표시"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ако ниту еден дисплеј не го достигнува минимумот, прикажи го тековниот Простор на главниот дисплеј"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jika tiada paparan mencapai bilangan minimum, tunjukkan Ruang semasa pada paparan utama"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hvis ingen skjerm når minimumsantallet, vis gjeldende Space på hovedskjermen"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toon de huidige Space van het hoofdscherm als geen enkel scherm het minimum haalt"
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vis gjeldande Space på hovudskjermen dersom ingen skjerm når minstetalet"
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "جے کوئی وی ڈسپلے گھٹ توں گھٹ گنتی تک نہ پہنچے، تاں مرکزی ڈسپلے دا موجودہ سپیس وکھاؤ"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jeśli żaden ekran nie osiąga minimum, pokaż bieżący Space głównego ekranu"
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "که هېڅ ډیسپلې لږ تر لږه شمېر ته ونه رسېږي، د اصلي ډیسپلې اوسنی سپېس ښکاره کړئ"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se nenhum monitor atingir o mínimo, mostrar o Espaço atual do monitor principal"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se nenhuma tela atingir o mínimo, mostrar o Espaço atual da tela principal"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dacă niciun ecran nu atinge minimul, afișează Spațiul curent al ecranului principal"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Если ни один дисплей не достигает минимума, показывать текущее Пространство основного дисплея"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ak žiadny displej nedosiahne minimum, zobraziť aktuálny Priestor hlavného displeja"
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ako nijedan ekran ne dostigne minimum, prikaži trenutni Prostor glavnog ekrana"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visa huvudskärmens aktuella Space om ingen skärm når minimiantalet"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "หากไม่มีจอภาพใดมีจำนวน Space ถึงขั้นต่ำ ให้แสดง Space ปัจจุบันของจอภาพหลัก"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hiçbir ekran alt sınıra ulaşmazsa ana ekranın geçerli Alanını göster"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Якщо жоден дисплей не досягає мінімуму, показувати поточний Простір основного дисплея"
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "اگر کوئی ڈسپلے کم از کم تعداد تک نہ پہنچے تو مرکزی ڈسپلے کا موجودہ اسپیس دکھائیں"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nếu không màn hình nào đạt mức tối thiểu, hiển thị Không gian hiện tại của màn hình chính"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "如果所有显示器的空间数均低于下限，则显示主显示器的当前空间"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "如果所有顯示器的空間數皆低於下限，則顯示主顯示器的目前空間"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "如所有顯示器的空間數目均低於下限，便顯示主顯示器目前的空間"
+          }
+        }
+      }
+    },
     "tip_label_input" : {
       "comment" : "%lld is LabelTemplate.maxContentLength; keep the specifier rather than a literal number.",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "نص مخصص، حتى %lld حرفًا.\nاستخدم {#} لرقم المساحة."
+            "value" : "نص مخصص، حتى %lld حرفًا.\nاستخدم {#} لرقم المساحة"
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Персонализиран текст, до %lld знака.\nИзползвай {#} за номера на Пространството."
+            "value" : "Персонализиран текст, до %lld знака.\nИзползвай {#} за номера на Пространството"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Text personalitzat, fins a %lld caràcters.\nUsa {#} per al número de l'Espai."
+            "value" : "Text personalitzat, fins a %lld caràcters.\nUsa {#} per al número de l'Espai"
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vlastní text, až %lld znaků.\nPoužijte {#} pro číslo Space."
+            "value" : "Vlastní text, až %lld znaků.\nPoužijte {#} pro číslo Space"
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tilpasset tekst, op til %lld tegn.\nBrug {#} for Space-nummeret."
+            "value" : "Tilpasset tekst, op til %lld tegn.\nBrug {#} for Space-nummeret"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Benutzerdefinierter Text, bis zu %lld Zeichen.\n{#} für die Space-Nummer verwenden."
+            "value" : "Benutzerdefinierter Text, bis zu %lld Zeichen.\n{#} für die Space-Nummer verwenden"
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Προσαρμοσμένο κείμενο, έως %lld χαρακτήρες.\nΧρησιμοποιήστε το {#} για τον αριθμό του Χώρου."
+            "value" : "Προσαρμοσμένο κείμενο, έως %lld χαρακτήρες.\nΧρησιμοποιήστε το {#} για τον αριθμό του Χώρου"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Custom text, up to %lld characters.\nUse {#} for the Space number."
+            "value" : "Custom text, up to %lld characters.\nUse {#} for the Space number"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Custom text, up to %lld characters.\nUse {#} for the Space number."
+            "value" : "Custom text, up to %lld characters.\nUse {#} for the Space number"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Texto personalizado, hasta %lld caracteres.\nUse {#} para el número del Espacio."
+            "value" : "Texto personalizado, hasta %lld caracteres.\nUse {#} para el número del Espacio"
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "متن دلخواه، تا %lld کاراکتر.\nاز {#} برای شماره فضا استفاده کنید."
+            "value" : "متن دلخواه، تا %lld کاراکتر.\nاز {#} برای شماره فضا استفاده کنید"
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mukautettu teksti, enintään %lld merkkiä.\nKäytä {#}-merkintää Spacen numerolle."
+            "value" : "Mukautettu teksti, enintään %lld merkkiä.\nKäytä {#}-merkintää Spacen numerolle"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Texte personnalisé, jusqu'à %lld caractères.\nUtilisez {#} pour le numéro d'Espace."
+            "value" : "Texte personnalisé, jusqu'à %lld caractères.\nUtilisez {#} pour le numéro d'Espace"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "טקסט מותאם אישית, עד %lld תווים.\nהשתמש ב-{#} עבור מספר המרחב."
+            "value" : "טקסט מותאם אישית, עד %lld תווים.\nהשתמש ב-{#} עבור מספר המרחב"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "कस्टम टेक्स्ट, अधिकतम %lld वर्ण।\nस्पेस नंबर के लिए {#} का उपयोग करें।"
+            "value" : "कस्टम टेक्स्ट, अधिकतम %lld वर्ण।\nस्पेस नंबर के लिए {#} का उपयोग करें"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Egyéni szöveg, legfeljebb %lld karakter.\nHasználja a {#} helyőrzőt a Space számához."
+            "value" : "Egyéni szöveg, legfeljebb %lld karakter.\nHasználja a {#} helyőrzőt a Space számához"
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Teks kustom, hingga %lld karakter.\nGunakan {#} untuk nomor Space."
+            "value" : "Teks kustom, hingga %lld karakter.\nGunakan {#} untuk nomor Space"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Testo personalizzato, fino a %lld caratteri.\nUsa {#} per il numero dello Spazio."
+            "value" : "Testo personalizzato, fino a %lld caratteri.\nUsa {#} per il numero dello Spazio"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "カスタムテキスト（最大%lld文字）。\nスペース番号には{#}を使用。"
+            "value" : "カスタムテキスト（最大%lld文字）。\nスペース番号には{#}を使用"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "사용자 지정 텍스트, 최대 %lld자.\n스페이스 번호를 표시하려면 {#} 기호를 사용하세요."
+            "value" : "사용자 지정 텍스트, 최대 %lld자.\n스페이스 번호를 표시하려면 {#} 기호를 사용하세요"
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Прилагоден текст, до %lld знаци.\nКористи {#} за бројот на Просторот."
+            "value" : "Прилагоден текст, до %lld знаци.\nКористи {#} за бројот на Просторот"
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Teks tersuai, sehingga %lld aksara.\nGunakan {#} untuk nombor Ruang."
+            "value" : "Teks tersuai, sehingga %lld aksara.\nGunakan {#} untuk nombor Ruang"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Egendefinert tekst, opptil %lld tegn.\nBruk {#} for Space-nummeret."
+            "value" : "Egendefinert tekst, opptil %lld tegn.\nBruk {#} for Space-nummeret"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aangepaste tekst, tot %lld tekens.\nGebruik {#} voor het Space-nummer."
+            "value" : "Aangepaste tekst, tot %lld tekens.\nGebruik {#} voor het Space-nummer"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eigendefinert tekst, opptil %lld teikn.\nBruk {#} for Space-nummeret."
+            "value" : "Eigendefinert tekst, opptil %lld teikn.\nBruk {#} for Space-nummeret"
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "حسبِ منشا ٹیکسٹ، ودھ توں ودھ %lld اکھر۔\nسپیس نمبر لئی {#} ورتو۔"
+            "value" : "حسبِ منشا ٹیکسٹ، ودھ توں ودھ %lld اکھر۔\nسپیس نمبر لئی {#} ورتو"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Niestandardowy tekst, do %lld znaków.\nUżyj {#} dla numeru Space."
+            "value" : "Niestandardowy tekst, do %lld znaków.\nUżyj {#} dla numeru Space"
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ځانګړی متن، تر %lld تورو پورې.\nد سپېس شمېرې لپاره {#} وکاروئ."
+            "value" : "ځانګړی متن، تر %lld تورو پورې.\nد سپېس شمېرې لپاره {#} وکاروئ"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Texto personalizado, até %lld caracteres.\nUse {#} para o número do Espaço."
+            "value" : "Texto personalizado, até %lld caracteres.\nUse {#} para o número do Espaço"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Texto personalizado, até %lld caracteres.\nUse {#} para o número do Espaço."
+            "value" : "Texto personalizado, até %lld caracteres.\nUse {#} para o número do Espaço"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Text personalizat, până la %lld de caractere.\nFolosiți {#} pentru numărul Spațiului."
+            "value" : "Text personalizat, până la %lld de caractere.\nFolosiți {#} pentru numărul Spațiului"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Произвольный текст, до %lld символов.\nИспользуйте {#} для номера Пространства."
+            "value" : "Произвольный текст, до %lld символов.\nИспользуйте {#} для номера Пространства"
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vlastný text, až %lld znakov.\nPoužite {#} pre číslo Priestoru."
+            "value" : "Vlastný text, až %lld znakov.\nPoužite {#} pre číslo Priestoru"
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prilagođeni tekst, do %lld znakova.\nKoristite {#} za broj Prostora."
+            "value" : "Prilagođeni tekst, do %lld znakova.\nKoristite {#} za broj Prostora"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Anpassad text, upp till %lld tecken.\nAnvänd {#} för Space-numret."
+            "value" : "Anpassad text, upp till %lld tecken.\nAnvänd {#} för Space-numret"
           }
         },
         "th" : {
@@ -80411,43 +81181,43 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Özel metin, en fazla %lld karakter.\nAlan numarası için {#} kullanın."
+            "value" : "Özel metin, en fazla %lld karakter.\nAlan numarası için {#} kullanın"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Довільний текст, до %lld символів.\nВикористовуйте {#} для номера Простору."
+            "value" : "Довільний текст, до %lld символів.\nВикористовуйте {#} для номера Простору"
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "حسبِ منشا متن، زیادہ سے زیادہ %lld حروف۔\nاسپیس نمبر کے لیے {#} استعمال کریں۔"
+            "value" : "حسبِ منشا متن، زیادہ سے زیادہ %lld حروف۔\nاسپیس نمبر کے لیے {#} استعمال کریں"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Văn bản tùy chỉnh, tối đa %lld ký tự.\nDùng {#} cho số Không gian."
+            "value" : "Văn bản tùy chỉnh, tối đa %lld ký tự.\nDùng {#} cho số Không gian"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "自定义文本，最多 %lld 个字符。\n用 {#} 表示空间编号。"
+            "value" : "自定义文本，最多 %lld 个字符。\n用 {#} 表示空间编号"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "自訂文字，最多 %lld 個字元。\n用 {#} 代表空間編號。"
+            "value" : "自訂文字，最多 %lld 個字元。\n用 {#} 代表空間編號"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "自訂文字，最多 %lld 個字元。\n用 {#} 代表空間編號。"
+            "value" : "自訂文字，最多 %lld 個字元。\n用 {#} 代表空間編號"
           }
         }
       }
@@ -90146,6 +90916,268 @@
         }
       }
     },
+    "toggle_count_fullscreen_apps" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "احتساب التطبيقات بملء الشاشة"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Включвай приложенията на цял екран в броя"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compta les aplicacions a pantalla completa"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Započítat aplikace v režimu celé obrazovky"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Medregn fuldskærmsapps"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vollbild-Apps mitzählen"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Συνυπολογισμός εφαρμογών πλήρους οθόνης"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Count full-screen applications"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Count full-screen applications"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contar las aplicaciones a pantalla completa"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "احتساب برنامه‌های تمام‌صفحه"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Laske koko näytön sovellukset mukaan"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compter les applications en plein écran"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "לכלול בספירה יישומים במסך מלא"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "फुल-स्क्रीन ऐप्स को गिनती में शामिल करें"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A teljes képernyős alkalmazások beszámítása"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sertakan aplikasi layar penuh dalam hitungan"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Includi nel conteggio le app a schermo intero"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フルスクリーンアプリを数に含める"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "전체 화면 앱도 개수에 포함"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вклучи ги апликациите на цел екран во бројот"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sertakan aplikasi skrin penuh dalam kiraan"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tell med fullskjermsapper"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schermvullende apps meetellen"
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tel med program i fullskjerm"
+          }
+        },
+        "pa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "فل اسکرین ایپس وی گنتی وچ شامل کرو"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wliczaj aplikacje pełnoekranowe"
+          }
+        },
+        "ps" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "د بشپړ سکرین اپلېکېشنونه په شمېر کې شامل کړئ"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incluir aplicações em ecrã completo na contagem"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incluir aplicativos em tela cheia na contagem"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Include în calcul aplicațiile în modul ecran complet"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Учитывать полноэкранные приложения"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Započítať celoobrazovkové aplikácie"
+          }
+        },
+        "sr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uračunaj aplikacije preko celog ekrana"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Räkna med helskärmsappar"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "นับรวมแอปเต็มหน้าจอ"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tam ekran uygulamaları sayıma dahil et"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Враховувати повноекранні застосунки"
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "فل اسکرین ایپس کو گنتی میں شامل کریں"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tính cả ứng dụng toàn màn hình"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将全屏应用计入空间数"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "將全螢幕應用程式計入空間數"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "將全螢幕應用程式計入空間數目"
+          }
+        }
+      }
+    },
     "toggle_hide_empty_spaces" : {
       "localizations" : {
         "ar" : {
@@ -90670,264 +91702,264 @@
         }
       }
     },
-    "toggle_hide_single_space" : {
+    "toggle_keep_one_icon_visible" : {
       "localizations" : {
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "إخفاء المساحة الوحيدة"
+            "value" : "إبقاء أيقونة واحدة ظاهرة"
           }
         },
         "bg" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Скрий единично Пространство"
+            "value" : "Оставяй една икона видима"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Amaga l'Espai únic"
+            "value" : "Mantén una icona visible"
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Skrýt jeden Space"
+            "value" : "Ponechat jednu ikonu viditelnou"
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Skjul enkelt Space"
+            "value" : "Behold ét symbol synligt"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Einzelnen Space ausblenden"
+            "value" : "Ein Symbol sichtbar lassen"
           }
         },
         "el" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Απόκρυψη μεμονωμένου Χώρου"
+            "value" : "Διατήρηση ενός εικονιδίου ορατού"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hide single Space"
+            "value" : "Keep one icon visible"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hide single Space"
+            "value" : "Keep one icon visible"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ocultar Espacio único"
+            "value" : "Mantener un icono visible"
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "مخفی کردن تنها فضای موجود"
+            "value" : "نمایان نگه داشتن یک نماد"
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Piilota yksittäinen Space"
+            "value" : "Pidä yksi kuvake näkyvissä"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Masquer l'Espace unique"
+            "value" : "Garder une icône visible"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "הסתר מרחב יחיד"
+            "value" : "השארת סמל אחד גלוי"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "केवल एक स्पेस होने पर मेनू बार आइकन छिपाएँ"
+            "value" : "एक आइकन हमेशा दिखाएँ"
           }
         },
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Egyetlen Space elrejtése"
+            "value" : "Egy ikon maradjon látható"
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sembunyikan Space tunggal"
+            "value" : "Biarkan satu ikon tetap terlihat"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nascondi l'unico Spazio"
+            "value" : "Mantieni visibile un'icona"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "単一のスペースを非表示"
+            "value" : "アイコンを1つ残す"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "단일 스페이스 숨기기"
+            "value" : "아이콘 하나를 계속 표시"
           }
         },
         "mk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Сокриј единствен Простор"
+            "value" : "Задржи една икона видлива"
           }
         },
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sembunyikan Ruang tunggal"
+            "value" : "Kekalkan satu ikon kelihatan"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Skjul enkelt Space"
+            "value" : "Behold ett symbol synlig"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enkele Space verbergen"
+            "value" : "Eén symbool zichtbaar houden"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gøym enkelt Space"
+            "value" : "Hald eitt symbol synleg"
           }
         },
         "pa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "اکلا سپیس لکاؤ"
+            "value" : "اک آئیکن وکھائی دیندا رہے"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ukryj pojedynczy Space"
+            "value" : "Pozostaw jedną ikonę widoczną"
           }
         },
         "ps" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "یوازینی سپېس پټ کړئ"
+            "value" : "یوه نښه ښکاره وساتئ"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ocultar Espaço único"
+            "value" : "Manter um ícone visível"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ocultar Espaço único"
+            "value" : "Manter um ícone visível"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ascunde Spațiul unic"
+            "value" : "Păstrează o pictogramă vizibilă"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Скрыть единственное Пространство"
+            "value" : "Оставлять один значок видимым"
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Skryť jeden Priestor"
+            "value" : "Ponechať jednu ikonu viditeľnú"
           }
         },
         "sr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sakrij pojedinačni Prostor"
+            "value" : "Zadrži jednu ikonu vidljivom"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dölj enstaka Space"
+            "value" : "Behåll en symbol synlig"
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ซ่อน Space เดี่ยว"
+            "value" : "แสดงไอคอนไว้หนึ่งไอคอน"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tek Alanı gizle"
+            "value" : "Bir simgeyi görünür tut"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Приховати єдиний Простір"
+            "value" : "Залишати один значок видимим"
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "واحد اسپیس چھپائیں"
+            "value" : "ایک آئیکن دکھائی دیتا رہے"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ẩn Không gian đơn"
+            "value" : "Giữ một biểu tượng luôn hiển thị"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "隐藏单个空间"
+            "value" : "保留一个图标"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "隱藏單一空間"
+            "value" : "保留一個圖示"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "隱藏單一空間"
+            "value" : "保留一個圖示"
           }
         }
       }

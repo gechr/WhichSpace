@@ -346,7 +346,7 @@ struct DynamicDisplayTests {
     }
 }
 
-// MARK: - Regular Space Count Tests (for hideSingleSpace feature)
+// MARK: - Regular Space Count Tests
 
 @MainActor
 struct RegularSpaceCountTests {
@@ -417,23 +417,30 @@ struct RegularSpaceCountTests {
         #expect(sut.regularSpaceCount == 2)
     }
 
-    @Test("all spaces fullscreen yields zero regular count")
-    func regularSpaceCount_allFullscreenSpaces() {
+    @Test("full-screen Spaces can meet any display minimum", arguments: 1 ... 5)
+    func fullscreenOnlyDisplay(minimum: Int) {
         stub.activeDisplayIdentifier = "Main"
         stub.displays = [
             CGSStub.makeDisplay(
                 displayID: "Main",
-                spaces: [
-                    (id: 100, isFullscreen: true),
-                    (id: 101, isFullscreen: true),
-                ],
+                spaces: (0 ..< minimum).map { (id: 100 + $0, isFullscreen: true) },
                 activeSpaceID: 100
             ),
         ]
-
+        store.showAllDisplays = true
+        store.minimumSpacesPerDisplay = minimum
+        store.keepOneIconVisible = false
         let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
         #expect(sut.regularSpaceCount == 0)
+        #expect(sut.shouldShowStatusItem == (minimum == 1))
+        #expect(sut.menuBarDisplays.isFallback == (minimum == 1))
+        #expect(sut.statusBarLayout().slots.isEmpty == (minimum > 1))
+
+        store.countFullscreenApps = true
+        #expect(!sut.menuBarDisplays.isFallback)
+        #expect(sut.shouldShowStatusItem)
+        #expect(sut.statusBarLayout().slots.first?.spaceID == 100)
     }
 
     @Test("regular space count sums across multiple displays")
@@ -461,7 +468,8 @@ struct RegularSpaceCountTests {
         let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
         #expect(sut.regularSpaceCount == 3)
-        #expect(sut.hasMultipleRegularSpacesOnAnyDisplay)
+        store.minimumSpacesPerDisplay = 2
+        #expect(sut.shouldShowStatusItem)
     }
 
     @Test("five displays with one Space each have no multi-Space display")
@@ -479,7 +487,9 @@ struct RegularSpaceCountTests {
         let sut = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
 
         #expect(sut.regularSpaceCount == 5)
-        #expect(!sut.hasMultipleRegularSpacesOnAnyDisplay)
+        store.minimumSpacesPerDisplay = 2
+        store.keepOneIconVisible = false
+        #expect(!sut.shouldShowStatusItem)
     }
 
     @Test("no spaces yields zero regular count")

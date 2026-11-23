@@ -32,7 +32,8 @@ enum SpaceSnapshotService {
         localSpaceNumbers: Bool,
         displayOrder: DisplayOrder = .system,
         preserveSystemSpaceNumbers: Bool = false,
-        screenOrder: [String] = []
+        screenOrder: [String] = [],
+        mainDisplayID: String? = nil
     ) -> SpaceSnapshot {
         guard let displays = provider.copyManagedDisplaySpaces(),
               let activeDisplay = provider.copyActiveMenuBarDisplayIdentifier()
@@ -104,6 +105,11 @@ enum SpaceSnapshotService {
                 ))
             }
         }
+
+        // Keep the main display independent of the user's presentation order.
+        let primaryID = parsedDisplays.first {
+            $0.displayID.caseInsensitiveCompare(mainDisplayID ?? mainDisplay) == .orderedSame
+        }?.displayID ?? parsedDisplays.first?.displayID
 
         // CGS order disagrees with Mission Control on some multi-display
         // setups, so the user can number displays in screen order instead.
@@ -204,7 +210,8 @@ enum SpaceSnapshotService {
                 currentGlobalSpaceIndex: snapshotGlobalSpaceIndex,
                 currentSpace: snapshotCurrentSpace,
                 currentSpaceID: snapshotCurrentSpaceID,
-                currentSpaceLabel: snapshotCurrentSpaceLabel
+                currentSpaceLabel: snapshotCurrentSpaceLabel,
+                mainDisplayID: primaryID
             )
         }
 

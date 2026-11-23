@@ -90,7 +90,12 @@ struct BackupSettings: Codable {
     var fullscreenIconStyle: String?
     var hideEmptySpaces: Bool
     var hideFullscreenApps: Bool
-    var hideSingleSpace: Bool
+    // Decode-only compatibility with the former toggle.
+    // swiftlint:disable:next discouraged_optional_boolean
+    private var hideSingleSpace: Bool?
+    var countFullscreenApps: Bool
+    var keepOneIconVisible: Bool
+    var minimumSpacesPerDisplay: Int
     var horizontalScrollEnabled: Bool
     var hotkeysMoveSkipEmptySpaces: Bool
     var hotkeysSendSkipEmptySpaces: Bool
@@ -133,7 +138,7 @@ struct BackupSettings: Codable {
         case hotkeysMoveSkipEmptySpaces, hotkeysSendSkipEmptySpaces, hotkeysSkipEmptySpaces
         case includeNightlyUpdates
         case invertHorizontalScroll, invertVerticalScroll, launchAtLogin, localSpaceNumbers
-        case inactiveSpaceOpacity
+        case countFullscreenApps, inactiveSpaceOpacity, keepOneIconVisible, minimumSpacesPerDisplay
         // Raw value matches the legacy stored defaults key
         case moveApplicationAlertSuppress = "moveToApplicationsFolderAlertSuppress"
         case paddingScale
@@ -166,7 +171,11 @@ struct BackupSettings: Codable {
         fullscreenIconStyle = try container.decodeIfPresent(String.self, forKey: .fullscreenIconStyle)
         hideEmptySpaces = try container.decodeIfPresent(Bool.self, forKey: .hideEmptySpaces) ?? false
         hideFullscreenApps = try container.decodeIfPresent(Bool.self, forKey: .hideFullscreenApps) ?? false
-        hideSingleSpace = try container.decodeIfPresent(Bool.self, forKey: .hideSingleSpace) ?? false
+        countFullscreenApps = try container.decodeIfPresent(Bool.self, forKey: .countFullscreenApps) ?? false
+        let hidSingleSpace = try container.decodeIfPresent(Bool.self, forKey: .hideSingleSpace) == true
+        minimumSpacesPerDisplay = try container.decodeIfPresent(Int.self, forKey: .minimumSpacesPerDisplay)
+            ?? (hidSingleSpace ? 2 : 1)
+        keepOneIconVisible = try container.decodeIfPresent(Bool.self, forKey: .keepOneIconVisible) ?? !hidSingleSpace
         horizontalScrollEnabled = try container.decodeIfPresent(Bool.self, forKey: .horizontalScrollEnabled) ?? false
         hotkeysMoveSkipEmptySpaces = try container
             .decodeIfPresent(Bool.self, forKey: .hotkeysMoveSkipEmptySpaces) ?? false
@@ -220,7 +229,9 @@ struct BackupSettings: Codable {
         fullscreenIconStyle: String?,
         hideEmptySpaces: Bool,
         hideFullscreenApps: Bool,
-        hideSingleSpace: Bool,
+        countFullscreenApps: Bool,
+        keepOneIconVisible: Bool,
+        minimumSpacesPerDisplay: Int,
         horizontalScrollEnabled: Bool,
         hotkeysMoveSkipEmptySpaces: Bool,
         hotkeysSendSkipEmptySpaces: Bool,
@@ -260,7 +271,9 @@ struct BackupSettings: Codable {
         self.fullscreenIconStyle = fullscreenIconStyle
         self.hideEmptySpaces = hideEmptySpaces
         self.hideFullscreenApps = hideFullscreenApps
-        self.hideSingleSpace = hideSingleSpace
+        self.countFullscreenApps = countFullscreenApps
+        self.keepOneIconVisible = keepOneIconVisible
+        self.minimumSpacesPerDisplay = minimumSpacesPerDisplay
         self.horizontalScrollEnabled = horizontalScrollEnabled
         self.hotkeysMoveSkipEmptySpaces = hotkeysMoveSkipEmptySpaces
         self.hotkeysSendSkipEmptySpaces = hotkeysSendSkipEmptySpaces
@@ -706,7 +719,9 @@ enum BackupManager {
             fullscreenIconStyle: store.fullscreenIconStyle.rawValue,
             hideEmptySpaces: store.hideEmptySpaces,
             hideFullscreenApps: store.hideFullscreenApps,
-            hideSingleSpace: store.hideSingleSpace,
+            countFullscreenApps: store.countFullscreenApps,
+            keepOneIconVisible: store.keepOneIconVisible,
+            minimumSpacesPerDisplay: store.minimumSpacesPerDisplay,
             horizontalScrollEnabled: store.horizontalScrollEnabled,
             hotkeysMoveSkipEmptySpaces: store.hotkeysMoveSkipEmptySpaces,
             hotkeysSendSkipEmptySpaces: store.hotkeysSendSkipEmptySpaces,
@@ -870,7 +885,9 @@ enum BackupManager {
             .flatMap { FullscreenIconStyle(rawValue: $0) } ?? .appIcon
         store.hideEmptySpaces = backup.settings.hideEmptySpaces
         store.hideFullscreenApps = backup.settings.hideFullscreenApps
-        store.hideSingleSpace = backup.settings.hideSingleSpace
+        store.countFullscreenApps = backup.settings.countFullscreenApps
+        store.keepOneIconVisible = backup.settings.keepOneIconVisible
+        store.minimumSpacesPerDisplay = backup.settings.minimumSpacesPerDisplay
         store.horizontalScrollEnabled = backup.settings.horizontalScrollEnabled
         store.hotkeysMoveSkipEmptySpaces = backup.settings.hotkeysMoveSkipEmptySpaces
         store.hotkeysSendSkipEmptySpaces = backup.settings.hotkeysSendSkipEmptySpaces

@@ -103,6 +103,15 @@ struct DisplaySpaceInfo: Equatable {
     }
 }
 
+struct MenuBarDisplaySelection {
+    let displays: [DisplaySpaceInfo]
+    let isFallback: Bool
+
+    var fallbackDisplay: DisplaySpaceInfo? {
+        isFallback ? displays.first : nil
+    }
+}
+
 // MARK: - Space Snapshot
 
 /// Immutable snapshot of the current system space state
@@ -114,6 +123,7 @@ struct SpaceSnapshot: Equatable {
     let currentSpace: Int
     let currentSpaceID: Int
     let currentSpaceLabel: String
+    let mainDisplayID: String?
 
     static let empty = Self(
         allDisplaysSpaceInfo: [],
@@ -122,7 +132,8 @@ struct SpaceSnapshot: Equatable {
         currentGlobalSpaceIndex: 0,
         currentSpace: 0,
         currentSpaceID: 0,
-        currentSpaceLabel: "?"
+        currentSpaceLabel: "?",
+        mainDisplayID: nil
     )
 }
 
@@ -287,11 +298,26 @@ final class AppState {
             .map { ($0.displayID, $0.position, $0.entry) }
     }
 
-    /// Whether any display has more than one regular Space. A collection of
-    /// single-Space displays still has nothing useful for the status item to
-    /// switch between on any individual display.
-    var hasMultipleRegularSpacesOnAnyDisplay: Bool {
-        allDisplaysSpaceInfo.contains { $0.regularSpaceCount > 1 }
+    var menuBarDisplays: MenuBarDisplaySelection {
+        let minimum = store.minimumSpacesPerDisplay
+        let countFullscreen = store.countFullscreenApps
+        let matches = allDisplaysSpaceInfo.filter { display in
+            (countFullscreen ? display.entries.count : display.regularSpaceCount) >= minimum
+        }
+        guard matches.isEmpty, minimum == 1 || store.keepOneIconVisible else {
+            return MenuBarDisplaySelection(displays: matches, isFallback: false)
+        }
+        let main = allDisplaysSpaceInfo.first { $0.displayID == snapshot.mainDisplayID } ?? allDisplaysSpaceInfo.first
+        return MenuBarDisplaySelection(displays: main.map { [$0] } ?? [], isFallback: true)
+    }
+
+    var clicksSelectIndividualSpaces: Bool {
+        store.showAllSpaces && shrinkLevel.showsInactiveSpaces && !menuBarDisplays.isFallback
+    }
+
+    var shouldShowStatusItem: Bool {
+        let selection = menuBarDisplays
+        return selection.isFallback || !selection.displays.isEmpty
     }
 
     /// Spaces on every display with no qualifying windows, resolved from the
@@ -439,7 +465,8 @@ final class AppState {
                 currentGlobalSpaceIndex: globalSpaceIndex ?? currentSpace,
                 currentSpace: currentSpace,
                 currentSpaceID: currentSpaceID,
-                currentSpaceLabel: currentLabel
+                currentSpaceLabel: currentLabel,
+                mainDisplayID: resolvedDisplays.first?.displayID
             )
         }
     #endif
@@ -599,14 +626,14 @@ final class AppState {
     /// numbering rather than leaving a disabled row still changing the icon.
     /// Screen order numbering is greyed out by restarted numbering instead.
     private func buildSnapshot() -> SpaceSnapshot {
-        SpaceSnapshotService.buildSnapshot(
+        let screens = displaySpaceProvider.screenOrder()
+        return SpaceSnapshotService.buildSnapshot(
             provider: displaySpaceProvider,
             localSpaceNumbers: store.localSpaceNumbers,
             displayOrder: store.showAllDisplays ? store.displayOrder : .system,
             preserveSystemSpaceNumbers: store.preserveSystemSpaceNumbers,
-            screenOrder: store.screenOrderNumbering && !store.localSpaceNumbers
-                ? displaySpaceProvider.screenOrder()
-                : []
+            screenOrder: store.screenOrderNumbering && !store.localSpaceNumbers ? screens : [],
+            mainDisplayID: screens.first
         )
     }
 

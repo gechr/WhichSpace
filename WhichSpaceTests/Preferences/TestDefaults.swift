@@ -243,13 +243,35 @@ struct DefaultsIsolationGuardTests {
         #expect(legacySuite.suite.object(forKey: "dimInactiveSpaces") == nil)
     }
 
+    @Test("legacy single-Space preference migrates once", arguments: [true, false])
+    func migrateSingleSpacePreference(enabled: Bool) {
+        let legacy = TestSuiteFactory.createSuite()
+        defer { TestSuiteFactory.destroySuite(legacy) }
+        legacy.suite.set(enabled, forKey: "hideSingleSpace")
+        _ = KeySpecs.minimumSpacesPerDisplay.key(suite: legacy.suite)
+        let migrated = DefaultsStore(suite: legacy.suite, domainName: legacy.suiteName)
+
+        #expect(migrated.minimumSpacesPerDisplay == (enabled ? 2 : 1))
+        #expect(!migrated.countFullscreenApps)
+        #expect(migrated.keepOneIconVisible == !enabled)
+        #expect(legacy.suite.persistentDomain(forName: legacy.suiteName)?["hideSingleSpace"] == nil)
+
+        migrated.minimumSpacesPerDisplay = 4
+        migrated.keepOneIconVisible = enabled
+        legacy.suite.set(enabled, forKey: "hideSingleSpace")
+        let reopened = DefaultsStore(suite: legacy.suite, domainName: legacy.suiteName)
+        #expect(reopened.minimumSpacesPerDisplay == 4)
+        #expect(reopened.keepOneIconVisible == enabled)
+        #expect(legacy.suite.persistentDomain(forName: legacy.suiteName)?["hideSingleSpace"] == nil)
+    }
+
     /// Verifies that KeySpecs matches Defaults.Keys definitions.
     @Test("KeySpecs.allKeyNames matches Defaults.Keys")
     func keySpecsMatchDefaultsKeys() {
         let expectedKeyNames: Set = [
             "classicSpaceSwitching",
             "clickToSwitchSpaces",
-            "inactiveSpaceOpacity",
+            "countFullscreenApps",
             "displayOrder",
             "displaySpaceBadges",
             "displaySpaceColors",
@@ -267,15 +289,17 @@ struct DefaultsIsolationGuardTests {
             "fullscreenIconStyle",
             "hideEmptySpaces",
             "hideFullscreenApps",
-            "hideSingleSpace",
             "horizontalScrollEnabled",
             "hotkeysMoveSkipEmptySpaces",
             "hotkeysSendSkipEmptySpaces",
             "hotkeysSkipEmptySpaces",
+            "inactiveSpaceOpacity",
             "includeNightlyUpdates",
             "invertHorizontalScroll",
             "invertVerticalScroll",
+            "keepOneIconVisible",
             "localSpaceNumbers",
+            "minimumSpacesPerDisplay",
             "moveToApplicationsFolderAlertSuppress",
             "paddingScale",
             "preserveSystemSpaceNumbers",

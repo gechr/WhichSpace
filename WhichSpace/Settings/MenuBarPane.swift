@@ -154,7 +154,9 @@ struct MenuBarPane: View {
     /// What the status item as a whole does: how much it gives up when the
     /// menu bar runs out of room, and when it stands down altogether.
     private var behaviorSection: some View {
-        SettingsSection(Localization.labelBehavior) {
+        let range = Layout.minimumSpacesPerDisplayRange
+        let alwaysKeepsIcon = model.value(\.minimumSpacesPerDisplay) == range.lowerBound
+        return SettingsSection(Localization.labelBehavior) {
             SettingsToggleRow(
                 title: Localization.toggleShrinkToFit,
                 isOn: model.binding(\.shrinkIconToFit),
@@ -163,17 +165,38 @@ struct MenuBarPane: View {
                 anchor: .shrinkToFit
             )
             SettingsRowDivider()
+            SettingsSliderRow(
+                title: Localization.onlyShowDisplays(minimum: model.value(\.minimumSpacesPerDisplay)),
+                value: integerBinding(\.minimumSpacesPerDisplay),
+                range: Double(range.lowerBound) ... Double(range.upperBound),
+                step: 1,
+                defaultValue: Double(KeySpecs.minimumSpacesPerDisplay.defaultValue),
+                icon: "display.2",
+                anchor: .minimumSpacesPerDisplay,
+                valueParser: SettingsSliderRow.parseNumber
+            ) { String(Int($0)) }
+            SettingsRowDivider()
             SettingsToggleRow(
-                title: Localization.toggleHideSingleSpace,
-                isOn: model.binding(\.hideSingleSpace),
-                icon: "eye.slash.fill",
-                subtitle: Localization.tipHideSingleSpace,
-                anchor: .hideSingleSpace
+                title: Localization.toggleCountFullscreenApps,
+                isOn: model.binding(\.countFullscreenApps),
+                icon: "arrow.up.left.and.arrow.down.right",
+                indented: true,
+                anchor: .countFullscreenApps
+            )
+            SettingsRowDivider()
+            SettingsToggleRow(
+                title: Localization.toggleKeepOneIconVisible,
+                isOn: alwaysKeepsIcon ? .constant(true) : model.binding(\.keepOneIconVisible),
+                icon: "menubar.rectangle",
+                indented: true,
+                disabled: alwaysKeepsIcon,
+                subtitle: Localization.tipKeepOneIconVisible,
+                anchor: .keepOneIconVisible
             )
             SettingsRowDivider()
             SettingsSliderRow(
                 title: Localization.labelPickerAppIcons,
-                value: spacePickerMaxAppIconsBinding,
+                value: integerBinding(\.spacePickerMaxAppIcons),
                 range: 0 ... Double(Layout.spacePickerMaxAppIconsRange.upperBound),
                 step: 1,
                 defaultValue: Double(Layout.defaultSpacePickerMaxAppIcons),
@@ -352,8 +375,8 @@ struct MenuBarPane: View {
         )
     }
 
-    private var spacePickerMaxAppIconsBinding: Binding<Double> {
-        let stored = model.binding(\.spacePickerMaxAppIcons)
+    private func integerBinding(_ keyPath: ReferenceWritableKeyPath<DefaultsStore, Int>) -> Binding<Double> {
+        let stored = model.binding(keyPath)
         return Binding(
             get: { Double(stored.wrappedValue) },
             set: { stored.wrappedValue = Int($0) }

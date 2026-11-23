@@ -40,6 +40,76 @@ struct StatusBarRendererFilterTests {
         #expect(layout.slots.map(\.label) == ["1", "F", "S2"])
     }
 
+    @Test("display minimum precedes slot filtering and preserves click targets")
+    func minimumSpacesPerDisplay() throws {
+        store.showAllDisplays = true
+        store.showAllSpaces = true
+        store.hideFullscreenApps = true
+        store.minimumSpacesPerDisplay = 2
+        stub.activeDisplayIdentifier = "A"
+        stub.displays = [
+            CGSStub.makeDisplay(displayID: "A", spaces: [(10, false)], activeSpaceID: 10),
+            CGSStub.makeDisplay(displayID: "B", spaces: [(20, false), (21, true)], activeSpaceID: 20),
+            CGSStub.makeDisplay(displayID: "C", spaces: [(30, false)], activeSpaceID: 30),
+            CGSStub.makeDisplay(displayID: "D", spaces: [(40, false), (41, false)], activeSpaceID: 41),
+        ]
+        let state = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        #expect(state.statusBarLayout().slots.map(\.spaceID) == [40, 41])
+        store.countFullscreenApps = true
+        let layout = state.statusBarLayout()
+        #expect(layout.slots.map(\.spaceID) == [20, 40, 41])
+        #expect(layout.slots.map(\.targetSpace) == [2, 4, 5])
+        let first = try #require(layout.slots.first)
+        let second = try #require(layout.slots.dropFirst().first)
+        #expect(first.startX == 0)
+        #expect(second.startX == first.width + Layout.displaySeparatorWidth)
+        #expect(layout.slot(at: first.width + Layout.displaySeparatorWidth / 2) == nil)
+        #expect(layout.targetSpace(at: second.startX + second.width / 2) == 4)
+
+        store.showAllSpaces = false
+        #expect(state.statusBarLayout().slots.map(\.spaceID) == [20, 41])
+        store.minimumSpacesPerDisplay = 3
+        store.keepOneIconVisible = false
+        #expect(!state.shouldShowStatusItem)
+        #expect(state.statusBarLayout().slots.isEmpty)
+        stub.displays[2] = CGSStub.makeDisplay(
+            displayID: "C", spaces: [(30, false), (31, false), (32, false)], activeSpaceID: 31
+        )
+        state.forceSpaceUpdate()
+        #expect(state.shouldShowStatusItem)
+        #expect(state.statusBarLayout().slots.map(\.spaceID) == [31])
+    }
+
+    @Test("the fallback shows just the main display's active Space", arguments: [false, true])
+    func fallbackUsesMainDisplay(showAllDisplays: Bool) {
+        store.showAllSpaces = true
+        store.showAllDisplays = showAllDisplays
+        store.minimumSpacesPerDisplay = 4
+        stub.activeDisplayIdentifier = "Left"
+        stub.screenOrderList = ["Right", "Left"]
+        stub.displays = [
+            CGSStub.makeDisplay(displayID: "Left", spaces: [(10, false)], activeSpaceID: 10),
+            CGSStub.makeDisplay(displayID: "Right", spaces: [(20, false), (21, false)], activeSpaceID: 21),
+        ]
+        let state = AppState(displaySpaceProvider: stub, skipObservers: true, store: store)
+        for level in IconShrinkLevel.allCases {
+            state.shrinkLevel = level
+            let layout = state.statusBarLayout()
+            #expect(state.shouldShowStatusItem)
+            #expect(layout.slots.map(\.spaceID) == [21])
+            #expect(layout.slots.map(\.label) == ["3"])
+            #expect(layout.targetSpace(at: 0) == 3)
+            #expect(!state.clicksSelectIndividualSpaces)
+            #expect(state.renderer.fallbackAccessibilityLabel == "3")
+        }
+        #expect(state.spacePickerEntries().map(\.spaceID) == [20, 21])
+        #expect(state.spacePickerEntries().filter(\.isActive).map(\.spaceID) == [21])
+
+        store.minimumSpacesPerDisplay = 1
+        state.shrinkLevel = .full
+        #expect(state.clicksSelectIndividualSpaces)
+    }
+
     // MARK: - hideEmptySpaces
 
     @Test("hideEmptySpaces hides non-active empty spaces")

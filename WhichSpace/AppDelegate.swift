@@ -1041,22 +1041,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
             return
         }
 
-        // A collapsed icon reports no slots, so it lands on the picker here
-        // alongside single-icon mode rather than expanding: growing the icon
-        // back under a full menu bar would just have macOS drop it again
+        // Single-icon, shrunk and fallback layouts open the picker so a click
+        // can reach Spaces that are not visible in the menu bar.
         let layout = appState.statusBarLayout()
-        // Single-icon mode draws one icon per display rather than one per
-        // Space, so a click has no Space of its own to land on even when the
-        // display row gives the layout slots. Offer the picker in both cases,
-        // and whenever the layout came back empty, so a left click can always
-        // reach another Space.
-        //
-        // A shrunk icon that has given up its per-Space slots is the same
-        // picture arrived at a different way, so it routes the same way. Keying
-        // this off the preference alone would leave a click on the current
-        // display's icon selecting the Space it is already on.
-        let showsSpaces = store.showAllSpaces && appState.shrinkLevel.showsInactiveSpaces
-        guard showsSpaces, !layout.slots.isEmpty else {
+        guard appState.clicksSelectIndividualSpaces, !layout.slots.isEmpty else {
             let allSpaces = store.showAllSpaces
             let slotCount = layout.slots.count
             Self.logger.info("picker fallback: showAllSpaces \(allSpaces), slots \(slotCount)")
@@ -1377,7 +1365,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
     /// the stored value untouched.
     func prepareStatusMenuLabelField(spaceID: Int? = nil) {
         let store = store
-        guard let target = appState.spaceTarget(forSpaceID: spaceID ?? appState.currentSpaceID) else {
+        let representedID = spaceID ?? appState.menuBarDisplays.fallbackDisplay?.activeSpaceID ?? appState
+            .currentSpaceID
+        guard let target = appState.spaceTarget(forSpaceID: representedID) else {
             statusMenuLabelField.configure(currentLabel: nil, isEnabled: false, onChange: { _ in }, onRevert: {})
             return
         }
@@ -1479,29 +1469,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, SPUUpd
     /// without a label the item announces only the app name. The tooltip is
     /// left naming the app: an explicit accessibility label takes precedence
     /// over the one AppKit would otherwise derive from the tooltip, so the
-    /// two can say different things. The text matches what AppleScript
-    /// reports for `current space label`.
+    /// two can say different things. A fallback names the Space it shows on
+    /// the main display, even when another display has focus.
     func updateStatusBarAccessibilityLabel() {
         guard let button = statusBarItem?.button else {
             return
         }
-        let label = ScriptingHelpers.resolveCurrentLabel(appState: appState, store: store)
+        let label = appState.renderer.fallbackAccessibilityLabel
+            ?? ScriptingHelpers.resolveCurrentLabel(appState: appState, store: store)
         button.setAccessibilityLabel(
             String(format: Localization.accessibilityCurrentSpace, label)
         )
     }
 
     private func updateStatusBarVisibility() {
-        guard let statusBarItem else {
-            return
-        }
-        guard store.hideSingleSpace else {
-            statusBarItem.isVisible = true
-            return
-        }
-        // A separate single Space on each display still leaves nothing to
-        // switch between on any one display.
-        statusBarItem.isVisible = appState.hasMultipleRegularSpacesOnAnyDisplay
+        statusBarItem?.isVisible = appState.shouldShowStatusItem
     }
 }
 

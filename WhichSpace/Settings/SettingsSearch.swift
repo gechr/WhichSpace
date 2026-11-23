@@ -338,11 +338,25 @@ enum SettingsSearchIndex {
             keywords: [.size, .hide]
         ),
         SettingsSearchEntry(
-            anchor: .hideSingleSpace,
+            anchor: .minimumSpacesPerDisplay,
             section: Localization.labelBehavior,
-            title: Localization.toggleHideSingleSpace,
-            subtitle: Localization.tipHideSingleSpace,
-            keywords: [.hide, .space]
+            title: Localization.labelMinimumSpacesPerDisplay,
+            subtitle: nil,
+            keywords: [.display, .hide, .space]
+        ),
+        SettingsSearchEntry(
+            anchor: .countFullscreenApps,
+            section: Localization.labelBehavior,
+            title: Localization.toggleCountFullscreenApps,
+            subtitle: nil,
+            keywords: [.display, .fullscreen, .space]
+        ),
+        SettingsSearchEntry(
+            anchor: .keepOneIconVisible,
+            section: Localization.labelBehavior,
+            title: Localization.toggleKeepOneIconVisible,
+            subtitle: Localization.tipKeepOneIconVisible,
+            keywords: [.display, .icon, .hide]
         ),
         SettingsSearchEntry(
             anchor: .spacePickerIcons,

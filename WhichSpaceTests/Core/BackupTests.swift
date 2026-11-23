@@ -422,6 +422,9 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         XCTAssertTrue(try XCTUnwrap(backup.settings.clickToSwitchSpaces))
         XCTAssertEqual(backup.settings.sizeScale, 80.0)
         XCTAssertEqual(backup.settings.inactiveSpaceOpacity, Layout.defaultInactiveSpaceOpacity)
+        XCTAssertEqual(backup.settings.minimumSpacesPerDisplay, 1)
+        XCTAssertTrue(backup.settings.keepOneIconVisible)
+        XCTAssertFalse(backup.settings.countFullscreenApps)
         XCTAssertFalse(backup.settings.hideEmptySpaces)
         XCTAssertFalse(backup.settings.horizontalScrollEnabled)
         XCTAssertFalse(backup.settings.invertHorizontalScroll)
@@ -629,7 +632,8 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         XCTAssertEqual(store.inactiveSpaceOpacity, Layout.defaultInactiveSpaceOpacity)
         XCTAssertTrue(store.hideEmptySpaces)
         XCTAssertTrue(store.hideFullscreenApps)
-        XCTAssertTrue(store.hideSingleSpace)
+        XCTAssertEqual(store.minimumSpacesPerDisplay, 2)
+        XCTAssertFalse(store.keepOneIconVisible)
         XCTAssertTrue(store.horizontalScrollEnabled)
         XCTAssertTrue(store.invertHorizontalScroll)
         XCTAssertTrue(store.invertVerticalScroll)
@@ -642,6 +646,22 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
         XCTAssertTrue(store.verticalScrollEnabled)
     }
 
+    func testMinimumSpacesBackupRoundTrip() throws {
+        store.minimumSpacesPerDisplay = 3
+        store.keepOneIconVisible = false
+        store.countFullscreenApps = true
+        let json = try BackupManager.encode(store: store)
+        XCTAssertFalse(json.contains("\"hideSingleSpace\""))
+        let backup = try BackupManager.decode(jsonString: json)
+        store.minimumSpacesPerDisplay = 1
+        store.keepOneIconVisible = true
+        store.countFullscreenApps = false
+        BackupManager.apply(backup, to: store)
+        XCTAssertTrue(store.countFullscreenApps)
+        XCTAssertEqual(store.minimumSpacesPerDisplay, 3)
+        XCTAssertFalse(store.keepOneIconVisible)
+    }
+
     func testApplyClampsOutOfRangeSettings() throws {
         let json = """
         {
@@ -649,6 +669,8 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
             "version": "1.0.0",
             "settings": {
                 "inactiveSpaceOpacity": -50.0,
+                "hideSingleSpace": true,
+                "minimumSpacesPerDisplay": 88,
                 "sizeScale": 99999.0,
                 "paddingScale": -50.0,
                 "scrollSensitivity": 99999.0
@@ -661,6 +683,7 @@ final class BackupManagerTests: IsolatedDefaultsTestCase {
 
         XCTAssertEqual(store.sizeScale, Layout.sizeScaleRange.upperBound)
         XCTAssertEqual(store.inactiveSpaceOpacity, Layout.inactiveSpaceOpacityRange.lowerBound)
+        XCTAssertEqual(store.minimumSpacesPerDisplay, Layout.minimumSpacesPerDisplayRange.upperBound)
         XCTAssertEqual(store.paddingScale, Layout.paddingScaleRange.lowerBound)
         XCTAssertEqual(store.scrollSensitivity, Layout.scrollSensitivityRange.upperBound)
     }

@@ -226,10 +226,23 @@ final class StatusBarRenderer {
         return width
     }
 
+    var fallbackAccessibilityLabel: String? {
+        let selection = appState.menuBarDisplays
+        guard selection.isFallback else {
+            return nil
+        }
+        return resolveCrossDisplaySlots(selection, level: appState.shrinkLevel).first?.first?.displayLabel
+    }
+
     /// Returns the layout of visible icons in the status bar for the current mode
     func statusBarLayout(level: IconShrinkLevel) -> StatusBarLayout {
-        if showAllDisplays, level.showsOtherDisplays {
-            let renderedDisplays = renderedCrossDisplayIcons(darkMode: appState.darkModeEnabled, level: level)
+        let selection = appState.menuBarDisplays
+        if (selection.fallbackDisplay != nil) || (showAllDisplays && level.showsOtherDisplays) {
+            let renderedDisplays = renderedCrossDisplayIcons(
+                selection,
+                darkMode: appState.darkModeEnabled,
+                level: level
+            )
             guard !renderedDisplays.isEmpty else {
                 return .empty
             }
@@ -262,7 +275,7 @@ final class StatusBarRenderer {
         // mode uses, so every Space stays reachable without growing the icon
         // back under a menu bar that had no room for it.
         if showAllSpaces, level.showsInactiveSpaces {
-            let renderedIcons = renderedCurrentDisplayIcons(darkMode: appState.darkModeEnabled, level: level)
+            let renderedIcons = renderedDisplayIcons(darkMode: appState.darkModeEnabled, level: level)
             guard !renderedIcons.isEmpty else {
                 return .empty
             }
@@ -285,13 +298,17 @@ final class StatusBarRenderer {
         return .empty
     }
 
-    /// Returns one entry per Space on the current display for the left-click
+    /// Returns one entry per Space on the represented display for the left-click
     /// picker menu shown in single-icon mode. Icons render exactly as they
     /// would in the status bar. Hide filters don't apply: their menu options
     /// are only offered in multi-space modes, and the picker exists to reach
     /// Spaces the bar isn't showing.
     func spacePickerEntries() -> [SpacePickerEntry] {
-        let renderedIcons = renderedCurrentDisplayIcons(darkMode: appState.darkModeEnabled, includeHidden: true)
+        let renderedIcons = renderedDisplayIcons(
+            on: appState.menuBarDisplays.fallbackDisplay,
+            darkMode: appState.darkModeEnabled,
+            includeHidden: true
+        )
         let cap = store.spacePickerMaxAppIcons
         // Name mode and a cap of 0 both leave nothing to scan for
         let wantsIcons = cap > 0 && store.spacePickerStyle != .name
@@ -551,8 +568,9 @@ final class StatusBarRenderer {
     /// custom labels, inactive Spaces and other displays.
     private func generateStatusBarIcon(isDark: Bool, level: IconShrinkLevel) -> NSImage {
         // Show all displays mode takes precedence (shows spaces from all displays with separators)
-        if showAllDisplays, level.showsOtherDisplays, !appState.allDisplaysSpaceInfo.isEmpty {
-            return generateCrossDisplayIcon(darkMode: isDark, level: level)
+        let selection = appState.menuBarDisplays
+        if !selection.displays.isEmpty, selection.isFallback || (showAllDisplays && level.showsOtherDisplays) {
+            return generateCrossDisplayIcon(selection, darkMode: isDark, level: level)
         }
 
         // Show all spaces mode (shows all spaces from current display only)
@@ -588,14 +606,15 @@ final class StatusBarRenderer {
         return render(spec, nativeTint: spec.supportsNativeTint)
     }
 
-    private func renderedCurrentDisplayIcons(
+    private func renderedDisplayIcons(
+        on display: DisplaySpaceInfo? = nil,
         darkMode: Bool,
         includeHidden: Bool = false,
         level: IconShrinkLevel = .full,
         nativeTint: Bool = false
     ) -> [RenderedSlotIcon] {
         renderSlotGroups(
-            [resolveCurrentDisplaySlots(includeHidden: includeHidden, level: level)],
+            [resolveDisplaySlots(on: display, includeHidden: includeHidden, level: level)],
             darkMode: darkMode,
             level: level,
             nativeTint: nativeTint
@@ -603,12 +622,13 @@ final class StatusBarRenderer {
     }
 
     private func renderedCrossDisplayIcons(
+        _ selection: MenuBarDisplaySelection,
         darkMode: Bool,
         level: IconShrinkLevel,
         nativeTint: Bool = false
     ) -> [[RenderedSlotIcon]] {
         renderSlotGroups(
-            resolveCrossDisplaySlots(level: level),
+            resolveCrossDisplaySlots(selection, level: level),
             darkMode: darkMode,
             level: level,
             nativeTint: nativeTint
@@ -649,7 +669,7 @@ final class StatusBarRenderer {
     }
 
     private func generateCombinedIcon(darkMode: Bool, level: IconShrinkLevel) -> NSImage {
-        let renderedIcons = renderedCurrentDisplayIcons(
+        let renderedIcons = renderedDisplayIcons(
             darkMode: darkMode,
             level: level,
             nativeTint: true
@@ -687,8 +707,11 @@ final class StatusBarRenderer {
         return image
     }
 
-    private func generateCrossDisplayIcon(darkMode: Bool, level: IconShrinkLevel) -> NSImage {
+    private func generateCrossDisplayIcon(
+        _ selection: MenuBarDisplaySelection, darkMode: Bool, level: IconShrinkLevel
+    ) -> NSImage {
         let renderedDisplays = renderedCrossDisplayIcons(
+            selection,
             darkMode: darkMode,
             level: level,
             nativeTint: true
@@ -1162,17 +1185,20 @@ final class StatusBarRenderer {
         return true
     }
 
-    /// Resolves visible spaces for the current display into fully computed slots.
-    private func resolveCurrentDisplaySlots(
+    /// Resolves visible Spaces on one display, defaulting to the focused display.
+    private func resolveDisplaySlots(
+        on display: DisplaySpaceInfo? = nil,
         includeHidden: Bool = false,
         level: IconShrinkLevel = .full
     ) -> [ResolvedSlot] {
-        let globalStartIndex = appState.allDisplaysSpaceInfo
-            .first { $0.displayID == appState.currentDisplayID }?.globalStartIndex ?? 1
-        let displayID = appState.currentDisplayID ?? ""
+        let displayID = display?.displayID ?? appState.currentDisplayID ?? ""
+        let globalStartIndex = display?.globalStartIndex ?? appState.allDisplaysSpaceInfo
+            .first { $0.displayID == displayID }?.globalStartIndex ?? 1
+        let entries = display?.entries ?? appState.allSpaceEntries
+        let activeSpaceID = display?.activeSpaceID ?? appState.currentSpaceID
 
         let nonEmptySpaceIDs: Set<Int> = if !includeHidden, store.hideEmptySpaces {
-            getCachedSpacesWithWindows(forSpaceIDs: appState.allSpaceIDs)
+            getCachedSpacesWithWindows(forSpaceIDs: entries.map(\.id))
         } else {
             []
         }
@@ -1180,9 +1206,9 @@ final class StatusBarRenderer {
         let labels = fetchLabels(displayID: displayID)
         var slots: [ResolvedSlot] = []
 
-        for (arrayIndex, entry) in appState.allSpaceEntries.enumerated() {
+        for (arrayIndex, entry) in entries.enumerated() {
             let localIndex = arrayIndex + 1
-            let isActive = localIndex == appState.currentSpace
+            let isActive = entry.id == activeSpaceID
             let isFullscreen = entry.label == Labels.fullscreen
 
             if !includeHidden, !isActive,
@@ -1225,9 +1251,12 @@ final class StatusBarRenderer {
     /// Resolves visible spaces across all displays into fully computed slots grouped by display.
     /// Each display contributes only its active Space unless Show all Spaces
     /// is also enabled, in which case every display contributes all of its Spaces.
-    private func resolveCrossDisplaySlots(level: IconShrinkLevel) -> [[ResolvedSlot]] {
+    private func resolveCrossDisplaySlots(
+        _ selection: MenuBarDisplaySelection,
+        level: IconShrinkLevel
+    ) -> [[ResolvedSlot]] {
         let allSpaceIDsAcrossDisplays = appState.allDisplaysSpaceInfo.flatMap { $0.entries.map(\.id) }
-        let nonEmptySpaceIDs: Set<Int> = if store.hideEmptySpaces {
+        let nonEmptySpaceIDs: Set<Int> = if !selection.isFallback, store.hideEmptySpaces {
             getCachedSpacesWithWindows(forSpaceIDs: allSpaceIDsAcrossDisplays)
         } else {
             []
@@ -1235,7 +1264,7 @@ final class StatusBarRenderer {
 
         var slotsPerDisplay: [[ResolvedSlot]] = []
 
-        for displayInfo in appState.allDisplaysSpaceInfo {
+        for displayInfo in selection.displays {
             let labels = fetchLabels(displayID: displayInfo.displayID)
             var displaySlots: [ResolvedSlot] = []
             let isCurrentDisplay = displayInfo.displayID == appState.currentDisplayID
@@ -1245,14 +1274,14 @@ final class StatusBarRenderer {
                 // Shrinking past `compact` leaves each display showing only the
                 // Space it is on, the same shape as single-icon mode but with
                 // every display still represented
-                if !showAllSpaces || !level.showsInactiveSpaces, entry.id != activeSpaceID {
+                if selection.isFallback || !showAllSpaces || !level.showsInactiveSpaces, entry.id != activeSpaceID {
                     continue
                 }
 
                 let localIndex = arrayIndex + 1
                 let globalIndex = Self.globalIndex(entry: entry, globalStartIndex: displayInfo.globalStartIndex)
                 let isDisplayActiveSpace = entry.id == activeSpaceID
-                let isActive = entry.id == appState.currentSpaceID
+                let isActive = selection.isFallback || entry.id == appState.currentSpaceID
                 let isFullscreen = entry.label == Labels.fullscreen
 
                 // Each display keeps its active Space whatever the level, so a

@@ -110,7 +110,9 @@ enum KeySpecs {
     static let screenOrderNumbering = TypedKeySpec(name: "screenOrderNumbering", defaultValue: false)
     static let hideEmptySpaces = TypedKeySpec(name: "hideEmptySpaces", defaultValue: false)
     static let hideFullscreenApps = TypedKeySpec(name: "hideFullscreenApps", defaultValue: false)
-    static let hideSingleSpace = TypedKeySpec(name: "hideSingleSpace", defaultValue: false)
+    static let countFullscreenApps = TypedKeySpec(name: "countFullscreenApps", defaultValue: false)
+    static let keepOneIconVisible = TypedKeySpec(name: "keepOneIconVisible", defaultValue: true)
+    static let minimumSpacesPerDisplay = TypedKeySpec(name: "minimumSpacesPerDisplay", defaultValue: 1)
     static let localSpaceNumbers = TypedKeySpec(name: "localSpaceNumbers", defaultValue: false)
     static let moveApplicationAlertSuppress = TypedKeySpec(
         // Legacy stored name kept for compatibility
@@ -185,7 +187,9 @@ enum KeySpecs {
         fullscreenIconStyle,
         hideEmptySpaces,
         hideFullscreenApps,
-        hideSingleSpace,
+        countFullscreenApps,
+        keepOneIconVisible,
+        minimumSpacesPerDisplay,
         horizontalScrollEnabled,
         hotkeysMoveSkipEmptySpaces,
         hotkeysSendSkipEmptySpaces,
@@ -321,24 +325,30 @@ final class DefaultsStore {
 
     init(suite: UserDefaults, domainName: String? = Bundle.main.bundleIdentifier) {
         self.suite = suite
-        migrateDimInactiveSpaces(in: domainName)
+        migrateLegacyPreferences(in: domainName)
     }
 
-    /// Converts the former on/off preference to its equivalent opacity. The
-    /// legacy default (on) already matches 35%; off becomes fully opaque.
-    private func migrateDimInactiveSpaces(in domainName: String?) {
-        let legacyName = "dimInactiveSpaces"
-        guard suite.object(forKey: legacyName) != nil, let domainName,
-              let saved = suite.persistentDomain(forName: domainName),
-              let legacy = saved[legacyName] as? NSNumber
-        else {
-            return
-        }
+    private func migrateLegacyPreferences(in domainName: String?) {
+        guard suite.object(forKey: "dimInactiveSpaces") != nil || suite.object(forKey: "hideSingleSpace") != nil,
+              let domainName, let saved = suite.persistentDomain(forName: domainName)
+        else { return }
 
-        if !legacy.boolValue, saved[KeySpecs.inactiveSpaceOpacity.name] == nil {
-            Defaults[KeySpecs.inactiveSpaceOpacity.key(suite: suite)] = 100
+        // Only explicitly saved values take precedence over the old toggles.
+        if let dim = saved["dimInactiveSpaces"] as? NSNumber {
+            if !dim.boolValue, saved[KeySpecs.inactiveSpaceOpacity.name] == nil {
+                inactiveSpaceOpacity = 100
+            }
+            suite.removeObject(forKey: "dimInactiveSpaces")
         }
-        suite.removeObject(forKey: legacyName)
+        if let hide = saved["hideSingleSpace"] as? NSNumber {
+            if saved[KeySpecs.minimumSpacesPerDisplay.name] == nil {
+                minimumSpacesPerDisplay = hide.boolValue ? 2 : 1
+            }
+            if saved[KeySpecs.keepOneIconVisible.name] == nil {
+                keepOneIconVisible = !hide.boolValue
+            }
+            suite.removeObject(forKey: "hideSingleSpace")
+        }
     }
 
     /// Read/write a defaults value via its `TypedKeySpec`, memoizing decoded
@@ -523,9 +533,19 @@ final class DefaultsStore {
         set { self[KeySpecs.hideFullscreenApps] = newValue }
     }
 
-    var hideSingleSpace: Bool {
-        get { self[KeySpecs.hideSingleSpace] }
-        set { self[KeySpecs.hideSingleSpace] = newValue }
+    var countFullscreenApps: Bool {
+        get { self[KeySpecs.countFullscreenApps] }
+        set { self[KeySpecs.countFullscreenApps] = newValue }
+    }
+
+    var keepOneIconVisible: Bool {
+        get { self[KeySpecs.keepOneIconVisible] }
+        set { self[KeySpecs.keepOneIconVisible] = newValue }
+    }
+
+    var minimumSpacesPerDisplay: Int {
+        get { self[KeySpecs.minimumSpacesPerDisplay].clamped(to: Layout.minimumSpacesPerDisplayRange) }
+        set { self[KeySpecs.minimumSpacesPerDisplay] = newValue.clamped(to: Layout.minimumSpacesPerDisplayRange) }
     }
 
     var horizontalScrollEnabled: Bool {

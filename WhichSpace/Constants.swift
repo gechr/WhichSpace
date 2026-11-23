@@ -175,6 +175,8 @@ enum Layout {
     /// Slider default, the strong tap
     static let defaultScrollHapticIntensity = 4
 
+    static let minimumSpacesPerDisplayRange = 1 ... 5
+
     /// Space picker menu app icons
     /// App icons shown per picker row before the list is truncated
     static let defaultSpacePickerMaxAppIcons = 5
@@ -495,6 +497,11 @@ enum Localization {
     static let labelLabelBackground = String(localized: "label_label_background")
     static let labelLabelForeground = String(localized: "label_label_foreground")
     static let labelLeft = String(localized: "label_left")
+    static let labelMinimumSpacesPerDisplay = String(localized: "label_minimum_spaces_per_display")
+    static func onlyShowDisplays(minimum: Int) -> String {
+        String.localizedStringWithFormat(String(localized: "label_only_show_displays"), minimum)
+    }
+
     static let labelMoveWindow = String(localized: "label_move_window")
     static let labelNever = String(localized: "label_never")
     static let labelNone = String(localized: "label_none")
@@ -612,7 +619,7 @@ enum Localization {
     static let tipHotkeySwitchRight = String(localized: "tip_hotkey_switch_right")
     static let tipHotkeysBehavior = String(localized: "tip_hotkeys_behavior")
     static let tipHideFullscreenApps = String(localized: "tip_hide_fullscreen_apps")
-    static let tipHideSingleSpace = String(localized: "tip_hide_single_space")
+    static let tipKeepOneIconVisible = String(localized: "tip_keep_one_icon_visible")
     static let tipIconPadding = String(localized: "tip_icon_padding")
     static let tipIconSize = String(localized: "tip_icon_size")
     static let tipInvertColors = String(localized: "tip_invert_colors")
@@ -657,9 +664,10 @@ enum Localization {
     static let toggleAutoInstallUpdates = String(localized: "toggle_auto_install_updates")
     static let toggleClassicSwitching = String(localized: "toggle_classic_switching")
     static let toggleClickToSwitchSpaces = String(localized: "toggle_click_to_switch_spaces")
+    static let toggleCountFullscreenApps = String(localized: "toggle_count_fullscreen_apps")
     static let toggleHideEmptySpaces = String(localized: "toggle_hide_empty_spaces")
     static let toggleHideFullscreenApps = String(localized: "toggle_hide_fullscreen_apps")
-    static let toggleHideSingleSpace = String(localized: "toggle_hide_single_space")
+    static let toggleKeepOneIconVisible = String(localized: "toggle_keep_one_icon_visible")
     static let toggleLaunchAtLogin = String(localized: "toggle_launch_at_login")
     static let toggleNightlyUpdates = String(localized: "toggle_nightly_updates")
     static let togglePreserveSystemSpaceNumbers = String(localized: "toggle_preserve_system_space_numbers")
