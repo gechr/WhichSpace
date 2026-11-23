@@ -4,38 +4,37 @@ import Testing
 
 @MainActor
 struct SpaceSwitcherTests {
-    @Test("fullscreen gestures follow the target display and classic steps require focus there")
+    @Test("fullscreen shortcuts target a remote display and focus an already-visible app")
     func fullscreenDisplayRouting() {
-        #expect(SpaceSwitcher.canStepToFullscreen(
-            displayID: "B",
-            pointerOnTarget: true,
-            classic: false,
-            focusedDisplay: "A"
-        ))
-        #expect(!SpaceSwitcher.canStepToFullscreen(
-            displayID: "B",
-            pointerOnTarget: false,
-            classic: false,
-            focusedDisplay: "B"
-        ))
-        #expect(!SpaceSwitcher.canStepToFullscreen(
-            displayID: "B",
-            pointerOnTarget: true,
-            classic: true,
-            focusedDisplay: "A"
-        ))
-        #expect(SpaceSwitcher.canStepToFullscreen(
-            displayID: "B",
-            pointerOnTarget: true,
-            classic: true,
-            focusedDisplay: "B"
-        ))
-        #expect(SpaceSwitcher.canStepToFullscreen(
-            displayID: "Main",
-            pointerOnTarget: false,
-            classic: true,
-            focusedDisplay: nil
-        ))
+        let frame = CGRect(x: -700, y: 100, width: 600, height: 400)
+        let onTarget = CGPoint(x: -650, y: 180)
+        let onOtherDisplay = CGPoint(x: 80, y: 120)
+        func route(
+            pointer: CGPoint?,
+            classic: Bool = false,
+            focus: String? = "Other",
+            current: Bool = false,
+            bounds: CGRect? = frame,
+            display: String = "Target"
+        ) -> SpaceSwitcher.FullscreenSwitchRoute {
+            SpaceSwitcher.fullscreenSwitchRoute(
+                displayID: display,
+                alreadyCurrent: current,
+                bounds: bounds,
+                pointer: pointer,
+                classic: classic,
+                focusedDisplay: focus
+            )
+        }
+        #expect(route(pointer: onOtherDisplay) == .step(at: CGPoint(x: -400, y: 300)))
+        #expect(route(pointer: onOtherDisplay, current: true) == .activate)
+        #expect(route(pointer: onOtherDisplay, bounds: nil) == .activate)
+        #expect(route(pointer: onOtherDisplay, bounds: .zero) == .activate)
+        #expect(route(pointer: onTarget) == .step(at: nil))
+        #expect(route(pointer: onOtherDisplay, classic: true, focus: "Target") == .activate)
+        #expect(route(pointer: onTarget, classic: true) == .activate)
+        #expect(route(pointer: onTarget, classic: true, focus: "Target") == .step(at: nil))
+        #expect(route(pointer: nil, classic: true, focus: nil, bounds: nil, display: "Main") == .step(at: nil))
     }
 
     @Test("a fullscreen jump focuses the matching window and can fall back to the other tile")

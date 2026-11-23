@@ -532,6 +532,10 @@ enum SpaceSwitcher {
         func predictedIndex(_ index: Int?) -> Int? {
             index.flatMap { spaces.indices.contains($0) ? $0 : nil }
         }
+
+        func currentSpaceID(predictedIndex index: Int?) -> Int {
+            predictedIndex(index).map { spaces[$0].id } ?? currentSpaceID
+        }
     }
 
     /// Untargeted gestures land under the pointer. Classic key events go to the focused display.
@@ -663,8 +667,7 @@ enum SpaceSwitcher {
         if space.isFullscreen, case .local = target {
             return .fullscreen(spaceID: space.id)
         }
-        let currentSpaceID = display.predictedIndex(predictedIndex(display.identifier))
-            .map { display.spaces[$0].id } ?? display.currentSpaceID
+        let currentSpaceID = display.currentSpaceID(predictedIndex: predictedIndex(display.identifier))
         let focused = display.identifier == "Main" || display.identifier == (focusedDisplayID ?? activeDisplayID)
         if display.identifier == activeDisplayID,
            focused || currentSpaceID != space.id || space.isFullscreen
@@ -676,11 +679,9 @@ enum SpaceSwitcher {
         }
         // An already-visible Desktop still needs the native shortcut to focus its display.
         if display.identifier != activeDisplayID, currentSpaceID != space.id,
-           let bounds = gestureBounds(display.identifier), !bounds.isEmpty, !bounds.isInfinite
+           let center = gestureCenter(in: gestureBounds(display.identifier))
         {
-            return .targetedGesture(
-                displayID: display.identifier, spaceID: space.id, location: CGPoint(x: bounds.midX, y: bounds.midY)
-            )
+            return .targetedGesture(displayID: display.identifier, spaceID: space.id, location: center)
         }
         if focused {
             return .focusedDisplay(spaceID: space.id)
@@ -691,6 +692,13 @@ enum SpaceSwitcher {
             return nil
         }
         return .otherDisplay(hotKey: HotKey.firstDesktop + CGSSymbolicHotKey(number - 1))
+    }
+
+    private static func gestureCenter(in bounds: CGRect?) -> CGPoint? {
+        guard let bounds, !bounds.isEmpty, !bounds.isInfinite else {
+            return nil
+        }
+        return CGPoint(x: bounds.midX, y: bounds.midY)
     }
 
     // MARK: - Classic Switching
@@ -1220,18 +1228,24 @@ enum SpaceSwitcher {
         let provider = CGSDisplaySpaceProvider()
         func step(on display: ManagedDisplay) -> Bool {
             let classic = requiresClassicPath(fromStatusItemClick: fromStatusItemClick)
-            let pointerOnTarget = CGEvent(source: nil).map {
-                provider.displayBounds(forIdentifier: display.identifier)?.contains($0.location) == true
-            } ?? false
-            guard canStepToFullscreen(
+            let current = display.currentSpaceID(predictedIndex: prediction(for: display.identifier))
+            guard case let .step(location) = fullscreenSwitchRoute(
                 displayID: display.identifier,
-                pointerOnTarget: pointerOnTarget,
+                alreadyCurrent: current == spaceID,
+                bounds: provider.displayBounds(forIdentifier: display.identifier),
+                pointer: CGEvent(source: nil)?.location,
                 classic: classic,
                 focusedDisplay: provider.copyActiveMenuBarDisplayIdentifier()
             ) else {
                 return false
             }
-            return switchToSpace(id: spaceID, on: display, classic: classic, connection: conn)
+            return switchToSpace(
+                id: spaceID,
+                on: display,
+                classic: classic,
+                connection: conn,
+                gestureLocation: location
+            )
         }
 
         func activate(on display: ManagedDisplay) -> Bool {
@@ -1267,15 +1281,31 @@ enum SpaceSwitcher {
         }
     }
 
-    /// Gestures follow the pointer. Classic relative key events also need
-    /// keyboard focus on this display. A shared Space spans every display.
-    static func canStepToFullscreen(
+    enum FullscreenSwitchRoute: Equatable {
+        case step(at: CGPoint?)
+        case activate
+    }
+
+    static func fullscreenSwitchRoute(
         displayID: String,
-        pointerOnTarget: Bool,
+        alreadyCurrent: Bool,
+        bounds: CGRect?,
+        pointer: CGPoint?,
         classic: Bool,
         focusedDisplay: String?
-    ) -> Bool {
-        displayID == "Main" || (pointerOnTarget && (!classic || focusedDisplay == displayID))
+    ) -> FullscreenSwitchRoute {
+        // A shared Space spans every display.
+        if displayID == "Main" {
+            return .step(at: nil)
+        }
+        guard let bounds, let center = gestureCenter(in: bounds) else {
+            return .activate
+        }
+        if let pointer, bounds.contains(pointer) {
+            return !classic || focusedDisplay == displayID ? .step(at: nil) : .activate
+        }
+        // A swipe changes Spaces. Activate the window when the remote target is already visible.
+        return classic || alreadyCurrent ? .activate : .step(at: center)
     }
 
     /// Two windows of the same application may occupy different fullscreen
