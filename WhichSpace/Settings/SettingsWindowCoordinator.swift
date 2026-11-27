@@ -83,6 +83,7 @@ final class SettingsWindowCoordinator {
     private var closeObserver: NSObjectProtocol?
     private var shortcutMonitor: Any?
     private var titleObservation: NSKeyValueObservation?
+    private var paneTransitionTask: Task<Void, Never>?
     private var search: SettingsSearchController?
 
     /// Margin past the package's 0.25 s tab crossfade before repairing.
@@ -150,23 +151,16 @@ final class SettingsWindowCoordinator {
                     }
                 }
                 // The window is retitled on every tab activation, including
-                // toolbar clicks this coordinator never sees; an interrupted
-                // crossfade can strand the incoming pane half-faded, so each
-                // switch schedules a repair for after the transition
+                // toolbar clicks this coordinator never sees. Wait for the
+                // crossfade before measuring the pane with its native controls.
                 titleObservation = window.observe(\.title) { [weak self] window, _ in
                     // The title is set from the tab activation, on the main
                     // thread, and KVO delivers on the thread that set it, so
                     // the name is replaced before the bar is drawn
-                    let retitled = MainActor.assumeIsolated {
-                        Self.restoreAppTitle(in: window)
-                    }
-                    // The remaining change is the replacement above
-                    guard retitled else {
-                        return
-                    }
-                    Task { @MainActor in
-                        try? await Task.sleep(for: Self.transitionSettleDelay)
-                        self?.restorePaneVisibility()
+                    MainActor.assumeIsolated {
+                        if Self.restoreAppTitle(in: window) {
+                            self?.schedulePaneFit()
+                        }
                     }
                 }
             }
@@ -200,6 +194,18 @@ final class SettingsWindowCoordinator {
         highlighter.point(at: focus)
     }
 
+    private func schedulePaneFit() {
+        paneTransitionTask?.cancel()
+        paneTransitionTask = Task { [weak self] in
+            try? await Task.sleep(for: Self.transitionSettleDelay)
+            guard !Task.isCancelled, let self, isWindowVisible else {
+                return
+            }
+            restorePaneVisibility()
+            fitWindowToPane()
+        }
+    }
+
     /// Puts the app's name in the title bar, reporting whether a pane name was
     /// there to replace.
     ///
@@ -215,8 +221,8 @@ final class SettingsWindowCoordinator {
         return true
     }
 
-    /// Sizes the window around the pane just put on screen, in the same pass
-    /// that showed it so the corrected size is the first one drawn.
+    /// Fits the window to the mounted pane. On first display, AppKit can add
+    /// scrollbar width after the toolbar has measured the pane for its transition.
     ///
     /// A pane is measured for the window before it is on screen, where an
     /// AppKit-backed control has yet to take the control size the pane sets
