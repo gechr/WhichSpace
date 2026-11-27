@@ -10,6 +10,7 @@ struct SpacesPane: View {
     let onOpenCustomSoundsFolder: () -> Void
 
     @State private var colorPanel = ColorPanelCoordinator()
+    @State private var listOverflows = false
 
     @Environment(SettingsHighlighter.self) private var highlighter: SettingsHighlighter?
 
@@ -21,6 +22,7 @@ struct SpacesPane: View {
                 .frame(width: editorWidth)
         }
         .padding(Layout.settingsPanePadding)
+        .cappedSettingsPaneHeight()
         .toggleStyle(.switch)
         .font(.system(size: Layout.settingsRowFontSize))
         .endsFieldEditingOnTap()
@@ -50,7 +52,8 @@ struct SpacesPane: View {
     // MARK: - Space List
 
     private var listColumn: some View {
-        VStack(alignment: .leading, spacing: Layout.settingsSectionSpacing) {
+        let contentHeight = listContentHeight
+        return VStack(alignment: .leading, spacing: Layout.settingsSectionSpacing) {
             if model.displays.count > 1 {
                 listHeader(Localization.labelDisplays)
                 VStack(alignment: .leading, spacing: 4) {
@@ -85,9 +88,14 @@ struct SpacesPane: View {
                         .fill(Color(nsColor: .quaternarySystemFill))
                 )
                 // The overlay scroller must not cover row text
-                .padding(.trailing, listOverflows ? Layout.settingsSpaceListScrollerWidth : 0)
+                .padding(.trailing, listScrollerInset)
             }
-            .frame(height: min(listContentHeight, Layout.settingsSpaceListMaxHeight))
+            .frame(idealHeight: contentHeight, maxHeight: contentHeight)
+            .onGeometryChange(for: Bool.self) { geometry in
+                geometry.size.height < contentHeight
+            } action: { overflows in
+                listOverflows = overflows
+            }
         }
     }
 
@@ -95,11 +103,11 @@ struct SpacesPane: View {
     /// widens as a label is typed, and rows grow taller with the icon. Row
     /// titles are fixed for a given set of Spaces, so they need no watching.
     private var listMetrics: CGSize {
-        CGSize(width: listIconColumnWidth, height: listContentHeight)
+        CGSize(width: listIconColumnWidth + listScrollerInset, height: listContentHeight)
     }
 
-    private var listOverflows: Bool {
-        listContentHeight > Layout.settingsSpaceListMaxHeight
+    private var listScrollerInset: Double {
+        listOverflows ? Layout.settingsSpaceListScrollerWidth : 0
     }
 
     /// The width of the widest row icon. Styles like the pill auto-expand
@@ -308,7 +316,7 @@ struct SpacesPane: View {
                 // the window measuring this column at the base height: a
                 // scroll view without one reports its whole card stack.
                 .frame(
-                    minHeight: Layout.settingsSpacesEditorBaseHeight,
+                    minHeight: 0,
                     idealHeight: Layout.settingsSpacesEditorBaseHeight,
                     maxHeight: .infinity
                 )

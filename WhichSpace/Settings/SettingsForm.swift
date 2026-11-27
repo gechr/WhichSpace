@@ -28,6 +28,12 @@ extension View {
         modifier(SettingsRowHighlight(anchor: anchor))
     }
 
+    /// Caps the whole pane, including pinned headers, and leaves room on smaller screens.
+    func cappedSettingsPaneHeight() -> some View {
+        let screenLimit = NSScreen.main.map { $0.visibleFrame.height * Layout.settingsPaneMaxHeightRatio }
+        return frame(maxHeight: min(Layout.settingsPaneMaxHeight, screenLimit ?? Layout.settingsPaneMaxHeight))
+    }
+
     /// Commits a value field being typed in when the click lands off it.
     func endsFieldEditingOnTap() -> some View {
         contentShape(Rectangle())
@@ -46,10 +52,7 @@ extension View {
 /// panes. This VStack-based recreation of the same visual style sizes to its
 /// content, so the window fits each pane exactly.
 ///
-/// The stack sits in a scroll view capped at a share of the screen height,
-/// so a pane taller than that scrolls instead of running the window off the
-/// screen. A pane that fits reports its content height as the scroll view's
-/// ideal, keeping the window sized to the pane exactly as before.
+/// Tall panes scroll within the shared height limit. Short panes fit their content.
 ///
 /// A `header` pins above the scroll view - the permission banner stays put
 /// while the sections scroll beneath it.
@@ -92,7 +95,6 @@ struct SettingsForm<Header: View, Content: View>: View {
                     )
                     .frame(width: Layout.settingsPaneContentWidth)
                 }
-                .frame(maxHeight: maxPaneHeight)
                 // A deep link can point at a row the cap has scrolled out of
                 // view, so bring the anchor in rather than only highlighting it
                 .onAppear {
@@ -103,18 +105,10 @@ struct SettingsForm<Header: View, Content: View>: View {
                 }
             }
         }
+        .cappedSettingsPaneHeight()
         .toggleStyle(.switch)
         .font(.system(size: Layout.settingsRowFontSize))
         .endsFieldEditingOnTap()
-    }
-
-    /// The tallest a pane may grow before it scrolls: a fixed share of the
-    /// screen height.
-    private var maxPaneHeight: Double {
-        guard let screen = NSScreen.main else {
-            return Layout.settingsPaneMaxHeightFallback
-        }
-        return screen.frame.height * Layout.settingsPaneMaxHeightRatio
     }
 
     private func scroll(_ proxy: ScrollViewProxy, to anchor: SettingsAnchor?) {

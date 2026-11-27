@@ -207,8 +207,8 @@ enum Layout {
     static let settingsPanePadding = 16.0
     /// Share of the screen height a settings pane may take before it scrolls
     static let settingsPaneMaxHeightRatio = 0.75
-    /// Pane height cap when no screen is available to measure
-    static let settingsPaneMaxHeightFallback = 800.0
+    /// Maximum height of a settings pane, including its pinned content
+    static let settingsPaneMaxHeight = 630.0
     /// Vertical gap between the cards stacked in a pane
     static let settingsSectionSpacing = 12.0
     /// Inset from a card's edges to the row's controls
@@ -234,8 +234,6 @@ enum Layout {
     static let settingsSliderDefaultPosition = 0.5
     /// Width of the Space list column in the Spaces pane
     static let settingsSpaceListWidth = 140.0
-    /// Height at which the Space list starts scrolling instead of growing
-    static let settingsSpaceListMaxHeight = 800.0
     /// Trailing inset a scrolling list leaves for an overlay scroller
     static let settingsSpaceListScrollerWidth = 16.0
     /// Character cap on a custom Space name
