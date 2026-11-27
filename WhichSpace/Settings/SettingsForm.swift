@@ -57,6 +57,7 @@ extension View {
 /// A `header` pins above the scroll view - the permission banner stays put
 /// while the sections scroll beneath it.
 struct SettingsForm<Header: View, Content: View>: View {
+    private let bottomPadding: Double
     private let header: Header
     private let content: Content
     /// Distinguishes a real pinned header from the placeholder, so headerless
@@ -65,13 +66,22 @@ struct SettingsForm<Header: View, Content: View>: View {
 
     @Environment(SettingsHighlighter.self) private var highlighter: SettingsHighlighter?
 
-    init(@ViewBuilder content: () -> Content) where Header == EmptyView {
+    init(
+        bottomPadding: Double = Layout.settingsPanePadding,
+        @ViewBuilder content: () -> Content
+    ) where Header == EmptyView {
+        self.bottomPadding = bottomPadding
         header = EmptyView()
         self.content = content()
         hasHeader = false
     }
 
-    init(@ViewBuilder header: () -> Header, @ViewBuilder content: () -> Content) {
+    init(
+        bottomPadding: Double = Layout.settingsPanePadding,
+        @ViewBuilder header: () -> Header,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.bottomPadding = bottomPadding
         self.header = header()
         self.content = content()
         hasHeader = true
@@ -89,10 +99,9 @@ struct SettingsForm<Header: View, Content: View>: View {
                     VStack(alignment: .leading, spacing: Layout.settingsSectionSpacing) {
                         content
                     }
-                    .padding(
-                        hasHeader ? [.horizontal, .bottom] : .all,
-                        Layout.settingsPanePadding
-                    )
+                    .padding(.horizontal, Layout.settingsPanePadding)
+                    .padding(.top, hasHeader ? 0 : Layout.settingsPanePadding)
+                    .padding(.bottom, bottomPadding)
                     .frame(width: Layout.settingsPaneContentWidth)
                 }
                 // A deep link can point at a row the cap has scrolled out of

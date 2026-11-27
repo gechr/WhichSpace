@@ -42,19 +42,25 @@ struct KeyboardPane: View {
     var body: some View {
         // The banner pins above the scroll view, so the warning stays visible
         // while the sections scroll beneath it
-        Group {
+        VStack(alignment: .leading, spacing: 0) {
             if model.accessibilityGranted {
-                SettingsForm {
+                SettingsForm(bottomPadding: 0) {
                     sections
                 }
             } else {
-                SettingsForm {
+                SettingsForm(bottomPadding: 0) {
                     AccessibilityBannerSection(model: model)
                 } content: {
                     sections
                 }
             }
+            behaviorNote
+                .padding(.horizontal, Layout.settingsPanePadding)
+                .padding(.vertical, Layout.settingsRowVerticalPadding)
+                .frame(width: Layout.settingsPaneContentWidth, alignment: .leading)
+                .fixedSize(horizontal: false, vertical: true)
         }
+        .cappedSettingsPaneHeight()
         // Revealing the hidden numbered rows grows the pane after the window
         // was sized to it, so the window has to follow
         .fitsSettingsWindow(measuring: CGSize(
@@ -87,7 +93,6 @@ struct KeyboardPane: View {
         }
         numberedSection
         fullscreenSection
-        behaviorNote
     }
 
     // MARK: - Adjacent Spaces
